@@ -34,18 +34,7 @@ extern "C" {
   ) -> size_t;
   #[no_mangle]
   fn localtime(__timer: *const time_t) -> *mut tm;
-  #[no_mangle]
-  fn strftime_HHMMSS(
-    buf: *mut libc::c_char,
-    len: libc::c_uint,
-    tp: *mut time_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn safe_gethostname() -> *mut libc::c_char;
+
   #[no_mangle]
   static bb_PATH_root_path: [libc::c_char; 0];
   #[no_mangle]
@@ -53,8 +42,9 @@ extern "C" {
 }
 
 use libc::tm;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct utsname {
   pub sysname: [libc::c_char; 65],
   pub nodename: [libc::c_char; 65],
@@ -96,7 +86,7 @@ pub unsafe extern "C" fn print_login_issue(
   time(&mut t);
   uname(&mut uts);
   puts(b"\r\x00" as *const u8 as *const libc::c_char);
-  fp = fopen_for_read(issue_file);
+  fp = crate::libbb::wfopen::fopen_for_read(issue_file);
   if fp.is_null() {
     return;
   }
@@ -155,7 +145,7 @@ pub unsafe extern "C" fn print_login_issue(
           current_block_23 = 7245201122033322888;
         }
         116 => {
-          strftime_HHMMSS(
+          crate::libbb::time::strftime_HHMMSS(
             buf.as_mut_ptr(),
             ::std::mem::size_of::<[libc::c_char; 257]>() as libc::c_ulong as libc::c_uint,
             &mut t,
@@ -217,7 +207,7 @@ pub unsafe extern "C" fn print_login_issue(
     fputs_unlocked(outbuf, stdout);
   }
   fclose(fp);
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
 }
 /* For top, ps. Some argv[i] are replaced by malloced "-opt" strings */
 /* { "-", NULL } */
@@ -336,10 +326,10 @@ pub unsafe extern "C" fn print_login_issue(
 /* Returns number of lines changed, or -1 on error */
 #[no_mangle]
 pub unsafe extern "C" fn print_login_prompt() {
-  let mut hostname: *mut libc::c_char = safe_gethostname();
+  let mut hostname: *mut libc::c_char = crate::libbb::safe_gethostname::safe_gethostname();
   fputs_unlocked(hostname, stdout);
   fputs_unlocked(b" login: \x00" as *const u8 as *const libc::c_char, stdout);
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   free(hostname as *mut libc::c_void);
 }
 /* Clear dangerous stuff, set PATH */

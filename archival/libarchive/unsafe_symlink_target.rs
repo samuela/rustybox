@@ -1,3 +1,5 @@
+use crate::libbb::llist::llist_t;
+use crate::librb::size_t;
 use libc;
 use libc::strstr;
 use libc::symlink;
@@ -8,21 +10,8 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
-
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
-use crate::libbb::llist::llist_t;
-use crate::librb::size_t;
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
@@ -37,9 +26,9 @@ pub unsafe extern "C" fn create_or_remember_link(
     || *target.offset(0) as libc::c_int == '/' as i32
     || !strstr(target, b"..\x00" as *const u8 as *const libc::c_char).is_null()
   {
-    llist_add_to_end(
+    crate::libbb::llist::llist_add_to_end(
       link_placeholders,
-      xasprintf(
+      crate::libbb::xfuncs_printf::xasprintf(
         b"%c%s%c%s\x00" as *const u8 as *const libc::c_char,
         hard_link,
         linkname,
@@ -51,7 +40,7 @@ pub unsafe extern "C" fn create_or_remember_link(
   }
   if symlink(target, linkname) != 0i32 {
     /* shared message */
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t create %slink \'%s\' to \'%s\'\x00" as *const u8 as *const libc::c_char,
       b"sym\x00" as *const u8 as *const libc::c_char,
       linkname,
@@ -82,7 +71,7 @@ pub unsafe extern "C" fn create_links_from_list(mut list: *mut llist_t) {
       != 0
     {
       /* shared message */
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"can\'t create %slink \'%s\' to \'%s\'\x00" as *const u8 as *const libc::c_char,
         if *(*list).data as libc::c_int != 0 {
           b"hard\x00" as *const u8 as *const libc::c_char

@@ -30,69 +30,17 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-
-  #[no_mangle]
-  fn xpipe(filedes: *mut libc::c_int);
-
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xmalloc_reads(fd: libc::c_int, maxsz_p: *mut size_t) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-
-  #[no_mangle]
-  fn safe_waitpid(pid: pid_t, wstat: *mut libc::c_int, options: libc::c_int) -> pid_t;
-
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn bb_ask_noecho(
-    fd: libc::c_int,
-    timeout: libc::c_int,
-    prompt: *const libc::c_char,
-  ) -> *mut libc::c_char;
-
-  #[no_mangle]
   static bb_uuenc_tbl_base64: [libc::c_char; 0];
 
-  #[no_mangle]
-  fn bb_uuencode(
-    store: *mut libc::c_char,
-    s: *const libc::c_void,
-    length: libc::c_int,
-    tbl: *const libc::c_char,
-  );
 }
 
 use crate::librb::size_t;
 use libc::pid_t;
 use libc::ssize_t;
 use libc::FILE;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub helper_pid: pid_t,
   pub timeout: libc::c_uint,
@@ -119,12 +67,14 @@ pub const DST_BUF_SIZE: C2RustUnnamed = 76;
 // generic signal handler
 unsafe extern "C" fn signal_handler(mut signo: libc::c_int) {
   if 14i32 == signo {
-    bb_simple_error_msg_and_die(b"timed out\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"timed out\x00" as *const u8 as *const libc::c_char,
+    );
   }
   // SIGCHLD. reap zombies
-  if safe_waitpid((*ptr_to_globals).helper_pid, &mut signo, 1i32) > 0i32 {
+  if crate::libbb::xfuncs::safe_waitpid((*ptr_to_globals).helper_pid, &mut signo, 1i32) > 0i32 {
     if ((signo & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0i32 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"helper killed by signal %u\x00" as *const u8 as *const libc::c_char,
         signo & 0x7fi32,
       );
@@ -132,7 +82,7 @@ unsafe extern "C" fn signal_handler(mut signo: libc::c_int) {
     if signo & 0x7fi32 == 0i32 {
       (*ptr_to_globals).helper_pid = 0i32;
       if (signo & 0xff00i32) >> 8i32 != 0 {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"helper exited (%u)\x00" as *const u8 as *const libc::c_char,
           (signo & 0xff00i32) >> 8i32,
         );
@@ -146,17 +96,19 @@ pub unsafe extern "C" fn launch_helper(mut argv: *mut *const libc::c_char) {
   // setup vanilla unidirectional pipes interchange
   let mut i: libc::c_int = 0;
   let mut pipes: [libc::c_int; 4] = [0; 4];
-  xpipe(pipes.as_mut_ptr());
-  xpipe(pipes.as_mut_ptr().offset(2));
+  crate::libbb::xfuncs_printf::xpipe(pipes.as_mut_ptr());
+  crate::libbb::xfuncs_printf::xpipe(pipes.as_mut_ptr().offset(2));
   // NB: handler must be installed before vfork
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     0i32 + (1i32 << 17i32) + (1i32 << 14i32),
     Some(signal_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
   ); // for parent:0, for child:2
   (*ptr_to_globals).helper_pid = {
     let mut bb__xvfork_pid: pid_t = vfork(); // 1 or 3 - closing one write end
     if bb__xvfork_pid < 0i32 {
-      bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"vfork\x00" as *const u8 as *const libc::c_char,
+      );
       // 2 or 0 - closing one read end
     } // 0 or 2 - using other read end
     bb__xvfork_pid
@@ -164,8 +116,8 @@ pub unsafe extern "C" fn launch_helper(mut argv: *mut *const libc::c_char) {
   i = ((*ptr_to_globals).helper_pid == 0) as libc::c_int * 2i32;
   close(pipes[(i + 1i32) as usize]);
   close(pipes[(2i32 - i) as usize]);
-  xmove_fd(pipes[i as usize], 0i32);
-  xmove_fd(pipes[(3i32 - i) as usize], 1i32);
+  crate::libbb::xfuncs_printf::xmove_fd(pipes[i as usize], 0i32);
+  crate::libbb::xfuncs_printf::xmove_fd(pipes[(3i32 - i) as usize], 1i32);
   // End result:
   // parent stdout [3] -> child stdin [2]
   // child stdout [1] -> parent stdin [0]
@@ -175,7 +127,7 @@ pub unsafe extern "C" fn launch_helper(mut argv: *mut *const libc::c_char) {
     prctl(1i32, 15i32, 0i32, 0i32, 0i32);
     // try to execute connection helper
     // NB: SIGCHLD & SIGALRM revert to SIG_DFL on exec
-    BB_EXECVP_or_die(argv as *mut *mut libc::c_char);
+    crate::libbb::executable::BB_EXECVP_or_die(argv as *mut *mut libc::c_char);
   };
   // parent goes on
 }
@@ -190,13 +142,16 @@ pub unsafe extern "C" fn send_mail_command(
   }
   msg = fmt as *mut libc::c_char;
   if !fmt.is_null() {
-    msg = xasprintf(fmt, param);
+    msg = crate::libbb::xfuncs_printf::xasprintf(fmt, param);
     if (*ptr_to_globals).verbose != 0 {
-      bb_error_msg(b"send:\'%s\'\x00" as *const u8 as *const libc::c_char, msg);
+      crate::libbb::verror_msg::bb_error_msg(
+        b"send:\'%s\'\x00" as *const u8 as *const libc::c_char,
+        msg,
+      );
     }
     printf(b"%s\r\n\x00" as *const u8 as *const libc::c_char, msg);
   }
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   return msg;
 }
 // NB: parse_url can modify url[] (despite const), but only if '@' is there
@@ -231,7 +186,7 @@ unsafe extern "C" fn encode_n_base64(
   let mut dst_buf: [libc::c_char; 77] = [0; 77];
   if !fname.is_null() {
     fp = if *fname.offset(0) as libc::c_int != '-' as i32 || *fname.offset(1) as libc::c_int != 0 {
-      xfopen_for_read(fname)
+      crate::libbb::wfopen::xfopen_for_read(fname)
     } else {
       stdin
     };
@@ -247,7 +202,9 @@ unsafe extern "C" fn encode_n_base64(
         fp,
       );
       if (size as ssize_t) < 0 {
-        bb_simple_perror_msg_and_die(b"read error\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"read error\x00" as *const u8 as *const libc::c_char,
+        );
       }
     } else {
       size = len;
@@ -259,7 +216,7 @@ unsafe extern "C" fn encode_n_base64(
       break;
     }
     // encode the buffer we just read in
-    bb_uuencode(
+    crate::libbb::uuencode::bb_uuencode(
       dst_buf.as_mut_ptr(),
       text as *const libc::c_void,
       size as libc::c_int,
@@ -306,21 +263,28 @@ pub unsafe extern "C" fn printfile_base64(mut fname: *const libc::c_char) {
 #[no_mangle]
 pub unsafe extern "C" fn get_cred_or_die(mut fd: libc::c_int) {
   if isatty(fd) != 0 {
-    (*ptr_to_globals).user =
-      bb_ask_noecho(fd, 0i32, b"User: \x00" as *const u8 as *const libc::c_char);
-    (*ptr_to_globals).pass = bb_ask_noecho(
+    (*ptr_to_globals).user = crate::libbb::bb_askpass::bb_ask_noecho(
+      fd,
+      0i32,
+      b"User: \x00" as *const u8 as *const libc::c_char,
+    );
+    (*ptr_to_globals).pass = crate::libbb::bb_askpass::bb_ask_noecho(
       fd,
       0i32,
       b"Password: \x00" as *const u8 as *const libc::c_char,
     )
   } else {
-    (*ptr_to_globals).user = xmalloc_reads(fd, std::ptr::null_mut::<size_t>());
-    (*ptr_to_globals).pass = xmalloc_reads(fd, std::ptr::null_mut::<size_t>())
+    (*ptr_to_globals).user =
+      crate::libbb::read_printf::xmalloc_reads(fd, std::ptr::null_mut::<size_t>());
+    (*ptr_to_globals).pass =
+      crate::libbb::read_printf::xmalloc_reads(fd, std::ptr::null_mut::<size_t>())
   }
   if (*ptr_to_globals).user.is_null()
     || *(*ptr_to_globals).user == 0
     || (*ptr_to_globals).pass.is_null()
   {
-    bb_simple_error_msg_and_die(b"no username or password\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"no username or password\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }

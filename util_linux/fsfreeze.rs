@@ -2,22 +2,7 @@ use libc;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
+
 }
 
 /*
@@ -48,14 +33,14 @@ pub unsafe extern "C" fn fsfreeze_main(
   /* exactly one non-option arg: the mountpoint */
   /* one of opts is required */
   /* opts are mutually exclusive */
-  opts = getopt32long(
+  opts = crate::libbb::getopt32::getopt32long(
     argv,
     b"^\x00=1:\xff:\xfe:\xff--\xfe:\xfe--\xff\x00" as *const u8 as *const libc::c_char,
     b"freeze\x00\x00\xffunfreeze\x00\x00\xfe\x00" as *const u8 as *const libc::c_char,
   );
-  fd = xopen(*argv.offset(optind as isize), 0i32);
+  fd = crate::libbb::xfuncs_printf::xopen(*argv.offset(optind as isize), 0i32);
   /* Works with NULL arg on linux-4.8.0 */
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     if opts & 1i32 as libc::c_uint != 0 {
       (((2u32 | 1u32) << 0i32 + 8i32 + 8i32 + 14i32

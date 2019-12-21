@@ -1,16 +1,19 @@
 use crate::libbb::llist::llist_t;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::skip_whitespace::skip_whitespace;
+use crate::librb::len_and_sockaddr;
 use crate::librb::size_t;
 use libc;
 use libc::close;
 use libc::endmntent;
 use libc::free;
+use libc::mntent;
 use libc::mount;
 use libc::printf;
-use libc::sa_family_t;
 use libc::setmntent;
 use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::stat;
 use libc::strcasecmp;
 use libc::strchr;
@@ -56,96 +59,7 @@ extern "C" {
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn host2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
-
-  #[no_mangle]
-  fn xhost2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
-
-  #[no_mangle]
-  fn xmalloc_sockaddr2dotted_noport(sa: *const sockaddr) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
-  fn spawn_and_wait(argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn sanitize_env_if_suid() -> libc::c_int;
-
-  #[no_mangle]
   static mut option_mask32: u32;
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
-
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn fstype_matches(fstype: *const libc::c_char, comma_list: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn find_mount_point(name: *const libc::c_char, subdir_too: libc::c_int) -> *mut mntent;
-
-  #[no_mangle]
-  fn del_loop(device: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn set_loop(
-    devname: *mut *mut libc::c_char,
-    file: *const libc::c_char,
-    offset: libc::c_ulonglong,
-    flags: libc::c_uint,
-  ) -> libc::c_int;
-
-  #[no_mangle]
-  fn bb_simplify_path(path: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
@@ -156,24 +70,12 @@ extern "C" {
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 
-  /* Returns:
-   * 0: no UUID= or LABEL= prefix found
-   * 1: UUID= or LABEL= prefix found. In this case,
-   *    *fsname is replaced if device with such UUID or LABEL is found
-   */
-  #[no_mangle]
-  fn resolve_mount_spec(fsname: *mut *mut libc::c_char) -> libc::c_int;
-}
+/* Returns:
+ * 0: no UUID= or LABEL= prefix found
+ * 1: UUID= or LABEL= prefix found. In this case,
+ *    *fsname is replaced if device with such UUID or LABEL is found
+ */
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct mntent {
-  pub mnt_fsname: *mut libc::c_char,
-  pub mnt_dir: *mut libc::c_char,
-  pub mnt_type: *mut libc::c_char,
-  pub mnt_opts: *mut libc::c_char,
-  pub mnt_freq: libc::c_int,
-  pub mnt_passno: libc::c_int,
 }
 
 pub type C2RustUnnamed = libc::c_int;
@@ -205,67 +107,27 @@ pub const MS_NOSUID: C2RustUnnamed = 2;
 pub const MS_RDONLY: C2RustUnnamed = 1;
 
 pub type __socklen_t = libc::c_uint;
-pub type socklen_t = __socklen_t;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
-
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed_0,
-}
-
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_0 {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
-
 pub type in_addr_t = u32;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_1,
-}
-
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_1 {
   pub sa: sockaddr,
   pub sin: sockaddr_in,
   pub sin6: sockaddr_in6,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub verbose: libc::c_uint,
   pub fslist: *mut llist_t,
@@ -372,7 +234,7 @@ unsafe extern "C" fn verbose_mount(
   *bb_errno = 0i32;
   rc = mount(source, target, filesystemtype, mountflags, data);
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose >= 2i32 as libc::c_uint {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"mount(\'%s\',\'%s\',\'%s\',0x%08lx,\'%s\'):%d\x00" as *const u8 as *const libc::c_char,
       source,
       target,
@@ -417,7 +279,7 @@ unsafe extern "C" fn append_mount_options(
       }
       match current_block_11 {
         5399440093318478209 => {
-          p = xasprintf(
+          p = crate::libbb::xfuncs_printf::xasprintf(
             b"%s,%.*s\x00" as *const u8 as *const libc::c_char,
             *oldopts,
             len,
@@ -434,7 +296,7 @@ unsafe extern "C" fn append_mount_options(
       }
     }
   } else {
-    *oldopts = xstrdup(newopts)
+    *oldopts = crate::libbb::xfuncs_printf::xstrdup(newopts)
   };
 }
 // Use the mount_options list to parse options into flags.
@@ -502,7 +364,7 @@ unsafe extern "C" fn parse_mount_options(
           } else {
             0i32 as libc::c_ulong
           } as libc::c_uint;
-          p = xrealloc(
+          p = crate::libbb::xfuncs_printf::xrealloc(
             p as *mut libc::c_void,
             (len as libc::c_ulong)
               .wrapping_add(strlen(options))
@@ -547,14 +409,18 @@ unsafe extern "C" fn get_block_backed_filesystems() -> *mut llist_t {
   let mut f: *mut FILE = 0 as *mut FILE;
   i = 0i32;
   while i < 2i32 {
-    f = fopen_for_read(filesystems[i as usize].as_ptr());
+    f = crate::libbb::wfopen::fopen_for_read(filesystems[i as usize].as_ptr());
     if !f.is_null() {
       loop {
-        buf = xmalloc_fgetline(f);
+        buf = crate::libbb::get_line_from_file::xmalloc_fgetline(f);
         if buf.is_null() {
           break;
         }
-        if !(!is_prefixed_with(buf, b"nodev\x00" as *const u8 as *const libc::c_char).is_null()
+        if !(!crate::libbb::compare_string_array::is_prefixed_with(
+          buf,
+          b"nodev\x00" as *const u8 as *const libc::c_char,
+        )
+        .is_null()
           && ({
             let mut bb__isspace: libc::c_uchar =
               (*buf.offset(5) as libc::c_int - 9i32) as libc::c_uchar;
@@ -564,7 +430,10 @@ unsafe extern "C" fn get_block_backed_filesystems() -> *mut llist_t {
         {
           fs = skip_whitespace(buf);
           if !(*fs as libc::c_int == '#' as i32 || *fs as libc::c_int == '*' as i32 || *fs == 0) {
-            llist_add_to_end(&mut list, xstrdup(fs) as *mut libc::c_void);
+            crate::libbb::llist::llist_add_to_end(
+              &mut list,
+              crate::libbb::xfuncs_printf::xstrdup(fs) as *mut libc::c_void,
+            );
           }
         }
         free(buf as *mut libc::c_void);
@@ -585,7 +454,7 @@ unsafe extern "C" fn mount_it_now(
   vfsflags &= !(MOUNT_FAKEFLAGS as libc::c_int as libc::c_ulong);
   if option_mask32 & OPT_f as libc::c_int as libc::c_uint != 0 {
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose >= 2i32 as libc::c_uint {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"would do mount(\'%s\',\'%s\',\'%s\',0x%08lx,\'%s\')\x00" as *const u8
           as *const libc::c_char,
         (*mp).mnt_fsname,
@@ -612,7 +481,7 @@ unsafe extern "C" fn mount_it_now(
       if false && rc != 0 && !(*mp).mnt_type.is_null() {
         let mut args: [*mut libc::c_char; 8] = [0 as *mut libc::c_char; 8];
         let mut errno_save: libc::c_int = *bb_errno;
-        args[0] = xasprintf(
+        args[0] = crate::libbb::xfuncs_printf::xasprintf(
           b"mount.%s\x00" as *const u8 as *const libc::c_char,
           (*mp).mnt_type,
         );
@@ -643,7 +512,7 @@ unsafe extern "C" fn mount_it_now(
           args[fresh6 as usize] = filteropts
         }
         args[rc as usize] = std::ptr::null_mut::<libc::c_char>();
-        rc = spawn_and_wait(args.as_mut_ptr());
+        rc = crate::libbb::vfork_daemon_rexec::spawn_and_wait(args.as_mut_ptr());
         free(args[0] as *mut libc::c_void);
         if rc == 0 {
           break;
@@ -657,7 +526,7 @@ unsafe extern "C" fn mount_it_now(
         break;
       }
       if vfsflags & MS_SILENT as libc::c_int as libc::c_ulong == 0 {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"%s is write-protected, mounting read-only\x00" as *const u8 as *const libc::c_char,
           (*mp).mnt_fsname,
         );
@@ -666,7 +535,9 @@ unsafe extern "C" fn mount_it_now(
     }
     // Abort entirely if permission denied.
     if rc != 0 && *bb_errno == 1i32 {
-      bb_simple_error_msg_and_die(bb_msg_perm_denied_are_you_root.as_ptr());
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        bb_msg_perm_denied_are_you_root.as_ptr(),
+      );
     }
   }
   // If the mount was successful, and we're maintaining an old-style
@@ -680,7 +551,9 @@ unsafe extern "C" fn mount_it_now(
     let mut option_str: *const libc::c_char = mount_option_str.as_ptr();
     let mut i: libc::c_int = 0;
     if mountTable.is_null() {
-      bb_simple_perror_msg(b"/proc/mounts\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg(
+        b"/proc/mounts\x00" as *const u8 as *const libc::c_char,
+      );
     } else {
       // Add vfs string flags
       i = 0i32;
@@ -702,11 +575,11 @@ unsafe extern "C" fn mount_it_now(
         *(*mp).mnt_dir.offset(fresh7 as isize) = '\u{0}' as i32 as libc::c_char
       }
       // Convert to canonical pathnames as needed
-      (*mp).mnt_dir = bb_simplify_path((*mp).mnt_dir);
+      (*mp).mnt_dir = crate::libbb::simplify_path::bb_simplify_path((*mp).mnt_dir);
       fsname = std::ptr::null_mut::<libc::c_char>();
       if (*mp).mnt_type.is_null() || *(*mp).mnt_type == 0 {
         // bind mount
-        fsname = bb_simplify_path((*mp).mnt_fsname);
+        fsname = crate::libbb::simplify_path::bb_simplify_path((*mp).mnt_fsname);
         (*mp).mnt_fsname = fsname;
         (*mp).mnt_type = b"bind\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
       }
@@ -742,10 +615,10 @@ unsafe extern "C" fn nfsmount(
     end = strchr((*mp).mnt_fsname, ':' as i32)
   }
   *end = '\u{0}' as i32 as libc::c_char;
-  lsa = xhost2sockaddr((*mp).mnt_fsname, 0i32);
+  lsa = crate::libbb::xconnect::xhost2sockaddr((*mp).mnt_fsname, 0i32);
   *end = ':' as i32 as libc::c_char;
-  dotted = xmalloc_sockaddr2dotted_noport(&mut (*lsa).u.sa);
-  opts = xasprintf(
+  dotted = crate::libbb::xconnect::xmalloc_sockaddr2dotted_noport(&mut (*lsa).u.sa);
+  opts = crate::libbb::xfuncs_printf::xasprintf(
     b"%s%saddr=%s\x00" as *const u8 as *const libc::c_char,
     if !filteropts.is_null() {
       filteropts
@@ -817,7 +690,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
     n = n + 1;
     args[fresh11 as usize] = (*mp).mnt_dir;
     args[n as usize] = std::ptr::null_mut::<libc::c_char>();
-    rc = spawn_and_wait(args.as_mut_ptr())
+    rc = crate::libbb::vfork_daemon_rexec::spawn_and_wait(args.as_mut_ptr())
   } else if 1i32 != 0
     && ((*mp).mnt_type.is_null()
       || strcmp(
@@ -849,7 +722,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
       // after CIFS option parsing was rewritten in Linux 3.4.
       // Must use backslashes.
       // If /dir1/dir2 is present, also add "prefixpath=dir1/dir2"
-      let mut unc: *mut libc::c_char = xasprintf(
+      let mut unc: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
         if *share.offset(len as isize) as libc::c_int != '\u{0}' as i32 {
           b"unc=\\\\%s\\%.*s,prefixpath=%s\x00" as *const u8 as *const libc::c_char
         } else {
@@ -861,11 +734,11 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
         share.offset(len as isize).offset(1),
       );
       parse_mount_options(unc, &mut filteropts);
-      lsa = host2sockaddr(hostname, 0i32);
+      lsa = crate::libbb::xconnect::host2sockaddr(hostname, 0i32);
       *share.offset(-1i32 as isize) = c;
       if !lsa.is_null() {
         // If there is no "ip=..." option yet
-        if is_prefixed_with(
+        if crate::libbb::compare_string_array::is_prefixed_with(
           filteropts,
           (b",ip=\x00" as *const u8 as *const libc::c_char).offset(1),
         )
@@ -875,8 +748,11 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
           let mut dotted: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           let mut ip: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           // Insert "ip=..." option into options
-          dotted = xmalloc_sockaddr2dotted_noport(&mut (*lsa).u.sa);
-          ip = xasprintf(b"ip=%s\x00" as *const u8 as *const libc::c_char, dotted);
+          dotted = crate::libbb::xconnect::xmalloc_sockaddr2dotted_noport(&mut (*lsa).u.sa);
+          ip = crate::libbb::xfuncs_printf::xasprintf(
+            b"ip=%s\x00" as *const u8 as *const libc::c_char,
+            dotted,
+          );
           // Note: IPv6 scoped addresses ("host%iface", see RFC 4007) should be
           // handled by libc in getnameinfo() (inside xmalloc_sockaddr2dotted_noport()).
           // Currently, glibc does not support that (has no NI_NUMERICSCOPE),
@@ -891,7 +767,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
       }
     }
   } else if ((*mp).mnt_type.is_null()
-    || !is_prefixed_with(
+    || !crate::libbb::compare_string_array::is_prefixed_with(
       (*mp).mnt_type,
       b"nfs\x00" as *const u8 as *const libc::c_char,
     )
@@ -916,10 +792,10 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
     {
       // Do we need to allocate a loopback device for it?
       if 1i32 != 0 && st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint {
-        loopFile = bb_simplify_path((*mp).mnt_fsname);
+        loopFile = crate::libbb::simplify_path::bb_simplify_path((*mp).mnt_fsname);
         // Autodetect bind mounts
         (*mp).mnt_fsname = std::ptr::null_mut::<libc::c_char>(); // will receive malloced loop dev name
-        loopfd = set_loop(
+        loopfd = crate::libbb::r#loop::set_loop(
           &mut (*mp).mnt_fsname,
           loopFile,
           0i32 as libc::c_ulonglong,
@@ -931,9 +807,9 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
         );
         if loopfd < 0i32 {
           if *bb_errno == 1i32 || *bb_errno == 13i32 {
-            bb_simple_error_msg(bb_msg_perm_denied_are_you_root.as_ptr());
+            crate::libbb::verror_msg::bb_simple_error_msg(bb_msg_perm_denied_are_you_root.as_ptr());
           } else {
-            bb_simple_perror_msg(
+            crate::libbb::perror_msg::bb_simple_perror_msg(
               b"can\'t setup loop device\x00" as *const u8 as *const libc::c_char,
             );
           }
@@ -1016,7 +892,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
     // (Newer kernels which support LO_FLAGS_AUTOCLEAR should not need this,
     // merely "close(loopfd)" should do it?)
     if 1i32 != 0 && rc != 0 && !loopFile.is_null() {
-      del_loop((*mp).mnt_fsname);
+      crate::libbb::r#loop::del_loop((*mp).mnt_fsname);
     }
   }
   // empty share name
@@ -1030,7 +906,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
     return 0i32;
   }
   if rc != 0i32 {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"mounting %s on %s failed\x00" as *const u8 as *const libc::c_char,
       (*mp).mnt_fsname,
       (*mp).mnt_dir,
@@ -1111,7 +987,8 @@ pub unsafe extern "C" fn mount_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut cmdopts: *mut libc::c_char = xzalloc(1i32 as size_t) as *mut libc::c_char;
+  let mut cmdopts: *mut libc::c_char =
+    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t) as *mut libc::c_char;
   let mut fstype: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut O_optmatch: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut storage_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -1132,7 +1009,7 @@ pub unsafe extern "C" fn mount_main(
     mnt_passno: 0,
   }; 2];
   let mut mtcur: *mut mntent = mtpair.as_mut_ptr();
-  let mut nonroot: libc::c_int = sanitize_env_if_suid();
+  let mut nonroot: libc::c_int = crate::libbb::login::sanitize_env_if_suid();
   // Parse long options, like --bind and --move.  Note that -o option
   // and --option are synonymous.  Yes, this means --remount,rw works.
   j = 1i32;
@@ -1154,7 +1031,7 @@ pub unsafe extern "C" fn mount_main(
   *fresh15 = std::ptr::null_mut::<libc::c_char>();
   // Parse remaining options
   // Max 2 params; -o is a list, -v is a counter
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^o:*t:rwanfvsiO:T:\x00?2vv\x00" as *const u8 as *const libc::c_char,
     &mut lst_o as *mut *mut llist_t,
@@ -1164,7 +1041,10 @@ pub unsafe extern "C" fn mount_main(
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose as *mut libc::c_uint,
   ); // -o
   while !lst_o.is_null() {
-    append_mount_options(&mut cmdopts, llist_pop(&mut lst_o) as *const libc::c_char);
+    append_mount_options(
+      &mut cmdopts,
+      crate::libbb::llist::llist_pop(&mut lst_o) as *const libc::c_char,
+    );
     // -r
   } // -w
   if opt & OPT_r as libc::c_int as libc::c_uint != 0 {
@@ -1182,7 +1062,7 @@ pub unsafe extern "C" fn mount_main(
         b"r\x00" as *const u8 as *const libc::c_char,
       );
       if mountTable.is_null() {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"no %s\x00" as *const u8 as *const libc::c_char,
           b"/proc/mounts\x00" as *const u8 as *const libc::c_char,
         );
@@ -1219,7 +1099,7 @@ pub unsafe extern "C" fn mount_main(
     // argument when we get it.
     if !(*argv.offset(1)).is_null() {
       if nonroot != 0 {
-        bb_simple_error_msg_and_die(bb_msg_you_must_be_root.as_ptr());
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(bb_msg_you_must_be_root.as_ptr());
       }
       let ref mut fresh16 = (*mtpair.as_mut_ptr()).mnt_fsname;
       *fresh16 = *argv.offset(0);
@@ -1229,11 +1109,13 @@ pub unsafe extern "C" fn mount_main(
       *fresh18 = fstype;
       let ref mut fresh19 = (*mtpair.as_mut_ptr()).mnt_opts;
       *fresh19 = cmdopts;
-      resolve_mount_spec(&mut (*mtpair.as_mut_ptr()).mnt_fsname);
+      crate::util_linux::volume_id::get_devname::resolve_mount_spec(
+        &mut (*mtpair.as_mut_ptr()).mnt_fsname,
+      );
       rc = singlemount(mtpair.as_mut_ptr(), 0i32);
       return rc;
     }
-    storage_path = bb_simplify_path(*argv.offset(0))
+    storage_path = crate::libbb::simplify_path::bb_simplify_path(*argv.offset(0))
     // malloced
   }
   // Past this point, we are handling either "mount -a [opts]"
@@ -1241,7 +1123,7 @@ pub unsafe extern "C" fn mount_main(
   cmdopt_flags = parse_mount_options(cmdopts, 0 as *mut *mut libc::c_char);
   if nonroot != 0 && cmdopt_flags & !(MS_SILENT as libc::c_int) as libc::c_ulong != 0 {
     // Non-root users cannot specify flags
-    bb_simple_error_msg_and_die(bb_msg_you_must_be_root.as_ptr());
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(bb_msg_you_must_be_root.as_ptr());
   }
   // If we have a shared subtree flag, don't worry about fstab or mtab.
   if 1i32 != 0
@@ -1261,7 +1143,7 @@ pub unsafe extern "C" fn mount_main(
       b"\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
     );
     if rc != 0 {
-      bb_simple_perror_msg_and_die(*argv.offset(0));
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(*argv.offset(0));
     }
     return rc;
   }
@@ -1278,7 +1160,7 @@ pub unsafe extern "C" fn mount_main(
   }
   fstab = setmntent(fstabname, b"r\x00" as *const u8 as *const libc::c_char);
   if fstab.is_null() {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t read \'%s\'\x00" as *const u8 as *const libc::c_char,
       fstabname,
     );
@@ -1338,10 +1220,10 @@ pub unsafe extern "C" fn mount_main(
       // No, mount -a won't mount anything,
       // even user mounts, for mere humans
       if nonroot != 0 {
-        bb_simple_error_msg_and_die(bb_msg_you_must_be_root.as_ptr());
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(bb_msg_you_must_be_root.as_ptr());
       }
       // Does type match? (NULL matches always)
-      if fstype_matches((*mtcur).mnt_type, fstype) == 0 {
+      if crate::libbb::match_fstype::fstype_matches((*mtcur).mnt_type, fstype) == 0 {
         continue;
       }
       // Skip noauto and swap anyway
@@ -1360,18 +1242,18 @@ pub unsafe extern "C" fn mount_main(
       if match_opt((*mtcur).mnt_opts, O_optmatch) == 0 {
         continue;
       }
-      resolve_mount_spec(&mut (*mtcur).mnt_fsname);
+      crate::util_linux::volume_id::get_devname::resolve_mount_spec(&mut (*mtcur).mnt_fsname);
       // NFS mounts want this to be xrealloc-able
-      (*mtcur).mnt_opts = xstrdup((*mtcur).mnt_opts);
+      (*mtcur).mnt_opts = crate::libbb::xfuncs_printf::xstrdup((*mtcur).mnt_opts);
       // If nothing is mounted on this directory...
       // (otherwise repeated "mount -a" mounts everything again)
-      mp = find_mount_point((*mtcur).mnt_dir, 0i32);
+      mp = crate::libbb::find_mount_point::find_mount_point((*mtcur).mnt_dir, 0i32);
       // We do not check fsname match of found mount point -
       // "/" may have fsname of "/dev/root" while fstab
       // says "/dev/something_else".
       if !mp.is_null() {
         if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose != 0 {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"according to %s, %s is already mounted on %s\x00" as *const u8 as *const libc::c_char,
             b"/proc/mounts\x00" as *const u8 as *const libc::c_char,
             (*mp).mnt_fsname,
@@ -1393,7 +1275,7 @@ pub unsafe extern "C" fn mount_main(
     let mut l: libc::c_ulong = 0;
     // If we didn't find anything, complain
     if (*mtcur).mnt_fsname.is_null() {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"can\'t find %s in %s\x00" as *const u8 as *const libc::c_char,
         *argv.offset(0),
         fstabname,
@@ -1411,7 +1293,7 @@ pub unsafe extern "C" fn mount_main(
       // fstab must have "users" or "user"
       l = parse_mount_options((*mtcur).mnt_opts, 0 as *mut *mut libc::c_char);
       if l & MOUNT_USERS as libc::c_int as libc::c_ulong == 0 {
-        bb_simple_error_msg_and_die(bb_msg_you_must_be_root.as_ptr());
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(bb_msg_you_must_be_root.as_ptr());
       }
     }
     //util-linux-2.12 does not do this check.
@@ -1425,9 +1307,11 @@ pub unsafe extern "C" fn mount_main(
     //		mp->mnt_fsname, mp->mnt_dir);
     //} else {
     // ...mount the last thing we found
-    (*mtcur).mnt_opts = xstrdup((*mtcur).mnt_opts);
+    (*mtcur).mnt_opts = crate::libbb::xfuncs_printf::xstrdup((*mtcur).mnt_opts);
     append_mount_options(&mut (*mtcur).mnt_opts, cmdopts);
-    resolve_mount_spec(&mut (*mtpair.as_mut_ptr()).mnt_fsname);
+    crate::util_linux::volume_id::get_devname::resolve_mount_spec(
+      &mut (*mtpair.as_mut_ptr()).mnt_fsname,
+    );
     rc = singlemount(mtcur, 0i32)
   }
   //ret:

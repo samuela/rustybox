@@ -19,33 +19,6 @@ extern "C" {
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn xmalloc_xopen_read_close(
-    filename: *const libc::c_char,
-    maxsz_p: *mut size_t,
-  ) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-
 }
 
 pub type C2RustUnnamed = libc::c_uint;
@@ -139,7 +112,7 @@ pub unsafe extern "C" fn readprofile_main(
   proFile = b"/proc/profile\x00" as *const u8 as *const libc::c_char;
   mapFile = b"/boot/System.map\x00" as *const u8 as *const libc::c_char;
   multiplier = 0i32;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"M:+m:p:nabsirv\x00" as *const u8 as *const libc::c_char,
     &mut multiplier as *mut libc::c_int,
@@ -158,11 +131,11 @@ pub unsafe extern "C" fn readprofile_main(
     if opt & OPT_M as libc::c_int as libc::c_uint == 0 {
       to_write = 1i32
     }
-    fd = xopen(
+    fd = crate::libbb::xfuncs_printf::xopen(
       b"/proc/profile\x00" as *const u8 as *const libc::c_char,
       0o1i32,
     );
-    xwrite(
+    crate::libbb::xfuncs_printf::xwrite(
       fd,
       &mut multiplier as *mut libc::c_int as *const libc::c_void,
       to_write as size_t,
@@ -181,7 +154,7 @@ pub unsafe extern "C" fn readprofile_main(
         .wrapping_mul(8i32 as libc::c_ulong)
         .wrapping_sub(1i32 as libc::c_ulong))
   } as size_t;
-  buf = xmalloc_xopen_read_close(proFile, &mut len) as *mut libc::c_uint;
+  buf = crate::libbb::read_printf::xmalloc_xopen_read_close(proFile, &mut len) as *mut libc::c_uint;
   len = (len as libc::c_ulong).wrapping_div(::std::mem::size_of::<libc::c_uint>() as libc::c_ulong)
     as size_t as size_t;
   if opt & OPT_n as libc::c_int as libc::c_uint == 0 {
@@ -210,7 +183,7 @@ pub unsafe extern "C" fn readprofile_main(
       p = p.offset(1)
     }
     if big > small {
-      bb_simple_error_msg(
+      crate::libbb::verror_msg::bb_simple_error_msg(
         b"assuming reversed byte order, use -n to force native byte order\x00" as *const u8
           as *const libc::c_char,
       );
@@ -228,8 +201,7 @@ pub unsafe extern "C" fn readprofile_main(
               let fresh1;
               let fresh2 = __x;
               asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
-                                      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2))
-                                      : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) : "cc");
               c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
             }
             __v
@@ -249,8 +221,7 @@ pub unsafe extern "C" fn readprofile_main(
               let fresh4;
               let fresh5 = __x;
               asm!("bswap $0" : "=r" (fresh4) : "0"
-                                      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
               c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
             }
             __v
@@ -274,8 +245,7 @@ pub unsafe extern "C" fn readprofile_main(
               let fresh7;
               let fresh8 = __x;
               asm!("bswap ${0:q}" : "=r" (fresh7) : "0"
-                                      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8))
-                                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :);
               c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
             }
             __v
@@ -293,7 +263,7 @@ pub unsafe extern "C" fn readprofile_main(
     );
     return 0i32;
   }
-  map = xfopen_for_read(mapFile);
+  map = crate::libbb::wfopen::xfopen_for_read(mapFile);
   add0 = 0i32 as u64;
   maplineno = 1i32;
   while !fgets_unlocked(mapline.as_mut_ptr(), 128i32, map).is_null() {
@@ -305,7 +275,7 @@ pub unsafe extern "C" fn readprofile_main(
       fn_name.as_mut_ptr(),
     ) != 3i32
     {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"%s(%i): wrong map line\x00" as *const u8 as *const libc::c_char,
         mapFile,
         maplineno,
@@ -324,7 +294,7 @@ pub unsafe extern "C" fn readprofile_main(
     }
   }
   if add0 == 0 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"can\'t find \"_stext\" in %s\x00" as *const u8 as *const libc::c_char,
       mapFile,
     );
@@ -345,7 +315,7 @@ pub unsafe extern "C" fn readprofile_main(
       next_name.as_mut_ptr(),
     ) != 3i32
     {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"%s(%i): wrong map line\x00" as *const u8 as *const libc::c_char,
         mapFile,
         maplineno,
@@ -365,7 +335,7 @@ pub unsafe extern "C" fn readprofile_main(
       break;
     }
     if indx >= len {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"profile address out of range. Wrong map file?\x00" as *const u8 as *const libc::c_char,
       );
     }

@@ -1,12 +1,6 @@
 use libc;
 use libc::close;
-extern "C" {
 
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xwrite_str(fd: libc::c_int, str: *const libc::c_char);
-}
 
 /*
  * Busybox main internal header file
@@ -266,7 +260,7 @@ pub unsafe extern "C" fn xopen_xwrite_close(
   mut file: *const libc::c_char,
   mut str: *const libc::c_char,
 ) {
-  let mut fd: libc::c_int = xopen(file, 0o1i32);
-  xwrite_str(fd, str);
+  let mut fd: libc::c_int = crate::libbb::xfuncs_printf::xopen(file, 0o1i32);
+  crate::libbb::xfuncs_printf::xwrite_str(fd, str);
   close(fd);
 }

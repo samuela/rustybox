@@ -10,8 +10,7 @@ extern "C" {
     __n: libc::c_int,
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
 }
 
 /*
@@ -576,7 +575,7 @@ pub unsafe extern "C" fn get_cpu_count() -> libc::c_uint {
   let mut fp: *mut FILE = 0 as *mut FILE; /* we are past "cpuN..." lines */
   let mut line: [libc::c_char; 256] = [0; 256];
   let mut proc_nr: libc::c_int = -1i32;
-  fp = xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);
+  fp = crate::libbb::wfopen::xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);
   while !fgets_unlocked(
     line.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong as libc::c_int,

@@ -3,8 +3,7 @@ use libc;
 extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
+
 }
 
 /* After v = xrealloc_vector(v, SHIFT, idx) it's ok to use
@@ -55,7 +54,7 @@ pub unsafe extern "C" fn xrealloc_vector_helper(
   let mut mask: libc::c_int = 1i32 << sizeof_and_shift as u8 as libc::c_int; /* sizeof(vector[0]) */
   if idx & mask - 1i32 == 0 {
     sizeof_and_shift >>= 8i32;
-    vector = xrealloc(
+    vector = crate::libbb::xfuncs_printf::xrealloc(
       vector,
       sizeof_and_shift.wrapping_mul((idx + mask + 1i32) as libc::c_uint) as size_t,
     );

@@ -1,69 +1,10 @@
-use crate::librb::size_t;
-
+use crate::libbb::parse_config::parser_t;
 use libc;
 use libc::free;
 use libc::printf;
 use libc::stat;
 use libc::strcmp;
 use libc::FILE;
-extern "C" {
-
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn recursive_action(
-    fileName: *const libc::c_char,
-    flags: libc::c_uint,
-    fileAction_0: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    dirAction: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    userData: *mut libc::c_void,
-    depth: libc::c_uint,
-  ) -> libc::c_int;
-
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
-  fn xstrtou(str: *const libc::c_char, b: libc::c_int) -> libc::c_uint;
-
-  #[no_mangle]
-  fn config_open2(
-    filename: *const libc::c_char,
-    fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
-  ) -> *mut parser_t;
-
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
-
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-}
 
 pub type C2RustUnnamed = libc::c_uint;
 // pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
@@ -83,18 +24,6 @@ pub const PARSE_NORMAL: C2RustUnnamed_0 = 4653056;
 // pub const PARSE_GREEDY: C2RustUnnamed_0 = 262144;
 // pub const PARSE_TRIM: C2RustUnnamed_0 = 131072;
 // pub const PARSE_COLLAPSE: C2RustUnnamed_0 = 65536;
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
 
 /*
  * lsusb implementation for busybox
@@ -128,14 +57,19 @@ unsafe extern "C" fn fileAction(
   let mut devnum: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut product_vid: libc::c_int = 0i32;
   let mut product_did: libc::c_int = 0i32;
-  let mut uevent_filename: *mut libc::c_char =
-    concat_path_file(fileName, b"/uevent\x00" as *const u8 as *const libc::c_char);
-  parser = config_open2(
+  let mut uevent_filename: *mut libc::c_char = crate::libbb::concat_path_file::concat_path_file(
+    fileName,
+    b"/uevent\x00" as *const u8 as *const libc::c_char,
+  );
+  parser = crate::libbb::parse_config::config_open2(
     uevent_filename,
-    Some(fopen_for_read as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE),
+    Some(
+      crate::libbb::wfopen::fopen_for_read
+        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+    ),
   );
   free(uevent_filename as *mut libc::c_void);
-  while config_read(
+  while crate::libbb::parse_config::config_read(
     parser,
     tokens.as_mut_ptr(),
     (PARSE_NORMAL as libc::c_int | (2i32 & 0xffi32) << 8i32 | 4i32 & 0xffi32) as libc::c_uint,
@@ -155,18 +89,18 @@ unsafe extern "C" fn fileAction(
       b"PRODUCT\x00" as *const u8 as *const libc::c_char,
     ) == 0i32
     {
-      product_vid = xstrtou(tokens[1], 16i32) as libc::c_int;
-      product_did = xstrtou(tokens[2], 16i32) as libc::c_int
+      product_vid = crate::libbb::xatonum::xstrtou(tokens[1], 16i32) as libc::c_int;
+      product_did = crate::libbb::xatonum::xstrtou(tokens[2], 16i32) as libc::c_int
     } else if strcmp(tokens[0], b"BUSNUM\x00" as *const u8 as *const libc::c_char) == 0i32 {
-      busnum = xstrdup(tokens[1])
+      busnum = crate::libbb::xfuncs_printf::xstrdup(tokens[1])
     } else {
       if !(strcmp(tokens[0], b"DEVNUM\x00" as *const u8 as *const libc::c_char) == 0i32) {
         continue;
       }
-      devnum = xstrdup(tokens[1])
+      devnum = crate::libbb::xfuncs_printf::xstrdup(tokens[1])
     }
   }
-  config_close(parser);
+  crate::libbb::parse_config::config_close(parser);
   if !busnum.is_null() {
     printf(
       b"Bus %s Device %s: ID %04x:%04x\n\x00" as *const u8 as *const libc::c_char,
@@ -187,7 +121,7 @@ pub unsafe extern "C" fn lsusb_main(
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /* no options, no getopt */
-  recursive_action(
+  crate::libbb::recursive_action::recursive_action(
     b"/sys/bus/usb/devices\x00" as *const u8 as *const libc::c_char,
     ACTION_RECURSE as libc::c_int as libc::c_uint,
     Some(

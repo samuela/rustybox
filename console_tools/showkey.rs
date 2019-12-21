@@ -24,37 +24,20 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   fn cfmakeraw(__termios_p: *mut termios);
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_signals_recursive_norestart(
-    sigs: libc::c_int,
-    f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
-  );
+
   #[no_mangle]
   static mut bb_got_signal: smallint;
-  #[no_mangle]
-  fn record_signo(signo: libc::c_int);
+
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
+
 }
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub kbmode: libc::c_int,
   pub tio: termios,
@@ -83,7 +66,9 @@ unsafe extern "C" fn xget1(mut t: *mut termios, mut oldt: *mut termios) {
 unsafe extern "C" fn xset1(mut t: *mut termios) {
   let mut ret: libc::c_int = tcsetattr(0i32, 2i32, t);
   if ret != 0 {
-    bb_simple_perror_msg(b"can\'t tcsetattr for stdin\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg(
+      b"can\'t tcsetattr for stdin\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 #[no_mangle]
@@ -93,10 +78,11 @@ pub unsafe extern "C" fn showkey_main(
 ) -> libc::c_int {
   let ref mut fresh0 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh0 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh0 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   // FIXME: aks are all mutually exclusive
-  getopt32(argv, b"aks\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::getopt32::getopt32(argv, b"aks\x00" as *const u8 as *const libc::c_char);
   // prepare for raw mode
   xget1(&mut (*ptr_to_globals).tio, &mut (*ptr_to_globals).tio0);
   // put stdin in raw mode
@@ -122,7 +108,7 @@ pub unsafe extern "C" fn showkey_main(
     }
   } else {
     // we assume a PC keyboard
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       0i32,
       0x4b44i32 as libc::c_uint,
       &mut (*ptr_to_globals).kbmode as *mut libc::c_int as *mut libc::c_void,
@@ -143,7 +129,7 @@ pub unsafe extern "C" fn showkey_main(
       },
     );
     // set raw keyboard mode
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       0i32,
       0x4b45i32 as libc::c_uint,
       if option_mask32 & OPT_k as libc::c_int as libc::c_uint != 0 {
@@ -154,9 +140,9 @@ pub unsafe extern "C" fn showkey_main(
       b"KDSKBMODE\x00" as *const u8 as *const libc::c_char,
     );
     // we should exit on any signal; signals should interrupt read
-    bb_signals_recursive_norestart(
+    crate::libbb::signals::bb_signals_recursive_norestart(
       BB_FATAL_SIGS as libc::c_int,
-      Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+      Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
     );
     // inform user that program ends after time of inactivity
     printf(
@@ -216,7 +202,7 @@ pub unsafe extern "C" fn showkey_main(
       puts(b"\r\x00" as *const u8 as *const libc::c_char);
     }
     // restore keyboard mode
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       0i32,
       0x4b45i32 as libc::c_uint,
       (*ptr_to_globals).kbmode as ptrdiff_t as *mut libc::c_void,

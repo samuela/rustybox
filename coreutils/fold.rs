@@ -15,24 +15,10 @@ extern "C" {
   fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn fclose_if_not_stdin(file: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
+
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
+
 }
 
 /*
@@ -96,24 +82,25 @@ pub unsafe extern "C" fn fold_main(
       }
       if (*a as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
         let ref mut fresh0 = *argv.offset(i as isize);
-        *fresh0 = xasprintf(b"-w%s\x00" as *const u8 as *const libc::c_char, a)
+        *fresh0 =
+          crate::libbb::xfuncs_printf::xasprintf(b"-w%s\x00" as *const u8 as *const libc::c_char, a)
       }
     }
     i += 1
   }
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     b"bsw:\x00" as *const u8 as *const libc::c_char,
     &mut w_opt as *mut *const libc::c_char,
   );
-  width = xatou_range(w_opt, 1i32 as libc::c_uint, 10000i32 as libc::c_uint);
+  width = crate::libbb::xatonum::xatou_range(w_opt, 1i32 as libc::c_uint, 10000i32 as libc::c_uint);
   argv = argv.offset(optind as isize);
   if (*argv).is_null() {
     argv = argv.offset(-1);
     *argv = b"-\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
   }
   loop {
-    let mut istream: *mut FILE = fopen_or_warn_stdin(*argv);
+    let mut istream: *mut FILE = crate::libbb::wfopen_input::fopen_or_warn_stdin(*argv);
     let mut c: libc::c_int = 0;
     let mut column: libc::c_uint = 0i32 as libc::c_uint;
     let mut offset_out: libc::c_uint = 0i32 as libc::c_uint;
@@ -127,7 +114,7 @@ pub unsafe extern "C" fn fold_main(
         }
         /* We grow line_out in chunks of 0x1000 bytes */
         if offset_out & 0xfffi32 as libc::c_uint == 0i32 as libc::c_uint {
-          line_out = xrealloc(
+          line_out = crate::libbb::xfuncs_printf::xrealloc(
             line_out as *mut libc::c_void,
             offset_out.wrapping_add(0x1000i32 as libc::c_uint) as size_t,
           ) as *mut libc::c_char
@@ -212,8 +199,8 @@ pub unsafe extern "C" fn fold_main(
       if offset_out != 0 {
         write2stdout(line_out as *const libc::c_void, offset_out);
       }
-      if fclose_if_not_stdin(istream) != 0 {
-        bb_simple_perror_msg(*argv);
+      if crate::libbb::fclose_nonstdin::fclose_if_not_stdin(istream) != 0 {
+        crate::libbb::perror_msg::bb_simple_perror_msg(*argv);
         exitcode = 1i32 as smallint
       }
     }
@@ -222,5 +209,5 @@ pub unsafe extern "C" fn fold_main(
       break;
     }
   }
-  fflush_stdout_and_exit(exitcode as libc::c_int);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(exitcode as libc::c_int);
 }

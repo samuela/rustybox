@@ -1,105 +1,10 @@
+use crate::librb::size_t;
 use libc;
 use libc::close;
 use libc::free;
-extern "C" {
 
-  /* Probe routines */
-  /* RAID */
-  //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,u64 off*/);
-  //int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,u64 off*/, u64 size);
-  //int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,u64 off*/, u64 size);
-  #[no_mangle]
-  fn volume_id_probe_linux_raid(id: *mut volume_id, size: u64) -> libc::c_int;
-  //int FAST_FUNC volume_id_probe_lsi_mega_raid(struct volume_id *id /*,u64 off*/, u64 size);
-  //int FAST_FUNC volume_id_probe_nvidia_raid(struct volume_id *id /*,u64 off*/, u64 size);
-  //int FAST_FUNC volume_id_probe_promise_fasttrack_raid(struct volume_id *id /*,u64 off*/, u64 size);
-  //int FAST_FUNC volume_id_probe_silicon_medley_raid(struct volume_id *id /*,u64 off*/, u64 size);
-  //int FAST_FUNC volume_id_probe_via_raid(struct volume_id *id /*,u64 off*/, u64 size);
-  //int FAST_FUNC volume_id_probe_lvm1(struct volume_id *id /*,u64 off*/);
-  //int FAST_FUNC volume_id_probe_lvm2(struct volume_id *id /*,u64 off*/);
-  /* FS */
-  /*,u64 off*/
-  /*,u64 off*/
-  /*,u64 off*/
-  /*,u64 off*/
-  /*,u64 off*/
-  /*,u64 off*/
-  //int FAST_FUNC volume_id_probe_hpfs(struct volume_id *id /*,u64 off*/);
-  /*,u64 off*/
-  /*,u64 off*/
-  /*,u64 off*/
-  /*,u64 off*/
-  #[no_mangle]
-  fn volume_id_probe_luks(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_vfat(id: *mut volume_id) -> libc::c_int;
-  //int FAST_FUNC volume_id_probe_mac_partition_map(struct volume_id *id /*,u64 off*/);
-  /*, u64 off*/
-  //int FAST_FUNC volume_id_probe_msdos_part_table(struct volume_id *id /*,u64 off*/);
-  /*,u64 off*/
-  /*,u64 off*/
-  /*,u64 off*/
-  #[no_mangle]
-  fn volume_id_probe_exfat(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_lfs(id: *mut volume_id) -> libc::c_int;
-  /*,u64 off*/
-  /*,u64 off*/
-  /*,u64 off*/
-  #[no_mangle]
-  fn volume_id_probe_squashfs(id: *mut volume_id) -> libc::c_int;
-  /*,u64 off*/
-  /*,u64 off*/
-  //int FAST_FUNC volume_id_probe_ufs(struct volume_id *id /*,u64 off*/);
-  #[no_mangle]
-  fn volume_id_probe_xfs(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_bcache(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off: u64, len: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn volume_id_probe_linux_swap(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_ext(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_btrfs(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_reiserfs(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_jfs(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_udf(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_iso9660(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_hfs_hfsplus(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_f2fs(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_nilfs(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_ntfs(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_cramfs(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_romfs(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_sysv(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_minix(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_ocfs2(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_probe_ubifs(id: *mut volume_id) -> libc::c_int;
-  #[no_mangle]
-  fn volume_id_free_buffer(id: *mut volume_id);
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-}
-
-use crate::librb::size_t;
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct volume_id {
   pub fd: libc::c_int,
   pub error: libc::c_int,
@@ -112,6 +17,7 @@ pub struct volume_id {
   pub uuid: [libc::c_char; 37],
   pub type_0: *const libc::c_char,
 }
+
 pub type probe_fptr = Option<unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int>;
 /*, u64 off*/
 /*
@@ -144,46 +50,116 @@ pub type probe_fptr = Option<unsafe extern "C" fn(_: *mut volume_id) -> libc::c_
 pub type raid_probe_fptr = Option<unsafe extern "C" fn(_: *mut volume_id, _: u64) -> libc::c_int>;
 static mut raid1: [raid_probe_fptr; 1] = {
   [Some(
-    volume_id_probe_linux_raid as unsafe extern "C" fn(_: *mut volume_id, _: u64) -> libc::c_int,
+    crate::util_linux::volume_id::linux_raid::volume_id_probe_linux_raid,
   )]
 };
 static mut raid2: [probe_fptr; 1] = {
   [Some(
-    volume_id_probe_luks as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    crate::util_linux::volume_id::luks::volume_id_probe_luks
+      as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
   )]
 };
 /*u64 off,*/
 /* signature in the first block, only small buffer needed */
 static mut fs1: [probe_fptr; 6] = {
   [
-    Some(volume_id_probe_vfat as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_exfat as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_lfs as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_squashfs as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_xfs as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_bcache as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
+    Some(
+      crate::util_linux::volume_id::fat::volume_id_probe_vfat
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::exfat::volume_id_probe_exfat
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::lfs::volume_id_probe_lfs
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::squashfs::volume_id_probe_squashfs
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::xfs::volume_id_probe_xfs
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::bcache::volume_id_probe_bcache
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
   ]
 };
 /* fill buffer with maximum */
 static mut fs2: [probe_fptr; 17] = {
   [
-    Some(volume_id_probe_linux_swap as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_ext as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_btrfs as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_reiserfs as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_jfs as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_udf as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_iso9660 as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_hfs_hfsplus as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_f2fs as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_nilfs as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_ntfs as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_cramfs as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_romfs as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_sysv as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_minix as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_ocfs2 as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
-    Some(volume_id_probe_ubifs as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int),
+    Some(
+      crate::util_linux::volume_id::linux_swap::volume_id_probe_linux_swap
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::ext::volume_id_probe_ext
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::btrfs::volume_id_probe_btrfs
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::reiserfs::volume_id_probe_reiserfs
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::jfs::volume_id_probe_jfs
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::udf::volume_id_probe_udf
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::iso9660::volume_id_probe_iso9660
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::hfs::volume_id_probe_hfs_hfsplus
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::f2fs::volume_id_probe_f2fs
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::nilfs::volume_id_probe_nilfs
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::ntfs::volume_id_probe_ntfs
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::cramfs::volume_id_probe_cramfs
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::romfs::volume_id_probe_romfs
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::sysv::volume_id_probe_sysv
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::minix::volume_id_probe_minix
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::ocfs2::volume_id_probe_ocfs2
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
+    Some(
+      crate::util_linux::volume_id::ubifs::volume_id_probe_ubifs
+        as unsafe extern "C" fn(_: *mut volume_id) -> libc::c_int,
+    ),
   ]
 };
 #[no_mangle]
@@ -266,7 +242,11 @@ pub unsafe extern "C" fn volume_id_probe_all(mut id: *mut volume_id, mut size: u
             13835600803501426168 => {}
             _ => {
               /* fill buffer with maximum */
-              volume_id_get_buffer(id, 0i32 as u64, 0x11000i32 as size_t);
+              crate::util_linux::volume_id::util::volume_id_get_buffer(
+                id,
+                0i32 as u64,
+                0x11000i32 as size_t,
+              );
               i = 0i32 as libc::c_uint;
               while i
                 < (::std::mem::size_of::<[probe_fptr; 17]>() as libc::c_ulong)
@@ -288,7 +268,7 @@ pub unsafe extern "C" fn volume_id_probe_all(mut id: *mut volume_id, mut size: u
     }
     _ => {}
   }
-  volume_id_free_buffer(id);
+  crate::util_linux::volume_id::util::volume_id_free_buffer(id);
   return -(*id).error;
   /* 0 or -1 */
 }
@@ -296,7 +276,8 @@ pub unsafe extern "C" fn volume_id_probe_all(mut id: *mut volume_id, mut size: u
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_open_node(mut fd: libc::c_int) -> *mut volume_id {
   let mut id: *mut volume_id = 0 as *mut volume_id;
-  id = xzalloc(::std::mem::size_of::<volume_id>() as libc::c_ulong) as *mut volume_id;
+  id = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<volume_id>() as libc::c_ulong)
+    as *mut volume_id;
   (*id).fd = fd;
   // /* close fd on device close */
   //id->fd_close = 1;
@@ -340,6 +321,6 @@ pub unsafe extern "C" fn free_volume_id(mut id: *mut volume_id) {
   }
   //if (id->fd_close != 0) - always true
   close((*id).fd);
-  volume_id_free_buffer(id);
+  crate::util_linux::volume_id::util::volume_id_free_buffer(id);
   free(id as *mut libc::c_void);
 }

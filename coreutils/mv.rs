@@ -17,39 +17,6 @@ extern "C" {
   #[no_mangle]
   static mut stderr: *mut FILE;
 
-  #[no_mangle]
-  fn remove_file(path: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn copy_file(
-    source: *const libc::c_char,
-    dest: *const libc::c_char,
-    flags: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_get_last_path_component_strip(path: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_ask_y_confirmation() -> libc::c_int;
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn cp_mv_stat2(fn_0: *const libc::c_char, fn_stat: *mut stat, sf: stat_func) -> libc::c_int;
-  #[no_mangle]
-  fn cp_mv_stat(fn_0: *const libc::c_char, fn_stat: *mut stat) -> libc::c_int;
 }
 
 pub type C2RustUnnamed = libc::c_int;
@@ -126,7 +93,7 @@ pub unsafe extern "C" fn mv_main(
    * If more than one of -f, -i, -n is specified , only the final one
    * takes effect (it unsets previous options).
    */
-  flags = getopt32long(
+  flags = crate::libbb::getopt32::getopt32long(
     argv,
     b"^finv\x00-2:f-in:i-fn:n-fi\x00" as *const u8 as *const libc::c_char,
     b"interactive\x00\x00iforce\x00\x00fno-clobber\x00\x00nverbose\x00\x00v\x00" as *const u8
@@ -136,7 +103,7 @@ pub unsafe extern "C" fn mv_main(
   argv = argv.offset(optind as isize);
   last = *argv.offset((argc - 1i32) as isize);
   if argc == 2i32 {
-    dest_exists = cp_mv_stat(last, &mut dest_stat);
+    dest_exists = crate::coreutils::libcoreutils::cp_mv_stat::cp_mv_stat(last, &mut dest_stat);
     if dest_exists < 0i32 {
       return 1i32;
     }
@@ -153,8 +120,11 @@ pub unsafe extern "C" fn mv_main(
   loop {
     match current_block {
       17407779659766490442 => {
-        dest = concat_path_file(last, bb_get_last_path_component_strip(*argv));
-        dest_exists = cp_mv_stat(dest, &mut dest_stat);
+        dest = crate::libbb::concat_path_file::concat_path_file(
+          last,
+          crate::libbb::get_last_path_component::bb_get_last_path_component_strip(*argv),
+        );
+        dest_exists = crate::coreutils::libcoreutils::cp_mv_stat::cp_mv_stat(dest, &mut dest_stat);
         if !(dest_exists < 0i32) {
           current_block = 4372395669998863707;
           continue;
@@ -176,7 +146,7 @@ pub unsafe extern "C" fn mv_main(
             ) < 0i32
             {
               current_block = 6059157660367733168;
-            } else if bb_ask_y_confirmation() == 0 {
+            } else if crate::libbb::ask_confirmation::bb_ask_y_confirmation() == 0 {
               current_block = 11386481267603146021;
             } else {
               current_block = 14763689060501151050;
@@ -195,7 +165,7 @@ pub unsafe extern "C" fn mv_main(
               source_stat = std::mem::zeroed();
               source_exists = 0;
               if *bb_errno != 18i32 || {
-                source_exists = cp_mv_stat2(
+                source_exists = crate::coreutils::libcoreutils::cp_mv_stat::cp_mv_stat2(
                   *argv,
                   &mut source_stat,
                   Some(
@@ -205,7 +175,7 @@ pub unsafe extern "C" fn mv_main(
                 );
                 (source_exists) < 1i32
               } {
-                bb_perror_msg(
+                crate::libbb::perror_msg::bb_perror_msg(
                   b"can\'t rename \'%s\'\x00" as *const u8 as *const libc::c_char,
                   *argv,
                 );
@@ -219,7 +189,7 @@ pub unsafe extern "C" fn mv_main(
                 if dest_exists != 0 {
                   if dest_exists == 3i32 {
                     if source_exists != 3i32 {
-                      bb_error_msg(
+                      crate::libbb::verror_msg::bb_error_msg(
                         fmt.as_ptr(),
                         b"\x00" as *const u8 as *const libc::c_char,
                         b"non-\x00" as *const u8 as *const libc::c_char,
@@ -229,7 +199,7 @@ pub unsafe extern "C" fn mv_main(
                       current_block = 10891380440665537214;
                     }
                   } else if source_exists == 3i32 {
-                    bb_error_msg(
+                    crate::libbb::verror_msg::bb_error_msg(
                       fmt.as_ptr(),
                       b"non-\x00" as *const u8 as *const libc::c_char,
                       b"\x00" as *const u8 as *const libc::c_char,
@@ -242,7 +212,7 @@ pub unsafe extern "C" fn mv_main(
                     6059157660367733168 => {}
                     _ => {
                       if unlink(dest) < 0i32 {
-                        bb_perror_msg(
+                        crate::libbb::perror_msg::bb_perror_msg(
                           b"can\'t remove \'%s\'\x00" as *const u8 as *const libc::c_char,
                           dest,
                         );
@@ -263,8 +233,8 @@ pub unsafe extern "C" fn mv_main(
                      * instead of "create same device node" */
                     copy_flag =
                       FILEUTILS_RECUR as libc::c_int | FILEUTILS_PRESERVE_STATUS as libc::c_int;
-                    if copy_file(*argv, dest, copy_flag) >= 0i32
-                      && remove_file(
+                    if crate::libbb::copy_file::copy_file(*argv, dest, copy_flag) >= 0i32
+                      && crate::libbb::remove_file::remove_file(
                         *argv,
                         FILEUTILS_RECUR as libc::c_int | FILEUTILS_FORCE as libc::c_int,
                       ) >= 0i32

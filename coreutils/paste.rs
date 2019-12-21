@@ -13,25 +13,7 @@ extern "C" {
   fn putc_unlocked(__c: libc::c_int, __stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn strcpy_and_process_escape_sequences(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn fclose_if_not_stdin(file: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
 }
 
 /*
@@ -76,9 +58,9 @@ unsafe extern "C" fn paste_files(
     i = 0i32;
     while i < file_cnt {
       if !(*files.offset(i as isize)).is_null() {
-        line = xmalloc_fgetline(*files.offset(i as isize));
+        line = crate::libbb::get_line_from_file::xmalloc_fgetline(*files.offset(i as isize));
         if line.is_null() {
-          fclose_if_not_stdin(*files.offset(i as isize));
+          crate::libbb::fclose_nonstdin::fclose_if_not_stdin(*files.offset(i as isize));
           let ref mut fresh0 = *files.offset(i as isize);
           *fresh0 = 0 as *mut FILE;
           active_files -= 1
@@ -117,7 +99,7 @@ unsafe extern "C" fn paste_files_separate(
     let mut del_idx: libc::c_int = 0i32;
     line = std::ptr::null_mut::<libc::c_char>();
     loop {
-      next_line = xmalloc_fgetline(*files.offset(i as isize));
+      next_line = crate::libbb::get_line_from_file::xmalloc_fgetline(*files.offset(i as isize));
       if next_line.is_null() {
         break;
       }
@@ -143,7 +125,7 @@ unsafe extern "C" fn paste_files_separate(
       printf(b"%s\n\x00" as *const u8 as *const libc::c_char, line);
       free(line as *mut libc::c_void);
     }
-    fclose_if_not_stdin(*files.offset(i as isize));
+    crate::libbb::fclose_nonstdin::fclose_if_not_stdin(*files.offset(i as isize));
     i += 1
   }
 }
@@ -157,7 +139,7 @@ pub unsafe extern "C" fn paste_main(
   let mut del_cnt: libc::c_int = 1i32;
   let mut opt: libc::c_uint = 0;
   let mut i: libc::c_int = 0;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"d:s\x00" as *const u8 as *const libc::c_char,
     &mut delims as *mut *mut libc::c_char,
@@ -165,13 +147,14 @@ pub unsafe extern "C" fn paste_main(
   argv = argv.offset(optind as isize);
   if opt & (1i32 << 0i32) as libc::c_uint != 0 {
     if *delims.offset(0) == 0 {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"-d \'\' is not supported\x00" as *const u8 as *const libc::c_char,
       );
     }
     /* note: handle NUL properly (do not stop at it!): try -d'\t\0\t' */
-    del_cnt = strcpy_and_process_escape_sequences(delims, delims).wrapping_offset_from(delims)
-      as libc::c_long as libc::c_int
+    del_cnt =
+      crate::libbb::process_escape_sequence::strcpy_and_process_escape_sequences(delims, delims)
+        .wrapping_offset_from(delims) as libc::c_long as libc::c_int
   }
   if (*argv.offset(0)).is_null() {
     argv = argv.offset(-1);
@@ -181,10 +164,10 @@ pub unsafe extern "C" fn paste_main(
   i = 0i32;
   while !(*argv.offset(i as isize)).is_null() {
     let ref mut fresh4 = *argv.offset(i as isize);
-    *fresh4 =
-      fopen_or_warn_stdin(*argv.offset(i as isize)) as *mut libc::c_void as *mut libc::c_char;
+    *fresh4 = crate::libbb::wfopen_input::fopen_or_warn_stdin(*argv.offset(i as isize))
+      as *mut libc::c_void as *mut libc::c_char;
     if (*argv.offset(i as isize)).is_null() {
-      xfunc_die();
+      crate::libbb::xfunc_die::xfunc_die();
     }
     i += 1
   }
@@ -193,7 +176,7 @@ pub unsafe extern "C" fn paste_main(
   } else {
     paste_files(argv as *mut *mut FILE, i, delims, del_cnt);
   }
-  fflush_stdout_and_exit(0i32);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
 }
 /* unknown mappings are not changed: "\z" -> '\\' 'z' */
 /* trailing backslash, if any, is preserved */

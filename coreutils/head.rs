@@ -25,43 +25,19 @@ extern "C" {
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xmalloc_fgets(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn die_if_ferror_stdout();
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn fclose_if_not_stdin(file: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
   static bkm_suffixes: [suffix_mult; 0];
-  #[no_mangle]
-  fn xatoull_sfx(str: *const libc::c_char, sfx: *const suffix_mult) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
+
   #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct suffix_mult {
-  pub suffix: [libc::c_char; 4],
-  pub mult: libc::c_uint,
-}
+use crate::librb::suffix_mult;
 #[inline(always)]
 unsafe extern "C" fn xatoul_sfx(
   mut str: *const libc::c_char,
   mut sfx: *const suffix_mult,
 ) -> libc::c_ulong {
-  return xatoull_sfx(str, sfx) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull_sfx(str, sfx) as libc::c_ulong;
 }
 
 /*
@@ -170,14 +146,14 @@ unsafe extern "C" fn print_except_N_last_bytes(mut fp: *mut FILE, mut count: lib
 unsafe extern "C" fn print_except_N_last_lines(mut fp: *mut FILE, mut count: libc::c_uint) {
   let mut current_block: u64;
   count = count.wrapping_add(1);
-  let mut circle: *mut *mut libc::c_char = xzalloc(
+  let mut circle: *mut *mut libc::c_char = crate::libbb::xfuncs_printf::xzalloc(
     (count as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong),
   ) as *mut *mut libc::c_char;
   let mut head: libc::c_uint = 0i32 as libc::c_uint;
   loop {
     let mut c: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    c = xmalloc_fgets(fp);
+    c = crate::libbb::get_line_from_file::xmalloc_fgets(fp);
     if c.is_null() {
       current_block = 349542114677786389;
       break;
@@ -203,7 +179,7 @@ unsafe extern "C" fn print_except_N_last_lines(mut fp: *mut FILE, mut count: lib
           head = 0i32 as libc::c_uint
         }
         fputs_unlocked(*circle.offset(head as isize), stdout);
-        c_0 = xmalloc_fgets(fp);
+        c_0 = crate::libbb::get_line_from_file::xmalloc_fgets(fp);
         if c_0.is_null() {
           current_block = 349542114677786389;
           continue;
@@ -293,7 +269,7 @@ pub unsafe extern "C" fn head_main(
           99 => count_bytes = 1i32 != 0,
           110 => {}
           _ => {
-            bb_show_usage();
+            crate::libbb::appletlib::bb_show_usage();
           }
         }
         /* fall through */
@@ -317,14 +293,14 @@ pub unsafe extern "C" fn head_main(
       >= (2147483647i32 as libc::c_ulong)
         .wrapping_div(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong)
     {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"count is too big: %lu\x00" as *const u8 as *const libc::c_char,
         count,
       );
     }
   }
   loop {
-    fp = fopen_or_warn_stdin(*argv);
+    fp = crate::libbb::wfopen_input::fopen_or_warn_stdin(*argv);
     if !fp.is_null() {
       if fp == stdin {
         *argv = bb_msg_standard_input.as_ptr() as *mut libc::c_char
@@ -341,9 +317,9 @@ pub unsafe extern "C" fn head_main(
       } else {
         print_first_N(fp, count, count_bytes);
       }
-      die_if_ferror_stdout();
-      if fclose_if_not_stdin(fp) != 0 {
-        bb_simple_perror_msg(*argv);
+      crate::libbb::xfuncs_printf::die_if_ferror_stdout();
+      if crate::libbb::fclose_nonstdin::fclose_if_not_stdin(fp) != 0 {
+        crate::libbb::perror_msg::bb_simple_perror_msg(*argv);
         retval = 1i32
       }
     } else {
@@ -355,5 +331,5 @@ pub unsafe extern "C" fn head_main(
       break;
     }
   }
-  fflush_stdout_and_exit(retval);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(retval);
 }

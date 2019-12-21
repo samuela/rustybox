@@ -1,4 +1,4 @@
-use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::unicode::bb_mbstate_t;use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::xfuncs_printf::xmalloc;
 use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use crate::librb::signal::sigaction;
@@ -41,14 +41,14 @@ use libc::uid_t;
 use libc::DIR;
 use libc::FILE;
 extern "C" {
-
+  #[no_mangle]
+  fn sigaction(__sig: libc::c_int, __act: *const sigaction, __oact: *mut sigaction) -> libc::c_int;
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn sigaction(__sig: libc::c_int, __act: *const sigaction, __oact: *mut sigaction) -> libc::c_int;
+
   #[no_mangle]
   static mut stdin: *mut FILE;
   #[no_mangle]
@@ -107,106 +107,21 @@ extern "C" {
   /* All function names below should be remapped by #defines above
    * in order to not collide with libc names. */
   /* Rewind the password-file stream.  */
-  #[no_mangle]
-  fn bb_internal_setpwent();
+
   /* Close the password-file stream.  */
-  #[no_mangle]
-  fn bb_internal_endpwent();
+
   /* Read an entry from the password-file stream, opening it if necessary.  */
-  #[no_mangle]
-  fn bb_internal_getpwent() -> *mut passwd;
+
   /* Search for an entry with a matching user ID.  */
-  #[no_mangle]
-  fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;
+
   /* Search for an entry with a matching username.  */
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_process_escape_sequence(ptr: *mut *const libc::c_char) -> libc::c_char;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xrealloc_getcwd_or_warn(cwd: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn sigaction_set(sig: libc::c_int, act: *const sigaction) -> libc::c_int;
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn strftime_HHMMSS(
-    buf: *mut libc::c_char,
-    len: libc::c_uint,
-    tp: *mut time_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn printable_string(str: *const libc::c_char) -> *const libc::c_char;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xfdopen_for_write(fd: libc::c_int) -> *mut FILE;
-  #[no_mangle]
-  fn qsort_string_vector(sv: *mut *mut libc::c_char, count: libc::c_uint);
-  #[no_mangle]
-  fn safe_gethostname() -> *mut libc::c_char;
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn get_terminal_width(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
-  #[no_mangle]
-  fn get_termios_and_make_raw(
-    fd: libc::c_int,
-    newterm: *mut termios,
-    oldterm: *mut termios,
-    flags: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn read_key(fd: libc::c_int, buffer: *mut libc::c_char, timeout: libc::c_int) -> int64_t;
-  #[no_mangle]
-  fn read_key_ungets(buffer: *mut libc::c_char, str: *const libc::c_char, len: libc::c_uint);
   #[no_mangle]
   static bb_msg_unknown: [libc::c_char; 0];
   #[no_mangle]
   static const_int_0: libc::c_int;
   /* Width on terminal */
-  #[no_mangle]
-  fn unicode_strwidth(string: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn bb_mbstowcs(dest: *mut wchar_t, src: *const libc::c_char, n: size_t) -> size_t;
-  #[no_mangle]
-  fn bb_wcstombs(dest: *mut libc::c_char, src: *const wchar_t, n: size_t) -> size_t;
-  #[no_mangle]
-  fn bb_wcrtomb(s: *mut libc::c_char, wc: wchar_t, ps: *mut bb_mbstate_t) -> size_t;
-  #[no_mangle]
-  fn bb_wcwidth(ucs: libc::c_uint) -> libc::c_int;
+
   /* See lineedit_ptr_hack.c */
   #[no_mangle]
   static lineedit_ptr_to_statics: *mut lineedit_statics;
@@ -225,8 +140,9 @@ pub type int64_t = __int64_t;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub _pad: [libc::c_int; 28],
   pub _kill: C2RustUnnamed_8,
@@ -237,40 +153,46 @@ pub union C2RustUnnamed {
   pub _sigpoll: C2RustUnnamed_1,
   pub _sigsys: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_0 {
   pub _call_addr: *mut libc::c_void,
   pub _syscall: libc::c_int,
   pub _arch: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_1 {
   pub si_band: libc::c_long,
   pub si_fd: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_2 {
   pub si_addr: *mut libc::c_void,
   pub si_addr_lsb: libc::c_short,
   pub _bounds: C2RustUnnamed_3,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_3 {
   pub _addr_bnd: C2RustUnnamed_4,
   pub _pkey: u32,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_4 {
   pub _lower: *mut libc::c_void,
   pub _upper: *mut libc::c_void,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_5 {
   pub si_pid: pid_t,
   pub si_uid: uid_t,
@@ -278,22 +200,25 @@ pub struct C2RustUnnamed_5 {
   pub si_utime: libc::clock_t,
   pub si_stime: libc::clock_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_6 {
   pub si_pid: pid_t,
   pub si_uid: uid_t,
   pub si_sigval: sigval,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_7 {
   pub si_tid: libc::c_int,
   pub si_overrun: libc::c_int,
   pub si_sigval: sigval,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_8 {
   pub si_pid: pid_t,
   pub si_uid: uid_t,
@@ -321,19 +246,8 @@ pub const KEYCODE_LEFT: C2RustUnnamed_10 = -5;
 pub const KEYCODE_RIGHT: C2RustUnnamed_10 = -4;
 pub const KEYCODE_DOWN: C2RustUnnamed_10 = -3;
 pub const KEYCODE_UP: C2RustUnnamed_10 = -2;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct line_input_t {
-  pub flags: libc::c_int,
-  pub timeout: libc::c_int,
-  pub path_lookup: *const libc::c_char,
-  pub cnt_history: libc::c_int,
-  pub cur_history: libc::c_int,
-  pub max_history: libc::c_int,
-  pub cnt_history_in_file: libc::c_uint,
-  pub hist_file: *const libc::c_char,
-  pub history: [*mut libc::c_char; 256],
-}
+
+use crate::librb::line_input_t;
 pub type C2RustUnnamed_11 = libc::c_uint;
 pub const FOR_SHELL: C2RustUnnamed_11 = 7;
 pub const WITH_PATH_LOOKUP: C2RustUnnamed_11 = 16;
@@ -342,8 +256,9 @@ pub const USERNAME_COMPLETION: C2RustUnnamed_11 = 4;
 pub const TAB_COMPLETION: C2RustUnnamed_11 = 2;
 pub const DO_HISTORY: C2RustUnnamed_11 = 1;
 /* We try to minimize both static and stack usage. */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct lineedit_statics {
   pub state: *mut line_input_t,
   pub cmdedit_termw: libc::c_uint,
@@ -367,11 +282,7 @@ pub struct lineedit_statics {
 }
 pub const MAX_LINELEN: C2RustUnnamed_13 = 1024;
 pub const UNICODE_ON: C2RustUnnamed_12 = 2;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct bb_mbstate_t {
-  pub bogus: libc::c_char,
-}
+
 pub const VI_CMDMODE_BIT: C2RustUnnamed_15 = 1073741824;
 pub const FIND_DIR_ONLY: C2RustUnnamed_14 = 1;
 pub const FIND_EXE_ONLY: C2RustUnnamed_14 = 0;
@@ -426,7 +337,7 @@ unsafe extern "C" fn deinit_S() {
 }
 unsafe extern "C" fn load_string(mut src: *const libc::c_char) -> size_t {
   if UNICODE_ON as libc::c_int == UNICODE_ON as libc::c_int {
-    let mut len: ssize_t = bb_mbstowcs(
+    let mut len: ssize_t = crate::libbb::unicode::bb_mbstowcs(
       (*lineedit_ptr_to_statics).command_ps,
       src,
       ((*lineedit_ptr_to_statics).maxsize - 1i32) as size_t,
@@ -454,7 +365,7 @@ unsafe extern "C" fn save_string(
   mut maxsize: libc::c_uint,
 ) -> libc::c_uint {
   if UNICODE_ON as libc::c_int == UNICODE_ON as libc::c_int {
-    let mut len: ssize_t = bb_wcstombs(
+    let mut len: ssize_t = crate::libbb::unicode::bb_wcstombs(
       dst,
       (*lineedit_ptr_to_statics).command_ps,
       maxsize.wrapping_sub(1i32 as libc::c_uint) as size_t,
@@ -487,7 +398,8 @@ unsafe extern "C" fn BB_PUTCHAR(mut c: wchar_t) {
       };
       init
     };
-    let mut len: ssize_t = bb_wcrtomb(buf.as_mut_ptr(), c, &mut mbst) as ssize_t;
+    let mut len: ssize_t =
+      crate::libbb::unicode::bb_wcrtomb(buf.as_mut_ptr(), c, &mut mbst) as ssize_t;
     if len > 0 {
       buf[len as usize] = '\u{0}' as i32 as libc::c_char;
       fputs_unlocked(buf.as_mut_ptr(), stdout);
@@ -504,7 +416,7 @@ unsafe extern "C" fn adjust_width_and_validate_wc(mut wc: wchar_t) -> wchar_t {
     if wc > 767i32 {
       current_block_2 = 15232977139320167099;
     } else {
-      w = bb_wcwidth(wc as libc::c_uint);
+      w = crate::libbb::unicode::bb_wcwidth(wc as libc::c_uint);
       if false && w < 0i32 || 0i32 == 0 && w <= 0i32 || 0i32 == 0 && w > 1i32 {
         current_block_2 = 15232977139320167099;
       } else {
@@ -586,11 +498,11 @@ unsafe extern "C" fn goto_new_line() {
   if (*lineedit_ptr_to_statics).cursor == 0i32 as libc::c_uint
     || (*lineedit_ptr_to_statics).cmdedit_x != 0i32 as libc::c_uint
   {
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   };
 }
 unsafe extern "C" fn beep() {
-  bb_putchar('\u{7}' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\u{7}' as i32);
 }
 /* Full or last/sole prompt line, reset edit cursor, calculate terminal cursor.
  * cmdedit_y is always calculated for the last/sole prompt line.
@@ -655,7 +567,7 @@ unsafe extern "C" fn input_backward(mut num: libc::c_uint) {
        * return;
        */
       {
-        bb_putchar('\u{8}' as i32);
+        crate::libbb::xfuncs_printf::bb_putchar('\u{8}' as i32);
         num = num.wrapping_sub(1);
         if !(num != 0) {
           break;
@@ -709,7 +621,7 @@ unsafe extern "C" fn draw_custom(
     /* up y lines */
     printf(b"\x1b[%uA\x00" as *const u8 as *const libc::c_char, y);
   }
-  bb_putchar('\r' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\r' as i32);
   put_prompt_custom(is_full);
   put_till_end_and_adv_cursor();
   printf(b"\x1b[J\x00" as *const u8 as *const libc::c_char);
@@ -793,7 +705,7 @@ unsafe extern "C" fn add_match(mut matched: *mut libc::c_char) {
     }
     p = p.offset(1)
   }
-  (*lineedit_ptr_to_statics).matches = xrealloc_vector_helper(
+  (*lineedit_ptr_to_statics).matches = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
     (*lineedit_ptr_to_statics).matches as *mut libc::c_void,
     ((::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong) << 8i32)
       .wrapping_add(4i32 as libc::c_ulong) as libc::c_uint,
@@ -828,7 +740,7 @@ unsafe extern "C" fn username_path_completion(mut ud: *mut libc::c_char) -> *mut
     }
   }
   if !home.is_null() {
-    ud = concat_path_file(home, ud);
+    ud = crate::libbb::concat_path_file::concat_path_file(home, ud);
     free(tilde_name as *mut libc::c_void);
     tilde_name = ud
   }
@@ -843,21 +755,21 @@ unsafe extern "C" fn complete_username(mut ud: *const libc::c_char) -> libc::c_u
   let mut userlen: libc::c_uint = 0;
   ud = ud.offset(1);
   userlen = strlen(ud) as libc::c_uint;
-  bb_internal_setpwent();
+  crate::libpwdgrp::pwd_grp::bb_internal_setpwent();
   loop {
-    pw = bb_internal_getpwent();
+    pw = crate::libpwdgrp::pwd_grp::bb_internal_getpwent();
     if pw.is_null() {
       break;
     }
     /* Null usernames should result in all users as possible completions. */
-    if !is_prefixed_with((*pw).pw_name, ud).is_null() {
-      add_match(xasprintf(
+    if !crate::libbb::compare_string_array::is_prefixed_with((*pw).pw_name, ud).is_null() {
+      add_match(crate::libbb::xfuncs_printf::xasprintf(
         b"~%s/\x00" as *const u8 as *const libc::c_char,
         (*pw).pw_name,
       )); /* don't keep password file open */
     }
   }
-  bb_internal_endpwent();
+  crate::libpwdgrp::pwd_grp::bb_internal_endpwent();
   return (1i32 as libc::c_uint).wrapping_add(userlen);
 }
 unsafe extern "C" fn path_parse(mut p: *mut *mut *mut libc::c_char) -> libc::c_int {
@@ -895,7 +807,7 @@ unsafe extern "C" fn path_parse(mut p: *mut *mut *mut libc::c_char) -> libc::c_i
       .wrapping_mul(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong),
   ) as *mut *mut libc::c_char;
   *p = res;
-  tmp = xstrdup(pth);
+  tmp = crate::libbb::xfuncs_printf::xstrdup(pth);
   let ref mut fresh2 = *res.offset(0);
   *fresh2 = tmp;
   npth = 1i32;
@@ -945,7 +857,7 @@ unsafe extern "C" fn complete_cmd_dir_file(
     /* point to 'l' in "..../last_component" */
     pfind = pfind.offset(1);
     /* dirbuf = ".../.../.../" */
-    dirbuf = xstrndup(
+    dirbuf = crate::libbb::xfuncs_printf::xstrndup(
       command,
       pfind.wrapping_offset_from(command) as libc::c_long as libc::c_int,
     );
@@ -980,10 +892,11 @@ unsafe extern "C" fn complete_cmd_dir_file(
           continue;
         }
         /* match? */
-        if is_prefixed_with(name_found, pfind).is_null() {
+        if crate::libbb::compare_string_array::is_prefixed_with(name_found, pfind).is_null() {
           continue; /* no */
         }
-        found = concat_path_file(*paths.offset(i as isize), name_found);
+        found =
+          crate::libbb::concat_path_file::concat_path_file(*paths.offset(i as isize), name_found);
         /* NB: stat() first so that we see is it a directory;
          * but if that fails, use lstat() so that
          * we still match dangling links */
@@ -991,7 +904,7 @@ unsafe extern "C" fn complete_cmd_dir_file(
           /* hmm, remove in progress? */
           /* Save only name */
           len = strlen(name_found) as libc::c_uint; /* +2: for slash and NUL */
-          found = xrealloc(
+          found = crate::libbb::xfuncs_printf::xrealloc(
             found as *mut libc::c_void,
             len.wrapping_add(2i32 as libc::c_uint) as size_t,
           ) as *mut libc::c_char;
@@ -1254,7 +1167,9 @@ unsafe extern "C" fn showfiles() {
   /* find the longest file name - use that as the column width */
   row = 0i32; /* min space for columns */
   while row < nrows {
-    l = unicode_strwidth(*(*lineedit_ptr_to_statics).matches.offset(row as isize)) as libc::c_int;
+    l = crate::libbb::unicode::unicode_strwidth(
+      *(*lineedit_ptr_to_statics).matches.offset(row as isize),
+    ) as libc::c_int;
     if column_width < l {
       column_width = l
     }
@@ -1282,7 +1197,7 @@ unsafe extern "C" fn showfiles() {
       printf(
         b"%s%-*s\x00" as *const u8 as *const libc::c_char,
         *(*lineedit_ptr_to_statics).matches.offset(n as isize),
-        (column_width as libc::c_ulong).wrapping_sub(unicode_strwidth(
+        (column_width as libc::c_ulong).wrapping_sub(crate::libbb::unicode::unicode_strwidth(
           *(*lineedit_ptr_to_statics).matches.offset(n as isize),
         )) as libc::c_int,
         b"\x00" as *const u8 as *const libc::c_char,
@@ -1290,7 +1205,7 @@ unsafe extern "C" fn showfiles() {
       n += nrows;
       nc += 1
     }
-    puts(printable_string(
+    puts(crate::libbb::printable_string::printable_string(
       *(*lineedit_ptr_to_statics).matches.offset(n as isize),
     ));
     row += 1
@@ -1304,7 +1219,7 @@ unsafe extern "C" fn is_special_char(mut c: libc::c_char) -> *const libc::c_char
 }
 unsafe extern "C" fn quote_special_chars(mut found: *mut libc::c_char) -> *mut libc::c_char {
   let mut l: libc::c_int = 0i32;
-  let mut s: *mut libc::c_char = xzalloc(
+  let mut s: *mut libc::c_char = crate::libbb::xfuncs_printf::xzalloc(
     strlen(found)
       .wrapping_add(1i32 as libc::c_ulong)
       .wrapping_mul(2i32 as libc::c_ulong),
@@ -1410,7 +1325,7 @@ unsafe extern "C" fn input_tab(mut lastWasTab: *mut smallint) {
   if !(*lineedit_ptr_to_statics).matches.is_null() {
     let mut i: libc::c_uint = 0;
     let mut n: libc::c_uint = 0i32 as libc::c_uint;
-    qsort_string_vector(
+    crate::libbb::bb_qsort::qsort_string_vector(
       (*lineedit_ptr_to_statics).matches,
       (*lineedit_ptr_to_statics).num_matches,
     );
@@ -1454,7 +1369,8 @@ unsafe extern "C" fn input_tab(mut lastWasTab: *mut smallint) {
       current_block = 3431305713246613743; /* no matches at all */
     } else {
       /* Find common prefix */
-      chosen_match = xstrdup(*(*lineedit_ptr_to_statics).matches.offset(0));
+      chosen_match =
+        crate::libbb::xfuncs_printf::xstrdup(*(*lineedit_ptr_to_statics).matches.offset(0));
       cp = chosen_match;
       's_245: while *cp != 0 {
         let mut n_0: libc::c_uint = 0;
@@ -1547,8 +1463,9 @@ unsafe extern "C" fn input_tab(mut lastWasTab: *mut smallint) {
 /* FEATURE_TAB_COMPLETION */
 #[no_mangle]
 pub unsafe extern "C" fn new_line_input_t(mut flags: libc::c_int) -> *mut line_input_t {
-  let mut n: *mut line_input_t =
-    xzalloc(::std::mem::size_of::<line_input_t>() as libc::c_ulong) as *mut line_input_t;
+  let mut n: *mut line_input_t = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<
+    line_input_t,
+  >() as libc::c_ulong) as *mut line_input_t;
   (*n).flags = flags;
   (*n).timeout = -1i32;
   (*n).max_history = 255i32 + 0i32;
@@ -1577,7 +1494,8 @@ unsafe extern "C" fn save_command_ps_at_cur_history() {
       tbuf.as_mut_ptr(),
       ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_uint,
     );
-    (*(*lineedit_ptr_to_statics).state).history[cur as usize] = xstrdup(tbuf.as_mut_ptr())
+    (*(*lineedit_ptr_to_statics).state).history[cur as usize] =
+      crate::libbb::xfuncs_printf::xstrdup(tbuf.as_mut_ptr())
   };
 }
 /* state->flags is already checked to be nonzero */
@@ -1647,7 +1565,7 @@ unsafe extern "C" fn load_history(mut st_parm: *mut line_input_t) {
   let mut i: libc::c_uint = 0;
   let mut line_len: libc::c_uint = 0;
   /* NB: do not trash old history if file can't be opened */
-  fp = fopen_for_read((*st_parm).hist_file);
+  fp = crate::libbb::wfopen::fopen_for_read((*st_parm).hist_file);
   if !fp.is_null() {
     /* clean up old history */
     idx = (*st_parm).cnt_history as libc::c_uint;
@@ -1665,7 +1583,7 @@ unsafe extern "C" fn load_history(mut st_parm: *mut line_input_t) {
     idx = 0i32 as libc::c_uint;
     (*st_parm).cnt_history_in_file = 0i32 as libc::c_uint;
     loop {
-      line = xmalloc_fgetline(fp);
+      line = crate::libbb::get_line_from_file::xmalloc_fgetline(fp);
       if line.is_null() {
         break;
       }
@@ -1728,10 +1646,12 @@ unsafe extern "C" fn save_history(mut str: *mut libc::c_char) {
   if fd < 0i32 {
     return;
   }
-  xlseek(fd, 0i32 as off_t, 2i32);
+  crate::libbb::xfuncs_printf::xlseek(fd, 0i32 as off_t, 2i32);
   len = strlen(str) as libc::c_int;
   *str.offset(len as isize) = '\n' as i32 as libc::c_char;
-  len2 = full_write(fd, str as *const libc::c_void, (len + 1i32) as size_t) as libc::c_int;
+  len2 =
+    crate::libbb::full_write::full_write(fd, str as *const libc::c_void, (len + 1i32) as size_t)
+      as libc::c_int;
   *str.offset(len as isize) = '\u{0}' as i32 as libc::c_char;
   close(fd);
   if len2 != len + 1i32 {
@@ -1753,7 +1673,7 @@ unsafe extern "C" fn save_history(mut str: *mut libc::c_char) {
     (*st_temp).max_history = (*(*lineedit_ptr_to_statics).state).max_history;
     load_history(st_temp);
     /* write out temp file and replace hist_file atomically */
-    new_name = xasprintf(
+    new_name = crate::libbb::xfuncs_printf::xasprintf(
       b"%s.%u.new\x00" as *const u8 as *const libc::c_char,
       (*(*lineedit_ptr_to_statics).state).hist_file,
       getpid(),
@@ -1762,7 +1682,7 @@ unsafe extern "C" fn save_history(mut str: *mut libc::c_char) {
     if fd >= 0i32 {
       let mut fp: *mut FILE = 0 as *mut FILE;
       let mut i: libc::c_int = 0;
-      fp = xfdopen_for_write(fd);
+      fp = crate::libbb::wfopen::xfdopen_for_write(fd);
       i = 0i32;
       while i < (*st_temp).cnt_history {
         fprintf(
@@ -1823,7 +1743,8 @@ unsafe extern "C" fn remember_in_history(mut str: *mut libc::c_char) {
   /* i <= state->max_history-1 */
   let fresh18 = i;
   i = i + 1;
-  (*(*lineedit_ptr_to_statics).state).history[fresh18 as usize] = xstrdup(str);
+  (*(*lineedit_ptr_to_statics).state).history[fresh18 as usize] =
+    crate::libbb::xfuncs_printf::xstrdup(str);
   /* i <= state->max_history */
   (*(*lineedit_ptr_to_statics).state).cur_history = i;
   (*(*lineedit_ptr_to_statics).state).cnt_history = i;
@@ -1915,7 +1836,8 @@ unsafe extern "C" fn ctrl_right() {
 /* Called just once at read_line_input() init time */
 unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
   let mut prmt_size: libc::c_int = 0i32;
-  let mut prmt_mem_ptr: *mut libc::c_char = xzalloc(1i32 as size_t) as *mut libc::c_char;
+  let mut prmt_mem_ptr: *mut libc::c_char =
+    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t) as *mut libc::c_char;
   let mut cwd_buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut flg_not_length: libc::c_char = '[' as i32 as libc::c_char;
   let mut cbuf: [libc::c_char; 2] = [0; 2];
@@ -1977,7 +1899,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
       c = *cp;
       if c as libc::c_int != 't' as i32 {
         /* don't treat \t as tab */
-        c = bb_process_escape_sequence(&mut prmt_ptr)
+        c = crate::libbb::process_escape_sequence::bb_process_escape_sequence(&mut prmt_ptr)
       }
       if prmt_ptr == cp {
         if *cp as libc::c_int == '\u{0}' as i32 {
@@ -1992,7 +1914,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
             current_block_52 = 9642695190694411401;
             match current_block_52 {
               18087889531735461995 => {
-                free_me = safe_gethostname();
+                free_me = crate::libbb::safe_gethostname::safe_gethostname();
                 pbuf = free_me;
                 if c as libc::c_int == 'h' as i32 {
                   *strchrnul(pbuf, '.' as i32).offset(0) = '\u{0}' as i32 as libc::c_char
@@ -2004,21 +1926,26 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               /* basename of cur dir */
               {
                 if cwd_buf.is_null() {
-                  cwd_buf = xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
+                  cwd_buf = crate::libbb::xgetcwd::xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
                     let mut after_home_user: *mut libc::c_char =
                       std::ptr::null_mut::<libc::c_char>();
                     /* /home/user[/something] -> ~[/something] */
-                    after_home_user =
-                      is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
+                    after_home_user = crate::libbb::compare_string_array::is_prefixed_with(
+                      cwd_buf,
+                      (*lineedit_ptr_to_statics).home_pwd_buf,
+                    );
                     if !after_home_user.is_null()
                       && (*after_home_user as libc::c_int == '/' as i32
                         || *after_home_user as libc::c_int == '\u{0}' as i32)
                     {
                       *cwd_buf.offset(0) = '~' as i32 as libc::c_char;
-                      overlapping_strcpy(cwd_buf.offset(1), after_home_user);
+                      crate::libbb::safe_strncpy::overlapping_strcpy(
+                        cwd_buf.offset(1),
+                        after_home_user,
+                      );
                     }
                   }
                 }
@@ -2110,7 +2037,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                 /* 24-hour HH:MM format */
                 /* 24-hour HH:MM:SS format */
                 /* We show all of them as 24-hour HH:MM */
-                *strftime_HHMMSS(
+                *crate::libbb::time::strftime_HHMMSS(
                   timebuf.as_mut_ptr(),
                   ::std::mem::size_of::<[libc::c_char; 9]>() as libc::c_ulong as libc::c_uint,
                   0 as *mut time_t,
@@ -2124,7 +2051,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
             current_block_52 = 18087889531735461995;
             match current_block_52 {
               18087889531735461995 => {
-                free_me = safe_gethostname();
+                free_me = crate::libbb::safe_gethostname::safe_gethostname();
                 pbuf = free_me;
                 if c as libc::c_int == 'h' as i32 {
                   *strchrnul(pbuf, '.' as i32).offset(0) = '\u{0}' as i32 as libc::c_char
@@ -2133,20 +2060,25 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               }
               11214990802921196617 => {
                 if cwd_buf.is_null() {
-                  cwd_buf = xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
+                  cwd_buf = crate::libbb::xgetcwd::xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
                     let mut after_home_user: *mut libc::c_char =
                       std::ptr::null_mut::<libc::c_char>();
-                    after_home_user =
-                      is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
+                    after_home_user = crate::libbb::compare_string_array::is_prefixed_with(
+                      cwd_buf,
+                      (*lineedit_ptr_to_statics).home_pwd_buf,
+                    );
                     if !after_home_user.is_null()
                       && (*after_home_user as libc::c_int == '/' as i32
                         || *after_home_user as libc::c_int == '\u{0}' as i32)
                     {
                       *cwd_buf.offset(0) = '~' as i32 as libc::c_char;
-                      overlapping_strcpy(cwd_buf.offset(1), after_home_user);
+                      crate::libbb::safe_strncpy::overlapping_strcpy(
+                        cwd_buf.offset(1),
+                        after_home_user,
+                      );
                     }
                   }
                 }
@@ -2225,7 +2157,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   16491562349523041571 => {}
                   _ => {}
                 }
-                *strftime_HHMMSS(
+                *crate::libbb::time::strftime_HHMMSS(
                   timebuf.as_mut_ptr(),
                   ::std::mem::size_of::<[libc::c_char; 9]>() as libc::c_ulong as libc::c_uint,
                   0 as *mut time_t,
@@ -2239,7 +2171,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
             current_block_52 = 14477407255285059806;
             match current_block_52 {
               18087889531735461995 => {
-                free_me = safe_gethostname();
+                free_me = crate::libbb::safe_gethostname::safe_gethostname();
                 pbuf = free_me;
                 if c as libc::c_int == 'h' as i32 {
                   *strchrnul(pbuf, '.' as i32).offset(0) = '\u{0}' as i32 as libc::c_char
@@ -2248,20 +2180,25 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               }
               11214990802921196617 => {
                 if cwd_buf.is_null() {
-                  cwd_buf = xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
+                  cwd_buf = crate::libbb::xgetcwd::xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
                     let mut after_home_user: *mut libc::c_char =
                       std::ptr::null_mut::<libc::c_char>();
-                    after_home_user =
-                      is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
+                    after_home_user = crate::libbb::compare_string_array::is_prefixed_with(
+                      cwd_buf,
+                      (*lineedit_ptr_to_statics).home_pwd_buf,
+                    );
                     if !after_home_user.is_null()
                       && (*after_home_user as libc::c_int == '/' as i32
                         || *after_home_user as libc::c_int == '\u{0}' as i32)
                     {
                       *cwd_buf.offset(0) = '~' as i32 as libc::c_char;
-                      overlapping_strcpy(cwd_buf.offset(1), after_home_user);
+                      crate::libbb::safe_strncpy::overlapping_strcpy(
+                        cwd_buf.offset(1),
+                        after_home_user,
+                      );
                     }
                   }
                 }
@@ -2340,7 +2277,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   16491562349523041571 => {}
                   _ => {}
                 }
-                *strftime_HHMMSS(
+                *crate::libbb::time::strftime_HHMMSS(
                   timebuf.as_mut_ptr(),
                   ::std::mem::size_of::<[libc::c_char; 9]>() as libc::c_ulong as libc::c_uint,
                   0 as *mut time_t,
@@ -2354,7 +2291,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
             current_block_52 = 12410170708601199743;
             match current_block_52 {
               18087889531735461995 => {
-                free_me = safe_gethostname();
+                free_me = crate::libbb::safe_gethostname::safe_gethostname();
                 pbuf = free_me;
                 if c as libc::c_int == 'h' as i32 {
                   *strchrnul(pbuf, '.' as i32).offset(0) = '\u{0}' as i32 as libc::c_char
@@ -2363,20 +2300,25 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               }
               11214990802921196617 => {
                 if cwd_buf.is_null() {
-                  cwd_buf = xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
+                  cwd_buf = crate::libbb::xgetcwd::xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
                     let mut after_home_user: *mut libc::c_char =
                       std::ptr::null_mut::<libc::c_char>();
-                    after_home_user =
-                      is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
+                    after_home_user = crate::libbb::compare_string_array::is_prefixed_with(
+                      cwd_buf,
+                      (*lineedit_ptr_to_statics).home_pwd_buf,
+                    );
                     if !after_home_user.is_null()
                       && (*after_home_user as libc::c_int == '/' as i32
                         || *after_home_user as libc::c_int == '\u{0}' as i32)
                     {
                       *cwd_buf.offset(0) = '~' as i32 as libc::c_char;
-                      overlapping_strcpy(cwd_buf.offset(1), after_home_user);
+                      crate::libbb::safe_strncpy::overlapping_strcpy(
+                        cwd_buf.offset(1),
+                        after_home_user,
+                      );
                     }
                   }
                 }
@@ -2455,7 +2397,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   16491562349523041571 => {}
                   _ => {}
                 }
-                *strftime_HHMMSS(
+                *crate::libbb::time::strftime_HHMMSS(
                   timebuf.as_mut_ptr(),
                   ::std::mem::size_of::<[libc::c_char; 9]>() as libc::c_ulong as libc::c_uint,
                   0 as *mut time_t,
@@ -2469,7 +2411,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
             current_block_52 = 16491562349523041571;
             match current_block_52 {
               18087889531735461995 => {
-                free_me = safe_gethostname();
+                free_me = crate::libbb::safe_gethostname::safe_gethostname();
                 pbuf = free_me;
                 if c as libc::c_int == 'h' as i32 {
                   *strchrnul(pbuf, '.' as i32).offset(0) = '\u{0}' as i32 as libc::c_char
@@ -2478,20 +2420,25 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               }
               11214990802921196617 => {
                 if cwd_buf.is_null() {
-                  cwd_buf = xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
+                  cwd_buf = crate::libbb::xgetcwd::xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
                     let mut after_home_user: *mut libc::c_char =
                       std::ptr::null_mut::<libc::c_char>();
-                    after_home_user =
-                      is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
+                    after_home_user = crate::libbb::compare_string_array::is_prefixed_with(
+                      cwd_buf,
+                      (*lineedit_ptr_to_statics).home_pwd_buf,
+                    );
                     if !after_home_user.is_null()
                       && (*after_home_user as libc::c_int == '/' as i32
                         || *after_home_user as libc::c_int == '\u{0}' as i32)
                     {
                       *cwd_buf.offset(0) = '~' as i32 as libc::c_char;
-                      overlapping_strcpy(cwd_buf.offset(1), after_home_user);
+                      crate::libbb::safe_strncpy::overlapping_strcpy(
+                        cwd_buf.offset(1),
+                        after_home_user,
+                      );
                     }
                   }
                 }
@@ -2570,7 +2517,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   16491562349523041571 => {}
                   _ => {}
                 }
-                *strftime_HHMMSS(
+                *crate::libbb::time::strftime_HHMMSS(
                   timebuf.as_mut_ptr(),
                   ::std::mem::size_of::<[libc::c_char; 9]>() as libc::c_ulong as libc::c_uint,
                   0 as *mut time_t,
@@ -2584,7 +2531,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
             current_block_52 = 10426230885943900852;
             match current_block_52 {
               18087889531735461995 => {
-                free_me = safe_gethostname();
+                free_me = crate::libbb::safe_gethostname::safe_gethostname();
                 pbuf = free_me;
                 if c as libc::c_int == 'h' as i32 {
                   *strchrnul(pbuf, '.' as i32).offset(0) = '\u{0}' as i32 as libc::c_char
@@ -2593,20 +2540,25 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               }
               11214990802921196617 => {
                 if cwd_buf.is_null() {
-                  cwd_buf = xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
+                  cwd_buf = crate::libbb::xgetcwd::xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
                     let mut after_home_user: *mut libc::c_char =
                       std::ptr::null_mut::<libc::c_char>();
-                    after_home_user =
-                      is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
+                    after_home_user = crate::libbb::compare_string_array::is_prefixed_with(
+                      cwd_buf,
+                      (*lineedit_ptr_to_statics).home_pwd_buf,
+                    );
                     if !after_home_user.is_null()
                       && (*after_home_user as libc::c_int == '/' as i32
                         || *after_home_user as libc::c_int == '\u{0}' as i32)
                     {
                       *cwd_buf.offset(0) = '~' as i32 as libc::c_char;
-                      overlapping_strcpy(cwd_buf.offset(1), after_home_user);
+                      crate::libbb::safe_strncpy::overlapping_strcpy(
+                        cwd_buf.offset(1),
+                        after_home_user,
+                      );
                     }
                   }
                 }
@@ -2685,7 +2637,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   16491562349523041571 => {}
                   _ => {}
                 }
-                *strftime_HHMMSS(
+                *crate::libbb::time::strftime_HHMMSS(
                   timebuf.as_mut_ptr(),
                   ::std::mem::size_of::<[libc::c_char; 9]>() as libc::c_ulong as libc::c_uint,
                   0 as *mut time_t,
@@ -2699,7 +2651,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
             current_block_52 = 11214990802921196617;
             match current_block_52 {
               18087889531735461995 => {
-                free_me = safe_gethostname();
+                free_me = crate::libbb::safe_gethostname::safe_gethostname();
                 pbuf = free_me;
                 if c as libc::c_int == 'h' as i32 {
                   *strchrnul(pbuf, '.' as i32).offset(0) = '\u{0}' as i32 as libc::c_char
@@ -2708,20 +2660,25 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               }
               11214990802921196617 => {
                 if cwd_buf.is_null() {
-                  cwd_buf = xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
+                  cwd_buf = crate::libbb::xgetcwd::xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
                     let mut after_home_user: *mut libc::c_char =
                       std::ptr::null_mut::<libc::c_char>();
-                    after_home_user =
-                      is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
+                    after_home_user = crate::libbb::compare_string_array::is_prefixed_with(
+                      cwd_buf,
+                      (*lineedit_ptr_to_statics).home_pwd_buf,
+                    );
                     if !after_home_user.is_null()
                       && (*after_home_user as libc::c_int == '/' as i32
                         || *after_home_user as libc::c_int == '\u{0}' as i32)
                     {
                       *cwd_buf.offset(0) = '~' as i32 as libc::c_char;
-                      overlapping_strcpy(cwd_buf.offset(1), after_home_user);
+                      crate::libbb::safe_strncpy::overlapping_strcpy(
+                        cwd_buf.offset(1),
+                        after_home_user,
+                      );
                     }
                   }
                 }
@@ -2800,7 +2757,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   16491562349523041571 => {}
                   _ => {}
                 }
-                *strftime_HHMMSS(
+                *crate::libbb::time::strftime_HHMMSS(
                   timebuf.as_mut_ptr(),
                   ::std::mem::size_of::<[libc::c_char; 9]>() as libc::c_ulong as libc::c_uint,
                   0 as *mut time_t,
@@ -2814,7 +2771,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
             current_block_52 = 12381812505308290051;
             match current_block_52 {
               18087889531735461995 => {
-                free_me = safe_gethostname();
+                free_me = crate::libbb::safe_gethostname::safe_gethostname();
                 pbuf = free_me;
                 if c as libc::c_int == 'h' as i32 {
                   *strchrnul(pbuf, '.' as i32).offset(0) = '\u{0}' as i32 as libc::c_char
@@ -2823,20 +2780,25 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               }
               11214990802921196617 => {
                 if cwd_buf.is_null() {
-                  cwd_buf = xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
+                  cwd_buf = crate::libbb::xgetcwd::xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
                     let mut after_home_user: *mut libc::c_char =
                       std::ptr::null_mut::<libc::c_char>();
-                    after_home_user =
-                      is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
+                    after_home_user = crate::libbb::compare_string_array::is_prefixed_with(
+                      cwd_buf,
+                      (*lineedit_ptr_to_statics).home_pwd_buf,
+                    );
                     if !after_home_user.is_null()
                       && (*after_home_user as libc::c_int == '/' as i32
                         || *after_home_user as libc::c_int == '\u{0}' as i32)
                     {
                       *cwd_buf.offset(0) = '~' as i32 as libc::c_char;
-                      overlapping_strcpy(cwd_buf.offset(1), after_home_user);
+                      crate::libbb::safe_strncpy::overlapping_strcpy(
+                        cwd_buf.offset(1),
+                        after_home_user,
+                      );
                     }
                   }
                 }
@@ -2915,7 +2877,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   16491562349523041571 => {}
                   _ => {}
                 }
-                *strftime_HHMMSS(
+                *crate::libbb::time::strftime_HHMMSS(
                   timebuf.as_mut_ptr(),
                   ::std::mem::size_of::<[libc::c_char; 9]>() as libc::c_ulong as libc::c_uint,
                   0 as *mut time_t,
@@ -2929,7 +2891,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
             current_block_52 = 10485851455608404399;
             match current_block_52 {
               18087889531735461995 => {
-                free_me = safe_gethostname();
+                free_me = crate::libbb::safe_gethostname::safe_gethostname();
                 pbuf = free_me;
                 if c as libc::c_int == 'h' as i32 {
                   *strchrnul(pbuf, '.' as i32).offset(0) = '\u{0}' as i32 as libc::c_char
@@ -2938,20 +2900,25 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
               }
               11214990802921196617 => {
                 if cwd_buf.is_null() {
-                  cwd_buf = xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
+                  cwd_buf = crate::libbb::xgetcwd::xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
                   if cwd_buf.is_null() {
                     cwd_buf = bb_msg_unknown.as_ptr() as *mut libc::c_char
                   } else if *(*lineedit_ptr_to_statics).home_pwd_buf.offset(0) != 0 {
                     let mut after_home_user: *mut libc::c_char =
                       std::ptr::null_mut::<libc::c_char>();
-                    after_home_user =
-                      is_prefixed_with(cwd_buf, (*lineedit_ptr_to_statics).home_pwd_buf);
+                    after_home_user = crate::libbb::compare_string_array::is_prefixed_with(
+                      cwd_buf,
+                      (*lineedit_ptr_to_statics).home_pwd_buf,
+                    );
                     if !after_home_user.is_null()
                       && (*after_home_user as libc::c_int == '/' as i32
                         || *after_home_user as libc::c_int == '\u{0}' as i32)
                     {
                       *cwd_buf.offset(0) = '~' as i32 as libc::c_char;
-                      overlapping_strcpy(cwd_buf.offset(1), after_home_user);
+                      crate::libbb::safe_strncpy::overlapping_strcpy(
+                        cwd_buf.offset(1),
+                        after_home_user,
+                      );
                     }
                   }
                 }
@@ -3030,7 +2997,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
                   16491562349523041571 => {}
                   _ => {}
                 }
-                *strftime_HHMMSS(
+                *crate::libbb::time::strftime_HHMMSS(
                   timebuf.as_mut_ptr(),
                   ::std::mem::size_of::<[libc::c_char; 9]>() as libc::c_ulong as libc::c_uint,
                   0 as *mut time_t,
@@ -3056,7 +3023,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
         .wrapping_add(n as libc::c_uint)
     }
     prmt_mem_ptr = strcat(
-      xrealloc(
+      crate::libbb::xfuncs_printf::xrealloc(
         prmt_mem_ptr as *mut libc::c_void,
         (prmt_size + 1i32) as size_t,
       ) as *mut libc::c_char,
@@ -3078,7 +3045,8 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
 }
 unsafe extern "C" fn cmdedit_setwidth() {
   let mut new_y: libc::c_int = 0;
-  (*lineedit_ptr_to_statics).cmdedit_termw = get_terminal_width(0i32) as libc::c_uint;
+  (*lineedit_ptr_to_statics).cmdedit_termw =
+    crate::libbb::xfuncs::get_terminal_width(0i32) as libc::c_uint;
   /* new y for current cursor */
   new_y = (*lineedit_ptr_to_statics)
     .cursor
@@ -3101,7 +3069,7 @@ unsafe extern "C" fn win_changed(mut _nsig: libc::c_int) {
     /* We are in read_key(), safe to redraw immediately */
     let mut sv_errno: libc::c_int = *bb_errno;
     cmdedit_setwidth();
-    fflush_all();
+    crate::libbb::xfuncs_printf::fflush_all();
     *bb_errno = sv_errno
   } else {
     /* Signal main loop that redraw is necessary */
@@ -3121,7 +3089,7 @@ unsafe extern "C" fn lineedit_read_key(
   let mut ic: int64_t = 0;
   let mut unicode_buf: [libc::c_char; 7] = [0; 7];
   let mut unicode_idx: libc::c_int = 0i32;
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   let mut wc: wchar_t = 0;
   loop {
     /* Wait for input. TIMEOUT = -1 makes read_key wait even
@@ -3135,7 +3103,7 @@ unsafe extern "C" fn lineedit_read_key(
       &mut (*lineedit_ptr_to_statics).ok_to_redraw as *mut smallint,
       1i32 as smallint,
     );
-    ic = read_key(0i32, read_key_buffer, timeout);
+    ic = crate::libbb::read_key::read_key(0i32, read_key_buffer, timeout);
     ::std::ptr::write_volatile(
       &mut (*lineedit_ptr_to_statics).ok_to_redraw as *mut smallint,
       0i32 as smallint,
@@ -3157,7 +3125,9 @@ unsafe extern "C" fn lineedit_read_key(
       unicode_idx = unicode_idx + 1;
       unicode_buf[fresh22 as usize] = ic as libc::c_char;
       unicode_buf[unicode_idx as usize] = '\u{0}' as i32 as libc::c_char;
-      if bb_mbstowcs(&mut wc, unicode_buf.as_mut_ptr(), 1i32 as size_t) != 1i32 as libc::c_ulong {
+      if crate::libbb::unicode::bb_mbstowcs(&mut wc, unicode_buf.as_mut_ptr(), 1i32 as size_t)
+        != 1i32 as libc::c_ulong
+      {
         /* Not (yet?) a valid unicode char */
         if unicode_idx < 6i32 {
           timeout = 50i32;
@@ -3170,7 +3140,7 @@ unsafe extern "C" fn lineedit_read_key(
       }
     }
     /* Invalid sequence. Save all "bad bytes" except first */
-    read_key_ungets(
+    crate::libbb::read_key::read_key_ungets(
       read_key_buffer,
       unicode_buf.as_mut_ptr().offset(1),
       (unicode_idx - 1i32) as libc::c_uint,
@@ -3207,12 +3177,13 @@ unsafe extern "C" fn reverse_i_search(mut timeout: libc::c_int) -> i32 {
   saved_prompt = (*lineedit_ptr_to_statics).prompt_last_line; /* while (1) */
   saved_prmt_len = (*lineedit_ptr_to_statics).cmdedit_prmt_len;
   'c_12065: loop {
-    (*lineedit_ptr_to_statics).prompt_last_line = xasprintf(
+    (*lineedit_ptr_to_statics).prompt_last_line = crate::libbb::xfuncs_printf::xasprintf(
       b"(reverse-i-search)\'%s\': \x00" as *const u8 as *const libc::c_char,
       match_buf.as_mut_ptr(),
     );
     (*lineedit_ptr_to_statics).cmdedit_prmt_len =
-      unicode_strwidth((*lineedit_ptr_to_statics).prompt_last_line) as libc::c_uint;
+      crate::libbb::unicode::unicode_strwidth((*lineedit_ptr_to_statics).prompt_last_line)
+        as libc::c_uint;
     draw_custom(
       (*lineedit_ptr_to_statics).cmdedit_y as libc::c_int,
       ((*lineedit_ptr_to_statics).command_len as libc::c_uint)
@@ -3259,7 +3230,7 @@ unsafe extern "C" fn reverse_i_search(mut timeout: libc::c_int) -> i32 {
             };
             let mut buf: [libc::c_char; 7] = [0; 7];
             let mut len: libc::c_int =
-              bb_wcrtomb(buf.as_mut_ptr(), ic, &mut mbstate) as libc::c_int;
+              crate::libbb::unicode::bb_wcrtomb(buf.as_mut_ptr(), ic, &mut mbstate) as libc::c_int;
             if len > 0i32 {
               buf[len as usize] = '\u{0}' as i32 as libc::c_char;
               if (match_buf_len.wrapping_add(len as libc::c_uint) as libc::c_ulong)
@@ -3893,12 +3864,13 @@ pub unsafe extern "C" fn read_line_input(
   let ref mut fresh23 =
     *(not_const_pp(&lineedit_ptr_to_statics as *const *mut lineedit_statics as *const libc::c_void)
       as *mut *mut lineedit_statics);
-  *fresh23 =
-    xzalloc(::std::mem::size_of::<lineedit_statics>() as libc::c_ulong) as *mut lineedit_statics;
+  *fresh23 = crate::libbb::xfuncs_printf::xzalloc(
+    ::std::mem::size_of::<lineedit_statics>() as libc::c_ulong
+  ) as *mut lineedit_statics;
   asm!("" : : : "memory" : "volatile");
   (*lineedit_ptr_to_statics).cmdedit_termw = 80i32 as libc::c_uint;
   (*lineedit_ptr_to_statics).home_pwd_buf = null_str.as_ptr() as *mut libc::c_char;
-  n = get_termios_and_make_raw(
+  n = crate::libbb::xfuncs::get_termios_and_make_raw(
     0i32,
     &mut new_settings,
     &mut initial_settings,
@@ -3913,7 +3885,7 @@ pub unsafe extern "C" fn read_line_input(
      * tty is still in "raw mode").
      */
     parse_and_put_prompt(prompt); /* EOF or error */
-    fflush_all();
+    crate::libbb::xfuncs_printf::fflush_all();
     if fgets_unlocked(command, maxsize, stdin).is_null() {
       len = -1i32
     } else {
@@ -3948,18 +3920,19 @@ pub unsafe extern "C" fn read_line_input(
   /* prepare before init handlers */
   (*lineedit_ptr_to_statics).cmdedit_y = 0i32 as libc::c_uint; /* quasireal y, not true if line > xt*yt */
   (*lineedit_ptr_to_statics).command_len = 0i32;
-  (*lineedit_ptr_to_statics).command_ps = xzalloc(
+  (*lineedit_ptr_to_statics).command_ps = crate::libbb::xfuncs_printf::xzalloc(
     (maxsize as libc::c_ulong).wrapping_mul(::std::mem::size_of::<wchar_t>() as libc::c_ulong),
   ) as *mut wchar_t;
-  tcsetattr_stdin_TCSANOW(&mut new_settings);
+  crate::libbb::xfuncs::tcsetattr_stdin_TCSANOW(&mut new_settings);
   let mut entry: *mut passwd = 0 as *mut passwd;
-  entry = bb_internal_getpwuid(geteuid());
+  entry = crate::libpwdgrp::pwd_grp::bb_internal_getpwuid(geteuid());
   if !entry.is_null() {
-    (*lineedit_ptr_to_statics).user_buf = xstrdup((*entry).pw_name);
-    (*lineedit_ptr_to_statics).home_pwd_buf = xstrdup((*entry).pw_dir)
+    (*lineedit_ptr_to_statics).user_buf = crate::libbb::xfuncs_printf::xstrdup((*entry).pw_name);
+    (*lineedit_ptr_to_statics).home_pwd_buf = crate::libbb::xfuncs_printf::xstrdup((*entry).pw_dir)
   }
   /* Get width (before printing prompt) */
-  (*lineedit_ptr_to_statics).cmdedit_termw = get_terminal_width(0i32) as libc::c_uint;
+  (*lineedit_ptr_to_statics).cmdedit_termw =
+    crate::libbb::xfuncs::get_terminal_width(0i32) as libc::c_uint;
   /* Print out the command prompt, optionally ask where cursor is */
   parse_and_put_prompt(prompt);
   /* Install window resize handler (NB: after *all* init is complete) */
@@ -4397,10 +4370,10 @@ pub unsafe extern "C" fn read_line_input(
   }
   free_tab_completion_data();
   /* restore initial_settings */
-  tcsetattr_stdin_TCSANOW(&mut initial_settings);
+  crate::libbb::xfuncs::tcsetattr_stdin_TCSANOW(&mut initial_settings);
   /* restore SIGWINCH handler */
-  sigaction_set(28i32, &mut (*lineedit_ptr_to_statics).SIGWINCH_handler);
-  fflush_all();
+  crate::libbb::signals::sigaction_set(28i32, &mut (*lineedit_ptr_to_statics).SIGWINCH_handler);
+  crate::libbb::xfuncs_printf::fflush_all();
   len = (*lineedit_ptr_to_statics).command_len;
   deinit_S();
   return len;

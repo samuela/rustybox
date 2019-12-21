@@ -1,3 +1,4 @@
+use crate::libbb::print_numbered_lines::number_state;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
@@ -16,33 +17,10 @@ extern "C" {
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
 
-  #[no_mangle]
-  fn open_or_warn_stdin(pathname: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn visible(ch: libc::c_uint, buf: *mut libc::c_char, flags: libc::c_int);
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
   /* Applets which are useful from another applets */
-  #[no_mangle]
-  fn bb_cat(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn print_numbered_lines(ns: *mut number_state, filename: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
-}
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct number_state {
-  pub width: libc::c_uint,
-  pub start: libc::c_uint,
-  pub inc: libc::c_uint,
-  pub sep: *const libc::c_char,
-  pub empty_str: *const libc::c_char,
-  pub all: smallint,
-  pub nonempty: smallint,
 }
 
 pub type C2RustUnnamed = libc::c_uint;
@@ -65,7 +43,7 @@ unsafe extern "C" fn catv(mut opts: libc::c_uint, mut argv: *mut *mut libc::c_ch
   let mut lineno: libc::c_uint = 0 as libc::c_uint;
   /* These consts match, we can just pass "opts" to visible() */
   loop {
-    fd = open_or_warn_stdin(*argv);
+    fd = crate::libbb::wfopen_input::open_or_warn_stdin(*argv);
     if fd < 0 {
       retval = 1
     } else {
@@ -93,7 +71,11 @@ unsafe extern "C" fn catv(mut opts: libc::c_uint, mut argv: *mut *mut libc::c_ch
             printf(b"%6u  \x00" as *const u8 as *const libc::c_char, lineno);
           }
           eol_seen = c as libc::c_uint == eol_char;
-          visible(c as libc::c_uint, buf.as_mut_ptr(), opts as libc::c_int);
+          crate::libbb::printable::visible(
+            c as libc::c_uint,
+            buf.as_mut_ptr(),
+            opts as libc::c_int,
+          );
           fputs_unlocked(buf.as_mut_ptr(), stdout);
           i += 1
         }
@@ -107,7 +89,7 @@ unsafe extern "C" fn catv(mut opts: libc::c_uint, mut argv: *mut *mut libc::c_ch
       break;
     }
   }
-  fflush_stdout_and_exit(retval);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(retval);
 }
 #[no_mangle]
 pub unsafe extern "C" fn cat_main(
@@ -115,7 +97,7 @@ pub unsafe extern "C" fn cat_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_uint = 0;
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^etvAnbu\x00Aetv\x00" as *const u8 as *const libc::c_char,
   );
@@ -150,14 +132,14 @@ pub unsafe extern "C" fn cat_main(
     ns.nonempty = (opts & (1 << 1) as libc::c_uint) as smallint;
     exitcode = 0;
     loop {
-      exitcode |= print_numbered_lines(&mut ns, *argv);
+      exitcode |= crate::libbb::print_numbered_lines::print_numbered_lines(&mut ns, *argv);
       argv = argv.offset(1);
       if (*argv).is_null() {
         break;
       }
     }
-    fflush_stdout_and_exit(exitcode);
+    crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(exitcode);
   }
   /*opts >>= 2;*/
-  return bb_cat(argv);
+  return crate::libbb::bb_cat::bb_cat(argv);
 }

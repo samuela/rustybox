@@ -1,4 +1,6 @@
+use crate::archival::libarchive::bb_archive::transformer_state_t;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
 use libc;
 use libc::free;
 use libc::strcpy;
@@ -15,10 +17,6 @@ extern "C" {
   #[no_mangle]
   fn malloc(_: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
   /* Returns $SHELL, getpwuid(getuid())->pw_shell, or DEFAULT_SHELL.
    * Note that getpwuid result might need xstrdup'ing
    * if there is a possibility of intervening getpwxxx() calls.
@@ -140,21 +138,7 @@ extern "C" {
   /* TLS benefits from knowing that sha1 and sha256 share these. Give them "agnostic" names too */
   #[no_mangle]
   static mut global_crc32_table: *mut u32;
-  #[no_mangle]
-  fn crc32_block_endian0(
-    val: u32,
-    buf: *const libc::c_void,
-    len: libc::c_uint,
-    crc_table: *mut u32,
-  ) -> u32;
-  #[no_mangle]
-  fn global_crc32_new_table_le() -> *mut u32;
-  #[no_mangle]
-  fn xtransformer_write(
-    xstate: *mut transformer_state_t,
-    buf: *const libc::c_void,
-    bufsize: size_t,
-  ) -> ssize_t;
+
 }
 
 pub type bb__aliased_u32 = u32;
@@ -169,11 +153,8 @@ pub type bb__aliased_u32 = u32;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 
-use crate::archival::libarchive::bb_archive::transformer_state_t;
-use crate::librb::size_t;
-use libc::ssize_t;
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct xz_dec {
   pub sequence: C2RustUnnamed_6,
   pub pos: u32,
@@ -190,8 +171,9 @@ pub struct xz_dec {
   pub temp: C2RustUnnamed_1,
   pub lzma2: *mut xz_dec_lzma2,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct xz_dec_lzma2 {
   pub rc: rc_dec,
   pub dict: dictionary,
@@ -199,14 +181,16 @@ pub struct xz_dec_lzma2 {
   pub lzma: lzma_dec,
   pub temp: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_0 {
   pub size: u32,
   pub buf: [u8; 63],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct lzma_dec {
   pub rep0: u32,
   pub rep1: u32,
@@ -230,8 +214,9 @@ pub struct lzma_dec {
   pub rep_len_dec: lzma_len_dec,
   pub literal: [[u16; 768]; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct lzma_len_dec {
   pub choice: u16,
   pub choice2: u16,
@@ -270,8 +255,9 @@ pub const STATE_SHORTREP_LIT_LIT: lzma_state = 3;
 pub const STATE_REP_LIT_LIT: lzma_state = 2;
 pub const STATE_MATCH_LIT_LIT: lzma_state = 1;
 pub const STATE_LIT_LIT: lzma_state = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct lzma2_dec {
   pub sequence: lzma2_seq,
   pub next_sequence: lzma2_seq,
@@ -290,8 +276,9 @@ pub const SEQ_COMPRESSED_0: lzma2_seq = 3;
 pub const SEQ_UNCOMPRESSED_2: lzma2_seq = 2;
 pub const SEQ_UNCOMPRESSED_1: lzma2_seq = 1;
 pub const SEQ_CONTROL: lzma2_seq = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct dictionary {
   pub buf: *mut u8,
   pub start: size_t,
@@ -344,8 +331,9 @@ pub type xz_mode = libc::c_uint;
 pub const XZ_DYNALLOC: xz_mode = 2;
 pub const XZ_PREALLOC: xz_mode = 1;
 pub const XZ_SINGLE: xz_mode = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct rc_dec {
   pub range: u32,
   pub code: u32,
@@ -354,23 +342,26 @@ pub struct rc_dec {
   pub in_pos: size_t,
   pub in_limit: size_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_1 {
   pub pos: size_t,
   pub size: size_t,
   pub buf: [u8; 1024],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_2 {
   pub sequence: C2RustUnnamed_3,
   pub size: vli_type,
   pub count: vli_type,
   pub hash: xz_dec_hash,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct xz_dec_hash {
   pub unpadded: vli_type,
   pub uncompressed: vli_type,
@@ -381,16 +372,18 @@ pub type C2RustUnnamed_3 = libc::c_uint;
 pub const SEQ_INDEX_UNCOMPRESSED: C2RustUnnamed_3 = 2;
 pub const SEQ_INDEX_UNPADDED: C2RustUnnamed_3 = 1;
 pub const SEQ_INDEX_COUNT: C2RustUnnamed_3 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_4 {
   pub compressed: vli_type,
   pub uncompressed: vli_type,
   pub count: vli_type,
   pub hash: xz_dec_hash,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_5 {
   pub compressed: vli_type,
   pub uncompressed: vli_type,
@@ -422,8 +415,9 @@ pub const XZ_MEMLIMIT_ERROR: xz_ret = 4;
 pub const XZ_MEM_ERROR: xz_ret = 3;
 pub const XZ_STREAM_END: xz_ret = 1;
 pub const XZ_OK: xz_ret = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct xz_buf {
   pub in_0: *const u8,
   pub in_pos: size_t,
@@ -446,7 +440,7 @@ pub struct xz_buf {
 /* Skip check (rather than fail) of unsupported hash functions */
 /* We use our own crc32 function */
 unsafe extern "C" fn xz_crc32(mut buf: *const u8, mut size: size_t, mut crc: u32) -> u32 {
-  return !crc32_block_endian0(
+  return !crate::libbb::crc32::crc32_block_endian0(
     !crc,
     buf as *const libc::c_void,
     size as libc::c_uint,
@@ -2407,7 +2401,7 @@ pub unsafe extern "C" fn unpack_xz_stream(
   let mut membuf: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
   let mut total: libc::c_longlong = 0i32 as libc::c_longlong;
   if global_crc32_table.is_null() {
-    global_crc32_new_table_le();
+    crate::libbb::crc32::global_crc32_new_table_le();
   }
   memset(
     &mut iobuf as *mut xz_buf as *mut libc::c_void,
@@ -2438,13 +2432,15 @@ pub unsafe extern "C" fn unpack_xz_stream(
    */
   {
     if iobuf.in_pos == iobuf.in_size {
-      let mut rd: libc::c_int = safe_read(
+      let mut rd: libc::c_int = crate::libbb::read::safe_read(
         (*xstate).src_fd,
         membuf as *mut libc::c_void,
         8192i32 as size_t,
       ) as libc::c_int;
       if rd < 0i32 {
-        bb_simple_error_msg(b"read error\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg(
+          b"read error\x00" as *const u8 as *const libc::c_char,
+        );
         total = -1i32 as libc::c_longlong;
         break;
       } else {
@@ -2500,7 +2496,11 @@ pub unsafe extern "C" fn unpack_xz_stream(
     //		bb_error_msg("<in pos:%d size:%d out pos:%d size:%d r:%d",
     //				iobuf.in_pos, iobuf.in_size, iobuf.out_pos, iobuf.out_size, xz_result);
     if iobuf.out_pos != 0 {
-      xtransformer_write(xstate, iobuf.out as *const libc::c_void, iobuf.out_pos);
+      crate::archival::libarchive::open_transformer::xtransformer_write(
+        xstate,
+        iobuf.out as *const libc::c_void,
+        iobuf.out_pos,
+      );
       total = (total as libc::c_ulonglong).wrapping_add(iobuf.out_pos as libc::c_ulonglong)
         as libc::c_longlong as libc::c_longlong;
       iobuf.out_pos = 0i32 as size_t
@@ -2513,7 +2513,9 @@ pub unsafe extern "C" fn unpack_xz_stream(
     {
       continue;
     }
-    bb_simple_error_msg(b"corrupted data\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg(
+      b"corrupted data\x00" as *const u8 as *const libc::c_char,
+    );
     total = -1i32 as libc::c_longlong;
     break;
   }

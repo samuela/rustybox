@@ -8,27 +8,14 @@ extern "C" {
   fn posix_fallocate(__fd: libc::c_int, __offset: off64_t, __len: off64_t) -> libc::c_int;
 
   #[no_mangle]
-  fn xopen3(pathname: *const libc::c_char, flags: libc::c_int, mode: libc::c_int) -> libc::c_int;
-  #[no_mangle]
   static kmg_i_suffixes: [suffix_mult; 0];
-  #[no_mangle]
-  fn xatoull_sfx(str: *const libc::c_char, sfx: *const suffix_mult) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
 }
 
 use libc::off64_t;
 use libc::off_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct suffix_mult {
-  pub suffix: [libc::c_char; 4],
-  pub mult: libc::c_uint,
-}
+
+use crate::librb::suffix_mult;
 
 /*
  * Copyright (C) 2017 Denys Vlasenko <vda.linux@googlemail.com>
@@ -107,24 +94,24 @@ pub unsafe extern "C" fn fallocate_main(
   let mut opts: libc::c_uint = 0;
   let mut fd: libc::c_int = 0;
   /* exactly one non-option arg */
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^l:o:\x00=1\x00" as *const u8 as *const libc::c_char,
     &mut str_l as *mut *const libc::c_char,
     &mut str_o as *mut *const libc::c_char,
   );
   if opts & 1i32 as libc::c_uint == 0 {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
-  ofs = xatoull_sfx(str_o, kmg_i_suffixes.as_ptr()) as off_t;
-  len = xatoull_sfx(str_l, kmg_i_suffixes.as_ptr()) as off_t;
+  ofs = crate::libbb::xatonum::xatoull_sfx(str_o, kmg_i_suffixes.as_ptr()) as off_t;
+  len = crate::libbb::xatonum::xatoull_sfx(str_l, kmg_i_suffixes.as_ptr()) as off_t;
   argv = argv.offset(optind as isize);
-  fd = xopen3(*argv, 0o2i32 | 0o100i32, 0o666i32);
+  fd = crate::libbb::xfuncs_printf::xopen3(*argv, 0o2i32 | 0o100i32, 0o666i32);
   /* posix_fallocate has unusual method of returning error */
   /* maybe use Linux-specific fallocate(int fd, int mode, off_t offset, off_t len) instead? */
   *bb_errno = posix_fallocate(fd, ofs, len);
   if *bb_errno != 0i32 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"fallocate \'%s\'\x00" as *const u8 as *const libc::c_char,
       *argv,
     );

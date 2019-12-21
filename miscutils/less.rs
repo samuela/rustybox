@@ -1,10 +1,9 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::re_pattern_buffer;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use c2rust_bitfields;
-use c2rust_bitfields::BitfieldStruct;
 use libc;
 use libc::access;
 use libc::close;
@@ -45,23 +44,7 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
-  #[no_mangle]
-  fn read_key(fd: libc::c_int, buffer: *mut libc::c_char, timeout: libc::c_int) -> int64_t;
-  #[no_mangle]
-  fn get_termios_and_make_raw(
-    fd: libc::c_int,
-    newterm: *mut termios,
-    oldterm: *mut termios,
-    flags: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn get_terminal_width_height(
-    fd: libc::c_int,
-    width: *mut libc::c_uint,
-    height: *mut libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn xmalloc_ttyname(fd: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
@@ -86,53 +69,7 @@ extern "C" {
   ) -> libc::c_int;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn ndelay_on(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn ndelay_off(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn kill_myself_with_sig(sig: libc::c_int) -> !;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn fopen_for_write(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_cat(argv: *mut *mut libc::c_char) -> libc::c_int;
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
@@ -146,12 +83,7 @@ extern "C" {
    *
    * Licensed under GPLv2 or later, see file LICENSE in this source tree.
    */
-  #[no_mangle]
-  fn regcomp_or_errmsg(
-    preg: *mut regex_t,
-    regex: *const libc::c_char,
-    cflags: libc::c_int,
-  ) -> *mut libc::c_char;
+
   #[no_mangle]
   fn regexec(
     __preg: *const regex_t,
@@ -192,8 +124,9 @@ pub const KEYCODE_LEFT: C2RustUnnamed_0 = -5;
 pub const KEYCODE_RIGHT: C2RustUnnamed_0 = -4;
 pub const KEYCODE_DOWN: C2RustUnnamed_0 = -3;
 pub const KEYCODE_UP: C2RustUnnamed_0 = -2;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub cur_fline: libc::c_int,
   pub kbd_fd: libc::c_int,
@@ -232,33 +165,13 @@ pub struct globals {
   pub kbd_input: [libc::c_char; 16],
 }
 pub type regex_t = re_pattern_buffer;
-#[derive(Copy, Clone, BitfieldStruct)]
-#[repr(C)]
-pub struct re_pattern_buffer {
-  pub buffer: *mut libc::c_uchar,
-  pub allocated: libc::c_ulong,
-  pub used: libc::c_ulong,
-  pub syntax: reg_syntax_t,
-  pub fastmap: *mut libc::c_char,
-  pub translate: *mut libc::c_uchar,
-  pub re_nsub: size_t,
-  #[bitfield(name = "can_be_null", ty = "libc::c_uint", bits = "0..=0")]
-  #[bitfield(name = "regs_allocated", ty = "libc::c_uint", bits = "1..=2")]
-  #[bitfield(name = "fastmap_accurate", ty = "libc::c_uint", bits = "3..=3")]
-  #[bitfield(name = "no_sub", ty = "libc::c_uint", bits = "4..=4")]
-  #[bitfield(name = "not_bol", ty = "libc::c_uint", bits = "5..=5")]
-  #[bitfield(name = "not_eol", ty = "libc::c_uint", bits = "6..=6")]
-  #[bitfield(name = "newline_anchor", ty = "libc::c_uint", bits = "7..=7")]
-  pub can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [u8; 1],
-  #[bitfield(padding)]
-  pub c2rust_padding: [u8; 7],
-}
-pub type reg_syntax_t = libc::c_ulong;
+
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed_1 = 1024;
 pub type regoff_t = libc::c_int;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct regmatch_t {
   pub rm_so: regoff_t,
   pub rm_eo: regoff_t,
@@ -288,7 +201,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
  * line number. Accessor: */
 /* Reset terminal input to normal */
 unsafe extern "C" fn set_tty_cooked() {
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   tcsetattr(
     (*ptr_to_globals).kbd_fd,
     0i32,
@@ -330,11 +243,11 @@ unsafe extern "C" fn print_statusline(mut str: *const libc::c_char) {
 unsafe extern "C" fn less_exit(mut code: libc::c_int) {
   set_tty_cooked(); /* does not return */
   if (*ptr_to_globals).kbd_fd_orig_flags & 0o4000i32 == 0 {
-    ndelay_off((*ptr_to_globals).kbd_fd);
+    crate::libbb::xfuncs::ndelay_off((*ptr_to_globals).kbd_fd);
   }
   clear_line();
   if code < 0i32 {
-    kill_myself_with_sig(-code);
+    crate::libbb::signals::kill_myself_with_sig(-code);
   }
   exit(code);
 }
@@ -406,7 +319,7 @@ unsafe extern "C" fn re_wrap() {
       linebuf.as_mut_ptr() as *const libc::c_void,
       sz as libc::c_ulong,
     );
-    new_flines = xrealloc_vector_helper(
+    new_flines = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
       new_flines as *mut libc::c_void,
       ((::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong) << 8i32)
         .wrapping_add(8i32 as libc::c_ulong) as libc::c_uint,
@@ -518,11 +431,11 @@ unsafe extern "C" fn read_lines() {
       let mut c: libc::c_char = 0;
       /* if no unprocessed chars left, eat more */
       if (*ptr_to_globals).readpos >= (*ptr_to_globals).readeof {
-        let mut flags: libc::c_int = ndelay_on(0i32); /* ndelay_off(0) */
+        let mut flags: libc::c_int = crate::libbb::xfuncs::ndelay_on(0i32); /* ndelay_off(0) */
         loop {
           let mut t: time_t = 0;
           *bb_errno = 0i32;
-          (*ptr_to_globals).eof_error = safe_read(
+          (*ptr_to_globals).eof_error = crate::libbb::read::safe_read(
             0i32,
             bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
             COMMON_BUFSIZE as libc::c_int as size_t,
@@ -623,7 +536,7 @@ unsafe extern "C" fn read_lines() {
       }
     }
     last_terminated = (*ptr_to_globals).terminated as libc::c_char;
-    (*ptr_to_globals).flines = xrealloc_vector_helper(
+    (*ptr_to_globals).flines = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
       (*ptr_to_globals).flines as *mut libc::c_void,
       ((::std::mem::size_of::<*const libc::c_char>() as libc::c_ulong) << 8i32)
         .wrapping_add(8i32 as libc::c_ulong) as libc::c_uint,
@@ -632,7 +545,7 @@ unsafe extern "C" fn read_lines() {
     let ref mut fresh2 = *(*ptr_to_globals)
       .flines
       .offset((*ptr_to_globals).max_fline as isize);
-    *fresh2 = (xrealloc(
+    *fresh2 = (crate::libbb::xfuncs_printf::xrealloc(
       current_line.offset(-4) as *mut libc::c_void,
       strlen(current_line)
         .wrapping_add(1i32 as libc::c_ulong)
@@ -725,7 +638,7 @@ unsafe extern "C" fn update_num_lines() {
       (*ptr_to_globals).num_lines = -3i32
     } else {
       's_69: loop {
-        len = safe_read(
+        len = crate::libbb::read::safe_read(
           fd,
           buf.as_mut_ptr() as *mut libc::c_void,
           ::std::mem::size_of::<[libc::c_char; 4096]>() as libc::c_ulong,
@@ -838,7 +751,7 @@ unsafe extern "C" fn status_print() {
   /* No flags set */
   clear_line();
   if (*ptr_to_globals).cur_fline != 0 && at_end() == 0 {
-    bb_putchar(':' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar(':' as i32);
     return;
   }
   p = b"(END)\x00" as *const u8 as *const libc::c_char;
@@ -931,7 +844,7 @@ unsafe extern "C" fn print_found(mut line: *const libc::c_char) {
     if !(match_status == 0i32) {
       break;
     }
-    new = xasprintf(
+    new = crate::libbb::xfuncs_printf::xasprintf(
       b"%s%.*s\x1b[7m%.*s\x1b[m\x00" as *const u8 as *const libc::c_char,
       if !growline.is_null() {
         growline
@@ -1219,12 +1132,16 @@ unsafe extern "C" fn buffer_lineno(mut lineno: libc::c_int) {
 }
 unsafe extern "C" fn open_file_and_read_lines() {
   if !(*ptr_to_globals).filename.is_null() {
-    xmove_fd(xopen((*ptr_to_globals).filename, 0i32), 0i32);
+    crate::libbb::xfuncs_printf::xmove_fd(
+      crate::libbb::xfuncs_printf::xopen((*ptr_to_globals).filename, 0i32),
+      0i32,
+    );
     (*ptr_to_globals).num_lines = -1i32
   } else {
     /* "less" with no arguments in argv[] */
     /* For status line only */
-    (*ptr_to_globals).filename = xstrdup(bb_msg_standard_input.as_ptr());
+    (*ptr_to_globals).filename =
+      crate::libbb::xfuncs_printf::xstrdup(bb_msg_standard_input.as_ptr());
     (*ptr_to_globals).num_lines = -2i32
   }
   (*ptr_to_globals).readpos = 0i32 as ssize_t;
@@ -1299,7 +1216,7 @@ unsafe extern "C" fn getch_nowait() -> int64_t {
         (*ptr_to_globals).less_gets_pos + 1i32,
       );
     }
-    fflush_all();
+    crate::libbb::xfuncs_printf::fflush_all();
     if (*ptr_to_globals).kbd_input[0] as libc::c_int == 0i32 {
       loop
       /* if nothing is buffered */
@@ -1321,7 +1238,7 @@ unsafe extern "C" fn getch_nowait() -> int64_t {
     }
     /* We have kbd_fd in O_NONBLOCK mode, read inside read_key()
      * would not block even if there is no input available */
-    key64 = read_key(
+    key64 = crate::libbb::read_key::read_key(
       (*ptr_to_globals).kbd_fd,
       (*ptr_to_globals).kbd_input.as_mut_ptr(),
       -2i32,
@@ -1367,7 +1284,8 @@ unsafe extern "C" fn less_getch(mut pos: libc::c_int) -> int64_t {
 unsafe extern "C" fn less_gets(mut sz: libc::c_int) -> *mut libc::c_char {
   let mut c: libc::c_int = 0;
   let mut i: libc::c_uint = 0i32 as libc::c_uint;
-  let mut result: *mut libc::c_char = xzalloc(1i32 as size_t) as *mut libc::c_char;
+  let mut result: *mut libc::c_char =
+    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t) as *mut libc::c_char;
   loop
   /* filters out KEYCODE_xxx too (<0) */
   {
@@ -1397,11 +1315,11 @@ unsafe extern "C" fn less_gets(mut sz: libc::c_int) -> *mut libc::c_char {
     {
       continue;
     }
-    bb_putchar(c);
+    crate::libbb::xfuncs_printf::bb_putchar(c);
     let fresh8 = i;
     i = i.wrapping_add(1);
     *result.offset(fresh8 as isize) = c as libc::c_char;
-    result = xrealloc(
+    result = crate::libbb::xfuncs_printf::xrealloc(
       result as *mut libc::c_void,
       i.wrapping_add(1i32 as libc::c_uint) as size_t,
     ) as *mut libc::c_char
@@ -1454,7 +1372,7 @@ unsafe extern "C" fn change_file(mut direction: libc::c_int) {
       1i32 as libc::c_uint
     };
     free((*ptr_to_globals).filename as *mut libc::c_void);
-    (*ptr_to_globals).filename = xstrdup(
+    (*ptr_to_globals).filename = crate::libbb::xfuncs_printf::xstrdup(
       *(*ptr_to_globals).files.offset(
         (*ptr_to_globals)
           .current_file
@@ -1586,7 +1504,7 @@ unsafe extern "C" fn fill_match_lines(mut pos: libc::c_uint) {
           .offset(((*ptr_to_globals).num_matches - 1i32) as isize)
           == pos)
     {
-      (*ptr_to_globals).match_lines = xrealloc_vector_helper(
+      (*ptr_to_globals).match_lines = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
         (*ptr_to_globals).match_lines as *mut libc::c_void,
         ((::std::mem::size_of::<libc::c_uint>() as libc::c_ulong) << 8i32)
           .wrapping_add(4i32 as libc::c_ulong) as libc::c_uint,
@@ -1613,7 +1531,7 @@ unsafe extern "C" fn regex_process() {
   }
   /* Get the uncompiled regular expression from the user */
   clear_line();
-  bb_putchar(
+  crate::libbb::xfuncs_printf::bb_putchar(
     if option_mask32 & LESS_STATE_MATCH_BACKWARDS as libc::c_int as libc::c_uint != 0 {
       '?' as i32
     } else {
@@ -1627,7 +1545,7 @@ unsafe extern "C" fn regex_process() {
     return;
   }
   /* Compile the regex and check for errors */
-  err = regcomp_or_errmsg(
+  err = crate::libbb::xregcomp::regcomp_or_errmsg(
     &mut (*ptr_to_globals).pattern,
     uncomp_regex,
     if option_mask32 & FLAG_I as libc::c_int as libc::c_uint != 0 {
@@ -1685,11 +1603,15 @@ unsafe extern "C" fn number_process(mut first_digit: libc::c_int) {
       break;
     }
     num_input[i as usize] = keypress as libc::c_char;
-    bb_putchar(keypress);
+    crate::libbb::xfuncs_printf::bb_putchar(keypress);
     i = i.wrapping_add(1)
   }
   num_input[i as usize] = '\u{0}' as i32 as libc::c_char;
-  num = bb_strtou(num_input.as_mut_ptr(), 0 as *mut *mut libc::c_char, 10i32) as libc::c_int;
+  num = crate::libbb::bb_strtonum::bb_strtou(
+    num_input.as_mut_ptr(),
+    0 as *mut *mut libc::c_char,
+    10i32,
+  ) as libc::c_int;
   /* on format error, num == -1 */
   if num < 1i32 || num > MAXLINES as libc::c_int {
     buffer_print();
@@ -1734,7 +1656,7 @@ unsafe extern "C" fn number_process(mut first_digit: libc::c_int) {
 unsafe extern "C" fn flag_change() {
   let mut keypress: libc::c_int = 0;
   clear_line();
-  bb_putchar('-' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('-' as i32);
   keypress = less_getch(1i32) as libc::c_int;
   match keypress {
     77 => option_mask32 ^= FLAG_M as libc::c_int as libc::c_uint,
@@ -1765,7 +1687,7 @@ unsafe extern "C" fn save_input_to_file() {
       .wrapping_sub(1i32 as libc::c_ulong) as libc::c_int,
   );
   if *current_line.offset(0) != 0 {
-    fp = fopen_for_write(current_line);
+    fp = crate::libbb::wfopen::fopen_for_write(current_line);
     if fp.is_null() {
       msg = b"Error opening log file\x00" as *const u8 as *const libc::c_char
     } else {
@@ -2054,7 +1976,8 @@ pub unsafe extern "C" fn less_main(
   let ref mut fresh13 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
-  *fresh13 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh13 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).less_gets_pos = -1i32;
   (*ptr_to_globals).empty_line_marker = b"~\x00" as *const u8 as *const libc::c_char;
@@ -2068,7 +1991,7 @@ pub unsafe extern "C" fn less_main(
    * -s: condense many empty lines to one
    *     (used by some setups for manpage display)
    */
-  getopt32(argv, b"EMmN~IFSRs\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::getopt32::getopt32(argv, b"EMmN~IFSRs\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   (*ptr_to_globals).num_files = (argc - optind) as libc::c_uint;
   (*ptr_to_globals).files = argv;
@@ -2091,15 +2014,16 @@ pub unsafe extern "C" fn less_main(
   /* Another popular pager, most, detects when stdout
    * is not a tty and turns into cat. This makes sense. */
   if isatty(1i32) == 0 {
-    return bb_cat(argv);
+    return crate::libbb::bb_cat::bb_cat(argv);
   }
   if (*ptr_to_globals).num_files == 0 {
     if isatty(0i32) != 0 {
       /* Just "less"? No args and no redirection? */
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
   } else {
-    (*ptr_to_globals).filename = xstrdup(*(*ptr_to_globals).files.offset(0))
+    (*ptr_to_globals).filename =
+      crate::libbb::xfuncs_printf::xstrdup(*(*ptr_to_globals).files.offset(0))
   }
   if option_mask32 & FLAG_TILDE as libc::c_int as libc::c_uint != 0 {
     (*ptr_to_globals).empty_line_marker = b"\x00" as *const u8 as *const libc::c_char
@@ -2112,7 +2036,7 @@ pub unsafe extern "C" fn less_main(
    * since we want to set this fd to non-blocking mode,
    * and not interfere with other processes which share stdout with us.
    */
-  tty_name = xmalloc_ttyname(1i32);
+  tty_name = crate::libbb::xfuncs_printf::xmalloc_ttyname(1i32);
   let mut current_block_42: u64;
   if !tty_name.is_null() {
     tty_fd = open(tty_name, 0i32);
@@ -2137,15 +2061,15 @@ pub unsafe extern "C" fn less_main(
     }
     _ => {}
   } /* save in a global */
-  (*ptr_to_globals).kbd_fd_orig_flags = ndelay_on(tty_fd);
+  (*ptr_to_globals).kbd_fd_orig_flags = crate::libbb::xfuncs::ndelay_on(tty_fd);
   (*ptr_to_globals).kbd_fd = tty_fd;
-  get_termios_and_make_raw(
+  crate::libbb::xfuncs::get_termios_and_make_raw(
     tty_fd,
     &mut (*ptr_to_globals).term_less,
     &mut (*ptr_to_globals).term_orig,
     1i32 << 1i32,
   );
-  (*ptr_to_globals).winsize_err = get_terminal_width_height(
+  (*ptr_to_globals).winsize_err = crate::libbb::xfuncs::get_terminal_width_height(
     tty_fd,
     &mut (*ptr_to_globals).width,
     &mut (*ptr_to_globals).max_displayed_line,
@@ -2154,13 +2078,13 @@ pub unsafe extern "C" fn less_main(
   if (*ptr_to_globals).width < 20i32 as libc::c_uint
     || (*ptr_to_globals).max_displayed_line < 3i32 as libc::c_uint
   {
-    return bb_cat(argv);
+    return crate::libbb::bb_cat::bb_cat(argv);
   }
   (*ptr_to_globals).max_displayed_line = (*ptr_to_globals)
     .max_displayed_line
     .wrapping_sub(2i32 as libc::c_uint);
   /* We want to restore term_orig on exit */
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     BB_FATAL_SIGS as libc::c_int,
     Some(sig_catcher as unsafe extern "C" fn(_: libc::c_int) -> ()),
   ); /* -1: do not position cursor */
@@ -2229,7 +2153,7 @@ pub unsafe extern "C" fn less_main(
           }
           _ => {
             (*ptr_to_globals).winch_counter = (*ptr_to_globals).winch_counter.wrapping_sub(1);
-            (*ptr_to_globals).winsize_err = get_terminal_width_height(
+            (*ptr_to_globals).winsize_err = crate::libbb::xfuncs::get_terminal_width_height(
               (*ptr_to_globals).kbd_fd,
               &mut (*ptr_to_globals).width,
               &mut (*ptr_to_globals).max_displayed_line,

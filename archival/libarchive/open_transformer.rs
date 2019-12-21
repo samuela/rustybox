@@ -23,59 +23,10 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn wait(__stat_loc: *mut libc::c_int) -> pid_t;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xmemdup(s: *const libc::c_void, n: libc::c_int) -> *mut libc::c_void;
-  #[no_mangle]
-  fn is_suffixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
+
   #[no_mangle]
   static mut bb_got_signal: smallint;
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn xpipe(filedes: *mut libc::c_int);
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xread(fd: libc::c_int, buf: *mut libc::c_void, count: size_t);
-  #[no_mangle]
-  fn xmalloc_read_with_initial_buf(
-    fd: libc::c_int,
-    maxsz_p: *mut size_t,
-    buf: *mut libc::c_char,
-    total: size_t,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn xfork() -> pid_t;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn wait_any_nohang(wstat: *mut libc::c_int) -> pid_t;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn unpack_gz_stream(xstate: *mut transformer_state_t) -> libc::c_longlong;
-  #[no_mangle]
-  fn unpack_bz2_stream(xstate: *mut transformer_state_t) -> libc::c_longlong;
-  #[no_mangle]
-  fn unpack_lzma_stream(xstate: *mut transformer_state_t) -> libc::c_longlong;
-  #[no_mangle]
-  fn unpack_xz_stream(xstate: *mut transformer_state_t) -> libc::c_longlong;
+
 }
 
 pub type bb__aliased_u32 = u32;
@@ -109,14 +60,16 @@ pub unsafe extern "C" fn check_signature16(
 ) -> libc::c_int {
   if (*xstate).signature_skipped == 0 {
     let mut magic2: u16 = 0;
-    if full_read(
+    if crate::libbb::read::full_read(
       (*xstate).src_fd,
       &mut magic2 as *mut u16 as *mut libc::c_void,
       2i32 as size_t,
     ) != 2
       || magic2 as libc::c_uint != magic16
     {
-      bb_simple_error_msg(b"invalid magic\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg(
+        b"invalid magic\x00" as *const u8 as *const libc::c_char,
+      );
       return -1i32;
     }
     (*xstate).signature_skipped = 2i32 as smallint
@@ -139,13 +92,13 @@ pub unsafe extern "C" fn transformer_write(
     if size > (*xstate).mem_output_size_max {
       free((*xstate).mem_output_buf as *mut libc::c_void);
       (*xstate).mem_output_buf = std::ptr::null_mut::<libc::c_char>();
-      bb_perror_msg(
+      crate::libbb::perror_msg::bb_perror_msg(
         b"buffer %u too small\x00" as *const u8 as *const libc::c_char,
         (*xstate).mem_output_size_max as libc::c_uint,
       );
       nwrote = -1i32 as ssize_t
     } else {
-      (*xstate).mem_output_buf = xrealloc(
+      (*xstate).mem_output_buf = crate::libbb::xfuncs_printf::xrealloc(
         (*xstate).mem_output_buf as *mut libc::c_void,
         size.wrapping_add(1),
       ) as *mut libc::c_char;
@@ -158,9 +111,11 @@ pub unsafe extern "C" fn transformer_write(
       nwrote = bufsize as ssize_t
     }
   } else {
-    nwrote = full_write((*xstate).dst_fd, buf, bufsize);
+    nwrote = crate::libbb::full_write::full_write((*xstate).dst_fd, buf, bufsize);
     if nwrote != bufsize as ssize_t {
-      bb_simple_perror_msg(b"write\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg(
+        b"write\x00" as *const u8 as *const libc::c_char,
+      );
       nwrote = -1i32 as ssize_t
     }
   }
@@ -174,7 +129,7 @@ pub unsafe extern "C" fn xtransformer_write(
 ) -> ssize_t {
   let mut nwrote: ssize_t = transformer_write(xstate, buf, bufsize);
   if nwrote != bufsize as ssize_t {
-    xfunc_die();
+    crate::libbb::xfunc_die::xfunc_die();
   }
   return nwrote;
 }
@@ -199,7 +154,7 @@ pub unsafe extern "C" fn check_errors_in_children(mut signo: libc::c_int) {
       7095457783677275021 =>
       /* this child exited with 0 */
       {
-        if wait_any_nohang(&mut status) < 0i32 {
+        if crate::libbb::xfuncs::wait_any_nohang(&mut status) < 0i32 {
           //FIXME: check EINTR?
           /* wait failed?! I'm confused... */
           return;
@@ -232,14 +187,16 @@ pub unsafe extern "C" fn fork_transformer(
 ) {
   let mut fd_pipe: fd_pair = fd_pair { rd: 0, wr: 0 };
   let mut pid: libc::c_int = 0;
-  xpipe(&mut fd_pipe.rd);
+  crate::libbb::xfuncs_printf::xpipe(&mut fd_pipe.rd);
   pid = if 1i32 != 0 {
-    xfork()
+    crate::libbb::xfuncs_printf::xfork()
   } else {
     ({
       let mut bb__xvfork_pid: pid_t = vfork();
       if bb__xvfork_pid < 0i32 {
-        bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"vfork\x00" as *const u8 as *const libc::c_char,
+        );
       }
       bb__xvfork_pid
     })
@@ -261,7 +218,7 @@ pub unsafe extern "C" fn fork_transformer(
   /* must be _exit! bug was actually seen here */
   /* parent process */
   close(fd_pipe.wr); /* don't want to write to the child */
-  xmove_fd(fd_pipe.rd, fd);
+  crate::libbb::xfuncs_printf::xmove_fd(fd_pipe.rd, fd);
 }
 /* Used by e.g. rpm which gives us a fd without filename,
  * thus we can't guess the format from filename's extension.
@@ -272,20 +229,22 @@ unsafe extern "C" fn setup_transformer_on_fd(
 ) -> *mut transformer_state_t {
   let mut current_block: u64;
   let mut xstate: *mut transformer_state_t = 0 as *mut transformer_state_t;
-  xstate = xzalloc(::std::mem::size_of::<transformer_state_t>() as libc::c_ulong)
-    as *mut transformer_state_t;
+  xstate = crate::libbb::xfuncs_printf::xzalloc(
+    ::std::mem::size_of::<transformer_state_t>() as libc::c_ulong
+  ) as *mut transformer_state_t;
   (*xstate).src_fd = fd;
   /* .gz and .bz2 both have 2-byte signature, and their
    * unpack_XXX_stream wants this header skipped. */
   (*xstate).signature_skipped = 2i32 as smallint;
-  xread(
+  crate::libbb::read_printf::xread(
     fd,
     (*xstate).magic.b16.as_mut_ptr() as *mut libc::c_void,
     2i32 as size_t,
   );
   if 1i32 != 0 && (*xstate).magic.b16[0] as libc::c_int == GZIP_MAGIC as libc::c_int {
     (*xstate).xformer = Some(
-      unpack_gz_stream as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
+      crate::archival::libarchive::decompress_gunzip::unpack_gz_stream
+        as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
     )
   } else if false && (*xstate).magic.b16[0] as libc::c_int == COMPRESS_MAGIC as libc::c_int {
     // Branch conditional was originally
@@ -294,14 +253,12 @@ unsafe extern "C" fn setup_transformer_on_fd(
     // (*xstate).xformer =
     //   Some(unpack_Z_stream as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong)
   } else if 1i32 != 0 && (*xstate).magic.b16[0] as libc::c_int == BZIP2_MAGIC as libc::c_int {
-    (*xstate).xformer = Some(
-      unpack_bz2_stream as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
-    )
+    (*xstate).xformer = Some(crate::archival::libarchive::decompress_bunzip2::unpack_bz2_stream)
   } else {
     if 1i32 != 0 && (*xstate).magic.b16[0] as libc::c_int == XZ_MAGIC1 as libc::c_int {
       let mut v32: u32 = 0;
       (*xstate).signature_skipped = 6i32 as smallint;
-      xread(
+      crate::libbb::read_printf::xread(
         fd,
         &mut *(*xstate).magic.b16.as_mut_ptr().offset(1) as *mut u16 as *mut libc::c_void,
         4i32 as size_t,
@@ -309,7 +266,8 @@ unsafe extern "C" fn setup_transformer_on_fd(
       v32 = *(&mut *(*xstate).magic.b16.as_mut_ptr().offset(1) as *mut u16 as *mut bb__aliased_u32);
       if v32 == XZ_MAGIC2 as libc::c_int as libc::c_uint {
         (*xstate).xformer = Some(
-          unpack_xz_stream as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
+          crate::archival::libarchive::decompress_unxz::unpack_xz_stream
+            as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
         );
         current_block = 4138974559695082291;
       } else {
@@ -323,7 +281,7 @@ unsafe extern "C" fn setup_transformer_on_fd(
       _ => {
         /* No known magic seen */
         if fail_if_not_compressed != 0 {
-          bb_simple_error_msg_and_die(
+          crate::libbb::verror_msg::bb_simple_error_msg_and_die(
             b"no gzip/bzip2/xz magic\x00" as *const u8 as *const libc::c_char,
           );
         }
@@ -362,12 +320,13 @@ pub unsafe extern "C" fn setup_unzip_on_fd(
 /* ...and custom version for LZMA */
 #[no_mangle]
 pub unsafe extern "C" fn setup_lzma_on_fd(mut fd: libc::c_int) {
-  let mut xstate: *mut transformer_state_t =
-    xzalloc(::std::mem::size_of::<transformer_state_t>() as libc::c_ulong)
-      as *mut transformer_state_t;
+  let mut xstate: *mut transformer_state_t = crate::libbb::xfuncs_printf::xzalloc(
+    ::std::mem::size_of::<transformer_state_t>() as libc::c_ulong,
+  ) as *mut transformer_state_t;
   (*xstate).src_fd = fd;
   (*xstate).xformer = Some(
-    unpack_lzma_stream as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
+    crate::archival::libarchive::decompress_unlzma::unpack_lzma_stream
+      as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
   );
   fork_transformer_and_free(xstate);
 }
@@ -382,12 +341,19 @@ unsafe extern "C" fn open_transformer(
     return 0 as *mut transformer_state_t;
   }
   /* .lzma has no header/signature, can only detect it by extension */
-  if !is_suffixed_with(fname, b".lzma\x00" as *const u8 as *const libc::c_char).is_null() {
-    xstate = xzalloc(::std::mem::size_of::<transformer_state_t>() as libc::c_ulong)
-      as *mut transformer_state_t;
+  if !crate::libbb::compare_string_array::is_suffixed_with(
+    fname,
+    b".lzma\x00" as *const u8 as *const libc::c_char,
+  )
+  .is_null()
+  {
+    xstate = crate::libbb::xfuncs_printf::xzalloc(
+      ::std::mem::size_of::<transformer_state_t>() as libc::c_ulong
+    ) as *mut transformer_state_t;
     (*xstate).src_fd = fd;
     (*xstate).xformer = Some(
-      unpack_lzma_stream as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
+      crate::archival::libarchive::decompress_unlzma::unpack_lzma_stream
+        as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
     );
     return xstate;
   }
@@ -410,7 +376,7 @@ pub unsafe extern "C" fn open_zipped(
     fork_transformer(fd, 1i32, (*xstate).xformer);
   } else {
     /* the file is not compressed */
-    xlseek(
+    crate::libbb::xfuncs_printf::xlseek(
       fd,
       -((*xstate).signature_skipped as libc::c_int) as off_t,
       1i32,
@@ -700,10 +666,10 @@ pub unsafe extern "C" fn xmalloc_open_zipped_read_close(
      *   read(4, "LF\2\1\1\0\0\0\0"...
      * ...and we avoided seeking on the fd! :)
      */
-    image = xmalloc_read_with_initial_buf(
+    image = crate::libbb::read_printf::xmalloc_read_with_initial_buf(
       (*xstate).src_fd,
       maxsz_p,
-      xmemdup(
+      crate::libbb::xfuncs_printf::xmemdup(
         &mut (*xstate).magic as *mut TransformerMagic as *const libc::c_void,
         (*xstate).signature_skipped as libc::c_int,
       ) as *mut libc::c_char,
@@ -712,7 +678,7 @@ pub unsafe extern "C" fn xmalloc_open_zipped_read_close(
     (*xstate).signature_skipped = 0i32 as smallint
   }
   if image.is_null() {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"read error from \'%s\'\x00" as *const u8 as *const libc::c_char,
       fname,
     );

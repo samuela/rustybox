@@ -9,10 +9,7 @@ extern "C" {
   fn unlockpt(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn ptsname_r(__fd: libc::c_int, __buf: *mut libc::c_char, __buflen: size_t) -> libc::c_int;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
 }
 
 pub type C2RustUnnamed = libc::c_uint;
@@ -141,7 +138,7 @@ pub unsafe extern "C" fn xgetpty(mut line: *mut libc::c_char) -> libc::c_int {
     unlockpt(p);
     /* find out the name of slave pty */
     if ptsname_r(p, line, (GETPTY_BUFSIZE as libc::c_int - 1i32) as size_t) != 0i32 {
-      bb_simple_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
         b"ptsname error (is /dev/pts mounted?)\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -149,5 +146,7 @@ pub unsafe extern "C" fn xgetpty(mut line: *mut libc::c_char) -> libc::c_int {
     return p;
   }
   /* FEATURE_DEVPTS */
-  bb_simple_error_msg_and_die(b"can\'t find free pty\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+    b"can\'t find free pty\x00" as *const u8 as *const libc::c_char,
+  );
 }

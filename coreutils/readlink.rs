@@ -8,14 +8,6 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn xmalloc_realpath_coreutils(path: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_readlink_or_warn(path: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
   static mut logmode: smallint;
 }
 
@@ -90,7 +82,7 @@ pub unsafe extern "C" fn readlink_main(
   let mut fname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_uint = 0;
   /* We need exactly one non-option argument.  */
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^fnvsq\x00=1\x00" as *const u8 as *const libc::c_char,
   );
@@ -103,9 +95,9 @@ pub unsafe extern "C" fn readlink_main(
   /* NOFORK: only one alloc is allowed; must free */
   if opt & 1i32 as libc::c_uint != 0 {
     /* -f */
-    buf = xmalloc_realpath_coreutils(fname)
+    buf = crate::libbb::xreadlink::xmalloc_realpath_coreutils(fname)
   } else {
-    buf = xmalloc_readlink_or_warn(fname)
+    buf = crate::libbb::xreadlink::xmalloc_readlink_or_warn(fname)
   }
   if buf.is_null() {
     return 1i32;
@@ -119,5 +111,5 @@ pub unsafe extern "C" fn readlink_main(
     buf,
   );
   free(buf as *mut libc::c_void);
-  fflush_stdout_and_exit(0i32);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
 }

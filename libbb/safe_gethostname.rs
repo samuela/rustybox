@@ -1,12 +1,12 @@
 use libc;
 extern "C" {
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct utsname {
   pub sysname: [libc::c_char; 65],
   pub nodename: [libc::c_char; 65],
@@ -330,7 +330,7 @@ pub unsafe extern "C" fn safe_gethostname() -> *mut libc::c_char {
    */
   /* Uname can fail only if you pass a bad pointer to it. */
   uname(&mut uts);
-  return xstrndup(
+  return crate::libbb::xfuncs_printf::xstrndup(
     if uts.nodename[0] == 0 {
       b"?\x00" as *const u8 as *const libc::c_char
     } else {

@@ -45,42 +45,6 @@ extern "C" {
   fn localtime(__timer: *const time_t) -> *mut tm;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn open_read_close(
-    filename: *const libc::c_char,
-    buf: *mut libc::c_void,
-    maxsz: size_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-  #[no_mangle]
-  fn smart_ulltoa4(
-    ul: libc::c_ulonglong,
-    buf: *mut libc::c_char,
-    scale_0: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatoi(str: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
@@ -90,16 +54,18 @@ use libc::ssize_t;
 use libc::time_t;
 use libc::timeval;
 use libc::useconds_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct timezone {
   pub tz_minuteswest: libc::c_int,
   pub tz_dsttime: libc::c_int,
 }
 pub type __timezone_ptr_t = *mut timezone;
 use libc::tm;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub gen: smallint,
   pub is26: smallint,
@@ -116,8 +82,9 @@ pub struct globals {
   pub proc_diskstats: proc_file,
   pub proc_sys_fs_filenr: proc_file,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct proc_file {
   pub file: *mut libc::c_char,
   pub file_sz: libc::c_int,
@@ -129,8 +96,9 @@ pub type ullong = libc::c_ulonglong;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const PROC_MAX_FILE_SIZE: C2RustUnnamed_0 = 16384;
 pub const PROC_MIN_FILE_SIZE: C2RustUnnamed_0 = 256;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct s_stat {
   pub next: *mut s_stat,
   pub collect: Option<unsafe extern "C" fn(_: *mut s_stat) -> ()>,
@@ -144,8 +112,9 @@ pub const conv_decimal: conv_type = 0;
 //cpuN 649369 0 341297 4336769 11640 7122 1183
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const CPU_FIELDCNT: C2RustUnnamed_1 = 7;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct cpu_stat {
   pub next: *mut s_stat,
   pub collect: Option<unsafe extern "C" fn(_: *mut cpu_stat) -> ()>,
@@ -154,8 +123,9 @@ pub struct cpu_stat {
   pub bar_sz: libc::c_uint,
   pub bar: [libc::c_char; 1],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct int_stat {
   pub next: *mut s_stat,
   pub collect: Option<unsafe extern "C" fn(_: *mut int_stat) -> ()>,
@@ -163,16 +133,18 @@ pub struct int_stat {
   pub old: ullong,
   pub no: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ctx_stat {
   pub next: *mut s_stat,
   pub collect: Option<unsafe extern "C" fn(_: *mut ctx_stat) -> ()>,
   pub label: *const libc::c_char,
   pub old: ullong,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct blk_stat {
   pub next: *mut s_stat,
   pub collect: Option<unsafe extern "C" fn(_: *mut blk_stat) -> ()>,
@@ -180,16 +152,18 @@ pub struct blk_stat {
   pub lookfor: *const libc::c_char,
   pub old: [ullong; 2],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fork_stat {
   pub next: *mut s_stat,
   pub collect: Option<unsafe extern "C" fn(_: *mut fork_stat) -> ()>,
   pub label: *const libc::c_char,
   pub old: ullong,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct if_stat {
   pub next: *mut s_stat,
   pub collect: Option<unsafe extern "C" fn(_: *mut if_stat) -> ()>,
@@ -198,30 +172,34 @@ pub struct if_stat {
   pub device: *const libc::c_char,
   pub device_colon: *mut libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct mem_stat {
   pub next: *mut s_stat,
   pub collect: Option<unsafe extern "C" fn(_: *mut mem_stat) -> ()>,
   pub label: *const libc::c_char,
   pub opt: libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct swp_stat {
   pub next: *mut s_stat,
   pub collect: Option<unsafe extern "C" fn(_: *mut swp_stat) -> ()>,
   pub label: *const libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fd_stat {
   pub next: *mut s_stat,
   pub collect: Option<unsafe extern "C" fn(_: *mut fd_stat) -> ()>,
   pub label: *const libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct time_stat {
   pub next: *mut s_stat,
   pub collect: Option<unsafe extern "C" fn(_: *mut time_stat) -> ()>,
@@ -252,7 +230,7 @@ unsafe extern "C" fn print_outbuf() {
     .wrapping_offset_from(bb_common_bufsiz1.as_mut_ptr())
     as libc::c_long as libc::c_int;
   if sz > 0i32 {
-    xwrite(
+    crate::libbb::xfuncs_printf::xwrite(
       1i32,
       bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,
       sz as size_t,
@@ -313,7 +291,7 @@ unsafe extern "C" fn readfile_z(mut pf: *mut proc_file, mut fname: *const libc::
     sz = PROC_MIN_FILE_SIZE as libc::c_int
   }
   loop {
-    fd = xopen(fname, 0i32);
+    fd = crate::libbb::xfuncs_printf::xopen(fname, 0i32);
     *buf.offset(0) = '\u{0}' as i32 as libc::c_char;
     rdsz = read(fd, buf as *mut libc::c_void, (sz - 1i32) as size_t) as libc::c_int;
     close(fd);
@@ -322,7 +300,8 @@ unsafe extern "C" fn readfile_z(mut pf: *mut proc_file, mut fname: *const libc::
     }
     if rdsz == sz - 1i32 && sz < PROC_MAX_FILE_SIZE as libc::c_int {
       sz *= 2i32;
-      buf = xrealloc(buf as *mut libc::c_void, sz as size_t) as *mut libc::c_char
+      buf = crate::libbb::xfuncs_printf::xrealloc(buf as *mut libc::c_void, sz as size_t)
+        as *mut libc::c_char
     } else {
       *buf.offset(rdsz as isize) = '\u{0}' as i32 as libc::c_char;
       break;
@@ -507,7 +486,7 @@ unsafe extern "C" fn rdval_diskstats(
 unsafe extern "C" fn scale(mut ul: ullong) {
   let mut buf: [libc::c_char; 5] = [0; 5];
   /* see http://en.wikipedia.org/wiki/Tera */
-  *smart_ulltoa4(
+  *crate::libbb::human_readable::smart_ulltoa4(
     ul,
     buf.as_mut_ptr(),
     b" kmgtpezy\x00" as *const u8 as *const libc::c_char,
@@ -517,7 +496,9 @@ unsafe extern "C" fn scale(mut ul: ullong) {
 }
 unsafe extern "C" fn collect_literal(mut _s: *mut s_stat) {}
 unsafe extern "C" fn init_literal() -> *mut s_stat {
-  let mut s: *mut s_stat = xzalloc(::std::mem::size_of::<s_stat>() as libc::c_ulong) as *mut s_stat;
+  let mut s: *mut s_stat =
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<s_stat>() as libc::c_ulong)
+      as *mut s_stat;
   (*s).collect = Some(collect_literal as unsafe extern "C" fn(_: *mut s_stat) -> ());
   return s;
 }
@@ -668,9 +649,9 @@ unsafe extern "C" fn init_cpu(mut param: *const libc::c_char) -> *mut s_stat {
   if sz > 1000i32 {
     sz = 1000i32
   }
-  s =
-    xzalloc((::std::mem::size_of::<cpu_stat>() as libc::c_ulong).wrapping_add(sz as libc::c_ulong))
-      as *mut cpu_stat;
+  s = crate::libbb::xfuncs_printf::xzalloc(
+    (::std::mem::size_of::<cpu_stat>() as libc::c_ulong).wrapping_add(sz as libc::c_ulong),
+  ) as *mut cpu_stat;
   /*s->bar[sz] = '\0'; - xzalloc did it */
   (*s).bar_sz = sz as libc::c_uint; //sanitize
   (*s).collect = Some(collect_cpu as unsafe extern "C" fn(_: *mut cpu_stat) -> ()); //sanitize
@@ -698,12 +679,13 @@ unsafe extern "C" fn collect_int(mut s: *mut int_stat) {
 }
 unsafe extern "C" fn init_int(mut param: *const libc::c_char) -> *mut s_stat {
   let mut s: *mut int_stat =
-    xzalloc(::std::mem::size_of::<int_stat>() as libc::c_ulong) as *mut int_stat;
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<int_stat>() as libc::c_ulong)
+      as *mut int_stat;
   (*s).collect = Some(collect_int as unsafe extern "C" fn(_: *mut int_stat) -> ());
   if *param.offset(0) as libc::c_int == '\u{0}' as i32 {
     (*s).no = 1i32
   } else {
-    let mut n: libc::c_int = xatoi_positive(param);
+    let mut n: libc::c_int = crate::libbb::xatonum::xatoi_positive(param);
     (*s).no = n + 2i32
   }
   return s as *mut s_stat;
@@ -730,7 +712,8 @@ unsafe extern "C" fn collect_ctx(mut s: *mut ctx_stat) {
 }
 unsafe extern "C" fn init_ctx(mut _param: *const libc::c_char) -> *mut s_stat {
   let mut s: *mut ctx_stat =
-    xzalloc(::std::mem::size_of::<ctx_stat>() as libc::c_ulong) as *mut ctx_stat;
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<ctx_stat>() as libc::c_ulong)
+      as *mut ctx_stat;
   (*s).collect = Some(collect_ctx as unsafe extern "C" fn(_: *mut ctx_stat) -> ());
   return s as *mut s_stat;
 }
@@ -776,7 +759,8 @@ unsafe extern "C" fn collect_blk(mut s: *mut blk_stat) {
 }
 unsafe extern "C" fn init_blk(mut _param: *const libc::c_char) -> *mut s_stat {
   let mut s: *mut blk_stat =
-    xzalloc(::std::mem::size_of::<blk_stat>() as libc::c_ulong) as *mut blk_stat;
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<blk_stat>() as libc::c_ulong)
+      as *mut blk_stat;
   (*s).collect = Some(collect_blk as unsafe extern "C" fn(_: *mut blk_stat) -> ());
   (*s).lookfor = b"page\x00" as *const u8 as *const libc::c_char;
   return s as *mut s_stat;
@@ -816,7 +800,8 @@ unsafe extern "C" fn collect_fork(mut s: *mut fork_stat) {
 }
 unsafe extern "C" fn init_fork(mut param: *const libc::c_char) -> *mut s_stat {
   let mut s: *mut fork_stat =
-    xzalloc(::std::mem::size_of::<fork_stat>() as libc::c_ulong) as *mut fork_stat;
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<fork_stat>() as libc::c_ulong)
+      as *mut fork_stat;
   if *param as libc::c_int == 'n' as i32 {
     (*s).collect = Some(collect_thread_nr as unsafe extern "C" fn(_: *mut fork_stat) -> ())
   } else {
@@ -855,13 +840,15 @@ unsafe extern "C" fn collect_if(mut s: *mut if_stat) {
 }
 unsafe extern "C" fn init_if(mut device: *const libc::c_char) -> *mut s_stat {
   let mut s: *mut if_stat =
-    xzalloc(::std::mem::size_of::<if_stat>() as libc::c_ulong) as *mut if_stat;
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<if_stat>() as libc::c_ulong)
+      as *mut if_stat;
   if device.is_null() || *device.offset(0) == 0 {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   (*s).collect = Some(collect_if as unsafe extern "C" fn(_: *mut if_stat) -> ());
   (*s).device = device;
-  (*s).device_colon = xasprintf(b"%s:\x00" as *const u8 as *const libc::c_char, device);
+  (*s).device_colon =
+    crate::libbb::xfuncs_printf::xasprintf(b"%s:\x00" as *const u8 as *const libc::c_char, device);
   return s as *mut s_stat;
 }
 // "Memory" value should not include any caches.
@@ -961,7 +948,8 @@ unsafe extern "C" fn collect_mem(mut s: *mut mem_stat) {
 }
 unsafe extern "C" fn init_mem(mut param: *const libc::c_char) -> *mut s_stat {
   let mut s: *mut mem_stat =
-    xzalloc(::std::mem::size_of::<mem_stat>() as libc::c_ulong) as *mut mem_stat;
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<mem_stat>() as libc::c_ulong)
+      as *mut mem_stat;
   (*s).collect = Some(collect_mem as unsafe extern "C" fn(_: *mut mem_stat) -> ());
   (*s).opt = *param.offset(0);
   return s as *mut s_stat;
@@ -989,7 +977,8 @@ unsafe extern "C" fn collect_swp(mut _s: *mut swp_stat) {
 }
 unsafe extern "C" fn init_swp(mut _param: *const libc::c_char) -> *mut s_stat {
   let mut s: *mut swp_stat =
-    xzalloc(::std::mem::size_of::<swp_stat>() as libc::c_ulong) as *mut swp_stat;
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<swp_stat>() as libc::c_ulong)
+      as *mut swp_stat;
   (*s).collect = Some(collect_swp as unsafe extern "C" fn(_: *mut swp_stat) -> ());
   return s as *mut s_stat;
 }
@@ -1009,7 +998,8 @@ unsafe extern "C" fn collect_fd(mut _s: *mut fd_stat) {
 }
 unsafe extern "C" fn init_fd(mut _param: *const libc::c_char) -> *mut s_stat {
   let mut s: *mut fd_stat =
-    xzalloc(::std::mem::size_of::<fd_stat>() as libc::c_ulong) as *mut fd_stat;
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<fd_stat>() as libc::c_ulong)
+      as *mut fd_stat;
   (*s).collect = Some(collect_fd as unsafe extern "C" fn(_: *mut fd_stat) -> ());
   return s as *mut s_stat;
 }
@@ -1045,7 +1035,8 @@ unsafe extern "C" fn collect_time(mut s: *mut time_stat) {
 unsafe extern "C" fn init_time(mut param: *const libc::c_char) -> *mut s_stat {
   let mut prec: libc::c_int = 0;
   let mut s: *mut time_stat =
-    xzalloc(::std::mem::size_of::<time_stat>() as libc::c_ulong) as *mut time_stat;
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<time_stat>() as libc::c_ulong)
+      as *mut time_stat;
   (*s).collect = Some(collect_time as unsafe extern "C" fn(_: *mut time_stat) -> ());
   prec = *param.offset(0) as libc::c_int - '0' as i32;
   if prec < 0i32 {
@@ -1104,14 +1095,15 @@ pub unsafe extern "C" fn nmeter_main(
   let mut prev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let ref mut fresh8 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh8 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh8 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).cur_outbuf = bb_common_bufsiz1.as_mut_ptr();
   (*ptr_to_globals).final_char = '\n' as i32 as libc::c_char;
   (*ptr_to_globals).delta = 1000000i32;
   (*ptr_to_globals).deltanz = (*ptr_to_globals).delta as libc::c_uint;
-  xchdir(b"/proc\x00" as *const u8 as *const libc::c_char);
-  if open_read_close(
+  crate::libbb::xfuncs_printf::xchdir(b"/proc\x00" as *const u8 as *const libc::c_char);
+  if crate::libbb::read::open_read_close(
     b"version\x00" as *const u8 as *const libc::c_char,
     buf.as_mut_ptr() as *mut libc::c_void,
     (::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong)
@@ -1126,13 +1118,13 @@ pub unsafe extern "C" fn nmeter_main(
     ) == 0 as *mut libc::c_void as *mut libc::c_char) as libc::c_int
       as smallint
   }
-  if getopt32(
+  if crate::libbb::getopt32::getopt32(
     argv,
     b"d:\x00" as *const u8 as *const libc::c_char,
     &mut opt_d as *mut *mut libc::c_char,
   ) != 0
   {
-    (*ptr_to_globals).delta = xatoi(opt_d) * 1000i32;
+    (*ptr_to_globals).delta = crate::libbb::xatonum::xatoi(opt_d) * 1000i32;
     (*ptr_to_globals).deltanz = if (*ptr_to_globals).delta > 0i32 {
       (*ptr_to_globals).delta
     } else {
@@ -1144,11 +1136,11 @@ pub unsafe extern "C" fn nmeter_main(
   }
   argv = argv.offset(optind as isize);
   if (*argv.offset(0)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   // Can use argv[0] directly, but this will mess up
   // parameters as seen by e.g. ps. Making a copy...
-  cur = xstrdup(*argv.offset(0));
+  cur = crate::libbb::xfuncs_printf::xstrdup(*argv.offset(0));
   's_129: loop {
     let mut param: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -1162,7 +1154,7 @@ pub unsafe extern "C" fn nmeter_main(
         break;
       }
       // %%
-      overlapping_strcpy(cur, cur.offset(1)); // overwrite %
+      crate::libbb::safe_strncpy::overlapping_strcpy(cur, cur.offset(1)); // overwrite %
       cur = cur.offset(1)
     }
     let fresh9 = cur;
@@ -1175,7 +1167,7 @@ pub unsafe extern "C" fn nmeter_main(
       param = cur.offset(1);
       while *cur.offset(0) as libc::c_int != ']' as i32 {
         if *cur.offset(0) == 0 {
-          bb_show_usage();
+          crate::libbb::appletlib::bb_show_usage();
         }
         cur = cur.offset(1)
       }
@@ -1192,7 +1184,7 @@ pub unsafe extern "C" fn nmeter_main(
         cur = cur.offset(1)
       }
       if *cur.offset(0) == 0 {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
       p = strchr(options.as_ptr(), *cur.offset(0) as libc::c_int);
       let fresh11 = cur;
@@ -1201,7 +1193,7 @@ pub unsafe extern "C" fn nmeter_main(
       // overwrite format char
     }
     if p.is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     s = init_functions[p.wrapping_offset_from(options.as_ptr()) as libc::c_long as usize]
       .expect("non-null function pointer")(param);
@@ -1216,7 +1208,7 @@ pub unsafe extern "C" fn nmeter_main(
       last = s
     } else {
       // %r option. remove it from string
-      overlapping_strcpy(prev.offset(strlen(prev) as isize), cur);
+      crate::libbb::safe_strncpy::overlapping_strcpy(prev.offset(strlen(prev) as isize), cur);
       cur = prev
     }
   }

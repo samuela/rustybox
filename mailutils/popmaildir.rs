@@ -37,60 +37,13 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn monotonic_us() -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn xsetenv(key: *const libc::c_char, value: *const libc::c_char);
-  #[no_mangle]
-  fn rename_or_warn(oldpath: *const libc::c_char, newpath: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_fgets_str(
-    file: *mut FILE,
-    terminating_string: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfopen_for_write(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn safe_gethostname() -> *mut libc::c_char;
-  #[no_mangle]
-  fn bin2hex(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    count: libc::c_int,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn md5_begin(ctx: *mut md5_ctx_t);
-  #[no_mangle]
-  fn md5_hash(ctx: *mut md5_ctx_t, buffer: *const libc::c_void, len: size_t);
-  #[no_mangle]
-  fn md5_end(ctx: *mut md5_ctx_t, resbuf: *mut libc::c_void) -> libc::c_uint;
-  //char FAST_FUNC *parse_url(char *url, char **user, char **pass);
-  #[no_mangle]
-  fn launch_helper(argv: *mut *const libc::c_char);
-  #[no_mangle]
-  fn get_cred_or_die(fd: libc::c_int);
-  #[no_mangle]
-  fn send_mail_command(fmt: *const libc::c_char, param: *const libc::c_char) -> *mut libc::c_char;
+
+//char FAST_FUNC *parse_url(char *url, char **user, char **pass);
+
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub helper_pid: pid_t,
   pub timeout: libc::c_uint,
@@ -102,8 +55,8 @@ pub struct globals {
   pub opt_charset: *mut libc::c_char,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub ctx: md5_ctx_t,
   pub hex: [libc::c_char; 33],
@@ -212,8 +165,8 @@ unsafe extern "C" fn pop3_checkr(
   mut param: *const libc::c_char,
   mut ret: *mut *mut libc::c_char,
 ) {
-  let mut msg: *mut libc::c_char = send_mail_command(fmt, param);
-  let mut answer: *mut libc::c_char = xmalloc_fgetline(stdin);
+  let mut msg: *mut libc::c_char = crate::mailutils::mail::send_mail_command(fmt, param);
+  let mut answer: *mut libc::c_char = crate::libbb::get_line_from_file::xmalloc_fgetline(stdin);
   if !answer.is_null() && '+' as i32 == *answer.offset(0) as libc::c_int {
     free(msg as *mut libc::c_void);
     if (*ptr_to_globals).timeout != 0 {
@@ -232,7 +185,7 @@ unsafe extern "C" fn pop3_checkr(
     }
     return;
   }
-  bb_error_msg_and_die(
+  crate::libbb::verror_msg::bb_error_msg_and_die(
     b"%s failed, reply was: %s\x00" as *const u8 as *const libc::c_char,
     msg,
     answer,
@@ -256,12 +209,13 @@ pub unsafe extern "C" fn popmaildir_main(
   // init global variables
   let ref mut fresh0 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh0 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh0 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).opt_charset =
     b"us-ascii\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
   // parse options
-  (*ptr_to_globals).opts = getopt32(
+  (*ptr_to_globals).opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^bdmVcasTkt:+R:+Z:L:+H:+M:F:\x00-1:dd\x00" as *const u8 as *const libc::c_char,
     &mut (*ptr_to_globals).timeout as *mut libc::c_uint,
@@ -276,15 +230,15 @@ pub unsafe extern "C" fn popmaildir_main(
   argv = argv.offset(optind as isize);
   // get auth info
   if (*ptr_to_globals).opts & OPT_s as libc::c_int as libc::c_uint == 0 {
-    get_cred_or_die(0i32);
+    crate::mailutils::mail::get_cred_or_die(0i32);
   }
   // goto maildir
   let fresh1 = argv;
   argv = argv.offset(1);
-  xchdir(*fresh1);
+  crate::libbb::xfuncs_printf::xchdir(*fresh1);
   // launch connect helper, if any
   if !(*argv).is_null() {
-    launch_helper(argv as *mut *const libc::c_char);
+    crate::mailutils::mail::launch_helper(argv as *mut *const libc::c_char);
   }
   // get server greeting
   pop3_checkr(0 as *const libc::c_char, 0 as *const libc::c_char, &mut buf);
@@ -308,20 +262,20 @@ pub unsafe extern "C" fn popmaildir_main(
         *s.offset(1) = '\u{0}' as i32 as libc::c_char
       }
       // server ignores APOP -> use simple text authentication
-      md5_begin(&mut md5.ctx);
-      md5_hash(&mut md5.ctx, buf as *const libc::c_void, strlen(buf));
-      md5_hash(
+      crate::libbb::hash_md5_sha::md5_begin(&mut md5.ctx);
+      crate::libbb::hash_md5_sha::md5_hash(&mut md5.ctx, buf as *const libc::c_void, strlen(buf));
+      crate::libbb::hash_md5_sha::md5_hash(
         &mut md5.ctx,
         (*ptr_to_globals).pass as *const libc::c_void,
         strlen((*ptr_to_globals).pass),
       );
-      md5_end(&mut md5.ctx, res.as_mut_ptr() as *mut libc::c_void);
-      *bin2hex(
+      crate::libbb::hash_md5_sha::md5_end(&mut md5.ctx, res.as_mut_ptr() as *mut libc::c_void);
+      *crate::libbb::xfuncs::bin2hex(
         md5.hex.as_mut_ptr(),
         res.as_mut_ptr() as *mut libc::c_char,
         16i32,
       ) = '\u{0}' as i32 as libc::c_char;
-      s = xasprintf(
+      s = crate::libbb::xfuncs_printf::xasprintf(
         b"%s %s\x00" as *const u8 as *const libc::c_char,
         (*ptr_to_globals).user,
         md5.hex.as_mut_ptr(),
@@ -351,7 +305,7 @@ pub unsafe extern "C" fn popmaildir_main(
     &mut buf,
   );
   // prepare message filename suffix
-  hostname = safe_gethostname();
+  hostname = crate::libbb::safe_gethostname::safe_gethostname();
   pid = getpid();
   // get messages counter
   // NOTE: we don't use xatou(buf) since buf is "nmsg nbytes"
@@ -362,7 +316,7 @@ pub unsafe extern "C" fn popmaildir_main(
   free(buf as *mut libc::c_void);
   // loop through messages
   retr = if (*ptr_to_globals).opts & OPT_T as libc::c_int as libc::c_uint != 0 {
-    xasprintf(
+    crate::libbb::xfuncs_printf::xasprintf(
       b"TOP %%u %u\x00" as *const u8 as *const libc::c_char,
       opt_nlines,
     )
@@ -376,9 +330,9 @@ pub unsafe extern "C" fn popmaildir_main(
     let mut fp: *mut FILE = 0 as *mut FILE;
     let mut rc: libc::c_int = 0;
     // generate unique filename
-    filename = xasprintf(
+    filename = crate::libbb::xfuncs_printf::xasprintf(
       b"tmp/%llu.%u.%s\x00" as *const u8 as *const libc::c_char,
-      monotonic_us(),
+      crate::libbb::time::monotonic_us(),
       pid as libc::c_uint,
       hostname,
     );
@@ -387,24 +341,29 @@ pub unsafe extern "C" fn popmaildir_main(
     // delivery helper ordered? -> setup pipe
     if (*ptr_to_globals).opts & (OPT_F as libc::c_int | OPT_M as libc::c_int) as libc::c_uint != 0 {
       // helper will have $FILENAME set to filename
-      xsetenv(
+      crate::libbb::xfuncs_printf::xsetenv(
         b"FILENAME\x00" as *const u8 as *const libc::c_char,
         filename,
       );
       fp = popen(delivery, b"w\x00" as *const u8 as *const libc::c_char);
       unsetenv(b"FILENAME\x00" as *const u8 as *const libc::c_char);
       if fp.is_null() {
-        bb_simple_perror_msg(b"delivery helper\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg(
+          b"delivery helper\x00" as *const u8 as *const libc::c_char,
+        );
         break;
       }
     } else {
       // create and open file filename
-      fp = xfopen_for_write(filename)
+      fp = crate::libbb::wfopen::xfopen_for_write(filename)
     }
     loop
     // copy stdin to fp (either filename or delivery helper)
     {
-      answer = xmalloc_fgets_str(stdin, b"\r\n\x00" as *const u8 as *const libc::c_char);
+      answer = crate::libbb::fgets_str::xmalloc_fgets_str(
+        stdin,
+        b"\r\n\x00" as *const u8 as *const libc::c_char,
+      );
       if answer.is_null() {
         break;
       }
@@ -441,14 +400,14 @@ pub unsafe extern "C" fn popmaildir_main(
         );
       }
       // atomically move message to ./new/
-      target = xstrdup(filename);
+      target = crate::libbb::xfuncs_printf::xstrdup(filename);
       memcpy(
         target as *mut libc::c_void,
         b"new\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
         3i32 as libc::c_ulong,
       );
       // ... or just stop receiving on failure
-      if rename_or_warn(filename, target) != 0 {
+      if crate::libbb::xfuncs_printf::rename_or_warn(filename, target) != 0 {
         break;
       }
       free(target as *mut libc::c_void);

@@ -19,7 +19,6 @@ use libc::puts;
 use libc::sigset_t;
 use libc::sprintf;
 use libc::sscanf;
-use libc::ssize_t;
 use libc::stat;
 use libc::strcasecmp;
 use libc::strchr;
@@ -95,50 +94,12 @@ extern "C" {
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
 
   #[no_mangle]
-  fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn last_char_is(s: *const libc::c_char, c: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn safe_poll(ufds: *mut pollfd, nfds: nfds_t, timeout_ms: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn get_terminal_width_height(
-    fd: libc::c_int,
-    width: *mut libc::c_uint,
-    height: *mut libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
-  #[no_mangle]
-  fn set_termios_to_raw(fd: libc::c_int, oldterm: *mut termios, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn read_key(fd: libc::c_int, buffer: *mut libc::c_char, timeout: libc::c_int) -> int64_t;
-  #[no_mangle]
   static ptr_to_globals: *mut globals;
 }
 pub type __builtin_va_list = [__va_list_tag; 1];
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __va_list_tag {
   pub gp_offset: libc::c_uint,
   pub fp_offset: libc::c_uint,
@@ -162,8 +123,9 @@ pub type uintptr_t = libc::c_ulong;
 /* add other arches which benefit from this... */
 
 pub type __jmp_buf = [libc::c_long; 8];
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __jmp_buf_tag {
   pub __jmpbuf: __jmp_buf,
   pub __mask_was_saved: libc::c_int,
@@ -194,8 +156,9 @@ pub const KEYCODE_LEFT: C2RustUnnamed = -5;
 pub const KEYCODE_RIGHT: C2RustUnnamed = -4;
 pub const KEYCODE_DOWN: C2RustUnnamed = -3;
 pub const KEYCODE_UP: C2RustUnnamed = -2;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub text: *mut libc::c_char,
   pub end: *mut libc::c_char,
@@ -250,8 +213,9 @@ pub struct globals {
   pub undo_queue: [libc::c_char; 256],
   pub undo_stack_tail: *mut undo_object,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct undo_object {
   pub prev: *mut undo_object,
   pub start: libc::c_int,
@@ -316,7 +280,7 @@ unsafe extern "C" fn write1(mut out: *const libc::c_char) {
   fputs_unlocked(out, stdout);
 }
 unsafe extern "C" fn query_screen_dimensions() -> libc::c_int {
-  let mut err: libc::c_int = get_terminal_width_height(
+  let mut err: libc::c_int = crate::libbb::xfuncs::get_terminal_width_height(
     0i32,
     &mut (*ptr_to_globals).columns,
     &mut (*ptr_to_globals).rows,
@@ -337,24 +301,25 @@ unsafe extern "C" fn mysleep(mut hund: libc::c_int) -> libc::c_int {
     revents: 0,
   }; 1];
   if hund != 0i32 {
-    fflush_all();
+    crate::libbb::xfuncs_printf::fflush_all();
   }
   pfd[0].fd = 0i32;
   pfd[0].events = 0x1i32 as libc::c_short;
-  return (safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, hund * 10i32) > 0i32) as libc::c_int;
+  return (crate::libbb::safe_poll::safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, hund * 10i32) > 0i32)
+    as libc::c_int;
 }
 //----- Set terminal attributes --------------------------------
 unsafe extern "C" fn rawmode() {
   // no TERMIOS_CLEAR_ISIG: leave ISIG on - allow signals
-  set_termios_to_raw(
+  crate::libbb::xfuncs::set_termios_to_raw(
     0i32,
     &mut (*ptr_to_globals).term_orig,
     1i32 << 1i32 | 1i32 << 2i32,
   );
 }
 unsafe extern "C" fn cookmode() {
-  fflush_all();
-  tcsetattr_stdin_TCSANOW(&mut (*ptr_to_globals).term_orig);
+  crate::libbb::xfuncs_printf::fflush_all();
+  crate::libbb::xfuncs::tcsetattr_stdin_TCSANOW(&mut (*ptr_to_globals).term_orig);
 }
 //----- Terminal Drawing ---------------------------------------
 // The terminal is made up of 'rows' line of 'columns' columns.
@@ -927,14 +892,15 @@ unsafe extern "C" fn readit() -> libc::c_int
 // read (maybe cursor) key from stdin
 {
   let mut c: libc::c_int = 0;
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   // Wait for input. TIMEOUT = -1 makes read_key wait even
   // on nonblocking stdin.
   // Note: read_key sets errno to 0 on success.
   loop
   // paranoia
   {
-    c = read_key(0i32, (*ptr_to_globals).readbuffer.as_mut_ptr(), -1i32) as libc::c_int;
+    c = crate::libbb::read_key::read_key(0i32, (*ptr_to_globals).readbuffer.as_mut_ptr(), -1i32)
+      as libc::c_int;
     if c == -1i32 {
       // EOF/error
       if *bb_errno == 11i32 {
@@ -942,7 +908,7 @@ unsafe extern "C" fn readit() -> libc::c_int
       }
       go_bottom_and_clear_to_eol();
       cookmode();
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"can\'t read user input\x00" as *const u8 as *const libc::c_char,
       );
     } else {
@@ -1020,7 +986,7 @@ unsafe extern "C" fn get_input_line(mut prompt: *const libc::c_char) -> *mut lib
       (*ptr_to_globals).get_input_line__buf[i as usize] = c as libc::c_char;
       i += 1;
       (*ptr_to_globals).get_input_line__buf[i as usize] = '\u{0}' as i32 as libc::c_char;
-      bb_putchar(c);
+      crate::libbb::xfuncs_printf::bb_putchar(c);
     }
   }
   refresh(0i32);
@@ -1150,7 +1116,7 @@ unsafe extern "C" fn show_status_line() {
     place_cursor((*ptr_to_globals).crow, (*ptr_to_globals).ccol);
     // put cursor back in correct place
   }
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
 }
 //----- format the status buffer, the bottom line of screen ------
 unsafe extern "C" fn status_line(mut format: *const libc::c_char, mut args: ...) {
@@ -1280,7 +1246,7 @@ unsafe extern "C" fn text_yank(
     cnt = -cnt
   } // default to D-reg
   free((*ptr_to_globals).reg[dest as usize] as *mut libc::c_void);
-  (*ptr_to_globals).reg[dest as usize] = xstrndup(p, cnt + 1i32);
+  (*ptr_to_globals).reg[dest as usize] = crate::libbb::xfuncs_printf::xstrndup(p, cnt + 1i32);
   return p;
 }
 unsafe extern "C" fn what_reg() -> libc::c_char {
@@ -1356,7 +1322,7 @@ unsafe extern "C" fn text_hole_make(mut p: *mut libc::c_char, mut size: libc::c_
           .offset((*ptr_to_globals).text_size as isize),
       ) as libc::c_long
         + 10240i32 as libc::c_long)) as libc::c_int;
-    new_text = xrealloc(
+    new_text = crate::libbb::xfuncs_printf::xrealloc(
       (*ptr_to_globals).text as *mut libc::c_void,
       (*ptr_to_globals).text_size as size_t,
     ) as *mut libc::c_char;
@@ -1574,14 +1540,17 @@ unsafe extern "C" fn undo_push(
     }
     // If this deletion empties text[], strip the newline. When the buffer becomes
     // zero-length, a newline is added back, which requires this to compensate.
-    undo_entry = xzalloc(17u64.wrapping_add(length as libc::c_ulong)) as *mut undo_object;
+    undo_entry = crate::libbb::xfuncs_printf::xzalloc(17u64.wrapping_add(length as libc::c_ulong))
+      as *mut undo_object;
     memcpy(
       (*undo_entry).undo_text.as_mut_ptr() as *mut libc::c_void,
       src as *const libc::c_void,
       length as libc::c_ulong,
     );
   } else {
-    undo_entry = xzalloc(::std::mem::size_of::<undo_object>() as libc::c_ulong) as *mut undo_object
+    undo_entry =
+      crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<undo_object>() as libc::c_ulong)
+        as *mut undo_object
   }
   (*undo_entry).length = length as libc::c_int;
   if u_type as libc::c_int & 32i32 != 0i32 {
@@ -1897,7 +1866,7 @@ unsafe extern "C" fn file_insert(
       2147483647i32
     };
     p = p.offset(text_hole_make(p, size) as isize);
-    cnt = full_read(fd, p as *mut libc::c_void, size as size_t) as libc::c_int;
+    cnt = crate::libbb::read::full_read(fd, p as *mut libc::c_void, size as size_t) as libc::c_int;
     if cnt < 0i32 {
       status_line_bold_errno(fn_0);
       p = text_hole_delete(p, p.offset(size as isize).offset(-1), 0i32)
@@ -2070,13 +2039,15 @@ unsafe extern "C" fn init_text_buffer(mut fn_0: *mut libc::c_char) -> libc::c_in
   // allocate/reallocate text buffer
   free((*ptr_to_globals).text as *mut libc::c_void);
   (*ptr_to_globals).text_size = 10240i32;
-  (*ptr_to_globals).text = xzalloc((*ptr_to_globals).text_size as size_t) as *mut libc::c_char;
+  (*ptr_to_globals).text =
+    crate::libbb::xfuncs_printf::xzalloc((*ptr_to_globals).text_size as size_t)
+      as *mut libc::c_char;
   (*ptr_to_globals).end = (*ptr_to_globals).text;
   (*ptr_to_globals).dot = (*ptr_to_globals).end;
   (*ptr_to_globals).screenbegin = (*ptr_to_globals).dot;
   if fn_0 != (*ptr_to_globals).current_filename {
     free((*ptr_to_globals).current_filename as *mut libc::c_void);
-    (*ptr_to_globals).current_filename = xstrdup(fn_0)
+    (*ptr_to_globals).current_filename = crate::libbb::xfuncs_printf::xstrdup(fn_0)
   }
   rc = file_insert(fn_0, (*ptr_to_globals).text, 1i32);
   if rc < 0i32 {
@@ -2150,7 +2121,8 @@ unsafe extern "C" fn file_write(
     return -1i32;
   }
   cnt = (last.wrapping_offset_from(first) as libc::c_long + 1) as libc::c_int;
-  charcnt = full_write(fd, first as *const libc::c_void, cnt as size_t) as libc::c_int;
+  charcnt = crate::libbb::full_write::full_write(fd, first as *const libc::c_void, cnt as size_t)
+    as libc::c_int;
   ftruncate(fd, charcnt as off64_t);
   if !(charcnt == cnt) {
     charcnt = 0i32
@@ -2244,7 +2216,10 @@ unsafe extern "C" fn get_one_address(
     // a search pattern
     p = p.offset(1); // save copy of pattern
     q = strchrnul(p, '/' as i32);
-    pat = xstrndup(p, q.wrapping_offset_from(p) as libc::c_long as libc::c_int);
+    pat = crate::libbb::xfuncs_printf::xstrndup(
+      p,
+      q.wrapping_offset_from(p) as libc::c_long as libc::c_int,
+    );
     p = q;
     if *p as libc::c_int == '/' as i32 {
       p = p.offset(1)
@@ -2432,7 +2407,7 @@ unsafe extern "C" fn colon(mut buf: *mut libc::c_char) {
     }
     strcpy(args.as_mut_ptr(), buf);
     useforce = 0i32;
-    buf1 = last_char_is(cmd.as_mut_ptr(), '!' as i32);
+    buf1 = crate::libbb::last_char_is::last_char_is(cmd.as_mut_ptr(), '!' as i32);
     if !buf1.is_null() {
       useforce = 1i32;
       *buf1 = '\u{0}' as i32 as libc::c_char
@@ -2580,7 +2555,7 @@ unsafe extern "C" fn colon(mut buf: *mut libc::c_char) {
       } else if args[0] != 0 {
         // user wants a new filename
         free((*ptr_to_globals).current_filename as *mut libc::c_void);
-        (*ptr_to_globals).current_filename = xstrdup(args.as_mut_ptr())
+        (*ptr_to_globals).current_filename = crate::libbb::xfuncs_printf::xstrdup(args.as_mut_ptr())
       } else {
         // user wants file status info
         (*ptr_to_globals).last_status_cksum = 0i32
@@ -2627,14 +2602,14 @@ unsafe extern "C" fn colon(mut buf: *mut libc::c_char) {
         if c as libc::c_int == '\n' as i32 {
           write1(b"$\r\x00" as *const u8 as *const libc::c_char);
         } else if (c as libc::c_int) < ' ' as i32 || c as libc::c_int == 127i32 {
-          bb_putchar('^' as i32);
+          crate::libbb::xfuncs_printf::bb_putchar('^' as i32);
           if c as libc::c_int == 127i32 {
             c = '?' as i32 as libc::c_char
           } else {
             c = (c as libc::c_int + '@' as i32) as libc::c_char
           }
         }
-        bb_putchar(c as libc::c_int);
+        crate::libbb::xfuncs_printf::bb_putchar(c as libc::c_int);
         if c_is_no_print != 0 {
           standout_end();
         }
@@ -2868,7 +2843,7 @@ unsafe extern "C" fn colon(mut buf: *mut libc::c_char) {
               (*ptr_to_globals).tabstop = t
             }
           }
-          argp = skip_non_whitespace(argp);
+          argp = crate::libbb::skip_whitespace::skip_non_whitespace(argp);
           argp = skip_whitespace(argp)
         }
       }
@@ -3904,7 +3879,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 // strlen(q) > 1: new pat- save it and find
                 // there is a new pat
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               // now find the pattern
               } else {
@@ -4260,7 +4235,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
               // Stuff the last_modifying_cmd back into stdin
               // and let it be re-executed.
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -5278,7 +5253,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -5528,7 +5503,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -6437,7 +6412,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -6687,7 +6662,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -7596,7 +7571,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -7846,7 +7821,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -8755,7 +8730,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -9005,7 +8980,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -9914,7 +9889,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -10164,7 +10139,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -11073,7 +11048,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -11323,7 +11298,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -12232,7 +12207,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -12482,7 +12457,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -13391,7 +13366,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -13641,7 +13616,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -14550,7 +14525,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -14800,7 +14775,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -15709,7 +15684,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -15959,7 +15934,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -16868,7 +16843,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -17118,7 +17093,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -18027,7 +18002,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -18277,7 +18252,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -19186,7 +19161,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -19436,7 +19411,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -20345,7 +20320,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -20595,7 +20570,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -21504,7 +21479,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -21754,7 +21729,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -22663,7 +22638,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -22913,7 +22888,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -23822,7 +23797,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -24072,7 +24047,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -24981,7 +24956,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -25231,7 +25206,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -26140,7 +26115,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -26390,7 +26365,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -27299,7 +27274,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -27549,7 +27524,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -28458,7 +28433,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -28708,7 +28683,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -29617,7 +29592,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -29867,7 +29842,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -30776,7 +30751,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -31026,7 +31001,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -31935,7 +31910,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -32185,7 +32160,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -33094,7 +33069,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -33344,7 +33319,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -34253,7 +34228,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -34503,7 +34478,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -35412,7 +35387,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -35662,7 +35637,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -36571,7 +36546,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -36821,7 +36796,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -37730,7 +37705,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -37980,7 +37955,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -38889,7 +38864,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -39139,7 +39114,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -40048,7 +40023,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -40298,7 +40273,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -41207,7 +41182,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -41457,7 +41432,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -42366,7 +42341,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -42616,7 +42591,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -43525,7 +43500,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -43775,7 +43750,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -44684,7 +44659,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -44934,7 +44909,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -45843,7 +45818,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -46093,7 +46068,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -47002,7 +46977,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -47252,7 +47227,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -48161,7 +48136,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -48411,7 +48386,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -49320,7 +49295,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -49570,7 +49545,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -50479,7 +50454,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -50729,7 +50704,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -51638,7 +51613,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -51888,7 +51863,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -52797,7 +52772,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -53047,7 +53022,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -53956,7 +53931,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -54206,7 +54181,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -55115,7 +55090,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -55365,7 +55340,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -56274,7 +56249,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -56524,7 +56499,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -57433,7 +57408,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -57683,7 +57658,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -58592,7 +58567,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -58842,7 +58817,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -59751,7 +59726,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -60001,7 +59976,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -60910,7 +60885,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -61160,7 +61135,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -62069,7 +62044,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -62319,7 +62294,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -63228,7 +63203,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -63478,7 +63453,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -64387,7 +64362,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -64637,7 +64612,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -65546,7 +65521,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -65796,7 +65771,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -66705,7 +66680,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -66955,7 +66930,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -67864,7 +67839,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -68114,7 +68089,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -69023,7 +68998,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -69273,7 +69248,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -70185,7 +70160,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -70435,7 +70410,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -71344,7 +71319,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -71594,7 +71569,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -72503,7 +72478,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -72753,7 +72728,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -73662,7 +73637,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -73912,7 +73887,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -74821,7 +74796,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -75071,7 +75046,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -75983,7 +75958,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -76233,7 +76208,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -77142,7 +77117,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -77392,7 +77367,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -78301,7 +78276,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -78551,7 +78526,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -79460,7 +79435,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -79710,7 +79685,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -80619,7 +80594,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -80869,7 +80844,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -81778,7 +81753,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -82028,7 +82003,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -82937,7 +82912,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -83187,7 +83162,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -84096,7 +84071,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -84346,7 +84321,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -85255,7 +85230,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -85505,7 +85480,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -86414,7 +86389,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -86664,7 +86639,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -87573,7 +87548,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -87823,7 +87798,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -88732,7 +88707,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -88982,7 +88957,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -89891,7 +89866,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -90141,7 +90116,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -91050,7 +91025,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -91300,7 +91275,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -92209,7 +92184,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -92459,7 +92434,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -93368,7 +93343,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -93618,7 +93593,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -94527,7 +94502,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -94777,7 +94752,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -95686,7 +95661,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -95936,7 +95911,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -96845,7 +96820,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                 current_block = 7392824444931029276;
               } else if *q.offset(0) != 0 {
                 free((*ptr_to_globals).last_search_pattern as *mut libc::c_void);
-                (*ptr_to_globals).last_search_pattern = xstrdup(q);
+                (*ptr_to_globals).last_search_pattern = crate::libbb::xfuncs_printf::xstrdup(q);
                 current_block = 7392824444931029276;
               } else {
                 current_block = 15129665204879337069;
@@ -97095,7 +97070,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
             }
             3364823792826654116 => {
               if (*ptr_to_globals).lmc_len != 0i32 {
-                (*ptr_to_globals).ioq_start = xstrndup(
+                (*ptr_to_globals).ioq_start = crate::libbb::xfuncs_printf::xstrndup(
                   (*ptr_to_globals).last_modifying_cmd.as_mut_ptr(),
                   (*ptr_to_globals).lmc_len,
                 );
@@ -97682,8 +97657,9 @@ unsafe extern "C" fn edit_file(mut fn_0: *mut libc::c_char) {
     /* TODO? && no input on stdin */
     let mut k: u64 = 0; // get memory for virtual screen
     write1(b"\x1b[999;999H\x1b[6n\x00" as *const u8 as *const libc::c_char); // default Yank/Delete reg
-    fflush_all();
-    k = read_key(0i32, (*ptr_to_globals).readbuffer.as_mut_ptr(), 100i32) as u64;
+    crate::libbb::xfuncs_printf::fflush_all();
+    k = crate::libbb::read_key::read_key(0i32, (*ptr_to_globals).readbuffer.as_mut_ptr(), 100i32)
+      as u64;
     if k as i32 == KEYCODE_CURSOR_POS as libc::c_int {
       let mut rc: u32 = (k >> 32i32) as u32;
       (*ptr_to_globals).columns = rc & 0x7fffi32 as libc::c_uint;
@@ -97812,10 +97788,12 @@ pub unsafe extern "C" fn vi_main(
   let ref mut fresh17 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
-  *fresh17 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh17 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).last_modified_count = -1i32;
-  (*ptr_to_globals).last_search_pattern = xzalloc(2i32 as size_t) as *mut libc::c_char;
+  (*ptr_to_globals).last_search_pattern =
+    crate::libbb::xfuncs_printf::xzalloc(2i32 as size_t) as *mut libc::c_char;
   //undo_stack_tail = NULL; - already is
   (*ptr_to_globals).undo_queue_state = 64i32 as libc::c_char;
   //undo_q = 0; - already is
@@ -97826,7 +97804,8 @@ pub unsafe extern "C" fn vi_main(
   //  3-  process command line args
   let mut p: *mut libc::c_char = getenv(b"EXINIT\x00" as *const u8 as *const libc::c_char);
   if !p.is_null() && *p as libc::c_int != 0 {
-    (*ptr_to_globals).initial_cmds[0] = xstrndup(p, MAX_INPUT_LEN as libc::c_int)
+    (*ptr_to_globals).initial_cmds[0] =
+      crate::libbb::xfuncs_printf::xstrndup(p, MAX_INPUT_LEN as libc::c_int)
   }
   loop {
     c = getopt(
@@ -97850,7 +97829,8 @@ pub unsafe extern "C" fn vi_main(
         if *optarg != 0 {
           (*ptr_to_globals).initial_cmds[((*ptr_to_globals).initial_cmds[0]
             != 0 as *mut libc::c_void as *mut libc::c_char)
-            as libc::c_int as usize] = xstrndup(optarg, MAX_INPUT_LEN as libc::c_int)
+            as libc::c_int as usize] =
+            crate::libbb::xfuncs_printf::xstrndup(optarg, MAX_INPUT_LEN as libc::c_int)
         }
         current_block_18 = 2668756484064249700;
       }
@@ -97867,7 +97847,7 @@ pub unsafe extern "C" fn vi_main(
       _ =>
       // fall through
       {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
     }
   }

@@ -6,21 +6,6 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
   fn personality(__persona: libc::c_ulong) -> libc::c_int;
 }
 
@@ -64,7 +49,7 @@ pub unsafe extern "C" fn setarch_main(
   if 1i32 != 0
     && *applet_name.offset(0) as libc::c_int == 's' as i32
     && !(*argv.offset(1)).is_null()
-    && !is_prefixed_with(
+    && !crate::libbb::compare_string_array::is_prefixed_with(
       *argv.offset(1),
       b"linux\x00" as *const u8 as *const libc::c_char,
     )
@@ -80,15 +65,15 @@ pub unsafe extern "C" fn setarch_main(
     /* linux32 */
     pers = PER_LINUX32 as libc::c_int as libc::c_ulong
   } else {
-    bb_show_usage(); /* '+': stop at first non-option */
+    crate::libbb::appletlib::bb_show_usage(); /* '+': stop at first non-option */
   }
-  opts = getopt32(argv, b"+R\x00" as *const u8 as *const libc::c_char);
+  opts = crate::libbb::getopt32::getopt32(argv, b"+R\x00" as *const u8 as *const libc::c_char);
   if opts != 0 {
     pers |= 0x40000i32 as libc::c_ulong
   }
   /* Try to set personality */
   if personality(pers) < 0i32 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"personality(0x%lx)\x00" as *const u8 as *const libc::c_char,
       pers,
     );
@@ -100,5 +85,5 @@ pub unsafe extern "C" fn setarch_main(
     *fresh0 = b"/bin/sh\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
   }
   /* Try to execute the program */
-  BB_EXECVP_or_die(argv);
+  crate::libbb::executable::BB_EXECVP_or_die(argv);
 }

@@ -11,14 +11,11 @@ extern "C" {
 
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
+
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct number_state {
   pub width: libc::c_uint,
   pub start: libc::c_uint,
@@ -429,7 +426,7 @@ pub unsafe extern "C" fn print_numbered_lines(
   mut ns: *mut number_state,
   mut filename: *const libc::c_char,
 ) -> libc::c_int {
-  let mut fp: *mut FILE = fopen_or_warn_stdin(filename);
+  let mut fp: *mut FILE = crate::libbb::wfopen_input::fopen_or_warn_stdin(filename);
   let mut N: libc::c_uint = 0;
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if fp.is_null() {
@@ -437,7 +434,7 @@ pub unsafe extern "C" fn print_numbered_lines(
   }
   N = (*ns).start;
   loop {
-    line = xmalloc_fgetline(fp);
+    line = crate::libbb::get_line_from_file::xmalloc_fgetline(fp);
     if line.is_null() {
       break;
     }

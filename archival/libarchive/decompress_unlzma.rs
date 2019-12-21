@@ -4,28 +4,9 @@ use crate::librb::size_t;
 use libc;
 use libc::free;
 use libc::ssize_t;
-extern "C" {
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn transformer_write(
-    xstate: *mut transformer_state_t,
-    buf: *const libc::c_void,
-    bufsize: size_t,
-  ) -> ssize_t;
-}
-
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct rc_t {
   pub fd: libc::c_int,
   pub ptr: *mut u8,
@@ -35,8 +16,8 @@ pub struct rc_t {
   pub bound: u32,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct lzma_header_t {
   pub pos: u8,
   pub dict_size: u32,
@@ -80,7 +61,7 @@ pub const LZMA_NUM_STATES: C2RustUnnamed_0 = 12;
 pub const LZMA_NUM_LEN_PROBS: C2RustUnnamed_0 = 514;
 /* Called once in rc_do_normalize() */
 unsafe extern "C" fn rc_read(mut rc: *mut rc_t) {
-  let mut buffer_size: libc::c_int = safe_read(
+  let mut buffer_size: libc::c_int = crate::libbb::read::safe_read(
     (*rc).fd,
     rc.offset(1) as *mut u8 as *mut libc::c_void,
     0x10000i32 as size_t,
@@ -88,7 +69,9 @@ unsafe extern "C" fn rc_read(mut rc: *mut rc_t) {
   //TODO: return -1 instead
   //This will make unlzma delete broken unpacked file on unpack errors
   if buffer_size <= 0i32 {
-    bb_simple_error_msg_and_die(b"unexpected EOF\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"unexpected EOF\x00" as *const u8 as *const libc::c_char,
+    );
   }
   (*rc).buffer_end = (rc.offset(1) as *mut u8).offset(buffer_size as isize);
   (*rc).ptr = rc.offset(1) as *mut u8;
@@ -115,7 +98,7 @@ unsafe extern "C" fn rc_init(mut fd: libc::c_int) -> *mut rc_t
 /*, int buffer_size) */ {
   let mut i: libc::c_int = 0;
   let mut rc: *mut rc_t = 0 as *mut rc_t;
-  rc = xzalloc(
+  rc = crate::libbb::xfuncs_printf::xzalloc(
     (::std::mem::size_of::<rc_t>() as libc::c_ulong).wrapping_add(0x10000i32 as libc::c_ulong),
   ) as *mut rc_t;
   (*rc).fd = fd;
@@ -222,7 +205,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
   let mut rep1: u32 = 1i32 as u32;
   let mut rep2: u32 = 1i32 as u32;
   let mut rep3: u32 = 1i32 as u32;
-  if full_read(
+  if crate::libbb::read::full_read(
     (*xstate).src_fd,
     &mut header as *mut lzma_header_t as *mut libc::c_void,
     ::std::mem::size_of::<lzma_header_t>() as libc::c_ulong,
@@ -230,7 +213,9 @@ pub unsafe extern "C" fn unpack_lzma_stream(
     != ::std::mem::size_of::<lzma_header_t>() as libc::c_ulong
     || header.pos as libc::c_int >= 9i32 * 5i32 * 5i32
   {
-    bb_simple_error_msg(b"bad lzma header\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg(
+      b"bad lzma header\x00" as *const u8 as *const libc::c_char,
+    );
     return -1i32 as libc::c_longlong;
   }
   i = header.pos as libc::c_int / 9i32;
@@ -522,7 +507,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
             global_pos = (global_pos as libc::c_ulong)
               .wrapping_add(header.dict_size as libc::c_ulong) as size_t
               as size_t;
-            if transformer_write(
+            if crate::archival::libarchive::open_transformer::transformer_write(
               xstate,
               buffer as *const libc::c_void,
               header.dict_size as size_t,
@@ -581,8 +566,11 @@ pub unsafe extern "C" fn unpack_lzma_stream(
       total_written = (total_written as libc::c_ulonglong)
         .wrapping_add(buffer_pos as libc::c_ulonglong) as libc::c_longlong
         as libc::c_longlong;
-      if transformer_write(xstate, buffer as *const libc::c_void, buffer_pos)
-        != buffer_pos as ssize_t
+      if crate::archival::libarchive::open_transformer::transformer_write(
+        xstate,
+        buffer as *const libc::c_void,
+        buffer_pos,
+      ) != buffer_pos as ssize_t
       {
         current_block = 7192488959635554372;
       } else {
@@ -598,7 +586,9 @@ pub unsafe extern "C" fn unpack_lzma_stream(
        * potentially more detailed information).
        * Do not fail silently.
        */
-      bb_simple_error_msg(b"corrupted data\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg(
+        b"corrupted data\x00" as *const u8 as *const libc::c_char,
+      );
       total_written = -1i32 as libc::c_longlong
       /* failure */
     }

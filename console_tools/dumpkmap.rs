@@ -1,28 +1,17 @@
+use crate::librb::size_t;
 use libc;
+use libc::ssize_t;
 extern "C" {
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn get_console_fd_or_die() -> libc::c_int;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn ioctl_or_perror(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    fmt: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::size_t;
-use libc::ssize_t;
 /*
  * Mini dumpkmap implementation for busybox
  *
@@ -48,8 +37,9 @@ use libc::ssize_t;
 //usage:#define dumpkmap_example_usage
 //usage:       "$ dumpkmap > keymap\n"
 /* From <linux/kd.h> */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct kbentry {
   pub kb_table: libc::c_uchar,
   pub kb_index: libc::c_uchar,
@@ -73,10 +63,10 @@ pub unsafe extern "C" fn dumpkmap_main(
    * Let's prevent it:
    */
   if !(*argv.offset(1)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /*	bb_warn_ignoring_args(argv[1]);*/
-  fd = get_console_fd_or_die();
+  fd = crate::libbb::get_console::get_console_fd_or_die();
   /*                     0 1 2 3 4 5 6 7 8 9 a b c=12 */
   memcpy(
     bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
@@ -96,7 +86,7 @@ pub unsafe extern "C" fn dumpkmap_main(
       while j < 128i32 {
         ke.kb_index = j as libc::c_uchar;
         ke.kb_table = i as libc::c_uchar;
-        if ioctl_or_perror(
+        if crate::libbb::xfuncs_printf::ioctl_or_perror(
           fd,
           0x4b46i32 as libc::c_uint,
           &mut ke as *mut kbentry as *mut libc::c_void,

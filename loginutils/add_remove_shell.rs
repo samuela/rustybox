@@ -12,27 +12,6 @@ extern "C" {
   #[no_mangle]
   fn fileno_unlocked(__stream: *mut FILE) -> libc::c_int;
 
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xmalloc_follow_symlinks(path: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xunlink(pathname: *const libc::c_char);
-  #[no_mangle]
-  fn xfstat(fd: libc::c_int, buf: *mut stat, errmsg: *const libc::c_char);
-  #[no_mangle]
-  fn xopen3(pathname: *const libc::c_char, flags: libc::c_int, mode: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xrename(oldpath: *const libc::c_char, newpath: *const libc::c_char);
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
 }
 
 use libc::mode_t;
@@ -51,15 +30,20 @@ pub unsafe extern "C" fn add_remove_shell_main(
   let mut sb: stat = std::mem::zeroed();
   sb.st_mode = 0o666i32 as mode_t;
   argv = argv.offset(1);
-  orig_fn = xmalloc_follow_symlinks(b"/etc/shells\x00" as *const u8 as *const libc::c_char);
+  orig_fn = crate::libbb::xreadlink::xmalloc_follow_symlinks(
+    b"/etc/shells\x00" as *const u8 as *const libc::c_char,
+  );
   if orig_fn.is_null() {
     return 1i32;
   }
-  orig_fp = fopen_for_read(orig_fn);
+  orig_fp = crate::libbb::wfopen::fopen_for_read(orig_fn);
   if !orig_fp.is_null() {
-    xfstat(fileno_unlocked(orig_fp), &mut sb, orig_fn);
+    crate::libbb::xfuncs_printf::xfstat(fileno_unlocked(orig_fp), &mut sb, orig_fn);
   }
-  new_fn = xasprintf(b"%s.tmp\x00" as *const u8 as *const libc::c_char, orig_fn);
+  new_fn = crate::libbb::xfuncs_printf::xasprintf(
+    b"%s.tmp\x00" as *const u8 as *const libc::c_char,
+    orig_fn,
+  );
   /*
    * O_TRUNC or O_EXCL? At the first glance, O_EXCL looks better,
    * since it prevents races. But: (1) it requires a retry loop,
@@ -68,8 +52,8 @@ pub unsafe extern "C" fn add_remove_shell_main(
    * after which it should revert to O_TRUNC.
    * For now, I settle for O_TRUNC instead.
    */
-  xmove_fd(
-    xopen3(
+  crate::libbb::xfuncs_printf::xmove_fd(
+    crate::libbb::xfuncs_printf::xopen3(
       new_fn,
       0o1i32 | 0o100i32 | 0o1000i32,
       sb.st_mode as libc::c_int,
@@ -83,7 +67,7 @@ pub unsafe extern "C" fn add_remove_shell_main(
     /* Copy old file, possibly skipping removed shell names */
     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     loop {
-      line = xmalloc_fgetline(orig_fp);
+      line = crate::libbb::get_line_from_file::xmalloc_fgetline(orig_fp);
       if line.is_null() {
         break;
       }
@@ -129,13 +113,13 @@ pub unsafe extern "C" fn add_remove_shell_main(
   }
   /* Ensure we wrote out everything */
   if fclose(stdout) != 0i32 {
-    xunlink(new_fn);
-    bb_perror_msg_and_die(
+    crate::libbb::xfuncs_printf::xunlink(new_fn);
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"%s: write error\x00" as *const u8 as *const libc::c_char,
       new_fn,
     );
   }
   /* Small hole: if rename fails, /etc/shells.tmp is not removed */
-  xrename(new_fn, orig_fn);
+  crate::libbb::xfuncs_printf::xrename(new_fn, orig_fn);
   return 0i32;
 }

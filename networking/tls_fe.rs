@@ -12,8 +12,9 @@ extern "C" {
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 pub type byte = u8;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed {
   pub f25519_one: [byte; 32],
   pub xm: [byte; 32],

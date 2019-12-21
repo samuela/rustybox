@@ -1,7 +1,11 @@
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::parse_config::parser_t;
 use libc;
+use libc::hostent;
+use libc::in_addr;
 use libc::printf;
 use libc::puts;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -15,58 +19,20 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn inet_ntoa(__in: in_addr) -> *mut libc::c_char;
-  // "old" (ipv4 only) API
-  // users: traceroute.c hostname.c - use _list_ of all IPs
-  #[no_mangle]
-  fn xgethostbyname(name: *const libc::c_char) -> *mut hostent;
-  /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
-   * But potentially slow, don't use in one-billion-times loops */
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn safe_gethostname() -> *mut libc::c_char;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn config_open2(
-    filename: *const libc::c_char,
-    fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
-  ) -> *mut parser_t;
-  /* delims[0] is a comment char (use '\0' to disable), the rest are token delimiters */
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
+// "old" (ipv4 only) API
+// users: traceroute.c hostname.c - use _list_ of all IPs
+
+/* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
+ * But potentially slow, don't use in one-billion-times loops */
+
+/* delims[0] is a comment char (use '\0' to disable), the rest are token delimiters */
 
 }
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
-pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct hostent {
-  pub h_name: *mut libc::c_char,
-  pub h_aliases: *mut *mut libc::c_char,
-  pub h_addrtype: libc::c_int,
-  pub h_length: libc::c_int,
-  pub h_addr_list: *mut *mut libc::c_char,
-}
 
-use libc::FILE;
+pub type in_addr_t = u32;
+
 /*
  * Config file parser
  */
@@ -98,17 +64,7 @@ pub const PARSE_GREEDY: C2RustUnnamed = 262144;
 // treat consecutive delimiters as one
 pub const PARSE_TRIM: C2RustUnnamed = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed = 65536;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
+
 pub const OPT_F: C2RustUnnamed_0 = 16;
 pub const OPT_s: C2RustUnnamed_0 = 8;
 pub const OPT_d: C2RustUnnamed_0 = 1;
@@ -163,11 +119,14 @@ unsafe extern "C" fn do_sethostname(mut s: *mut libc::c_char, mut isfile: libc::
   //	if (!s)
   //		return;
   if isfile != 0 {
-    let mut parser: *mut parser_t = config_open2(
+    let mut parser: *mut parser_t = crate::libbb::parse_config::config_open2(
       s,
-      Some(xfopen_for_read as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE),
+      Some(
+        crate::libbb::wfopen::xfopen_for_read
+          as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+      ),
     );
-    while config_read(
+    while crate::libbb::parse_config::config_read(
       parser,
       &mut s,
       (PARSE_NORMAL as libc::c_int & !(PARSE_GREEDY as libc::c_int)
@@ -181,7 +140,9 @@ unsafe extern "C" fn do_sethostname(mut s: *mut libc::c_char, mut isfile: libc::
   } else if sethostname(s, strlen(s)) != 0 {
     //		if (errno == EPERM)
     //			bb_error_msg_and_die(bb_msg_perm_denied_are_you_root);
-    bb_simple_perror_msg_and_die(b"sethostname\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"sethostname\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 /* Manpage circa 2009:
@@ -244,14 +205,14 @@ pub unsafe extern "C" fn hostname_main(
   let mut hostname_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* dnsdomainname from net-tools 1.60, hostname 1.100 (2001-04-14),
    * supports hostname's options too (not just -v as manpage says) */
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"dfisF:v\x00" as *const u8 as *const libc::c_char,
     &mut hostname_str as *mut *mut libc::c_char,
     b"domain\x00\x00dfqdn\x00\x00ffile\x00\x00F\x00" as *const u8 as *const libc::c_char,
   );
   argv = argv.offset(optind as isize);
-  buf = safe_gethostname();
+  buf = crate::libbb::safe_gethostname::safe_gethostname();
   if 1i32 == 0 || *applet_name.offset(0) as libc::c_int == 'd' as i32 {
     /* dnsdomainname */
     opts = OPT_d as libc::c_int as libc::c_uint
@@ -260,7 +221,7 @@ pub unsafe extern "C" fn hostname_main(
     /* Cases when we need full hostname (or its part) */
     let mut hp: *mut hostent = 0 as *mut hostent;
     let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    hp = xgethostbyname(buf);
+    hp = crate::libbb::xgethostbyname::xgethostbyname(buf);
     p = strchrnul((*hp).h_name, '.' as i32);
     if opts & OPT_f as libc::c_int as libc::c_uint != 0 {
       puts((*hp).h_name);
@@ -284,7 +245,7 @@ pub unsafe extern "C" fn hostname_main(
         );
         h_addr_list = h_addr_list.offset(1)
       }
-      bb_putchar('\n' as i32);
+      crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     }
   } else if opts & OPT_s as libc::c_int as libc::c_uint != 0 {
     *strchrnul(buf, '.' as i32).offset(0) = '\u{0}' as i32 as libc::c_char;

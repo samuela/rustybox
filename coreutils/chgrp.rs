@@ -1,10 +1,4 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn chown_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-}
 
 /*
  * Mini chgrp implementation for busybox
@@ -61,8 +55,11 @@ pub unsafe extern "C" fn chgrp_main(
       continue;
     }
     let ref mut fresh0 = *p.offset(0);
-    *fresh0 = xasprintf(b":%s\x00" as *const u8 as *const libc::c_char, *p.offset(0));
+    *fresh0 = crate::libbb::xfuncs_printf::xasprintf(
+      b":%s\x00" as *const u8 as *const libc::c_char,
+      *p.offset(0),
+    );
     break;
   }
-  return chown_main(argc, argv);
+  return crate::coreutils::chown::chown_main(argc, argv);
 }

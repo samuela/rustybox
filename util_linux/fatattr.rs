@@ -2,24 +2,6 @@ use libc;
 use libc::close;
 use libc::puts;
 use libc::strchr;
-extern "C" {
-
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
-}
 
 /*
  * Display or change file attributes on a fat file system
@@ -60,7 +42,7 @@ static mut bit_to_char: [libc::c_char; 10] = [114, 104, 115, 118, 100, 97, 54, 5
 unsafe extern "C" fn get_flag(mut c: libc::c_char) -> libc::c_ulong {
   let mut fp: *const libc::c_char = strchr(bit_to_char.as_ptr(), c as libc::c_int);
   if fp.is_null() {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"invalid character \'%c\'\x00" as *const u8 as *const libc::c_char,
       c as libc::c_int,
     );
@@ -90,7 +72,7 @@ pub unsafe extern "C" fn fatattr_main(
     argv = argv.offset(1);
     let mut arg: *mut libc::c_char = *argv;
     if arg.is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     if *arg.offset(0) as libc::c_int != '-' as i32 && *arg.offset(0) as libc::c_int != '+' as i32 {
       break;
@@ -106,8 +88,8 @@ pub unsafe extern "C" fn fatattr_main(
     let mut fd: libc::c_int = 0;
     let mut i: libc::c_int = 0;
     let mut attr: u32 = 0;
-    fd = xopen(*argv, 0i32);
-    bb_xioctl(
+    fd = crate::libbb::xfuncs_printf::xopen(*argv, 0i32);
+    crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
         | (('r' as i32) << 0i32 + 8i32) as libc::c_uint
@@ -119,7 +101,7 @@ pub unsafe extern "C" fn fatattr_main(
     );
     attr = (attr | set_mask) & !clear_mask;
     if set_mask | clear_mask != 0 {
-      bb_xioctl(
+      crate::libbb::xfuncs_printf::bb_xioctl(
         fd,
         ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
           | (('r' as i32) << 0i32 + 8i32) as libc::c_uint
@@ -132,7 +114,7 @@ pub unsafe extern "C" fn fatattr_main(
     } else {
       i = 0i32;
       while bit_to_char[i as usize] != 0 {
-        bb_putchar(if attr & 1i32 as libc::c_uint != 0 {
+        crate::libbb::xfuncs_printf::bb_putchar(if attr & 1i32 as libc::c_uint != 0 {
           bit_to_char[i as usize] as libc::c_int
         } else {
           ' ' as i32

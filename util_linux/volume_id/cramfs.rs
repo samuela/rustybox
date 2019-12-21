@@ -2,28 +2,10 @@ use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
-}
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+
+use crate::util_linux::volume_id::volume_id::volume_id;
 /*
  * volume_id - reads filesystem label and uuid
  *
@@ -48,8 +30,9 @@ pub struct volume_id {
 //config:	default y
 //config:	depends on VOLUMEID
 //kbuild:lib-$(CONFIG_FEATURE_VOLUMEID_CRAMFS) += cramfs.o
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct cramfs_super {
   pub magic: u32,
   pub size: u32,
@@ -59,8 +42,9 @@ pub struct cramfs_super {
   pub info: cramfs_info,
   pub name: [u8; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct cramfs_info {
   pub crc: u32,
   pub edition: u32,
@@ -132,7 +116,8 @@ pub struct cramfs_info {
 pub unsafe extern "C" fn volume_id_probe_cramfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut cs: *mut cramfs_super = 0 as *mut cramfs_super;
-  cs = volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut cramfs_super;
+  cs = crate::util_linux::volume_id::util::volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t)
+    as *mut cramfs_super;
   if cs.is_null() {
     return -1i32;
   }
@@ -150,15 +135,18 @@ pub unsafe extern "C" fn volume_id_probe_cramfs(mut id: *mut volume_id) -> libc:
         let fresh1;
         let fresh2 = __x;
         asm!("bswap $0" : "=r" (fresh1) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2))
-                         :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
       }
       __v
     })
   {
     //		volume_id_set_label_raw(id, cs->name, 16);
-    volume_id_set_label_string(id, (*cs).name.as_mut_ptr(), 16i32 as size_t);
+    crate::util_linux::volume_id::util::volume_id_set_label_string(
+      id,
+      (*cs).name.as_mut_ptr(),
+      16i32 as size_t,
+    );
     //		volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
     (*id).type_0 = b"cramfs\x00" as *const u8 as *const libc::c_char;
     return 0i32;

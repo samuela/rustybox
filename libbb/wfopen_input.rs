@@ -3,8 +3,7 @@ use libc::FILE;
 extern "C" {
   #[no_mangle]
   static mut stdin: *mut FILE;
-  #[no_mangle]
-  fn open_or_warn(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   /* not FAST_FUNC! */
   /* Wrapper which restarts poll on EINTR or ENOMEM.
    * On other errors complains [perror("poll")] and returns.
@@ -308,10 +307,7 @@ extern "C" {
   /* "BusyBox vN.N.N (timestamp or extra_version)" */
   #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn fopen_or_warn(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
+
 }
 
 /*
@@ -331,7 +327,7 @@ pub unsafe extern "C" fn fopen_or_warn_stdin(mut filename: *const libc::c_char) 
   if filename != bb_msg_standard_input.as_ptr()
     && (*filename.offset(0) as libc::c_int != '-' as i32 || *filename.offset(1) as libc::c_int != 0)
   {
-    fp = fopen_or_warn(filename, b"r\x00" as *const u8 as *const libc::c_char)
+    fp = crate::libbb::wfopen::fopen_or_warn(filename, b"r\x00" as *const u8 as *const libc::c_char)
   }
   return fp;
 }
@@ -448,7 +444,7 @@ pub unsafe extern "C" fn xfopen_stdin(mut filename: *const libc::c_char) -> *mut
   if !fp.is_null() {
     return fp;
   }
-  xfunc_die();
+  crate::libbb::xfunc_die::xfunc_die();
   /* We already output an error message. */
 }
 #[no_mangle]
@@ -457,7 +453,7 @@ pub unsafe extern "C" fn open_or_warn_stdin(mut filename: *const libc::c_char) -
   if filename != bb_msg_standard_input.as_ptr()
     && (*filename.offset(0) as libc::c_int != '-' as i32 || *filename.offset(1) as libc::c_int != 0)
   {
-    fd = open_or_warn(filename, 0i32)
+    fd = crate::libbb::xfuncs_printf::open_or_warn(filename, 0i32)
   }
   return fd;
 }
@@ -620,6 +616,6 @@ pub unsafe extern "C" fn xopen_stdin(mut filename: *const libc::c_char) -> libc:
   if fd >= 0i32 {
     return fd;
   }
-  xfunc_die();
+  crate::libbb::xfunc_die::xfunc_die();
   /* We already output an error message. */
 }

@@ -1,6 +1,9 @@
+use crate::libbb::llist::llist_t;
 use libc;
+use libc::pid_t;
 use libc::printf;
 use libc::puts;
+use libc::FILE;
 extern "C" {
   #[no_mangle]
   fn rand() -> libc::c_int;
@@ -18,27 +21,12 @@ extern "C" {
   ) -> *mut FILE;
 
   #[no_mangle]
-  fn monotonic_us() -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_get_last_path_component_strip(path: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
   static ptr_to_globals: *mut globals;
-  #[no_mangle]
-  fn printfile_base64(fname: *const libc::c_char);
+
 }
 
-use crate::libbb::llist::llist_t;
-use crate::librb::size_t;
-use libc::pid_t;
-use libc::FILE;
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub helper_pid: pid_t,
   pub timeout: libc::c_uint,
@@ -235,12 +223,13 @@ pub unsafe extern "C" fn makemime_main(
     b"application/octet-stream\x00" as *const u8 as *const libc::c_char;
   let ref mut fresh0 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh0 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh0 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).opt_charset =
     b"us-ascii\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
   // parse options
-  (*ptr_to_globals).opts = getopt32(
+  (*ptr_to_globals).opts = crate::libbb::getopt32::getopt32(
     argv,
     b"c:e:o:C:N:a:*\x00" as *const u8 as *const libc::c_char,
     &mut content_type as *mut *const libc::c_char,
@@ -272,8 +261,8 @@ pub unsafe extern "C" fn makemime_main(
     l = (*l).link
   }
   // make a random string -- it will delimit message parts
-  srand(monotonic_us() as libc::c_uint);
-  opt_output = xasprintf(
+  srand(crate::libbb::time::monotonic_us() as libc::c_uint);
+  opt_output = crate::libbb::xfuncs_printf::xasprintf(
     b"%u-%u-%u\x00" as *const u8 as *const libc::c_char,
     rand() as libc::c_uint,
     rand() as libc::c_uint,
@@ -290,10 +279,10 @@ pub unsafe extern "C" fn makemime_main(
     printf(b"\n--%s\nContent-Type: %s; charset=%s\nContent-Disposition: inline; filename=\"%s\"\nContent-Transfer-Encoding: base64\n\x00"
                    as *const u8 as *const libc::c_char, opt_output,
                content_type, (*ptr_to_globals).opt_charset,
-               bb_get_last_path_component_strip(*argv));
+               crate::libbb::get_last_path_component::bb_get_last_path_component_strip(*argv));
     let fresh1 = argv;
     argv = argv.offset(1);
-    printfile_base64(*fresh1);
+    crate::mailutils::mail::printfile_base64(*fresh1);
   }
   // put multipart footer
   printf(

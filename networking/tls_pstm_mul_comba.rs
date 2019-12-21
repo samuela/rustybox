@@ -4,12 +4,7 @@ extern "C" {
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn pstm_grow(a: *mut pstm_int, size: libc::c_int) -> int32;
-  #[no_mangle]
-  fn pstm_clamp(a: *mut pstm_int);
+
 }
 
 use crate::librb::size_t;
@@ -20,14 +15,8 @@ pub type uint32 = u32;
 pub type int32 = i32;
 pub type pstm_digit = uint32;
 pub type pstm_word = uint64;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pstm_int {
-  pub used: libc::c_int,
-  pub alloc: libc::c_int,
-  pub sign: libc::c_int,
-  pub dp: *mut pstm_digit,
-}
+
+use crate::networking::tls_pstm::pstm_int;
 /*
  * Copyright (C) 2017 Denys Vlasenko
  *
@@ -105,7 +94,7 @@ unsafe extern "C" fn pstm_mul_comba_gen(
     If c is not large enough grow it and continue
   */
   if (*C).alloc < pa {
-    if pstm_grow(C, pa) != 0i32 {
+    if crate::networking::tls_pstm::pstm_grow(C, pa) != 0i32 {
       return -8i32;
     }
   } /* have a paD but it's not large enough */
@@ -114,7 +103,7 @@ unsafe extern "C" fn pstm_mul_comba_gen(
       < (::std::mem::size_of::<pstm_digit>() as libc::c_ulong).wrapping_mul(pa as libc::c_ulong)
     {
       paDfail = 1i32;
-      dst = xzalloc(
+      dst = crate::libbb::xfuncs_printf::xzalloc(
         (::std::mem::size_of::<pstm_digit>() as libc::c_ulong).wrapping_mul(pa as libc::c_ulong),
       ) as *mut pstm_digit
     //bbox
@@ -123,7 +112,7 @@ unsafe extern "C" fn pstm_mul_comba_gen(
       memset(dst as *mut libc::c_void, 0i32, paDlen as libc::c_ulong);
     }
   } else {
-    dst = xzalloc(
+    dst = crate::libbb::xfuncs_printf::xzalloc(
       (::std::mem::size_of::<pstm_digit>() as libc::c_ulong).wrapping_mul(pa as libc::c_ulong),
     ) as *mut pstm_digit
     //bbox
@@ -196,7 +185,7 @@ unsafe extern "C" fn pstm_mul_comba_gen(
     *fresh3 = 0i32 as pstm_digit;
     ix += 1
   }
-  pstm_clamp(C);
+  crate::networking::tls_pstm::pstm_clamp(C);
   if paD.is_null() || paDfail == 1i32 {
     free(dst as *mut libc::c_void);
   }

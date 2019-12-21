@@ -36,27 +36,6 @@ extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strcpy_and_process_escape_sequences(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfstat(fd: libc::c_int, buf: *mut stat, errmsg: *const libc::c_char);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
 /* no conversions */
@@ -65,8 +44,9 @@ pub const WAIT: dump_vflag_t = 3;
 pub const FIRST: dump_vflag_t = 2;
 pub const DUP: dump_vflag_t = 1;
 pub const ALL: dump_vflag_t = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct PR {
   pub nextpr: *mut PR,
   pub flags: libc::c_uint,
@@ -75,8 +55,9 @@ pub struct PR {
   pub fmt: *mut libc::c_char,
   pub nospace: *mut libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct FU {
   pub nextfu: *mut FU,
   pub nextpr: *mut PR,
@@ -85,23 +66,26 @@ pub struct FU {
   pub bcnt: libc::c_int,
   pub fmt: *mut libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct FS {
   pub nextfs: *mut FS,
   pub nextfu: *mut FU,
   pub bcnt: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct dumper_t {
   pub dump_skip: off_t,
   pub dump_length: libc::c_int,
   pub dump_vflag: smallint,
   pub fshead: *mut FS,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct priv_dumper_t {
   pub pub_0: dumper_t,
   pub argv: *mut *mut libc::c_char,
@@ -137,8 +121,9 @@ static mut size_conv_str: [libc::c_char; 25] = [
 static mut int_convs: [libc::c_char; 7] = [100, 105, 111, 117, 120, 88, 0];
 #[no_mangle]
 pub unsafe extern "C" fn alloc_dumper() -> *mut dumper_t {
-  let mut dumper: *mut priv_dumper_t =
-    xzalloc(::std::mem::size_of::<priv_dumper_t>() as libc::c_ulong) as *mut priv_dumper_t;
+  let mut dumper: *mut priv_dumper_t = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<
+    priv_dumper_t,
+  >() as libc::c_ulong) as *mut priv_dumper_t;
   (*dumper).pub_0.dump_length = -1i32;
   (*dumper).pub_0.dump_vflag = FIRST as libc::c_int as smallint;
   (*dumper).get__ateof = 1i32 as smallint;
@@ -241,7 +226,8 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
       let mut prec: *const libc::c_char = 0 as *const libc::c_char;
       let mut byte_count_str: *const libc::c_char = 0 as *const libc::c_char;
       /* DBU:[dvae@cray.com] zalloc so that forward ptrs start out NULL */
-      pr = xzalloc(::std::mem::size_of::<PR>() as libc::c_ulong) as *mut PR;
+      pr = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<PR>() as libc::c_ulong)
+        as *mut PR;
       if (*fu).nextpr.is_null() {
         (*fu).nextpr = pr
       }
@@ -322,7 +308,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
             (*pr).bcnt = (*fu).bcnt;
             if (*fu).bcnt == 0i32 {
               if prec.is_null() {
-                bb_simple_error_msg_and_die(
+                crate::libbb::verror_msg::bb_simple_error_msg_and_die(
                   b"%%s needs precision or byte count\x00" as *const u8 as *const libc::c_char,
                 );
               }
@@ -574,7 +560,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
               match current_block {
                 2106018012992170135 => {}
                 _ => {
-                  bb_error_msg_and_die(
+                  crate::libbb::verror_msg::bb_error_msg_and_die(
                     b"bad conversion character %%%s\x00" as *const u8 as *const libc::c_char,
                     p1,
                   );
@@ -598,7 +584,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
               while !((*fu).bcnt == *byte_count_str as libc::c_int) {
                 byte_count_str = byte_count_str.offset(1);
                 if *byte_count_str as libc::c_int == 0i32 {
-                  bb_error_msg_and_die(
+                  crate::libbb::verror_msg::bb_error_msg_and_die(
                     b"bad byte count for conversion character %s\x00" as *const u8
                       as *const libc::c_char,
                     p1,
@@ -616,7 +602,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
          * pointer, update original.
          */
         len = (p1.wrapping_offset_from(fmtp) as libc::c_long + 1) as libc::c_uint;
-        (*pr).fmt = xstrndup(fmtp, len as libc::c_int);
+        (*pr).fmt = crate::libbb::xfuncs_printf::xstrndup(fmtp, len as libc::c_int);
         /* DBU:[dave@cray.com] w/o this, trailing fmt text, space is lost.
          * Skip subsequent text and up to the next % sign and tack the
          * additional text onto fmt: eg. if fmt is "%x is a HEX number",
@@ -628,7 +614,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
         }
         if p3.wrapping_offset_from(p2) as libc::c_long != 0 {
           let mut d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-          d = xrealloc(
+          d = crate::libbb::xfuncs_printf::xrealloc(
             (*pr).fmt as *mut libc::c_void,
             (len as libc::c_long + p3.wrapping_offset_from(p2) as libc::c_long + 1) as size_t,
           ) as *mut libc::c_char;
@@ -655,7 +641,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
           nconv = nconv + 1;
           (fresh2) != 0
         } {
-          bb_simple_error_msg_and_die(
+          crate::libbb::verror_msg::bb_simple_error_msg_and_die(
             b"byte count with multiple conversion characters\x00" as *const u8
               as *const libc::c_char,
           );
@@ -725,7 +711,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
 }
 unsafe extern "C" fn do_skip(mut dumper: *mut priv_dumper_t, mut fname: *const libc::c_char) {
   let mut sbuf: stat = std::mem::zeroed();
-  xfstat(0i32, &mut sbuf, fname);
+  crate::libbb::xfuncs_printf::xfstat(0i32, &mut sbuf, fname);
   if sbuf.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
     && (*dumper).pub_0.dump_skip >= sbuf.st_size
   {
@@ -735,7 +721,7 @@ unsafe extern "C" fn do_skip(mut dumper: *mut priv_dumper_t, mut fname: *const l
     return;
   }
   if fseeko(stdin, (*dumper).pub_0.dump_skip, 0i32) != 0 {
-    bb_simple_perror_msg_and_die(fname);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(fname);
   }
   (*dumper).address += (*dumper).pub_0.dump_skip;
   (*dumper).savaddress = (*dumper).address;
@@ -749,7 +735,7 @@ unsafe extern "C" fn next(mut dumper: *mut priv_dumper_t) -> libc::c_int {
       (*dumper).argv = (*dumper).argv.offset(1);
       if *fname.offset(0) as libc::c_int != '-' as i32 || *fname.offset(1) as libc::c_int != 0 {
         if freopen(fname, b"r\x00" as *const u8 as *const libc::c_char, stdin).is_null() {
-          bb_simple_perror_msg(fname);
+          crate::libbb::perror_msg::bb_simple_perror_msg(fname);
           (*dumper).exitval = 1i32 as smallint;
           continue;
         }
@@ -783,7 +769,8 @@ unsafe extern "C" fn get(mut dumper: *mut priv_dumper_t) -> *mut libc::c_uchar {
   if (*dumper).get__curp.is_null() {
     (*dumper).address = 0i32 as off_t;
     (*dumper).get__curp = xmalloc(blocksize as size_t) as *mut libc::c_uchar;
-    (*dumper).get__savp = xzalloc(blocksize as size_t) as *mut libc::c_uchar
+    (*dumper).get__savp =
+      crate::libbb::xfuncs_printf::xzalloc(blocksize as size_t) as *mut libc::c_uchar
   /* need to be initialized */
   } else {
     let mut tmp: *mut libc::c_uchar = (*dumper).get__curp;
@@ -842,7 +829,7 @@ unsafe extern "C" fn get(mut dumper: *mut priv_dumper_t) -> *mut libc::c_uchar {
     ) as libc::c_int;
     if n == 0i32 {
       if ferror_unlocked(stdin) != 0 {
-        bb_simple_perror_msg(*(*dumper).argv.offset(-1i32 as isize));
+        crate::libbb::perror_msg::bb_simple_perror_msg(*(*dumper).argv.offset(-1i32 as isize));
       }
       (*dumper).get__ateof = 1i32 as smallint
     } else {
@@ -1226,7 +1213,8 @@ pub unsafe extern "C" fn bb_dump_add(mut pub_dumper: *mut dumper_t, mut fmt: *co
   let mut nextfupp: *mut *mut FU = 0 as *mut *mut FU;
   let mut savep: *const libc::c_char = 0 as *const libc::c_char;
   /* start new linked list of format units */
-  tfs = xzalloc(::std::mem::size_of::<FS>() as libc::c_ulong) as *mut FS; /*DBU:[dave@cray.com] start out NULL */
+  tfs =
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<FS>() as libc::c_ulong) as *mut FS; /*DBU:[dave@cray.com] start out NULL */
   if (*(pub_dumper as *mut priv_dumper_t)).pub_0.fshead.is_null() {
     let ref mut fresh6 = (*(pub_dumper as *mut priv_dumper_t)).pub_0.fshead;
     *fresh6 = tfs
@@ -1248,7 +1236,8 @@ pub unsafe extern "C" fn bb_dump_add(mut pub_dumper: *mut dumper_t, mut fmt: *co
     /* allocate a new format unit and link it in */
     /* NOSTRICT */
     /* DBU:[dave@cray.com] zalloc so that forward pointers start out NULL */
-    tfu = xzalloc(::std::mem::size_of::<FU>() as libc::c_ulong) as *mut FU;
+    tfu =
+      crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<FU>() as libc::c_ulong) as *mut FU;
     *nextfupp = tfu;
     nextfupp = &mut (*tfu).nextfu;
     (*tfu).reps = 1i32;
@@ -1265,7 +1254,7 @@ pub unsafe extern "C" fn bb_dump_add(mut pub_dumper: *mut dumper_t, mut fmt: *co
       }) == 0
         && *p as libc::c_int != '/' as i32
       {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"bad format {%s}\x00" as *const u8 as *const libc::c_char,
           fmt,
         );
@@ -1297,7 +1286,7 @@ pub unsafe extern "C" fn bb_dump_add(mut pub_dumper: *mut dumper_t, mut fmt: *co
           || bb__isspace as libc::c_int <= 13i32 - 9i32) as libc::c_int
       }) == 0
       {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"bad format {%s}\x00" as *const u8 as *const libc::c_char,
           fmt,
         );
@@ -1313,7 +1302,7 @@ pub unsafe extern "C" fn bb_dump_add(mut pub_dumper: *mut dumper_t, mut fmt: *co
     }
     /* format */
     if *p as libc::c_int != '\"' as i32 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"bad format {%s}\x00" as *const u8 as *const libc::c_char,
         fmt,
       );
@@ -1324,18 +1313,21 @@ pub unsafe extern "C" fn bb_dump_add(mut pub_dumper: *mut dumper_t, mut fmt: *co
       let fresh7 = p;
       p = p.offset(1);
       if *fresh7 as libc::c_int == '\u{0}' as i32 {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"bad format {%s}\x00" as *const u8 as *const libc::c_char,
           fmt,
         );
       }
     }
-    (*tfu).fmt = xstrndup(
+    (*tfu).fmt = crate::libbb::xfuncs_printf::xstrndup(
       savep,
       p.wrapping_offset_from(savep) as libc::c_long as libc::c_int,
     );
     /* alphabetic escape sequences have to be done in place */
-    strcpy_and_process_escape_sequences((*tfu).fmt, (*tfu).fmt);
+    crate::libbb::process_escape_sequence::strcpy_and_process_escape_sequences(
+      (*tfu).fmt,
+      (*tfu).fmt,
+    );
     /* unknown mappings are not changed: "\z" -> '\\' 'z' */
     /* trailing backslash, if any, is preserved */
     p = p.offset(1)

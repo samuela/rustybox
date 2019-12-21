@@ -1,14 +1,5 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn invarg_1_to_2(_: *const libc::c_char, _: *const libc::c_char) -> !;
-}
+
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -71,9 +62,9 @@ pub unsafe extern "C" fn ip_parse_common_args(
         break;
       }
     }
-    arg = index_in_substrings(ip_common_commands.as_ptr(), opt);
+    arg = crate::libbb::compare_string_array::index_in_substrings(ip_common_commands.as_ptr(), opt);
     if arg < 0i32 {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     if arg == ARG_oneline as libc::c_int {
       oneline = 1i32 as smallint;
@@ -85,11 +76,14 @@ pub unsafe extern "C" fn ip_parse_common_args(
         ];
         argv = argv.offset(1);
         if (*argv).is_null() {
-          bb_show_usage();
+          crate::libbb::appletlib::bb_show_usage();
         }
-        arg = index_in_strings(families.as_ptr(), *argv);
+        arg = crate::libbb::compare_string_array::index_in_strings(families.as_ptr(), *argv);
         if arg < 0i32 {
-          invarg_1_to_2(*argv, b"family\x00" as *const u8 as *const libc::c_char);
+          crate::networking::libiproute::utils::invarg_1_to_2(
+            *argv,
+            b"family\x00" as *const u8 as *const libc::c_char,
+          );
         }
       /* now arg == 0, 1 or 2 */
       } else {

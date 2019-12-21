@@ -9,12 +9,8 @@ extern "C" {
 
 pub type bb__aliased_u32 = u32;
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct tls_aes {
-  pub key: [u32; 60],
-  pub rounds: libc::c_uint,
-}
+
+use crate::librb::tls_aes;
 /*
  * Copyright (C) 2017 Denys Vlasenko
  *
@@ -635,8 +631,7 @@ unsafe extern "C" fn KeyExpansion(
           let fresh1;
           let fresh2 = __x;
           asm!("bswap $0" : "=r" (fresh1) : "0"
-                               (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2))
-                               :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
         }
         __v

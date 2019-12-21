@@ -1,11 +1,5 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-}
+
 
 /*
  * Busybox main internal header file
@@ -460,5 +454,5 @@ pub unsafe extern "C" fn concat_subpath_file(
   {
     return std::ptr::null_mut::<libc::c_char>();
   }
-  return concat_path_file(path, f);
+  return crate::libbb::concat_path_file::concat_path_file(path, f);
 }

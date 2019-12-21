@@ -37,33 +37,12 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct option {
   pub name: *const libc::c_char,
   pub has_arg: libc::c_int,
@@ -220,7 +199,7 @@ unsafe extern "C" fn normalize(mut arg: *const libc::c_char) -> *const libc::c_c
   let mut BUFFER: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if option_mask32 & OPT_u as libc::c_int as libc::c_uint != 0 {
     /* Just copy arg */
-    BUFFER = xstrdup(arg);
+    BUFFER = crate::libbb::xfuncs_printf::xstrdup(arg);
     return BUFFER;
   }
   /* Each character in arg may take up to four characters in the result:
@@ -399,7 +378,7 @@ unsafe extern "C" fn generate_output(
         normalize(*argv.offset(fresh18 as isize)),
       );
     }
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   }
   return exit_code;
 }
@@ -435,12 +414,12 @@ unsafe extern "C" fn add_long_options(
         }
         *tokptr.offset(tlen as isize) = '\u{0}' as i32 as libc::c_char;
         if tlen == 0i32 {
-          bb_simple_error_msg_and_die(
+          crate::libbb::verror_msg::bb_simple_error_msg_and_die(
             b"empty long option specified\x00" as *const u8 as *const libc::c_char,
           );
         }
       }
-      long_options = xrealloc_vector_helper(
+      long_options = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
         long_options as *mut libc::c_void,
         ((::std::mem::size_of::<option>() as libc::c_ulong) << 8i32)
           .wrapping_add(4i32 as libc::c_ulong) as libc::c_uint,
@@ -450,7 +429,7 @@ unsafe extern "C" fn add_long_options(
       /*memset(&long_options[long_nr], 0, sizeof(long_options[0])); - xrealloc_vector did it */
       (*long_options.offset(long_nr as isize)).val = LONG_OPT as libc::c_int;
       let ref mut fresh19 = (*long_options.offset(long_nr as isize)).name;
-      *fresh19 = xstrdup(tokptr);
+      *fresh19 = crate::libbb::xfuncs_printf::xstrdup(tokptr);
       long_nr += 1
     }
     tokptr = strtok(
@@ -471,7 +450,7 @@ unsafe extern "C" fn set_shell(mut new_shell: *const libc::c_char) {
   {
     option_mask32 |= SHELL_IS_TCSH as libc::c_int as libc::c_uint
   } else {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"unknown shell \'%s\', assuming bash\x00" as *const u8 as *const libc::c_char,
       new_shell,
     );
@@ -513,19 +492,21 @@ pub unsafe extern "C" fn getopt_main(
       puts(b" --\x00" as *const u8 as *const libc::c_char); /* quoting off */
       return 0i32;
     }
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"missing optstring argument\x00" as *const u8 as *const libc::c_char,
     );
   }
   if *(*argv.offset(1)).offset(0) as libc::c_int != '-' as i32 || !compatible.is_null() {
     let mut s: *mut libc::c_char = *argv.offset(1);
     option_mask32 |= OPT_u as libc::c_int as libc::c_uint;
-    s = xstrdup(s.offset(strspn(s, b"-+\x00" as *const u8 as *const libc::c_char) as isize));
+    s = crate::libbb::xfuncs_printf::xstrdup(
+      s.offset(strspn(s, b"-+\x00" as *const u8 as *const libc::c_char) as isize),
+    );
     let ref mut fresh20 = *argv.offset(1);
     *fresh20 = *argv.offset(0);
     return generate_output(argv.offset(1), argc - 1i32, s, long_options);
   }
-  opt = getopt32long(
+  opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"+o:n:qQs:Tual:*\x00" as *const u8 as *const libc::c_char,
     getopt_longopts.as_ptr(),
@@ -536,7 +517,10 @@ pub unsafe extern "C" fn getopt_main(
   );
   /* Effectuate the read options for the applet itself */
   while !l_arg.is_null() {
-    long_options = add_long_options(long_options, llist_pop(&mut l_arg) as *mut libc::c_char)
+    long_options = add_long_options(
+      long_options,
+      crate::libbb::llist::llist_pop(&mut l_arg) as *mut libc::c_char,
+    )
   }
   if opt & OPT_s as libc::c_int as libc::c_uint != 0 {
     set_shell(s_arg);
@@ -550,7 +534,7 @@ pub unsafe extern "C" fn getopt_main(
     n += 1;
     optstr = *argv.offset(n as isize);
     if optstr.is_null() {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"missing optstring argument\x00" as *const u8 as *const libc::c_char,
       );
     }

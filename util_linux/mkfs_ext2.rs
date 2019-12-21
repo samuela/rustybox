@@ -1,6 +1,5 @@
 use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::size_t;
-use crate::librb::uoff_t;
 use libc;
 use libc::off_t;
 use libc::printf;
@@ -17,82 +16,16 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-
-  #[no_mangle]
-  fn xfstat(fd_0: libc::c_int, buf: *mut stat, errmsg: *const libc::c_char);
-
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn xlseek(fd_0: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-
-  #[no_mangle]
-  fn get_volume_size_in_bytes(
-    fd_0: libc::c_int,
-    override_0: *const libc::c_char,
-    override_units: libc::c_uint,
-    extend: libc::c_int,
-  ) -> uoff_t;
-
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn xwrite(fd_0: libc::c_int, buf: *const libc::c_void, count: size_t);
-
-  #[no_mangle]
-  fn xclose(fd_0: libc::c_int);
-
-  #[no_mangle]
-  fn generate_uuid(buf: *mut u8);
-
-  #[no_mangle]
   static mut option_mask32: u32;
 
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn find_mount_point(name: *const libc::c_char, subdir_too: libc::c_int) -> *mut mntent;
-}
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct mntent {
-  pub mnt_fsname: *mut libc::c_char,
-  pub mnt_dir: *mut libc::c_char,
-  pub mnt_type: *mut libc::c_char,
-  pub mnt_opts: *mut libc::c_char,
-  pub mnt_freq: libc::c_int,
-  pub mnt_passno: libc::c_int,
 }
 
 /*
  * Structure of a blocks group descriptor
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ext2_group_desc {
   pub bg_block_bitmap: u32,
   pub bg_inode_bitmap: u32,
@@ -144,8 +77,9 @@ pub struct ext2_group_desc {
 /*
  * Structure of an inode on the disk
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ext2_inode {
   pub i_mode: u16,
   pub i_uid: u16,
@@ -168,16 +102,16 @@ pub struct ext2_inode {
   /* OS dependent 2 */
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub linux2: C2RustUnnamed_2,
   pub hurd2: C2RustUnnamed_1,
   pub masix2: C2RustUnnamed_0,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_0 {
   pub m_i_frag: u8,
   pub m_i_fsize: u8,
@@ -185,8 +119,8 @@ pub struct C2RustUnnamed_0 {
   pub m_i_reserved2: [u32; 2],
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_1 {
   pub h_i_frag: u8,
   pub h_i_fsize: u8,
@@ -196,8 +130,8 @@ pub struct C2RustUnnamed_1 {
   pub h_i_author: u32,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_2 {
   pub l_i_frag: u8,
   pub l_i_fsize: u8,
@@ -207,28 +141,28 @@ pub struct C2RustUnnamed_2 {
   pub l_i_reserved2: u32,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_3 {
   pub linux1: C2RustUnnamed_6,
   pub hurd1: C2RustUnnamed_5,
   pub masix1: C2RustUnnamed_4,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_4 {
   pub m_i_reserved1: u32,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_5 {
   pub h_i_translator: u32,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_6 {
   pub l_i_reserved1: u32,
 }
@@ -263,8 +197,9 @@ pub struct C2RustUnnamed_6 {
 /*
  * Structure of the super block
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ext2_super_block {
   pub s_inodes_count: u32,
   pub s_blocks_count: u32,
@@ -334,8 +269,9 @@ pub struct ext2_super_block {
 }
 
 // All fields are little-endian
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ext2_dir {
   pub inode1: u32,
   pub rec_len1: u16,
@@ -539,8 +475,8 @@ unsafe extern "C" fn has_super(mut x: u32) -> u32 {
 /* predefined output descriptor */
 unsafe extern "C" fn PUT(mut off: u64, mut buf: *mut libc::c_void, mut size: u32) {
   //bb_error_msg("PUT[%llu]:[%u]", off, size);
-  xlseek(3i32, off as off_t, 0i32); // superblock
-  xwrite(3i32, buf, size as size_t); // group descriptors
+  crate::libbb::xfuncs_printf::xlseek(3i32, off as off_t, 0i32); // superblock
+  crate::libbb::xfuncs_printf::xwrite(3i32, buf, size as size_t); // group descriptors
 }
 #[no_mangle]
 pub unsafe extern "C" fn mkfs_ext2_main(
@@ -579,7 +515,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   // using global "option_mask32" instead of local "opts":
   // we are register starved here
   /*opts =*/
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     b"cl:b:+f:i:+I:+J:G:N:m:+o:g:L:M:O:r:E:T:U:jnqvFS\x00" as *const u8 as *const libc::c_char,
     0 as *mut libc::c_void,
@@ -603,12 +539,15 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   ); // argv[0] -- device
   argv = argv.offset(optind as isize);
   // open the device, check the device is a block device
-  xmove_fd(xopen(*argv.offset(0), 0o1i32), 3i32);
-  xfstat(3i32, &mut st, *argv.offset(0));
+  crate::libbb::xfuncs_printf::xmove_fd(
+    crate::libbb::xfuncs_printf::xopen(*argv.offset(0), 0o1i32),
+    3i32,
+  );
+  crate::libbb::xfuncs_printf::xfstat(3i32, &mut st, *argv.offset(0));
   if !(st.st_mode & 0o170000i32 as libc::c_uint == 0o60000i32 as libc::c_uint)
     && option_mask32 & OPT_F as libc::c_int as libc::c_uint == 0
   {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"%s: not a block device\x00" as *const u8 as *const libc::c_char,
       *argv.offset(0),
     );
@@ -616,13 +555,13 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   // check if it is mounted
   // N.B. what if we format a file? find_mount_point will return false negative since
   // it is loop block device which is mounted!
-  if !find_mount_point(*argv.offset(0), 0i32).is_null() {
-    bb_simple_error_msg_and_die(
+  if !crate::libbb::find_mount_point::find_mount_point(*argv.offset(0), 0i32).is_null() {
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"can\'t format mounted filesystem\x00" as *const u8 as *const libc::c_char,
     );
   }
   // get size in kbytes
-  kilobytes = get_volume_size_in_bytes(
+  kilobytes = crate::libbb::get_volsize::get_volume_size_in_bytes(
     3i32,
     *argv.offset(1),
     1024i32 as libc::c_uint,
@@ -665,7 +604,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     || blocksize & blocksize.wrapping_sub(1i32 as libc::c_uint) != 0
   {
     // not power of 2
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"blocksize %u is bad\x00" as *const u8 as *const libc::c_char,
       blocksize,
     );
@@ -677,7 +616,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
       || user_inodesize & user_inodesize.wrapping_sub(1i32 as libc::c_uint) != 0
     {
       // not power of 2
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"-%c is bad\x00" as *const u8 as *const libc::c_char,
         'I' as i32,
       );
@@ -686,7 +625,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     }
   }
   if (bytes_per_inode as i32 as libc::c_uint) < blocksize {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"-%c is bad\x00" as *const u8 as *const libc::c_char,
       'i' as i32,
     );
@@ -698,17 +637,19 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   kilobytes >>= blocksize_log2.wrapping_sub(10i32 as libc::c_uint);
   nblocks = kilobytes as u32;
   if nblocks as libc::c_ulonglong != kilobytes {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"block count doesn\'t fit in 32 bits\x00" as *const u8 as *const libc::c_char,
     );
   }
   // Experimentally, standard mke2fs won't work on images smaller than 60k
   if nblocks < 60i32 as libc::c_uint {
-    bb_simple_error_msg_and_die(b"need >= 60 blocks\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"need >= 60 blocks\x00" as *const u8 as *const libc::c_char,
+    );
   }
   // How many reserved blocks?
   if reserved_percent > 50i32 as libc::c_uint {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"-%c is bad\x00" as *const u8 as *const libc::c_char,
       'm' as i32,
     );
@@ -835,7 +776,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     }
     i = i.wrapping_add(1)
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   if option_mask32 & OPT_n as libc::c_int as libc::c_uint != 0 {
     return 0i32;
   }
@@ -847,7 +788,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   // TODO: 2/5 reserved GDT: how to mark but not allocate?
   // TODO: 3/5 dir_index?
   // fill the superblock
-  sb = xzalloc(1024i32 as size_t) as *mut ext2_super_block; // revision 1 filesystem
+  sb = crate::libbb::xfuncs_printf::xzalloc(1024i32 as size_t) as *mut ext2_super_block; // revision 1 filesystem
   if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*sb).s_rev_level = 1i32 as u32
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
@@ -1113,7 +1054,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   } else {
     BUG_wrong_field_size();
   }
-  generate_uuid((*sb).s_uuid.as_mut_ptr());
+  crate::libbb::xfuncs_printf::generate_uuid((*sb).s_uuid.as_mut_ptr());
   if ::std::mem::size_of::<u8>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*sb).s_def_hash_version = 1i32 as u32 as u8
   } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 2i32 as libc::c_ulong {
@@ -1123,7 +1064,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   } else {
     BUG_wrong_field_size();
   }
-  generate_uuid((*sb).s_hash_seed.as_mut_ptr() as *mut u8);
+  crate::libbb::xfuncs_printf::generate_uuid((*sb).s_hash_seed.as_mut_ptr() as *mut u8);
   /*
    * From e2fsprogs: add "jitter" to the superblock's check interval so that we
    * don't check all the filesystems at the same time.  We use a
@@ -1154,13 +1095,14 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     BUG_wrong_field_size();
   }
   // write the label
-  safe_strncpy(
+  crate::libbb::safe_strncpy::safe_strncpy(
     (*sb).s_volume_name.as_mut_ptr(),
     label,
     ::std::mem::size_of::<[libc::c_char; 16]>() as libc::c_ulong,
   );
   // calculate filesystem skeleton structures
-  gd = xzalloc(group_desc_blocks.wrapping_mul(blocksize) as size_t) as *mut ext2_group_desc;
+  gd = crate::libbb::xfuncs_printf::xzalloc(group_desc_blocks.wrapping_mul(blocksize) as size_t)
+    as *mut ext2_group_desc;
   buf = xmalloc(blocksize as size_t) as *mut u8;
   (*sb).s_free_blocks_count = 0i32 as u32;
   i = 0i32 as libc::c_uint;
@@ -1284,7 +1226,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     // dump inode bitmap
     //PUT((u64)(FETCH_LE32(gd[i].bg_block_bitmap)) * blocksize, buf, blocksize);
     //but it's right after block bitmap, so we can just:
-    xwrite(3i32, buf as *const libc::c_void, blocksize as size_t);
+    crate::libbb::xfuncs_printf::xwrite(3i32, buf as *const libc::c_void, blocksize as size_t);
     if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
       (*gd.offset(i as isize)).bg_free_inodes_count =
         (*gd.offset(i as isize)).bg_free_inodes_count as u32 as u16
@@ -1752,6 +1694,6 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     blocksize,
   );
   // cleanup
-  xclose(3i32);
+  crate::libbb::xfuncs_printf::xclose(3i32);
   return 0i32;
 }

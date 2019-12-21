@@ -1,8 +1,7 @@
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::re_pattern_buffer;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use c2rust_bitfields;
-use c2rust_bitfields::BitfieldStruct;
 use libc;
 use libc::free;
 use libc::printf;
@@ -25,23 +24,8 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
   static mut xfunc_error_retval: u8;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
   #[no_mangle]
@@ -54,8 +38,7 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   fn regfree(__preg: *mut regex_t);
-  #[no_mangle]
-  fn xregcomp(preg: *mut regex_t, regex: *const libc::c_char, cflags: libc::c_int);
+
 }
 
 pub type __int64_t = libc::c_long;
@@ -63,12 +46,12 @@ pub type int64_t = __int64_t;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub args: *mut *mut libc::c_char,
 }
-pub type reg_syntax_t = libc::c_ulong;
 pub type C2RustUnnamed = libc::c_int;
 pub const REG_ERPAREN: C2RustUnnamed = 16;
 pub const REG_ESIZE: C2RustUnnamed = 15;
@@ -88,31 +71,12 @@ pub const REG_BADPAT: C2RustUnnamed = 2;
 pub const REG_NOMATCH: C2RustUnnamed = 1;
 pub const REG_NOERROR: C2RustUnnamed = 0;
 pub const REG_ENOSYS: C2RustUnnamed = -1;
-#[derive(Copy, Clone, BitfieldStruct)]
-#[repr(C)]
-pub struct re_pattern_buffer {
-  pub buffer: *mut libc::c_uchar,
-  pub allocated: libc::c_ulong,
-  pub used: libc::c_ulong,
-  pub syntax: reg_syntax_t,
-  pub fastmap: *mut libc::c_char,
-  pub translate: *mut libc::c_uchar,
-  pub re_nsub: size_t,
-  #[bitfield(name = "can_be_null", ty = "libc::c_uint", bits = "0..=0")]
-  #[bitfield(name = "regs_allocated", ty = "libc::c_uint", bits = "1..=2")]
-  #[bitfield(name = "fastmap_accurate", ty = "libc::c_uint", bits = "3..=3")]
-  #[bitfield(name = "no_sub", ty = "libc::c_uint", bits = "4..=4")]
-  #[bitfield(name = "not_bol", ty = "libc::c_uint", bits = "5..=5")]
-  #[bitfield(name = "not_eol", ty = "libc::c_uint", bits = "6..=6")]
-  #[bitfield(name = "newline_anchor", ty = "libc::c_uint", bits = "7..=7")]
-  pub can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [u8; 1],
-  #[bitfield(padding)]
-  pub c2rust_padding: [u8; 7],
-}
+
 pub type regex_t = re_pattern_buffer;
 pub type regoff_t = libc::c_int;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct regmatch_t {
   pub rm_so: regoff_t,
   pub rm_eo: regoff_t,
@@ -121,14 +85,16 @@ pub type arith_t = int64_t;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const STRING: C2RustUnnamed_0 = 1;
 pub const INTEGER: C2RustUnnamed_0 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct valinfo {
   pub type_0: smallint,
   pub u: C2RustUnnamed_1,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub i: arith_t,
   pub s: *mut libc::c_char,
@@ -139,7 +105,8 @@ pub type C2RustUnnamed_2 = libc::c_uint;
 /* Return a VALUE for I.  */
 unsafe extern "C" fn int_value(mut i: arith_t) -> *mut VALUE {
   let mut v: *mut VALUE = 0 as *mut VALUE;
-  v = xzalloc(::std::mem::size_of::<VALUE>() as libc::c_ulong) as *mut VALUE;
+  v = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<VALUE>() as libc::c_ulong)
+    as *mut VALUE;
   if INTEGER as libc::c_int != 0 {
     /* otherwise xzalloc did it already */
     (*v).type_0 = INTEGER as libc::c_int as smallint
@@ -150,12 +117,13 @@ unsafe extern "C" fn int_value(mut i: arith_t) -> *mut VALUE {
 /* Return a VALUE for S.  */
 unsafe extern "C" fn str_value(mut s: *const libc::c_char) -> *mut VALUE {
   let mut v: *mut VALUE = 0 as *mut VALUE;
-  v = xzalloc(::std::mem::size_of::<VALUE>() as libc::c_ulong) as *mut VALUE;
+  v = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<VALUE>() as libc::c_ulong)
+    as *mut VALUE;
   if STRING as libc::c_int != 0 {
     /* otherwise xzalloc did it already */
     (*v).type_0 = STRING as libc::c_int as smallint
   }
-  (*v).u.s = xstrdup(s);
+  (*v).u.s = crate::libbb::xfuncs_printf::xstrdup(s);
   return v;
 }
 /* Free VALUE V, including structure components.  */
@@ -178,7 +146,7 @@ unsafe extern "C" fn null(mut v: *mut VALUE) -> libc::c_int {
 /* Coerce V to a STRING value (can't fail).  */
 unsafe extern "C" fn tostring(mut v: *mut VALUE) {
   if (*v).type_0 as libc::c_int == INTEGER as libc::c_int {
-    (*v).u.s = xasprintf(
+    (*v).u.s = crate::libbb::xfuncs_printf::xasprintf(
       b"%lld\x00" as *const u8 as *const libc::c_char,
       (*v).u.i as libc::c_longlong,
     );
@@ -263,7 +231,9 @@ unsafe extern "C" fn arithmetic_common(
   let mut li: arith_t = 0;
   let mut ri: arith_t = 0;
   if !toarith(l) || !toarith(r) {
-    bb_simple_error_msg_and_die(b"non-numeric argument\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"non-numeric argument\x00" as *const u8 as *const libc::c_char,
+    );
   }
   li = (*l).u.i;
   ri = (*r).u.i;
@@ -277,7 +247,9 @@ unsafe extern "C" fn arithmetic_common(
     return li * ri;
   }
   if ri == 0 {
-    bb_simple_error_msg_and_die(b"division by zero\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"division by zero\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if op == '/' as i32 {
     return li / ri;
@@ -289,22 +261,12 @@ SV is the VALUE for the lhs (the string),
 PV is the VALUE for the rhs (the pattern).  */
 unsafe extern "C" fn docolon(mut sv: *mut VALUE, mut pv: *mut VALUE) -> *mut VALUE {
   let mut v: *mut VALUE = 0 as *mut VALUE;
-  let mut re_buffer: regex_t = regex_t {
-    buffer: 0 as *mut libc::c_uchar,
-    allocated: 0,
-    used: 0,
-    syntax: 0,
-    fastmap: std::ptr::null_mut::<libc::c_char>(),
-    translate: 0 as *mut libc::c_uchar,
-    re_nsub: 0,
-    can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [0; 1],
-    c2rust_padding: [0; 7],
-  };
+  let mut re_buffer: regex_t = std::mem::zeroed();
   let mut re_regs: [regmatch_t; 2] = [regmatch_t { rm_so: 0, rm_eo: 0 }; 2];
   tostring(sv);
   tostring(pv);
   if *(*pv).u.s.offset(0) as libc::c_int == '^' as i32 {
-    bb_error_msg(b"warning: \'%s\': using \'^\' as the first character\nof a basic regular expression is not portable; it is ignored\x00"
+    crate::libbb::verror_msg::bb_error_msg(b"warning: \'%s\': using \'^\' as the first character\nof a basic regular expression is not portable; it is ignored\x00"
                          as *const u8 as *const libc::c_char, (*pv).u.s);
   }
   memset(
@@ -317,7 +279,7 @@ unsafe extern "C" fn docolon(mut sv: *mut VALUE, mut pv: *mut VALUE) -> *mut VAL
     0i32,
     ::std::mem::size_of::<[regmatch_t; 2]>() as libc::c_ulong,
   );
-  xregcomp(&mut re_buffer, (*pv).u.s, 0i32);
+  crate::libbb::xregcomp::xregcomp(&mut re_buffer, (*pv).u.s, 0i32);
   /* expr uses an anchored pattern match, so check that there was a
    * match and that the match starts at offset 0. */
   if regexec(
@@ -349,21 +311,27 @@ unsafe extern "C" fn docolon(mut sv: *mut VALUE, mut pv: *mut VALUE) -> *mut VAL
 unsafe extern "C" fn eval7() -> *mut VALUE {
   let mut v: *mut VALUE = 0 as *mut VALUE;
   if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args).is_null() {
-    bb_simple_error_msg_and_die(b"syntax error\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"syntax error\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if nextarg(b"(\x00" as *const u8 as *const libc::c_char) != 0 {
     let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args;
     *fresh0 = (*fresh0).offset(1);
     v = eval();
     if nextarg(b")\x00" as *const u8 as *const libc::c_char) == 0 {
-      bb_simple_error_msg_and_die(b"syntax error\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"syntax error\x00" as *const u8 as *const libc::c_char,
+      );
     }
     let ref mut fresh1 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args;
     *fresh1 = (*fresh1).offset(1);
     return v;
   }
   if nextarg(b")\x00" as *const u8 as *const libc::c_char) != 0 {
-    bb_simple_error_msg_and_die(b"syntax error\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"syntax error\x00" as *const u8 as *const libc::c_char,
+    );
   }
   let ref mut fresh2 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args;
   let fresh3 = *fresh2;
@@ -385,7 +353,7 @@ unsafe extern "C" fn eval6() -> *mut VALUE {
   v = v;
   let mut key: libc::c_int =
     if !(*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args).is_null() {
-      (index_in_strings(
+      (crate::libbb::compare_string_array::index_in_strings(
         keywords.as_ptr(),
         *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args,
       )) + 1i32
@@ -401,7 +369,9 @@ unsafe extern "C" fn eval6() -> *mut VALUE {
   if key == 1i32 {
     /* quote */
     if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args).is_null() {
-      bb_simple_error_msg_and_die(b"syntax error\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"syntax error\x00" as *const u8 as *const libc::c_char,
+      );
     }
     let ref mut fresh5 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args;
     let fresh6 = *fresh5;
@@ -451,7 +421,7 @@ unsafe extern "C" fn eval6() -> *mut VALUE {
     } else {
       v = xmalloc(::std::mem::size_of::<VALUE>() as libc::c_ulong) as *mut VALUE;
       (*v).type_0 = STRING as libc::c_int as smallint;
-      (*v).u.s = xstrndup(
+      (*v).u.s = crate::libbb::xfuncs_printf::xstrndup(
         (*l).u.s.offset((*i1).u.i as isize).offset(-1),
         (*i2).u.i as libc::c_int,
       )
@@ -621,11 +591,15 @@ pub unsafe extern "C" fn expr_main(
   let ref mut fresh13 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args;
   *fresh13 = argv.offset(1);
   if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args).is_null() {
-    bb_simple_error_msg_and_die(b"too few arguments\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"too few arguments\x00" as *const u8 as *const libc::c_char,
+    );
   }
   v = eval();
   if !(*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args).is_null() {
-    bb_simple_error_msg_and_die(b"syntax error\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"syntax error\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if (*v).type_0 as libc::c_int == INTEGER as libc::c_int {
     printf(
@@ -635,5 +609,5 @@ pub unsafe extern "C" fn expr_main(
   } else {
     puts((*v).u.s);
   }
-  fflush_stdout_and_exit(null(v));
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(null(v));
 }

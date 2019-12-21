@@ -4,14 +4,11 @@ extern "C" {
   #[no_mangle]
   fn strerror(_: libc::c_int) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_verror_msg(s: *const libc::c_char, p: ::std::ffi::VaList, strerr: *const libc::c_char);
 }
 pub type __builtin_va_list = [__va_list_tag; 1];
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __va_list_tag {
   pub gp_offset: libc::c_uint,
   pub fp_offset: libc::c_uint,
@@ -32,7 +29,7 @@ pub unsafe extern "C" fn bb_perror_msg(mut s: *const libc::c_char, mut args: ...
   let mut p: ::std::ffi::VaListImpl;
   p = args.clone();
   /* Guard against "<error message>: Success" */
-  bb_verror_msg(
+  crate::libbb::verror_msg::bb_verror_msg(
     s,
     p.as_va_list(),
     if *bb_errno != 0 {
@@ -47,7 +44,7 @@ pub unsafe extern "C" fn bb_perror_msg_and_die(mut s: *const libc::c_char, mut a
   let mut p: ::std::ffi::VaListImpl;
   p = args.clone();
   /* Guard against "<error message>: Success" */
-  bb_verror_msg(
+  crate::libbb::verror_msg::bb_verror_msg(
     s,
     p.as_va_list(),
     if *bb_errno != 0 {
@@ -56,7 +53,7 @@ pub unsafe extern "C" fn bb_perror_msg_and_die(mut s: *const libc::c_char, mut a
       std::ptr::null_mut::<libc::c_char>()
     },
   );
-  xfunc_die();
+  crate::libbb::xfunc_die::xfunc_die();
 }
 #[no_mangle]
 pub unsafe extern "C" fn bb_simple_perror_msg(mut s: *const libc::c_char) {

@@ -1,15 +1,17 @@
 use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 use libc::alarm;
 use libc::close;
+use libc::in_addr;
 use libc::printf;
 use libc::puts;
 use libc::sigaddset;
 use libc::sigprocmask;
 use libc::sigset_t;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::ssize_t;
 extern "C" {
   pub type sockaddr_x25;
@@ -63,77 +65,11 @@ extern "C" {
   ) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn monotonic_us() -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn signal_SA_RESTART_empty_mask(
-    sig: libc::c_int,
-    handler: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
-  );
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xbind(sockfd: libc::c_int, my_addr: *mut sockaddr, addrlen: socklen_t);
-  #[no_mangle]
-  fn xconnect(s: libc::c_int, s_addr: *const sockaddr, addrlen: socklen_t);
-  #[no_mangle]
-  fn setsockopt_SOL_SOCKET_1(fd: libc::c_int, optname: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn setsockopt_bindtodevice(fd: libc::c_int, iface: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn bb_getsockname(
-    sockfd: libc::c_int,
-    addr: *mut libc::c_void,
-    addrlen: socklen_t,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn xhost_and_af2sockaddr(
-    host: *const libc::c_char,
-    port: libc::c_int,
-    af: sa_family_t,
-  ) -> *mut len_and_sockaddr;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   static mut xfunc_error_retval: u8;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn ioctl_or_perror_and_die(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    fmt: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
+
   #[no_mangle]
   static ptr_to_globals: *mut globals;
 }
@@ -141,7 +77,7 @@ extern "C" {
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
 
-pub type socklen_t = __socklen_t;
+use crate::librb::socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -154,8 +90,9 @@ pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 use libc::sa_family_t;
 use libc::sockaddr;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __SOCKADDR_ARG {
   pub __sockaddr__: *mut sockaddr,
   pub __sockaddr_at__: *mut sockaddr_at,
@@ -171,44 +108,20 @@ pub union __SOCKADDR_ARG {
   pub __sockaddr_un__: *mut sockaddr_un,
   pub __sockaddr_x25__: *mut sockaddr_x25,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr__: *const sockaddr,
   pub __sockaddr_at__: *const sockaddr_at,
@@ -241,8 +154,9 @@ pub const IFF_LOOPBACK: C2RustUnnamed_0 = 8;
 pub const IFF_DEBUG: C2RustUnnamed_0 = 4;
 pub const IFF_BROADCAST: C2RustUnnamed_0 = 2;
 pub const IFF_UP: C2RustUnnamed_0 = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifmap {
   pub mem_start: libc::c_ulong,
   pub mem_end: libc::c_ulong,
@@ -251,14 +165,16 @@ pub struct ifmap {
   pub dma: libc::c_uchar,
   pub port: libc::c_uchar,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifreq {
   pub ifr_ifrn: C2RustUnnamed_2,
   pub ifr_ifru: C2RustUnnamed_1,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub ifru_addr: sockaddr,
   pub ifru_dstaddr: sockaddr,
@@ -273,13 +189,15 @@ pub union C2RustUnnamed_1 {
   pub ifru_newname: [libc::c_char; 16],
   pub ifru_data: __caddr_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_2 {
   pub ifrn_name: [libc::c_char; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct arphdr {
   pub ar_hrd: libc::c_ushort,
   pub ar_pro: libc::c_ushort,
@@ -287,8 +205,9 @@ pub struct arphdr {
   pub ar_pln: libc::c_uchar,
   pub ar_op: libc::c_ushort,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sockaddr_ll {
   pub sll_family: libc::c_ushort,
   pub sll_protocol: libc::c_ushort,
@@ -299,21 +218,19 @@ pub struct sockaddr_ll {
   pub sll_addr: [libc::c_uchar; 8],
 }
 pub type bb__aliased_u32 = u32;
-#[derive(Copy, Clone)]
+
+use crate::librb::len_and_sockaddr;
+
 #[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_3,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_3 {
   pub sa: sockaddr,
   pub sin: sockaddr_in,
   pub sin6: sockaddr_in6,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub src: in_addr,
   pub dst: in_addr,
@@ -367,8 +284,7 @@ unsafe extern "C" fn send_pack(
       let fresh1;
       let fresh2 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
@@ -384,8 +300,7 @@ unsafe extern "C" fn send_pack(
       let fresh4;
       let fresh5 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
     }
     __v
@@ -404,8 +319,7 @@ unsafe extern "C" fn send_pack(
         let fresh7;
         let fresh8 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8))
-                          : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
       }
       __v
@@ -422,8 +336,7 @@ unsafe extern "C" fn send_pack(
         let fresh10;
         let fresh11 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh10) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11))
-                          : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
       }
       __v
@@ -469,7 +382,7 @@ unsafe extern "C" fn send_pack(
     ::std::mem::size_of::<sockaddr_ll>() as libc::c_ulong as socklen_t,
   ) as libc::c_int;
   if err as libc::c_long == p.wrapping_offset_from(buf.as_mut_ptr()) as libc::c_long {
-    (*ptr_to_globals).last = monotonic_us() as libc::c_uint;
+    (*ptr_to_globals).last = crate::libbb::time::monotonic_us() as libc::c_uint;
     (*ptr_to_globals).sent = (*ptr_to_globals).sent.wrapping_add(1);
     if option_mask32 & UNICASTING as libc::c_int as libc::c_uint == 0 {
       (*ptr_to_globals).brd_sent = (*ptr_to_globals).brd_sent.wrapping_add(1)
@@ -495,7 +408,7 @@ unsafe extern "C" fn finish() -> ! {
 }
 unsafe extern "C" fn catcher() {
   let mut now: libc::c_uint = 0;
-  now = monotonic_us() as libc::c_uint;
+  now = crate::libbb::time::monotonic_us() as libc::c_uint;
   if (*ptr_to_globals).start == 0i32 as libc::c_uint {
     (*ptr_to_globals).start = now
   }
@@ -556,8 +469,7 @@ unsafe extern "C" fn recv_pack(
         let fresh13;
         let fresh14 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14))
-                         : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
       }
       __v
@@ -574,8 +486,7 @@ unsafe extern "C" fn recv_pack(
           let fresh16;
           let fresh17 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh16) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17))
-                             : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
         }
         __v
@@ -596,8 +507,7 @@ unsafe extern "C" fn recv_pack(
         let fresh19;
         let fresh20 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh19) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20))
-                         : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh18, fresh20, fresh19);
       }
       __v
@@ -615,8 +525,7 @@ unsafe extern "C" fn recv_pack(
             let fresh22;
             let fresh23 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh22) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23))
-                                  : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh21, fresh23, fresh22);
           }
           __v
@@ -637,8 +546,7 @@ unsafe extern "C" fn recv_pack(
         let fresh25;
         let fresh26 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh25) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh24, fresh26))
-                         : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh24, fresh26)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh24, fresh26, fresh25);
       }
       __v
@@ -715,8 +623,7 @@ unsafe extern "C" fn recv_pack(
             let fresh28;
             let fresh29 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh28) : "0"
-                                    (c2rust_asm_casts::AsmCast::cast_in(fresh27, fresh29))
-                                    : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh27, fresh29)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh27, fresh29, fresh28);
           }
           __v
@@ -763,7 +670,7 @@ unsafe extern "C" fn recv_pack(
     }
     if (*ptr_to_globals).last != 0 {
       let mut diff: libc::c_uint =
-        (monotonic_us() as libc::c_uint).wrapping_sub((*ptr_to_globals).last);
+        (crate::libbb::time::monotonic_us() as libc::c_uint).wrapping_sub((*ptr_to_globals).last);
       printf(
         b" %u.%03ums\n\x00" as *const u8 as *const libc::c_char,
         diff.wrapping_div(1000i32 as libc::c_uint),
@@ -772,7 +679,7 @@ unsafe extern "C" fn recv_pack(
     } else {
       puts(b" UNSOLICITED?\x00" as *const u8 as *const libc::c_char);
     }
-    fflush_all();
+    crate::libbb::xfuncs_printf::fflush_all();
   }
   (*ptr_to_globals).received = (*ptr_to_globals).received.wrapping_add(1);
   if (*FROM).sll_pkttype as libc::c_int != 0i32 {
@@ -790,8 +697,7 @@ unsafe extern "C" fn recv_pack(
         let fresh31;
         let fresh32 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh31) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh30, fresh32))
-                         : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh30, fresh32)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh30, fresh32, fresh31);
       }
       __v
@@ -823,16 +729,20 @@ pub unsafe extern "C" fn arping_main(
   let ref mut fresh33 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
-  *fresh33 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh33 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).count = -1i32;
-  xmove_fd(xsocket(17i32, SOCK_DGRAM as libc::c_int, 0i32), 3i32);
+  crate::libbb::xfuncs_printf::xmove_fd(
+    crate::libbb::xfuncs_printf::xsocket(17i32, SOCK_DGRAM as libc::c_int, 0i32),
+    3i32,
+  );
   // If you ever change SUID_DROP to SUID_REQUIRE,
   // drop suid root privileges here:
   //xsetuid(getuid());
   let mut opt: libc::c_uint = 0;
   let mut str_timeout: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^UDAqfbc:+w:I:s:\x00=1:Df:AU\x00" as *const u8 as *const libc::c_char,
     &mut (*ptr_to_globals).count as *mut libc::c_int,
@@ -841,7 +751,7 @@ pub unsafe extern "C" fn arping_main(
     &mut source as *mut *mut libc::c_char,
   );
   if opt & TIMEOUT as libc::c_int as libc::c_uint != 0 {
-    (*ptr_to_globals).timeout_us = xatou_range(
+    (*ptr_to_globals).timeout_us = crate::libbb::xatonum::xatou_range(
       str_timeout,
       0i32 as libc::c_uint,
       (2147483647i32 / 2000000i32) as libc::c_uint,
@@ -850,17 +760,17 @@ pub unsafe extern "C" fn arping_main(
     .wrapping_add(500000i32 as libc::c_uint)
   }
   target = *argv.offset(optind as isize);
-  err_str = xasprintf(
+  err_str = crate::libbb::xfuncs_printf::xasprintf(
     b"interface %s %%s\x00" as *const u8 as *const libc::c_char,
     device,
   );
   xfunc_error_retval = 2i32 as u8;
   /*memset(&G.ifr, 0, sizeof(G.ifr)); - zeroed by INIT_G */
-  strncpy_IFNAMSIZ(
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(
     (*ptr_to_globals).ifr.ifr_ifrn.ifrn_name.as_mut_ptr(),
     device,
   );
-  ioctl_or_perror_and_die(
+  crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
     3i32,
     0x8933i32 as libc::c_uint,
     &mut (*ptr_to_globals).ifr as *mut ifreq as *mut libc::c_void,
@@ -868,20 +778,23 @@ pub unsafe extern "C" fn arping_main(
     b"not found\x00" as *const u8 as *const libc::c_char,
   );
   (*ptr_to_globals).me.sll_ifindex = (*ptr_to_globals).ifr.ifr_ifru.ifru_ivalue;
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     3i32,
     0x8913i32 as libc::c_uint,
     &mut (*ptr_to_globals).ifr as *mut ifreq as *mut libc::c_char as *mut libc::c_void,
     b"SIOCGIFFLAGS\x00" as *const u8 as *const libc::c_char,
   );
   if (*ptr_to_globals).ifr.ifr_ifru.ifru_flags as libc::c_int & IFF_UP as libc::c_int == 0 {
-    bb_error_msg_and_die(err_str, b"is down\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_error_msg_and_die(
+      err_str,
+      b"is down\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if (*ptr_to_globals).ifr.ifr_ifru.ifru_flags as libc::c_int
     & (IFF_NOARP as libc::c_int | IFF_LOOPBACK as libc::c_int)
     != 0
   {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       err_str,
       b"is not ARPable\x00" as *const u8 as *const libc::c_char,
     );
@@ -890,10 +803,10 @@ pub unsafe extern "C" fn arping_main(
   }
   /* if (!inet_aton(target, &dst)) - not needed */
   let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  lsa = xhost_and_af2sockaddr(target, 0i32, 2i32 as sa_family_t);
+  lsa = crate::libbb::xconnect::xhost_and_af2sockaddr(target, 0i32, 2i32 as sa_family_t);
   (*ptr_to_globals).dst = (*lsa).u.sin.sin_addr;
   if !source.is_null() && inet_aton(source, &mut (*ptr_to_globals).src) == 0 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"invalid source address %s\x00" as *const u8 as *const libc::c_char,
       source,
     );
@@ -906,14 +819,15 @@ pub unsafe extern "C" fn arping_main(
   }
   if option_mask32 & DAD as libc::c_int as libc::c_uint == 0 || (*ptr_to_globals).src.s_addr != 0 {
     /*struct sockaddr_in probe_saddr;*/
-    let mut probe_fd: libc::c_int = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
-    setsockopt_bindtodevice(probe_fd, device);
+    let mut probe_fd: libc::c_int =
+      crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+    crate::libbb::xconnect::setsockopt_bindtodevice(probe_fd, device);
     /*memset(&G.probe_saddr, 0, sizeof(G.probe_saddr)); - zeroed by INIT_G */
     (*ptr_to_globals).probe_saddr.sin_family = 2i32 as sa_family_t; /* !(option_mask32 & DAD) case */
     if (*ptr_to_globals).src.s_addr != 0 {
       /* Check that this is indeed our IP */
       (*ptr_to_globals).probe_saddr.sin_addr = (*ptr_to_globals).src;
-      xbind(
+      crate::libbb::xfuncs_printf::xbind(
         probe_fd,
         &mut (*ptr_to_globals).probe_saddr as *mut sockaddr_in as *mut sockaddr,
         ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong as socklen_t,
@@ -931,32 +845,31 @@ pub unsafe extern "C" fn arping_main(
           let fresh35;
           let fresh36 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh35) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh34, fresh36))
-                              : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh34, fresh36)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh34, fresh36, fresh35);
         }
         __v
       };
       (*ptr_to_globals).probe_saddr.sin_addr = (*ptr_to_globals).dst;
-      if setsockopt_SOL_SOCKET_1(probe_fd, 5i32) != 0i32 {
-        bb_perror_msg(
+      if crate::libbb::xconnect::setsockopt_SOL_SOCKET_1(probe_fd, 5i32) != 0i32 {
+        crate::libbb::perror_msg::bb_perror_msg(
           b"setsockopt(%s)\x00" as *const u8 as *const libc::c_char,
           b"SO_DONTROUTE\x00" as *const u8 as *const libc::c_char,
         );
       }
-      xconnect(
+      crate::libbb::xconnect::xconnect(
         probe_fd,
         &mut (*ptr_to_globals).probe_saddr as *mut sockaddr_in as *mut sockaddr,
         ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong as socklen_t,
       );
-      bb_getsockname(
+      crate::libbb::bb_getsockname::bb_getsockname(
         probe_fd,
         &mut (*ptr_to_globals).probe_saddr as *mut sockaddr_in as *mut sockaddr
           as *mut libc::c_void,
         ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong as socklen_t,
       );
       if (*ptr_to_globals).probe_saddr.sin_family as libc::c_int != 2i32 {
-        bb_simple_error_msg_and_die(
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
           b"no IP address configured\x00" as *const u8 as *const libc::c_char,
         );
       }
@@ -977,18 +890,17 @@ pub unsafe extern "C" fn arping_main(
       let fresh38;
       let fresh39 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh38) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh37, fresh39)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh37, fresh39)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh37, fresh39, fresh38);
     }
     __v
   };
-  xbind(
+  crate::libbb::xfuncs_printf::xbind(
     3i32,
     &mut (*ptr_to_globals).me as *mut sockaddr_ll as *mut sockaddr,
     ::std::mem::size_of::<sockaddr_ll>() as libc::c_ulong as socklen_t,
   );
-  bb_getsockname(
+  crate::libbb::bb_getsockname::bb_getsockname(
     3i32,
     &mut (*ptr_to_globals).me as *mut sockaddr_ll as *mut sockaddr as *mut libc::c_void,
     ::std::mem::size_of::<sockaddr_ll>() as libc::c_ulong as socklen_t,
@@ -997,7 +909,7 @@ pub unsafe extern "C" fn arping_main(
   //if (getsockname(sock_fd, (struct sockaddr *) &me, &alen) == -1)
   //	bb_perror_msg_and_die("getsockname");
   if (*ptr_to_globals).me.sll_halen as libc::c_int == 0i32 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       err_str,
       b"is not ARPable (no ll address)\x00" as *const u8 as *const libc::c_char,
     );
@@ -1025,14 +937,14 @@ pub unsafe extern "C" fn arping_main(
   /*sigemptyset(&G.sset); - zeroed by INIT_G */
   sigaddset(&mut (*ptr_to_globals).sset, 14i32);
   sigaddset(&mut (*ptr_to_globals).sset, 2i32);
-  signal_SA_RESTART_empty_mask(
+  crate::libbb::signals::signal_SA_RESTART_empty_mask(
     2i32,
     ::std::mem::transmute::<
       Option<unsafe extern "C" fn() -> !>,
       Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
     >(Some(finish as unsafe extern "C" fn() -> !)),
   );
-  signal_SA_RESTART_empty_mask(
+  crate::libbb::signals::signal_SA_RESTART_empty_mask(
     14i32,
     ::std::mem::transmute::<
       Option<unsafe extern "C" fn() -> ()>,
@@ -1071,7 +983,9 @@ pub unsafe extern "C" fn arping_main(
     /* Don't allow SIGALRMs while we process the reply */
     sigprocmask(0i32, &mut (*ptr_to_globals).sset, 0 as *mut sigset_t);
     if cc < 0i32 {
-      bb_simple_perror_msg(b"recvfrom\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg(
+        b"recvfrom\x00" as *const u8 as *const libc::c_char,
+      );
     } else {
       recv_pack((*ptr_to_globals).packet.as_mut_ptr(), cc, &mut from);
     }

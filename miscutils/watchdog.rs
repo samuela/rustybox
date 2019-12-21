@@ -10,29 +10,6 @@ extern "C" {
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xatou_sfx(str: *const libc::c_char, sfx: *const suffix_mult) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn write_pidfile_std_path_and_ext(path: *const libc::c_char);
-  #[no_mangle]
-  fn remove_pidfile_std_path_and_ext(path: *const libc::c_char);
-  #[no_mangle]
-  fn bb_ioctl_or_warn(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 }
 
 use crate::librb::size_t;
@@ -40,12 +17,8 @@ use libc::ssize_t;
 use libc::useconds_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct suffix_mult {
-  pub suffix: [libc::c_char; 4],
-  pub mult: libc::c_uint,
-}
+
+use crate::librb::suffix_mult;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed_0 = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed_0 = 4;
@@ -61,13 +34,15 @@ unsafe extern "C" fn shutdown_watchdog() {
   close(3i32);
 }
 unsafe extern "C" fn shutdown_on_signal(mut _sig: libc::c_int) {
-  remove_pidfile_std_path_and_ext(b"watchdog\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::pidfile::remove_pidfile_std_path_and_ext(
+    b"watchdog\x00" as *const u8 as *const libc::c_char,
+  );
   shutdown_watchdog();
   _exit(0i32);
 }
 unsafe extern "C" fn watchdog_open(mut device: *const libc::c_char) {
   /* Use known fd # - avoid needing global 'int fd' */
-  xmove_fd(xopen(device, 0o1i32), 3i32);
+  crate::libbb::xfuncs_printf::xmove_fd(crate::libbb::xfuncs_printf::xopen(device, 0o1i32), 3i32);
   /* If the watchdog driver can do something other than cause a reboot
    * on a timeout, then it's possible this program may be starting from
    * a state when the watchdog hadn't been previously stopped with
@@ -75,7 +50,8 @@ unsafe extern "C" fn watchdog_open(mut device: *const libc::c_char) {
    * not start properly, so always do the proper stop first just in case.
    */
   shutdown_watchdog(); /* how often to restart */
-  xmove_fd(xopen(device, 0o1i32), 3i32); /* reboots after N ms if not restarted */
+  crate::libbb::xfuncs_printf::xmove_fd(crate::libbb::xfuncs_printf::xopen(device, 0o1i32), 3i32);
+  /* reboots after N ms if not restarted */
 }
 #[no_mangle]
 pub unsafe extern "C" fn watchdog_main(
@@ -111,7 +87,7 @@ pub unsafe extern "C" fn watchdog_main(
   let mut htimer_duration: libc::c_uint = 60000i32 as libc::c_uint;
   let mut st_arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ht_arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^Ft:T:\x00=1\x00" as *const u8 as *const libc::c_char,
     &mut st_arg as *mut *mut libc::c_char,
@@ -124,24 +100,24 @@ pub unsafe extern "C" fn watchdog_main(
    * the watchdog fd -- something else that may not even be allowed).
    */
   if opts & (1i32 << 0i32) as libc::c_uint == 0 {
-    bb_daemonize_or_rexec(DAEMON_CHDIR_ROOT as libc::c_int);
+    crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(DAEMON_CHDIR_ROOT as libc::c_int);
   }
   /* maybe bb_logenv_override(); here for LOGGING=syslog to work? */
   if opts & (1i32 << 2i32) as libc::c_uint != 0 {
-    htimer_duration = xatou_sfx(ht_arg, suffixes.as_ptr())
+    htimer_duration = crate::libbb::xatonum::xatou_sfx(ht_arg, suffixes.as_ptr())
   }
   stimer_duration = htimer_duration.wrapping_div(2i32 as libc::c_uint);
   if opts & (1i32 << 1i32) as libc::c_uint != 0 {
-    stimer_duration = xatou_sfx(st_arg, suffixes.as_ptr())
+    stimer_duration = crate::libbb::xatonum::xatou_sfx(st_arg, suffixes.as_ptr())
   }
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     BB_FATAL_SIGS as libc::c_int,
     Some(shutdown_on_signal as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   watchdog_open(*argv.offset(optind as isize));
   /* WDIOC_SETTIMEOUT takes seconds, not milliseconds */
   htimer_duration = htimer_duration.wrapping_div(1000i32 as libc::c_uint);
-  bb_ioctl_or_warn(
+  crate::libbb::xfuncs_printf::bb_ioctl_or_warn(
     3i32,
     ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
       | (('W' as i32) << 0i32 + 8i32) as libc::c_uint
@@ -151,7 +127,7 @@ pub unsafe extern "C" fn watchdog_main(
     &enable as *const libc::c_int as *mut libc::c_void,
     b"WDIOC_SETOPTIONS\x00" as *const u8 as *const libc::c_char,
   );
-  bb_ioctl_or_warn(
+  crate::libbb::xfuncs_printf::bb_ioctl_or_warn(
     3i32,
     (((2u32 | 1u32) << 0i32 + 8i32 + 8i32 + 14i32
       | (('W' as i32) << 0i32 + 8i32) as libc::c_uint
@@ -161,7 +137,9 @@ pub unsafe extern "C" fn watchdog_main(
     &mut htimer_duration as *mut libc::c_uint as *mut libc::c_void,
     b"WDIOC_SETTIMEOUT\x00" as *const u8 as *const libc::c_char,
   );
-  write_pidfile_std_path_and_ext(b"watchdog\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::pidfile::write_pidfile_std_path_and_ext(
+    b"watchdog\x00" as *const u8 as *const libc::c_char,
+  );
   loop {
     /*
      * Make sure we clear the counter before sleeping,

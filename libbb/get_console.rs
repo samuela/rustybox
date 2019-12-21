@@ -4,18 +4,7 @@ use libc::close;
 use libc::ioctl;
 use libc::open;
 use libc::ptrdiff_t;
-extern "C" {
 
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
-}
 
 pub const KDGKBTYPE: C2RustUnnamed = 19251;
 /* make vt active */
@@ -90,18 +79,20 @@ pub unsafe extern "C" fn get_console_fd_or_die() -> libc::c_int {
     }
     fd -= 1
   }
-  bb_simple_error_msg_and_die(b"can\'t open console\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+    b"can\'t open console\x00" as *const u8 as *const libc::c_char,
+  );
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn console_make_active(mut fd: libc::c_int, vt_num: libc::c_int) {
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     VT_ACTIVATE as libc::c_int as libc::c_uint,
     vt_num as ptrdiff_t as *mut libc::c_void,
     b"VT_ACTIVATE\x00" as *const u8 as *const libc::c_char,
   );
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     VT_WAITACTIVE as libc::c_int as libc::c_uint,
     vt_num as ptrdiff_t as *mut libc::c_void,

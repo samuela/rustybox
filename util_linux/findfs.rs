@@ -2,17 +2,12 @@ use libc;
 use libc::puts;
 extern "C" {
 
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
   /* Returns:
    * 0: no UUID= or LABEL= prefix found
    * 1: UUID= or LABEL= prefix found. In this case,
    *    *fsname is replaced if device with such UUID or LABEL is found
    */
-  #[no_mangle]
-  fn resolve_mount_spec(fsname: *mut *mut libc::c_char) -> libc::c_int;
+
 }
 
 /*
@@ -48,15 +43,20 @@ pub unsafe extern "C" fn findfs_main(
   argv = argv.offset(1);
   let mut dev: *mut libc::c_char = *argv;
   if dev.is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
-  if !is_prefixed_with(dev, b"/dev/\x00" as *const u8 as *const libc::c_char).is_null() {
+  if !crate::libbb::compare_string_array::is_prefixed_with(
+    dev,
+    b"/dev/\x00" as *const u8 as *const libc::c_char,
+  )
+  .is_null()
+  {
     /* Just pass any /dev/xxx name right through.
      * This might aid in some scripts being able
      * to call this unconditionally */
     dev = std::ptr::null_mut::<libc::c_char>()
-  } else if resolve_mount_spec(argv) == 0 {
-    bb_show_usage();
+  } else if crate::util_linux::volume_id::get_devname::resolve_mount_spec(argv) == 0 {
+    crate::libbb::appletlib::bb_show_usage();
   }
   if *argv != dev {
     puts(*argv);

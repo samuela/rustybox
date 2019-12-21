@@ -18,32 +18,11 @@ extern "C" {
   fn klogctl(type_0: libc::c_int, b: *mut libc::c_char, len: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
-  fn bb_signals_recursive_norestart(
-    sigs: libc::c_int,
-    f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
-  );
-  #[no_mangle]
-  fn kill_myself_with_sig(sig: libc::c_int) -> !;
-  #[no_mangle]
   static mut bb_got_signal: smallint;
-  #[no_mangle]
-  fn record_signo(signo: libc::c_int);
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn write_pidfile_std_path_and_ext(path: *const libc::c_char);
-  #[no_mangle]
-  fn remove_pidfile_std_path_and_ext(path: *const libc::c_char);
+
   #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
+
   #[no_mangle]
   static bb_banner: [libc::c_char; 0];
   #[no_mangle]
@@ -168,17 +147,18 @@ pub unsafe extern "C" fn klogd_main(
   let mut opt_c: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;
   let mut used: libc::c_int = 0;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"c:n\x00" as *const u8 as *const libc::c_char,
     &mut opt_c as *mut *mut libc::c_char,
   ) as libc::c_int;
   if opt & OPT_LEVEL as libc::c_int != 0 {
     /* Valid levels are between 1 and 8 */
-    i = xatou_range(opt_c, 1i32 as libc::c_uint, 8i32 as libc::c_uint) as libc::c_int
+    i = crate::libbb::xatonum::xatou_range(opt_c, 1i32 as libc::c_uint, 8i32 as libc::c_uint)
+      as libc::c_int
   }
   if opt & OPT_FOREGROUND as libc::c_int == 0 {
-    bb_daemonize_or_rexec(DAEMON_CHDIR_ROOT as libc::c_int);
+    crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(DAEMON_CHDIR_ROOT as libc::c_int);
   }
   logmode = LOGMODE_SYSLOG as libc::c_int as smallint;
   /* klogd_open() before openlog(), since it might use fixed fd 3,
@@ -226,16 +206,18 @@ pub unsafe extern "C" fn klogd_main(
     ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
   );
   /* We want klogd_read to not be restarted, thus _norestart: */
-  bb_signals_recursive_norestart(
+  crate::libbb::signals::bb_signals_recursive_norestart(
     BB_FATAL_SIGS as libc::c_int,
-    Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   syslog(
     5i32,
     b"klogd started: %s\x00" as *const u8 as *const libc::c_char,
     bb_banner.as_ptr(),
   );
-  write_pidfile_std_path_and_ext(b"klogd\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::pidfile::write_pidfile_std_path_and_ext(
+    b"klogd\x00" as *const u8 as *const libc::c_char,
+  );
   used = 0i32;
   while bb_got_signal == 0 {
     let mut n: libc::c_int = 0;
@@ -247,7 +229,9 @@ pub unsafe extern "C" fn klogd_main(
       if *bb_errno == 4i32 {
         continue;
       }
-      bb_simple_perror_msg(b"klogctl(2) error\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg(
+        b"klogctl(2) error\x00" as *const u8 as *const libc::c_char,
+      );
       break;
     } else {
       *start.offset(n as isize) = '\u{0}' as i32 as libc::c_char;
@@ -258,7 +242,7 @@ pub unsafe extern "C" fn klogd_main(
         if *newline as libc::c_int == '\u{0}' as i32 {
           /* This line is incomplete */
           /* move it to the front of the buffer */
-          overlapping_strcpy(bb_common_bufsiz1.as_mut_ptr(), start);
+          crate::libbb::safe_strncpy::overlapping_strcpy(bb_common_bufsiz1.as_mut_ptr(), start);
           used = newline.wrapping_offset_from(start) as libc::c_long as libc::c_int;
           if used < KLOGD_LOGBUF_SIZE as libc::c_int - 1i32 {
             break;
@@ -304,9 +288,11 @@ pub unsafe extern "C" fn klogd_main(
     5i32,
     b"klogd: exiting\x00" as *const u8 as *const libc::c_char,
   );
-  remove_pidfile_std_path_and_ext(b"klogd\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::pidfile::remove_pidfile_std_path_and_ext(
+    b"klogd\x00" as *const u8 as *const libc::c_char,
+  );
   if bb_got_signal != 0 {
-    kill_myself_with_sig(bb_got_signal as libc::c_int);
+    crate::libbb::signals::kill_myself_with_sig(bb_got_signal as libc::c_int);
   }
   return 1i32;
 }

@@ -21,18 +21,6 @@ extern "C" {
   #[no_mangle]
   static mut stderr: *mut FILE;
 
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_ask_y_confirmation() -> libc::c_int;
-
-  #[no_mangle]
-  fn concat_subpath_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
 }
 
 pub type C2RustUnnamed = libc::c_int;
@@ -171,14 +159,14 @@ pub unsafe extern "C" fn remove_file(
   let mut path_stat: stat = std::mem::zeroed();
   if lstat(path, &mut path_stat) < 0i32 {
     if *bb_errno != 2i32 {
-      bb_perror_msg(
+      crate::libbb::perror_msg::bb_perror_msg(
         b"can\'t stat \'%s\'\x00" as *const u8 as *const libc::c_char,
         path,
       );
       return -1i32;
     }
     if flags & FILEUTILS_FORCE as libc::c_int == 0 {
-      bb_perror_msg(
+      crate::libbb::perror_msg::bb_perror_msg(
         b"can\'t remove \'%s\'\x00" as *const u8 as *const libc::c_char,
         path,
       );
@@ -191,7 +179,7 @@ pub unsafe extern "C" fn remove_file(
     let mut d: *mut dirent = 0 as *mut dirent;
     let mut status: libc::c_int = 0i32;
     if flags & FILEUTILS_RECUR as libc::c_int == 0 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"\'%s\' is a directory\x00" as *const u8 as *const libc::c_char,
         path,
       );
@@ -206,7 +194,7 @@ pub unsafe extern "C" fn remove_file(
         applet_name,
         path,
       );
-      if bb_ask_y_confirmation() == 0 {
+      if crate::libbb::ask_confirmation::bb_ask_y_confirmation() == 0 {
         return 0i32;
       }
     }
@@ -220,7 +208,8 @@ pub unsafe extern "C" fn remove_file(
         break;
       }
       let mut new_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-      new_path = concat_subpath_file(path, (*d).d_name.as_mut_ptr());
+      new_path =
+        crate::libbb::concat_subpath_file::concat_subpath_file(path, (*d).d_name.as_mut_ptr());
       if new_path.is_null() {
         continue;
       }
@@ -230,7 +219,7 @@ pub unsafe extern "C" fn remove_file(
       free(new_path as *mut libc::c_void);
     }
     if closedir(dp) < 0i32 {
-      bb_perror_msg(
+      crate::libbb::perror_msg::bb_perror_msg(
         b"can\'t close \'%s\'\x00" as *const u8 as *const libc::c_char,
         path,
       );
@@ -243,12 +232,12 @@ pub unsafe extern "C" fn remove_file(
         applet_name,
         path,
       );
-      if bb_ask_y_confirmation() == 0 {
+      if crate::libbb::ask_confirmation::bb_ask_y_confirmation() == 0 {
         return status;
       }
     }
     if status == 0i32 && rmdir(path) < 0i32 {
-      bb_perror_msg(
+      crate::libbb::perror_msg::bb_perror_msg(
         b"can\'t remove \'%s\'\x00" as *const u8 as *const libc::c_char,
         path,
       );
@@ -275,12 +264,12 @@ pub unsafe extern "C" fn remove_file(
       applet_name,
       path,
     );
-    if bb_ask_y_confirmation() == 0 {
+    if crate::libbb::ask_confirmation::bb_ask_y_confirmation() == 0 {
       return 0i32;
     }
   }
   if unlink(path) < 0i32 {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"can\'t remove \'%s\'\x00" as *const u8 as *const libc::c_char,
       path,
     );

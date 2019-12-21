@@ -3,10 +3,7 @@ use libc::puts;
 extern "C" {
   #[no_mangle]
   fn dirname(__path: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn single_argv(argv: *mut *mut libc::c_char) -> *mut libc::c_char;
+
 }
 
 /*
@@ -42,6 +39,6 @@ pub unsafe extern "C" fn dirname_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  puts(dirname(single_argv(argv)));
-  return fflush_all();
+  puts(dirname(crate::libbb::single_argv::single_argv(argv)));
+  return crate::libbb::xfuncs_printf::fflush_all();
 }

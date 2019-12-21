@@ -1,6 +1,4 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-use crate::librb::size_t;
-
 use libc;
 use libc::endmntent;
 use libc::free;
@@ -23,49 +21,10 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xmalloc_realpath(path: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn fstype_matches(fstype: *const libc::c_char, comma_list: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn del_loop(device: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct mntent {
-  pub mnt_fsname: *mut libc::c_char,
-  pub mnt_dir: *mut libc::c_char,
-  pub mnt_type: *mut libc::c_char,
-  pub mnt_opts: *mut libc::c_char,
-  pub mnt_freq: libc::c_int,
-  pub mnt_passno: libc::c_int,
-}
+use libc::mntent;
 
 pub type C2RustUnnamed = libc::c_int;
 // pub const MS_NOUSER: C2RustUnnamed = -2147483648;
@@ -98,8 +57,8 @@ pub const MS_RDONLY: C2RustUnnamed = 1;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed_0 = 1024;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct mtab_list {
   pub dir: *mut libc::c_char,
   pub device: *mut libc::c_char,
@@ -126,7 +85,7 @@ pub unsafe extern "C" fn umount_main(
   let mut opt: libc::c_uint = 0;
   let mut mtl: *mut mtab_list = 0 as *mut mtab_list;
   let mut m: *mut mtab_list = 0 as *mut mtab_list;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"fldnrat:cvi\x00" as *const u8 as *const libc::c_char,
     &mut fstype as *mut *mut libc::c_char,
@@ -151,7 +110,7 @@ pub unsafe extern "C" fn umount_main(
   );
   if fp.is_null() {
     if opt & (if 1i32 != 0 { (1i32) << 5i32 } else { 0i32 }) as libc::c_uint != 0 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
         b"/proc/mounts\x00" as *const u8 as *const libc::c_char,
       );
@@ -166,13 +125,14 @@ pub unsafe extern "C" fn umount_main(
     .is_null()
     {
       /* Match fstype (fstype==NULL matches always) */
-      if fstype_matches(me.mnt_type, fstype) == 0 {
+      if crate::libbb::match_fstype::fstype_matches(me.mnt_type, fstype) == 0 {
         continue;
       }
-      m = xzalloc(::std::mem::size_of::<mtab_list>() as libc::c_ulong) as *mut mtab_list;
+      m = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<mtab_list>() as libc::c_ulong)
+        as *mut mtab_list;
       (*m).next = mtl;
-      (*m).device = xstrdup(me.mnt_fsname);
-      (*m).dir = xstrdup(me.mnt_dir);
+      (*m).device = crate::libbb::xfuncs_printf::xstrdup(me.mnt_fsname);
+      (*m).dir = crate::libbb::xfuncs_printf::xstrdup(me.mnt_dir);
       mtl = m
     }
     endmntent(fp);
@@ -181,7 +141,7 @@ pub unsafe extern "C" fn umount_main(
   // Note: "-t FSTYPE" does not imply -a.
   if opt & (if 1i32 != 0 { (1i32) << 5i32 } else { 0i32 }) as libc::c_uint == 0 {
     if (*argv.offset(0)).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     m = 0 as *mut mtab_list
   }
@@ -193,7 +153,7 @@ pub unsafe extern "C" fn umount_main(
     let mut path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     // Do we already know what to umount this time through the loop?
     if !m.is_null() {
-      path = xstrdup((*m).dir)
+      path = crate::libbb::xfuncs_printf::xstrdup((*m).dir)
     } else {
       // For umount -a, end of mtab means time to exit.
       if opt & (if 1i32 != 0 { (1i32) << 5i32 } else { 0i32 }) as libc::c_uint != 0 {
@@ -204,7 +164,7 @@ pub unsafe extern "C" fn umount_main(
         break;
       }
       argv = argv.offset(1);
-      path = xmalloc_realpath(zapit);
+      path = crate::libbb::xreadlink::xmalloc_realpath(zapit);
       if !path.is_null() {
         m = mtl;
         while !m.is_null() {
@@ -245,10 +205,10 @@ pub unsafe extern "C" fn umount_main(
           msg = b"can\'t remount %s read-only\x00" as *const u8 as *const libc::c_char;
           status = 1i32
         }
-        bb_error_msg(msg, (*m).device);
+        crate::libbb::verror_msg::bb_error_msg(msg, (*m).device);
       } else {
         status = 1i32;
-        bb_perror_msg(
+        crate::libbb::perror_msg::bb_perror_msg(
           b"can\'t unmount %s\x00" as *const u8 as *const libc::c_char,
           zapit,
         );
@@ -260,7 +220,7 @@ pub unsafe extern "C" fn umount_main(
       //    if (ENABLE_FEATURE_MOUNT_LOOP && (opt & OPT_FREELOOP) && m)
       // in the C code.
       if 1i32 != 0 && opt & (1i32 << 2i32) as libc::c_uint != 0 && !m.is_null() {
-        del_loop((*m).device);
+        crate::libbb::r#loop::del_loop((*m).device);
       }
 
       // This was originally

@@ -12,35 +12,15 @@ extern "C" {
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn monotonic_sec() -> libc::c_uint;
-  #[no_mangle]
-  fn smart_ulltoa5(
-    ul: libc::c_ulonglong,
-    buf: *mut libc::c_char,
-    scale: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn get_terminal_width(fd: libc::c_int) -> libc::c_int;
-  //UNUSED: char* FAST_FUNC unicode_conv_to_printable_maxwidth(uni_stat_t *stats, const char *src, unsigned maxwidth);
-  #[no_mangle]
-  fn unicode_conv_to_printable_fixedwidth(
-    src: *const libc::c_char,
-    width: libc::c_uint,
-  ) -> *mut libc::c_char;
+
+//UNUSED: char* FAST_FUNC unicode_conv_to_printable_maxwidth(uni_stat_t *stats, const char *src, unsigned maxwidth);
+
 }
 
 use crate::librb::uoff_t;
 use libc::FILE;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct bb_progress_t {
-  pub last_size: libc::c_uint,
-  pub last_update_sec: libc::c_uint,
-  pub last_change_sec: libc::c_uint,
-  pub start_sec: libc::c_uint,
-  pub curfile: *const libc::c_char,
-}
+
+use crate::librb::bb_progress_t;
 /* Seconds when xfer considered "stalled" */
 pub const STALLTIME: C2RustUnnamed = 5;
 
@@ -88,8 +68,9 @@ pub unsafe extern "C" fn bb_progress_init(
   mut p: *mut bb_progress_t,
   mut curfile: *const libc::c_char,
 ) {
-  (*p).curfile = unicode_conv_to_printable_fixedwidth(curfile, 20i32 as libc::c_uint);
-  (*p).start_sec = monotonic_sec();
+  (*p).curfile =
+    crate::libbb::unicode::unicode_conv_to_printable_fixedwidth(curfile, 20i32 as libc::c_uint);
+  (*p).start_sec = crate::libbb::time::monotonic_sec();
   (*p).last_update_sec = (*p).start_sec;
   (*p).last_change_sec = (*p).start_sec;
   (*p).last_size = 0i32 as libc::c_uint;
@@ -665,7 +646,7 @@ pub unsafe extern "C" fn bb_progress_update(
   let mut notty: libc::c_int = 0;
   //transferred = 1234; /* use for stall detection testing */
   //totalsize = 0; /* use for unknown size download testing */
-  elapsed = monotonic_sec();
+  elapsed = crate::libbb::time::monotonic_sec();
   since_last_update = elapsed.wrapping_sub((*p).last_update_sec);
   (*p).last_update_sec = elapsed;
   if totalsize != 0i32 as libc::c_ulong && transferred >= totalsize.wrapping_sub(beg_size) {
@@ -680,7 +661,7 @@ pub unsafe extern "C" fn bb_progress_update(
     return -1i32;
   }
   /* Before we lose real, unscaled sizes, produce human-readable size string */
-  *smart_ulltoa5(
+  *crate::libbb::human_readable::smart_ulltoa5(
     beg_size.wrapping_add(transferred) as libc::c_ulonglong,
     numbuf5.as_mut_ptr(),
     b" kMGTPEZY\x00" as *const u8 as *const libc::c_char,
@@ -719,7 +700,7 @@ pub unsafe extern "C" fn bb_progress_update(
       b"%3u%% \x00" as *const u8 as *const libc::c_char,
       ratio,
     );
-    barlength = get_terminal_width(2i32) - 48i32;
+    barlength = crate::libbb::xfuncs::get_terminal_width(2i32) - 48i32;
     /*
      * Must reject barlength <= 0 (terminal too narrow). While at it,
      * also reject: 1-char bar (useless), 2-char bar (ridiculous).

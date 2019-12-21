@@ -23,58 +23,6 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  #[no_mangle]
-  fn count_strstr(str: *const libc::c_char, sub: *const libc::c_char) -> libc::c_uint;
-  #[no_mangle]
-  fn xmalloc_substitute_string(
-    src: *const libc::c_char,
-    count: libc::c_int,
-    sub: *const libc::c_char,
-    repl: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_putchar_stderr(ch: libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn bb_arg_max() -> libc::c_uint;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn spawn(argv: *mut *mut libc::c_char) -> pid_t;
-  #[no_mangle]
-  fn safe_waitpid(pid: pid_t, wstat: *mut libc::c_int, options: libc::c_int) -> pid_t;
-  #[no_mangle]
-  fn wait_any_nohang(wstat: *mut libc::c_int) -> pid_t;
-  #[no_mangle]
-  fn spawn_and_wait(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_ask_y_confirmation_FILE(fp: *mut FILE) -> libc::c_int;
-  #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
@@ -129,8 +77,8 @@ extern "C" {
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub args: *mut *mut libc::c_char,
   pub argv: *mut *mut libc::c_char,
@@ -207,7 +155,9 @@ pub const OPTBIT_VERBOSE: libc::c_uint = 0;
 unsafe extern "C" fn xargs_exec() -> libc::c_int {
   let mut status: libc::c_int = 0;
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_procs == 1i32 {
-    status = spawn_and_wait((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args)
+    status = crate::libbb::vfork_daemon_rexec::spawn_and_wait(
+      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args,
+    )
   } else {
     let mut pid: pid_t = 0;
     let mut wstat: libc::c_int = 0;
@@ -215,9 +165,9 @@ unsafe extern "C" fn xargs_exec() -> libc::c_int {
       if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).running_procs
         >= (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_procs
       {
-        pid = safe_waitpid(-1i32, &mut wstat, 0i32)
+        pid = crate::libbb::xfuncs::safe_waitpid(-1i32, &mut wstat, 0i32)
       } else {
-        pid = wait_any_nohang(&mut wstat)
+        pid = crate::libbb::xfuncs::wait_any_nohang(&mut wstat)
       }
       if pid > 0i32 {
         /* We may have children we don't know about:
@@ -248,7 +198,9 @@ unsafe extern "C" fn xargs_exec() -> libc::c_int {
           /* Not in final waitpid() loop,
            * and G.running_procs < G.max_procs: start more procs
            */
-          status = spawn((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args);
+          status = crate::libbb::vfork_daemon_rexec::spawn(
+            (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args,
+          );
           /* else: status == -1 (failed to fork or exec) */
           if status > 0i32 {
             let ref mut fresh1 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).running_procs;
@@ -278,14 +230,14 @@ unsafe extern "C" fn xargs_exec() -> libc::c_int {
    * 1 if some other error occurred."""
    */
   if status < 0i32 {
-    bb_simple_perror_msg(
+    crate::libbb::perror_msg::bb_simple_perror_msg(
       *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .args
         .offset(0),
     );
     status = if *bb_errno == 2i32 { 127i32 } else { 126i32 }
   } else if status >= 0x180i32 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"\'%s\' terminated by signal %u\x00" as *const u8 as *const libc::c_char,
       *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .args
@@ -295,7 +247,7 @@ unsafe extern "C" fn xargs_exec() -> libc::c_int {
     status = 125i32
   } else if status != 0i32 {
     if status == 255i32 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"%s: exited with status 255; aborting\x00" as *const u8 as *const libc::c_char,
         *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
           .args
@@ -325,7 +277,7 @@ unsafe extern "C" fn store_param(mut s: *mut libc::c_char) {
     /* G.idx == N*256? */
     /* Enlarge, make G.args[(N+1)*256 - 1] last valid idx */
     let ref mut fresh2 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args;
-    *fresh2 = xrealloc(
+    *fresh2 = crate::libbb::xfuncs_printf::xrealloc(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args as *mut libc::c_void,
       (::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong).wrapping_mul(
         ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).idx + 0x100i32) as libc::c_ulong,
@@ -423,7 +375,7 @@ unsafe extern "C" fn process_stdin(
     if state as libc::c_int == 4i32 {
       /* word's delimiter or EOF detected */
       if q != 0 {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"unmatched %s quote\x00" as *const u8 as *const libc::c_char,
           if q as libc::c_int == '\'' as i32 {
             b"single\x00" as *const u8 as *const libc::c_char
@@ -572,12 +524,12 @@ unsafe extern "C" fn process_stdin_with_replace(
         let mut arg: *mut libc::c_char = *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
           .argv
           .offset(i as isize);
-        let mut count: libc::c_int = count_strstr(
+        let mut count: libc::c_int = crate::libbb::replace::count_strstr(
           arg,
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).repl_str,
         ) as libc::c_int;
         if count != 0i32 {
-          arg = xmalloc_substitute_string(
+          arg = crate::libbb::replace::xmalloc_substitute_string(
             arg,
             count,
             (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).repl_str,
@@ -604,9 +556,10 @@ unsafe extern "C" fn process_stdin_with_replace(
 unsafe extern "C" fn xargs_ask_confirmation() -> libc::c_int {
   let mut tty_stream: *mut FILE = 0 as *mut FILE; /* let's not go crazy high */
   let mut r: libc::c_int = 0;
-  tty_stream = xfopen_for_read(b"/dev/tty\x00" as *const u8 as *const libc::c_char);
+  tty_stream =
+    crate::libbb::wfopen::xfopen_for_read(b"/dev/tty\x00" as *const u8 as *const libc::c_char);
   fputs_unlocked(b" ?...\x00" as *const u8 as *const libc::c_char, stderr);
-  r = bb_ask_y_confirmation_FILE(tty_stream);
+  r = crate::libbb::ask_confirmation::bb_ask_y_confirmation_FILE(tty_stream);
   fclose(tty_stream);
   return r;
 }
@@ -643,7 +596,7 @@ pub unsafe extern "C" fn xargs_main(
   let ref mut fresh10 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).repl_str;
   *fresh10 = b"{}\x00" as *const u8 as *const libc::c_char;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).eol_ch = '\n' as i32 as libc::c_char;
-  opt = getopt32long(
+  opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"+trn:s:e::E:px0I:i::P:+a:\x00" as *const u8 as *const libc::c_char,
     b"no-run-if-empty\x00\x00r\x00" as *const u8 as *const libc::c_char,
@@ -661,7 +614,7 @@ pub unsafe extern "C" fn xargs_main(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_procs = 100i32
   }
   if !opt_a.is_null() {
-    xmove_fd(xopen(opt_a, 0i32), 0i32);
+    crate::libbb::xfuncs_printf::xmove_fd(crate::libbb::xfuncs_printf::xopen(opt_a, 0i32), 0i32);
   }
   /* -E ""? You may wonder why not just omit -E?
    * This is used for portability:
@@ -702,7 +655,7 @@ pub unsafe extern "C" fn xargs_main(
    * in the System Interfaces volume of IEEE Std 1003.1-2001)
    * shall not exceed {ARG_MAX}-2048 bytes".
    */
-  n_max_chars = bb_arg_max() as libc::c_int;
+  n_max_chars = crate::libbb::sysconf::bb_arg_max() as libc::c_int;
   if n_max_chars > 32i32 * 1024i32 {
     n_max_chars = 32i32 * 1024i32
   }
@@ -712,7 +665,7 @@ pub unsafe extern "C" fn xargs_main(
    */
   n_max_chars -= 2048i32;
   if opt & OPT_UPTO_SIZE as libc::c_int as libc::c_uint != 0 {
-    n_max_chars = xatou_range(
+    n_max_chars = crate::libbb::xatonum::xatou_range(
       max_chars,
       1i32 as libc::c_uint,
       2147483647i32 as libc::c_uint,
@@ -730,15 +683,15 @@ pub unsafe extern "C" fn xargs_main(
   n_max_chars = (n_max_chars as libc::c_ulong).wrapping_sub(n_chars) as libc::c_int as libc::c_int;
   /* Sanity check */
   if n_max_chars <= 0i32 {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"can\'t fit single argument within argument list size limit\x00" as *const u8
         as *const libc::c_char,
     );
   }
-  buf = xzalloc((n_max_chars + 1i32) as size_t) as *mut libc::c_char;
+  buf = crate::libbb::xfuncs_printf::xzalloc((n_max_chars + 1i32) as size_t) as *mut libc::c_char;
   n_max_arg = n_max_chars;
   if opt & OPT_UPTO_NUMBER as libc::c_int as libc::c_uint != 0 {
-    n_max_arg = xatou_range(
+    n_max_arg = crate::libbb::xatonum::xatou_range(
       max_args,
       1i32 as libc::c_uint,
       2147483647i32 as libc::c_uint,
@@ -796,7 +749,7 @@ pub unsafe extern "C" fn xargs_main(
     {
       /* not even one ARG was added? */
       if *rem as libc::c_int != '\u{0}' as i32 {
-        bb_simple_error_msg_and_die(
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
           b"argument line too long\x00" as *const u8 as *const libc::c_char,
         );
       }
@@ -816,7 +769,7 @@ pub unsafe extern "C" fn xargs_main(
         i += 1
       }
       if opt & OPT_INTERACTIVE as libc::c_int as libc::c_uint == 0 {
-        bb_putchar_stderr('\n' as i32 as libc::c_char);
+        crate::libbb::xfuncs::bb_putchar_stderr('\n' as i32 as libc::c_char);
       }
     }
     if opt & OPT_INTERACTIVE as libc::c_int as libc::c_uint == 0 || xargs_ask_confirmation() != 0 {
@@ -825,7 +778,7 @@ pub unsafe extern "C" fn xargs_main(
         /* G.xargs_exitcode is set by xargs_exec() */
       }
     } /* final waitpid() loop */
-    overlapping_strcpy(buf, rem);
+    crate::libbb::safe_strncpy::overlapping_strcpy(buf, rem);
   }
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_procs = 0i32;
   xargs_exec();

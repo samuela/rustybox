@@ -9,6 +9,8 @@ use libc::sigval;
 use libc::uid_t;
 extern "C" {
   #[no_mangle]
+  fn sigaction(__sig: libc::c_int, __act: *const sigaction, __oact: *mut sigaction) -> libc::c_int;
+  #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
@@ -20,14 +22,13 @@ extern "C" {
 
   #[no_mangle]
   fn sigsuspend(__set: *const sigset_t) -> libc::c_int;
-  #[no_mangle]
-  fn sigaction(__sig: libc::c_int, __act: *const sigaction, __oact: *mut sigaction) -> libc::c_int;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub _pad: [libc::c_int; 28],
   pub _kill: C2RustUnnamed_8,
@@ -38,40 +39,46 @@ pub union C2RustUnnamed {
   pub _sigpoll: C2RustUnnamed_1,
   pub _sigsys: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_0 {
   pub _call_addr: *mut libc::c_void,
   pub _syscall: libc::c_int,
   pub _arch: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_1 {
   pub si_band: libc::c_long,
   pub si_fd: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_2 {
   pub si_addr: *mut libc::c_void,
   pub si_addr_lsb: libc::c_short,
   pub _bounds: C2RustUnnamed_3,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_3 {
   pub _addr_bnd: C2RustUnnamed_4,
   pub _pkey: u32,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_4 {
   pub _lower: *mut libc::c_void,
   pub _upper: *mut libc::c_void,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_5 {
   pub si_pid: pid_t,
   pub si_uid: uid_t,
@@ -79,22 +86,25 @@ pub struct C2RustUnnamed_5 {
   pub si_utime: libc::clock_t,
   pub si_stime: libc::clock_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_6 {
   pub si_pid: pid_t,
   pub si_uid: uid_t,
   pub si_sigval: sigval,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_7 {
   pub si_tid: libc::c_int,
   pub si_overrun: libc::c_int,
   pub si_sigval: sigval,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_8 {
   pub si_pid: pid_t,
   pub si_uid: uid_t,

@@ -25,26 +25,12 @@ extern "C" {
   ) -> size_t;
   #[no_mangle]
   fn localtime(__timer: *const time_t) -> *mut tm;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
+
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  //UNUSED: char* FAST_FUNC unicode_conv_to_printable_maxwidth(uni_stat_t *stats, const char *src, unsigned maxwidth);
-  #[no_mangle]
-  fn unicode_conv_to_printable_fixedwidth(
-    src: *const libc::c_char,
-    width: libc::c_uint,
-  ) -> *mut libc::c_char;
+
+//UNUSED: char* FAST_FUNC unicode_conv_to_printable_maxwidth(uni_stat_t *stats, const char *src, unsigned maxwidth);
+
 }
 
 use crate::librb::size_t;
@@ -117,7 +103,7 @@ pub unsafe extern "C" fn cal_main(
   let mut day_headings: [libc::c_char; 168] = [0; 168];
   let mut hp: *mut libc::c_char = day_headings.as_mut_ptr();
   let mut buf: [libc::c_char; 40] = [0; 40];
-  flags = getopt32(argv, b"jy\x00" as *const u8 as *const libc::c_char);
+  flags = crate::libbb::getopt32::getopt32(argv, b"jy\x00" as *const u8 as *const libc::c_char);
   /* This sets julian = flags & 1: */
   option_mask32 &= 1i32 as libc::c_uint;
   month = 0i32 as libc::c_uint;
@@ -134,15 +120,16 @@ pub unsafe extern "C" fn cal_main(
   } else {
     if !(*argv.offset(1)).is_null() {
       if !(*argv.offset(2)).is_null() {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
       if flags & 2i32 as libc::c_uint == 0 {
         /* no -y */
-        month = xatou_range(*argv, 1i32 as libc::c_uint, 12i32 as libc::c_uint)
+        month =
+          crate::libbb::xatonum::xatou_range(*argv, 1i32 as libc::c_uint, 12i32 as libc::c_uint)
       }
       argv = argv.offset(1)
     }
-    year = xatou_range(*argv, 1i32 as libc::c_uint, 9999i32 as libc::c_uint)
+    year = crate::libbb::xatonum::xatou_range(*argv, 1i32 as libc::c_uint, 9999i32 as libc::c_uint)
   }
   blank_string(
     day_headings.as_mut_ptr(),
@@ -160,7 +147,7 @@ pub unsafe extern "C" fn cal_main(
       b"%B\x00" as *const u8 as *const libc::c_char,
       &mut zero_tm,
     );
-    month_names[i as usize] = xstrdup(buf.as_mut_ptr());
+    month_names[i as usize] = crate::libbb::xfuncs_printf::xstrdup(buf.as_mut_ptr());
     if i < 7i32 as libc::c_uint {
       zero_tm.tm_wday = i as libc::c_int;
       /* abbreviated weekday name according to locale */
@@ -176,7 +163,10 @@ pub unsafe extern "C" fn cal_main(
         *fresh0 = ' ' as i32 as libc::c_char
       }
       let mut two_wchars: *mut libc::c_char =
-        unicode_conv_to_printable_fixedwidth(buf.as_mut_ptr(), 2i32 as libc::c_uint);
+        crate::libbb::unicode::unicode_conv_to_printable_fixedwidth(
+          buf.as_mut_ptr(),
+          2i32 as libc::c_uint,
+        );
       strcpy(hp, two_wchars);
       free(two_wchars as *mut libc::c_void);
       hp = hp.offset(strlen(hp) as isize);
@@ -288,7 +278,7 @@ pub unsafe extern "C" fn cal_main(
           day_headings.as_mut_ptr(),
         );
       }
-      bb_putchar('\n' as i32);
+      crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
       row_0 = 0i32 as libc::c_uint;
       while row_0 < (6i32 * 7i32) as libc::c_uint {
         which_cal = 0i32 as libc::c_uint;
@@ -311,7 +301,7 @@ pub unsafe extern "C" fn cal_main(
       month = month.wrapping_add((3i32 as libc::c_uint).wrapping_sub(option_mask32))
     }
   }
-  fflush_stdout_and_exit(0i32);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
 }
 /*
  * day_array --

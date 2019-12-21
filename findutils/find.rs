@@ -1,7 +1,7 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::re_pattern_buffer;
 use c2rust_bitfields;
-use c2rust_bitfields::BitfieldStruct;
 use libc;
 use libc::access;
 use libc::closedir;
@@ -31,66 +31,6 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn recursive_action(
-    fileName: *const libc::c_char,
-    flags: libc::c_uint,
-    fileAction_0: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    dirAction: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    userData: *mut libc::c_void,
-    depth: libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
-  #[no_mangle]
-  fn xstat(pathname: *const libc::c_char, buf: *mut stat);
-  #[no_mangle]
-  fn count_strstr(str: *const libc::c_char, sub: *const libc::c_char) -> libc::c_uint;
-  #[no_mangle]
-  fn xmalloc_substitute_string(
-    src: *const libc::c_char,
-    count: libc::c_int,
-    sub: *const libc::c_char,
-    repl: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_arg_max() -> libc::c_uint;
-  #[no_mangle]
-  fn xatoull_sfx(str: *const libc::c_char, sfx: *const suffix_mult) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xatoull(str: *const libc::c_char) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
   /* Specialized: */
   /* Using xatoi() instead of naive atoi() is not always convenient -
    * in many places people want *non-negative* values, but store them
@@ -99,48 +39,27 @@ extern "C" {
    * It should really be named xatoi_nonnegative (since it allows 0),
    * but that would be too long.
    */
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
+
   /* These parse entries in /etc/passwd and /etc/group.  This is desirable
    * for BusyBox since we want to avoid using the glibc NSS stuff, which
    * increases target size and is often not needed on embedded systems.  */
-  #[no_mangle]
-  fn xuname2uid(name: *const libc::c_char) -> libc::c_long;
-  #[no_mangle]
-  fn xgroup2gid(name: *const libc::c_char) -> libc::c_long;
+
   /* ***********************************************************************/
   /* spawn_and_wait/run_nofork_applet/run_applet_no_and_exit need to work */
   /* carefully together to reinit some global state while not disturbing  */
   /* other. Be careful if you change them. Consult docs/nofork_noexec.txt */
   /* ***********************************************************************/
   /* Same as wait4pid(spawn(argv)), but with NOFORK/NOEXEC if configured: */
-  #[no_mangle]
-  fn spawn_and_wait(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
+
   /* Returns -1 if input is invalid. current_mode is a base for e.g. "u+rw" */
-  #[no_mangle]
-  fn bb_parse_mode(s: *const libc::c_char, cur_mode: libc::c_uint) -> libc::c_int;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static bb_msg_requires_arg: [libc::c_char; 0];
   #[no_mangle]
   static bb_msg_invalid_arg_to: [libc::c_char; 0];
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
-  #[no_mangle]
-  fn xregcomp(preg: *mut regex_t, regex: *const libc::c_char, cflags: libc::c_int);
+
   #[no_mangle]
   fn regexec(
     __preg: *const regex_t,
@@ -182,17 +101,14 @@ pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
 pub const ACTION_RECURSE: C2RustUnnamed = 1;
 pub type recurse_flags_t = u8;
 /* Last element is marked by mult == 0 */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct suffix_mult {
-  pub suffix: [libc::c_char; 4],
-  pub mult: libc::c_uint,
-}
+
+use crate::librb::suffix_mult;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub xdev_dev: *mut libc::dev_t,
   pub xdev_count: libc::c_int,
@@ -204,8 +120,9 @@ pub struct globals {
   pub recurse_flags: recurse_flags_t,
   pub max_argv_len: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action {
   pub f: action_fp,
   pub invert: bool,
@@ -213,151 +130,151 @@ pub struct action {
 pub type action_fp = Option<
   unsafe extern "C" fn(_: *const libc::c_char, _: *const stat, _: *mut libc::c_void) -> libc::c_int,
 >;
-pub type reg_syntax_t = libc::c_ulong;
-#[derive(Copy, Clone, BitfieldStruct)]
-#[repr(C)]
-pub struct re_pattern_buffer {
-  pub buffer: *mut libc::c_uchar,
-  pub allocated: libc::c_ulong,
-  pub used: libc::c_ulong,
-  pub syntax: reg_syntax_t,
-  pub fastmap: *mut libc::c_char,
-  pub translate: *mut libc::c_uchar,
-  pub re_nsub: size_t,
-  #[bitfield(name = "can_be_null", ty = "libc::c_uint", bits = "0..=0")]
-  #[bitfield(name = "regs_allocated", ty = "libc::c_uint", bits = "1..=2")]
-  #[bitfield(name = "fastmap_accurate", ty = "libc::c_uint", bits = "3..=3")]
-  #[bitfield(name = "no_sub", ty = "libc::c_uint", bits = "4..=4")]
-  #[bitfield(name = "not_bol", ty = "libc::c_uint", bits = "5..=5")]
-  #[bitfield(name = "not_eol", ty = "libc::c_uint", bits = "6..=6")]
-  #[bitfield(name = "newline_anchor", ty = "libc::c_uint", bits = "7..=7")]
-  pub can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [u8; 1],
-  #[bitfield(padding)]
-  pub c2rust_padding: [u8; 7],
-}
+
 pub type regex_t = re_pattern_buffer;
 pub type regoff_t = libc::c_int;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct regmatch_t {
   pub rm_so: regoff_t,
   pub rm_eo: regoff_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_print {
   pub a: action,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_name {
   pub a: action,
   pub pattern: *const libc::c_char,
   pub iname: bool,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_path {
   pub a: action,
   pub pattern: *const libc::c_char,
   pub ipath: bool,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_regex {
   pub a: action,
   pub compiled_pattern: regex_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_print0 {
   pub a: action,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_type {
   pub a: action,
   pub type_mask: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_executable {
   pub a: action,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_perm {
   pub a: action,
   pub perm_char: libc::c_char,
   pub perm_mask: mode_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_mtime {
   pub a: action,
   pub mtime_char: libc::c_char,
   pub mtime_days: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_mmin {
   pub a: action,
   pub mmin_char: libc::c_char,
   pub mmin_mins: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_newer {
   pub a: action,
   pub newer_mtime: time_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_inum {
   pub a: action,
   pub inode_num: ino_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_user {
   pub a: action,
   pub uid: uid_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_size {
   pub a: action,
   pub size_char: libc::c_char,
   pub size: off_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_paren {
   pub a: action,
   pub subexpr: *mut *mut *mut action,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_prune {
   pub a: action,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_quit {
   pub a: action,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_delete {
   pub a: action,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_empty {
   pub a: action,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_exec {
   pub a: action,
   pub exec_argv: *mut *mut libc::c_char,
@@ -367,22 +284,25 @@ pub struct action_exec {
   pub filelist_idx: libc::c_int,
   pub file_len: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_group {
   pub a: action,
   pub gid: gid_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct action_links {
   pub a: action,
   pub links_char: libc::c_char,
   pub links_count: libc::c_int,
 }
 /* Say no to GCCism */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct pp_locals {
   pub appp: *mut *mut *mut action,
   pub cur_group: libc::c_uint,
@@ -431,7 +351,7 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 pub const OPT_MAXDEPTH: C2RustUnnamed_0 = 35;
 #[inline(always)]
 unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
-  return xatoull(str) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull(str) as libc::c_ulong;
 }
 /* we have to zero it out because of NOEXEC */
 /* Return values of ACTFs ('action functions') are a bit mask:
@@ -497,7 +417,7 @@ unsafe extern "C" fn func_name(
   mut ap: *mut action_name,
 ) -> libc::c_int {
   let mut r: libc::c_int = 0;
-  let mut tmp: *const libc::c_char = bb_basename(fileName);
+  let mut tmp: *const libc::c_char = crate::libbb::get_last_path_component::bb_basename(fileName);
   /* GNU findutils: find DIR/ -name DIR
    * prints "DIR/" (DIR// prints "DIR//" etc).
    * Need to strip trailing "/".
@@ -696,14 +616,14 @@ unsafe extern "C" fn do_exec(
       if *(*ap).subst_count.offset(i as isize) == 0i32 as libc::c_uint {
         let fresh0 = pp;
         pp = pp.offset(1);
-        *fresh0 = xstrdup(arg)
+        *fresh0 = crate::libbb::xfuncs_printf::xstrdup(arg)
       } else {
         let mut j: libc::c_int = 0i32;
         while !(*(*ap).filelist.offset(j as isize)).is_null() {
           /* 2nd arg here should be ap->subst_count[i], but it is always 1: */
           let fresh1 = pp;
           pp = pp.offset(1);
-          *fresh1 = xmalloc_substitute_string(
+          *fresh1 = crate::libbb::replace::xmalloc_substitute_string(
             arg,
             1i32,
             b"{}\x00" as *const u8 as *const libc::c_char,
@@ -717,7 +637,7 @@ unsafe extern "C" fn do_exec(
       /* Handling "-exec ;" */
       let fresh2 = pp; /* terminate the list */
       pp = pp.offset(1);
-      *fresh2 = xmalloc_substitute_string(
+      *fresh2 = crate::libbb::replace::xmalloc_substitute_string(
         arg,
         *(*ap).subst_count.offset(i as isize) as libc::c_int,
         b"{}\x00" as *const u8 as *const libc::c_char,
@@ -733,9 +653,9 @@ unsafe extern "C" fn do_exec(
     (*ap).filelist_idx = 0i32;
     (*ap).file_len = 0i32
   }
-  rc = spawn_and_wait(argv.as_mut_ptr());
+  rc = crate::libbb::vfork_daemon_rexec::spawn_and_wait(argv.as_mut_ptr());
   if rc < 0i32 {
-    bb_simple_perror_msg(*argv.as_mut_ptr().offset(0));
+    crate::libbb::perror_msg::bb_simple_perror_msg(*argv.as_mut_ptr().offset(0));
   }
   i = 0i32;
   while !(*argv.as_mut_ptr().offset(i as isize)).is_null() {
@@ -753,7 +673,7 @@ unsafe extern "C" fn func_exec(
 ) -> libc::c_int {
   if !(*ap).filelist.is_null() {
     let mut rc: libc::c_int = 0;
-    (*ap).filelist = xrealloc_vector_helper(
+    (*ap).filelist = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
       (*ap).filelist as *mut libc::c_void,
       ((::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong) << 8i32)
         .wrapping_add(8i32 as libc::c_ulong) as libc::c_uint,
@@ -762,7 +682,7 @@ unsafe extern "C" fn func_exec(
     let fresh5 = (*ap).filelist_idx;
     (*ap).filelist_idx = (*ap).filelist_idx + 1;
     let ref mut fresh6 = *(*ap).filelist.offset(fresh5 as isize);
-    *fresh6 = xstrdup(fileName);
+    *fresh6 = crate::libbb::xfuncs_printf::xstrdup(fileName);
     (*ap).file_len = ((*ap).file_len as libc::c_ulong).wrapping_add(
       strlen(fileName)
         .wrapping_add(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong)
@@ -921,7 +841,7 @@ unsafe extern "C" fn func_delete(
     rc = unlink(fileName)
   }
   if rc < 0i32 {
-    bb_simple_perror_msg(fileName);
+    crate::libbb::perror_msg::bb_simple_perror_msg(fileName);
   }
   return 1i32;
 }
@@ -935,7 +855,7 @@ unsafe extern "C" fn func_empty(
     let mut dent: *mut dirent = 0 as *mut dirent;
     dir = opendir(fileName);
     if dir.is_null() {
-      bb_simple_perror_msg(fileName);
+      crate::libbb::perror_msg::bb_simple_perror_msg(fileName);
       return 0i32;
     }
     loop {
@@ -1055,7 +975,7 @@ unsafe extern "C" fn find_type(mut type_0: *const libc::c_char) -> libc::c_int {
     mask = 0o140000i32
   }
   if mask == 0i32 || *type_0.offset(1) as libc::c_int != '\u{0}' as i32 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       bb_msg_invalid_arg_to.as_ptr(),
       type_0,
       b"-type\x00" as *const u8 as *const libc::c_char,
@@ -1074,11 +994,12 @@ unsafe extern "C" fn alloc_action(
   mut sizeof_struct: libc::c_int,
   mut f: action_fp,
 ) -> *mut action {
-  let mut ap: *mut action = xzalloc(sizeof_struct as size_t) as *mut action;
+  let mut ap: *mut action =
+    crate::libbb::xfuncs_printf::xzalloc(sizeof_struct as size_t) as *mut action;
   let mut app: *mut *mut action = 0 as *mut *mut action;
   let mut group: *mut *mut *mut action =
     &mut *(*ppl).appp.offset((*ppl).cur_group as isize) as *mut *mut *mut action;
-  app = xrealloc(
+  app = crate::libbb::xfuncs_printf::xrealloc(
     *group as *mut libc::c_void,
     ((*ppl).cur_action.wrapping_add(2i32 as libc::c_uint) as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<*mut action>() as libc::c_ulong),
@@ -1119,18 +1040,19 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
   ppl.cur_group = 0i32 as libc::c_uint;
   ppl.cur_action = 0i32 as libc::c_uint;
   ppl.invert_flag = 0i32 != 0;
-  ppl.appp = xzalloc(
+  ppl.appp = crate::libbb::xfuncs_printf::xzalloc(
     (2i32 as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<*mut *mut action>() as libc::c_ulong),
   ) as *mut *mut *mut action;
   while !(*argv).is_null() {
     let mut arg: *const libc::c_char = *argv.offset(0);
-    let mut parm: libc::c_int = index_in_strings(params.as_ptr(), arg);
+    let mut parm: libc::c_int =
+      crate::libbb::compare_string_array::index_in_strings(params.as_ptr(), arg);
     let mut arg1: *const libc::c_char = *argv.offset(1);
     if parm >= PARM_name as libc::c_int {
       /* All options/actions starting from -name require argument */
       if arg1.is_null() {
-        bb_error_msg_and_die(bb_msg_requires_arg.as_ptr(), arg);
+        crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_requires_arg.as_ptr(), arg);
       }
       argv = argv.offset(1)
     }
@@ -1150,7 +1072,8 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xdev_on = 1i32 as smallint
     } else if parm == OPT_MINDEPTH as libc::c_int || parm == OPT_MINDEPTH as libc::c_int + 1i32 {
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).minmaxdepth
-        [(parm - OPT_MINDEPTH as libc::c_int) as usize] = xatoi_positive(arg1)
+        [(parm - OPT_MINDEPTH as libc::c_int) as usize] =
+        crate::libbb::xatonum::xatoi_positive(arg1)
     } else if parm == OPT_DEPTH as libc::c_int {
       let ref mut fresh13 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).recurse_flags;
       *fresh13 = (*fresh13 as libc::c_int | ACTION_DEPTHFIRST as libc::c_int) as recurse_flags_t
@@ -1168,7 +1091,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
         /* Operators */
         /* start new OR group */
         ppl.cur_group = ppl.cur_group.wrapping_add(1);
-        ppl.appp = xrealloc(
+        ppl.appp = crate::libbb::xfuncs_printf::xrealloc(
           ppl.appp as *mut libc::c_void,
           (ppl.cur_group.wrapping_add(2i32 as libc::c_uint) as libc::c_ulong)
             .wrapping_mul(::std::mem::size_of::<*mut *mut action>() as libc::c_ulong),
@@ -1353,7 +1276,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
         {
           if (*argv).is_null() {
             /* did not see ';' or '+' until end */
-            bb_error_msg_and_die(
+            crate::libbb::verror_msg::bb_error_msg_and_die(
               bb_msg_requires_arg.as_ptr(),
               b"-exec\x00" as *const u8 as *const libc::c_char,
             );
@@ -1367,8 +1290,10 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
             && *(*argv.offset(0)).offset(1) as libc::c_int == '\u{0}' as i32
           {
             if *(*argv.offset(0)).offset(0) as libc::c_int == '+' as i32 {
-              (*ap).filelist = xzalloc(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong)
-                as *mut *mut libc::c_char
+              (*ap).filelist = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<
+                *mut libc::c_char,
+              >()
+                as libc::c_ulong) as *mut *mut libc::c_char
             }
             break;
           } else {
@@ -1377,7 +1302,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
           }
         }
         if (*ap).exec_argc == 0i32 {
-          bb_error_msg_and_die(bb_msg_requires_arg.as_ptr(), arg);
+          crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_requires_arg.as_ptr(), arg);
         }
         (*ap).subst_count = xmalloc(
           ((*ap).exec_argc as libc::c_ulong)
@@ -1390,7 +1315,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
           if !(fresh16 != 0) {
             break;
           }
-          *(*ap).subst_count.offset(i as isize) = count_strstr(
+          *(*ap).subst_count.offset(i as isize) = crate::libbb::replace::count_strstr(
             *(*ap).exec_argv.offset(i as isize),
             b"{}\x00" as *const u8 as *const libc::c_char,
           );
@@ -1402,7 +1327,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
          * coreutils expects {} to appear only once in "-exec +"
          */
         if all_subst != 1i32 && !(*ap).filelist.is_null() {
-          bb_simple_error_msg_and_die(
+          crate::libbb::verror_msg::bb_simple_error_msg_and_die(
             b"only one \'{}\' allowed for -exec +\x00" as *const u8 as *const libc::c_char,
           ); /* restore NULLed parameter */
         }
@@ -1414,7 +1339,9 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
         loop {
           endarg = endarg.offset(1);
           if (*endarg).is_null() {
-            bb_simple_error_msg_and_die(b"unpaired \'(\'\x00" as *const u8 as *const libc::c_char);
+            crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+              b"unpaired \'(\'\x00" as *const u8 as *const libc::c_char,
+            );
           }
           if *(*endarg).offset(0) as libc::c_int == '(' as i32 && *(*endarg).offset(1) == 0 {
             nested = nested.wrapping_add(1)
@@ -1532,7 +1459,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
               ) -> libc::c_int,
           )),
         ) as *mut action_regex;
-        xregcomp(&mut (*ap_3).compiled_pattern, arg1, 0i32);
+        crate::libbb::xregcomp::xregcomp(&mut (*ap_3).compiled_pattern, arg1, 0i32);
       } else if parm == PARM_type as libc::c_int {
         let mut ap_4: *mut action_type = 0 as *mut action_type;
         ap_4 = alloc_action(
@@ -1614,9 +1541,10 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
          * -perm [+/]BITS  At least one of the BITS is set in file's mode.
          */
         /*ap->perm_mask = 0; - ALLOC_ACTION did it */
-        (*ap_5).perm_mask = bb_parse_mode(arg1, (*ap_5).perm_mask) as mode_t;
+        (*ap_5).perm_mask =
+          crate::libbb::parse_mode::bb_parse_mode(arg1, (*ap_5).perm_mask) as mode_t;
         if (*ap_5).perm_mask == -1i32 as mode_t {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"invalid mode \'%s\'\x00" as *const u8 as *const libc::c_char,
             arg1,
           );
@@ -1695,7 +1623,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
               ) -> libc::c_int,
           )),
         ) as *mut action_newer;
-        xstat(arg1, &mut stat_newer);
+        crate::libbb::xfuncs_printf::xstat(arg1, &mut stat_newer);
         (*ap_8).newer_mtime = stat_newer.st_mtime
       } else if parm == PARM_inum as libc::c_int {
         let mut ap_9: *mut action_inum = 0 as *mut action_inum;
@@ -1744,9 +1672,10 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
               ) -> libc::c_int,
           )),
         ) as *mut action_user;
-        (*ap_10).uid = bb_strtou(arg1, 0 as *mut *mut libc::c_char, 10i32);
+        (*ap_10).uid =
+          crate::libbb::bb_strtonum::bb_strtou(arg1, 0 as *mut *mut libc::c_char, 10i32);
         if *bb_errno != 0 {
-          (*ap_10).uid = xuname2uid(arg1) as uid_t
+          (*ap_10).uid = crate::libbb::bb_pwd::xuname2uid(arg1) as uid_t
         }
       } else if parm == PARM_group as libc::c_int {
         let mut ap_11: *mut action_group = 0 as *mut action_group;
@@ -1771,9 +1700,10 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
               ) -> libc::c_int,
           )),
         ) as *mut action_group;
-        (*ap_11).gid = bb_strtou(arg1, 0 as *mut *mut libc::c_char, 10i32);
+        (*ap_11).gid =
+          crate::libbb::bb_strtonum::bb_strtou(arg1, 0 as *mut *mut libc::c_char, 10i32);
         if *bb_errno != 0 {
-          (*ap_11).gid = xgroup2gid(arg1) as gid_t
+          (*ap_11).gid = crate::libbb::bb_pwd::xgroup2gid(arg1) as gid_t
         }
       } else if parm == PARM_size as libc::c_int {
         /* -size n[bckw]: file uses n units of space
@@ -1849,7 +1779,8 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
           )),
         ) as *mut action_size;
         (*ap_12).size_char = *arg1.offset(0);
-        (*ap_12).size = xatoull_sfx(plus_minus_num(arg1), find_suffixes.as_ptr()) as off_t
+        (*ap_12).size =
+          crate::libbb::xatonum::xatoull_sfx(plus_minus_num(arg1), find_suffixes.as_ptr()) as off_t
       } else if parm == PARM_links as libc::c_int {
         let mut ap_13: *mut action_links = 0 as *mut action_links;
         ap_13 = alloc_action(
@@ -1876,11 +1807,11 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
         (*ap_13).links_char = *arg1.offset(0);
         (*ap_13).links_count = xatoul(plus_minus_num(arg1)) as libc::c_int
       } else {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"unrecognized: %s\x00" as *const u8 as *const libc::c_char,
           arg,
         );
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
     }
     argv = argv.offset(1)
@@ -1903,7 +1834,7 @@ pub unsafe extern "C" fn find_main(
   );
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).minmaxdepth[1] = 2147483647i32;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_argv_len =
-    bb_arg_max().wrapping_sub(2048i32 as libc::c_uint);
+    crate::libbb::sysconf::bb_arg_max().wrapping_sub(2048i32 as libc::c_uint);
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).need_print = 1i32 as smallint;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).recurse_flags =
     ACTION_RECURSE as libc::c_int as recurse_flags_t;
@@ -1941,7 +1872,8 @@ pub unsafe extern "C" fn find_main(
   }
   *past_HLP = std::ptr::null_mut::<libc::c_char>();
   /* "+": stop on first non-option */
-  i = getopt32(argv, b"+HLP\x00" as *const u8 as *const libc::c_char) as libc::c_int;
+  i = crate::libbb::getopt32::getopt32(argv, b"+HLP\x00" as *const u8 as *const libc::c_char)
+    as libc::c_int;
   if i & 1i32 << 0i32 != 0 {
     let ref mut fresh17 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).recurse_flags;
     *fresh17 = (*fresh17 as libc::c_int
@@ -1989,7 +1921,7 @@ pub unsafe extern "C" fn find_main(
     let mut stbuf: stat = std::mem::zeroed();
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xdev_count = firstopt;
     let ref mut fresh21 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xdev_dev;
-    *fresh21 = xzalloc(
+    *fresh21 = crate::libbb::xfuncs_printf::xzalloc(
       ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).xdev_count as libc::c_ulong)
         .wrapping_mul(::std::mem::size_of::<libc::dev_t>() as libc::c_ulong),
     ) as *mut libc::dev_t;
@@ -2010,7 +1942,7 @@ pub unsafe extern "C" fn find_main(
   }
   i = 0i32;
   while !(*argv.offset(i as isize)).is_null() {
-    if recursive_action(
+    if crate::libbb::recursive_action::recursive_action(
       *argv.offset(i as isize),
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).recurse_flags as libc::c_uint,
       Some(

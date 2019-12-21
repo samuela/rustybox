@@ -2,7 +2,6 @@ use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::uoff_t;
-
 use libc;
 use libc::close;
 use libc::fclose;
@@ -16,7 +15,6 @@ use libc::sigset_t;
 use libc::sleep;
 use libc::sprintf;
 use libc::sscanf;
-use libc::ssize_t;
 use libc::stat;
 use libc::strcmp;
 use libc::sync;
@@ -74,52 +72,7 @@ extern "C" {
   static ptr_to_globals: *mut globals;
 
   #[no_mangle]
-  fn read_line_input(
-    st: *mut line_input_t,
-    prompt: *const libc::c_char,
-    command: *mut libc::c_char,
-    maxsize: libc::c_int,
-  ) -> libc::c_int;
-
-  #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn auto_string(str: *mut libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-
-  #[no_mangle]
-  fn fopen_or_warn(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
-  fn smart_ulltoa5(
-    ul: libc::c_ulonglong,
-    buf: *mut libc::c_char,
-    scale: *const libc::c_char,
-  ) -> *mut libc::c_char;
 
   /* Non-aborting kind of convertors: bb_strto[u][l]l */
   /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
@@ -132,39 +85,9 @@ extern "C" {
    * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
    *    return value is all-ones in this case.
    */
-  #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
 
   #[no_mangle]
   static mut option_mask32: u32;
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn ioctl_or_perror(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    fmt: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
 
   #[no_mangle]
   fn exit(_: libc::c_int) -> !;
@@ -272,8 +195,8 @@ pub type bb__aliased_u32 = u32;
 
 pub type __jmp_buf = [libc::c_long; 8];
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __jmp_buf_tag {
   pub __jmpbuf: __jmp_buf,
   pub __mask_was_saved: libc::c_int,
@@ -282,22 +205,10 @@ pub struct __jmp_buf_tag {
 
 pub type jmp_buf = [__jmp_buf_tag; 1];
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct line_input_t {
-  pub flags: libc::c_int,
-  pub timeout: libc::c_int,
-  pub path_lookup: *const libc::c_char,
-  pub cnt_history: libc::c_int,
-  pub cur_history: libc::c_int,
-  pub max_history: libc::c_int,
-  pub cnt_history_in_file: libc::c_uint,
-  pub hist_file: *const libc::c_char,
-  pub history: [*mut libc::c_char; 256],
-}
+use crate::librb::line_input_t;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub line_ptr: *mut libc::c_char,
   pub disk_device: *const libc::c_char,
@@ -330,8 +241,8 @@ pub struct globals {
   pub ptes: [pte; 60],
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct pte {
   pub part_table: *mut partition,
   pub ext_pointer: *mut partition,
@@ -342,8 +253,8 @@ pub struct pte {
 
 pub type sector_t = u32;
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct partition {
   pub boot_ind: libc::c_uchar,
   pub head: libc::c_uchar,
@@ -368,8 +279,8 @@ pub const OPT_b: C2RustUnnamed = 1;
 
 pub type ullong = libc::c_ulonglong;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct hd_geometry {
   pub heads: libc::c_uchar,
   pub sectors: libc::c_uchar,
@@ -392,8 +303,8 @@ pub const TRY_ONLY: action = 1;
 pub const OPEN_MAIN: action = 0;
 pub const dev_fd: C2RustUnnamed_1 = 3;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sun_info {
   pub spare1: libc::c_uchar,
   pub id: libc::c_uchar,
@@ -402,8 +313,9 @@ pub struct sun_info {
 }
 
 /* FEATURE_FDISK_WRITABLE */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sun_partition {
   pub info: [libc::c_uchar; 128],
   pub spare0: [libc::c_uchar; 14],
@@ -425,8 +337,8 @@ pub struct sun_partition {
   /* Label xor'd checksum */
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sun_partinfo {
   pub start_cylinder: u32,
   pub num_sectors: u32,
@@ -447,7 +359,7 @@ unsafe extern "C" fn bb_strtoul(
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_ulong {
-  return bb_strtoull(arg, endp, base) as libc::c_ulong;
+  return crate::libbb::bb_strtonum::bb_strtoull(arg, endp, base) as libc::c_ulong;
 }
 
 static mut msg_building_new_label: [libc::c_char; 143] = [
@@ -574,7 +486,7 @@ unsafe extern "C" fn bb_BLKGETSIZE_sectors(mut fd: libc::c_int) -> sector_t {
        * we support can't record more than 32 bit
        * sector counts or offsets
        */
-      bb_simple_error_msg(
+      crate::libbb::verror_msg::bb_simple_error_msg(
         b"device has more than 2^32 sectors, can\'t use all of them\x00" as *const u8
           as *const libc::c_char,
       );
@@ -586,8 +498,8 @@ unsafe extern "C" fn bb_BLKGETSIZE_sectors(mut fd: libc::c_int) -> sector_t {
 }
 unsafe extern "C" fn close_dev_fd() {
   /* Not really closing, but making sure it is open, and to harmless place */
-  xmove_fd(
-    xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0i32),
+  crate::libbb::xfuncs_printf::xmove_fd(
+    crate::libbb::xfuncs_printf::xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0i32),
     dev_fd as libc::c_int,
   );
 }
@@ -602,7 +514,9 @@ unsafe extern "C" fn partname(
   let mut wp: libc::c_int = 0;
   let mut bufsiz: libc::c_int = 0;
   let mut bufp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  bufp = auto_string(xzalloc(80i32 as size_t) as *mut libc::c_char);
+  bufp = crate::libbb::auto_string::auto_string(crate::libbb::xfuncs_printf::xzalloc(
+    80i32 as size_t,
+  ) as *mut libc::c_char);
   bufsiz = 80i32;
   w = strlen(dev) as libc::c_int;
   p = b"\x00" as *const u8 as *const libc::c_char;
@@ -663,7 +577,7 @@ unsafe extern "C" fn fdisk_fatal(mut why: *const libc::c_char) {
     close_dev_fd();
     longjmp((*ptr_to_globals).listingbuf.as_mut_ptr(), 1i32);
   }
-  bb_error_msg_and_die(why, (*ptr_to_globals).disk_device);
+  crate::libbb::verror_msg::bb_error_msg_and_die(why, (*ptr_to_globals).disk_device);
 }
 unsafe extern "C" fn seek_sector(mut secno: sector_t) {
   let mut off: u64 = (secno as u64).wrapping_mul((*ptr_to_globals).sector_size as libc::c_ulong);
@@ -701,7 +615,7 @@ unsafe extern "C" fn write_part_table_flag(mut b: *mut libc::c_char) {
 /* Read line; return 0 or first printable non-space char */
 unsafe extern "C" fn read_line(mut prompt: *const libc::c_char) -> libc::c_int {
   let mut sz: libc::c_int = 0; /* Ctrl-D or Ctrl-C */
-  sz = read_line_input(
+  sz = crate::libbb::lineedit::read_line_input(
     0 as *mut line_input_t,
     prompt,
     (*ptr_to_globals).line_buffer.as_mut_ptr(),
@@ -754,7 +668,7 @@ unsafe extern "C" fn read_hex(mut sys: *const *const libc::c_char) -> libc::c_in
 }
 unsafe extern "C" fn write_sector(mut secno: sector_t, mut buf: *const libc::c_void) {
   seek_sector(secno);
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     dev_fd as libc::c_int,
     buf,
     (*ptr_to_globals).sector_size as size_t,
@@ -788,10 +702,11 @@ unsafe extern "C" fn set_nr_sects(mut p: *mut partition, mut nr_sects: libc::c_u
 /* Allocate a buffer and read a partition table sector */
 unsafe extern "C" fn read_pte(mut pe: *mut pte, mut offset: sector_t) {
   (*pe).offset_from_dev_start = offset;
-  (*pe).sectorbuffer = xzalloc((*ptr_to_globals).sector_size as size_t) as *mut libc::c_char;
+  (*pe).sectorbuffer = crate::libbb::xfuncs_printf::xzalloc((*ptr_to_globals).sector_size as size_t)
+    as *mut libc::c_char;
   seek_sector(offset);
   /* xread would make us abort - bad for fdisk -l */
-  if full_read(
+  if crate::libbb::read::full_read(
     dev_fd as libc::c_int,
     (*pe).sectorbuffer as *mut libc::c_void,
     (*ptr_to_globals).sector_size as size_t,
@@ -947,7 +862,7 @@ unsafe extern "C" fn list_types(mut sys: *const *const libc::c_char) {
       break;
     }
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
 }
 unsafe extern "C" fn set_hsc_start_end(
   mut p: *mut partition,
@@ -1412,9 +1327,9 @@ unsafe extern "C" fn get_boot(mut what: action) -> libc::c_int {
         (*ptr_to_globals).disk_device,
       );
     }
-    xmove_fd(fd, dev_fd as libc::c_int);
+    crate::libbb::xfuncs_printf::xmove_fd(fd, dev_fd as libc::c_int);
     if 512i32 as libc::c_long
-      != full_read(
+      != crate::libbb::read::full_read(
         dev_fd as libc::c_int,
         (*ptr_to_globals).MBRbuffer.as_mut_ptr() as *mut libc::c_void,
         512i32 as size_t,
@@ -2268,11 +2183,12 @@ unsafe extern "C" fn chs_string11(
   mut head: libc::c_uint,
   mut sect: libc::c_uint,
 ) -> *const libc::c_char {
-  let mut buf: *mut libc::c_char = auto_string(xzalloc(
-    (::std::mem::size_of::<libc::c_int>() as libc::c_ulong)
-      .wrapping_mul(3i32 as libc::c_ulong)
-      .wrapping_mul(3i32 as libc::c_ulong),
-  ) as *mut libc::c_char);
+  let mut buf: *mut libc::c_char =
+    crate::libbb::auto_string::auto_string(crate::libbb::xfuncs_printf::xzalloc(
+      (::std::mem::size_of::<libc::c_int>() as libc::c_ulong)
+        .wrapping_mul(3i32 as libc::c_ulong)
+        .wrapping_mul(3i32 as libc::c_ulong),
+    ) as *mut libc::c_char);
   sprintf(
     buf,
     b"%u,%u,%u\x00" as *const u8 as *const libc::c_char,
@@ -2341,7 +2257,7 @@ unsafe extern "C" fn list_table(mut _xtra: libc::c_int) {
           .wrapping_add(nr_sects.wrapping_sub(1i32 as libc::c_uint)) as sector_t
           as sector_t
       }
-      *smart_ulltoa5(
+      *crate::libbb::human_readable::smart_ulltoa5(
         (nr_sects as ullong).wrapping_mul((*ptr_to_globals).sector_size as libc::c_ulonglong),
         numstr6.as_mut_ptr(),
         b" KMGTPEZY\x00" as *const u8 as *const libc::c_char,
@@ -2901,7 +2817,9 @@ unsafe extern "C" fn add_partition(mut n: libc::c_int, mut sys: libc::c_int) {
     (*pen).ext_pointer = p;
     (*ptr_to_globals).extended_offset = start;
     (*pe4).offset_from_dev_start = (*ptr_to_globals).extended_offset;
-    (*pe4).sectorbuffer = xzalloc((*ptr_to_globals).sector_size as size_t) as *mut libc::c_char;
+    (*pe4).sectorbuffer =
+      crate::libbb::xfuncs_printf::xzalloc((*ptr_to_globals).sector_size as size_t)
+        as *mut libc::c_char;
     (*pe4).part_table = (*pe4).sectorbuffer.offset(0x1bei32 as isize).offset(
       (0i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<partition>() as libc::c_ulong)
         as isize,
@@ -2919,7 +2837,9 @@ unsafe extern "C" fn add_logical() {
       .ptes
       .as_mut_ptr()
       .offset((*ptr_to_globals).g_partitions as isize) as *mut pte;
-    (*pe).sectorbuffer = xzalloc((*ptr_to_globals).sector_size as size_t) as *mut libc::c_char;
+    (*pe).sectorbuffer =
+      crate::libbb::xfuncs_printf::xzalloc((*ptr_to_globals).sector_size as size_t)
+        as *mut libc::c_char;
     (*pe).part_table = (*pe).sectorbuffer.offset(0x1bei32 as isize).offset(
       (0i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<partition>() as libc::c_ulong)
         as isize,
@@ -3007,7 +2927,7 @@ unsafe extern "C" fn reread_partition_table(mut leave: libc::c_int) {
    * report that sleep is needed, otherwise BLKRRPART may fail with -EIO:
    */
   sleep(1i32 as libc::c_uint); /* == pe->offset_from_dev_start + get_start_sect(p) */
-  i = ioctl_or_perror(
+  i = crate::libbb::xfuncs_printf::ioctl_or_perror(
     dev_fd as libc::c_int,
     0u32 << 0i32 + 8i32 + 8i32 + 14i32
       | (0x12i32 << 0i32 + 8i32) as libc::c_uint
@@ -3062,16 +2982,16 @@ unsafe extern "C" fn print_buffer(mut pbuffer: *mut libc::c_char) {
       *pbuffer.offset(i as isize) as libc::c_uchar as libc::c_int,
     );
     if l == 16i32 - 1i32 {
-      bb_putchar('\n' as i32);
+      crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
       l = -1i32
     }
     i += 1;
     l += 1
   }
   if l > 0i32 {
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
 }
 unsafe extern "C" fn print_raw() {
   let mut i: libc::c_int = 0;
@@ -3143,7 +3063,7 @@ unsafe extern "C" fn move_begin(mut i: libc::c_uint) {
 unsafe extern "C" fn xselect() {
   let mut c: libc::c_char = 0;
   loop {
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     c = (0x20i32
       | read_nonempty(b"Expert command (m for help): \x00" as *const u8 as *const libc::c_char)
         as libc::c_int) as libc::c_char;
@@ -3197,7 +3117,7 @@ unsafe extern "C" fn xselect() {
         x_list_table(0i32);
       }
       113 => {
-        bb_putchar('\n' as i32);
+        crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
         exit(0i32);
       }
       114 => return,
@@ -3244,7 +3164,12 @@ unsafe extern "C" fn is_ide_cdrom_or_tape(mut device: *const libc::c_char) -> li
   if it happens to be a CD-ROM drive. It even happens that
   the process hangs on the attempt to read a music CD.
   So try to be careful. This only works since 2.1.73. */
-  if is_prefixed_with(device, b"/dev/hd\x00" as *const u8 as *const libc::c_char).is_null() {
+  if crate::libbb::compare_string_array::is_prefixed_with(
+    device,
+    b"/dev/hd\x00" as *const u8 as *const libc::c_char,
+  )
+  .is_null()
+  {
     return 0i32;
   }
   snprintf(
@@ -3253,7 +3178,7 @@ unsafe extern "C" fn is_ide_cdrom_or_tape(mut device: *const libc::c_char) -> li
     b"/proc/ide/%s/media\x00" as *const u8 as *const libc::c_char,
     device.offset(5),
   );
-  procf = fopen_for_read(buf.as_mut_ptr());
+  procf = crate::libbb::wfopen::fopen_for_read(buf.as_mut_ptr());
   if !procf.is_null()
     && !fgets_unlocked(
       buf.as_mut_ptr(),
@@ -3262,12 +3187,12 @@ unsafe extern "C" fn is_ide_cdrom_or_tape(mut device: *const libc::c_char) -> li
     )
     .is_null()
   {
-    is_ide = (!is_prefixed_with(
+    is_ide = (!crate::libbb::compare_string_array::is_prefixed_with(
       buf.as_mut_ptr(),
       b"cdrom\x00" as *const u8 as *const libc::c_char,
     )
     .is_null()
-      || !is_prefixed_with(
+      || !crate::libbb::compare_string_array::is_prefixed_with(
         buf.as_mut_ptr(),
         b"tape\x00" as *const u8 as *const libc::c_char,
       )
@@ -3305,7 +3230,7 @@ unsafe extern "C" fn open_list_and_close(
     and SCSI hard disks which may not be
     installed on the system. */
     if user_specified != 0 || *bb_errno == 13i32 {
-      bb_perror_msg(
+      crate::libbb::perror_msg::bb_perror_msg(
         b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
         device,
       );
@@ -3371,7 +3296,7 @@ unsafe extern "C" fn list_devs_in_proc_partititons() {
   let mut ma: libc::c_int = 0;
   let mut mi: libc::c_int = 0;
   let mut sz: libc::c_int = 0;
-  procpt = fopen_or_warn(
+  procpt = crate::libbb::wfopen::fopen_or_warn(
     b"/proc/partitions\x00" as *const u8 as *const libc::c_char,
     b"r\x00" as *const u8 as *const libc::c_char,
   );
@@ -3425,7 +3350,8 @@ pub unsafe extern "C" fn fdisk_main(
    */
   let ref mut fresh2 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals); /* needed: fd 3 must not stay closed */
-  *fresh2 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh2 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).sector_size = 512i32 as libc::c_uint;
   (*ptr_to_globals).sector_offset = 1i32 as libc::c_uint;
@@ -3433,7 +3359,7 @@ pub unsafe extern "C" fn fdisk_main(
   (*ptr_to_globals).units_per_sector = 1i32 as libc::c_uint;
   (*ptr_to_globals).dos_compatible_flag = 1i32 as smallint;
   close_dev_fd();
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"b:+C:+H:+lS:+u\x00" as *const u8 as *const libc::c_char,
     &mut (*ptr_to_globals).sector_size as *mut libc::c_uint,
@@ -3456,7 +3382,7 @@ pub unsafe extern "C" fn fdisk_main(
         != 0
     {
       /* not power of 2 */
-      bb_show_usage(); // -u
+      crate::libbb::appletlib::bb_show_usage(); // -u
     }
     (*ptr_to_globals).sector_offset = 2i32 as libc::c_uint;
     (*ptr_to_globals).user_set_sector_size = 1i32 as libc::c_uint
@@ -3493,13 +3419,13 @@ pub unsafe extern "C" fn fdisk_main(
     return 0i32;
   }
   if (*argv.offset(0)).is_null() || !(*argv.offset(1)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   (*ptr_to_globals).disk_device = *argv.offset(0);
   get_boot(OPEN_MAIN);
   loop {
     let mut c: libc::c_int = 0;
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     c = 0x20i32
       | read_nonempty(b"Command (m for help): \x00" as *const u8 as *const libc::c_char)
         as libc::c_int;
@@ -3563,7 +3489,7 @@ pub unsafe extern "C" fn fdisk_main(
         current_block_99 = 11995618668192240200;
       }
       113 => {
-        bb_putchar('\n' as i32);
+        crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
         return 0i32;
       }
       98 | 115 => {

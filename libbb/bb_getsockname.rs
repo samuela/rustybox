@@ -1,6 +1,8 @@
+use crate::librb::socklen_t;
 use libc;
-use libc::sa_family_t;
 use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -18,9 +20,9 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-pub type socklen_t = __socklen_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __SOCKADDR_ARG {
   pub __sockaddr__: *mut sockaddr,
   pub __sockaddr_at__: *mut sockaddr_at,
@@ -37,24 +39,8 @@ pub union __SOCKADDR_ARG {
   pub __sockaddr_x25__: *mut sockaddr_x25,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
-
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
@@ -62,22 +48,6 @@ pub union C2RustUnnamed {
 }
 
 pub type in_port_t = u16;
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
-
 pub type in_addr_t = u32;
 
 #[no_mangle]

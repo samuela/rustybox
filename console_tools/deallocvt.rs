@@ -1,20 +1,5 @@
 use libc;
 use libc::ptrdiff_t;
-extern "C" {
-  #[no_mangle]
-  fn get_console_fd_or_die() -> libc::c_int;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
-}
 
 /*
  * Disallocate virtual terminal(s)
@@ -50,13 +35,17 @@ pub unsafe extern "C" fn deallocvt_main(
   let mut num: libc::c_int = 0i32;
   if !(*argv.offset(1)).is_null() {
     if !(*argv.offset(2)).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
-    num = xatou_range(*argv.offset(1), 1i32 as libc::c_uint, 63i32 as libc::c_uint) as libc::c_int
+    num = crate::libbb::xatonum::xatou_range(
+      *argv.offset(1),
+      1i32 as libc::c_uint,
+      63i32 as libc::c_uint,
+    ) as libc::c_int
   }
   /* double cast suppresses "cast to ptr from int of different size" */
-  bb_xioctl(
-    get_console_fd_or_die(),
+  crate::libbb::xfuncs_printf::bb_xioctl(
+    crate::libbb::get_console::get_console_fd_or_die(),
     VT_DISALLOCATE as libc::c_int as libc::c_uint,
     num as ptrdiff_t as *mut libc::c_void,
     b"VT_DISALLOCATE\x00" as *const u8 as *const libc::c_char,

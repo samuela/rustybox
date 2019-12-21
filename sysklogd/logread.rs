@@ -18,20 +18,6 @@ extern "C" {
   fn strnlen(__string: *const libc::c_char, __maxlen: size_t) -> size_t;
 
   #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn kill_myself_with_sig(sig: libc::c_int) -> !;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
   #[no_mangle]
   fn semget(__key: key_t, __nsems: libc::c_int, __semflg: libc::c_int) -> libc::c_int;
@@ -55,22 +41,25 @@ pub type key_t = __key_t;
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub SMrup: [sembuf; 1],
   pub SMrdn: [sembuf; 2],
   pub shbuf: *mut shbuf_ds,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct shbuf_ds {
   pub size: i32,
   pub tail: i32,
   pub data: [libc::c_char; 1],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sembuf {
   pub sem_num: libc::c_ushort,
   pub sem_op: libc::c_short,
@@ -117,12 +106,14 @@ unsafe extern "C" fn sem_up(mut semid: libc::c_int) {
     1i32 as size_t,
   ) == -1i32
   {
-    bb_simple_perror_msg_and_die(b"semop[SMrup]\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"semop[SMrup]\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 unsafe extern "C" fn interrupted(mut sig: libc::c_int) {
   /* shmdt(shbuf); - on Linux, shmdt is not mandatory on exit */
-  kill_myself_with_sig(sig); /* ipc semaphore id */
+  crate::libbb::signals::kill_myself_with_sig(sig); /* ipc semaphore id */
 }
 #[no_mangle]
 pub unsafe extern "C" fn logread_main(
@@ -133,7 +124,8 @@ pub unsafe extern "C" fn logread_main(
   let mut log_semid: libc::c_int = 0;
   let mut log_shmid: libc::c_int = 0;
   let mut follow: libc::c_int =
-    getopt32(argv, b"fF\x00" as *const u8 as *const libc::c_char) as libc::c_int;
+    crate::libbb::getopt32::getopt32(argv, b"fF\x00" as *const u8 as *const libc::c_char)
+      as libc::c_int;
   memcpy(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .SMrup
@@ -143,7 +135,7 @@ pub unsafe extern "C" fn logread_main(
   );
   log_shmid = shmget(KEY_ID as libc::c_int, 0i32 as size_t, 0i32);
   if log_shmid == -1i32 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t %s syslogd buffer\x00" as *const u8 as *const libc::c_char,
       b"find\x00" as *const u8 as *const libc::c_char,
     );
@@ -155,18 +147,18 @@ pub unsafe extern "C" fn logread_main(
     .shbuf
     .is_null()
   {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t %s syslogd buffer\x00" as *const u8 as *const libc::c_char,
       b"access\x00" as *const u8 as *const libc::c_char,
     );
   }
   log_semid = semget(KEY_ID as libc::c_int, 0i32, 0i32);
   if log_semid == -1i32 {
-    bb_simple_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
       b"can\'t get access to semaphores for syslogd buffer\x00" as *const u8 as *const libc::c_char,
     );
   }
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     BB_FATAL_SIGS as libc::c_int,
     Some(interrupted as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
@@ -194,7 +186,9 @@ pub unsafe extern "C" fn logread_main(
       2i32 as size_t,
     ) == -1i32
     {
-      bb_simple_perror_msg_and_die(b"semop[SMrdn]\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"semop[SMrdn]\x00" as *const u8 as *const libc::c_char,
+      );
     }
     /* Copy the info, helps gcc to realize that it doesn't change */
     shbuf_size = (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).shbuf).size as libc::c_uint; /* pointer! */
@@ -238,7 +232,7 @@ pub unsafe extern "C" fn logread_main(
       }
     } else if cur == shbuf_tail {
       sem_up(log_semid);
-      fflush_all();
+      crate::libbb::xfuncs_printf::fflush_all();
       sleep(1i32 as libc::c_uint);
       current_block_49 = 9606288038608642794;
     } else {
@@ -289,7 +283,7 @@ pub unsafe extern "C" fn logread_main(
             as libc::c_int as libc::c_int
         }
         free(copy as *mut libc::c_void);
-        fflush_all();
+        crate::libbb::xfuncs_printf::fflush_all();
       }
       _ => {}
     }
@@ -298,5 +292,5 @@ pub unsafe extern "C" fn logread_main(
     }
   }
   /* shmdt(shbuf); - on Linux, shmdt is not mandatory on exit */
-  fflush_stdout_and_exit(0i32);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
 }

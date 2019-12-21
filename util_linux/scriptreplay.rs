@@ -6,14 +6,6 @@ extern "C" {
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
 
-  #[no_mangle]
-  fn bb_copyfd_exact_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
 }
 
 use libc::off_t;
@@ -50,7 +42,7 @@ pub unsafe extern "C" fn scriptreplay_main(
   let mut count: libc::c_ulong = 0;
   let mut tfp: *mut FILE = 0 as *mut FILE;
   if (*argv.offset(1)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   if !(*argv.offset(2)).is_null() {
     script = *argv.offset(2);
@@ -58,8 +50,8 @@ pub unsafe extern "C" fn scriptreplay_main(
       factor /= atof(*argv.offset(3))
     }
   }
-  tfp = xfopen_for_read(*argv.offset(1));
-  fd = xopen(script, 0i32);
+  tfp = crate::libbb::wfopen::xfopen_for_read(*argv.offset(1));
+  fd = crate::libbb::xfuncs_printf::xopen(script, 0i32);
   while fscanf(
     tfp,
     b"%lf %lu\n\x00" as *const u8 as *const libc::c_char,
@@ -68,7 +60,7 @@ pub unsafe extern "C" fn scriptreplay_main(
   ) == 2i32
   {
     usleep((delay * factor) as useconds_t);
-    bb_copyfd_exact_size(fd, 1i32, count as off_t);
+    crate::libbb::copyfd::bb_copyfd_exact_size(fd, 1i32, count as off_t);
   }
   return 0i32;
 }

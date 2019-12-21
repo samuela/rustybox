@@ -1,8 +1,5 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn remove_file(path: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-}
+
 
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
@@ -53,7 +50,7 @@ pub unsafe extern "C" fn nuke_main(
     if (*argv).is_null() {
       break;
     }
-    remove_file(
+    crate::libbb::remove_file::remove_file(
       *argv,
       FILEUTILS_FORCE as libc::c_int | FILEUTILS_RECUR as libc::c_int,
     );

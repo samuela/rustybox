@@ -1,22 +1,8 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
-}
 
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed {
   pub fn_0: libc::c_char,
   pub subarg: libc::c_char,
@@ -68,8 +54,11 @@ pub unsafe extern "C" fn setlogcons_main(
     init
   };
   if !(*argv.offset(1)).is_null() {
-    arg.subarg =
-      xatou_range(*argv.offset(1), 0i32 as libc::c_uint, 63i32 as libc::c_uint) as libc::c_char
+    arg.subarg = crate::libbb::xatonum::xatou_range(
+      *argv.offset(1),
+      0i32 as libc::c_uint,
+      63i32 as libc::c_uint,
+    ) as libc::c_char
   }
   /* Can just call it on "/dev/tty1" always, but...
    * in my testing, inactive (never opened) VTs are not
@@ -77,12 +66,12 @@ pub unsafe extern "C" fn setlogcons_main(
    *
    * By using "/dev/ttyN", ensure it is activated.
    */
-  devname = xasprintf(
+  devname = crate::libbb::xfuncs_printf::xasprintf(
     b"/dev/tty%u\x00" as *const u8 as *const libc::c_char,
     arg.subarg as libc::c_int,
   );
-  bb_xioctl(
-    xopen(devname, 0i32),
+  crate::libbb::xfuncs_printf::bb_xioctl(
+    crate::libbb::xfuncs_printf::xopen(devname, 0i32),
     0x541ci32 as libc::c_uint,
     &mut arg as *mut C2RustUnnamed as *mut libc::c_void,
     b"TIOCLINUX\x00" as *const u8 as *const libc::c_char,

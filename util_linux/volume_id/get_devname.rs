@@ -7,61 +7,11 @@ use libc::strcmp;
 extern "C" {
 
   #[no_mangle]
-  fn volume_id_open_node(fd: libc::c_int) -> *mut volume_id;
-
-  #[no_mangle]
-  fn volume_id_probe_all(id: *mut volume_id, size: u64) -> libc::c_int;
-
-  #[no_mangle]
-  fn free_volume_id(id: *mut volume_id);
-
-  #[no_mangle]
   fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;
 
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn recursive_action(
-    fileName: *const libc::c_char,
-    flags: libc::c_uint,
-    fileAction: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    dirAction: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    userData: *mut libc::c_void,
-    depth: libc::c_uint,
-  ) -> libc::c_int;
-
-  #[no_mangle]
-  fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
-
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
 }
 
 use crate::librb::size_t;
@@ -87,8 +37,9 @@ pub const ACTION_RECURSE: C2RustUnnamed = 1;
 //kbuild:lib-$(CONFIG_FEATURE_MOUNT_LABEL) += get_devname.o
 //kbuild:lib-$(CONFIG_FEATURE_SWAPONOFF_LABEL) += get_devname.o
 /* BLKGETSIZE64 */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct uuidCache_s {
   pub next: *mut uuidCache_s,
   pub device: *mut libc::c_char,
@@ -96,20 +47,8 @@ pub struct uuidCache_s {
   pub uc_uuid: *mut libc::c_char,
   pub type_0: *const libc::c_char,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+
+use crate::util_linux::volume_id::volume_id::volume_id;
 static mut uuidCache: *mut uuidCache_s = 0 as *const uuidCache_s as *mut uuidCache_s;
 /* Returns !0 on error.
  * Otherwise, returns malloc'ed strings for label and uuid
@@ -125,7 +64,7 @@ unsafe extern "C" fn get_label_uuid(
   let mut size: u64 = 0;
   let mut vid: *mut volume_id = 0 as *mut volume_id;
   /* fd is owned by vid now */
-  vid = volume_id_open_node(fd); /* also closes fd */
+  vid = crate::util_linux::volume_id::volume_id::volume_id_open_node(fd); /* also closes fd */
   if ioctl(
     fd,
     (2u32 << 0i32 + 8i32 + 8i32 + 14i32
@@ -137,16 +76,16 @@ unsafe extern "C" fn get_label_uuid(
   {
     size = 0i32 as u64
   }
-  if !(volume_id_probe_all(vid, size) != 0i32) {
+  if !(crate::util_linux::volume_id::volume_id::volume_id_probe_all(vid, size) != 0i32) {
     if (*vid).label[0] as libc::c_int != '\u{0}' as i32
       || (*vid).uuid[0] as libc::c_int != '\u{0}' as i32
       || !(*vid).type_0.is_null()
     {
-      *label = xstrndup(
+      *label = crate::libbb::xfuncs_printf::xstrndup(
         (*vid).label.as_mut_ptr(),
         ::std::mem::size_of::<[libc::c_char; 65]>() as libc::c_ulong as libc::c_int,
       );
-      *uuid = xstrndup(
+      *uuid = crate::libbb::xfuncs_printf::xstrndup(
         (*vid).uuid.as_mut_ptr(),
         ::std::mem::size_of::<[libc::c_char; 37]>() as libc::c_ulong as libc::c_int,
       );
@@ -154,7 +93,7 @@ unsafe extern "C" fn get_label_uuid(
       rv = 0i32
     }
   }
-  free_volume_id(vid);
+  crate::util_linux::volume_id::volume_id::free_volume_id(vid);
   return rv;
 }
 /* NB: we take ownership of (malloc'ed) label and uuid */
@@ -166,7 +105,9 @@ unsafe extern "C" fn uuidcache_addentry(
 ) {
   let mut last: *mut uuidCache_s = 0 as *mut uuidCache_s;
   if uuidCache.is_null() {
-    uuidCache = xzalloc(::std::mem::size_of::<uuidCache_s>() as libc::c_ulong) as *mut uuidCache_s;
+    uuidCache =
+      crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<uuidCache_s>() as libc::c_ulong)
+        as *mut uuidCache_s;
     last = uuidCache
   } else {
     last = uuidCache;
@@ -174,7 +115,8 @@ unsafe extern "C" fn uuidcache_addentry(
       last = (*last).next
     }
     (*last).next =
-      xzalloc(::std::mem::size_of::<uuidCache_s>() as libc::c_ulong) as *mut uuidCache_s;
+      crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<uuidCache_s>() as libc::c_ulong)
+        as *mut uuidCache_s;
     last = (*last).next
   }
   /*last->next = NULL; - xzalloc did it*/
@@ -198,7 +140,7 @@ unsafe extern "C" fn uuidcache_check_device(
   if !((*statbuf).st_mode & 0o170000i32 as libc::c_uint == 0o60000i32 as libc::c_uint)
     && !((*statbuf).st_mode & 0o170000i32 as libc::c_uint == 0o20000i32 as libc::c_uint
       && strncmp(
-        bb_basename(device),
+        crate::libbb::get_last_path_component::bb_basename(device),
         b"ubi\x00" as *const u8 as *const libc::c_char,
         3i32 as libc::c_ulong,
       ) == 0i32)
@@ -231,7 +173,7 @@ unsafe extern "C" fn uuidcache_init(mut scan_devices: libc::c_int) -> *mut uuidC
    * (Maybe add scanning of /sys/block/XXX/dev for devices
    * somehow not having their /dev/XXX entries created?) */
   if scan_devices != 0 {
-    recursive_action(
+    crate::libbb::recursive_action::recursive_action(
       b"/dev\x00" as *const u8 as *const libc::c_char,
       ACTION_RECURSE as libc::c_int as libc::c_uint,
       Some(
@@ -276,7 +218,7 @@ pub unsafe extern "C" fn display_uuid_cache(mut scan_devices: libc::c_int) {
         (*uc).type_0,
       );
     }
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     uc = (*uc).next
   }
 }
@@ -296,7 +238,12 @@ pub unsafe extern "C" fn add_to_uuid_cache(mut device: *const libc::c_char) -> l
   /* get_label_uuid() closes fd in all cases (success & failure) */
   if get_label_uuid(fd, &mut label, &mut uuid, &mut type_0) == 0i32 {
     /* uuidcache_addentry() takes ownership of all four params */
-    uuidcache_addentry(xstrdup(device), label, uuid, type_0);
+    uuidcache_addentry(
+      crate::libbb::xfuncs_printf::xstrdup(device),
+      label,
+      uuid,
+      type_0,
+    );
     return 1i32;
   }
   return 0i32;
@@ -310,7 +257,7 @@ pub unsafe extern "C" fn get_devname_from_label(
   uc = uuidcache_init(1i32);
   while !uc.is_null() {
     if *(*uc).label.offset(0) as libc::c_int != 0 && strcmp(spec, (*uc).label) == 0i32 {
-      return xstrdup((*uc).device);
+      return crate::libbb::xfuncs_printf::xstrdup((*uc).device);
     }
     uc = (*uc).next
   }
@@ -323,7 +270,7 @@ pub unsafe extern "C" fn get_devname_from_uuid(mut spec: *const libc::c_char) ->
   while !uc.is_null() {
     /* case of hex numbers doesn't matter */
     if strcasecmp(spec, (*uc).uc_uuid) == 0i32 {
-      return xstrdup((*uc).device);
+      return crate::libbb::xfuncs_printf::xstrdup((*uc).device);
     }
     uc = (*uc).next
   }
@@ -356,9 +303,18 @@ pub unsafe extern "C" fn get_devname_from_uuid(mut spec: *const libc::c_char) ->
 #[no_mangle]
 pub unsafe extern "C" fn resolve_mount_spec(mut fsname: *mut *mut libc::c_char) -> libc::c_int {
   let mut tmp: *mut libc::c_char = *fsname; /* no UUID= or LABEL= prefix found */
-  if !is_prefixed_with(*fsname, b"UUID=\x00" as *const u8 as *const libc::c_char).is_null() {
+  if !crate::libbb::compare_string_array::is_prefixed_with(
+    *fsname,
+    b"UUID=\x00" as *const u8 as *const libc::c_char,
+  )
+  .is_null()
+  {
     tmp = get_devname_from_uuid((*fsname).offset(5))
-  } else if !is_prefixed_with(*fsname, b"LABEL=\x00" as *const u8 as *const libc::c_char).is_null()
+  } else if !crate::libbb::compare_string_array::is_prefixed_with(
+    *fsname,
+    b"LABEL=\x00" as *const u8 as *const libc::c_char,
+  )
+  .is_null()
   {
     tmp = get_devname_from_label((*fsname).offset(6))
   }

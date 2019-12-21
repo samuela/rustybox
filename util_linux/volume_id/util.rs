@@ -12,30 +12,14 @@ extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
   // NB: will return short read on error, not -1,
   // if some data was read before error occurred
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
+
   #[no_mangle]
   fn strnlen(__string: *const libc::c_char, __maxlen: size_t) -> size_t;
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+use crate::util_linux::volume_id::volume_id::volume_id;
 
 pub type uuid_format = libc::c_uint;
 pub const UUID_DCE_STRING: uuid_format = 3;
@@ -310,7 +294,8 @@ pub unsafe extern "C" fn volume_id_get_buffer(
     } else {
       (*id).seekbuf_off = off;
       (*id).seekbuf_len = len;
-      (*id).seekbuf = xrealloc((*id).seekbuf as *mut libc::c_void, len) as *mut u8;
+      (*id).seekbuf =
+        crate::libbb::xfuncs_printf::xrealloc((*id).seekbuf as *mut libc::c_void, len) as *mut u8;
       small_off = 0i32 as libc::c_uint;
       dst = (*id).seekbuf;
       current_block = 16164644963279819311;
@@ -321,7 +306,7 @@ pub unsafe extern "C" fn volume_id_get_buffer(
       if lseek((*id).fd, off as off64_t, 0i32) as libc::c_ulong != off {
         current_block = 1886147455329398701;
       } else {
-        read_len = full_read((*id).fd, dst as *mut libc::c_void, len);
+        read_len = crate::libbb::read::full_read((*id).fd, dst as *mut libc::c_void, len);
         if read_len as libc::c_ulong != len {
           current_block = 1886147455329398701;
         } else {

@@ -1,5 +1,4 @@
 use crate::libbb::appletlib::applet_name;
-use crate::librb::size_t;
 use libc;
 use libc::fclose;
 use libc::free;
@@ -21,33 +20,11 @@ extern "C" {
   fn clearerr(__stream: *mut FILE);
   #[no_mangle]
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
-  #[no_mangle]
-  fn xmalloc_fgets(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn fclose_if_not_stdin(file: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 
   #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
-  /* Width on terminal */
-  #[no_mangle]
-  fn unicode_strwidth(string: *const libc::c_char) -> size_t;
+/* Width on terminal */
+
 }
 
 /* expand - convert tabs to spaces
@@ -122,7 +99,7 @@ unsafe extern "C" fn expand(
     //		unsigned len = 0;
     //		linelen = 1024 * 1024;
     //		line = xmalloc_fgets_str_len(file, "\n", &linelen);
-    line = xmalloc_fgets(file); //
+    line = crate::libbb::get_line_from_file::xmalloc_fgets(file); //
     if line.is_null() {
       break;
     }
@@ -146,8 +123,9 @@ unsafe extern "C" fn expand(
         if c as libc::c_int == '\t' as i32 {
           let mut len: libc::c_uint = 0i32 as libc::c_uint;
           *ptr = '\u{0}' as i32 as libc::c_char;
-          len = (len as libc::c_ulong).wrapping_add(unicode_strwidth(ptr_strbeg)) as libc::c_uint
-            as libc::c_uint;
+          len = (len as libc::c_ulong)
+            .wrapping_add(crate::libbb::unicode::unicode_strwidth(ptr_strbeg))
+            as libc::c_uint as libc::c_uint;
           len = tab_size.wrapping_sub(len.wrapping_rem(tab_size));
           /*while (ptr[1] == '\t') { ptr++; len += tab_size; } - can handle many tabs at once */
           printf(
@@ -173,7 +151,7 @@ unsafe extern "C" fn unexpand(
 ) {
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   loop {
-    line = xmalloc_fgets(file);
+    line = crate::libbb::get_line_from_file::xmalloc_fgets(file);
     if line.is_null() {
       break;
     }
@@ -223,7 +201,7 @@ unsafe extern "C" fn unexpand(
           );
           let mut c: libc::c_char = *ptr.offset(n as isize);
           *ptr.offset(n as isize) = '\u{0}' as i32 as libc::c_char;
-          len = unicode_strwidth(ptr) as libc::c_uint;
+          len = crate::libbb::unicode::unicode_strwidth(ptr) as libc::c_uint;
           *ptr.offset(n as isize) = c;
           ptr = ptr.offset(n as isize);
           column = column.wrapping_add(len).wrapping_rem(tab_size)
@@ -245,14 +223,14 @@ pub unsafe extern "C" fn expand_main(
   let mut opt: libc::c_uint = 0;
   let mut exit_status: libc::c_int = 0i32;
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(0) as libc::c_int == 'e' as i32) {
-    opt = getopt32long(
+    opt = crate::libbb::getopt32::getopt32long(
       argv,
       b"it:\x00" as *const u8 as *const libc::c_char,
       b"initial\x00\x00itabs\x00\x01t\x00" as *const u8 as *const libc::c_char,
       &mut opt_t as *mut *const libc::c_char,
     )
   } else {
-    opt = getopt32long(
+    opt = crate::libbb::getopt32::getopt32long(
       argv,
       b"^ft:a\x00ta\x00" as *const u8 as *const libc::c_char,
       b"first-only\x00\x00itabs\x00\x01tall\x00\x00a\x00" as *const u8 as *const libc::c_char,
@@ -263,7 +241,7 @@ pub unsafe extern "C" fn expand_main(
       opt |= OPT_INITIAL as libc::c_int as libc::c_uint
     }
   }
-  tab_size = xatou_range(
+  tab_size = crate::libbb::xatonum::xatou_range(
     opt_t,
     1i32 as libc::c_uint,
     (2147483647i32 as libc::c_uint)
@@ -276,7 +254,7 @@ pub unsafe extern "C" fn expand_main(
     *argv = bb_msg_standard_input.as_ptr() as *mut libc::c_char
   }
   loop {
-    file = fopen_or_warn_stdin(*argv);
+    file = crate::libbb::wfopen_input::fopen_or_warn_stdin(*argv);
     if file.is_null() {
       exit_status = 1i32
     } else {
@@ -286,8 +264,8 @@ pub unsafe extern "C" fn expand_main(
         unexpand(file, tab_size, opt);
       }
       /* Check and close the file */
-      if fclose_if_not_stdin(file) != 0 {
-        bb_simple_perror_msg(*argv);
+      if crate::libbb::fclose_nonstdin::fclose_if_not_stdin(file) != 0 {
+        crate::libbb::perror_msg::bb_simple_perror_msg(*argv);
         exit_status = 1i32
       }
       /* If stdin also clear EOF */
@@ -303,7 +281,7 @@ pub unsafe extern "C" fn expand_main(
   /* Now close stdin also */
   /* (if we didn't read from it, it's a no-op) */
   if fclose(stdin) != 0 {
-    bb_simple_perror_msg_and_die(bb_msg_standard_input.as_ptr());
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(bb_msg_standard_input.as_ptr());
   }
-  fflush_stdout_and_exit(exit_status);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(exit_status);
 }

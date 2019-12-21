@@ -2,23 +2,12 @@ use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::size_t;
 use libc;
 use libc::ioctl;
-extern "C" {
 
-  #[no_mangle]
-  fn get_console_fd_or_die() -> libc::c_int;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xread(fd: libc::c_int, buf: *mut libc::c_void, count: size_t);
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-}
 
 /* From <linux/kd.h> */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct kbentry {
   pub kb_table: libc::c_uchar,
   pub kb_index: libc::c_uchar,
@@ -45,25 +34,30 @@ pub unsafe extern "C" fn loadkmap_main(
    * instead of "loadkmap <FILE", we end up waiting for input from tty.
    * Let's prevent it: */
   if !(*argv.offset(1)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* bb_warn_ignoring_args(argv[1]); */
-  fd = get_console_fd_or_die();
+  fd = crate::libbb::get_console::get_console_fd_or_die();
   /* or maybe:
     opt = getopt32(argv, "C:", &tty_name);
     fd = xopen_nonblocking(tty_name);
   */
-  xread(0i32, flags as *mut libc::c_void, 7i32 as size_t);
-  if is_prefixed_with(flags, b"bkeymap\x00" as *const u8 as *const libc::c_char).is_null() {
-    bb_simple_error_msg_and_die(
+  crate::libbb::read_printf::xread(0i32, flags as *mut libc::c_void, 7i32 as size_t);
+  if crate::libbb::compare_string_array::is_prefixed_with(
+    flags,
+    b"bkeymap\x00" as *const u8 as *const libc::c_char,
+  )
+  .is_null()
+  {
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"not a valid binary keymap\x00" as *const u8 as *const libc::c_char,
     );
   }
-  xread(0i32, flags as *mut libc::c_void, 256i32 as size_t);
+  crate::libbb::read_printf::xread(0i32, flags as *mut libc::c_void, 256i32 as size_t);
   i = 0i32;
   while i < 256i32 {
     if !(*flags.offset(i as isize) as libc::c_int != 1i32) {
-      xread(
+      crate::libbb::read_printf::xread(
         0i32,
         ibuff.as_mut_ptr() as *mut libc::c_void,
         (128i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u16>() as libc::c_ulong),

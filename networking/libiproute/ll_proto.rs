@@ -15,15 +15,6 @@ extern "C" {
     _: ...
   ) -> libc::c_int;
 
-  #[no_mangle]
-  fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
-
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
 }
 
 use crate::librb::size_t;
@@ -115,8 +106,7 @@ pub unsafe extern "C" fn ll_proto_n2a(
       let fresh1;
       let fresh2 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
@@ -127,7 +117,10 @@ pub unsafe extern "C" fn ll_proto_n2a(
       .wrapping_div(::std::mem::size_of::<u16>() as libc::c_ulong) as libc::c_uint
   {
     if llproto_ids[i as usize] as libc::c_int == id as libc::c_int {
-      return nth_string(llproto_names.as_ptr(), i as libc::c_int);
+      return crate::libbb::compare_string_array::nth_string(
+        llproto_names.as_ptr(),
+        i as libc::c_int,
+      );
     }
     i = i.wrapping_add(1)
   }
@@ -168,7 +161,7 @@ pub unsafe extern "C" fn ll_proto_a2n(
   match current_block {
     11006700562992250127 => {
       *bb_errno = 0i32;
-      i = bb_strtou(buf, 0 as *mut *mut libc::c_char, 0i32);
+      i = crate::libbb::bb_strtonum::bb_strtou(buf, 0 as *mut *mut libc::c_char, 0i32);
       if *bb_errno != 0 || i > 0xffffi32 as libc::c_uint {
         return -1i32;
       }
@@ -186,8 +179,7 @@ pub unsafe extern "C" fn ll_proto_a2n(
       let fresh4;
       let fresh5 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
     }
     __v

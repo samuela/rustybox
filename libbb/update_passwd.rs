@@ -55,33 +55,10 @@ extern "C" {
   #[no_mangle]
   fn strsep(__stringp: *mut *mut libc::c_char, __delim: *const libc::c_char) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn last_char_is(s: *const libc::c_char, c: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_follow_symlinks(path: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fopen_or_warn(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xfdopen_for_write(fd: libc::c_int) -> *mut FILE;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_nomsg();
-
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct flock {
   pub l_type: libc::c_short,
   pub l_whence: libc::c_short,
@@ -628,7 +605,7 @@ pub unsafe extern "C" fn update_passwd(
   /* used as a bool: "are we modifying /etc/shadow?" */
   let mut shadow: *const libc::c_char =
     strstr(filename, b"shadow\x00" as *const u8 as *const libc::c_char);
-  filename = xmalloc_follow_symlinks(filename);
+  filename = crate::libbb::xreadlink::xmalloc_follow_symlinks(filename);
   if filename.is_null() {
     return ret;
   }
@@ -637,12 +614,15 @@ pub unsafe extern "C" fn update_passwd(
   // !name.is_null();
 
   /* New passwd file, "/etc/passwd+" for now */
-  fnamesfx = xasprintf(b"%s+\x00" as *const u8 as *const libc::c_char, filename); /* missing shadow is not an error */
+  fnamesfx = crate::libbb::xfuncs_printf::xasprintf(
+    b"%s+\x00" as *const u8 as *const libc::c_char,
+    filename,
+  ); /* missing shadow is not an error */
   sfx_char = &mut *fnamesfx.offset(
     (strlen as unsafe extern "C" fn(_: *const libc::c_char) -> size_t)(fnamesfx)
       .wrapping_sub(1i32 as libc::c_ulong) as isize,
   ) as *mut libc::c_char;
-  name_colon = xasprintf(
+  name_colon = crate::libbb::xfuncs_printf::xasprintf(
     b"%s:\x00" as *const u8 as *const libc::c_char,
     if !name.is_null() {
       name
@@ -653,7 +633,8 @@ pub unsafe extern "C" fn update_passwd(
   if !shadow.is_null() {
     old_fp = fopen(filename, b"r+\x00" as *const u8 as *const libc::c_char)
   } else {
-    old_fp = fopen_or_warn(filename, b"r+\x00" as *const u8 as *const libc::c_char)
+    old_fp =
+      crate::libbb::wfopen::fopen_or_warn(filename, b"r+\x00" as *const u8 as *const libc::c_char)
   }
   if old_fp.is_null() {
     if !shadow.is_null() {
@@ -684,7 +665,7 @@ pub unsafe extern "C" fn update_passwd(
     } /* ignore errors */
     match current_block {
       1608152415753874203 => {
-        bb_perror_msg(
+        crate::libbb::perror_msg::bb_perror_msg(
           b"can\'t create \'%s\'\x00" as *const u8 as *const libc::c_char,
           fnamesfx,
         );
@@ -695,14 +676,14 @@ pub unsafe extern "C" fn update_passwd(
           fchown(new_fd, sb.st_uid, sb.st_gid);
         }
         *bb_errno = 0i32;
-        new_fp = xfdopen_for_write(new_fd);
+        new_fp = crate::libbb::wfopen::xfdopen_for_write(new_fd);
         /* Backup file is "/etc/passwd-" */
         *sfx_char = '-' as i32 as libc::c_char;
         /* Delete old backup */
         i = (unlink(fnamesfx) != 0 && *bb_errno != 2i32) as libc::c_int;
         /* Create backup as a hardlink to current */
         if i != 0 || link(filename, fnamesfx) != 0 {
-          bb_perror_msg(
+          crate::libbb::perror_msg::bb_perror_msg(
             b"warning: can\'t create backup copy \'%s\'\x00" as *const u8 as *const libc::c_char,
             fnamesfx,
           );
@@ -714,7 +695,7 @@ pub unsafe extern "C" fn update_passwd(
         lock.l_start = 0i32 as off64_t;
         lock.l_len = 0i32 as off64_t;
         if fcntl(old_fd, 6i32, &mut lock as *mut flock) < 0i32 {
-          bb_perror_msg(
+          crate::libbb::perror_msg::bb_perror_msg(
             b"warning: can\'t lock \'%s\'\x00" as *const u8 as *const libc::c_char,
             filename,
           );
@@ -725,7 +706,7 @@ pub unsafe extern "C" fn update_passwd(
         loop {
           let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-          line = xmalloc_fgetline(old_fp);
+          line = crate::libbb::get_line_from_file::xmalloc_fgetline(old_fp);
           if line.is_null() {
             break;
           }
@@ -736,7 +717,7 @@ pub unsafe extern "C" fn update_passwd(
             let mut list: *mut libc::c_char = strrchr(line, ':' as i32);
             's_262: while !list.is_null() {
               list = list.offset(1);
-              while !is_prefixed_with(list, member).is_null() {
+              while !crate::libbb::compare_string_array::is_prefixed_with(list, member).is_null() {
                 let mut c: libc::c_char = 0;
                 changed_lines += 1;
                 c = *list.offset(member_len as isize);
@@ -747,7 +728,10 @@ pub unsafe extern "C" fn update_passwd(
                   *list = '\u{0}' as i32 as libc::c_char;
                   break 's_262;
                 } else if c as libc::c_int == ',' as i32 {
-                  overlapping_strcpy(list, list.offset(member_len as isize).offset(1));
+                  crate::libbb::safe_strncpy::overlapping_strcpy(
+                    list,
+                    list.offset(member_len as isize).offset(1),
+                  );
                 } else {
                   changed_lines -= 1;
                   break;
@@ -761,7 +745,7 @@ pub unsafe extern "C" fn update_passwd(
               line,
             );
           } else {
-            cp = is_prefixed_with(line, name_colon);
+            cp = crate::libbb::compare_string_array::is_prefixed_with(line, name_colon);
             if cp.is_null() {
               fprintf(
                 new_fp,
@@ -779,7 +763,7 @@ pub unsafe extern "C" fn update_passwd(
                   new_fp,
                   b"%s%s%s\n\x00" as *const u8 as *const libc::c_char,
                   line,
-                  if !last_char_is(line, ':' as i32).is_null() {
+                  if !crate::libbb::last_char_is::last_char_is(line, ':' as i32).is_null() {
                     b"\x00" as *const u8 as *const libc::c_char
                   } else {
                     b",\x00" as *const u8 as *const libc::c_char
@@ -862,14 +846,14 @@ pub unsafe extern "C" fn update_passwd(
         if changed_lines == 0i32 {
           if !member.is_null() {
             if 1i32 != 0 && *applet_name.offset(0) as libc::c_int == 'a' as i32 {
-              bb_error_msg(
+              crate::libbb::verror_msg::bb_error_msg(
                 b"can\'t find %s in %s\x00" as *const u8 as *const libc::c_char,
                 name,
                 filename,
               );
             }
             if 1i32 != 0 && *applet_name.offset(0) as libc::c_int == 'd' as i32 {
-              bb_error_msg(
+              crate::libbb::verror_msg::bb_error_msg(
                 b"can\'t find %s in %s\x00" as *const u8 as *const libc::c_char,
                 member,
                 filename,
@@ -897,7 +881,7 @@ pub unsafe extern "C" fn update_passwd(
           || rename(fnamesfx, filename) != 0
         {
           /* At least one of those failed */
-          bb_perror_nomsg();
+          crate::libbb::perror_nomsg::bb_perror_nomsg();
         } else {
           /* Success: ret >= 0 */
           ret = changed_lines

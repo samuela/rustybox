@@ -7,8 +7,6 @@ extern "C" {
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
 
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
 }
 
 /* Read a line from fp.  If the first non-whitespace char is 'y' or 'Y',
@@ -18,7 +16,7 @@ extern "C" {
 pub unsafe extern "C" fn bb_ask_y_confirmation_FILE(mut fp: *mut FILE) -> libc::c_int {
   let mut first: libc::c_char = 0i32 as libc::c_char;
   let mut c: libc::c_int = 0;
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   loop {
     c = getc_unlocked(fp);
     if !(c != -1i32 && c != '\n' as i32) {

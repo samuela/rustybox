@@ -1,8 +1,15 @@
+use crate::librb::in6_addr;
+use crate::librb::size_t;
+use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 use libc::close;
+use libc::sa_family_t;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
+use libc::ssize_t;
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -40,20 +47,7 @@ extern "C" {
    * time out. Linux does not allow multiple live binds on same ip:port
    * regardless of SO_REUSEADDR (unlike some other flavors of Unix).
    * Turn it on before you call bind(). */
-  #[no_mangle]
-  fn setsockopt_reuseaddr(fd: libc::c_int);
-  #[no_mangle]
-  fn inet_cksum(addr: *mut u16, len: libc::c_int) -> u16;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn safe_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_info_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_info_msg(s: *const libc::c_char);
+
   // RFC 2131  Table 5: Fields and options used by DHCP clients
   //
   // Fields 'hops', 'yiaddr', 'siaddr', 'giaddr' are always zero, 'chaddr' is always client's MAC
@@ -98,9 +92,6 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::size_t;
-use libc::ssize_t;
-pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -111,46 +102,12 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed {
-  pub __u6_addr8: [u8; 16],
-  pub __u6_addr16: [u16; 8],
-  pub __u6_addr32: [u32; 4],
-}
+
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr__: *const sockaddr,
   pub __sockaddr_at__: *const sockaddr_at,
@@ -193,48 +150,55 @@ pub const IPPROTO_IPIP: C2RustUnnamed_0 = 4;
 pub const IPPROTO_IGMP: C2RustUnnamed_0 = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed_0 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_0 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct udphdr {
   pub c2rust_unnamed: C2RustUnnamed_1,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub c2rust_unnamed: C2RustUnnamed_3,
   pub c2rust_unnamed_0: C2RustUnnamed_2,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_2 {
   pub source: u16,
   pub dest: u16,
   pub len: u16,
   pub check: u16,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_3 {
   pub uh_sport: u16,
   pub uh_dport: u16,
   pub uh_ulen: u16,
   pub uh_sum: u16,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ip6_hdr {
   pub ip6_ctlun: C2RustUnnamed_4,
   pub ip6_src: in6_addr,
   pub ip6_dst: in6_addr,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_4 {
   pub ip6_un1: ip6_hdrctl,
   pub ip6_un2_vfc: u8,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ip6_hdrctl {
   pub ip6_un1_flow: u32,
   pub ip6_un1_plen: u16,
@@ -249,27 +213,31 @@ pub struct ip6_hdrctl {
  */
 /* ** DHCPv6 packet ***/
 /* DHCPv6 protocol. See RFC 3315 */
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct d6_packet {
   pub d6_u: C2RustUnnamed_5,
   pub d6_options: [u8; 604],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_5 {
   pub d6_msg_type: u8,
   pub d6_xid32: u32,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct ip6_udp_d6_packet {
   pub ip6: ip6_hdr,
   pub udp: udphdr,
   pub data: d6_packet,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sockaddr_ll {
   pub sll_family: libc::c_ushort,
   pub sll_protocol: libc::c_ushort,
@@ -290,7 +258,7 @@ pub unsafe extern "C" fn d6_dump_packet(mut packet: *mut d6_packet) {
   if dhcp_verbose < 2i32 as libc::c_uint {
     return;
   }
-  bb_info_msg(
+  crate::libbb::verror_msg::bb_info_msg(
     b" xid %x\x00" as *const u8 as *const libc::c_char,
     (*packet).d6_u.d6_xid32,
   );
@@ -309,24 +277,28 @@ pub unsafe extern "C" fn d6_recv_kernel_packet(
     0i32,
     ::std::mem::size_of::<d6_packet>() as libc::c_ulong,
   );
-  bytes = safe_read(
+  bytes = crate::libbb::read::safe_read(
     fd,
     packet as *mut libc::c_void,
     ::std::mem::size_of::<d6_packet>() as libc::c_ulong,
   ) as libc::c_int;
   if bytes < 0i32 {
     if dhcp_verbose >= 1i32 as libc::c_uint {
-      bb_simple_info_msg(b"packet read error, ignoring\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_info_msg(
+        b"packet read error, ignoring\x00" as *const u8 as *const libc::c_char,
+      );
     }
     return bytes;
     /* returns -1 */
   }
   if (bytes as libc::c_ulong) < 4u64 {
-    bb_simple_info_msg(b"packet with bad magic, ignoring\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_info_msg(
+      b"packet with bad magic, ignoring\x00" as *const u8 as *const libc::c_char,
+    );
     return -2i32;
   }
   if dhcp_verbose >= 1i32 as libc::c_uint {
-    bb_info_msg(
+    crate::libbb::verror_msg::bb_info_msg(
       b"received %s\x00" as *const u8 as *const libc::c_char,
       b"a packet\x00" as *const u8 as *const libc::c_char,
     );
@@ -347,51 +319,8 @@ pub unsafe extern "C" fn d6_send_raw_packet(
   mut ifindex: libc::c_int,
 ) -> libc::c_int {
   let mut current_block: u64; /* struct copy */
-  let mut dest_sll: sockaddr_ll = sockaddr_ll {
-    sll_family: 0,
-    sll_protocol: 0,
-    sll_ifindex: 0,
-    sll_hatype: 0,
-    sll_pkttype: 0,
-    sll_halen: 0,
-    sll_addr: [0; 8],
-  };
-  let mut packet: ip6_udp_d6_packet = ip6_udp_d6_packet {
-    ip6: ip6_hdr {
-      ip6_ctlun: C2RustUnnamed_4 {
-        ip6_un1: ip6_hdrctl {
-          ip6_un1_flow: 0,
-          ip6_un1_plen: 0,
-          ip6_un1_nxt: 0,
-          ip6_un1_hlim: 0,
-        },
-      },
-      ip6_src: in6_addr {
-        __in6_u: C2RustUnnamed {
-          __u6_addr8: [0; 16],
-        },
-      },
-      ip6_dst: in6_addr {
-        __in6_u: C2RustUnnamed {
-          __u6_addr8: [0; 16],
-        },
-      },
-    },
-    udp: udphdr {
-      c2rust_unnamed: C2RustUnnamed_1 {
-        c2rust_unnamed: C2RustUnnamed_3 {
-          uh_sport: 0,
-          uh_dport: 0,
-          uh_ulen: 0,
-          uh_sum: 0,
-        },
-      },
-    },
-    data: d6_packet {
-      d6_u: C2RustUnnamed_5 { d6_msg_type: 0 },
-      d6_options: [0; 604],
-    },
-  };
+  let mut dest_sll: sockaddr_ll = std::mem::zeroed();
+  let mut packet: ip6_udp_d6_packet = std::mem::zeroed();
   let mut fd: libc::c_int = 0;
   let mut result: libc::c_int = -1i32;
   let mut msg: *const libc::c_char = 0 as *const libc::c_char;
@@ -409,8 +338,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
         let fresh1;
         let fresh2 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2))
-                             : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
       }
       __v
@@ -443,8 +371,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
         let fresh4;
         let fresh5 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                          : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
       }
       __v
@@ -484,8 +411,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
           let fresh7;
           let fresh8 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8))
-                              : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
         }
         __v
@@ -501,8 +427,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
           let fresh10;
           let fresh11 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh10) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11))
-                              : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
         }
         __v
@@ -521,8 +446,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
           let fresh13;
           let fresh14 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14))
-                              : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
         }
         __v
@@ -536,7 +460,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
        * into ip6_hlim, and its 'real' location remains zero-filled for now.
        */
       packet.ip6.ip6_ctlun.ip6_un1.ip6_un1_hlim = IPPROTO_UDP as libc::c_int as u8;
-      packet.udp.c2rust_unnamed.c2rust_unnamed_0.check = inet_cksum(
+      packet.udp.c2rust_unnamed.c2rust_unnamed_0.check = crate::libbb::inet_cksum::inet_cksum(
         (&mut packet as *mut ip6_udp_d6_packet as *mut u16).offset(2),
         48u64
           .wrapping_sub(4i32 as libc::c_ulong)
@@ -567,7 +491,10 @@ pub unsafe extern "C" fn d6_send_raw_packet(
   }
   match current_block {
     6439760897239081377 => {
-      bb_perror_msg(msg, b"PACKET\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_perror_msg(
+        msg,
+        b"PACKET\x00" as *const u8 as *const libc::c_char,
+      );
     }
     _ => {}
   }
@@ -585,17 +512,7 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
   mut ifindex: libc::c_int,
 ) -> libc::c_int {
   let mut current_block: u64; /* struct copy */
-  let mut sa: sockaddr_in6 = sockaddr_in6 {
-    sin6_family: 0,
-    sin6_port: 0,
-    sin6_flowinfo: 0,
-    sin6_addr: in6_addr {
-      __in6_u: C2RustUnnamed {
-        __u6_addr8: [0; 16],
-      },
-    },
-    sin6_scope_id: 0,
-  }; /* struct copy */
+  let mut sa: sockaddr_in6 = std::mem::zeroed(); /* struct copy */
   let mut fd: libc::c_int = 0;
   let mut result: libc::c_int = -1i32;
   let mut msg: *const libc::c_char = 0 as *const libc::c_char;
@@ -604,7 +521,7 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
     msg = b"socket(%s)\x00" as *const u8 as *const libc::c_char;
     current_block = 9009192957559530970;
   } else {
-    setsockopt_reuseaddr(fd);
+    crate::libbb::xconnect::setsockopt_reuseaddr(fd);
     memset(
       &mut sa as *mut sockaddr_in6 as *mut libc::c_void,
       0i32,
@@ -622,13 +539,14 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
         let fresh16;
         let fresh17 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh16) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17))
-                          : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
       }
       __v
     };
-    sa.sin6_addr = *src_ipv6;
+    sa.sin6_addr = libc::in6_addr {
+      s6_addr: (*src_ipv6).__in6_u.__u6_addr8,
+    };
     if bind(
       fd,
       __CONST_SOCKADDR_ARG {
@@ -656,13 +574,14 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
           let fresh19;
           let fresh20 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh19) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20))
-                              : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh18, fresh20, fresh19);
         }
         __v
       };
-      sa.sin6_addr = *dst_ipv6;
+      sa.sin6_addr = libc::in6_addr {
+        s6_addr: (*dst_ipv6).__in6_u.__u6_addr8,
+      };
       sa.sin6_scope_id = ifindex as u32;
       if connect(
         fd,
@@ -675,8 +594,11 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
         msg = b"connect\x00" as *const u8 as *const libc::c_char
       } else {
         d6_dump_packet(d6_pkt);
-        result =
-          safe_write(fd, d6_pkt as *const libc::c_void, d6_pkt_size as size_t) as libc::c_int;
+        result = crate::libbb::safe_write::safe_write(
+          fd,
+          d6_pkt as *const libc::c_void,
+          d6_pkt_size as size_t,
+        ) as libc::c_int;
         msg = b"write\x00" as *const u8 as *const libc::c_char
       }
     }
@@ -689,7 +611,7 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
   }
   match current_block {
     9009192957559530970 => {
-      bb_perror_msg(msg, b"UDP\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_perror_msg(msg, b"UDP\x00" as *const u8 as *const libc::c_char);
     }
     _ => {}
   }

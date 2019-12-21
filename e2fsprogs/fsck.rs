@@ -39,68 +39,16 @@ extern "C" {
   ) -> *mut mntent;
 
   #[no_mangle]
-  fn skip_dev_pfx(tty_name: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn signal_no_SA_RESTART_empty_mask(
-    sig: libc::c_int,
-    handler: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
-  );
-  #[no_mangle]
   static mut bb_got_signal: smallint;
-  #[no_mangle]
-  fn record_signo(signo: libc::c_int);
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatoi(str: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn spawn(argv: *mut *mut libc::c_char) -> pid_t;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-#[derive(Copy, Clone)]
+use libc::mntent;
+
 #[repr(C)]
-pub struct mntent {
-  pub mnt_fsname: *mut libc::c_char,
-  pub mnt_dir: *mut libc::c_char,
-  pub mnt_type: *mut libc::c_char,
-  pub mnt_opts: *mut libc::c_char,
-  pub mnt_freq: libc::c_int,
-  pub mnt_passno: libc::c_int,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct globals {
   pub args: *mut *mut libc::c_char,
   pub num_args: libc::c_int,
@@ -121,8 +69,9 @@ pub struct globals {
   pub filesys_last: *mut fs_info,
   pub instance_list: *mut fsck_instance,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fsck_instance {
   pub next: *mut fsck_instance,
   pub pid: libc::c_int,
@@ -131,8 +80,9 @@ pub struct fsck_instance {
   pub device: *mut libc::c_char,
   pub base_device: *mut libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fs_info {
   pub next: *mut fs_info,
   pub device: *mut libc::c_char,
@@ -159,9 +109,9 @@ static mut ignored_types: [libc::c_char; 46] = [
 unsafe extern "C" fn base_device(mut device: *const libc::c_char) -> *mut libc::c_char {
   let mut str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  str = xstrdup(device);
+  str = crate::libbb::xfuncs_printf::xstrdup(device);
   /* Skip over "/dev/"; if it's not present, give up */
-  cp = skip_dev_pfx(str);
+  cp = crate::libbb::skip_whitespace::skip_dev_pfx(str);
   if !(cp == str) {
     /*
      * For md devices, we treat them all as if they were all
@@ -172,7 +122,12 @@ unsafe extern "C" fn base_device(mut device: *const libc::c_char) -> *mut libc::
       return str;
     }
     /* Handle DAC 960 devices */
-    if !is_prefixed_with(cp, b"rd/\x00" as *const u8 as *const libc::c_char).is_null() {
+    if !crate::libbb::compare_string_array::is_prefixed_with(
+      cp,
+      b"rd/\x00" as *const u8 as *const libc::c_char,
+    )
+    .is_null()
+    {
       cp = cp.offset(3);
       if !(*cp.offset(0) as libc::c_int != 'c' as i32
         || !((*cp.offset(1) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32)
@@ -218,14 +173,15 @@ unsafe extern "C" fn create_fs_device(
   mut passno: libc::c_int,
 ) -> *mut fs_info {
   let mut fs: *mut fs_info = 0 as *mut fs_info;
-  fs = xzalloc(::std::mem::size_of::<fs_info>() as libc::c_ulong) as *mut fs_info;
-  (*fs).device = xstrdup(device);
-  (*fs).mountpt = xstrdup(mntpnt);
+  fs = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<fs_info>() as libc::c_ulong)
+    as *mut fs_info;
+  (*fs).device = crate::libbb::xfuncs_printf::xstrdup(device);
+  (*fs).mountpt = crate::libbb::xfuncs_printf::xstrdup(mntpnt);
   if !strchr(type_0, ',' as i32).is_null() {
     type_0 = b"auto\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
   }
-  (*fs).type_0 = xstrdup(type_0);
-  (*fs).opts = xstrdup(if !opts.is_null() {
+  (*fs).type_0 = crate::libbb::xfuncs_printf::xstrdup(type_0);
+  (*fs).opts = crate::libbb::xfuncs_printf::xstrdup(if !opts.is_null() {
     opts
   } else {
     b"\x00" as *const u8 as *const libc::c_char
@@ -261,7 +217,7 @@ unsafe extern "C" fn load_fs_info(mut filename: *const libc::c_char) {
   let mut buf: [libc::c_char; 1024] = [0; 1024];
   fstab = setmntent(filename, b"r\x00" as *const u8 as *const libc::c_char);
   if fstab.is_null() {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"can\'t read \'%s\'\x00" as *const u8 as *const libc::c_char,
       filename,
     );
@@ -354,10 +310,14 @@ unsafe extern "C" fn wait_one(mut flags: libc::c_int) -> libc::c_int {
       }
       if *bb_errno == 10i32 {
         /* paranoia */
-        bb_simple_error_msg(b"wait: no more children\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg(
+          b"wait: no more children\x00" as *const u8 as *const libc::c_char,
+        );
         return -1i32;
       }
-      bb_simple_perror_msg(b"wait\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg(
+        b"wait\x00" as *const u8 as *const libc::c_char,
+      );
     } else {
       prev = 0 as *mut fsck_instance;
       inst = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).instance_list;
@@ -437,7 +397,10 @@ unsafe extern "C" fn execute(
   let ref mut fresh5 = *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .args
     .offset(0);
-  *fresh5 = xasprintf(b"fsck.%s\x00" as *const u8 as *const libc::c_char, type_0);
+  *fresh5 = crate::libbb::xfuncs_printf::xasprintf(
+    b"fsck.%s\x00" as *const u8 as *const libc::c_char,
+    type_0,
+  );
   let ref mut fresh6 = *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .args
     .offset(((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).num_args - 2i32) as isize);
@@ -468,14 +431,16 @@ unsafe extern "C" fn execute(
       );
       i += 1
     }
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   }
   /* Fork and execute the correct program. */
   pid = -1i32;
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).noexecute == 0 {
-    pid = spawn((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args);
+    pid = crate::libbb::vfork_daemon_rexec::spawn(
+      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args,
+    );
     if pid < 0i32 {
-      bb_simple_perror_msg(
+      crate::libbb::perror_msg::bb_simple_perror_msg(
         *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
           .args
           .offset(0),
@@ -491,12 +456,14 @@ unsafe extern "C" fn execute(
     );
     return;
   }
-  inst = xzalloc(::std::mem::size_of::<fsck_instance>() as libc::c_ulong) as *mut fsck_instance;
+  inst =
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<fsck_instance>() as libc::c_ulong)
+      as *mut fsck_instance;
   (*inst).pid = pid;
   (*inst).prog = *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .args
     .offset(0);
-  (*inst).device = xstrdup(device);
+  (*inst).device = crate::libbb::xfuncs_printf::xstrdup(device);
   (*inst).base_device = base_device(device);
   /* Add to the list of running fsck's.
    * (was adding to the end, but adding to the front is simpler...) */
@@ -542,12 +509,12 @@ unsafe extern "C" fn fsck_device(mut fs: *mut fs_info)
         .fstype
         .offset(1) as libc::c_int
         != 'o' as i32)
-    && is_prefixed_with(
+    && crate::libbb::compare_string_array::is_prefixed_with(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).fstype,
       b"opts=\x00" as *const u8 as *const libc::c_char,
     )
     .is_null()
-    && is_prefixed_with(
+    && crate::libbb::compare_string_array::is_prefixed_with(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).fstype,
       b"loop\x00" as *const u8 as *const libc::c_char,
     )
@@ -594,12 +561,16 @@ unsafe extern "C" fn device_already_active(mut device: *mut libc::c_char) -> lib
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .instance_list
     .is_null()
-    && (!is_prefixed_with(
+    && (!crate::libbb::compare_string_array::is_prefixed_with(
       (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).instance_list).device,
       b"/dev/md\x00" as *const u8 as *const libc::c_char,
     )
     .is_null()
-      || !is_prefixed_with(device, b"/dev/md\x00" as *const u8 as *const libc::c_char).is_null())
+      || !crate::libbb::compare_string_array::is_prefixed_with(
+        device,
+        b"/dev/md\x00" as *const u8 as *const libc::c_char,
+      )
+      .is_null())
   {
     return 1i32;
   }
@@ -728,7 +699,9 @@ unsafe extern "C" fn ignore(mut fs: *mut fs_info) -> libc::c_int {
     return 1i32;
   }
   /* Are we ignoring this type? */
-  if index_in_strings(ignored_types.as_ptr(), (*fs).type_0) >= 0i32 {
+  if crate::libbb::compare_string_array::index_in_strings(ignored_types.as_ptr(), (*fs).type_0)
+    >= 0i32
+  {
     return 1i32;
   }
   /* We can and want to check this file system type. */
@@ -884,14 +857,14 @@ unsafe extern "C" fn compile_fs_type(mut fs_type: *mut libc::c_char) {
     s = s.offset(1)
   }
   let ref mut fresh9 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).fs_type_list;
-  *fresh9 = xzalloc(
+  *fresh9 = crate::libbb::xfuncs_printf::xzalloc(
     (num as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong),
   ) as *mut *mut libc::c_char;
   let ref mut fresh10 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).fs_type_flag;
-  *fresh10 =
-    xzalloc((num as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u8>() as libc::c_ulong))
-      as *mut u8;
+  *fresh10 = crate::libbb::xfuncs_printf::xzalloc(
+    (num as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u8>() as libc::c_ulong),
+  ) as *mut u8;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).fs_type_negated = -1i32 as smallint;
   num = 0i32;
   s = fs_type;
@@ -909,7 +882,12 @@ unsafe extern "C" fn compile_fs_type(mut fs_type: *mut libc::c_char) {
     }
     if strcmp(s, b"loop\x00" as *const u8 as *const libc::c_char) == 0i32 {
       current_block_28 = 11934833676784627535;
-    } else if !is_prefixed_with(s, b"opts=\x00" as *const u8 as *const libc::c_char).is_null() {
+    } else if !crate::libbb::compare_string_array::is_prefixed_with(
+      s,
+      b"opts=\x00" as *const u8 as *const libc::c_char,
+    )
+    .is_null()
+    {
       s = s.offset(5);
       current_block_28 = 11934833676784627535;
     } else {
@@ -920,7 +898,7 @@ unsafe extern "C" fn compile_fs_type(mut fs_type: *mut libc::c_char) {
       if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).fs_type_negated as libc::c_int
         != negate as libc::c_int
       {
-        bb_simple_error_msg_and_die(b"either all or none of the filesystem types passed to -t must be prefixed with \'no\' or \'!\'\x00"
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(b"either all or none of the filesystem types passed to -t must be prefixed with \'no\' or \'!\'\x00"
                                                 as *const u8 as
                                                 *const libc::c_char);
       }
@@ -946,7 +924,7 @@ unsafe extern "C" fn compile_fs_type(mut fs_type: *mut libc::c_char) {
     let ref mut fresh12 = *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .fs_type_list
       .offset(fresh11 as isize);
-    *fresh12 = xstrndup(
+    *fresh12 = crate::libbb::xfuncs_printf::xstrndup(
       s,
       comma.wrapping_offset_from(s) as libc::c_long as libc::c_int,
     );
@@ -958,7 +936,7 @@ unsafe extern "C" fn compile_fs_type(mut fs_type: *mut libc::c_char) {
 }
 unsafe extern "C" fn new_args() -> *mut *mut libc::c_char {
   let ref mut fresh13 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args;
-  *fresh13 = xrealloc_vector_helper(
+  *fresh13 = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args as *mut libc::c_void,
     ((::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong) << 8i32)
       .wrapping_add(2i32 as libc::c_ulong) as libc::c_uint,
@@ -988,13 +966,13 @@ pub unsafe extern "C" fn fsck_main(
   let mut doall: smallint = 0;
   let mut notitle: smallint = 0;
   /* we want wait() to be interruptible */
-  signal_no_SA_RESTART_empty_mask(
+  crate::libbb::signals::signal_no_SA_RESTART_empty_mask(
     2i32,
-    Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   ); /* G.args[0] = NULL, will be replaced by fsck.<type> */
-  signal_no_SA_RESTART_empty_mask(
+  crate::libbb::signals::signal_no_SA_RESTART_empty_mask(
     15i32,
-    Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   setbuf(stdout, std::ptr::null_mut::<libc::c_char>());
   notitle = 0i32 as smallint;
@@ -1021,7 +999,7 @@ pub unsafe extern "C" fn fsck_main(
       // FIXME: must check that arg is a blkdev, or resolve
       // "/path", "UUID=xxx" or "LABEL=xxx" into block device name
       // ("UUID=xxx"/"LABEL=xxx" can probably shifted to fsck.auto duties)
-      devices = xrealloc_vector_helper(
+      devices = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
         devices as *mut libc::c_void,
         ((::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong) << 8i32)
           .wrapping_add(2i32 as libc::c_ulong) as libc::c_uint,
@@ -1064,7 +1042,7 @@ pub unsafe extern "C" fn fsck_main(
               .fstype
               .is_null()
             {
-              bb_show_usage();
+              crate::libbb::appletlib::bb_show_usage();
             }
             j += 1;
             if *arg.offset(j as isize) != 0 {
@@ -1074,22 +1052,24 @@ pub unsafe extern "C" fn fsck_main(
               if !(*argv).is_null() {
                 tmp = *argv
               } else {
-                bb_show_usage();
+                crate::libbb::appletlib::bb_show_usage();
               }
             }
             let ref mut fresh20 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).fstype;
-            *fresh20 = xstrdup(tmp);
+            *fresh20 = crate::libbb::xfuncs_printf::xstrdup(tmp);
             compile_fs_type((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).fstype);
             break;
           }
           63 => {
-            bb_show_usage();
+            crate::libbb::appletlib::bb_show_usage();
           }
           _ => {
             optpos += 1;
             /* one extra for '\0' */
-            options = xrealloc(options as *mut libc::c_void, (optpos + 2i32) as size_t)
-              as *mut libc::c_char; /* G.args[G.num_args - 2] will be replaced by <device> */
+            options = crate::libbb::xfuncs_printf::xrealloc(
+              options as *mut libc::c_void,
+              (optpos + 2i32) as size_t,
+            ) as *mut libc::c_char; /* G.args[G.num_args - 2] will be replaced by <device> */
             *options.offset(optpos as isize) = *arg.offset(j as isize)
           }
         } /* G.args[G.num_args - 1] is the last, NULL element */
@@ -1109,7 +1089,8 @@ pub unsafe extern "C" fn fsck_main(
   tmp = getenv(b"FSCK_MAX_INST\x00" as *const u8 as *const libc::c_char);
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_running = 2147483647i32;
   if !tmp.is_null() {
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_running = xatoi(tmp)
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_running =
+      crate::libbb::xatonum::xatoi(tmp)
   }
   new_args();
   new_args();

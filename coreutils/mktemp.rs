@@ -2,7 +2,6 @@ use libc;
 use libc::getenv;
 use libc::puts;
 extern "C" {
-
   #[no_mangle]
   fn mktemp(__template: *mut libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
@@ -11,18 +10,6 @@ extern "C" {
   fn mkdtemp(__template: *mut libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   static mut optind: libc::c_int;
-
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_perror_nomsg_and_die() -> !;
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
 }
 
 pub const OPT_q: C2RustUnnamed = 2;
@@ -100,7 +87,7 @@ pub unsafe extern "C" fn mktemp_main(
   if path.is_null() || *path.offset(0) as libc::c_int == '\u{0}' as i32 {
     path = b"/tmp\x00" as *const u8 as *const libc::c_char
   }
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^dqtp:u\x00?1\x00" as *const u8 as *const libc::c_char,
     &mut path as *mut *const libc::c_char,
@@ -110,11 +97,12 @@ pub unsafe extern "C" fn mktemp_main(
     /* GNU coreutils 8.4:
      * bare "mktemp" -> "mktemp -t tmp.XXXXXX"
      */
-    chp = xstrdup(b"tmp.XXXXXX\x00" as *const u8 as *const libc::c_char);
+    chp =
+      crate::libbb::xfuncs_printf::xstrdup(b"tmp.XXXXXX\x00" as *const u8 as *const libc::c_char);
     opts |= OPT_t as libc::c_int as libc::c_uint
   }
   if opts & (OPT_t as libc::c_int | OPT_p as libc::c_int) as libc::c_uint != 0 {
-    chp = concat_path_file(path, chp)
+    chp = crate::libbb::concat_path_file::concat_path_file(path, chp)
   }
   if opts & OPT_u as libc::c_int as libc::c_uint != 0 {
     chp = mktemp(chp);
@@ -140,11 +128,13 @@ pub unsafe extern "C" fn mktemp_main(
         return 1i32;
       }
       /* don't use chp as it gets mangled in case of error */
-      bb_perror_nomsg_and_die();
+      crate::libbb::perror_nomsg_and_die::bb_perror_nomsg_and_die();
     }
     _ => {
       puts(chp);
       return 0i32;
     }
   };
+
+  0
 }

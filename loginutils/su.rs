@@ -12,38 +12,7 @@ extern "C" {
   static mut optind: libc::c_int;
 
   /* Search for an entry with a matching user ID.  */
-  #[no_mangle]
-  fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;
-  #[no_mangle]
-  fn skip_dev_pfx(tty_name: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xgetpwnam(name: *const libc::c_char) -> *mut passwd;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_do_delay(seconds: libc::c_int);
-  #[no_mangle]
-  fn change_identity(pw: *const passwd);
-  #[no_mangle]
-  fn run_shell(
-    shell: *const libc::c_char,
-    loginshell: libc::c_int,
-    args: *mut *const libc::c_char,
-  ) -> !;
-  #[no_mangle]
-  fn setup_environment(shell: *const libc::c_char, flags: libc::c_int, pw: *const passwd);
-  #[no_mangle]
-  fn is_tty_secure(short_tty: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn ask_and_check_password(pw: *const passwd) -> libc::c_int;
-  #[no_mangle]
-  fn xmalloc_ttyname(fd: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   fn endusershell();
   #[no_mangle]
@@ -136,7 +105,7 @@ pub unsafe extern "C" fn su_main(
    * ARGS starting with dash will be treated as su options,
    * not passed to shell. (Tested on util-linux 2.28).
    */
-  flags = getopt32(
+  flags = crate::libbb::getopt32::getopt32(
     argv,
     b"mplc:s:\x00" as *const u8 as *const libc::c_char,
     &mut opt_command as *mut *mut libc::c_char,
@@ -155,11 +124,11 @@ pub unsafe extern "C" fn su_main(
     opt_username = *argv.offset(0);
     argv = argv.offset(1)
   }
-  tty = xmalloc_ttyname(0i32);
+  tty = crate::libbb::xfuncs_printf::xmalloc_ttyname(0i32);
   if tty.is_null() {
     tty = b"none\x00" as *const u8 as *const libc::c_char
   }
-  tty = skip_dev_pfx(tty);
+  tty = crate::libbb::skip_whitespace::skip_dev_pfx(tty);
   /* The utmp entry (via getlogin) is probably the best way to
    * identify the user, especially if someone su's from a su-shell.
    * But getlogin can fail -- usually due to lack of utmp entry.
@@ -170,22 +139,22 @@ pub unsafe extern "C" fn su_main(
     ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong,
   ) != 0i32
   {
-    pw = bb_internal_getpwuid(cur_uid);
+    pw = crate::libpwdgrp::pwd_grp::bb_internal_getpwuid(cur_uid);
     old_user = if !pw.is_null() {
-      xstrdup((*pw).pw_name)
+      crate::libbb::xfuncs_printf::xstrdup((*pw).pw_name)
     } else {
       b"\x00" as *const u8 as *const libc::c_char
     }
   }
   openlog(applet_name, 0i32, 4i32 << 3i32);
-  pw = xgetpwnam(opt_username);
+  pw = crate::libbb::bb_pwd::xgetpwnam(opt_username);
   r = 1i32;
   if cur_uid != 0i32 as libc::c_uint {
-    r = ask_and_check_password(pw)
+    r = crate::libbb::correct_password::ask_and_check_password(pw)
   }
   's_191: {
     if r > 0i32 {
-      if !(0i32 != 0 && r == 2i32 && is_tty_secure(tty) == 0) {
+      if !(0i32 != 0 && r == 2i32 && crate::libbb::securetty::is_tty_secure(tty) == 0) {
         syslog(
           5i32,
           b"%c %s %s:%s\x00" as *const u8 as *const libc::c_char,
@@ -205,8 +174,10 @@ pub unsafe extern "C" fn su_main(
       old_user,
       opt_username,
     );
-    bb_do_delay(3i32);
-    bb_simple_error_msg_and_die(b"incorrect password\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::bb_do_delay::bb_do_delay(3i32);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"incorrect password\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if false && 1i32 != 0 {
     closelog();
@@ -224,7 +195,9 @@ pub unsafe extern "C" fn su_main(
      * probably a uucp account or has restricted access.  Don't
      * compromise the account by allowing access with a standard
      * shell.  */
-    bb_simple_error_msg(b"using restricted shell\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg(
+      b"using restricted shell\x00" as *const u8 as *const libc::c_char,
+    );
     opt_shell = std::ptr::null_mut::<libc::c_char>()
     /* ignore -s PROG */
   }
@@ -233,8 +206,8 @@ pub unsafe extern "C" fn su_main(
   if opt_shell.is_null() {
     opt_shell = (*pw).pw_shell
   }
-  change_identity(pw);
-  setup_environment(
+  crate::libbb::change_identity::change_identity(pw);
+  crate::libbb::setup_environment::setup_environment(
     opt_shell,
     (flags & 4i32 as libc::c_uint)
       .wrapping_div(4i32 as libc::c_uint)
@@ -269,7 +242,7 @@ pub unsafe extern "C" fn su_main(
    * ioctl(TIOCSTI) works only on the controlling tty.
    */
   /* Never returns */
-  run_shell(
+  crate::libbb::run_shell::run_shell(
     opt_shell,
     (flags & 4i32 as libc::c_uint) as libc::c_int,
     argv as *mut *const libc::c_char,

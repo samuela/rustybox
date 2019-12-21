@@ -1,4 +1,5 @@
 use crate::libbb::llist::llist_t;
+use crate::libbb::parse_config::parser_t;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::__compar_fn_t;
 use crate::librb::__syscall_slong_t;
@@ -11,14 +12,12 @@ use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
-
 use libc;
 use libc::alarm;
 use libc::close;
 use libc::free;
 use libc::getpid;
 use libc::getuid;
-use libc::pid_t;
 use libc::putenv;
 use libc::ssize_t;
 use libc::strchr;
@@ -27,7 +26,6 @@ use libc::strcpy;
 use libc::suseconds_t;
 use libc::time_t;
 use libc::timeval;
-use libc::FILE;
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -45,91 +43,27 @@ extern "C" {
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn kill_myself_with_sig(sig: libc::c_int) -> !;
   /* Standard handler which just records signo */
   #[no_mangle]
   static mut bb_got_signal: smallint;
-  #[no_mangle]
-  fn record_signo(signo: libc::c_int);
-  #[no_mangle]
-  fn strftime_YYYYMMDDHHMMSS(
-    buf: *mut libc::c_char,
-    len: libc::c_uint,
-    tp: *mut time_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xbind(sockfd: libc::c_int, my_addr: *mut sockaddr, addrlen: socklen_t);
-  #[no_mangle]
-  fn setsockopt_int(
-    fd: libc::c_int,
-    level: libc::c_int,
-    optname: libc::c_int,
-    optval: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn setsockopt_bindtodevice(fd: libc::c_int, iface: *const libc::c_char) -> libc::c_int;
+
   /* Create stream socket, and allocate suitable lsa.
    * (lsa of correct size and lsa->sa.sa_family (AF_INET/AF_INET6))
    * af == AF_UNSPEC will result in trying to create IPv6 socket,
    * and if kernel doesn't support it, fall back to IPv4.
    * This is useful if you plan to bind to resulting local lsa.
    */
-  #[no_mangle]
-  fn xsocket_type(
-    lsap: *mut *mut len_and_sockaddr,
-    af: libc::c_int,
-    sock_type: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn create_and_bind_dgram_or_die(bindaddr: *const libc::c_char, port: libc::c_int) -> libc::c_int;
+
   /* Get local address of bound or accepted socket */
-  #[no_mangle]
-  fn get_sock_lsa(fd: libc::c_int) -> *mut len_and_sockaddr;
+
   /* Return malloc'ed len_and_sockaddr with socket address of host:port
    * Currently will return IPv4 or IPv6 sockaddrs only
    * (depending on host), but in theory nothing prevents e.g.
    * UNIX socket address being returned, IPX sockaddr etc...
    * On error does bb_error_msg and returns NULL */
-  #[no_mangle]
-  fn host2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
-  #[no_mangle]
-  fn xmalloc_sockaddr2dotted_noport(sa: *const sockaddr) -> *mut libc::c_char;
-  #[no_mangle]
-  fn socket_want_pktinfo(fd: libc::c_int);
-  #[no_mangle]
-  fn send_to_from(
-    fd: libc::c_int,
-    buf: *mut libc::c_void,
-    len: size_t,
-    flags: libc::c_int,
-    to: *const sockaddr,
-    from: *const sockaddr,
-    tolen: socklen_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn recv_from_to(
-    fd: libc::c_int,
-    buf: *mut libc::c_void,
-    len: size_t,
-    flags: libc::c_int,
-    from: *mut sockaddr,
-    to: *mut sockaddr,
-    sa_size: socklen_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
+
   /* Reverse */
-  #[no_mangle]
-  fn hex2bin(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    count: libc::c_int,
-  ) -> *mut libc::c_char;
+
   #[no_mangle]
   fn recv(
     __fd: libc::c_int,
@@ -186,66 +120,11 @@ extern "C" {
   fn settimeofday(__tv: *const timeval, __tz: *const timezone) -> libc::c_int;
 
   #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn spawn(argv: *mut *mut libc::c_char) -> pid_t;
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn write_pidfile_std_path_and_ext(path: *const libc::c_char);
-  #[no_mangle]
-  fn remove_pidfile_std_path_and_ext(path: *const libc::c_char);
+
   #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_info_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn config_open(filename: *const libc::c_char) -> *mut parser_t;
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
-  #[no_mangle]
-  fn md5_begin(ctx: *mut md5_ctx_t);
-  #[no_mangle]
-  fn md5_hash(ctx: *mut md5_ctx_t, buffer: *const libc::c_void, len: size_t);
-  #[no_mangle]
-  fn md5_end(ctx: *mut md5_ctx_t, resbuf: *mut libc::c_void) -> libc::c_uint;
-  #[no_mangle]
-  fn sha1_begin(ctx: *mut sha1_ctx_t);
-  #[no_mangle]
-  fn sha1_end(ctx: *mut sha1_ctx_t, resbuf: *mut libc::c_void) -> libc::c_uint;
+
   #[no_mangle]
   static bb_msg_you_must_be_root: [libc::c_char; 0];
   /* '*const' ptr makes gcc optimize code much better.
@@ -314,7 +193,7 @@ pub type __socklen_t = libc::c_uint;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
-pub type socklen_t = __socklen_t;
+use crate::librb::socklen_t;
 pub type id_t = __id_t;
 
 pub type __socket_type = libc::c_uint;
@@ -353,44 +232,26 @@ pub const MSG_DONTROUTE: C2RustUnnamed = 4;
 pub const MSG_PEEK: C2RustUnnamed = 2;
 pub const MSG_OOB: C2RustUnnamed = 1;
 
-#[derive(Copy, Clone)]
+use libc::sockaddr_in6;
+
+use crate::librb::in6_addr;
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed_0,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_0 {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
+use libc::sockaddr_in;
+
+use libc::in_addr;
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr__: *const sockaddr,
   pub __sockaddr_at__: *const sockaddr_at,
@@ -443,15 +304,17 @@ pub const PRIO_USER: __priority_which = 2;
 pub const PRIO_PGRP: __priority_which = 1;
 pub const PRIO_PROCESS: __priority_which = 0;
 pub type __priority_which_t = __priority_which;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct timezone {
   pub tz_minuteswest: libc::c_int,
   pub tz_dsttime: libc::c_int,
 }
 pub type __timezone_ptr_t = *mut timezone;
-#[derive(Copy, Clone, BitfieldStruct)]
+
 #[repr(C)]
+#[derive(Copy, Clone, BitfieldStruct)]
 pub struct timex {
   pub modes: libc::c_uint,
   pub offset: __syscall_slong_t,
@@ -488,20 +351,9 @@ pub struct timex {
     [u8; 44],
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_2,
-}
+use crate::librb::len_and_sockaddr;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed_2 {
-  pub sa: sockaddr,
-  pub sin: sockaddr_in,
-  pub sin6: sockaddr_in6,
-}
+
 
 pub type C2RustUnnamed_3 = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed_3 = 8;
@@ -526,23 +378,12 @@ pub const PARSE_GREEDY: C2RustUnnamed_5 = 262144;
 pub const PARSE_TRIM: C2RustUnnamed_5 = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed_5 = 65536;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
-
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub cur_time: libc::c_double,
   pub rootdelay: libc::c_double,
@@ -569,8 +410,9 @@ pub struct globals {
   pub discipline_jitter: libc::c_double,
   pub offset_to_jitter_ratio: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct peer_t {
   pub p_lsa: *mut len_and_sockaddr,
   pub p_dotted: *mut libc::c_char,
@@ -596,8 +438,9 @@ pub struct peer_t {
   pub p_xmt_msg: msg_t,
   pub p_hostname: [libc::c_char; 1],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct msg_t {
   pub m_status: u8,
   pub m_stratum: u8,
@@ -613,27 +456,31 @@ pub struct msg_t {
   pub m_keyid: u32,
   pub m_digest: [u8; 20],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct l_fixedpt_t {
   pub int_partl: u32,
   pub fractionl: u32,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct s_fixedpt_t {
   pub int_parts: u16,
   pub fractions: u16,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct datapoint_t {
   pub d_offset: libc::c_double,
   pub d_recv_time: libc::c_double,
   pub d_dispersion: libc::c_double,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct key_entry_t {
   pub id: libc::c_uint,
   pub type_0: smalluint,
@@ -681,22 +528,22 @@ pub const OPT_N: C2RustUnnamed_8 = 4;
 pub const OPT_q: C2RustUnnamed_8 = 2;
 pub const OPT_n: C2RustUnnamed_8 = 1;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_9 {
   pub f: libc::c_float,
   pub i: i32,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_10 {
   pub m: md5_ctx_t,
   pub s: sha1_ctx_t,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct point_t {
   pub p: *mut peer_t,
   pub type_0: libc::c_int,
@@ -704,8 +551,8 @@ pub struct point_t {
   pub opt_rd: libc::c_double,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct survivor_t {
   pub p: *mut peer_t,
   pub metric: libc::c_double,
@@ -806,7 +653,7 @@ unsafe extern "C" fn lfp_to_d(mut lfp: l_fixedpt_t) -> libc::c_double {
       let fresh1;
       let fresh2 = __x;
       asm!("bswap $0" : "=r" (fresh1) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
@@ -824,7 +671,7 @@ unsafe extern "C" fn lfp_to_d(mut lfp: l_fixedpt_t) -> libc::c_double {
       let fresh4;
       let fresh5 = __x;
       asm!("bswap $0" : "=r" (fresh4) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
     }
     __v
@@ -850,8 +697,7 @@ unsafe extern "C" fn sfp_to_d(mut sfp: s_fixedpt_t) -> libc::c_double {
       let fresh7;
       let fresh8 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
     }
     __v
@@ -867,8 +713,7 @@ unsafe extern "C" fn sfp_to_d(mut sfp: s_fixedpt_t) -> libc::c_double {
       let fresh10;
       let fresh11 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh10) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
     }
     __v
@@ -901,8 +746,7 @@ unsafe extern "C" fn d_to_lfp(mut d: libc::c_double) -> l_fixedpt_t {
       let fresh13;
       let fresh14 = __x;
       asm!("bswap $0" : "=r" (fresh13) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14))
-                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
     }
     __v
@@ -920,8 +764,7 @@ unsafe extern "C" fn d_to_lfp(mut d: libc::c_double) -> l_fixedpt_t {
       let fresh16;
       let fresh17 = __x;
       asm!("bswap $0" : "=r" (fresh16) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17))
-                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
     }
     __v
@@ -947,8 +790,7 @@ unsafe extern "C" fn d_to_sfp(mut d: libc::c_double) -> s_fixedpt_t {
       let fresh19;
       let fresh20 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh19) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh18, fresh20, fresh19);
     }
     __v
@@ -964,8 +806,7 @@ unsafe extern "C" fn d_to_sfp(mut d: libc::c_double) -> s_fixedpt_t {
       let fresh22;
       let fresh23 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh22) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh21, fresh23, fresh22);
     }
     __v
@@ -1041,7 +882,7 @@ unsafe extern "C" fn filter_datapoints(mut p: *mut peer_t) {
   sum = SQRT(sum / 8i32 as libc::c_double);
   (*p).filter_jitter = if sum > 0.002f64 { sum } else { 0.002f64 };
   if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"filter offset:%+f disp:%f jitter:%f\x00" as *const u8 as *const libc::c_char,
       (*p).filter_offset,
       (*p).filter_dispersion,
@@ -1089,7 +930,7 @@ unsafe extern "C" fn reset_peer_stats(mut p: *mut peer_t, mut offset: libc::c_do
   } /* recalc p->filter_xxx */
   filter_datapoints(p); /* = set_next(p, 0); */
   if 3i32 >= 6i32 && (*ptr_to_globals).verbose >= 6i32 as libc::c_uint {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"%s->lastpkt_recv_time=%f\x00" as *const u8 as *const libc::c_char,
       (*p).p_dotted,
       (*p).lastpkt_recv_time,
@@ -1097,15 +938,16 @@ unsafe extern "C" fn reset_peer_stats(mut p: *mut peer_t, mut offset: libc::c_do
   };
 }
 unsafe extern "C" fn resolve_peer_hostname(mut p: *mut peer_t) -> *mut len_and_sockaddr {
-  let mut lsa: *mut len_and_sockaddr = host2sockaddr((*p).p_hostname.as_mut_ptr(), 123i32);
+  let mut lsa: *mut len_and_sockaddr =
+    crate::libbb::xconnect::host2sockaddr((*p).p_hostname.as_mut_ptr(), 123i32);
   if !lsa.is_null() {
     free((*p).p_lsa as *mut libc::c_void);
     free((*p).p_dotted as *mut libc::c_void);
     (*p).p_lsa = lsa;
-    (*p).p_dotted = xmalloc_sockaddr2dotted_noport(&mut (*lsa).u.sa);
+    (*p).p_dotted = crate::libbb::xconnect::xmalloc_sockaddr2dotted_noport(&mut (*lsa).u.sa);
     if 3i32 != 0 && (*ptr_to_globals).verbose != 0 {
       if strcmp((*p).p_hostname.as_mut_ptr(), (*p).p_dotted) != 0i32 {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"\'%s\' is %s\x00" as *const u8 as *const libc::c_char,
           (*p).p_hostname.as_mut_ptr(),
           (*p).p_dotted,
@@ -1121,8 +963,9 @@ unsafe extern "C" fn resolve_peer_hostname(mut p: *mut peer_t) -> *mut len_and_s
 unsafe extern "C" fn add_peers(mut s: *const libc::c_char, mut key_entry: *mut key_entry_t) {
   let mut item: *mut llist_t = 0 as *mut llist_t;
   let mut p: *mut peer_t = 0 as *mut peer_t;
-  p = xzalloc((::std::mem::size_of::<peer_t>() as libc::c_ulong).wrapping_add(strlen(s)))
-    as *mut peer_t;
+  p = crate::libbb::xfuncs_printf::xzalloc(
+    (::std::mem::size_of::<peer_t>() as libc::c_ulong).wrapping_add(strlen(s)),
+  ) as *mut peer_t;
   strcpy((*p).p_hostname.as_mut_ptr(), s);
   (*p).p_fd = -1i32;
   (*p).p_xmt_msg.m_status =
@@ -1138,7 +981,7 @@ unsafe extern "C" fn add_peers(mut s: *const libc::c_char, mut key_entry: *mut k
     while !item.is_null() {
       let mut pp: *mut peer_t = (*item).data as *mut peer_t;
       if !(*pp).p_dotted.is_null() && strcmp((*p).p_dotted, (*pp).p_dotted) == 0i32 {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"duplicate peer %s (%s)\x00" as *const u8 as *const libc::c_char,
           s,
           (*p).p_dotted,
@@ -1152,7 +995,7 @@ unsafe extern "C" fn add_peers(mut s: *const libc::c_char, mut key_entry: *mut k
     }
   }
   (*p).key_entry = key_entry;
-  llist_add_to(&mut (*ptr_to_globals).ntp_peers, p as *mut libc::c_void);
+  crate::libbb::llist::llist_add_to(&mut (*ptr_to_globals).ntp_peers, p as *mut libc::c_void);
   (*ptr_to_globals).peer_cnt = (*ptr_to_globals).peer_cnt.wrapping_add(1);
 }
 unsafe extern "C" fn do_sendto(
@@ -1175,7 +1018,7 @@ unsafe extern "C" fn do_sendto(
       addrlen,
     )
   } else {
-    ret = send_to_from(
+    ret = crate::libbb::udp_io::send_to_from(
       fd,
       msg as *mut libc::c_void,
       len as size_t,
@@ -1186,7 +1029,9 @@ unsafe extern "C" fn do_sendto(
     )
   }
   if ret != len {
-    bb_simple_perror_msg(b"send failed\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg(
+      b"send failed\x00" as *const u8 as *const libc::c_char,
+    );
     return -1i32;
   }
   return 0i32;
@@ -1210,25 +1055,33 @@ unsafe extern "C" fn hash(
     as libc::c_uint;
   match (*key_entry).type_0 as libc::c_int {
     0 => {
-      md5_begin(&mut ctx.m);
-      md5_hash(
+      crate::libbb::hash_md5_sha::md5_begin(&mut ctx.m);
+      crate::libbb::hash_md5_sha::md5_hash(
         &mut ctx.m,
         (*key_entry).key.as_mut_ptr() as *const libc::c_void,
         (*key_entry).key_length as size_t,
       );
-      md5_hash(&mut ctx.m, msg as *const libc::c_void, hash_size as size_t);
-      md5_end(&mut ctx.m, output as *mut libc::c_void);
+      crate::libbb::hash_md5_sha::md5_hash(
+        &mut ctx.m,
+        msg as *const libc::c_void,
+        hash_size as size_t,
+      );
+      crate::libbb::hash_md5_sha::md5_end(&mut ctx.m, output as *mut libc::c_void);
     }
     _ => {
       /* it's HASH_SHA1 */
-      sha1_begin(&mut ctx.s);
-      md5_hash(
+      crate::libbb::hash_md5_sha::sha1_begin(&mut ctx.s);
+      crate::libbb::hash_md5_sha::md5_hash(
         &mut ctx.s,
         (*key_entry).key.as_mut_ptr() as *const libc::c_void,
         (*key_entry).key_length as size_t,
       );
-      md5_hash(&mut ctx.s, msg as *const libc::c_void, hash_size as size_t);
-      sha1_end(&mut ctx.s, output as *mut libc::c_void);
+      crate::libbb::hash_md5_sha::md5_hash(
+        &mut ctx.s,
+        msg as *const libc::c_void,
+        hash_size as size_t,
+      );
+      crate::libbb::hash_md5_sha::sha1_end(&mut ctx.s, output as *mut libc::c_void);
     }
   };
 }
@@ -1246,8 +1099,7 @@ unsafe extern "C" fn hash_peer(mut p: *mut peer_t) {
       let fresh25;
       let fresh26 = __x;
       asm!("bswap $0" : "=r" (fresh25) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh24, fresh26))
-                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh24, fresh26)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh24, fresh26, fresh25);
     }
     __v
@@ -1295,16 +1147,16 @@ unsafe extern "C" fn send_query_to_peer(mut p: *mut peer_t) {
     let mut family: libc::c_int = 0;
     let mut local_lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
     family = (*(*p).p_lsa).u.sa.sa_family as libc::c_int;
-    fd = xsocket_type(&mut local_lsa, family, SOCK_DGRAM as libc::c_int);
+    fd = crate::libbb::xconnect::xsocket_type(&mut local_lsa, family, SOCK_DGRAM as libc::c_int);
     (*p).p_fd = fd;
     /* local_lsa has "null" address and port 0 now.
      * bind() ensures we have a *particular port* selected by kernel
      * and remembered in p->p_fd, thus later recv(p->p_fd)
      * receives only packets sent to this port.
      */
-    xbind(fd, &mut (*local_lsa).u.sa, (*local_lsa).len);
+    crate::libbb::xfuncs_printf::xbind(fd, &mut (*local_lsa).u.sa, (*local_lsa).len);
     if family == 2i32 {
-      setsockopt_int(fd, IPPROTO_IP as libc::c_int, 1i32, 0x48i32);
+      crate::libbb::xconnect::setsockopt_int(fd, IPPROTO_IP as libc::c_int, 1i32, 0x48i32);
     }
     free(local_lsa as *mut libc::c_void);
   }
@@ -1313,7 +1165,7 @@ unsafe extern "C" fn send_query_to_peer(mut p: *mut peer_t) {
    * to reduce delay. Printing messages after send works against that.
    */
   if 3i32 != 0 && (*ptr_to_globals).verbose != 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"sending query to %s\x00" as *const u8 as *const libc::c_char,
       (*p).p_dotted,
     );
@@ -1390,31 +1242,31 @@ unsafe extern "C" fn run_script(mut action: *const libc::c_char, mut offset: lib
   argv[1] = action as *mut libc::c_char;
   argv[2] = std::ptr::null_mut::<libc::c_char>();
   if 3i32 != 0 && (*ptr_to_globals).verbose != 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"executing \'%s %s\'\x00" as *const u8 as *const libc::c_char,
       (*ptr_to_globals).script_name,
       action,
     );
   }
-  env1 = xasprintf(
+  env1 = crate::libbb::xfuncs_printf::xasprintf(
     b"%s=%u\x00" as *const u8 as *const libc::c_char,
     b"stratum\x00" as *const u8 as *const libc::c_char,
     (*ptr_to_globals).stratum as libc::c_int,
   );
   putenv(env1);
-  env2 = xasprintf(
+  env2 = crate::libbb::xfuncs_printf::xasprintf(
     b"%s=%ld\x00" as *const u8 as *const libc::c_char,
     b"freq_drift_ppm\x00" as *const u8 as *const libc::c_char,
     (*ptr_to_globals).kernel_freq_drift,
   );
   putenv(env2);
-  env3 = xasprintf(
+  env3 = crate::libbb::xfuncs_printf::xasprintf(
     b"%s=%u\x00" as *const u8 as *const libc::c_char,
     b"poll_interval\x00" as *const u8 as *const libc::c_char,
     1i32 << (*ptr_to_globals).poll_exp as libc::c_int,
   );
   putenv(env3);
-  env4 = xasprintf(
+  env4 = crate::libbb::xfuncs_printf::xasprintf(
     b"%s=%f\x00" as *const u8 as *const libc::c_char,
     b"offset\x00" as *const u8 as *const libc::c_char,
     offset,
@@ -1428,7 +1280,7 @@ unsafe extern "C" fn run_script(mut action: *const libc::c_char, mut offset: lib
   /* Don't want to wait: it may run hwclock --systohc, and that
    * may take some time (seconds): */
   /*spawn_and_wait(argv);*/
-  spawn(argv.as_mut_ptr());
+  crate::libbb::vfork_daemon_rexec::spawn(argv.as_mut_ptr());
   unsetenv(b"stratum\x00" as *const u8 as *const libc::c_char);
   unsetenv(b"freq_drift_ppm\x00" as *const u8 as *const libc::c_char);
   unsetenv(b"poll_interval\x00" as *const u8 as *const libc::c_char);
@@ -1457,28 +1309,30 @@ unsafe extern "C" fn step_time(mut offset: libc::c_double) {
   dtime = tvc.tv_sec as libc::c_double + 1.0e-6f64 * tvc.tv_usec as libc::c_double + offset;
   d_to_tv(dtime, &mut tvn);
   if settimeofday(&mut tvn, 0 as *const timezone) == -1i32 {
-    bb_simple_perror_msg_and_die(b"settimeofday\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"settimeofday\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if 3i32 >= 2i32 && (*ptr_to_globals).verbose >= 2i32 as libc::c_uint {
     tval = tvc.tv_sec;
-    strftime_YYYYMMDDHHMMSS(
+    crate::libbb::time::strftime_YYYYMMDDHHMMSS(
       buf.as_mut_ptr(),
       ::std::mem::size_of::<[libc::c_char; 24]>() as libc::c_ulong as libc::c_uint,
       &mut tval,
     );
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"current time is %s.%06u\x00" as *const u8 as *const libc::c_char,
       buf.as_mut_ptr(),
       tvc.tv_usec as libc::c_uint,
     );
   }
   tval = tvn.tv_sec;
-  strftime_YYYYMMDDHHMMSS(
+  crate::libbb::time::strftime_YYYYMMDDHHMMSS(
     buf.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 24]>() as libc::c_ulong as libc::c_uint,
     &mut tval,
   );
-  bb_info_msg(
+  crate::libbb::verror_msg::bb_info_msg(
     b"setting time to %s.%06u (offset %+fs)\x00" as *const u8 as *const libc::c_char,
     buf.as_mut_ptr(),
     tvn.tv_usec as libc::c_uint,
@@ -1546,7 +1400,7 @@ unsafe extern "C" fn fit(mut p: *mut peer_t, mut rd: libc::c_double) -> libc::c_
   if (*p).reachable_bits as libc::c_int & (*p).reachable_bits as libc::c_int - 1i32 == 0i32 {
     /* One or zero bits in reachable_bits */
     if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"peer %s unfit for selection: unreachable\x00" as *const u8 as *const libc::c_char,
         (*p).p_dotted,
       );
@@ -1560,7 +1414,7 @@ unsafe extern "C" fn fit(mut p: *mut peer_t, mut rd: libc::c_double) -> libc::c_
       + 0.000015f64 * (1i32 << (*ptr_to_globals).poll_exp as libc::c_int) as libc::c_double
   {
     if 3i32 >= 3i32 && (*ptr_to_globals).verbose >= 3i32 as libc::c_uint {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"peer %s unfit for selection: root distance %f too high, jitter:%f\x00" as *const u8
           as *const libc::c_char,
         (*p).p_dotted,
@@ -1623,7 +1477,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
       item = (*item).link
     } else {
       if 3i32 >= 5i32 && (*ptr_to_globals).verbose >= 5i32 as libc::c_uint {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"interval: [%f %f %f] %s\x00" as *const u8 as *const libc::c_char,
           offset - rd,
           offset,
@@ -1655,7 +1509,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
   num_candidates = num_points.wrapping_div(3i32 as libc::c_uint);
   if num_candidates == 0i32 as libc::c_uint {
     if 3i32 >= 3i32 && (*ptr_to_globals).verbose >= 3i32 as libc::c_uint {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"no valid datapoints%s\x00" as *const u8 as *const libc::c_char,
         b", no peer selected\x00" as *const u8 as *const libc::c_char,
       );
@@ -1733,7 +1587,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
     num_falsetickers = num_falsetickers.wrapping_add(1);
     if num_falsetickers.wrapping_mul(2i32 as libc::c_uint) >= num_candidates {
       if 3i32 >= 3i32 && (*ptr_to_globals).verbose >= 3i32 as libc::c_uint {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"falsetickers:%d, candidates:%d%s\x00" as *const u8 as *const libc::c_char,
           num_falsetickers,
           num_candidates,
@@ -1744,7 +1598,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
     }
   }
   if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"selected interval: [%f, %f]; candidates:%d falsetickers:%d\x00" as *const u8
         as *const libc::c_char,
       low,
@@ -1773,7 +1627,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
         (1i32 * (*p).lastpkt_stratum as libc::c_int) as libc::c_double
           + (*point.as_mut_ptr().offset(i as isize)).opt_rd;
       if 3i32 >= 5i32 && (*ptr_to_globals).verbose >= 5i32 as libc::c_uint {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"survivor[%d] metric:%f peer:%s\x00" as *const u8 as *const libc::c_char,
           num_survivors,
           (*survivor.as_mut_ptr().offset(num_survivors as isize)).metric,
@@ -1791,7 +1645,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
    */
   if num_survivors < 1i32 as libc::c_uint {
     if 3i32 >= 3i32 && (*ptr_to_globals).verbose >= 3i32 as libc::c_uint {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"survivors:%d%s\x00" as *const u8 as *const libc::c_char,
         num_survivors,
         b", no peer selected\x00" as *const u8 as *const libc::c_char,
@@ -1826,7 +1680,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
     min_jitter = min_jitter;
     if num_survivors <= 3i32 as libc::c_uint {
       if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"num_survivors %d <= %d, not discarding more\x00" as *const u8 as *const libc::c_char,
           num_survivors,
           3i32,
@@ -1858,7 +1712,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
           max_idx = i as libc::c_uint
         }
         if 3i32 >= 6i32 && (*ptr_to_globals).verbose >= 6i32 as libc::c_uint {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"survivor %d selection_jitter^2:%f\x00" as *const u8 as *const libc::c_char,
             i,
             selection_jitter_sq,
@@ -1868,7 +1722,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
       }
       max_selection_jitter = SQRT(max_selection_jitter / num_survivors as libc::c_double);
       if 3i32 >= 5i32 && (*ptr_to_globals).verbose >= 5i32 as libc::c_uint {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"max_selection_jitter (at %d):%f min_jitter:%f\x00" as *const u8 as *const libc::c_char,
           max_idx,
           max_selection_jitter,
@@ -1882,7 +1736,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
        */
       if max_selection_jitter < min_jitter {
         if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"max_selection_jitter:%f < min_jitter:%f, num_survivors:%d, not discarding more\x00"
               as *const u8 as *const libc::c_char,
             max_selection_jitter,
@@ -1896,7 +1750,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
          * and go around again.
          */
         if 3i32 >= 6i32 && (*ptr_to_globals).verbose >= 6i32 as libc::c_uint {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"dropping survivor %d\x00" as *const u8 as *const libc::c_char,
             max_idx,
           );
@@ -1930,7 +1784,9 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
       }
       if (*ptr_to_globals).last_update_peer == (*survivor.as_mut_ptr().offset(i as isize)).p {
         if 3i32 >= 5i32 && (*ptr_to_globals).verbose >= 5i32 as libc::c_uint {
-          bb_simple_error_msg(b"keeping old synced peer\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::verror_msg::bb_simple_error_msg(
+            b"keeping old synced peer\x00" as *const u8 as *const libc::c_char,
+          );
         }
         p = (*ptr_to_globals).last_update_peer;
         current_block = 16970629020640858593;
@@ -1947,7 +1803,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
     _ => {}
   }
   if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"selected peer %s filter_offset:%+f age:%f\x00" as *const u8 as *const libc::c_char,
       (*p).p_dotted,
       (*p).filter_offset,
@@ -1969,7 +1825,7 @@ unsafe extern "C" fn set_new_values(
    * the current time.
    */
   if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"disc_state=%d last update offset=%f recv_time=%f\x00" as *const u8 as *const libc::c_char,
       disc_state,
       offset,
@@ -2020,7 +1876,7 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
    */
   if recv_time <= (*ptr_to_globals).last_update_recv_time {
     if 3i32 >= 3i32 && (*ptr_to_globals).verbose >= 3i32 as libc::c_uint {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"update from %s: same or older datapoint, not using it\x00" as *const u8
           as *const libc::c_char,
         (*p).p_dotted,
@@ -2038,7 +1894,7 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
    */
   if abs_offset > 1i32 as libc::c_double {
     if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"stepping time by %+f; poll_exp=MINPOLL\x00" as *const u8 as *const libc::c_char,
         offset,
       ); /* abs_offset <= STEP_THRESHOLD */
@@ -2100,7 +1956,7 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
         }
         set_new_values(4i32, offset, recv_time);
         if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
-          bb_simple_error_msg(
+          crate::libbb::verror_msg::bb_simple_error_msg(
             b"transitioning to FREQ, datapoint ignored\x00" as *const u8 as *const libc::c_char,
           );
         }
@@ -2129,7 +1985,7 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
   );
   (*ptr_to_globals).rootdisp = (*p).lastpkt_rootdisp + dtemp;
   if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"updating leap/refid/reftime/rootdisp from peer %s\x00" as *const u8 as *const libc::c_char,
       (*p).p_dotted,
     );
@@ -2146,10 +2002,12 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
       ::std::mem::size_of::<timex>() as libc::c_ulong,
     ); // | ADJ_MAXERROR | ADJ_ESTERROR;
     if adjtimex(&mut tmx) < 0i32 {
-      bb_simple_perror_msg_and_die(b"adjtimex\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"adjtimex\x00" as *const u8 as *const libc::c_char,
+      );
       /* usec */
     }
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"p adjtimex freq:%ld offset:%+ld status:0x%x tc:%ld\x00" as *const u8 as *const libc::c_char,
       tmx.freq,
       tmx.offset,
@@ -2260,13 +2118,15 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
   //tmx.maxerror = (u32)((sys_rootdelay / 2 + sys_rootdisp) * 1e6);
   rc = adjtimex(&mut tmx);
   if rc < 0i32 {
-    bb_simple_perror_msg_and_die(b"adjtimex\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"adjtimex\x00" as *const u8 as *const libc::c_char,
+    );
   }
   /* NB: here kernel returns constant == G.poll_exp, not == G.poll_exp - 4.
    * Not sure why. Perhaps it is normal.
    */
   if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"adjtimex:%d freq:%ld offset:%+ld status:0x%x\x00" as *const u8 as *const libc::c_char,
       rc,
       tmx.freq,
@@ -2276,7 +2136,7 @@ unsafe extern "C" fn update_local_clock(mut p: *mut peer_t) -> libc::c_int {
   }
   (*ptr_to_globals).kernel_freq_drift = tmx.freq / 65536i32 as libc::c_long;
   if 3i32 >= 2i32 && (*ptr_to_globals).verbose >= 2i32 as libc::c_uint {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"update from:%s offset:%+f delay:%f jitter:%f clock drift:%+.3fppm tc:%d\x00" as *const u8
         as *const libc::c_char,
       (*p).p_dotted,
@@ -2306,7 +2166,7 @@ unsafe extern "C" fn poll_interval(mut upper_bound: libc::c_int) -> libc::c_uint
   r = rand() as libc::c_uint;
   interval = interval.wrapping_add(r & mask);
   if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"chose poll interval:%u (poll_exp:%d)\x00" as *const u8 as *const libc::c_char,
       interval,
       (*ptr_to_globals).poll_exp as libc::c_int,
@@ -2321,7 +2181,7 @@ unsafe extern "C" fn adjust_poll(mut count: libc::c_int) {
     if ((*ptr_to_globals).poll_exp as libc::c_int) < 12i32 {
       (*ptr_to_globals).poll_exp = (*ptr_to_globals).poll_exp.wrapping_add(1);
       if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"polladj: discipline_jitter:%f ++poll_exp=%d\x00" as *const u8 as *const libc::c_char,
           (*ptr_to_globals).discipline_jitter,
           (*ptr_to_globals).poll_exp as libc::c_int,
@@ -2351,7 +2211,7 @@ unsafe extern "C" fn adjust_poll(mut count: libc::c_int) {
         item = (*item).link
       }
       if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"polladj: discipline_jitter:%f --poll_exp=%d\x00" as *const u8 as *const libc::c_char,
           (*ptr_to_globals).discipline_jitter,
           (*ptr_to_globals).poll_exp as libc::c_int,
@@ -2359,7 +2219,7 @@ unsafe extern "C" fn adjust_poll(mut count: libc::c_int) {
       }
     }
   } else if 3i32 >= 4i32 && (*ptr_to_globals).verbose >= 4i32 as libc::c_uint {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"polladj: count:%d\x00" as *const u8 as *const libc::c_char,
       (*ptr_to_globals).polladj_count,
     );
@@ -2442,7 +2302,7 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
        * If you need a different handling for a specific
        * errno, always explain it in comment.
        */
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"recv(%s) error\x00" as *const u8 as *const libc::c_char,
         (*p).p_dotted,
       );
@@ -2451,7 +2311,7 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
         && size != NTP_MSGSIZE_MD5_AUTH as isize
         && size != NTP_MSGSIZE_SHA1_AUTH as isize
       {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"malformed packet received from %s: size %u\x00" as *const u8 as *const libc::c_char,
           (*p).p_dotted,
           size as libc::c_int,
@@ -2459,7 +2319,7 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
         return;
       }
       if !(*p).key_entry.is_null() && hashes_differ(p, &mut msg) != 0 {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"invalid cryptographic hash received from %s\x00" as *const u8 as *const libc::c_char,
           (*p).p_dotted,
         );
@@ -2491,7 +2351,7 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
   }
   match current_block {
     5634871135123216486 => {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"reply from %s: peer is unsynced\x00" as *const u8 as *const libc::c_char,
         (*p).p_dotted,
       );
@@ -2545,7 +2405,7 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
         && delay > 1.0f64 / (8i32 * 1024i32) as libc::c_double
       {
         /* larger than ~0.000122 */
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"reply from %s: delay %f is too high, ignoring\x00" as *const u8 as *const libc::c_char,
           (*p).p_dotted,
           delay,
@@ -2564,7 +2424,7 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
         (*p).lastpkt_delay = delay;
         (*p).lastpkt_recv_time = T4;
         if 3i32 >= 6i32 && (*ptr_to_globals).verbose >= 6i32 as libc::c_uint {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"%s->lastpkt_recv_time=%f\x00" as *const u8 as *const libc::c_char,
             (*p).p_dotted,
             (*p).lastpkt_recv_time,
@@ -2601,7 +2461,7 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
         if 3i32 != 0 && (*ptr_to_globals).verbose != 0
           || option_mask32 & OPT_w as libc::c_int as libc::c_uint != 0
         {
-          bb_info_msg(b"reply from %s: offset:%+f delay:%f status:0x%02x strat:%d refid:0x%08x rootdelay:%f reach:0x%02x\x00"
+          crate::libbb::verror_msg::bb_info_msg(b"reply from %s: offset:%+f delay:%f status:0x%02x strat:%d refid:0x%08x rootdelay:%f reach:0x%02x\x00"
                                     as *const u8 as *const libc::c_char,
                                 (*p).p_dotted, offset, (*p).p_raw_delay,
                                 (*p).lastpkt_status as libc::c_int,
@@ -2641,7 +2501,7 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
               } else {
                 if 3i32 >= 3i32 && (*ptr_to_globals).verbose >= 3i32 as libc::c_uint {
                   if rc > 0i32 {
-                    bb_error_msg(
+                    crate::libbb::verror_msg::bb_error_msg(
                       b"want smaller interval: offset/jitter = %u\x00" as *const u8
                         as *const libc::c_char,
                       (*ptr_to_globals).offset_to_jitter_ratio,
@@ -2733,9 +2593,9 @@ unsafe extern "C" fn recv_and_process_client_pkt()
     int_partl: 0,
     fractionl: 0,
   };
-  to = get_sock_lsa((*ptr_to_globals).listen_fd);
-  from = xzalloc((*to).len as size_t) as *mut sockaddr;
-  size = recv_from_to(
+  to = crate::libbb::xconnect::get_sock_lsa((*ptr_to_globals).listen_fd);
+  from = crate::libbb::xfuncs_printf::xzalloc((*to).len as size_t) as *mut sockaddr;
+  size = crate::libbb::udp_io::recv_from_to(
     (*ptr_to_globals).listen_fd,
     &mut msg as *mut msg_t as *mut libc::c_void,
     ::std::mem::size_of::<msg_t>() as libc::c_ulong,
@@ -2756,11 +2616,13 @@ unsafe extern "C" fn recv_and_process_client_pkt()
     let mut addr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if size < 0 {
       if !(*bb_errno == 11i32) {
-        bb_simple_perror_msg_and_die(b"recv\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"recv\x00" as *const u8 as *const libc::c_char,
+        );
       }
     } else {
-      addr = xmalloc_sockaddr2dotted_noport(from);
-      bb_error_msg(
+      addr = crate::libbb::xconnect::xmalloc_sockaddr2dotted_noport(from);
+      crate::libbb::verror_msg::bb_error_msg(
         b"malformed packet received from %s: size %u\x00" as *const u8 as *const libc::c_char,
         addr,
         size as libc::c_int,
@@ -2918,7 +2780,7 @@ unsafe extern "C" fn find_key_entry(
     }
     key_entries = (*key_entries).link
   }
-  bb_error_msg_and_die(
+  crate::libbb::verror_msg::bb_error_msg_and_die(
     b"key %u is not defined\x00" as *const u8 as *const libc::c_char,
     id,
   );
@@ -2935,7 +2797,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
   let mut key_file_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   srand(getpid() as libc::c_uint);
   if getuid() != 0 {
-    bb_simple_error_msg_and_die(bb_msg_you_must_be_root.as_ptr());
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(bb_msg_you_must_be_root.as_ptr());
   }
   /* Set some globals */
   (*ptr_to_globals).discipline_jitter = 0.002f64; /* speeds up initial sync */
@@ -2950,7 +2812,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
   /* Parse options */
   peers = 0 as *mut llist_t;
   key_entries = 0 as *mut llist_t;
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^nqNxk:wp:*S:lI:d46aAbgL\x00=0:dd:wn:Il\x00" as *const u8 as *const libc::c_char,
     &mut key_file_path as *mut *mut libc::c_char,
@@ -2963,14 +2825,19 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
   //		G.time_was_stepped = 1;
   (*ptr_to_globals).listen_fd = -1i32;
   if opts & OPT_l as libc::c_int as libc::c_uint != 0 {
-    (*ptr_to_globals).listen_fd = create_and_bind_dgram_or_die(0 as *const libc::c_char, 123i32);
+    (*ptr_to_globals).listen_fd =
+      crate::libbb::xconnect::create_and_bind_dgram_or_die(0 as *const libc::c_char, 123i32);
     if !(*ptr_to_globals).if_name.is_null() {
-      if setsockopt_bindtodevice((*ptr_to_globals).listen_fd, (*ptr_to_globals).if_name) != 0 {
-        xfunc_die();
+      if crate::libbb::xconnect::setsockopt_bindtodevice(
+        (*ptr_to_globals).listen_fd,
+        (*ptr_to_globals).if_name,
+      ) != 0
+      {
+        crate::libbb::xfunc_die::xfunc_die();
       }
     }
-    socket_want_pktinfo((*ptr_to_globals).listen_fd);
-    setsockopt_int(
+    crate::libbb::udp_io::socket_want_pktinfo((*ptr_to_globals).listen_fd);
+    crate::libbb::xconnect::setsockopt_int(
       (*ptr_to_globals).listen_fd,
       IPPROTO_IP as libc::c_int,
       1i32,
@@ -2982,14 +2849,14 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
     setpriority(PRIO_PROCESS, 0i32 as id_t, -15i32);
   }
   if opts & OPT_n as libc::c_int as libc::c_uint == 0 {
-    bb_daemonize_or_rexec(DAEMON_DEVNULL_STDIO as libc::c_int);
+    crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(DAEMON_DEVNULL_STDIO as libc::c_int);
     logmode = LOGMODE_NONE as libc::c_int as smallint
   }
   if opts & OPT_k as libc::c_int as libc::c_uint != 0 {
     let mut tokens: [*mut libc::c_char; 4] = [0 as *mut libc::c_char; 4];
     let mut parser: *mut parser_t = 0 as *mut parser_t;
-    parser = config_open(key_file_path);
-    while config_read(
+    parser = crate::libbb::parse_config::config_open(key_file_path);
+    while crate::libbb::parse_config::config_read(
       parser,
       tokens.as_mut_ptr(),
       (PARSE_NORMAL as libc::c_int
@@ -3017,7 +2884,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
         /* supports 'sha' and 'sha1' formats */
         hash_type = HASH_SHA1 as libc::c_int as smalluint
       } else {
-        bb_simple_error_msg_and_die(
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
           b"only MD5 and SHA1 keys supported\x00" as *const u8 as *const libc::c_char,
         );
       }
@@ -3044,7 +2911,13 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
           current_block = 14945149239039849694;
         } else if key_length as libc::c_int & 1i32 == 0 {
           key_length = (key_length as libc::c_int >> 1i32) as smalluint;
-          if hex2bin(buffer.as_mut_ptr(), tokens[2], key_length as libc::c_int).is_null() {
+          if crate::libbb::xfuncs::hex2bin(
+            buffer.as_mut_ptr(),
+            tokens[2],
+            key_length as libc::c_int,
+          )
+          .is_null()
+          {
             current_block = 8105424810531593847;
           } else {
             key = buffer.as_mut_ptr();
@@ -3057,7 +2930,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
         match current_block {
           8105424810531593847 => {}
           _ => {
-            key_entry = xzalloc(
+            key_entry = crate::libbb::xfuncs_printf::xzalloc(
               (::std::mem::size_of::<key_entry_t>() as libc::c_ulong)
                 .wrapping_add(key_length as libc::c_ulong),
             ) as *mut key_entry_t;
@@ -3069,23 +2942,27 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
               key as *const libc::c_void,
               key_length as libc::c_ulong,
             );
-            (*key_entry).id =
-              xatou_range(tokens[0], 1i32 as libc::c_uint, 65535i32 as libc::c_uint);
-            llist_add_to(&mut key_entries, key_entry as *mut libc::c_void);
+            (*key_entry).id = crate::libbb::xatonum::xatou_range(
+              tokens[0],
+              1i32 as libc::c_uint,
+              65535i32 as libc::c_uint,
+            );
+            crate::libbb::llist::llist_add_to(&mut key_entries, key_entry as *mut libc::c_void);
             continue;
           }
         }
       }
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"malformed key at line %u\x00" as *const u8 as *const libc::c_char,
         (*parser).lineno,
       );
     }
-    config_close(parser);
+    crate::libbb::parse_config::config_close(parser);
   }
   if !peers.is_null() {
     while !peers.is_null() {
-      let mut peer: *mut libc::c_char = llist_pop(&mut peers) as *mut libc::c_char;
+      let mut peer: *mut libc::c_char =
+        crate::libbb::llist::llist_pop(&mut peers) as *mut libc::c_char;
       let mut key_entry_0: *mut key_entry_t = 0 as *mut key_entry_t;
       if strncmp(
         peer,
@@ -3098,10 +2975,12 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
         peer = peer.offset(6);
         end = strchr(peer, ':' as i32);
         if end.is_null() {
-          bb_show_usage();
+          crate::libbb::appletlib::bb_show_usage();
         }
         *end = '\u{0}' as i32 as libc::c_char;
-        key_id = xatou_range(peer, 1i32 as libc::c_uint, 65535i32 as libc::c_uint) as libc::c_int;
+        key_id =
+          crate::libbb::xatonum::xatou_range(peer, 1i32 as libc::c_uint, 65535i32 as libc::c_uint)
+            as libc::c_int;
         *end = ':' as i32 as libc::c_char;
         key_entry_0 = find_key_entry(key_entries, key_id as libc::c_uint);
         peer = end.offset(1)
@@ -3111,8 +2990,10 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
   } else {
     let mut parser_0: *mut parser_t = 0 as *mut parser_t;
     let mut token: [*mut libc::c_char; 5] = [0 as *mut libc::c_char; 5];
-    parser_0 = config_open(b"/etc/ntp.conf\x00" as *const u8 as *const libc::c_char);
-    while config_read(
+    parser_0 = crate::libbb::parse_config::config_open(
+      b"/etc/ntp.conf\x00" as *const u8 as *const libc::c_char,
+    );
+    while crate::libbb::parse_config::config_read(
       parser_0,
       token.as_mut_ptr(),
       (PARSE_NORMAL as libc::c_int | (1i32 & 0xffi32) << 8i32 | 3i32 + 2i32 * 1i32 & 0xffi32)
@@ -3128,13 +3009,16 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
           && !token[3].is_null()
           && strcmp(token[2], b"key\x00" as *const u8 as *const libc::c_char) == 0i32
         {
-          let mut key_id_0: libc::c_uint =
-            xatou_range(token[3], 1i32 as libc::c_uint, 65535i32 as libc::c_uint);
+          let mut key_id_0: libc::c_uint = crate::libbb::xatonum::xatou_range(
+            token[3],
+            1i32 as libc::c_uint,
+            65535i32 as libc::c_uint,
+          );
           key_entry_1 = find_key_entry(key_entries, key_id_0)
         }
         add_peers(token[1], key_entry_1);
       } else {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"skipping %s:%u: unimplemented command \'%s\'\x00" as *const u8 as *const libc::c_char,
           b"/etc/ntp.conf\x00" as *const u8 as *const libc::c_char,
           (*parser_0).lineno,
@@ -3142,18 +3026,20 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
         );
       }
     }
-    config_close(parser_0);
+    crate::libbb::parse_config::config_close(parser_0);
   }
   if (*ptr_to_globals).peer_cnt == 0i32 as libc::c_uint {
     if opts & OPT_l as libc::c_int as libc::c_uint == 0 {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     /* -l but no peers: "stratum 1 server" mode */
     (*ptr_to_globals).stratum = 1i32 as u8
   }
   if opts & OPT_n as libc::c_int as libc::c_uint == 0 {
     /* only if backgrounded: */
-    write_pidfile_std_path_and_ext(b"ntpd\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::pidfile::write_pidfile_std_path_and_ext(
+      b"ntpd\x00" as *const u8 as *const libc::c_char,
+    );
   }
   /* If network is up, syncronization occurs in ~10 seconds.
    * We give "ntpd -q" 10 seconds to get first reply,
@@ -3168,11 +3054,11 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
     option_mask32 |= OPT_qq as libc::c_int as libc::c_uint;
     alarm(10i32 as libc::c_uint);
   }
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     0i32 | 1i32 << 15i32 | 1i32 << 2i32 | 1i32 << 14i32,
-    Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     0i32 | 1i32 << 13i32 | 1i32 << 17i32,
     ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
   );
@@ -3226,12 +3112,12 @@ pub unsafe extern "C" fn ntpd_main(
   ntp_init(argv);
   /* If ENABLE_FEATURE_NTPD_SERVER, + 1 for listen_fd: */
   cnt = G.peer_cnt.wrapping_add(1i32 as libc::c_uint);
-  idx2peer = xzalloc(
+  idx2peer = crate::libbb::xfuncs_printf::xzalloc(
     (::std::mem::size_of::<*mut peer_t>() as libc::c_ulong).wrapping_mul(cnt as libc::c_ulong),
   ) as *mut *mut peer_t;
-  pfd =
-    xzalloc((::std::mem::size_of::<pollfd>() as libc::c_ulong).wrapping_mul(cnt as libc::c_ulong))
-      as *mut pollfd;
+  pfd = crate::libbb::xfuncs_printf::xzalloc(
+    (::std::mem::size_of::<pollfd>() as libc::c_ulong).wrapping_mul(cnt as libc::c_ulong),
+  ) as *mut pollfd;
   /* Countdown: we never sync before we sent INITIAL_SAMPLES+1
    * packets to each peer.
    * NB: if some peer is not responding, we may end up sending
@@ -3268,7 +3154,9 @@ pub unsafe extern "C" fn ntpd_main(
           cnt = cnt.wrapping_sub(1);
           if cnt == 0i32 as libc::c_uint {
             if 3i32 >= 4i32 && G.verbose >= 4i32 as libc::c_uint {
-              bb_simple_error_msg(b"disabling burst mode\x00" as *const u8 as *const libc::c_char);
+              crate::libbb::verror_msg::bb_simple_error_msg(
+                b"disabling burst mode\x00" as *const u8 as *const libc::c_char,
+              );
             }
             G.polladj_count = 0i32;
             G.poll_exp = 5i32 as u8
@@ -3283,7 +3171,7 @@ pub unsafe extern "C" fn ntpd_main(
             adjust_poll(5i32);
           }
           timeout = poll_interval(512i32) as libc::c_int;
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"timed out waiting for %s, reach 0x%02x, next query in %us\x00" as *const u8
               as *const libc::c_char,
             (*p).p_dotted,
@@ -3340,7 +3228,7 @@ pub unsafe extern "C" fn ntpd_main(
       match current_block {
         4356998877126854527 => {}
         _ => {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"poll:%us sockets:%u interval:%us\x00" as *const u8 as *const libc::c_char,
             timeout,
             i,
@@ -3460,8 +3348,10 @@ pub unsafe extern "C" fn ntpd_main(
       }
     }
   }
-  remove_pidfile_std_path_and_ext(b"ntpd\x00" as *const u8 as *const libc::c_char);
-  kill_myself_with_sig(bb_got_signal as libc::c_int);
+  crate::libbb::pidfile::remove_pidfile_std_path_and_ext(
+    b"ntpd\x00" as *const u8 as *const libc::c_char,
+  );
+  crate::libbb::signals::kill_myself_with_sig(bb_got_signal as libc::c_int);
 }
 /* ** ntp-4.2.6/ntpd/ntp_loopfilter.c - adjtimex usage ***/
 /* ** openntpd-4.6 uses only adjtime, not adjtimex ***/

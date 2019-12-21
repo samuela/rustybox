@@ -1,10 +1,6 @@
 use libc;
 use libc::strcmp;
-extern "C" {
 
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-}
 
 #[no_mangle]
 pub unsafe extern "C" fn single_argv(mut argv: *mut *mut libc::c_char) -> *mut libc::c_char {
@@ -17,7 +13,7 @@ pub unsafe extern "C" fn single_argv(mut argv: *mut *mut libc::c_char) -> *mut l
     argv = argv.offset(1)
   }
   if (*argv.offset(1)).is_null() || !(*argv.offset(2)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   return *argv.offset(1);
 }

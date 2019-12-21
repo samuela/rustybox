@@ -1,23 +1,6 @@
-use crate::libbb::llist::llist_t;
-
 use libc;
 use libc::strcmp;
 use libc::strrchr;
-extern "C" {
-
-  #[no_mangle]
-  fn get_header_tar(archive_handle: *mut archive_handle_t) -> libc::c_char;
-  #[no_mangle]
-  fn get_header_tar_gz(archive_handle: *mut archive_handle_t) -> libc::c_char;
-  #[no_mangle]
-  fn get_header_tar_xz(archive_handle: *mut archive_handle_t) -> libc::c_char;
-  #[no_mangle]
-  fn get_header_tar_bz2(archive_handle: *mut archive_handle_t) -> libc::c_char;
-  #[no_mangle]
-  fn get_header_tar_lzma(archive_handle: *mut archive_handle_t) -> libc::c_char;
-  #[no_mangle]
-  fn find_list_entry(list: *const llist_t, filename: *const libc::c_char) -> *const llist_t;
-}
 
 /* Busybox does not use threads, we can speed up stdio. */
 /* Above functions are required by POSIX.1-2008, below ones are extensions */
@@ -75,7 +58,7 @@ pub unsafe extern "C" fn filter_accept_list_reassign(
   mut archive_handle: *mut archive_handle_t,
 ) -> libc::c_char {
   /* Check the file entry is in the accept list */
-  if !find_list_entry(
+  if !crate::archival::libarchive::find_list_entry::find_list_entry(
     (*archive_handle).accept,
     (*(*archive_handle).file_header).name,
   )
@@ -90,28 +73,38 @@ pub unsafe extern "C" fn filter_accept_list_reassign(
     name_ptr = name_ptr.offset(1);
     /* Modify the subarchive handler based on the extension */
     if strcmp(name_ptr, b"tar\x00" as *const u8 as *const libc::c_char) == 0i32 {
-      (*archive_handle).dpkg__action_data_subarchive =
-        Some(get_header_tar as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char);
+      (*archive_handle).dpkg__action_data_subarchive = Some(
+        crate::archival::libarchive::get_header_tar::get_header_tar
+          as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+      );
       return 0i32 as libc::c_char;
     }
     if 1i32 != 0 && strcmp(name_ptr, b"gz\x00" as *const u8 as *const libc::c_char) == 0i32 {
-      (*archive_handle).dpkg__action_data_subarchive =
-        Some(get_header_tar_gz as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char);
+      (*archive_handle).dpkg__action_data_subarchive = Some(
+        crate::archival::libarchive::get_header_tar_gz::get_header_tar_gz
+          as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+      );
       return 0i32 as libc::c_char;
     }
     if 1i32 != 0 && strcmp(name_ptr, b"bz2\x00" as *const u8 as *const libc::c_char) == 0i32 {
-      (*archive_handle).dpkg__action_data_subarchive =
-        Some(get_header_tar_bz2 as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char);
+      (*archive_handle).dpkg__action_data_subarchive = Some(
+        crate::archival::libarchive::get_header_tar_bz2::get_header_tar_bz2
+          as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+      );
       return 0i32 as libc::c_char;
     }
     if 1i32 != 0 && strcmp(name_ptr, b"lzma\x00" as *const u8 as *const libc::c_char) == 0i32 {
-      (*archive_handle).dpkg__action_data_subarchive =
-        Some(get_header_tar_lzma as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char);
+      (*archive_handle).dpkg__action_data_subarchive = Some(
+        crate::archival::libarchive::get_header_tar_lzma::get_header_tar_lzma
+          as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+      );
       return 0i32 as libc::c_char;
     }
     if 1i32 != 0 && strcmp(name_ptr, b"xz\x00" as *const u8 as *const libc::c_char) == 0i32 {
-      (*archive_handle).dpkg__action_data_subarchive =
-        Some(get_header_tar_xz as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char);
+      (*archive_handle).dpkg__action_data_subarchive = Some(
+        crate::archival::libarchive::get_header_tar_xz::get_header_tar_xz
+          as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+      );
       return 0i32 as libc::c_char;
     }
   }

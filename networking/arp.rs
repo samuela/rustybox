@@ -1,10 +1,15 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
+use crate::librb::aftype;
+use crate::librb::hwtype;
+use crate::librb::smallint;
 use libc;
 use libc::ioctl;
 use libc::printf;
+use libc::sa_family_t;
+use libc::sockaddr;
 use libc::sscanf;
 use libc::strcmp;
+use libc::FILE;
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -22,63 +27,8 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_herror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn get_aftype(name: *const libc::c_char) -> *const aftype;
-  #[no_mangle]
-  fn get_hwtype(name: *const libc::c_char) -> *const hwtype;
-  #[no_mangle]
-  fn get_hwntype(type_0: libc::c_int) -> *const hwtype;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn ioctl_or_perror_and_die(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    fmt: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn print_flags_separated(
-    masks: *const libc::c_int,
-    labels: *const libc::c_char,
-    flags: libc::c_int,
-    separator: *const libc::c_char,
-  ) -> libc::c_int;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -95,7 +45,6 @@ pub type __caddr_t = *mut libc::c_char;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::smallint;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -106,54 +55,18 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
-use libc::FILE;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct aftype {
-  pub name: *const libc::c_char,
-  pub title: *const libc::c_char,
-  pub af: libc::c_int,
-  pub alen: libc::c_int,
-  pub print: Option<unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char>,
-  pub sprint: Option<unsafe extern "C" fn(_: *mut sockaddr, _: libc::c_int) -> *const libc::c_char>,
-  pub input: Option<unsafe extern "C" fn(_: *const libc::c_char, _: *mut sockaddr) -> libc::c_int>,
-  pub herror: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> ()>,
-  pub rprint: Option<unsafe extern "C" fn(_: libc::c_int) -> libc::c_int>,
-  pub rinput: Option<
-    unsafe extern "C" fn(_: libc::c_int, _: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-  >,
-  pub getmask: Option<
-    unsafe extern "C" fn(
-      _: *mut libc::c_char,
-      _: *mut sockaddr,
-      _: *mut libc::c_char,
-    ) -> libc::c_int,
-  >,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct hwtype {
-  pub name: *const libc::c_char,
-  pub title: *const libc::c_char,
-  pub type_0: libc::c_int,
-  pub alen: libc::c_int,
-  pub print: Option<unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char>,
-  pub input: Option<unsafe extern "C" fn(_: *const libc::c_char, _: *mut sockaddr) -> libc::c_int>,
-  pub activate: Option<unsafe extern "C" fn(_: libc::c_int) -> libc::c_int>,
-  pub suppress_null_addr: libc::c_int,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub struct globals {
   pub ap: *const aftype,
   pub hw: *const hwtype,
   pub device: *const libc::c_char,
   pub hw_set: smallint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifmap {
   pub mem_start: libc::c_ulong,
   pub mem_end: libc::c_ulong,
@@ -162,14 +75,16 @@ pub struct ifmap {
   pub dma: libc::c_uchar,
   pub port: libc::c_uchar,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifreq {
   pub ifr_ifrn: C2RustUnnamed_0,
   pub ifr_ifru: C2RustUnnamed,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub ifru_addr: sockaddr,
   pub ifru_dstaddr: sockaddr,
@@ -184,13 +99,15 @@ pub union C2RustUnnamed {
   pub ifru_newname: [libc::c_char; 16],
   pub ifru_data: __caddr_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub ifrn_name: [libc::c_char; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct arpreq {
   pub arp_pa: sockaddr,
   pub arp_ha: sockaddr,
@@ -223,26 +140,8 @@ static mut options: [libc::c_char; 46] = [
 unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut host: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut req: arpreq = arpreq {
-    arp_pa: sockaddr {
-      sa_family: 0,
-      sa_data: [0; 14],
-    },
-    arp_ha: sockaddr {
-      sa_family: 0,
-      sa_data: [0; 14],
-    },
-    arp_flags: 0,
-    arp_netmask: sockaddr {
-      sa_family: 0,
-      sa_data: [0; 14],
-    },
-    arp_dev: [0; 16],
-  };
-  let mut sa: sockaddr = sockaddr {
-    sa_family: 0,
-    sa_data: [0; 14],
-  };
+  let mut req: arpreq = std::mem::zeroed();
+  let mut sa: sockaddr = std::mem::zeroed();
   let mut flags: libc::c_int = 0i32;
   let mut err: libc::c_int = 0;
   memset(
@@ -257,7 +156,7 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
     .expect("non-null function pointer")(host, &mut sa)
     < 0i32
   {
-    bb_simple_herror_msg_and_die(host);
+    crate::libbb::herror_msg::bb_simple_herror_msg_and_die(host);
   }
   /* If a host has more than one address, use the correct one! */
   memcpy(
@@ -272,7 +171,7 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
   req.arp_flags = 0x4i32;
   args = args.offset(1);
   while !(*args).is_null() {
-    match index_in_strings(options.as_ptr(), *args) {
+    match crate::libbb::compare_string_array::index_in_strings(options.as_ptr(), *args) {
       0 => {
         /* "pub" */
         flags |= 1i32;
@@ -295,14 +194,14 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
       }
       4 => {
         /* "dontpub" */
-        bb_simple_error_msg(
+        crate::libbb::verror_msg::bb_simple_error_msg(
           b"feature ATF_DONTPUB is not supported\x00" as *const u8 as *const libc::c_char,
         );
         args = args.offset(1)
       }
       5 => {
         /* "auto" */
-        bb_simple_error_msg(
+        crate::libbb::verror_msg::bb_simple_error_msg(
           b"feature ATF_MAGIC is not supported\x00" as *const u8 as *const libc::c_char,
         );
         args = args.offset(1)
@@ -311,7 +210,7 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
         /* "dev" */
         args = args.offset(1);
         if (*args).is_null() {
-          bb_show_usage();
+          crate::libbb::appletlib::bb_show_usage();
         }
         let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device;
         *fresh0 = *args;
@@ -321,7 +220,7 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
         /* "netmask" */
         args = args.offset(1);
         if (*args).is_null() {
-          bb_show_usage();
+          crate::libbb::appletlib::bb_show_usage();
         }
         if strcmp(
           *args,
@@ -334,7 +233,7 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
             .expect("non-null function pointer")(host, &mut sa)
             < 0i32
           {
-            bb_simple_herror_msg_and_die(host);
+            crate::libbb::herror_msg::bb_simple_herror_msg_and_die(host);
           }
           memcpy(
             &mut req.arp_netmask as *mut sockaddr as *mut libc::c_void,
@@ -346,14 +245,14 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
         args = args.offset(1)
       }
       _ => {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
     }
   }
   if flags == 0i32 {
     flags = 3i32
   }
-  strncpy_IFNAMSIZ(
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(
     req.arp_dev.as_mut_ptr(),
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device,
   );
@@ -361,7 +260,9 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
   /* Call the kernel. */
   if flags & 2i32 != 0 {
     if option_mask32 & ARP_OPT_v as libc::c_int as libc::c_uint != 0 {
-      bb_simple_error_msg(b"SIOCDARP(nopub)\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg(
+        b"SIOCDARP(nopub)\x00" as *const u8 as *const libc::c_char,
+      );
     }
     err = ioctl(
       sockfd as libc::c_int,
@@ -378,7 +279,9 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
           return -1i32;
         }
       } else {
-        bb_simple_perror_msg_and_die(b"SIOCDARP(priv)\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"SIOCDARP(priv)\x00" as *const u8 as *const libc::c_char,
+        );
       }
       current_block = 4254989650113872746;
     } else {
@@ -401,7 +304,9 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
     4254989650113872746 => {
       req.arp_flags |= 0x8i32;
       if option_mask32 & ARP_OPT_v as libc::c_int as libc::c_uint != 0 {
-        bb_simple_error_msg(b"SIOCDARP(pub)\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg(
+          b"SIOCDARP(pub)\x00" as *const u8 as *const libc::c_char,
+        );
       }
       if ioctl(
         sockfd as libc::c_int,
@@ -416,7 +321,9 @@ unsafe extern "C" fn arp_del(mut args: *mut *mut libc::c_char) -> libc::c_int {
           );
           return -1i32;
         }
-        bb_simple_perror_msg_and_die(b"SIOCDARP(pub)\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"SIOCDARP(pub)\x00" as *const u8 as *const libc::c_char,
+        );
       }
     }
     _ => {}
@@ -435,8 +342,8 @@ unsafe extern "C" fn arp_getdevhw(mut ifname: *mut libc::c_char, mut sa: *mut so
     },
   };
   let mut xhw: *const hwtype = 0 as *const hwtype;
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
-  ioctl_or_perror_and_die(
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
+  crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
     sockfd as libc::c_int,
     0x8927i32 as libc::c_uint,
     &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -447,7 +354,9 @@ unsafe extern "C" fn arp_getdevhw(mut ifname: *mut libc::c_char, mut sa: *mut so
     && ifr.ifr_ifru.ifru_hwaddr.sa_family as libc::c_int
       != (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hw).type_0
   {
-    bb_simple_error_msg_and_die(b"protocol type mismatch\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"protocol type mismatch\x00" as *const u8 as *const libc::c_char,
+    );
   }
   memcpy(
     sa as *mut libc::c_void,
@@ -455,11 +364,12 @@ unsafe extern "C" fn arp_getdevhw(mut ifname: *mut libc::c_char, mut sa: *mut so
     ::std::mem::size_of::<sockaddr>() as libc::c_ulong,
   );
   if option_mask32 & ARP_OPT_v as libc::c_int as libc::c_uint != 0 {
-    xhw = get_hwntype(ifr.ifr_ifru.ifru_hwaddr.sa_family as libc::c_int);
+    xhw =
+      crate::networking::interface::get_hwntype(ifr.ifr_ifru.ifru_hwaddr.sa_family as libc::c_int);
     if xhw.is_null() || (*xhw).print.is_none() {
-      xhw = get_hwntype(-1i32)
+      xhw = crate::networking::interface::get_hwntype(-1i32)
     }
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"device \'%s\' has HW address %s \'%s\'\x00" as *const u8 as *const libc::c_char,
       ifname,
       (*xhw).name,
@@ -473,26 +383,8 @@ unsafe extern "C" fn arp_getdevhw(mut ifname: *mut libc::c_char, mut sa: *mut so
 /* Called only from main, once */
 unsafe extern "C" fn arp_set(mut args: *mut *mut libc::c_char) -> libc::c_int {
   let mut host: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut req: arpreq = arpreq {
-    arp_pa: sockaddr {
-      sa_family: 0,
-      sa_data: [0; 14],
-    },
-    arp_ha: sockaddr {
-      sa_family: 0,
-      sa_data: [0; 14],
-    },
-    arp_flags: 0,
-    arp_netmask: sockaddr {
-      sa_family: 0,
-      sa_data: [0; 14],
-    },
-    arp_dev: [0; 16],
-  };
-  let mut sa: sockaddr = sockaddr {
-    sa_family: 0,
-    sa_data: [0; 14],
-  };
+  let mut req: arpreq = std::mem::zeroed();
+  let mut sa: sockaddr = std::mem::zeroed();
   let mut flags: libc::c_int = 0;
   memset(
     &mut req as *mut arpreq as *mut libc::c_void,
@@ -507,7 +399,7 @@ unsafe extern "C" fn arp_set(mut args: *mut *mut libc::c_char) -> libc::c_int {
     .expect("non-null function pointer")(host, &mut sa)
     < 0i32
   {
-    bb_simple_herror_msg_and_die(host);
+    crate::libbb::herror_msg::bb_simple_herror_msg_and_die(host);
   }
   /* If a host has more than one address, use the correct one! */
   memcpy(
@@ -517,7 +409,9 @@ unsafe extern "C" fn arp_set(mut args: *mut *mut libc::c_char) -> libc::c_int {
   );
   /* Fetch the hardware address. */
   if (*args).is_null() {
-    bb_simple_error_msg_and_die(b"need hardware address\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"need hardware address\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if option_mask32 & ARP_OPT_D as libc::c_int as libc::c_uint != 0 {
     let fresh2 = args;
@@ -531,7 +425,7 @@ unsafe extern "C" fn arp_set(mut args: *mut *mut libc::c_char) -> libc::c_int {
       .expect("non-null function pointer")(*fresh3, &mut req.arp_ha)
       < 0i32
     {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"invalid hardware address\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -539,7 +433,7 @@ unsafe extern "C" fn arp_set(mut args: *mut *mut libc::c_char) -> libc::c_int {
   /* Check out any modifiers. */
   flags = 0x4i32 | 0x2i32;
   while !(*args).is_null() {
-    match index_in_strings(options.as_ptr(), *args) {
+    match crate::libbb::compare_string_array::index_in_strings(options.as_ptr(), *args) {
       0 => {
         /* "pub" */
         flags |= 0x8i32;
@@ -562,14 +456,14 @@ unsafe extern "C" fn arp_set(mut args: *mut *mut libc::c_char) -> libc::c_int {
       }
       4 => {
         /* "dontpub" */
-        bb_simple_error_msg(
+        crate::libbb::verror_msg::bb_simple_error_msg(
           b"feature ATF_DONTPUB is not supported\x00" as *const u8 as *const libc::c_char,
         );
         args = args.offset(1)
       }
       5 => {
         /* "auto" */
-        bb_simple_error_msg(
+        crate::libbb::verror_msg::bb_simple_error_msg(
           b"feature ATF_MAGIC is not supported\x00" as *const u8 as *const libc::c_char,
         );
         args = args.offset(1)
@@ -578,7 +472,7 @@ unsafe extern "C" fn arp_set(mut args: *mut *mut libc::c_char) -> libc::c_int {
         /* "dev" */
         args = args.offset(1);
         if (*args).is_null() {
-          bb_show_usage();
+          crate::libbb::appletlib::bb_show_usage();
         }
         let ref mut fresh4 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device;
         *fresh4 = *args;
@@ -588,7 +482,7 @@ unsafe extern "C" fn arp_set(mut args: *mut *mut libc::c_char) -> libc::c_int {
         /* "netmask" */
         args = args.offset(1);
         if (*args).is_null() {
-          bb_show_usage();
+          crate::libbb::appletlib::bb_show_usage();
         }
         if strcmp(
           *args,
@@ -601,7 +495,7 @@ unsafe extern "C" fn arp_set(mut args: *mut *mut libc::c_char) -> libc::c_int {
             .expect("non-null function pointer")(host, &mut sa)
             < 0i32
           {
-            bb_simple_herror_msg_and_die(host);
+            crate::libbb::herror_msg::bb_simple_herror_msg_and_die(host);
           }
           memcpy(
             &mut req.arp_netmask as *mut sockaddr as *mut libc::c_void,
@@ -613,21 +507,23 @@ unsafe extern "C" fn arp_set(mut args: *mut *mut libc::c_char) -> libc::c_int {
         args = args.offset(1)
       }
       _ => {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
     }
   }
   /* Fill in the remainder of the request. */
   req.arp_flags = flags;
-  strncpy_IFNAMSIZ(
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(
     req.arp_dev.as_mut_ptr(),
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device,
   );
   /* Call the kernel. */
   if option_mask32 & ARP_OPT_v as libc::c_int as libc::c_uint != 0 {
-    bb_simple_error_msg(b"SIOCSARP()\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg(
+      b"SIOCSARP()\x00" as *const u8 as *const libc::c_char,
+    );
   }
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     sockfd as libc::c_int,
     0x8955i32 as libc::c_uint,
     &mut req as *mut arpreq as *mut libc::c_void,
@@ -649,9 +545,9 @@ unsafe extern "C" fn arp_disp(
   static mut arp_labels: [libc::c_char; 16] =
     [80, 69, 82, 77, 0, 80, 85, 80, 0, 84, 82, 65, 73, 76, 0, 0];
   let mut xhw: *const hwtype = 0 as *const hwtype;
-  xhw = get_hwntype(type_0);
+  xhw = crate::networking::interface::get_hwntype(type_0);
   if xhw.is_null() {
-    xhw = get_hwtype(b"ether\x00" as *const u8 as *const libc::c_char)
+    xhw = crate::networking::interface::get_hwtype(b"ether\x00" as *const u8 as *const libc::c_char)
   }
   printf(
     b"%s (%s) at \x00" as *const u8 as *const libc::c_char,
@@ -674,7 +570,7 @@ unsafe extern "C" fn arp_disp(
   if arp_flags & 0x20i32 != 0 {
     printf(b"netmask %s \x00" as *const u8 as *const libc::c_char, mask);
   }
-  print_flags_separated(
+  crate::libbb::print_flags::print_flags_separated(
     arp_masks.as_ptr(),
     arp_labels.as_ptr(),
     arp_flags,
@@ -710,13 +606,18 @@ unsafe extern "C" fn arp_show(mut name: *mut libc::c_char) -> libc::c_int {
       .expect("non-null function pointer")(name, &mut sa)
       < 0i32
     {
-      bb_simple_herror_msg_and_die(name);
+      crate::libbb::herror_msg::bb_simple_herror_msg_and_die(name);
     }
-    host = xstrdup((*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ap)
+    host = crate::libbb::xfuncs_printf::xstrdup((*(*(bb_common_bufsiz1.as_mut_ptr()
+      as *mut globals))
+      .ap)
       .sprint
-      .expect("non-null function pointer")(&mut sa, 1i32))
+      .expect("non-null function pointer")(
+      &mut sa, 1i32
+    ))
   }
-  fp = xfopen_for_read(b"/proc/net/arp\x00" as *const u8 as *const libc::c_char);
+  fp =
+    crate::libbb::wfopen::xfopen_for_read(b"/proc/net/arp\x00" as *const u8 as *const libc::c_char);
   /* Bypass header -- read one line */
   fgets_unlocked(
     line.as_mut_ptr(),
@@ -840,20 +741,22 @@ pub unsafe extern "C" fn arp_main(
   let mut opts: libc::c_uint = 0;
   let ref mut fresh5 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device;
   *fresh5 = b"\x00" as *const u8 as *const libc::c_char;
-  xmove_fd(
-    xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32),
+  crate::libbb::xfuncs_printf::xmove_fd(
+    crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32),
     sockfd as libc::c_int,
   );
   let ref mut fresh6 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ap;
-  *fresh6 = get_aftype(b"inet\x00" as *const u8 as *const libc::c_char);
+  *fresh6 =
+    crate::networking::interface::get_aftype(b"inet\x00" as *const u8 as *const libc::c_char);
   /* Defaults are always supported */
   //if (!ap)
   //	bb_error_msg_and_die("%s: %s not supported", DFLT_AF, "address family");
   let ref mut fresh7 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hw;
-  *fresh7 = get_hwtype(b"ether\x00" as *const u8 as *const libc::c_char);
+  *fresh7 =
+    crate::networking::interface::get_hwtype(b"ether\x00" as *const u8 as *const libc::c_char);
   //if (!hw)
   //	bb_error_msg_and_die("%s: %s not supported", DFLT_HW, "hardware type");
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"A:p:H:t:i:adnDsv\x00" as *const u8 as *const libc::c_char,
     &mut protocol as *mut *const libc::c_char,
@@ -865,12 +768,12 @@ pub unsafe extern "C" fn arp_main(
   argv = argv.offset(optind as isize);
   if opts & (ARP_OPT_A as libc::c_int | ARP_OPT_p as libc::c_int) as libc::c_uint != 0 {
     let ref mut fresh8 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ap;
-    *fresh8 = get_aftype(protocol);
+    *fresh8 = crate::networking::interface::get_aftype(protocol);
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .ap
       .is_null()
     {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"%s: unknown %s\x00" as *const u8 as *const libc::c_char,
         protocol,
         b"address family\x00" as *const u8 as *const libc::c_char,
@@ -879,12 +782,12 @@ pub unsafe extern "C" fn arp_main(
   }
   if opts & (ARP_OPT_H as libc::c_int | ARP_OPT_t as libc::c_int) as libc::c_uint != 0 {
     let ref mut fresh9 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hw;
-    *fresh9 = get_hwtype(hw_type);
+    *fresh9 = crate::networking::interface::get_hwtype(hw_type);
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .hw
       .is_null()
     {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"%s: unknown %s\x00" as *const u8 as *const libc::c_char,
         hw_type,
         b"hardware type\x00" as *const u8 as *const libc::c_char,
@@ -894,13 +797,13 @@ pub unsafe extern "C" fn arp_main(
   }
   //if (opts & ARP_OPT_i)... -i
   if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ap).af != 2i32 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"%s: kernel only supports \'inet\'\x00" as *const u8 as *const libc::c_char,
       (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ap).name,
     );
   }
   if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hw).alen <= 0i32 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"%s: %s without ARP support\x00" as *const u8 as *const libc::c_char,
       (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hw).name,
       b"hardware type\x00" as *const u8 as *const libc::c_char,
@@ -909,7 +812,9 @@ pub unsafe extern "C" fn arp_main(
   /* Now see what we have to do here... */
   if opts & (ARP_OPT_d as libc::c_int | ARP_OPT_s as libc::c_int) as libc::c_uint != 0 {
     if (*argv.offset(0)).is_null() {
-      bb_simple_error_msg_and_die(b"need host name\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"need host name\x00" as *const u8 as *const libc::c_char,
+      );
     }
     if opts & ARP_OPT_s as libc::c_int as libc::c_uint != 0 {
       return arp_set(argv);

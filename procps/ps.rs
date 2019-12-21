@@ -1,3 +1,6 @@
+use crate::libbb::llist::llist_t;
+use crate::librb::size_t;
+use crate::librb::procps_status_t;
 use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
 use libc::isatty;
@@ -22,104 +25,11 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn smart_ulltoa4(
-    ul: libc::c_ulonglong,
-    buf: *mut libc::c_char,
-    scale: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn get_cached_username(uid: uid_t) -> *const libc::c_char;
-  #[no_mangle]
-  fn get_cached_groupname(gid: gid_t) -> *const libc::c_char;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn get_terminal_width(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
-  #[no_mangle]
-  fn read_cmdline(
-    buf: *mut libc::c_char,
-    size: libc::c_int,
-    pid: libc::c_uint,
-    comm: *const libc::c_char,
-  );
-  #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
   #[no_mangle]
   fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
 }
 
-use crate::libbb::llist::llist_t;
-use crate::librb::size_t;
-use libc::gid_t;
-use libc::uid_t;
-use libc::DIR;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct smaprec {
-  pub mapped_rw: libc::c_ulong,
-  pub mapped_ro: libc::c_ulong,
-  pub shared_clean: libc::c_ulong,
-  pub shared_dirty: libc::c_ulong,
-  pub private_clean: libc::c_ulong,
-  pub private_dirty: libc::c_ulong,
-  pub stack: libc::c_ulong,
-  pub smap_pss: libc::c_ulong,
-  pub smap_swap: libc::c_ulong,
-  pub smap_size: libc::c_ulong,
-  pub smap_start: libc::c_ulonglong,
-  pub smap_mode: [libc::c_char; 5],
-  pub smap_name: *mut libc::c_char,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct procps_status_t {
-  pub dir: *mut DIR,
-  pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: u8,
-  pub shift_pages_to_kb: u8,
-  pub argv_len: u16,
-  pub argv0: *mut libc::c_char,
-  pub exe: *mut libc::c_char,
-  pub main_thread_pid: libc::c_uint,
-  pub vsz: libc::c_ulong,
-  pub rss: libc::c_ulong,
-  pub stime: libc::c_ulong,
-  pub utime: libc::c_ulong,
-  pub start_time: libc::c_ulong,
-  pub pid: libc::c_uint,
-  pub ppid: libc::c_uint,
-  pub pgid: libc::c_uint,
-  pub sid: libc::c_uint,
-  pub uid: libc::c_uint,
-  pub gid: libc::c_uint,
-  pub ruid: libc::c_uint,
-  pub rgid: libc::c_uint,
-  pub niceness: libc::c_int,
-  pub tty_major: libc::c_uint,
-  pub tty_minor: libc::c_uint,
-  pub smaps: smaprec,
-  pub state: [libc::c_char; 4],
-  pub comm: [libc::c_char; 16],
-  pub last_seen_on_cpu: libc::c_int,
-}
 pub type C2RustUnnamed = libc::c_uint;
 pub const PSSCAN_TASKS: C2RustUnnamed = 4194304;
 pub const PSSCAN_RUIDGID: C2RustUnnamed = 2097152;
@@ -143,8 +53,9 @@ pub const PSSCAN_SID: C2RustUnnamed = 8;
 pub const PSSCAN_PGID: C2RustUnnamed = 4;
 pub const PSSCAN_PPID: C2RustUnnamed = 2;
 pub const PSSCAN_PID: C2RustUnnamed = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub out: *mut ps_out_t,
   pub out_cnt: libc::c_int,
@@ -154,8 +65,9 @@ pub struct globals {
   pub terminal_width: libc::c_uint,
   pub seconds_since_boot: libc::c_ulong,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ps_out_t {
   pub width: u16,
   pub name6: [libc::c_char; 6],
@@ -169,8 +81,9 @@ pub type __u16 = libc::c_ushort;
 pub type u32 = libc::c_uint;
 pub type __kernel_long_t = libc::c_long;
 pub type __kernel_ulong_t = libc::c_ulong;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sysinfo {
   pub uptime: __kernel_long_t,
   pub loads: [__kernel_ulong_t; 3],
@@ -228,16 +141,20 @@ unsafe extern "C" fn func_user(
   mut size: libc::c_int,
   mut ps: *const procps_status_t,
 ) {
-  safe_strncpy(buf, get_cached_username((*ps).uid), (size + 1i32) as size_t);
+  crate::libbb::safe_strncpy::safe_strncpy(
+    buf,
+    crate::libbb::procps::get_cached_username((*ps).uid),
+    (size + 1i32) as size_t,
+  );
 }
 unsafe extern "C" fn func_group(
   mut buf: *mut libc::c_char,
   mut size: libc::c_int,
   mut ps: *const procps_status_t,
 ) {
-  safe_strncpy(
+  crate::libbb::safe_strncpy::safe_strncpy(
     buf,
-    get_cached_groupname((*ps).gid),
+    crate::libbb::procps::get_cached_groupname((*ps).gid),
     (size + 1i32) as size_t,
   );
 }
@@ -246,21 +163,21 @@ unsafe extern "C" fn func_comm(
   mut size: libc::c_int,
   mut ps: *const procps_status_t,
 ) {
-  safe_strncpy(buf, (*ps).comm.as_ptr(), (size + 1i32) as size_t);
+  crate::libbb::safe_strncpy::safe_strncpy(buf, (*ps).comm.as_ptr(), (size + 1i32) as size_t);
 }
 unsafe extern "C" fn func_state(
   mut buf: *mut libc::c_char,
   mut size: libc::c_int,
   mut ps: *const procps_status_t,
 ) {
-  safe_strncpy(buf, (*ps).state.as_ptr(), (size + 1i32) as size_t);
+  crate::libbb::safe_strncpy::safe_strncpy(buf, (*ps).state.as_ptr(), (size + 1i32) as size_t);
 }
 unsafe extern "C" fn func_args(
   mut buf: *mut libc::c_char,
   mut size: libc::c_int,
   mut ps: *const procps_status_t,
 ) {
-  read_cmdline(buf, size + 1i32, (*ps).pid, (*ps).comm.as_ptr());
+  crate::libbb::procps::read_cmdline(buf, size + 1i32, (*ps).pid, (*ps).comm.as_ptr());
 }
 unsafe extern "C" fn func_pid(
   mut buf: *mut libc::c_char,
@@ -317,7 +234,7 @@ unsafe extern "C" fn put_lu(
 ) {
   let mut buf4: [libc::c_char; 5] = [0; 5];
   /* see http://en.wikipedia.org/wiki/Tera */
-  *smart_ulltoa4(
+  *crate::libbb::human_readable::smart_ulltoa4(
     u as libc::c_ulonglong,
     buf4.as_mut_ptr(),
     b" mgtpezy\x00" as *const u8 as *const libc::c_char,
@@ -367,9 +284,9 @@ unsafe extern "C" fn func_rgroup(
   mut size: libc::c_int,
   mut ps: *const procps_status_t,
 ) {
-  safe_strncpy(
+  crate::libbb::safe_strncpy::safe_strncpy(
     buf,
-    get_cached_groupname((*ps).rgid),
+    crate::libbb::procps::get_cached_groupname((*ps).rgid),
     (size + 1i32) as size_t,
   );
 }
@@ -378,9 +295,9 @@ unsafe extern "C" fn func_ruser(
   mut size: libc::c_int,
   mut ps: *const procps_status_t,
 ) {
-  safe_strncpy(
+  crate::libbb::safe_strncpy::safe_strncpy(
     buf,
-    get_cached_username((*ps).ruid),
+    crate::libbb::procps::get_cached_username((*ps).ruid),
     (size + 1i32) as size_t,
   );
 }
@@ -496,7 +413,7 @@ static mut out_spec: [ps_out_t; 17] = [ps_out_t {
 }; 17];
 unsafe extern "C" fn new_out_t() -> *mut ps_out_t {
   let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).out;
-  *fresh0 = xrealloc_vector_helper(
+  *fresh0 = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).out as *mut libc::c_void,
     ((::std::mem::size_of::<ps_out_t>() as libc::c_ulong) << 8i32)
       .wrapping_add(2i32 as libc::c_ulong) as libc::c_uint,
@@ -534,7 +451,7 @@ unsafe extern "C" fn find_out_spec(mut name: *const libc::c_char) -> *const ps_o
     i = i.wrapping_add(1)
   }
   *p.offset(-1i32 as isize) = '\u{0}' as i32 as libc::c_char;
-  bb_error_msg_and_die(
+  crate::libbb::verror_msg::bb_error_msg_and_die(
     b"bad -o argument \'%s\', supported arguments: %s\x00" as *const u8 as *const libc::c_char,
     name,
     buf.as_mut_ptr(),
@@ -731,14 +648,14 @@ pub unsafe extern "C" fn ps_main(
    * procps v3.2.7 supports -T and shows tids as SPID column,
    * it also supports -L where it shows tids as LWP column.
    */
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"Zo:*aAdeflT\x00" as *const u8 as *const libc::c_char,
     &mut opt_o as *mut *mut llist_t,
   ) as libc::c_int;
   if !opt_o.is_null() {
     loop {
-      parse_o(llist_pop(&mut opt_o) as *mut libc::c_char);
+      parse_o(crate::libbb::llist::llist_pop(&mut opt_o) as *mut libc::c_char);
       if opt_o.is_null() {
         break;
       }
@@ -762,7 +679,7 @@ pub unsafe extern "C" fn ps_main(
     MAX_WIDTH as libc::c_int as libc::c_uint;
   if isatty(1i32) != 0 {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).terminal_width =
-      get_terminal_width(0i32) as libc::c_uint;
+      crate::libbb::xfuncs::get_terminal_width(0i32) as libc::c_uint;
     let ref mut fresh4 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).terminal_width;
     *fresh4 = (*fresh4).wrapping_sub(1);
     if *fresh4 > MAX_WIDTH as libc::c_int as libc::c_uint {
@@ -774,7 +691,7 @@ pub unsafe extern "C" fn ps_main(
   format_header();
   p = 0 as *mut procps_status_t;
   loop {
-    p = procps_scan(
+    p = crate::libbb::procps::procps_scan(
       p,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).need_flags,
     );

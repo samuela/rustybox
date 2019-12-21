@@ -52,8 +52,7 @@ extern "C" {
   /* "abc/def/" -> "" and it never modifies 'path' */
   /* Simpler version: does not special case "/" string */
   /* NB: can violate const-ness (similarly to strchr) */
-  #[no_mangle]
-  fn last_char_is(s: *const libc::c_char, c: libc::c_int) -> *mut libc::c_char;
+
 }
 
 /*
@@ -66,7 +65,7 @@ extern "C" {
  */
 #[no_mangle]
 pub unsafe extern "C" fn chomp(mut s: *mut libc::c_char) {
-  let mut lc: *mut libc::c_char = last_char_is(s, '\n' as i32);
+  let mut lc: *mut libc::c_char = crate::libbb::last_char_is::last_char_is(s, '\n' as i32);
   if !lc.is_null() {
     *lc = '\u{0}' as i32 as libc::c_char
   };

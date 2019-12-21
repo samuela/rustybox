@@ -1,7 +1,6 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use crate::librb::signal::__sighandler_t;
-use crate::librb::size_t;
 use libc;
 use libc::access;
 use libc::alarm;
@@ -13,11 +12,9 @@ use libc::getpid;
 use libc::gid_t;
 use libc::isatty;
 use libc::mode_t;
-use libc::off_t;
 use libc::open;
 use libc::openlog;
 use libc::passwd;
-use libc::pid_t;
 use libc::printf;
 use libc::puts;
 use libc::strchr;
@@ -67,75 +64,6 @@ extern "C" {
   /* Search for an entry with a matching username.  */
 
   #[no_mangle]
-  fn skip_dev_pfx(tty_name: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn ndelay_on(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn ndelay_off(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xsetenv(key: *const libc::c_char, value: *const libc::c_char);
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
-  #[no_mangle]
-  fn update_utmp(
-    pid: pid_t,
-    new_type: libc::c_int,
-    tty_name: *const libc::c_char,
-    username: *const libc::c_char,
-    hostname: *const libc::c_char,
-  );
-  #[no_mangle]
-  fn spawn_and_wait(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
-  #[no_mangle]
-  fn sanitize_env_if_suid() -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_do_delay(seconds: libc::c_int);
-  #[no_mangle]
-  fn change_identity(pw: *const passwd);
-  #[no_mangle]
-  fn run_shell(
-    shell: *const libc::c_char,
-    loginshell: libc::c_int,
-    args: *mut *const libc::c_char,
-  ) -> !;
-  #[no_mangle]
-  fn setup_environment(shell: *const libc::c_char, flags: libc::c_int, pw: *const passwd);
-  #[no_mangle]
-  fn is_tty_secure(short_tty: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn ask_and_check_password(pw: *const passwd) -> libc::c_int;
-  #[no_mangle]
-  fn print_login_prompt();
-  #[no_mangle]
-  fn xmalloc_ttyname(fd: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
-
-  #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 
 }
@@ -148,8 +76,9 @@ pub const DAEMON_CHDIR_ROOT: C2RustUnnamed = 1;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub tty_attrs: termios,
 }
@@ -166,7 +95,8 @@ unsafe extern "C" fn die_if_nologin() {
   let mut fp: *mut FILE = 0 as *mut FILE;
   let mut c: libc::c_int = 0;
   let mut empty: libc::c_int = 1i32;
-  fp = fopen_for_read(b"/etc/nologin\x00" as *const u8 as *const libc::c_char);
+  fp =
+    crate::libbb::wfopen::fopen_for_read(b"/etc/nologin\x00" as *const u8 as *const libc::c_char);
   if fp.is_null() {
     /* assuming it does not exist */
     return;
@@ -177,16 +107,16 @@ unsafe extern "C" fn die_if_nologin() {
       break;
     }
     if c == '\n' as i32 {
-      bb_putchar('\r' as i32);
+      crate::libbb::xfuncs_printf::bb_putchar('\r' as i32);
     }
-    bb_putchar(c);
+    crate::libbb::xfuncs_printf::bb_putchar(c);
     empty = 0i32
   }
   if empty != 0 {
     puts(b"\r\nSystem closed for routine maintenance\r\x00" as *const u8 as *const libc::c_char);
   }
   fclose(fp);
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   /* Users say that they do need this prior to exit: */
   tcdrain(1i32); /* NOMMU-friendly */
   exit(1i32);
@@ -196,27 +126,27 @@ unsafe extern "C" fn run_login_script(mut pw: *mut passwd, mut full_tty: *mut li
   t_argv[0] = getenv(b"LOGIN_PRE_SUID_SCRIPT\x00" as *const u8 as *const libc::c_char);
   if !t_argv[0].is_null() {
     t_argv[1] = std::ptr::null_mut::<libc::c_char>();
-    xsetenv(
+    crate::libbb::xfuncs_printf::xsetenv(
       b"LOGIN_TTY\x00" as *const u8 as *const libc::c_char,
       full_tty,
     );
-    xsetenv(
+    crate::libbb::xfuncs_printf::xsetenv(
       b"LOGIN_USER\x00" as *const u8 as *const libc::c_char,
       (*pw).pw_name,
     );
-    xsetenv(
+    crate::libbb::xfuncs_printf::xsetenv(
       b"LOGIN_UID\x00" as *const u8 as *const libc::c_char,
-      utoa((*pw).pw_uid),
+      crate::libbb::xfuncs::utoa((*pw).pw_uid),
     );
-    xsetenv(
+    crate::libbb::xfuncs_printf::xsetenv(
       b"LOGIN_GID\x00" as *const u8 as *const libc::c_char,
-      utoa((*pw).pw_gid),
+      crate::libbb::xfuncs::utoa((*pw).pw_gid),
     );
-    xsetenv(
+    crate::libbb::xfuncs_printf::xsetenv(
       b"LOGIN_SHELL\x00" as *const u8 as *const libc::c_char,
       (*pw).pw_shell,
     );
-    spawn_and_wait(t_argv.as_mut_ptr());
+    crate::libbb::vfork_daemon_rexec::spawn_and_wait(t_argv.as_mut_ptr());
     unsetenv(b"LOGIN_TTY\x00" as *const u8 as *const libc::c_char);
     unsetenv(b"LOGIN_USER\x00" as *const u8 as *const libc::c_char);
     unsetenv(b"LOGIN_UID\x00" as *const u8 as *const libc::c_char);
@@ -229,7 +159,7 @@ unsafe extern "C" fn get_username_or_die(mut buf: *mut libc::c_char, mut size_bu
   let mut cntdown: libc::c_int = 0;
   cntdown = EMPTY_USERNAME_COUNT as libc::c_int;
   'c_8997: loop {
-    print_login_prompt();
+    crate::libbb::login::print_login_prompt();
     loop
     /* skip whitespace */
     {
@@ -271,8 +201,8 @@ unsafe extern "C" fn motd() {
   let mut fd: libc::c_int = 0;
   fd = open(b"/etc/motd\x00" as *const u8 as *const libc::c_char, 0i32);
   if fd >= 0i32 {
-    fflush_all();
-    bb_copyfd_eof(fd, 1i32);
+    crate::libbb::xfuncs_printf::fflush_all();
+    crate::libbb::copyfd::bb_copyfd_eof(fd, 1i32);
     close(fd);
   };
 }
@@ -280,21 +210,23 @@ unsafe extern "C" fn alarm_handler(mut _sig: libc::c_int) {
   /* This is the escape hatch! Poor serial line users and the like
    * arrive here when their connection is broken.
    * We don't want to block here */
-  ndelay_on(1i32);
+  crate::libbb::xfuncs::ndelay_on(1i32);
   /* Test for correct attr restoring:
    * run "getty 0 -" from a shell, enter bogus username, stop at
    * password prompt, let it time out. Without the tcsetattr below,
    * when you are back at shell prompt, echo will be still off.
    */
-  tcsetattr_stdin_TCSANOW(&mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tty_attrs);
+  crate::libbb::xfuncs::tcsetattr_stdin_TCSANOW(
+    &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tty_attrs,
+  );
   printf(
     b"\r\nLogin timed out after %u seconds\r\n\x00" as *const u8 as *const libc::c_char,
     TIMEOUT as libc::c_int,
   );
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   /* unix API is brain damaged regarding O_NONBLOCK,
    * we should undo it, or else we can affect other processes */
-  ndelay_off(1i32); /* for compiler */
+  crate::libbb::xfuncs::ndelay_off(1i32); /* for compiler */
   _exit(0i32);
 }
 #[no_mangle]
@@ -316,16 +248,16 @@ pub unsafe extern "C" fn login_main(
   let mut short_tty: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* More of suid paranoia if called by non-root: */
   /* Clear dangerous stuff, set PATH */
-  run_by_root = (sanitize_env_if_suid() == 0) as libc::c_int;
+  run_by_root = (crate::libbb::login::sanitize_env_if_suid() == 0) as libc::c_int;
   /* Mandatory paranoia for suid applet:
    * ensure that fd# 0,1,2 are opened (at least to /dev/null)
    * and any extra open fd's are closed.
    */
-  bb_daemonize_or_rexec(
+  crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(
     DAEMON_CLOSE_EXTRA_FDS as libc::c_int | DAEMON_ONLY_SANITIZE as libc::c_int,
   );
   username[0] = '\u{0}' as i32 as libc::c_char;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"f:h:p\x00" as *const u8 as *const libc::c_char,
     &mut opt_user as *mut *mut libc::c_char,
@@ -333,9 +265,11 @@ pub unsafe extern "C" fn login_main(
   );
   if opt & LOGIN_OPT_f as libc::c_int as libc::c_uint != 0 {
     if run_by_root == 0 {
-      bb_simple_error_msg_and_die(b"-f is for root only\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"-f is for root only\x00" as *const u8 as *const libc::c_char,
+      );
     }
-    safe_strncpy(
+    crate::libbb::safe_strncpy::safe_strncpy(
       username.as_mut_ptr(),
       opt_user,
       ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong,
@@ -344,7 +278,7 @@ pub unsafe extern "C" fn login_main(
   argv = argv.offset(optind as isize);
   if !(*argv.offset(0)).is_null() {
     /* user from command line (getty) */
-    safe_strncpy(
+    crate::libbb::safe_strncpy::safe_strncpy(
       username.as_mut_ptr(),
       *argv.offset(0),
       ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong,
@@ -368,19 +302,20 @@ pub unsafe extern "C" fn login_main(
   );
   alarm(TIMEOUT as libc::c_int as libc::c_uint);
   /* Find out and memorize our tty name */
-  full_tty = xmalloc_ttyname(0i32);
+  full_tty = crate::libbb::xfuncs_printf::xmalloc_ttyname(0i32);
   if full_tty.is_null() {
-    full_tty = xstrdup(b"UNKNOWN\x00" as *const u8 as *const libc::c_char)
+    full_tty =
+      crate::libbb::xfuncs_printf::xstrdup(b"UNKNOWN\x00" as *const u8 as *const libc::c_char)
   }
-  short_tty = skip_dev_pfx(full_tty);
+  short_tty = crate::libbb::skip_whitespace::skip_dev_pfx(full_tty);
   if !opt_host.is_null() {
-    fromhost = xasprintf(
+    fromhost = crate::libbb::xfuncs_printf::xasprintf(
       b" on \'%s\' from \'%s\'\x00" as *const u8 as *const libc::c_char,
       short_tty,
       opt_host,
     )
   } else {
-    fromhost = xasprintf(
+    fromhost = crate::libbb::xfuncs_printf::xasprintf(
       b" on \'%s\'\x00" as *const u8 as *const libc::c_char,
       short_tty,
     )
@@ -414,7 +349,9 @@ pub unsafe extern "C" fn login_main(
       if opt & LOGIN_OPT_f as libc::c_int as libc::c_uint != 0 {
         break;
       }
-      if (*pw).pw_uid == 0i32 as libc::c_uint && is_tty_secure(short_tty) == 0 {
+      if (*pw).pw_uid == 0i32 as libc::c_uint
+        && crate::libbb::securetty::is_tty_secure(short_tty) == 0
+      {
         current_block = 8456411428248478739;
       } else {
         /* Don't check the password if password entry is empty (!) */
@@ -431,7 +368,7 @@ pub unsafe extern "C" fn login_main(
        * If we get interrupted by SIGALRM, we need to restore attrs.
        */
       {
-        if ask_and_check_password(pw) > 0i32 {
+        if crate::libbb::correct_password::ask_and_check_password(pw) > 0i32 {
           break;
         }
       }
@@ -439,7 +376,7 @@ pub unsafe extern "C" fn login_main(
     }
     /* ENABLE_PAM */
     opt &= !(LOGIN_OPT_f as libc::c_int) as libc::c_uint;
-    bb_do_delay(3i32);
+    crate::libbb::bb_do_delay::bb_do_delay(3i32);
     /* TODO: doesn't sound like correct English phrase to me */
     puts(b"Login incorrect\x00" as *const u8 as *const libc::c_char);
     count += 1;
@@ -464,7 +401,7 @@ pub unsafe extern "C" fn login_main(
    * _f_chown is safe wrt race t=ttyname(0);...;chown(t); */
   fchown(0i32, (*pw).pw_uid, (*pw).pw_gid);
   fchmod(0i32, 0o600i32 as mode_t);
-  update_utmp(
+  crate::libbb::utmp::update_utmp(
     getpid(),
     7i32,
     short_tty,
@@ -479,8 +416,8 @@ pub unsafe extern "C" fn login_main(
   if 1i32 != 0 && run_by_root != 0 {
     run_login_script(pw, full_tty);
   }
-  change_identity(pw);
-  setup_environment(
+  crate::libbb::change_identity::change_identity(pw);
+  crate::libbb::setup_environment::setup_environment(
     (*pw).pw_shell,
     (opt & LOGIN_OPT_p as libc::c_int as libc::c_uint == 0) as libc::c_int * (1i32 << 1i32)
       + (1i32 << 0i32),
@@ -517,6 +454,6 @@ pub unsafe extern "C" fn login_main(
    * should we leave SIGINT etc enabled or disabled? */
   signal(2i32, None);
   /* Exec login shell with no additional parameters */
-  run_shell((*pw).pw_shell, 1i32, 0 as *mut *const libc::c_char);
+  crate::libbb::run_shell::run_shell((*pw).pw_shell, 1i32, 0 as *mut *const libc::c_char);
   /* return EXIT_FAILURE; - not reached */
 }

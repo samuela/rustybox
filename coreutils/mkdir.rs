@@ -3,25 +3,7 @@ use libc::mode_t;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_parse_mode(s: *const libc::c_char, cur_mode: libc::c_uint) -> libc::c_int;
-  #[no_mangle]
-  fn bb_make_directory(
-    path: *mut libc::c_char,
-    mode: libc::c_long,
-    flags: libc::c_int,
-  ) -> libc::c_int;
+
 }
 
 pub type C2RustUnnamed = libc::c_int;
@@ -93,16 +75,17 @@ pub unsafe extern "C" fn mkdir_main(
   let mut flags: libc::c_int = 0i32;
   let mut opt: libc::c_uint = 0;
   let mut smode: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  opt = getopt32long(
+  opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"m:pv\x00" as *const u8 as *const libc::c_char,
     b"mode\x00\x01mparents\x00\x00pverbose\x00\x00v\x00" as *const u8 as *const libc::c_char,
     &mut smode as *mut *mut libc::c_char,
   );
   if opt & 1i32 as libc::c_uint != 0 {
-    let mut mmode: mode_t = bb_parse_mode(smode, 0o777i32 as libc::c_uint) as mode_t;
+    let mut mmode: mode_t =
+      crate::libbb::parse_mode::bb_parse_mode(smode, 0o777i32 as libc::c_uint) as mode_t;
     if mmode == -1i32 as mode_t {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"invalid mode \'%s\'\x00" as *const u8 as *const libc::c_char,
         smode,
       );
@@ -117,10 +100,10 @@ pub unsafe extern "C" fn mkdir_main(
   }
   argv = argv.offset(optind as isize);
   if (*argv.offset(0)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   loop {
-    if bb_make_directory(*argv, mode, flags) != 0 {
+    if crate::libbb::make_directory::bb_make_directory(*argv, mode, flags) != 0 {
       status = 1i32
     }
     argv = argv.offset(1);

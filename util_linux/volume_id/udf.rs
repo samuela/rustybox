@@ -1,67 +1,39 @@
+use crate::librb::size_t;
+use crate::util_linux::volume_id::volume_id::volume_id;
 use libc;
 extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
-
-  #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
-
-  #[no_mangle]
-  fn volume_id_set_label_unicode16(
-    id: *mut volume_id,
-    buf: *const u8,
-    endianess: endian,
-    count: size_t,
-  );
-
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
-}
-
-use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
 }
 
 pub type endian = libc::c_uint;
 pub const BE: endian = 1;
 // pub const LE: endian = 0;
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct dstring {
   pub clen: u8,
   pub c: [u8; 31],
 }
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct primary_descriptor {
   pub seq_num: u32,
   pub desc_num: u32,
   pub ident: dstring,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub anchor: anchor_descriptor,
   pub primary: primary_descriptor,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct anchor_descriptor {
   pub length: u32,
   pub location: u32,
@@ -90,14 +62,16 @@ pub struct anchor_descriptor {
 //config:	default y
 //config:	depends on VOLUMEID
 //kbuild:lib-$(CONFIG_FEATURE_VOLUMEID_UDF) += udf.o
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct volume_descriptor {
   pub tag: descriptor_tag,
   pub type_0: C2RustUnnamed,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct descriptor_tag {
   pub id: u16,
   pub version: u16,
@@ -108,8 +82,9 @@ pub struct descriptor_tag {
   pub crc_len: u16,
   pub location: u32,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct volume_structure_descriptor {
   pub type_0: u8,
   pub id: [u8; 5],
@@ -210,7 +185,7 @@ pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_
   let mut count: libc::c_uint = 0;
   let mut loc: libc::c_uint = 0;
   let mut clen: libc::c_uint = 0;
-  vsd = volume_id_get_buffer(
+  vsd = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     (0i32 as u64).wrapping_add(0x8000i32 as libc::c_ulong),
     0x200i32 as size_t,
@@ -275,7 +250,7 @@ pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_
       current_block = 13472856163611868459;
       break;
     }
-    vsd = volume_id_get_buffer(
+    vsd = crate::util_linux::volume_id::util::volume_id_get_buffer(
       id,
       (0i32 as u64)
         .wrapping_add(0x8000i32 as libc::c_ulong)
@@ -302,7 +277,7 @@ pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_
           current_block = 7245201122033322888;
           break;
         }
-        vsd = volume_id_get_buffer(
+        vsd = crate::util_linux::volume_id::util::volume_id_get_buffer(
           id,
           (0i32 as u64)
             .wrapping_add(0x8000i32 as libc::c_ulong)
@@ -339,7 +314,7 @@ pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_
         7245201122033322888 => return -1i32,
         _ => {
           /* read anchor volume descriptor */
-          vd = volume_id_get_buffer(
+          vd = crate::util_linux::volume_id::util::volume_id_get_buffer(
             id,
             (0i32 as u64).wrapping_add((256i32 as libc::c_uint).wrapping_mul(bs) as libc::c_ulong),
             0x200i32 as size_t,
@@ -359,7 +334,7 @@ pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_
                 current_block = 1843993682127799951;
                 break;
               }
-              vd = volume_id_get_buffer(
+              vd = crate::util_linux::volume_id::util::volume_id_get_buffer(
                 id,
                 (0i32 as u64).wrapping_add(loc.wrapping_add(b).wrapping_mul(bs) as libc::c_ulong),
                 0x200i32 as size_t,
@@ -391,13 +366,13 @@ pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_
               {
                 clen = (*vd).type_0.primary.ident.clen as libc::c_uint;
                 if clen == 8i32 as libc::c_uint {
-                  volume_id_set_label_string(
+                  crate::util_linux::volume_id::util::volume_id_set_label_string(
                     id,
                     (*vd).type_0.primary.ident.c.as_mut_ptr(),
                     31i32 as size_t,
                   );
                 } else if clen == 16i32 as libc::c_uint {
-                  volume_id_set_label_unicode16(
+                  crate::util_linux::volume_id::util::volume_id_set_label_unicode16(
                     id,
                     (*vd).type_0.primary.ident.c.as_mut_ptr(),
                     BE,

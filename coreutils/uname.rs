@@ -9,24 +9,11 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct utsname {
   pub sysname: [libc::c_char; 65],
   pub nodename: [libc::c_char; 65],
@@ -35,8 +22,9 @@ pub struct utsname {
   pub machine: [libc::c_char; 65],
   pub domainname: [libc::c_char; 65],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct uname_info_t {
   pub name: utsname,
   pub processor: [libc::c_char; 65],
@@ -83,14 +71,14 @@ pub unsafe extern "C" fn uname_main(
       119, 97, 114, 101, 45, 112, 108, 97, 116, 102, 111, 114, 109, 0, 0, 105, 111, 112, 101, 114,
       97, 116, 105, 110, 103, 45, 115, 121, 115, 116, 101, 109, 0, 0, 111, 0,
     ];
-    toprint = getopt32long(
+    toprint = crate::libbb::getopt32::getopt32long(
       argv,
       b"snrvmpioa\x00" as *const u8 as *const libc::c_char,
       uname_longopts.as_ptr(),
     );
     if !(*argv.offset(optind as isize)).is_null() {
       /* coreutils-6.9 compat */
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     if toprint & (1i32 << 8i32) as libc::c_uint != 0 {
       /* -a => all opts on */
@@ -134,8 +122,8 @@ pub unsafe extern "C" fn uname_main(
         break;
       }
     }
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   }
-  fflush_stdout_and_exit(0i32);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
   /* coreutils-6.9 compat */
 }

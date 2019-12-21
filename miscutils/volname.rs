@@ -1,17 +1,6 @@
 use libc;
 use libc::printf;
-extern "C" {
 
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn xread(fd: libc::c_int, buf: *mut libc::c_void, count: size_t);
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-
-}
 
 use crate::librb::size_t;
 use libc::off_t;
@@ -66,12 +55,12 @@ pub unsafe extern "C" fn volname_main(
   if !(*argv.offset(1)).is_null() {
     device = *argv.offset(1);
     if !(*argv.offset(2)).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
   }
-  fd = xopen(device, 0i32);
-  xlseek(fd, 32808i32 as off_t, 0i32);
-  xread(
+  fd = crate::libbb::xfuncs_printf::xopen(device, 0i32);
+  crate::libbb::xfuncs_printf::xlseek(fd, 32808i32 as off_t, 0i32);
+  crate::libbb::read_printf::xread(
     fd,
     buffer.as_mut_ptr() as *mut libc::c_void,
     32i32 as size_t,

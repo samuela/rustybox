@@ -4,12 +4,7 @@ extern "C" {
 
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-  #[no_mangle]
-  fn sleep_for_duration(duration: duration_t);
-  #[no_mangle]
-  fn parse_duration_str(str: *mut libc::c_char) -> duration_t;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
+
 }
 pub type duration_t = libc::c_double;
 
@@ -74,7 +69,7 @@ pub unsafe extern "C" fn sleep_main(
   let mut duration: duration_t = 0.;
   argv = argv.offset(1);
   if (*argv).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* GNU sleep accepts "inf", "INF", "infinity" and "INFINITY" */
   if strncasecmp(
@@ -90,13 +85,13 @@ pub unsafe extern "C" fn sleep_main(
   /* undo busybox.c setlocale */
   duration = 0i32 as duration_t;
   loop {
-    duration += parse_duration_str(*argv);
+    duration += crate::libbb::duration::parse_duration_str(*argv);
     argv = argv.offset(1);
     if (*argv).is_null() {
       break;
     }
   }
-  sleep_for_duration(duration);
+  crate::libbb::duration::sleep_for_duration(duration);
   /* simple */
   return 0i32;
 }

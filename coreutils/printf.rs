@@ -20,49 +20,17 @@ extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn bb_process_escape_sequence(ptr: *mut *const libc::c_char) -> libc::c_char;
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
-  /* Non-aborting kind of convertors: bb_strto[u][l]l */
-  /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
-   * errno = EINVAL if value was not '\0' terminated, but otherwise ok
-   *    Return value is still valid, caller should just check whether end[0]
-   *    is a valid terminating char for particular case. OTOH, if caller
-   *    requires '\0' terminated input, [s]he can just check errno == 0.
-   * errno = ERANGE if value had alphanumeric terminating char ("1234abcg").
-   * errno = ERANGE if value is out of range, missing, etc.
-   * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
-   *    return value is all-ones in this case.
-   */
-  #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_strtoll(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_longlong;
-  #[no_mangle]
-  fn bb_strtoi(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
+/* Non-aborting kind of convertors: bb_strto[u][l]l */
+/* On exit: errno = 0 only if there was non-empty, '\0' terminated value
+ * errno = EINVAL if value was not '\0' terminated, but otherwise ok
+ *    Return value is still valid, caller should just check whether end[0]
+ *    is a valid terminating char for particular case. OTOH, if caller
+ *    requires '\0' terminated input, [s]he can just check errno == 0.
+ * errno = ERANGE if value had alphanumeric terminating char ("1234abcg").
+ * errno = ERANGE if value is out of range, missing, etc.
+ * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
+ *    return value is all-ones in this case.
+ */
 
 }
 
@@ -145,12 +113,12 @@ unsafe extern "C" fn multiconvert(
   mut convert: converter,
 ) -> libc::c_int {
   if *arg as libc::c_int == '\"' as i32 || *arg as libc::c_int == '\'' as i32 {
-    arg = utoa(*arg.offset(1) as libc::c_uchar as libc::c_uint)
+    arg = crate::libbb::xfuncs::utoa(*arg.offset(1) as libc::c_uchar as libc::c_uint)
   }
   *bb_errno = 0;
   convert.expect("non-null function pointer")(arg, result);
   if *bb_errno != 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"invalid number \'%s\'\x00" as *const u8 as *const libc::c_char,
       arg,
     );
@@ -167,7 +135,8 @@ unsafe extern "C" fn conv_strtoull(mut arg: *const libc::c_char, mut result: *mu
   if *arg.offset(0) as libc::c_int == '+' as i32 {
     arg = arg.offset(1)
   }
-  *(result as *mut libc::c_ulonglong) = bb_strtoull(arg, 0 as *mut *mut libc::c_char, 0i32);
+  *(result as *mut libc::c_ulonglong) =
+    crate::libbb::bb_strtonum::bb_strtoull(arg, 0 as *mut *mut libc::c_char, 0i32);
   /* both coreutils 6.10 and bash 3.2:
    * $ printf '%x\n' -2
    * fffffffffffffffe
@@ -175,7 +144,8 @@ unsafe extern "C" fn conv_strtoull(mut arg: *const libc::c_char, mut result: *mu
    */
   if *bb_errno != 0 {
     *(result as *mut libc::c_ulonglong) =
-      bb_strtoll(arg, 0 as *mut *mut libc::c_char, 0i32) as libc::c_ulonglong
+      crate::libbb::bb_strtonum::bb_strtoll(arg, 0 as *mut *mut libc::c_char, 0i32)
+        as libc::c_ulonglong
   };
 }
 
@@ -183,7 +153,8 @@ unsafe extern "C" fn conv_strtoll(mut arg: *const libc::c_char, mut result: *mut
   if *arg.offset(0) as libc::c_int == '+' as i32 {
     arg = arg.offset(1)
   }
-  *(result as *mut libc::c_longlong) = bb_strtoll(arg, 0 as *mut *mut libc::c_char, 0i32);
+  *(result as *mut libc::c_longlong) =
+    crate::libbb::bb_strtonum::bb_strtoll(arg, 0 as *mut *mut libc::c_char, 0i32);
 }
 
 unsafe extern "C" fn conv_strtod(mut arg: *const libc::c_char, mut result: *mut libc::c_void) {
@@ -256,7 +227,7 @@ unsafe extern "C" fn print_esc_string(mut str: *const libc::c_char) -> libc::c_i
       /* optimization: don't force arg to be on-stack,
        * use another variable for that. */
       let mut z: *const libc::c_char = str;
-      c = bb_process_escape_sequence(&mut z);
+      c = crate::libbb::process_escape_sequence::bb_process_escape_sequence(&mut z);
       str = z
     }
     putchar_unlocked(c as libc::c_int);
@@ -365,9 +336,10 @@ unsafe extern "C" fn print_direc(
 
 /* Handle params for "%*.*f". Negative numbers are ok (compat). */
 unsafe extern "C" fn get_width_prec(mut str: *const libc::c_char) -> libc::c_int {
-  let mut v: libc::c_int = bb_strtoi(str, 0 as *mut *mut libc::c_char, 10i32);
+  let mut v: libc::c_int =
+    crate::libbb::bb_strtonum::bb_strtoi(str, 0 as *mut *mut libc::c_char, 10i32);
   if *bb_errno != 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"invalid number \'%s\'\x00" as *const u8 as *const libc::c_char,
       str,
     );
@@ -398,7 +370,7 @@ unsafe extern "C" fn print_formatted(
         precision = 0i32;
         field_width = precision;
         if *f as libc::c_int == '%' as i32 {
-          bb_putchar('%' as i32);
+          crate::libbb::xfuncs_printf::bb_putchar('%' as i32);
         } else if *f as libc::c_int == 'b' as i32 {
           if !(*argv).is_null() {
             if print_esc_string(*argv) != 0 {
@@ -457,7 +429,7 @@ unsafe extern "C" fn print_formatted(
             || *f as libc::c_int == 'h' as i32
             || *f as libc::c_int == 'z' as i32
           {
-            overlapping_strcpy(f, f.offset(1));
+            crate::libbb::safe_strncpy::overlapping_strcpy(f, f.offset(1));
           }
           /* Add "ll" if integer modifier, then print */
           static mut format_chars: [libc::c_char; 14] = [
@@ -466,7 +438,7 @@ unsafe extern "C" fn print_formatted(
           let mut p: *mut libc::c_char = strchr(format_chars.as_ptr(), *f as libc::c_int);
           /* needed - try "printf %" without it */
           if p.is_null() || *f as libc::c_int == '\u{0}' as i32 {
-            bb_error_msg(
+            crate::libbb::verror_msg::bb_error_msg(
               b"%s: invalid format\x00" as *const u8 as *const libc::c_char,
               direc_start,
             );
@@ -515,9 +487,11 @@ unsafe extern "C" fn print_formatted(
           return saved_argv;
           /* causes main() to exit */
         }
-        bb_putchar(bb_process_escape_sequence(
-          &mut f as *mut *mut libc::c_char as *mut *const libc::c_char,
-        ) as libc::c_int);
+        crate::libbb::xfuncs_printf::bb_putchar(
+          crate::libbb::process_escape_sequence::bb_process_escape_sequence(
+            &mut f as *mut *mut libc::c_char as *mut *const libc::c_char,
+          ) as libc::c_int,
+        );
         f = f.offset(-1)
       }
       _ => {
@@ -564,13 +538,13 @@ pub unsafe extern "C" fn printf_main(
   }
   if (*argv.offset(1)).is_null() {
     if 1 != 0 && *applet_name.offset(0) as libc::c_int != 'p' as i32 {
-      bb_simple_error_msg(
+      crate::libbb::verror_msg::bb_simple_error_msg(
         b"usage: printf FORMAT [ARGUMENT...]\x00" as *const u8 as *const libc::c_char,
       );
       return 2;
       /* bash compat */
     }
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   format = *argv.offset(1);
   argv2 = argv.offset(2);

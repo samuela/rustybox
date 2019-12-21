@@ -1,9 +1,15 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::len_and_sockaddr;
+use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::free;
+use libc::sa_family_t;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::sprintf;
 use libc::strchr;
 use libc::strtok;
@@ -21,39 +27,14 @@ extern "C" {
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
 
-  #[no_mangle]
-  fn trim(s: *mut libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
   /* NB: can violate const-ness (similarly to strchr) */
-  #[no_mangle]
-  fn last_char_is(s: *const libc::c_char, c: libc::c_int) -> *mut libc::c_char;
+
   /* Same, useful if you want to force family (e.g. IPv6) */
-  #[no_mangle]
-  fn host_and_af2sockaddr(
-    host: *const libc::c_char,
-    port: libc::c_int,
-    af: sa_family_t,
-  ) -> *mut len_and_sockaddr;
+
   /* Put a string of hex bytes ("1b2e66fe"...), return advanced pointer */
-  #[no_mangle]
-  fn bin2hex(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    count: libc::c_int,
-  ) -> *mut libc::c_char;
+
   /* Reverse */
-  #[no_mangle]
-  fn hex2bin(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    count: libc::c_int,
-  ) -> *mut libc::c_char;
+
   /* Non-aborting kind of convertors: bb_strto[u][l]l */
   /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
    * errno = EINVAL if value was not '\0' terminated, but otherwise ok
@@ -65,111 +46,29 @@ extern "C" {
    * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
    *    return value is all-ones in this case.
    */
-  #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_strtoll(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_longlong;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_strtoi(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_int;
+
   // #[no_mangle]
   // fn BUG_bb_strtou32_unimplemented() -> u32;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_info_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn dname_enc(
-    cstr: *const u8,
-    clen: libc::c_int,
-    src: *const libc::c_char,
-    retlen: *mut libc::c_int,
-  ) -> *mut u8;
+
   #[no_mangle]
   fn strnlen(__string: *const libc::c_char, __maxlen: size_t) -> size_t;
 }
 
 pub type __socklen_t = libc::c_uint;
-
 pub type bb__aliased_u32 = u32;
-use crate::librb::size_t;
-pub type socklen_t = __socklen_t;
-use libc::sa_family_t;
-use libc::sockaddr;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed {
-  pub __u6_addr8: [u8; 16],
-  pub __u6_addr16: [u16; 8],
-  pub __u6_addr32: [u32; 4],
-}
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_0,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_0 {
   pub sa: sockaddr,
   pub sin: sockaddr_in,
   pub sin6: sockaddr_in6,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct dhcp_packet {
   pub op: u8,
   pub htype: u8,
@@ -205,14 +104,16 @@ pub const OPTION_STRING_HOST: C2RustUnnamed_1 = 4;
 pub const OPTION_STRING: C2RustUnnamed_1 = 3;
 pub const OPTION_IP_PAIR: C2RustUnnamed_1 = 2;
 pub const OPTION_IP: C2RustUnnamed_1 = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct dhcp_optflag {
   pub flags: u8,
   pub code: u8,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct option_set {
   pub data: *mut u8,
   pub next: *mut option_set,
@@ -231,7 +132,7 @@ unsafe extern "C" fn bb_strtoul(
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_ulong {
-  return bb_strtoull(arg, endp, base) as libc::c_ulong;
+  return crate::libbb::bb_strtonum::bb_strtoull(arg, endp, base) as libc::c_ulong;
 }
 #[inline(always)]
 unsafe extern "C" fn bb_strtol(
@@ -239,7 +140,7 @@ unsafe extern "C" fn bb_strtol(
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_long {
-  return bb_strtoll(arg, endp, base) as libc::c_long;
+  return crate::libbb::bb_strtonum::bb_strtoll(arg, endp, base) as libc::c_long;
 }
 #[inline(always)]
 unsafe extern "C" fn bb_strtou32(
@@ -250,7 +151,7 @@ unsafe extern "C" fn bb_strtou32(
   if ::std::mem::size_of::<u32>() as libc::c_ulong
     == ::std::mem::size_of::<libc::c_uint>() as libc::c_ulong
   {
-    return bb_strtou(arg, endp, base);
+    return crate::libbb::bb_strtonum::bb_strtou(arg, endp, base);
   }
   if ::std::mem::size_of::<u32>() as libc::c_ulong
     == ::std::mem::size_of::<libc::c_ulong>() as libc::c_ulong
@@ -268,7 +169,7 @@ unsafe extern "C" fn bb_strtoi32(
   if ::std::mem::size_of::<i32>() as libc::c_ulong
     == ::std::mem::size_of::<libc::c_int>() as libc::c_ulong
   {
-    return bb_strtoi(arg, endp, base);
+    return crate::libbb::bb_strtonum::bb_strtoi(arg, endp, base);
   }
   if ::std::mem::size_of::<i32>() as libc::c_ulong
     == ::std::mem::size_of::<libc::c_long>() as libc::c_ulong
@@ -636,12 +537,12 @@ pub static mut dhcp_option_lengths: [u8; 14] = [
 unsafe extern "C" fn log_option(mut pfx: *const libc::c_char, mut opt: *const u8) {
   if dhcp_verbose >= 2i32 as libc::c_uint {
     let mut buf: [libc::c_char; 514] = [0; 514];
-    *bin2hex(
+    *crate::libbb::xfuncs::bin2hex(
       buf.as_mut_ptr(),
       opt.offset(2) as *mut libc::c_void as *const libc::c_char,
       *opt.offset(1) as libc::c_int,
     ) = '\u{0}' as i32 as libc::c_char;
-    bb_info_msg(
+    crate::libbb::verror_msg::bb_info_msg(
       b"%s: 0x%02x %s\x00" as *const u8 as *const libc::c_char,
       pfx,
       *opt.offset(0) as libc::c_int,
@@ -654,7 +555,8 @@ pub unsafe extern "C" fn udhcp_option_idx(
   mut name: *const libc::c_char,
   mut option_strings: *const libc::c_char,
 ) -> libc::c_uint {
-  let mut n: libc::c_int = index_in_strings(option_strings, name);
+  let mut n: libc::c_int =
+    crate::libbb::compare_string_array::index_in_strings(option_strings, name);
   if n >= 0i32 {
     return n as libc::c_uint;
   }
@@ -665,8 +567,9 @@ pub unsafe extern "C" fn udhcp_option_idx(
   while *s != 0 {
     s = s.offset(strlen(s).wrapping_add(1i32 as libc::c_ulong) as isize)
   }
-  buf =
-    xzalloc(s.wrapping_offset_from(option_strings) as libc::c_long as size_t) as *mut libc::c_char;
+  buf = crate::libbb::xfuncs_printf::xzalloc(
+    s.wrapping_offset_from(option_strings) as libc::c_long as size_t
+  ) as *mut libc::c_char;
   d = buf;
   s = option_strings;
   while !(*s as libc::c_int == '\u{0}' as i32 && *s.offset(1) as libc::c_int == '\u{0}' as i32) {
@@ -679,7 +582,7 @@ pub unsafe extern "C" fn udhcp_option_idx(
     } as libc::c_char;
     s = s.offset(1)
   }
-  bb_error_msg_and_die(
+  crate::libbb::verror_msg::bb_error_msg_and_die(
     b"unknown option \'%s\', known options: %s\x00" as *const u8 as *const libc::c_char,
     name,
     buf,
@@ -753,7 +656,7 @@ pub unsafe extern "C" fn udhcp_get_option(
      * that returned pointer might be unsafe
      * to dereference.
      */
-    bb_simple_error_msg(
+    crate::libbb::verror_msg::bb_simple_error_msg(
       b"bad packet, malformed option field\x00" as *const u8 as *const libc::c_char,
     );
     return 0 as *mut u8;
@@ -801,7 +704,7 @@ pub unsafe extern "C" fn udhcp_add_binary_option(
   /* end position + (option code/length + addopt length) + end option */
   if end.wrapping_add(len).wrapping_add(1i32 as libc::c_uint) >= 308i32 as libc::c_uint {
     //TODO: learn how to use overflow option if we exhaust packet->options[]
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"option 0x%02x did not fit into the packet\x00" as *const u8 as *const libc::c_char,
       *addopt.offset(0) as libc::c_int,
     );
@@ -842,7 +745,7 @@ pub unsafe extern "C" fn udhcp_add_simple_option(
     }
     dh = dh.offset(1)
   }
-  bb_error_msg(
+  crate::libbb::verror_msg::bb_error_msg(
     b"can\'t add option 0x%02x\x00" as *const u8 as *const libc::c_char,
     code as libc::c_int,
   );
@@ -868,7 +771,7 @@ pub unsafe extern "C" fn udhcp_str2nip(
   mut arg: *mut libc::c_void,
 ) -> libc::c_int {
   let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  lsa = host_and_af2sockaddr(str, 0i32, 2i32 as sa_family_t);
+  lsa = crate::libbb::xconnect::host_and_af2sockaddr(str, 0i32, 2i32 as sa_family_t);
   if lsa.is_null() {
     return 0i32;
   }
@@ -896,10 +799,10 @@ unsafe extern "C" fn attach_option(
   if (*optflag).flags as libc::c_int & OPTION_TYPE_MASK as libc::c_int == OPTION_BIN as libc::c_int
   {
     let mut end: *const libc::c_char = 0 as *const libc::c_char;
-    allocated = xstrdup(buffer);
-    end = hex2bin(allocated, buffer, 255i32);
+    allocated = crate::libbb::xfuncs_printf::xstrdup(buffer);
+    end = crate::libbb::xfuncs::hex2bin(allocated, buffer, 255i32);
     if *bb_errno != 0 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"malformed hex string \'%s\'\x00" as *const u8 as *const libc::c_char,
         buffer,
       );
@@ -911,7 +814,9 @@ unsafe extern "C" fn attach_option(
     == OPTION_DNS_STRING as libc::c_int
   {
     /* reuse buffer and length for RFC1035-formatted string */
-    buffer = dname_enc(0 as *const u8, 0i32, buffer, &mut length) as *mut libc::c_char;
+    buffer =
+      crate::networking::udhcp::domain_codec::dname_enc(0 as *const u8, 0i32, buffer, &mut length)
+        as *mut libc::c_char;
     allocated = buffer
   }
   existing = udhcp_find_option(*opt_list, (*optflag).code);
@@ -920,7 +825,7 @@ unsafe extern "C" fn attach_option(
     let mut curr: *mut *mut option_set = 0 as *mut *mut option_set;
     /* make a new option */
     if dhcp_verbose >= 2i32 as libc::c_uint {
-      bb_info_msg(
+      crate::libbb::verror_msg::bb_info_msg(
         b"attaching option %02x to list\x00" as *const u8 as *const libc::c_char,
         (*optflag).code as libc::c_int,
       ); /* else, ignore the new data */
@@ -960,7 +865,7 @@ unsafe extern "C" fn attach_option(
     let mut old_len: libc::c_uint = 0;
     /* else, ignore the data, we could put this in a second option in the future */
     if dhcp_verbose >= 2i32 as libc::c_uint {
-      bb_info_msg(
+      crate::libbb::verror_msg::bb_info_msg(
         b"attaching option %02x to existing member of list\x00" as *const u8 as *const libc::c_char,
         (*optflag).code as libc::c_int,
       );
@@ -969,7 +874,7 @@ unsafe extern "C" fn attach_option(
     if old_len.wrapping_add(length as libc::c_uint) < 255i32 as libc::c_uint {
       /* add it to an existing option */
       /* actually 255 is ok too, but adding a space can overlow it */
-      (*existing).data = xrealloc(
+      (*existing).data = crate::libbb::xfuncs_printf::xrealloc(
         (*existing).data as *mut libc::c_void,
         ((2i32 + 1i32) as libc::c_uint)
           .wrapping_add(old_len)
@@ -1011,7 +916,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
   if opt.is_null() {
     return 0i32;
   }
-  optcode = bb_strtou(opt, 0 as *mut *mut libc::c_char, 0i32);
+  optcode = crate::libbb::bb_strtonum::bb_strtou(opt, 0 as *mut *mut libc::c_char, 0i32);
   if *bb_errno == 0 && optcode < 255i32 as libc::c_uint {
     /* Raw (numeric) option code.
      * Initially assume binary (hex-str), but if "str" or 'str'
@@ -1038,7 +943,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
         b"\x00" as *const u8 as *const libc::c_char,
       );
       if !val.is_null() {
-        trim(val);
+        crate::libbb::trim::trim(val);
       }
     } else {
       val = strtok(
@@ -1104,8 +1009,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
             let fresh2;
             let fresh3 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh2) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh1, fresh3))
-                                  : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh1, fresh3)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh1, fresh3, fresh2);
           }
           __v
@@ -1134,8 +1038,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
             let fresh5;
             let fresh6 = __x;
             asm!("bswap $0" : "=r" (fresh5) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh4, fresh6))
-                                  :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh4, fresh6)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh4, fresh6, fresh5);
           }
           __v
@@ -1158,8 +1061,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
             let fresh8;
             let fresh9 = __x;
             asm!("bswap $0" : "=r" (fresh8) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh7, fresh9))
-                                  :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh7, fresh9)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh7, fresh9, fresh8);
           }
           __v
@@ -1175,7 +1077,11 @@ pub unsafe extern "C" fn udhcp_str2optset(
         if !slash.is_null() {
           *slash = '\u{0}' as i32 as libc::c_char;
           retval = udhcp_str2nip(val, buffer.as_mut_ptr().offset(1) as *mut libc::c_void);
-          mask = bb_strtou(slash.offset(1), 0 as *mut *mut libc::c_char, 10i32);
+          mask = crate::libbb::bb_strtonum::bb_strtou(
+            slash.offset(1),
+            0 as *mut *mut libc::c_char,
+            10i32,
+          );
           buffer[0] = mask as libc::c_char;
           val = strtok(
             std::ptr::null_mut::<libc::c_char>(),
@@ -1201,7 +1107,8 @@ pub unsafe extern "C" fn udhcp_str2optset(
           || *val.offset(0) as libc::c_int == '\'' as i32
         {
           let mut delim: libc::c_char = *val.offset(0);
-          let mut end: *mut libc::c_char = last_char_is(val.offset(1), delim as libc::c_int);
+          let mut end: *mut libc::c_char =
+            crate::libbb::last_char_is::last_char_is(val.offset(1), delim as libc::c_int);
           if !end.is_null() {
             *end = '\u{0}' as i32 as libc::c_char;
             val = val.offset(1);
@@ -1402,7 +1309,7 @@ pub unsafe extern "C" fn sprint_nip6(
   mut ip: *const u8,
 ) -> libc::c_int {
   let mut hexstrbuf: [libc::c_char; 32] = [0; 32];
-  bin2hex(
+  crate::libbb::xfuncs::bin2hex(
     hexstrbuf.as_mut_ptr(),
     ip as *mut libc::c_void as *const libc::c_char,
     16i32,

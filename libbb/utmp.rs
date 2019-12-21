@@ -23,27 +23,21 @@ extern "C" {
   fn pututxline(__utmpx: *const utmpx) -> *mut utmpx;
   #[no_mangle]
   fn updwtmpx(__wtmpx_file: *const libc::c_char, __utmpx: *const utmpx);
-  #[no_mangle]
-  fn skip_dev_pfx(tty_name: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
+
   #[no_mangle]
   static bb_path_wtmp_file: [libc::c_char; 0];
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __exit_status {
   pub e_termination: libc::c_short,
   pub e_exit: libc::c_short,
 }
 use libc::utmpx;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed {
   pub tv_sec: i32,
   pub tv_usec: i32,
@@ -79,21 +73,21 @@ pub unsafe extern "C" fn write_new_utmp(
   );
   utent.ut_pid = pid;
   utent.ut_type = new_type as libc::c_short;
-  tty_name = skip_dev_pfx(tty_name);
-  safe_strncpy(
+  tty_name = crate::libbb::skip_whitespace::skip_dev_pfx(tty_name);
+  crate::libbb::safe_strncpy::safe_strncpy(
     utent.ut_line.as_mut_ptr(),
     tty_name,
     ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong,
   );
   if !username.is_null() {
-    safe_strncpy(
+    crate::libbb::safe_strncpy::safe_strncpy(
       utent.ut_user.as_mut_ptr(),
       username,
       ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong,
     );
   }
   if !hostname.is_null() {
-    safe_strncpy(
+    crate::libbb::safe_strncpy::safe_strncpy(
       utent.ut_host.as_mut_ptr(),
       hostname,
       ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong,
@@ -185,21 +179,21 @@ pub unsafe extern "C" fn update_utmp(
   utent = *utp;
   utent.ut_type = new_type as libc::c_short;
   if !tty_name.is_null() {
-    safe_strncpy(
+    crate::libbb::safe_strncpy::safe_strncpy(
       utent.ut_line.as_mut_ptr(),
-      skip_dev_pfx(tty_name),
+      crate::libbb::skip_whitespace::skip_dev_pfx(tty_name),
       ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong,
     );
   }
   if !username.is_null() {
-    safe_strncpy(
+    crate::libbb::safe_strncpy::safe_strncpy(
       utent.ut_user.as_mut_ptr(),
       username,
       ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong,
     );
   }
   if !hostname.is_null() {
-    safe_strncpy(
+    crate::libbb::safe_strncpy::safe_strncpy(
       utent.ut_host.as_mut_ptr(),
       hostname,
       ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong,

@@ -6,7 +6,7 @@ use std::io;
 use std::io::Write;
 
 #[no_mangle]
-pub unsafe extern "C" fn yes_main(mut _argc: c_int, mut _argv: *const *const c_char) -> c_int {
+pub unsafe extern "C" fn yes_main(_argc: c_int, _argv: *mut *mut c_char) -> c_int {
   let line = if env::args().count() > 1 {
     env::args().skip(1).collect::<Vec<String>>().join(" ")
   } else {

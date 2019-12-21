@@ -2,10 +2,7 @@ use libc;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   fn link(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
 }
@@ -34,11 +31,11 @@ pub unsafe extern "C" fn link_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  getopt32(argv, b"^\x00=2\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::getopt32::getopt32(argv, b"^\x00=2\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   if link(*argv.offset(0), *argv.offset(1)) != 0i32 {
     /* shared message */
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t create %slink \'%s\' to \'%s\'\x00" as *const u8 as *const libc::c_char,
       b"hard\x00" as *const u8 as *const libc::c_char,
       *argv.offset(1),

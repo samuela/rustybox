@@ -13,12 +13,7 @@ extern "C" {
   ) -> *mut libc::c_char;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_gethostname() -> *mut libc::c_char;
-  #[no_mangle]
-  fn nuke_str(str: *mut libc::c_char);
+
 }
 
 /*
@@ -80,7 +75,7 @@ unsafe extern "C" fn string_checker(
   /* check string */
   let mut ret: libc::c_int = string_checker_helper(p1, p2);
   /* make our own copy */
-  let mut p: *mut libc::c_char = xstrdup(p1);
+  let mut p: *mut libc::c_char = crate::libbb::xfuncs_printf::xstrdup(p1);
   /* reverse string */
   size = strlen(p1) as libc::c_int; /* restore pointer */
   i = size;
@@ -97,7 +92,7 @@ unsafe extern "C" fn string_checker(
   /* check reversed string */
   ret |= string_checker_helper(p, p2);
   /* clean up */
-  nuke_str(p);
+  crate::libbb::nuke_str::nuke_str(p);
   free(p as *mut libc::c_void);
   return ret;
 }
@@ -129,7 +124,7 @@ unsafe extern "C" fn obscure_msg(
     return b"similar to gecos\x00" as *const u8 as *const libc::c_char;
   }
   /* hostname as-is, as sub-string, reversed, capitalized, doubled */
-  hostname = safe_gethostname();
+  hostname = crate::libbb::safe_gethostname::safe_gethostname();
   i = string_checker(new_p, hostname) as libc::c_uint;
   free(hostname as *mut libc::c_void);
   if i != 0 {

@@ -20,27 +20,6 @@ extern "C" {
   #[no_mangle]
   fn tcflush(__fd: libc::c_int, __queue_selector: libc::c_int) -> libc::c_int;
 
-  #[no_mangle]
-  fn signal_no_SA_RESTART_empty_mask(
-    sig: libc::c_int,
-    handler: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
-  );
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn safe_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn single_argv(argv: *mut *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
 use crate::librb::size_t;
@@ -76,7 +55,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
   tcflush(0i32, 0i32);
   /* Ask for CRC; if we get errors, we will go with checksum */
   reply_char = 'C' as i32 as libc::c_char;
-  full_write(
+  crate::libbb::full_write::full_write(
     1i32,
     &mut reply_char as *mut libc::c_char as *const libc::c_void,
     1i32 as size_t,
@@ -115,13 +94,15 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
       }
       /* Write previously received block */
       *bb_errno = 0i32;
-      if full_write(
+      if crate::libbb::full_write::full_write(
         file_fd,
         blockBuf.as_mut_ptr() as *const libc::c_void,
         blockLength as size_t,
       ) != blockLength as isize
       {
-        bb_simple_perror_msg(b"write error\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg(
+          b"write error\x00" as *const u8 as *const libc::c_char,
+        );
         current_block = 2830166982076203563;
       } else {
         timeout = 1i32 as libc::c_uint;
@@ -132,7 +113,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
             match current_block {
               3021757436737313741 => {
                 reply_char = 0x6i32 as libc::c_char;
-                full_write(
+                crate::libbb::full_write::full_write(
                   1i32,
                   &mut reply_char as *mut libc::c_char as *const libc::c_void,
                   1i32 as size_t,
@@ -147,7 +128,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                   blockNoOnesCompl = read_byte(1i32 as libc::c_uint);
                   if !(blockNoOnesCompl < 0i32) {
                     if blockNo != 255i32 - blockNoOnesCompl {
-                      bb_simple_error_msg(
+                      crate::libbb::verror_msg::bb_simple_error_msg(
                         b"bad block ones compl\x00" as *const u8 as *const libc::c_char,
                       );
                     } else {
@@ -200,7 +181,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                                 } else if blockNo as libc::c_uint
                                   != wantBlockNo & 0xffi32 as libc::c_uint
                                 {
-                                  bb_error_msg(
+                                  crate::libbb::verror_msg::bb_error_msg(
                                     b"unexpected block no, 0x%08x, expecting 0x%08x\x00"
                                       as *const u8
                                       as *const libc::c_char,
@@ -238,7 +219,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                                     expected &= 0xffi32 as libc::c_uint
                                   }
                                   if cksum_or_crc as libc::c_uint != expected {
-                                    bb_error_msg(
+                                    crate::libbb::verror_msg::bb_error_msg(
                                       if do_crc != 0 {
                                         b"crc error, expected 0x%04x, got 0x%04x\x00" as *const u8
                                           as *const libc::c_char
@@ -262,7 +243,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                                   _ => {
                                     errors = 0i32 as libc::c_uint;
                                     reply_char = 0x6i32 as libc::c_char;
-                                    full_write(
+                                    crate::libbb::full_write::full_write(
                                       1i32,
                                       &mut reply_char as *mut libc::c_char as *const libc::c_void,
                                       1i32 as size_t,
@@ -287,7 +268,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
             match current_block {
               3021757436737313741 => {
                 reply_char = 0x6i32 as libc::c_char;
-                full_write(
+                crate::libbb::full_write::full_write(
                   1i32,
                   &mut reply_char as *mut libc::c_char as *const libc::c_void,
                   1i32 as size_t,
@@ -300,7 +281,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                   blockNoOnesCompl = read_byte(1i32 as libc::c_uint);
                   if !(blockNoOnesCompl < 0i32) {
                     if blockNo != 255i32 - blockNoOnesCompl {
-                      bb_simple_error_msg(
+                      crate::libbb::verror_msg::bb_simple_error_msg(
                         b"bad block ones compl\x00" as *const u8 as *const libc::c_char,
                       );
                     } else {
@@ -350,7 +331,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                                 } else if blockNo as libc::c_uint
                                   != wantBlockNo & 0xffi32 as libc::c_uint
                                 {
-                                  bb_error_msg(
+                                  crate::libbb::verror_msg::bb_error_msg(
                                     b"unexpected block no, 0x%08x, expecting 0x%08x\x00"
                                       as *const u8
                                       as *const libc::c_char,
@@ -388,7 +369,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                                     expected &= 0xffi32 as libc::c_uint
                                   }
                                   if cksum_or_crc as libc::c_uint != expected {
-                                    bb_error_msg(
+                                    crate::libbb::verror_msg::bb_error_msg(
                                       if do_crc != 0 {
                                         b"crc error, expected 0x%04x, got 0x%04x\x00" as *const u8
                                           as *const libc::c_char
@@ -412,7 +393,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                                   _ => {
                                     errors = 0i32 as libc::c_uint;
                                     reply_char = 0x6i32 as libc::c_char;
-                                    full_write(
+                                    crate::libbb::full_write::full_write(
                                       1i32,
                                       &mut reply_char as *mut libc::c_char as *const libc::c_void,
                                       1i32 as size_t,
@@ -442,7 +423,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
       match current_block {
         2830166982076203563 => {
           /* 5 CAN followed by 5 BS. Don't try too hard... */
-          safe_write(
+          crate::libbb::safe_write::safe_write(
             1i32,
             b"\x18\x18\x18\x18\x18\x08\x08\x08\x08\x08\x00" as *const u8 as *const libc::c_char
               as *const libc::c_void,
@@ -462,7 +443,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
               do_crc = 0i32;
               current_block = 17524159567010234572;
             } else {
-              bb_simple_error_msg(
+              crate::libbb::verror_msg::bb_simple_error_msg(
                 b"too many errors; giving up\x00" as *const u8 as *const libc::c_char,
               );
               current_block = 2830166982076203563;
@@ -470,7 +451,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
           } else {
             /* Flush pending input */
             tcflush(0i32, 0i32);
-            full_write(
+            crate::libbb::full_write::full_write(
               1i32,
               &mut reply_char as *mut libc::c_char as *const libc::c_void,
               1i32 as size_t,
@@ -516,7 +497,10 @@ pub unsafe extern "C" fn rx_main(
    * why we can't receive from stdin? Why we *require*
    * controlling tty?? */
   /*read_fd = xopen(CURRENT_TTY, O_RDWR);*/
-  file_fd = xopen(single_argv(argv), 0o2i32 | 0o100i32 | 0o1000i32);
+  file_fd = crate::libbb::xfuncs_printf::xopen(
+    crate::libbb::single_argv::single_argv(argv),
+    0o2i32 | 0o100i32 | 0o1000i32,
+  );
   termios_err = tcgetattr(0i32, &mut tty);
   if termios_err == 0i32 {
     //TODO: use set_termios_to_raw()
@@ -525,7 +509,7 @@ pub unsafe extern "C" fn rx_main(
     tcsetattr(0i32, 2i32, &mut tty);
   }
   /* No SA_RESTART: we want ALRM to interrupt read() */
-  signal_no_SA_RESTART_empty_mask(
+  crate::libbb::signals::signal_no_SA_RESTART_empty_mask(
     14i32,
     Some(sigalrm_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
@@ -533,5 +517,5 @@ pub unsafe extern "C" fn rx_main(
   if termios_err == 0i32 {
     tcsetattr(0i32, 2i32, &mut orig_tty);
   }
-  fflush_stdout_and_exit((n >= 0i32) as libc::c_int);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit((n >= 0i32) as libc::c_int);
 }

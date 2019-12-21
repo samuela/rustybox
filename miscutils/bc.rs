@@ -56,69 +56,10 @@ extern "C" {
   static bb_hexdigits_upcase: [libc::c_char; 0];
 
   #[no_mangle]
-  fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
+  static mut bb_got_signal: smallint;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn signal_SA_RESTART_empty_mask(
-    sig: libc::c_int,
-    handler: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
-  );
-  #[no_mangle]
-  static mut bb_got_signal: smallint;
-  #[no_mangle]
-  fn record_signo(signo: libc::c_int);
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_verror_msg(s: *const libc::c_char, p: ::std::ffi::VaList, strerr: *const libc::c_char);
-  #[no_mangle]
-  fn new_line_input_t(flags: libc::c_int) -> *mut line_input_t;
-  #[no_mangle]
-  fn read_line_input(
-    st: *mut line_input_t,
-    prompt: *const libc::c_char,
-    command: *mut libc::c_char,
-    maxsize: libc::c_int,
-  ) -> libc::c_int;
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
@@ -128,8 +69,9 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 pub type __builtin_va_list = [__va_list_tag; 1];
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __va_list_tag {
   pub gp_offset: libc::c_uint,
   pub fp_offset: libc::c_uint,
@@ -152,19 +94,8 @@ use crate::librb::smallint;
 use libc::ssize_t;
 use libc::FILE;
 pub type va_list = __builtin_va_list;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct line_input_t {
-  pub flags: libc::c_int,
-  pub timeout: libc::c_int,
-  pub path_lookup: *const libc::c_char,
-  pub cnt_history: libc::c_int,
-  pub cur_history: libc::c_int,
-  pub max_history: libc::c_int,
-  pub cnt_history_in_file: libc::c_uint,
-  pub hist_file: *const libc::c_char,
-  pub history: [*mut libc::c_char; 256],
-}
+
+use crate::librb::line_input_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const FOR_SHELL: C2RustUnnamed = 7;
 pub const WITH_PATH_LOOKUP: C2RustUnnamed = 16;
@@ -172,8 +103,9 @@ pub const VI_MODE: C2RustUnnamed = 0;
 pub const USERNAME_COMPLETION: C2RustUnnamed = 4;
 pub const TAB_COMPLETION: C2RustUnnamed = 2;
 pub const DO_HISTORY: C2RustUnnamed = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub prs: BcParse,
   pub err_line: size_t,
@@ -184,8 +116,9 @@ pub struct globals {
   pub env_args: *mut libc::c_char,
   pub line_input_state: *mut line_input_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct BcVec {
   pub v: *mut libc::c_char,
   pub len: size_t,
@@ -194,8 +127,9 @@ pub struct BcVec {
   pub dtor: BcVecFree,
 }
 pub type BcVecFree = Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct BcProgram {
   pub len: size_t,
   pub nchars: size_t,
@@ -216,8 +150,9 @@ pub struct BcProgram {
   pub one: BcNum,
   pub last: BcNum,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct BcNum {
   pub num: *mut BcDig,
   pub rdx: size_t,
@@ -226,8 +161,9 @@ pub struct BcNum {
   pub neg: bool,
 }
 pub type BcDig = libc::c_schar;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct BcParse {
   pub lex: smallint,
   pub lex_last: smallint,
@@ -244,8 +180,9 @@ pub struct BcParse {
   pub conds: BcVec,
   pub ops: BcVec,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct BcFunc {
   pub code: BcVec,
   pub labels: BcVec,
@@ -329,8 +266,9 @@ pub const BC_INST_DEC_POST: BcInst = 3;
 pub const BC_INST_INC_POST: BcInst = 2;
 pub const BC_INST_DEC_PRE: BcInst = 1;
 pub const BC_INST_INC_PRE: BcInst = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct BcId {
   pub name: *mut libc::c_char,
   pub idx: size_t,
@@ -348,21 +286,24 @@ pub const XC_RESULT_ARRAY_ELEM: BcResultType = 3;
 pub const XC_RESULT_VAR: BcResultType = 2;
 pub const BC_RESULT_VOID: BcResultType = 1;
 pub const XC_RESULT_TEMP: BcResultType = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union BcResultData {
   pub n: BcNum,
   pub v: BcVec,
   pub id: BcId,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct BcResult {
   pub t: BcResultType,
   pub d: BcResultData,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct BcInstPtr {
   pub func: size_t,
   pub inst_idx: size_t,
@@ -471,8 +412,9 @@ pub const XC_LEX_WHITESPACE: BcLexType = 3;
 pub const XC_LEX_NLINE: BcLexType = 2;
 pub const XC_LEX_INVALID: BcLexType = 1;
 pub const XC_LEX_EOF: BcLexType = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct BcLexKeyword {
   pub name8: [libc::c_char; 8],
 }
@@ -805,14 +747,18 @@ static mut dc_LEX_to_INST: [i8; 42] = [
 // Utility routines
 //
 unsafe extern "C" fn fflush_and_check() {
-  fflush_all(); // for compiler
+  crate::libbb::xfuncs_printf::fflush_all(); // for compiler
   if ferror_unlocked(stdout) != 0 || ferror_unlocked(stderr) != 0 {
-    bb_simple_perror_msg_and_die(b"output error\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"output error\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 unsafe extern "C" fn quit() -> ! {
   if ferror_unlocked(stdin) != 0 {
-    bb_simple_perror_msg_and_die(b"input error\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"input error\x00" as *const u8 as *const libc::c_char,
+    );
   }
   fflush_and_check();
   exit(0i32);
@@ -822,14 +768,14 @@ unsafe extern "C" fn bc_verror_msg(mut fmt: *const libc::c_char, mut p: ::std::f
   sv = sv;
   if !(*ptr_to_globals).prs.lex_filename.is_null() {
     sv = applet_name;
-    applet_name = xasprintf(
+    applet_name = crate::libbb::xfuncs_printf::xasprintf(
       b"%s: %s:%lu\x00" as *const u8 as *const libc::c_char,
       applet_name,
       (*ptr_to_globals).prs.lex_filename,
       (*ptr_to_globals).err_line,
     )
   }
-  bb_verror_msg(fmt, p.as_va_list(), 0 as *const libc::c_char);
+  crate::libbb::verror_msg::bb_verror_msg(fmt, p.as_va_list(), 0 as *const libc::c_char);
   if !(*ptr_to_globals).prs.lex_filename.is_null() {
     free(applet_name as *mut libc::c_char as *mut libc::c_void);
     applet_name = sv
@@ -950,7 +896,9 @@ unsafe extern "C" fn bc_vec_grow(mut v: *mut BcVec, mut n: size_t) {
   while cap < (*v).len.wrapping_add(n) {
     cap = (cap as libc::c_ulong).wrapping_mul(2i32 as libc::c_ulong) as size_t as size_t
   }
-  (*v).v = xrealloc((*v).v as *mut libc::c_void, (*v).size.wrapping_mul(cap)) as *mut libc::c_char;
+  (*v).v =
+    crate::libbb::xfuncs_printf::xrealloc((*v).v as *mut libc::c_void, (*v).size.wrapping_mul(cap))
+      as *mut libc::c_char;
   (*v).cap = cap;
 }
 unsafe extern "C" fn bc_vec_init(mut v: *mut BcVec, mut esize: size_t, mut dtor: BcVecFree) {
@@ -969,8 +917,10 @@ unsafe extern "C" fn bc_char_vec_init(mut v: *mut BcVec) {
 }
 unsafe extern "C" fn bc_vec_expand(mut v: *mut BcVec, mut req: size_t) {
   if (*v).cap < req {
-    (*v).v =
-      xrealloc((*v).v as *mut libc::c_void, (*v).size.wrapping_mul(req)) as *mut libc::c_char;
+    (*v).v = crate::libbb::xfuncs_printf::xrealloc(
+      (*v).v as *mut libc::c_void,
+      (*v).size.wrapping_mul(req),
+    ) as *mut libc::c_char;
     (*v).cap = req
   };
 }
@@ -1221,7 +1171,8 @@ unsafe extern "C" fn bc_num_expand(mut n: *mut BcNum, mut req: size_t) {
     16i32 as libc::c_ulong
   };
   if req > (*n).cap {
-    (*n).num = xrealloc((*n).num as *mut libc::c_void, req) as *mut BcDig;
+    (*n).num =
+      crate::libbb::xfuncs_printf::xrealloc((*n).num as *mut libc::c_void, req) as *mut BcDig;
     (*n).cap = req
   };
 }
@@ -2978,7 +2929,7 @@ unsafe extern "C" fn dc_result_copy(mut d: *mut BcResult, mut src: *mut BcResult
       bc_num_init(&mut (*d).d.n, (*src).d.n.len);
       bc_num_copy(&mut (*d).d.n, &mut (*src).d.n);
     }
-    2 | 4 | 3 => (*d).d.id.name = xstrdup((*src).d.id.name),
+    2 | 4 | 3 => (*d).d.id.name = crate::libbb::xfuncs_printf::xstrdup((*src).d.id.name),
     10 | 5 => {
       memcpy(
         &mut (*d).d.n as *mut BcNum as *mut libc::c_void,
@@ -3048,7 +2999,7 @@ unsafe extern "C" fn xc_read_line(mut vec: *mut BcVec, mut fp: *mut FILE) {
             // (e.g. contain a "halt" stmt).
             // ^C dropping user into a bc prompt instead of
             // the shell would be unexpected.
-            xfunc_die();
+            crate::libbb::xfunc_die::xfunc_die();
           }
           // ^C while interactive input
           bb_got_signal = 0i32 as smallint;
@@ -3064,7 +3015,7 @@ unsafe extern "C" fn xc_read_line(mut vec: *mut BcVec, mut fp: *mut FILE) {
           if (*ptr_to_globals).ttyin as libc::c_int != 0 && fp == stdin {
             n = 0;
             i = 0;
-            n = read_line_input(
+            n = crate::libbb::lineedit::read_line_input(
               (*ptr_to_globals).line_input_state,
               b"\x00" as *const u8 as *const libc::c_char,
               bb_common_bufsiz1.as_mut_ptr(),
@@ -3119,7 +3070,7 @@ unsafe extern "C" fn xc_read_line(mut vec: *mut BcVec, mut fp: *mut FILE) {
             }
             if c_0 == -1i32 {
               if ferror_unlocked(fp) != 0 {
-                bb_simple_perror_msg_and_die(
+                crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                   b"input error\x00" as *const u8 as *const libc::c_char,
                 );
               }
@@ -3143,7 +3094,7 @@ unsafe extern "C" fn xc_read_line(mut vec: *mut BcVec, mut fp: *mut FILE) {
       if (*ptr_to_globals).prs.lex_filename.is_null() {
         continue;
       }
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"file \'%s\' is not text\x00" as *const u8 as *const libc::c_char,
         (*ptr_to_globals).prs.lex_filename,
       );
@@ -4216,7 +4167,7 @@ unsafe extern "C" fn bc_parse_pushJUMP_ZERO(mut idx: size_t) {
 }
 unsafe extern "C" fn zbc_parse_pushSTR() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
-  let mut str: *mut libc::c_char = xstrdup((*p).lex_strnumbuf.v);
+  let mut str: *mut libc::c_char = crate::libbb::xfuncs_printf::xstrdup((*p).lex_strnumbuf.v);
   xc_parse_pushInst_and_Index(
     XC_INST_STR as libc::c_int as libc::c_uint,
     (*(*p).func).strs.len,
@@ -4229,7 +4180,7 @@ unsafe extern "C" fn zbc_parse_pushSTR() -> BcStatus {
 }
 unsafe extern "C" fn xc_parse_pushNUM() {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
-  let mut num: *mut libc::c_char = xstrdup((*p).lex_strnumbuf.v);
+  let mut num: *mut libc::c_char = crate::libbb::xfuncs_printf::xstrdup((*p).lex_strnumbuf.v);
   let mut idx: size_t = bc_vec_push(
     if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(0) as libc::c_int == 'b' as i32) {
       &mut (*(*p).func).consts
@@ -4566,7 +4517,7 @@ unsafe extern "C" fn zbc_parse_name(mut type_0: *mut BcInst, mut flags: u8) -> B
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  name = xstrdup((*p).lex_strnumbuf.v);
+  name = crate::libbb::xfuncs_printf::xstrdup((*p).lex_strnumbuf.v);
   s = zxc_lex_next();
   if !(s as u64 != 0) {
     if (*p).lex as libc::c_int == BC_LEX_LBRACKET as libc::c_int {
@@ -5190,7 +5141,7 @@ unsafe extern "C" fn zbc_parse_funcdef() -> BcStatus {
   if (*p).lex as libc::c_int != BC_LEX_LPAREN as libc::c_int {
     return bc_error_bad_function_definition() as BcStatus;
   }
-  (*p).fidx = bc_program_addFunc(xstrdup((*p).lex_strnumbuf.v));
+  (*p).fidx = bc_program_addFunc(crate::libbb::xfuncs_printf::xstrdup((*p).lex_strnumbuf.v));
   (*p).func = xc_program_func((*p).fidx);
   (*(*p).func).voidfunc = voidfunc;
   s = zxc_lex_next();
@@ -5219,7 +5170,7 @@ unsafe extern "C" fn zbc_parse_funcdef() -> BcStatus {
       return bc_error_bad_function_definition() as BcStatus;
     }
     (*(*p).func).nparams = (*(*p).func).nparams.wrapping_add(1);
-    name = xstrdup((*p).lex_strnumbuf.v);
+    name = crate::libbb::xfuncs_printf::xstrdup((*p).lex_strnumbuf.v);
     s = zxc_lex_next();
     if s as u64 != 0 {
       current_block = 479107131381816815;
@@ -5326,7 +5277,7 @@ unsafe extern "C" fn zbc_parse_auto() -> BcStatus {
       return bc_error_at(b"bad \'auto\' syntax\x00" as *const u8 as *const libc::c_char)
         as BcStatus;
     }
-    name = xstrdup((*p).lex_strnumbuf.v);
+    name = crate::libbb::xfuncs_printf::xstrdup((*p).lex_strnumbuf.v);
     s = zxc_lex_next();
     if s as u64 != 0 {
       current_block = 3153325098279936700;
@@ -5774,7 +5725,7 @@ unsafe extern "C" fn dc_parse_string() {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len: size_t = (*ptr_to_globals).prog.strs.len;
-  str = xstrdup((*p).lex_strnumbuf.v);
+  str = crate::libbb::xfuncs_printf::xstrdup((*p).lex_strnumbuf.v);
   xc_parse_pushInst_and_Index(XC_INST_STR as libc::c_int as libc::c_uint, len);
   bc_vec_push(
     &mut (*ptr_to_globals).prog.strs,
@@ -5976,7 +5927,7 @@ unsafe extern "C" fn xc_program_name(
   code = code.offset(*bgn as isize);
   *bgn = (*bgn as libc::c_ulong).wrapping_add(strlen(code).wrapping_add(1i32 as libc::c_ulong))
     as size_t as size_t;
-  return xstrdup(code);
+  return crate::libbb::xfuncs_printf::xstrdup(code);
 }
 unsafe extern "C" fn xc_program_dereference(mut vec: *mut BcVec) -> *mut BcVec {
   let mut v: *mut BcVec = 0 as *mut BcVec;
@@ -6031,7 +5982,7 @@ unsafe extern "C" fn xc_program_search(
   }
   ptr = bc_vec_item(map, i) as *mut BcId;
   if new != 0 {
-    (*ptr).name = xstrdup(e.name)
+    (*ptr).name = crate::libbb::xfuncs_printf::xstrdup(e.name)
   }
   return bc_vec_item(v, (*ptr).idx) as *mut BcVec;
 }
@@ -6086,7 +6037,7 @@ unsafe extern "C" fn zxc_program_num(mut r: *mut BcResult, mut num: *mut *mut Bc
     11 => *num = &mut (*ptr_to_globals).prog.one,
     _ => {
       // Testing the theory that dc does not reach LAST/ONE
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"BUG:%d\x00" as *const u8 as *const libc::c_char,
         (*r).t as libc::c_uint,
       );
@@ -6307,7 +6258,7 @@ unsafe extern "C" fn xc_program_printString(mut str: *const libc::c_char) {
   {
     // Example: echo '[]ap' | dc
     // should print two bytes: 0x00, 0x0A
-    bb_putchar('\u{0}' as i32); // note: if c is NUL, n = \0 at end of esc
+    crate::libbb::xfuncs_printf::bb_putchar('\u{0}' as i32); // note: if c is NUL, n = \0 at end of esc
     return;
   }
   while *str != 0 {
@@ -6323,7 +6274,7 @@ unsafe extern "C" fn xc_program_printString(mut str: *const libc::c_char) {
       n = strchr(esc.as_ptr(), c as libc::c_int);
       if n.is_null() || c == 0 {
         // Just print the backslash and following character
-        bb_putchar('\\' as i32);
+        crate::libbb::xfuncs_printf::bb_putchar('\\' as i32);
         (*ptr_to_globals).prog.nchars = (*ptr_to_globals).prog.nchars.wrapping_add(1);
         // But if we're at the end of the string, stop
         if c == 0 {
@@ -6351,13 +6302,13 @@ unsafe extern "C" fn bc_num_printNewline() {
       .len
       .wrapping_sub(1i32 as libc::c_ulong)
   {
-    bb_putchar('\\' as i32);
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\\' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     (*ptr_to_globals).prog.nchars = 0i32 as size_t
   };
 }
 unsafe extern "C" fn dc_num_printChar(mut num: size_t, mut width: size_t, mut _radix: bool) {
-  bb_putchar(num as libc::c_char as libc::c_int);
+  crate::libbb::xfuncs_printf::bb_putchar(num as libc::c_char as libc::c_int);
   (*ptr_to_globals).prog.nchars =
     ((*ptr_to_globals).prog.nchars as libc::c_ulong).wrapping_add(width) as size_t as size_t;
 }
@@ -6365,7 +6316,7 @@ unsafe extern "C" fn bc_num_printDigits(mut num: size_t, mut width: size_t, mut 
   let mut exp: size_t = 0;
   let mut pow: size_t = 0;
   bc_num_printNewline();
-  bb_putchar(if radix as libc::c_int != 0 {
+  crate::libbb::xfuncs_printf::bb_putchar(if radix as libc::c_int != 0 {
     '.' as i32
   } else {
     ' ' as i32
@@ -6384,7 +6335,7 @@ unsafe extern "C" fn bc_num_printDigits(mut num: size_t, mut width: size_t, mut 
     bc_num_printNewline();
     dig = num.wrapping_div(pow);
     num = (num as libc::c_ulong).wrapping_sub(dig.wrapping_mul(pow)) as size_t as size_t;
-    bb_putchar(dig as libc::c_char as libc::c_int + '0' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar(dig as libc::c_char as libc::c_int + '0' as i32);
     pow = (pow as libc::c_ulong).wrapping_div(10i32 as libc::c_ulong) as size_t as size_t;
     (*ptr_to_globals).prog.nchars = (*ptr_to_globals).prog.nchars.wrapping_add(1);
     exp = exp.wrapping_add(1)
@@ -6393,11 +6344,13 @@ unsafe extern "C" fn bc_num_printDigits(mut num: size_t, mut width: size_t, mut 
 unsafe extern "C" fn bc_num_printHex(mut num: size_t, mut width: size_t, mut radix: bool) {
   if radix {
     bc_num_printNewline();
-    bb_putchar('.' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('.' as i32);
     (*ptr_to_globals).prog.nchars = (*ptr_to_globals).prog.nchars.wrapping_add(1)
   }
   bc_num_printNewline();
-  bb_putchar(*bb_hexdigits_upcase.as_ptr().offset(num as isize) as libc::c_int);
+  crate::libbb::xfuncs_printf::bb_putchar(
+    *bb_hexdigits_upcase.as_ptr().offset(num as isize) as libc::c_int
+  );
   (*ptr_to_globals).prog.nchars =
     ((*ptr_to_globals).prog.nchars as libc::c_ulong).wrapping_add(width) as size_t as size_t;
 }
@@ -6405,7 +6358,7 @@ unsafe extern "C" fn bc_num_printDecimal(mut n: *mut BcNum) {
   let mut i: size_t = 0;
   let mut rdx: size_t = (*n).rdx.wrapping_sub(1i32 as libc::c_ulong);
   if (*n).neg {
-    bb_putchar('-' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('-' as i32);
     (*ptr_to_globals).prog.nchars = (*ptr_to_globals).prog.nchars.wrapping_add(1)
   }
   i = (*n).len.wrapping_sub(1i32 as libc::c_ulong);
@@ -6580,7 +6533,7 @@ unsafe extern "C" fn zxc_num_printBase(mut n: *mut BcNum) -> BcStatus {
   let mut print: BcNumDigitOp = None;
   let mut neg: bool = (*n).neg;
   if neg {
-    bb_putchar('-' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('-' as i32);
     (*ptr_to_globals).prog.nchars = (*ptr_to_globals).prog.nchars.wrapping_add(1)
   }
   (*n).neg = 0i32 != 0;
@@ -6610,7 +6563,7 @@ unsafe extern "C" fn zxc_num_print(mut n: *mut BcNum, mut newline: bool) -> BcSt
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   bc_num_printNewline();
   if (*n).len == 0i32 as libc::c_ulong {
-    bb_putchar('0' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('0' as i32);
     (*ptr_to_globals).prog.nchars = (*ptr_to_globals).prog.nchars.wrapping_add(1)
   } else if (*ptr_to_globals).prog.ob_t == 10i32 as libc::c_ulong {
     bc_num_printDecimal(n);
@@ -6618,7 +6571,7 @@ unsafe extern "C" fn zxc_num_print(mut n: *mut BcNum, mut newline: bool) -> BcSt
     s = zxc_num_printBase(n)
   }
   if newline {
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     (*ptr_to_globals).prog.nchars = 0i32 as size_t
   }
   return s;
@@ -6671,7 +6624,7 @@ unsafe extern "C" fn xc_program_print(mut inst: libc::c_char, mut idx: size_t) -
     } else {
       xc_program_printString(str);
       if inst as libc::c_int == XC_INST_PRINT as libc::c_int {
-        bb_putchar('\n' as i32);
+        crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
       }
     }
   }
@@ -7636,7 +7589,7 @@ unsafe extern "C" fn zdc_program_asciify() -> BcStatus {
   }
   match current_block {
     2891135413264362348 => {
-      str = xzalloc(2i32 as size_t) as *mut libc::c_char;
+      str = crate::libbb::xfuncs_printf::xzalloc(2i32 as size_t) as *mut libc::c_char;
       *str.offset(0) = c;
       //str[1] = '\0'; - already is
       idx = bc_vec_push(
@@ -8226,7 +8179,8 @@ unsafe extern "C" fn xc_vm_envLen(mut var: *const libc::c_char) -> libc::c_uint 
   if lenv.is_null() {
     return len;
   }
-  len = bb_strtou(lenv, 0 as *mut *mut libc::c_char, 10i32).wrapping_sub(1i32 as libc::c_uint);
+  len = crate::libbb::bb_strtonum::bb_strtou(lenv, 0 as *mut *mut libc::c_char, 10i32)
+    .wrapping_sub(1i32 as libc::c_uint);
   if *bb_errno != 0 || len < 2i32 as libc::c_uint || len >= 2147483647i32 as libc::c_uint {
     len = 69i32 as libc::c_uint
   }
@@ -8274,12 +8228,14 @@ unsafe extern "C" fn zxc_vm_process(mut text: *const libc::c_char) -> BcStatus {
               // Check that next token is a correct stmt delimiter -
               // disallows "print 1 print 2" and such.
               // should have only main's IP
-              bb_simple_error_msg_and_die(
+              crate::libbb::verror_msg::bb_simple_error_msg_and_die(
                 b"BUG:call stack\x00" as *const u8 as *const libc::c_char,
               );
             }
             if (*ip).func != 0i32 as libc::c_ulong {
-              bb_simple_error_msg_and_die(b"BUG:not MAIN\x00" as *const u8 as *const libc::c_char);
+              crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+                b"BUG:not MAIN\x00" as *const u8 as *const libc::c_char,
+              );
             }
             f = (*ptr_to_globals).prog.fns.v as *mut BcFunc;
             // bc discards strings, constants and code after each
@@ -8295,7 +8251,7 @@ unsafe extern "C" fn zxc_vm_process(mut text: *const libc::c_char) -> BcStatus {
             if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(0) as libc::c_int == 'b' as i32) {
               if (*ptr_to_globals).prog.results.len != 0i32 as libc::c_ulong {
                 // should be empty
-                bb_simple_error_msg_and_die(
+                crate::libbb::verror_msg::bb_simple_error_msg_and_die(
                   b"BUG:data stack\x00" as *const u8 as *const libc::c_char,
                 );
               }
@@ -8373,7 +8329,7 @@ unsafe extern "C" fn zxc_vm_execute_FILE(
 unsafe extern "C" fn zxc_vm_file(mut file: *const libc::c_char) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut fp: *mut FILE = 0 as *mut FILE;
-  fp = xfopen_for_read(file);
+  fp = crate::libbb::wfopen::xfopen_for_read(file);
   s = zxc_vm_execute_FILE(fp, file);
   fclose(fp);
   return s;
@@ -8387,7 +8343,7 @@ unsafe extern "C" fn bc_args(mut argv: *mut *mut libc::c_char) {
   let mut i: libc::c_int = 0;
   optind = 0i32;
   option_mask32 |=
-        getopt32long(argv, b"wvsqli\x00" as *const u8 as *const libc::c_char,
+        crate::libbb::getopt32::getopt32long(argv, b"wvsqli\x00" as *const u8 as *const libc::c_char,
                      b"warn\x00\x00wversion\x00\x00vstandard\x00\x00squiet\x00\x00qmathlib\x00\x00linteractive\x00\x00i\x00"
                          as *const u8 as *const libc::c_char);
   opts = option_mask32;
@@ -8421,7 +8377,7 @@ unsafe extern "C" fn bc_vm_envArgs() {
   if env_args.is_null() {
     return;
   }
-  (*ptr_to_globals).env_args = xstrdup(env_args);
+  (*ptr_to_globals).env_args = crate::libbb::xfuncs_printf::xstrdup(env_args);
   buf = (*ptr_to_globals).env_args;
   bc_vec_init(
     &mut v,
@@ -8437,7 +8393,7 @@ unsafe extern "C" fn bc_vm_envArgs() {
       &mut v,
       &mut buf as *mut *mut libc::c_char as *const libc::c_void,
     );
-    buf = skip_non_whitespace(buf);
+    buf = crate::libbb::skip_whitespace::skip_non_whitespace(buf);
     if *buf == 0 {
       break;
     }
@@ -8606,9 +8562,13 @@ unsafe extern "C" fn xc_program_init() {
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(0) as libc::c_int == 'b' as i32) {
     // Names are chosen simply to be distinct and never match
     // a valid function name (and be short)
-    bc_program_addFunc(xstrdup(b"\x00" as *const u8 as *const libc::c_char));
-    bc_program_addFunc(xstrdup(b"1\x00" as *const u8 as *const libc::c_char)); // func #0: main
-                                                                               // func #1: for read()
+    bc_program_addFunc(crate::libbb::xfuncs_printf::xstrdup(
+      b"\x00" as *const u8 as *const libc::c_char,
+    ));
+    bc_program_addFunc(crate::libbb::xfuncs_printf::xstrdup(
+      b"1\x00" as *const u8 as *const libc::c_char,
+    )); // func #0: main
+        // func #1: for read()
   } else {
     // in dc, functions have no names
     xc_program_add_fn();
@@ -8662,7 +8622,8 @@ unsafe extern "C" fn xc_program_init() {
 }
 unsafe extern "C" fn xc_vm_init(mut env_len: *const libc::c_char) -> libc::c_int {
   (*ptr_to_globals).prog.len = xc_vm_envLen(env_len) as size_t;
-  (*ptr_to_globals).line_input_state = new_line_input_t(DO_HISTORY as libc::c_int);
+  (*ptr_to_globals).line_input_state =
+    crate::libbb::lineedit::new_line_input_t(DO_HISTORY as libc::c_int);
   bc_vec_init(
     &mut (*ptr_to_globals).files,
     ::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong,
@@ -8678,9 +8639,9 @@ unsafe extern "C" fn xc_vm_init(mut env_len: *const libc::c_char) -> libc::c_int
   if isatty(0i32) != 0 {
     (*ptr_to_globals).ttyin = 1i32 as smallint;
     // "tty"
-    signal_SA_RESTART_empty_mask(
+    crate::libbb::signals::signal_SA_RESTART_empty_mask(
       2i32,
-      Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+      Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
     );
     return 1i32;
   }
@@ -8717,7 +8678,8 @@ pub unsafe extern "C" fn bc_main(
   let ref mut fresh21 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
-  *fresh21 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh21 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   is_tty = xc_vm_init(b"BC_LINE_LENGTH\x00" as *const u8 as *const libc::c_char);
   bc_args(argv);
@@ -8735,7 +8697,8 @@ pub unsafe extern "C" fn dc_main(
   let ref mut fresh22 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
-  *fresh22 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh22 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   // TODO: dc (GNU bc 1.07.1) 1.4.1 seems to use width
   // 1 char wider than bc from the same package.
@@ -8772,7 +8735,7 @@ pub unsafe extern "C" fn dc_main(
       }
       120 => option_mask32 |= ((1i32 << 6i32) * 1i32) as libc::c_uint,
       _ => {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
     }
   }

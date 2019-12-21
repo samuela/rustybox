@@ -38,47 +38,14 @@ extern "C" {
   ) -> libc::c_int;
 
   #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-
-  #[no_mangle]
-  fn bb_putchar_stderr(ch: libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn die_if_ferror_stdout();
-
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-
-  #[no_mangle]
-  fn fopen_or_warn(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn bb_cat(argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn get_terminal_width_height(
-    fd: libc::c_int,
-    width: *mut libc::c_uint,
-    height: *mut libc::c_uint,
-  ) -> libc::c_int;
-
-  #[no_mangle]
-  fn set_termios_to_raw(fd: libc::c_int, oldterm: *mut termios, flags: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub tty_fileno: libc::c_int,
   pub terminal_width: libc::c_uint,
@@ -95,7 +62,7 @@ unsafe extern "C" fn bb_ascii_tolower(mut a: libc::c_uchar) -> libc::c_uchar {
 }
 unsafe extern "C" fn get_wh() {
   /* never returns w, h <= 1 */
-  get_terminal_width_height(
+  crate::libbb::xfuncs::get_terminal_width_height(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tty_fileno,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).terminal_width,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).terminal_height,
@@ -113,7 +80,7 @@ unsafe extern "C" fn tcsetattr_tty_TCSANOW(mut settings: *mut termios) {
 unsafe extern "C" fn gotsig(mut _sig: libc::c_int) {
   /* bb_putchar_stderr doesn't use stdio buffering,
    * therefore it is safe in signal handler */
-  bb_putchar_stderr('\n' as i32 as libc::c_char); /* for compiler */
+  crate::libbb::xfuncs::bb_putchar_stderr('\n' as i32 as libc::c_char); /* for compiler */
   tcsetattr_tty_TCSANOW(&mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).initial_settings);
   _exit(1i32);
 }
@@ -137,25 +104,25 @@ pub unsafe extern "C" fn more_main(
   /* -l	Do not pause after any line containing a ^L (form feed) */
   /* -s	Squeeze blank lines into one */
   /* -u	Suppress underlining */
-  getopt32(argv, b"dflsu\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::getopt32::getopt32(argv, b"dflsu\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   /* Another popular pager, most, detects when stdout
    * is not a tty and turns into cat. This makes sense. */
   if isatty(1i32) == 0 {
-    return bb_cat(argv);
+    return crate::libbb::bb_cat::bb_cat(argv);
   }
-  tty = fopen_for_read(b"/dev/tty\x00" as *const u8 as *const libc::c_char);
+  tty = crate::libbb::wfopen::fopen_for_read(b"/dev/tty\x00" as *const u8 as *const libc::c_char);
   if tty.is_null() {
-    return bb_cat(argv);
+    return crate::libbb::bb_cat::bb_cat(argv);
   }
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tty_fileno = fileno_unlocked(tty);
   /* Turn on unbuffered input; turn off echoing */
-  set_termios_to_raw(
+  crate::libbb::xfuncs::set_termios_to_raw(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tty_fileno,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).initial_settings,
     0i32,
   );
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     BB_FATAL_SIGS as libc::c_int,
     Some(gotsig as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
@@ -166,7 +133,8 @@ pub unsafe extern "C" fn more_main(
     let mut lines: libc::c_int = 0;
     file = stdin;
     if !(*argv).is_null() {
-      file = fopen_or_warn(*argv, b"r\x00" as *const u8 as *const libc::c_char);
+      file =
+        crate::libbb::wfopen::fopen_or_warn(*argv, b"r\x00" as *const u8 as *const libc::c_char);
       if file.is_null() {
         current_block = 12349973810996921269;
       } else {
@@ -220,7 +188,7 @@ pub unsafe extern "C" fn more_main(
                * to get input from the user.
                */
               {
-                fflush_all();
+                crate::libbb::xfuncs_printf::fflush_all();
                 input = getc_unlocked(tty);
                 input = bb_ascii_tolower(input as libc::c_uchar) as libc::c_int;
                 /* Erase the last message */
@@ -290,10 +258,10 @@ pub unsafe extern "C" fn more_main(
           }
           /* My small mind cannot fathom backspaces and UTF-8 */
           putchar_unlocked(c);
-          die_if_ferror_stdout();
+          crate::libbb::xfuncs_printf::die_if_ferror_stdout();
         }
         fclose(file);
-        fflush_all();
+        crate::libbb::xfuncs_printf::fflush_all();
       }
       _ => {}
     }

@@ -1,3 +1,5 @@
+use crate::libbb::parse_config::parser_t;
+use crate::librb::size_t;
 use libc;
 use libc::printf;
 use libc::sscanf;
@@ -11,47 +13,10 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+/* Specialized */
 
-  #[no_mangle]
-  fn xatoull(str: *const libc::c_char) -> libc::c_ulonglong;
-
-  #[no_mangle]
-  fn xatou(str: *const libc::c_char) -> libc::c_uint;
-
-  /* Specialized */
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn config_open(filename: *const libc::c_char) -> *mut parser_t;
-
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 }
 
-use crate::librb::size_t;
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;
 // pub const PARSE_WS_COMMENTS: C2RustUnnamed = 16777216;
@@ -63,24 +28,12 @@ pub const PARSE_NORMAL: C2RustUnnamed = 4653056;
 // pub const PARSE_TRIM: C2RustUnnamed = 131072;
 // pub const PARSE_COLLAPSE: C2RustUnnamed = 65536;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
-
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const FBIOPUT_VSCREENINFO: C2RustUnnamed_0 = 17921;
 pub const FBIOGET_VSCREENINFO: C2RustUnnamed_0 = 17920;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fb_bitfield {
   pub offset: u32,
   pub length: u32,
@@ -88,8 +41,8 @@ pub struct fb_bitfield {
   /* !=0: Most significant bit is right */
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fb_var_screeninfo {
   pub xres: u32,
   pub yres: u32,
@@ -157,8 +110,8 @@ pub const CMD_GEOMETRY: C2RustUnnamed_1 = 3;
 pub const CMD_DB: C2RustUnnamed_1 = 2;
 pub const CMD_FB: C2RustUnnamed_1 = 1;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct cmdoptions_t {
   pub name: [libc::c_char; 9],
   pub param_count: libc::c_uchar,
@@ -191,7 +144,7 @@ fn BUG_xatou32_unimplemented() -> u32 {
 
 #[inline(always)]
 unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
-  return xatoull(str) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull(str) as libc::c_ulong;
 }
 
 #[inline(always)]
@@ -201,7 +154,7 @@ unsafe extern "C" fn xatou32(mut numstr: *const libc::c_char) -> u32 {
     .wrapping_add(1u32)
     == 0xffffffffu32
   {
-    return xatou(numstr);
+    return crate::libbb::xatonum::xatou(numstr);
   }
   if (9223372036854775807i64 as libc::c_ulong)
     .wrapping_mul(2u64)
@@ -578,8 +531,8 @@ unsafe extern "C" fn read_mode_db(
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut parser: *mut parser_t = config_open(fn_0);
-  while config_read(
+  let mut parser: *mut parser_t = crate::libbb::parse_config::config_open(fn_0);
+  while crate::libbb::parse_config::config_read(
     parser,
     token.as_mut_ptr(),
     (PARSE_NORMAL as libc::c_int | (1i32 & 0xffi32) << 8i32 | 2i32 & 0xffi32) as libc::c_uint,
@@ -616,7 +569,7 @@ unsafe extern "C" fn read_mode_db(
   if token[0].is_null() {
     return 0i32;
   }
-  while config_read(
+  while crate::libbb::parse_config::config_read(
     parser,
     token.as_mut_ptr(),
     (PARSE_NORMAL as libc::c_int | (1i32 & 0xffi32) << 8i32 | 2i32 & 0xffi32) as libc::c_uint,
@@ -631,7 +584,7 @@ unsafe extern "C" fn read_mode_db(
     } /* for compiler */
     p = token[1]; /* set all to -1 */
     i =
-            index_in_strings(b"geometry\x00timings\x00interlaced\x00double\x00vsync\x00hsync\x00csync\x00extsync\x00rgba\x00\x00"
+            crate::libbb::compare_string_array::index_in_strings(b"geometry\x00timings\x00interlaced\x00double\x00vsync\x00hsync\x00csync\x00extsync\x00rgba\x00\x00"
                                  as *const u8 as *const libc::c_char,
                              token[0]);
     match i {
@@ -939,7 +892,7 @@ pub unsafe extern "C" fn fbset_main(
   } {
     if *thisarg.offset(0) as libc::c_int != '-' as i32 {
       if 1i32 == 0 || argc != 1i32 {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
       mode = thisarg;
       options |= OPT_READMODE as libc::c_int as libc::c_uint
@@ -958,7 +911,7 @@ pub unsafe extern "C" fn fbset_main(
           i += 1
         } else {
           if argc <= g_cmdoptions[i as usize].param_count as libc::c_int {
-            bb_show_usage();
+            crate::libbb::appletlib::bb_show_usage();
           }
           match g_cmdoptions[i as usize].code as libc::c_int {
             1 => fbdev = *argv.offset(1),
@@ -1004,15 +957,15 @@ pub unsafe extern "C" fn fbset_main(
       match current_block {
         10886091980245723256 => {}
         _ => {
-          bb_show_usage();
+          crate::libbb::appletlib::bb_show_usage();
         }
       }
     }
     argc -= 1;
     argv = argv.offset(1)
   }
-  fh = xopen(fbdev, 0i32);
-  bb_xioctl(
+  fh = crate::libbb::xfuncs_printf::xopen(fbdev, 0i32);
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fh,
     FBIOGET_VSCREENINFO as libc::c_int as libc::c_uint,
     &mut var_old as *mut fb_var_screeninfo as *mut libc::c_void,
@@ -1020,7 +973,7 @@ pub unsafe extern "C" fn fbset_main(
   );
   if options & OPT_READMODE as libc::c_int as libc::c_uint != 0 {
     if read_mode_db(&mut var_old, modefile, mode) == 0 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"unknown video mode \'%s\'\x00" as *const u8 as *const libc::c_char,
         mode,
       );
@@ -1032,7 +985,7 @@ pub unsafe extern "C" fn fbset_main(
     if options & OPT_ALL as libc::c_int as libc::c_uint != 0 {
       var_old.activate = 64i32 as u32
     }
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       fh,
       FBIOPUT_VSCREENINFO as libc::c_int as libc::c_uint,
       &mut var_old as *mut fb_var_screeninfo as *mut libc::c_void,

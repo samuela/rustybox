@@ -1,60 +1,17 @@
+use crate::libbb::parse_config::parser_t;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
 use libc;
 use libc::chdir;
 use libc::free;
 extern "C" {
-
   #[no_mangle]
   static mut optind: libc::c_int;
 
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn get_console_fd_or_die() -> libc::c_int;
-  #[no_mangle]
-  fn xopen_nonblocking(pathname: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn xmalloc_read(fd: libc::c_int, maxsz_p: *mut size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xmalloc_open_zipped_read_close(
-    fname: *const libc::c_char,
-    maxsz_p: *mut size_t,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrtoull(str: *const libc::c_char, b: libc::c_int) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn config_open(filename: *const libc::c_char) -> *mut parser_t;
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 }
 
-use crate::librb::size_t;
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;
 pub const PARSE_WS_COMMENTS: C2RustUnnamed = 16777216;
@@ -65,38 +22,31 @@ pub const PARSE_MIN_DIE: C2RustUnnamed = 1048576;
 pub const PARSE_GREEDY: C2RustUnnamed = 262144;
 pub const PARSE_TRIM: C2RustUnnamed = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed = 65536;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct unipair {
   pub unicode: libc::c_ushort,
   pub fontpos: libc::c_ushort,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct unimapdesc {
   pub entry_ct: libc::c_ushort,
   pub entries: *mut unipair,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct unimapinit {
   pub advised_hashsize: libc::c_ushort,
   pub advised_hashstep: libc::c_ushort,
   pub advised_hashlevel: libc::c_ushort,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct console_font_op {
   pub op: libc::c_uint,
   pub flags: libc::c_uint,
@@ -171,8 +121,9 @@ pub const PSF1_MODEHASTAB: C2RustUnnamed_0 = 2;
 pub const PSF1_MODE512: C2RustUnnamed_0 = 1;
 pub const PSF1_MAGIC1: C2RustUnnamed_0 = 4;
 pub const PSF1_MAGIC0: C2RustUnnamed_0 = 54;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct psf1_header {
   pub magic: [libc::c_uchar; 2],
   pub mode: libc::c_uchar,
@@ -188,8 +139,9 @@ pub const PSF2_MAGIC3: C2RustUnnamed_1 = 134;
 pub const PSF2_MAGIC2: C2RustUnnamed_1 = 74;
 pub const PSF2_MAGIC1: C2RustUnnamed_1 = 181;
 pub const PSF2_MAGIC0: C2RustUnnamed_1 = 114;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct psf2_header {
   pub magic: [libc::c_uchar; 4],
   pub version: libc::c_uint,
@@ -203,7 +155,7 @@ pub struct psf2_header {
 }
 #[inline(always)]
 unsafe extern "C" fn xstrtoul(mut str: *const libc::c_char, mut b: libc::c_int) -> libc::c_ulong {
-  return xstrtoull(str, b) as libc::c_ulong;
+  return crate::libbb::xatonum::xstrtoull(str, b) as libc::c_ulong;
 }
 /* ENABLE_FEATURE_LOADFONT_PSF2 */
 unsafe extern "C" fn do_loadfont(
@@ -218,14 +170,15 @@ unsafe extern "C" fn do_loadfont(
   let mut charwidth: libc::c_int = 32i32 * ((width + 7i32) / 8i32);
   let mut i: libc::c_int = 0;
   if height < 1i32 || height > 32i32 || width < 1i32 || width > 32i32 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"bad character size %dx%d\x00" as *const u8 as *const libc::c_char,
       height,
       width,
     );
   }
-  buf = xzalloc((charwidth * (if fontsize < 128i32 { 128i32 } else { fontsize })) as size_t)
-    as *mut libc::c_uchar;
+  buf = crate::libbb::xfuncs_printf::xzalloc(
+    (charwidth * (if fontsize < 128i32 { 128i32 } else { fontsize })) as size_t,
+  ) as *mut libc::c_uchar;
   i = 0i32;
   while i < fontsize {
     memcpy(
@@ -250,7 +203,7 @@ unsafe extern "C" fn do_loadfont(
   cfo.height = height as libc::c_uint;
   cfo.charcount = fontsize as libc::c_uint;
   cfo.data = buf;
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     0x4b72i32 as libc::c_uint,
     &mut cfo as *mut console_font_op as *mut libc::c_void,
@@ -328,7 +281,7 @@ unsafe extern "C" fn do_loadtable(
           break;
         }
         if unicode as libc::c_int == PSF2_STARTSEQ as libc::c_int {
-          bb_simple_error_msg_and_die(
+          crate::libbb::verror_msg::bb_simple_error_msg_and_die(
             b"unicode sequences not implemented\x00" as *const u8 as *const libc::c_char,
           );
         } else {
@@ -354,7 +307,7 @@ unsafe extern "C" fn do_loadtable(
                 || (*inbuf as libc::c_int) < 0x80i32
                 || *inbuf as libc::c_int > 0xbfi32
               {
-                bb_simple_error_msg_and_die(
+                crate::libbb::verror_msg::bb_simple_error_msg_and_die(
                   b"illegal UTF-8 character\x00" as *const u8 as *const libc::c_char,
                 );
               }
@@ -369,7 +322,7 @@ unsafe extern "C" fn do_loadtable(
               }
             }
           } else if unicode as libc::c_int >= 0x80i32 {
-            bb_simple_error_msg_and_die(
+            crate::libbb::verror_msg::bb_simple_error_msg_and_die(
               b"illegal UTF-8 character\x00" as *const u8 as *const libc::c_char,
             );
           }
@@ -386,7 +339,7 @@ unsafe extern "C" fn do_loadtable(
   advice.advised_hashsize = 0i32 as libc::c_ushort;
   advice.advised_hashstep = 0i32 as libc::c_ushort;
   advice.advised_hashlevel = 0i32 as libc::c_ushort;
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     0x4b68i32 as libc::c_uint,
     &mut advice as *mut unimapinit as *mut libc::c_void,
@@ -394,7 +347,7 @@ unsafe extern "C" fn do_loadtable(
   );
   ud.entry_ct = ct as libc::c_ushort;
   ud.entries = up;
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     0x4b67i32 as libc::c_uint,
     &mut ud as *mut unimapdesc as *mut libc::c_void,
@@ -414,7 +367,7 @@ unsafe extern "C" fn do_load(mut fd: libc::c_int, mut buffer: *mut libc::c_uchar
       && (*(buffer as *mut psf1_header)).magic[1] as libc::c_int == PSF1_MAGIC1 as libc::c_int)
   {
     if (*(buffer as *mut psf1_header)).mode as libc::c_int > PSF1_MAXMODE as libc::c_int {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"unsupported psf file mode\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -434,7 +387,7 @@ unsafe extern "C" fn do_load(mut fd: libc::c_int, mut buffer: *mut libc::c_uchar
       && (*(buffer as *mut psf2_header)).magic[3] as libc::c_int == PSF2_MAGIC3 as libc::c_int)
   {
     if (*(buffer as *mut psf2_header)).version > PSF2_MAXVERSION as libc::c_int as libc::c_uint {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"unsupported psf file version\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -458,14 +411,16 @@ unsafe extern "C" fn do_load(mut fd: libc::c_int, mut buffer: *mut libc::c_uchar
     height = len.wrapping_div(256i32 as libc::c_ulong) as libc::c_int;
     charsize = height
   } else {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"input file: bad length or unsupported font type\x00" as *const u8 as *const libc::c_char,
     );
   }
   table = font.offset((fontsize * charsize) as isize);
   buffer = buffer.offset(len as isize);
   if table > buffer || has_table == 0 && table != buffer {
-    bb_simple_error_msg_and_die(b"input file: bad length\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"input file: bad length\x00" as *const u8 as *const libc::c_char,
+    );
   }
   do_loadfont(fd, font, height, width, charsize, fontsize);
   if has_table != 0 {
@@ -494,7 +449,7 @@ pub unsafe extern "C" fn loadfont_main(
   let mut len: size_t = 0;
   let mut buffer: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
   // no arguments allowed!
-  getopt32(argv, b"^\x00=0\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::getopt32::getopt32(argv, b"^\x00=0\x00" as *const u8 as *const libc::c_char);
   /*
    * We used to look at the length of the input file
    * with stat(); now that we accept compressed files,
@@ -503,14 +458,18 @@ pub unsafe extern "C" fn loadfont_main(
    * (it has largish Unicode map).
    */
   len = (128i32 * 1024i32) as size_t;
-  buffer = xmalloc_read(0i32, &mut len) as *mut libc::c_uchar;
+  buffer = crate::libbb::read_printf::xmalloc_read(0i32, &mut len) as *mut libc::c_uchar;
   // xmalloc_open_zipped_read_close(filename, &len);
   if buffer.is_null() {
-    bb_simple_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
       b"error reading input font\x00" as *const u8 as *const libc::c_char,
     );
   }
-  do_load(get_console_fd_or_die(), buffer, len);
+  do_load(
+    crate::libbb::get_console::get_console_fd_or_die(),
+    buffer,
+    len,
+  );
   return 0i32;
 }
 /* kbd-1.12:
@@ -581,14 +540,14 @@ pub unsafe extern "C" fn setfont_main(
   let mut buffer: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
   let mut mapfilename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tty_name: *const libc::c_char = b"/dev/tty\x00" as *const u8 as *const libc::c_char;
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^m:C:\x00=1\x00" as *const u8 as *const libc::c_char,
     &mut mapfilename as *mut *mut libc::c_char,
     &mut tty_name as *mut *const libc::c_char,
   );
   argv = argv.offset(optind as isize);
-  fd = xopen_nonblocking(tty_name);
+  fd = crate::libbb::xfuncs_printf::xopen_nonblocking(tty_name);
   if ::std::mem::size_of::<[libc::c_char; 1]>() as libc::c_ulong > 1i32 as libc::c_ulong {
     // if not ""
     if **argv.offset(0) as libc::c_int != '/' as i32 {
@@ -598,9 +557,11 @@ pub unsafe extern "C" fn setfont_main(
   }
   // load font
   len = (128i32 * 1024i32) as size_t;
-  buffer = xmalloc_open_zipped_read_close(*argv, &mut len) as *mut libc::c_uchar;
+  buffer =
+    crate::archival::libarchive::open_transformer::xmalloc_open_zipped_read_close(*argv, &mut len)
+      as *mut libc::c_uchar;
   if buffer.is_null() {
-    bb_simple_perror_msg_and_die(*argv);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(*argv);
   }
   do_load(fd, buffer, len);
   // load the screen map, if any
@@ -616,9 +577,12 @@ pub unsafe extern "C" fn setfont_main(
       }
     }
     // fetch keymap
-    map = xmalloc_open_zipped_read_close(mapfilename, &mut len);
+    map = crate::archival::libarchive::open_transformer::xmalloc_open_zipped_read_close(
+      mapfilename,
+      &mut len,
+    );
     if map.is_null() {
-      bb_simple_perror_msg_and_die(mapfilename);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(mapfilename);
     }
     // file size is 256 or 512 bytes? -> assume binary map
     if len == 256i32 as libc::c_ulong || len == (2i32 * 256i32) as libc::c_ulong {
@@ -644,8 +608,8 @@ pub unsafe extern "C" fn setfont_main(
         *(map as *mut libc::c_ushort).offset(i as isize) = (0xf000i32 + i) as libc::c_ushort;
         i += 1
       }
-      parser = config_open(mapfilename);
-      while config_read(
+      parser = crate::libbb::parse_config::config_open(mapfilename);
+      while crate::libbb::parse_config::config_read(
         parser,
         token.as_mut_ptr(),
         (PARSE_NORMAL as libc::c_int
@@ -659,7 +623,9 @@ pub unsafe extern "C" fn setfont_main(
         let mut a: libc::c_int = ctoi(token[0]);
         let mut b: libc::c_int = ctoi(token[1]);
         if a < 0i32 || a >= 256i32 || b < 0i32 || b > 65535i32 {
-          bb_simple_error_msg_and_die(b"map format\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+            b"map format\x00" as *const u8 as *const libc::c_char,
+          );
         }
         // patch map
         *(map as *mut libc::c_ushort).offset(a as isize) = b as libc::c_ushort;
@@ -679,7 +645,7 @@ pub unsafe extern "C" fn setfont_main(
     }
     // ENABLE_FEATURE_SETFONT_TEXTUAL_MAP
     // do set screen map
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       mode,
       map,

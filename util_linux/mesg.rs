@@ -4,20 +4,6 @@ use libc::isatty;
 use libc::mode_t;
 use libc::puts;
 use libc::stat;
-extern "C" {
-
-  #[no_mangle]
-  fn xfstat(fd: libc::c_int, buf: *mut stat, errmsg: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn bb_perror_nomsg_and_die() -> !;
-}
 
 #[no_mangle]
 pub unsafe extern "C" fn mesg_main(
@@ -34,16 +20,18 @@ pub unsafe extern "C" fn mesg_main(
       (c as libc::c_int != 'y' as i32) && c as libc::c_int != 'n' as i32
     })
   {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* We are a NOFORK applet.
    * (Not that it's very useful, but code is trivially NOFORK-safe).
    * Play nice. Do not leak anything.
    */
   if isatty(0i32) == 0 {
-    bb_simple_error_msg_and_die(b"not a tty\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"not a tty\x00" as *const u8 as *const libc::c_char,
+    );
   }
-  xfstat(
+  crate::libbb::xfuncs_printf::xfstat(
     0i32,
     &mut sb,
     b"stdin\x00" as *const u8 as *const libc::c_char,
@@ -64,7 +52,7 @@ pub unsafe extern "C" fn mesg_main(
     (sb.st_mode) & !(0o200i32 >> 3i32 | 0o200i32 >> 3i32 >> 3i32) as libc::c_uint
   };
   if fchmod(0i32, m) != 0i32 {
-    bb_perror_nomsg_and_die();
+    crate::libbb::perror_nomsg_and_die::bb_perror_nomsg_and_die();
   }
   return 0i32;
 }

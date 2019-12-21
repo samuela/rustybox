@@ -3,9 +3,13 @@ use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::libbb::xfuncs_printf::xmalloc;
 use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
+use crate::librb::fd_pair;
+use crate::librb::len_and_sockaddr;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use crate::librb::socklen_t;
+use crate::librb::spwd;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
@@ -26,6 +30,9 @@ use libc::pid_t;
 use libc::pollfd;
 use libc::putenv;
 use libc::puts;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::sprintf;
 use libc::ssize_t;
 use libc::stat;
@@ -38,7 +45,6 @@ use libc::strstr;
 use libc::time;
 use libc::time_t;
 use libc::tm;
-use libc::uid_t;
 use libc::FILE;
 extern "C" {
   pub type sockaddr_x25;
@@ -155,90 +161,6 @@ extern "C" {
   /* All function names below should be remapped by #defines above
    * in order to not collide with libc names. */
 
-  #[no_mangle]
-  fn bb_internal_getspnam_r(
-    __name: *const libc::c_char,
-    __result_buf: *mut spwd,
-    __buffer: *mut libc::c_char,
-    __buflen: size_t,
-    __result: *mut *mut spwd,
-  ) -> libc::c_int;
-
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn is_directory(name: *const libc::c_char, followLinks: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
-
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xdup2(_: libc::c_int, _: libc::c_int);
-
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-
-  #[no_mangle]
-  fn xrealloc_getcwd_or_warn(cwd: *mut libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-
-  #[no_mangle]
-  fn xsetgid(gid: gid_t);
-
-  #[no_mangle]
-  fn xsetuid(uid: uid_t);
-
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-
-  #[no_mangle]
-  fn xpipe(filedes: *mut libc::c_int);
-
-  #[no_mangle]
-  fn xlisten(s: libc::c_int, backlog: libc::c_int);
-
-  #[no_mangle]
-  fn setsockopt_keepalive(fd: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn create_and_bind_stream_or_die(bindaddr: *const libc::c_char, port: libc::c_int)
-    -> libc::c_int;
-
-  #[no_mangle]
-  fn host2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
-
-  #[no_mangle]
-  fn xmalloc_sockaddr2dotted(sa: *const sockaddr) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-
-  #[no_mangle]
-  fn safe_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
-  fn safe_poll(ufds: *mut pollfd, nfds: nfds_t, timeout_ms: libc::c_int) -> libc::c_int;
   /* Non-aborting kind of convertors: bb_strto[u][l]l */
   /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
    * errno = EINVAL if value was not '\0' terminated, but otherwise ok
@@ -252,67 +174,7 @@ extern "C" {
    */
 
   #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
-
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-
-  #[no_mangle]
-  fn xget_uidgid(_: *mut bb_uidgid_t, _: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
   static mut xfunc_error_retval: u8;
-
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn bb_simplify_abs_path_inplace(path: *mut libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn pw_encrypt(
-    clear: *const libc::c_char,
-    salt: *const libc::c_char,
-    cleanup: libc::c_int,
-  ) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn crypt_make_salt(p: *mut libc::c_char, cnt: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn percent_decode_in_place(str: *mut libc::c_char, strict: libc::c_int) -> *mut libc::c_char;
 
   #[no_mangle]
   fn vfork() -> libc::c_int;
@@ -341,7 +203,6 @@ pub type __socklen_t = libc::c_uint;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-pub type socklen_t = __socklen_t;
 
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -353,14 +214,14 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const SHUT_RDWR: C2RustUnnamed = 2;
 pub const SHUT_WR: C2RustUnnamed = 1;
 pub const SHUT_RD: C2RustUnnamed = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __SOCKADDR_ARG {
   pub __sockaddr__: *mut sockaddr,
   pub __sockaddr_at__: *mut sockaddr_at,
@@ -376,44 +237,20 @@ pub union __SOCKADDR_ARG {
   pub __sockaddr_un__: *mut sockaddr_un,
   pub __sockaddr_x25__: *mut sockaddr_x25,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed_0,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_0 {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr__: *const sockaddr,
   pub __sockaddr_at__: *const sockaddr_at,
@@ -430,28 +267,9 @@ pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr_x25__: *const sockaddr_x25,
 }
 pub type nfds_t = libc::c_ulong;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct spwd {
-  pub sp_namp: *mut libc::c_char,
-  pub sp_pwdp: *mut libc::c_char,
-  pub sp_lstchg: libc::c_long,
-  pub sp_min: libc::c_long,
-  pub sp_max: libc::c_long,
-  pub sp_warn: libc::c_long,
-  pub sp_inact: libc::c_long,
-  pub sp_expire: libc::c_long,
-  pub sp_flag: libc::c_ulong,
-}
-use crate::librb::fd_pair;
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_1,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_1 {
   pub sa: sockaddr,
   pub sin: sockaddr_in,
@@ -461,8 +279,9 @@ pub type C2RustUnnamed_2 = libc::c_uint;
 pub const LSA_SIZEOF_SA: C2RustUnnamed_2 = 28;
 pub const LSA_LEN_SIZE: C2RustUnnamed_2 = 4;
 use crate::librb::bb_uidgid_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub verbose: libc::c_int,
   pub flg_deny_all: smallint,
@@ -492,23 +311,26 @@ pub struct globals {
   pub http_error_page: [*const libc::c_char; 11],
   pub proxy: *mut Htaccess_Proxy,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct Htaccess_Proxy {
   pub next: *mut Htaccess_Proxy,
   pub url_from: *mut libc::c_char,
   pub host_port: *mut libc::c_char,
   pub url_to: *mut libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct Htaccess {
   pub next: *mut Htaccess,
   pub after_colon: *mut libc::c_char,
   pub before_colon: [libc::c_char; 1],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct Htaccess_IP {
   pub next: *mut Htaccess_IP,
   pub ip: libc::c_uint,
@@ -517,8 +339,9 @@ pub struct Htaccess_IP {
 }
 pub type C2RustUnnamed_3 = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed_3 = 1024;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct has_next_ptr {
   pub next: *mut has_next_ptr,
 }
@@ -540,8 +363,9 @@ pub const HTTP_BAD_REQUEST: C2RustUnnamed_4 = 400;
 pub const HTTP_MOVED_TEMPORARILY: C2RustUnnamed_4 = 302;
 pub const HTTP_PARTIAL_CONTENT: C2RustUnnamed_4 = 206;
 pub const HTTP_OK: C2RustUnnamed_4 = 200;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_5 {
   pub name: *const libc::c_char,
   pub info: *const libc::c_char,
@@ -618,7 +442,7 @@ unsafe extern "C" fn bb_strtoul(
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_ulong {
-  return bb_strtoull(arg, endp, base) as libc::c_ulong;
+  return crate::libbb::bb_strtonum::bb_strtoull(arg, endp, base) as libc::c_ulong;
 }
 static mut DEFAULT_PATH_HTTPD_CONF: [libc::c_char; 5] = [47, 101, 116, 99, 0];
 static mut HTTPD_CONF: [libc::c_char; 11] = [104, 116, 116, 112, 100, 46, 99, 111, 110, 102, 0];
@@ -804,7 +628,7 @@ unsafe extern "C" fn scan_ip_mask(
   }
   if *str != 0 {
     /* there is /xxx after dotted-IP address */
-    i = bb_strtou(str, &mut p, 10i32) as libc::c_int;
+    i = crate::libbb::bb_strtonum::bb_strtou(str, &mut p, 10i32) as libc::c_int;
     if *p as libc::c_int == '.' as i32 {
       /* 'xxx' itself is dotted-IP mask, parse it */
       /* (return 0 (success) only if it has N.N.N.N form) */
@@ -863,7 +687,7 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
     );
   }
   loop {
-    f = fopen_for_read(filename);
+    f = crate::libbb::wfopen::fopen_for_read(filename);
     if !f.is_null() {
       break;
     }
@@ -875,7 +699,7 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
     if flag == FIRST_PARSE as libc::c_int {
       /* -c CONFFILE given, but CONFFILE doesn't exist? */
       if !(*ptr_to_globals).opt_c_configFile.is_null() {
-        bb_simple_perror_msg_and_die((*ptr_to_globals).opt_c_configFile);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die((*ptr_to_globals).opt_c_configFile);
       }
       /* else: no -c, thus we looked at /etc/httpd.conf,
        * and it's not there. try ./httpd.conf: */
@@ -962,11 +786,11 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
         if (*ptr_to_globals).index_page != index_html.as_ptr() {
           free((*ptr_to_globals).index_page as *mut libc::c_char as *mut libc::c_void);
         }
-        (*ptr_to_globals).index_page = xstrdup(after_colon);
+        (*ptr_to_globals).index_page = crate::libbb::xfuncs_printf::xstrdup(after_colon);
         continue;
       } else if flag == FIRST_PARSE as libc::c_int && ch as libc::c_int == 'H' as i32 {
-        (*ptr_to_globals).home_httpd = xstrdup(after_colon);
-        xchdir((*ptr_to_globals).home_httpd);
+        (*ptr_to_globals).home_httpd = crate::libbb::xfuncs_printf::xstrdup(after_colon);
+        crate::libbb::xfuncs_printf::xchdir((*ptr_to_globals).home_httpd);
         continue;
       } else if ch as libc::c_int == 'A' as i32 || ch as libc::c_int == 'D' as i32 {
         let mut pip: *mut Htaccess_IP = 0 as *mut Htaccess_IP;
@@ -979,7 +803,9 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
           continue;
         } else {
           /* store "allow/deny IP/mask" line */
-          pip = xzalloc(::std::mem::size_of::<Htaccess_IP>() as libc::c_ulong) as *mut Htaccess_IP;
+          pip = crate::libbb::xfuncs_printf::xzalloc(
+            ::std::mem::size_of::<Htaccess_IP>() as libc::c_ulong
+          ) as *mut Htaccess_IP;
           if scan_ip_mask(after_colon, &mut (*pip).ip, &mut (*pip).mask) != 0 {
             /* IP{/mask} syntax error detected, protect all */
             ch = 'D' as i32 as libc::c_uchar;
@@ -1019,7 +845,8 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
               /* We chdir to home_httpd, thus no need to
                * concat_path_file(home_httpd, after_colon)
                * here */
-              (*ptr_to_globals).http_error_page[i as usize] = xstrdup(after_colon);
+              (*ptr_to_globals).http_error_page[i as usize] =
+                crate::libbb::xfuncs_printf::xstrdup(after_colon);
               break;
             } else {
               i = i.wrapping_add(1)
@@ -1039,7 +866,7 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
           let fresh2 = host_port;
           host_port = host_port.offset(1);
           *fresh2 = '\u{0}' as i32 as libc::c_char;
-          if !is_prefixed_with(
+          if !crate::libbb::compare_string_array::is_prefixed_with(
             host_port,
             b"http://\x00" as *const u8 as *const libc::c_char,
           )
@@ -1051,12 +878,13 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
             url_to = strchr(host_port, '/' as i32);
             if !url_to.is_null() {
               *url_to = '\u{0}' as i32 as libc::c_char;
-              proxy_entry = xzalloc(::std::mem::size_of::<Htaccess_Proxy>() as libc::c_ulong)
-                as *mut Htaccess_Proxy;
-              (*proxy_entry).url_from = xstrdup(url_from);
-              (*proxy_entry).host_port = xstrdup(host_port);
+              proxy_entry = crate::libbb::xfuncs_printf::xzalloc(
+                ::std::mem::size_of::<Htaccess_Proxy>() as libc::c_ulong,
+              ) as *mut Htaccess_Proxy;
+              (*proxy_entry).url_from = crate::libbb::xfuncs_printf::xstrdup(url_from);
+              (*proxy_entry).host_port = crate::libbb::xfuncs_printf::xstrdup(host_port);
               *url_to = '/' as i32 as libc::c_char;
-              (*proxy_entry).url_to = xstrdup(url_to);
+              (*proxy_entry).url_to = crate::libbb::xfuncs_printf::xstrdup(url_to);
               (*proxy_entry).next = (*ptr_to_globals).proxy;
               (*ptr_to_globals).proxy = proxy_entry;
               continue;
@@ -1073,7 +901,7 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
           /* "*.php:/path/php" */
           let mut p_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           let mut cur: *mut Htaccess = 0 as *mut Htaccess;
-          cur = xzalloc(
+          cur = crate::libbb::xfuncs_printf::xzalloc(
             (::std::mem::size_of::<Htaccess>() as libc::c_ulong)
               .wrapping_add(strlen_buf as libc::c_ulong),
           ) as *mut Htaccess;
@@ -1101,7 +929,7 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
           let mut file_len: libc::c_uint = 0;
           /* note: path is "" unless we are in SUBDIR parse,
            * otherwise it does NOT start with "/" */
-          cur_0 = xzalloc(
+          cur_0 = crate::libbb::xfuncs_printf::xzalloc(
             (::std::mem::size_of::<Htaccess>() as libc::c_ulong)
               .wrapping_add(1i32 as libc::c_ulong)
               .wrapping_add(strlen(path))
@@ -1116,7 +944,9 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
             buf.as_mut_ptr(),
           );
           /* canonicalize it */
-          p_1 = bb_simplify_abs_path_inplace((*cur_0).before_colon.as_mut_ptr());
+          p_1 = crate::libbb::simplify_path::bb_simplify_abs_path_inplace(
+            (*cur_0).before_colon.as_mut_ptr(),
+          );
           file_len = p_1.wrapping_offset_from((*cur_0).before_colon.as_mut_ptr()) as libc::c_long
             as libc::c_uint;
           /* add "user:pass" after NUL */
@@ -1146,7 +976,7 @@ unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c
         }
       }
     }
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"config error \'%s\' in \'%s\'\x00" as *const u8 as *const libc::c_char,
       buf.as_mut_ptr(),
       filename,
@@ -1248,17 +1078,23 @@ unsafe extern "C" fn decodeBase64(mut Data: *mut libc::c_char) {
  * Create a listen server socket on the designated port.
  */
 unsafe extern "C" fn openServer() -> libc::c_int {
-  let mut n: libc::c_uint = bb_strtou(
+  let mut n: libc::c_uint = crate::libbb::bb_strtonum::bb_strtou(
     (*ptr_to_globals).bind_addr_or_port,
     0 as *mut *mut libc::c_char,
     10i32,
   );
   if *bb_errno == 0 && n != 0 && n <= 0xffffi32 as libc::c_uint {
-    n = create_and_bind_stream_or_die(0 as *const libc::c_char, n as libc::c_int) as libc::c_uint
+    n = crate::libbb::xconnect::create_and_bind_stream_or_die(
+      0 as *const libc::c_char,
+      n as libc::c_int,
+    ) as libc::c_uint
   } else {
-    n = create_and_bind_stream_or_die((*ptr_to_globals).bind_addr_or_port, 80i32) as libc::c_uint
+    n = crate::libbb::xconnect::create_and_bind_stream_or_die(
+      (*ptr_to_globals).bind_addr_or_port,
+      80i32,
+    ) as libc::c_uint
   }
-  xlisten(n as libc::c_int, 9i32);
+  crate::libbb::xfuncs_printf::xlisten(n as libc::c_int, 9i32);
   return n as libc::c_int;
 }
 /*
@@ -1275,7 +1111,9 @@ unsafe extern "C" fn log_and_exit() -> ! {
     continue;
   */
   if (*ptr_to_globals).verbose > 2i32 {
-    bb_simple_error_msg(b"closed\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg(
+      b"closed\x00" as *const u8 as *const libc::c_char,
+    );
   }
   _exit(xfunc_error_retval as libc::c_int);
 }
@@ -1315,7 +1153,7 @@ unsafe extern "C" fn send_headers(mut responseNum: libc::c_uint) {
     }
   }
   if (*ptr_to_globals).verbose != 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"response:%u\x00" as *const u8 as *const libc::c_char,
       responseNum,
     );
@@ -1393,7 +1231,7 @@ unsafe extern "C" fn send_headers(mut responseNum: libc::c_uint) {
     let fresh10 = len;
     len = len.wrapping_add(1);
     *(*ptr_to_globals).iobuf.offset(fresh10 as isize) = '\n' as i32 as libc::c_char;
-    full_write(
+    crate::libbb::full_write::full_write(
       1i32,
       (*ptr_to_globals).iobuf as *const libc::c_void,
       len as size_t,
@@ -1486,14 +1324,16 @@ unsafe extern "C" fn send_headers(mut responseNum: libc::c_uint) {
       infoString,
     ) as libc::c_uint)
   }
-  if full_write(
+  if crate::libbb::full_write::full_write(
     1,
     (*ptr_to_globals).iobuf as *const libc::c_void,
     len as size_t,
   ) != len as isize
   {
     if (*ptr_to_globals).verbose > 1i32 {
-      bb_simple_perror_msg(b"error\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg(
+        b"error\x00" as *const u8 as *const libc::c_char,
+      );
     }
     log_and_exit();
   };
@@ -1518,7 +1358,7 @@ unsafe extern "C" fn get_line() -> libc::c_uint {
   loop {
     if (*ptr_to_globals).hdr_cnt <= 0i32 {
       alarm(60i32 as libc::c_uint);
-      (*ptr_to_globals).hdr_cnt = safe_read(
+      (*ptr_to_globals).hdr_cnt = crate::libbb::read::safe_read(
         0i32,
         bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
         COMMON_BUFSIZE as libc::c_int as size_t,
@@ -1614,7 +1454,7 @@ unsafe extern "C" fn cgi_io_loop_and_exit(
       }
     }
     /* Now wait on the set of sockets */
-    count = safe_poll(
+    count = crate::libbb::safe_poll::safe_poll(
       pfd.as_mut_ptr(),
       if (*ptr_to_globals).hdr_cnt > 0i32 {
         (TO_CGI as libc::c_int) + 1i32
@@ -1629,7 +1469,7 @@ unsafe extern "C" fn cgi_io_loop_and_exit(
     if pfd[TO_CGI as libc::c_int as usize].revents != 0 {
       /* hdr_cnt > 0 here due to the way poll() called */
       /* Have data from peer and can write to CGI */
-      count = safe_write(
+      count = crate::libbb::safe_write::safe_write(
         toCgi_wr,
         (*ptr_to_globals).hdr_ptr as *const libc::c_void,
         (*ptr_to_globals).hdr_cnt as size_t,
@@ -1654,7 +1494,7 @@ unsafe extern "C" fn cgi_io_loop_and_exit(
        * (POSTDATA) */
       //count = post_len > (int)sizeof_hdr_buf ? (int)sizeof_hdr_buf : post_len;
       //count = safe_read(STDIN_FILENO, hdr_buf, count);
-      count = safe_read(
+      count = crate::libbb::read::safe_read(
         0i32,
         bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
         COMMON_BUFSIZE as libc::c_int as size_t,
@@ -1686,7 +1526,7 @@ unsafe extern "C" fn cgi_io_loop_and_exit(
        * CGI may output a few first bytes and then wait
        * for POSTDATA without closing stdout.
        * With full_read we may wait here forever. */
-      count = safe_read(
+      count = crate::libbb::read::safe_read(
         fromCgi_rd,
         rbuf.offset(out_cnt as isize) as *mut libc::c_void,
         (8192i32 - 8i32) as size_t,
@@ -1695,13 +1535,17 @@ unsafe extern "C" fn cgi_io_loop_and_exit(
         /* eof (or error) and there was no "HTTP",
          * send "HTTP/1.0 200 OK\r\n", then send received data */
         if out_cnt != 0 {
-          full_write(
+          crate::libbb::full_write::full_write(
             1i32,
             HTTP_200.as_ptr() as *const libc::c_void,
             (::std::mem::size_of::<[libc::c_char; 18]>() as libc::c_ulong)
               .wrapping_sub(1i32 as libc::c_ulong),
           );
-          full_write(1i32, rbuf as *const libc::c_void, out_cnt as size_t);
+          crate::libbb::full_write::full_write(
+            1i32,
+            rbuf as *const libc::c_void,
+            out_cnt as size_t,
+          );
         }
         break;
       /* CGI stdout is closed, exiting */
@@ -1717,7 +1561,9 @@ unsafe extern "C" fn cgi_io_loop_and_exit(
           ) == 0i32
         {
           /* send "HTTP/1.0 " */
-          if full_write(1, HTTP_200.as_ptr() as *const libc::c_void, 9) != 9 {
+          if crate::libbb::full_write::full_write(1, HTTP_200.as_ptr() as *const libc::c_void, 9)
+            != 9
+          {
             break;
           }
           /* skip "Status: " (including space, sending "HTTP/1.0  NNN" is wrong) */
@@ -1734,7 +1580,7 @@ unsafe extern "C" fn cgi_io_loop_and_exit(
           ) != 0i32
           {
             /* there is no "HTTP", do it ourself */
-            if full_write(
+            if crate::libbb::full_write::full_write(
               1i32,
               HTTP_200.as_ptr() as *const libc::c_void,
               (::std::mem::size_of::<[libc::c_char; 18]>() as libc::c_ulong)
@@ -1761,13 +1607,17 @@ unsafe extern "C" fn cgi_io_loop_and_exit(
         }
       }
     } else {
-      count = safe_read(fromCgi_rd, rbuf as *mut libc::c_void, 8192i32 as size_t) as libc::c_int;
+      count =
+        crate::libbb::read::safe_read(fromCgi_rd, rbuf as *mut libc::c_void, 8192i32 as size_t)
+          as libc::c_int;
       if count <= 0i32 {
         break;
       }
       /* eof (or error) */
     }
-    if full_write(1, rbuf as *const libc::c_void, count as size_t) != count as isize {
+    if crate::libbb::full_write::full_write(1, rbuf as *const libc::c_void, count as size_t)
+      != count as isize
+    {
       break;
     }
   }
@@ -1809,7 +1659,7 @@ unsafe extern "C" fn send_cgi_and_exit(
   let mut pid: libc::c_int = 0;
   /* Make a copy. NB: caller guarantees:
    * url[0] == '/', url[1] != '/' */
-  url = xstrdup(url);
+  url = crate::libbb::xfuncs_printf::xstrdup(url);
   /*
    * We are mucking with environment _first_ and then vfork/exec,
    * this allows us to use vfork safely. Parent doesn't care about
@@ -1825,7 +1675,7 @@ unsafe extern "C" fn send_cgi_and_exit(
     }
     let mut dir: libc::c_int = 0;
     *script = '\u{0}' as i32 as libc::c_char;
-    dir = is_directory(url.offset(1), 1i32);
+    dir = crate::libbb::isdirectory::is_directory(url.offset(1), 1i32);
     *script = '/' as i32 as libc::c_char;
     if dir == 0 {
       break;
@@ -1839,7 +1689,7 @@ unsafe extern "C" fn send_cgi_and_exit(
     request,
   );
   if !(*ptr_to_globals).g_query.is_null() {
-    putenv(xasprintf(
+    putenv(crate::libbb::xfuncs_printf::xasprintf(
       b"%s=%s?%s\x00" as *const u8 as *const libc::c_char,
       b"REQUEST_URI\x00" as *const u8 as *const libc::c_char,
       orig_uri,
@@ -1856,7 +1706,8 @@ unsafe extern "C" fn send_cgi_and_exit(
   }
   /* SCRIPT_FILENAME is required by PHP in CGI mode */
   if *(*ptr_to_globals).home_httpd.offset(0) as libc::c_int == '/' as i32 {
-    let mut fullpath: *mut libc::c_char = concat_path_file((*ptr_to_globals).home_httpd, url);
+    let mut fullpath: *mut libc::c_char =
+      crate::libbb::concat_path_file::concat_path_file((*ptr_to_globals).home_httpd, url);
     setenv1(
       b"SCRIPT_FILENAME\x00" as *const u8 as *const libc::c_char,
       fullpath,
@@ -1907,7 +1758,7 @@ unsafe extern "C" fn send_cgi_and_exit(
     );
   }
   if post_len != 0 {
-    putenv(xasprintf(
+    putenv(crate::libbb::xfuncs_printf::xasprintf(
       b"CONTENT_LENGTH=%u\x00" as *const u8 as *const libc::c_char,
       post_len,
     ));
@@ -1921,8 +1772,8 @@ unsafe extern "C" fn send_cgi_and_exit(
   }
   /* setenv1("SERVER_NAME", safe_gethostname()); - don't do this,
    * just run "env SERVER_NAME=xyz httpd ..." instead */
-  xpipe(&mut fromCgi.rd);
-  xpipe(&mut toCgi.rd);
+  crate::libbb::xfuncs_printf::xpipe(&mut fromCgi.rd);
+  crate::libbb::xfuncs_printf::xpipe(&mut toCgi.rd);
   pid = vfork();
   if pid < 0i32 {
     /* TODO: log perror? */
@@ -1936,8 +1787,8 @@ unsafe extern "C" fn send_cgi_and_exit(
     /* NB: close _first_, then move fds! */
     close(toCgi.wr); /* replace stdin with the pipe */
     close(fromCgi.rd); /* replace stdout with the pipe */
-    xmove_fd(toCgi.rd, 0i32);
-    xmove_fd(fromCgi.wr, 1i32);
+    crate::libbb::xfuncs_printf::xmove_fd(toCgi.rd, 0i32);
+    crate::libbb::xfuncs_printf::xmove_fd(fromCgi.wr, 1i32);
     /* User seeing stderr output can be a security problem.
      * If CGI really wants that, it can always do dup itself. */
     /* dup2(1, 2); */
@@ -1947,7 +1798,7 @@ unsafe extern "C" fn send_cgi_and_exit(
       /* paranoia */
       *script = '\u{0}' as i32 as libc::c_char;
       if chdir(url.offset(1)) != 0i32 {
-        bb_perror_msg(
+        crate::libbb::perror_msg::bb_perror_msg(
           b"can\'t change directory to \'%s\'\x00" as *const u8 as *const libc::c_char,
           url.offset(1),
         );
@@ -1982,13 +1833,16 @@ unsafe extern "C" fn send_cgi_and_exit(
           }
         }
         /* restore default signal dispositions for CGI process */
-        bb_signals(0i32 | 1i32 << 17i32 | 1i32 << 13i32 | 1i32 << 1i32, None);
+        crate::libbb::signals::bb_signals(
+          0i32 | 1i32 << 17i32 | 1i32 << 13i32 | 1i32 << 1i32,
+          None,
+        );
         /* _NOT_ execvp. We do not search PATH. argv[0] is a filename
          * without any dir components and will only match a file
          * in the current directory */
         execv(argv[0], argv.as_mut_ptr() as *const *mut libc::c_char);
         if (*ptr_to_globals).verbose != 0 {
-          bb_perror_msg(
+          crate::libbb::perror_msg::bb_perror_msg(
             b"can\'t execute \'%s\'\x00" as *const u8 as *const libc::c_char,
             argv[0],
           );
@@ -2025,7 +1879,7 @@ unsafe extern "C" fn send_file_and_exit(mut url: *const libc::c_char, mut what: 
   if (*ptr_to_globals).content_gzip != 0 {
     /* does <url>.gz exist? Then use it instead */
     let mut gzurl: *mut libc::c_char =
-      xasprintf(b"%s.gz\x00" as *const u8 as *const libc::c_char, url);
+      crate::libbb::xfuncs_printf::xasprintf(b"%s.gz\x00" as *const u8 as *const libc::c_char, url);
     fd = open(gzurl, 0i32);
     free(gzurl as *mut libc::c_void);
     if fd != -1i32 {
@@ -2179,7 +2033,7 @@ unsafe extern "C" fn send_file_and_exit(mut url: *const libc::c_char, mut what: 
   match current_block {
     4746626699541760585 => {
       loop {
-        count = safe_read(
+        count = crate::libbb::read::safe_read(
           fd,
           (*ptr_to_globals).iobuf as *mut libc::c_void,
           8192i32 as size_t,
@@ -2191,7 +2045,7 @@ unsafe extern "C" fn send_file_and_exit(mut url: *const libc::c_char, mut what: 
         if count > (*ptr_to_globals).range_len as isize {
           count = (*ptr_to_globals).range_len as isize
         }
-        n = full_write(
+        n = crate::libbb::full_write::full_write(
           1i32,
           (*ptr_to_globals).iobuf as *const libc::c_void,
           count as size_t,
@@ -2215,7 +2069,9 @@ unsafe extern "C" fn send_file_and_exit(mut url: *const libc::c_char, mut what: 
   match current_block {
     13828257217690466024 => {
       if (*ptr_to_globals).verbose > 1i32 {
-        bb_simple_perror_msg(b"error\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg(
+          b"error\x00" as *const u8 as *const libc::c_char,
+        );
       }
     }
     _ => {}
@@ -2325,7 +2181,7 @@ unsafe extern "C" fn check_user_passwd(
                   /* getspnam_r may return 0 yet set result to NULL.
                    * At least glibc 2.4 does this. Be extra paranoid here. */
                   let mut result: *mut spwd = 0 as *mut spwd;
-                  r = bb_internal_getspnam_r(
+                  r = crate::libpwdgrp::pwd_grp::bb_internal_getspnam_r(
                     (*pw).pw_name,
                     &mut spw,
                     sp_buf.as_mut_ptr(),
@@ -2360,7 +2216,8 @@ unsafe extern "C" fn check_user_passwd(
                */
               /* encrypt pwd from peer and check match with local one */
               {
-                encrypted = pw_encrypt(colon_after_user.offset(1), passwd, 0i32);
+                encrypted =
+                  crate::libbb::pw_encrypt::pw_encrypt(colon_after_user.offset(1), passwd, 0i32);
                 r = strcmp(encrypted, passwd);
                 free(encrypted as *mut libc::c_void);
                 current_block = 14545652377200942025;
@@ -2379,7 +2236,7 @@ unsafe extern "C" fn check_user_passwd(
               _ => {}
             }
             if r == 0i32 {
-              (*ptr_to_globals).remoteuser = xstrndup(
+              (*ptr_to_globals).remoteuser = crate::libbb::xfuncs_printf::xstrndup(
                 user_and_passwd,
                 strchrnul(user_and_passwd, ':' as i32).wrapping_offset_from(user_and_passwd)
                   as libc::c_long as libc::c_int,
@@ -2401,7 +2258,7 @@ unsafe extern "C" fn find_proxy_entry(mut url: *const libc::c_char) -> *mut Htac
   let mut p: *mut Htaccess_Proxy = 0 as *mut Htaccess_Proxy;
   p = (*ptr_to_globals).proxy;
   while !p.is_null() {
-    if !is_prefixed_with(url, (*p).url_from).is_null() {
+    if !crate::libbb::compare_string_array::is_prefixed_with(url, (*p).url_from).is_null() {
       return p;
     }
     p = (*p).next
@@ -2450,59 +2307,62 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
         let fresh15;
         let fresh16 = __x;
         asm!("bswap $0" : "=r" (fresh15) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh14, fresh16))
-                          :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh14, fresh16)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh14, fresh16, fresh15);
       }
       __v
     }
   }
-  if (*fromAddr).u.sa.sa_family as libc::c_int == 10i32
-    && (*fromAddr).u.sin6.sin6_addr.__in6_u.__u6_addr32[0] == 0i32 as libc::c_uint
-    && (*fromAddr).u.sin6.sin6_addr.__in6_u.__u6_addr32[1] == 0i32 as libc::c_uint
-    && ({
-      let mut __v: libc::c_uint = 0;
-      let mut __x: libc::c_uint = (*fromAddr).u.sin6.sin6_addr.__in6_u.__u6_addr32[2];
-      if false {
-        __v = (__x & 0xff000000u32) >> 24i32
-          | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
-          | (__x & 0xff00i32 as libc::c_uint) << 8i32
-          | (__x & 0xffi32 as libc::c_uint) << 24i32
-      } else {
-        let fresh17 = &mut __v;
-        let fresh18;
-        let fresh19 = __x;
-        asm!("bswap $0" : "=r" (fresh18) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh17, fresh19))
-                         :);
-        c2rust_asm_casts::AsmCast::cast_out(fresh17, fresh19, fresh18);
-      }
-      __v
-    }) == 0xffffi32 as libc::c_uint
-  {
-    remote_ip = {
-      let mut __v: libc::c_uint = 0;
-      let mut __x: libc::c_uint = (*fromAddr).u.sin6.sin6_addr.__in6_u.__u6_addr32[3];
-      if false {
-        __v = (__x & 0xff000000u32) >> 24i32
-          | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
-          | (__x & 0xff00i32 as libc::c_uint) << 8i32
-          | (__x & 0xffi32 as libc::c_uint) << 24i32
-      } else {
-        let fresh20 = &mut __v;
-        let fresh21;
-        let fresh22 = __x;
-        asm!("bswap $0" : "=r" (fresh21) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh20, fresh22))
-                          :);
-        c2rust_asm_casts::AsmCast::cast_out(fresh20, fresh22, fresh21);
-      }
-      __v
-    }
-  }
+
+  // This is IP v6 stuff that is messy to transpile correctly so we won't mess
+  // with it right now. The whole thing gets really gross.
+  // if (*fromAddr).u.sa.sa_family as libc::c_int == 10i32
+  //   && (*fromAddr).u.sin6.sin6_addr.__in6_u.__u6_addr32[0] == 0i32 as libc::c_uint
+  //   && (*fromAddr).u.sin6.sin6_addr.__in6_u.__u6_addr32[1] == 0i32 as libc::c_uint
+  //   && ({
+  //     let mut __v: libc::c_uint = 0;
+  //     let mut __x: libc::c_uint = (*fromAddr).u.sin6.sin6_addr.__in6_u.__u6_addr32[2];
+  //     if false {
+  //       __v = (__x & 0xff000000u32) >> 24i32
+  //         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
+  //         | (__x & 0xff00i32 as libc::c_uint) << 8i32
+  //         | (__x & 0xffi32 as libc::c_uint) << 24i32
+  //     } else {
+  //       let fresh17 = &mut __v;
+  //       let fresh18;
+  //       let fresh19 = __x;
+  //       asm!("bswap $0" : "=r" (fresh18) : "0"
+  //                        (c2rust_asm_casts::AsmCast::cast_in(fresh17, fresh19))
+  //                        :);
+  //       c2rust_asm_casts::AsmCast::cast_out(fresh17, fresh19, fresh18);
+  //     }
+  //     __v
+  //   }) == 0xffffi32 as libc::c_uint
+  // {
+  //   remote_ip = {
+  //     let mut __v: libc::c_uint = 0;
+  //     let mut __x: libc::c_uint = (*fromAddr).u.sin6.sin6_addr.__in6_u.__u6_addr32[3];
+  //     if false {
+  //       __v = (__x & 0xff000000u32) >> 24i32
+  //         | (__x & 0xff0000i32 as libc::c_uint) >> 8i32
+  //         | (__x & 0xff00i32 as libc::c_uint) << 8i32
+  //         | (__x & 0xffi32 as libc::c_uint) << 24i32
+  //     } else {
+  //       let fresh20 = &mut __v;
+  //       let fresh21;
+  //       let fresh22 = __x;
+  //       asm!("bswap $0" : "=r" (fresh21) : "0"
+  //    (c2rust_asm_casts::AsmCast::cast_in(fresh20, fresh22)) :);
+  //       c2rust_asm_casts::AsmCast::cast_out(fresh20, fresh22, fresh21);
+  //     }
+  //     __v
+  //   }
+  // }
+
   if 1i32 != 0 || 0i32 != 0 || (*ptr_to_globals).verbose != 0 {
     /* NB: can be NULL (user runs httpd -i by hand?) */
-    (*ptr_to_globals).rmt_ip_str = xmalloc_sockaddr2dotted(&(*fromAddr).u.sa)
+    (*ptr_to_globals).rmt_ip_str =
+      crate::libbb::xconnect::xmalloc_sockaddr2dotted(&(*fromAddr).u.sa)
   }
   if (*ptr_to_globals).verbose != 0 {
     /* this trick makes -v logging much simpler */
@@ -2510,7 +2370,9 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
       applet_name = (*ptr_to_globals).rmt_ip_str
     }
     if (*ptr_to_globals).verbose > 2i32 {
-      bb_simple_error_msg(b"connected\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg(
+        b"connected\x00" as *const u8 as *const libc::c_char,
+      );
     }
   }
   if_ip_denied_send_HTTP_FORBIDDEN_and_exit(remote_ip);
@@ -2582,9 +2444,12 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
   let mut proxy_entry: *mut Htaccess_Proxy = find_proxy_entry(urlcopy);
   if !proxy_entry.is_null() {
     if (*ptr_to_globals).verbose > 1i32 {
-      bb_error_msg(b"proxy:%s\x00" as *const u8 as *const libc::c_char, urlcopy);
+      crate::libbb::verror_msg::bb_error_msg(
+        b"proxy:%s\x00" as *const u8 as *const libc::c_char,
+        urlcopy,
+      );
     }
-    lsa = host2sockaddr((*proxy_entry).host_port, 80i32);
+    lsa = crate::libbb::xconnect::host2sockaddr((*proxy_entry).host_port, 80i32);
     if lsa.is_null() {
       send_headers_and_exit(HTTP_INTERNAL_SERVER_ERROR as libc::c_int);
     }
@@ -2631,7 +2496,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
     *fresh26 = '\u{0}' as i32 as libc::c_char
   }
   /* Decode URL escape sequences */
-  tptr = percent_decode_in_place(urlcopy, 1i32);
+  tptr = crate::libbb::percent_decode::percent_decode_in_place(urlcopy, 1i32);
   if tptr.is_null() {
     send_headers_and_exit(HTTP_BAD_REQUEST as libc::c_int);
   }
@@ -2698,13 +2563,16 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
   }
   /* If URL is a directory, add '/' */
   if *urlp.offset(-1i32 as isize) as libc::c_int != '/' as i32 {
-    if is_directory(urlcopy.offset(1), 1i32) != 0 {
+    if crate::libbb::isdirectory::is_directory(urlcopy.offset(1), 1i32) != 0 {
       (*ptr_to_globals).found_moved_temporarily = urlcopy
     }
   }
   /* Log it */
   if (*ptr_to_globals).verbose > 1i32 {
-    bb_error_msg(b"url:%s\x00" as *const u8 as *const libc::c_char, urlcopy);
+    crate::libbb::verror_msg::bb_error_msg(
+      b"url:%s\x00" as *const u8 as *const libc::c_char,
+      urlcopy,
+    );
   }
   tptr = urlcopy;
   loop {
@@ -2714,7 +2582,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
     }
     /* have path1/path2 */
     *tptr = '\u{0}' as i32 as libc::c_char;
-    if is_directory(urlcopy.offset(1), 1i32) != 0 {
+    if crate::libbb::isdirectory::is_directory(urlcopy.offset(1), 1i32) != 0 {
       /* may have subdir config */
       parse_conf(urlcopy.offset(1), SUBDIR_PARSE as libc::c_int); /* skip first '/' */
       if_ip_denied_send_HTTP_FORBIDDEN_and_exit(remote_ip);
@@ -2722,7 +2590,12 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
     *tptr = '/' as i32 as libc::c_char
   }
   tptr = urlcopy.offset(1);
-  if !is_prefixed_with(tptr, b"cgi-bin/\x00" as *const u8 as *const libc::c_char).is_null() {
+  if !crate::libbb::compare_string_array::is_prefixed_with(
+    tptr,
+    b"cgi-bin/\x00" as *const u8 as *const libc::c_char,
+  )
+  .is_null()
+  {
     if *tptr.offset(8) as libc::c_int == '\u{0}' as i32 {
       /* protect listing "cgi-bin/" */
       send_headers_and_exit(HTTP_FORBIDDEN as libc::c_int);
@@ -2735,7 +2608,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
      * query string would be lost and not available to the CGI.
      * Work around it by making a deep copy.
      */
-    (*ptr_to_globals).g_query = xstrdup((*ptr_to_globals).g_query); /* ok for NULL too */
+    (*ptr_to_globals).g_query = crate::libbb::xfuncs_printf::xstrdup((*ptr_to_globals).g_query); /* ok for NULL too */
     strcpy(urlp, (*ptr_to_globals).index_page);
   }
   if stat(tptr, &mut sb) == 0i32 {
@@ -2801,7 +2674,8 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
           send_headers_and_exit(HTTP_BAD_REQUEST as libc::c_int);
         }
         /* not using strtoul: it ignores leading minus! */
-        length = bb_strtou(tptr, 0 as *mut *mut libc::c_char, 10i32) as libc::c_ulong;
+        length = crate::libbb::bb_strtonum::bb_strtou(tptr, 0 as *mut *mut libc::c_char, 10i32)
+          as libc::c_ulong;
         /* length is "ulong", but we need to pass it to int later */
         if *bb_errno != 0 || length > 2147483647i32 as libc::c_ulong {
           send_headers_and_exit(HTTP_BAD_REQUEST as libc::c_int);
@@ -2856,7 +2730,12 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
             .offset(::std::mem::size_of::<[libc::c_char; 7]>() as libc::c_ulong as isize)
             .offset(-1),
         );
-        if !is_prefixed_with(s, b"bytes=\x00" as *const u8 as *const libc::c_char).is_null() {
+        if !crate::libbb::compare_string_array::is_prefixed_with(
+          s,
+          b"bytes=\x00" as *const u8 as *const libc::c_char,
+        )
+        .is_null()
+        {
           s = s.offset(
             (::std::mem::size_of::<[libc::c_char; 7]>() as libc::c_ulong)
               .wrapping_sub(1i32 as libc::c_ulong) as isize,
@@ -2928,7 +2807,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
           }
         }
         /* "Content-Type:" gets no HTTP_ prefix, all others do */
-        cp = xasprintf(
+        cp = crate::libbb::xfuncs_printf::xasprintf(
           if ct as libc::c_int != 0 {
             (b"HTTP_%.*s=%s\x00" as *const u8 as *const libc::c_char).offset(5)
           } else {
@@ -2944,7 +2823,11 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
   }
   /* We are done reading headers, disable peer timeout */
   alarm(0i32 as libc::c_uint);
-  if strcmp(bb_basename(urlcopy), HTTPD_CONF.as_ptr()) == 0i32 {
+  if strcmp(
+    crate::libbb::get_last_path_component::bb_basename(urlcopy),
+    HTTPD_CONF.as_ptr(),
+  ) == 0i32
+  {
     /* protect listing [/path]/httpd.conf or IP deny */
     send_headers_and_exit(HTTP_FORBIDDEN as libc::c_int);
   }
@@ -3006,15 +2889,7 @@ unsafe extern "C" fn mini_httpd(mut server_socket: libc::c_int) -> ! {
    */
   {
     let mut n: libc::c_int = 0;
-    let mut fromAddr: len_and_sockaddr = len_and_sockaddr {
-      len: 0,
-      u: C2RustUnnamed_1 {
-        sa: sockaddr {
-          sa_family: 0,
-          sa_data: [0; 14],
-        },
-      },
-    };
+    let mut fromAddr: len_and_sockaddr = std::mem::zeroed();
     /* Wait for connections... */
     fromAddr.len = LSA_SIZEOF_SA as libc::c_int as socklen_t;
     n = accept(
@@ -3028,7 +2903,7 @@ unsafe extern "C" fn mini_httpd(mut server_socket: libc::c_int) -> ! {
       continue;
     }
     /* set the KEEPALIVE option to cull dead connections */
-    setsockopt_keepalive(n);
+    crate::libbb::xconnect::setsockopt_keepalive(n);
     if fork() == 0i32 {
       /* child */
       /* Do not reload config on HUP */
@@ -3037,8 +2912,8 @@ unsafe extern "C" fn mini_httpd(mut server_socket: libc::c_int) -> ! {
         ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
       );
       close(server_socket);
-      xmove_fd(n, 0i32);
-      xdup2(0i32, 1i32);
+      crate::libbb::xfuncs_printf::xmove_fd(n, 0i32);
+      crate::libbb::xfuncs_printf::xdup2(0i32, 1i32);
       handle_incoming_and_exit(&mut fromAddr);
     }
     /* parent, or fork failed */
@@ -3052,15 +2927,7 @@ unsafe extern "C" fn mini_httpd(mut server_socket: libc::c_int) -> ! {
  * Never returns.
  */
 unsafe extern "C" fn mini_httpd_inetd() -> ! {
-  let mut fromAddr: len_and_sockaddr = len_and_sockaddr {
-    len: 0,
-    u: C2RustUnnamed_1 {
-      sa: sockaddr {
-        sa_family: 0,
-        sa_data: [0; 14],
-      },
-    },
-  };
+  let mut fromAddr: len_and_sockaddr = std::mem::zeroed();
   memset(
     &mut fromAddr as *mut len_and_sockaddr as *mut libc::c_void,
     0i32,
@@ -3101,18 +2968,20 @@ pub unsafe extern "C" fn httpd_main(
   let ref mut fresh28 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
-  *fresh28 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh28 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).g_realm = b"Web Server Authentication\x00" as *const u8 as *const libc::c_char;
   (*ptr_to_globals).range_start = -1i32 as off_t;
   (*ptr_to_globals).bind_addr_or_port = b"80\x00" as *const u8 as *const libc::c_char;
   (*ptr_to_globals).index_page = index_html.as_ptr();
   (*ptr_to_globals).file_size = -1i32 as off_t;
-  (*ptr_to_globals).home_httpd = xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
+  (*ptr_to_globals).home_httpd =
+    crate::libbb::xgetcwd::xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
   /* We do not "absolutize" path given by -h (home) opt.
    * If user gives relative path in -h,
    * $SCRIPT_FILENAME will not be set. */
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^c:d:h:e:r:m:u:p:ifv\x00vv:if\x00" as *const u8 as *const libc::c_char,
     &mut (*ptr_to_globals).opt_c_configFile as *mut *const libc::c_char,
@@ -3126,7 +2995,10 @@ pub unsafe extern "C" fn httpd_main(
     &mut (*ptr_to_globals).verbose as *mut libc::c_int,
   );
   if opt & OPT_DECODE_URL as libc::c_int as libc::c_uint != 0 {
-    fputs_unlocked(percent_decode_in_place(url_for_decode, 0i32), stdout);
+    fputs_unlocked(
+      crate::libbb::percent_decode::percent_decode_in_place(url_for_decode, 0i32),
+      stdout,
+    );
     return 0i32;
   }
   if opt & OPT_ENCODE_URL as libc::c_int as libc::c_uint != 0 {
@@ -3138,14 +3010,18 @@ pub unsafe extern "C" fn httpd_main(
     salt[0] = '$' as i32 as libc::c_char;
     salt[1] = '1' as i32 as libc::c_char;
     salt[2] = '$' as i32 as libc::c_char;
-    crypt_make_salt(salt.as_mut_ptr().offset(3), 4i32);
-    puts(pw_encrypt(pass, salt.as_mut_ptr(), 0i32));
+    crate::libbb::pw_encrypt::crypt_make_salt(salt.as_mut_ptr().offset(3), 4i32);
+    puts(crate::libbb::pw_encrypt::pw_encrypt(
+      pass,
+      salt.as_mut_ptr(),
+      0i32,
+    ));
     return 0i32;
   }
   if opt & OPT_SETUID as libc::c_int as libc::c_uint != 0 {
-    xget_uidgid(&mut ugid, s_ugid);
+    crate::libpwdgrp::uidgid_get::xget_uidgid(&mut ugid, s_ugid);
   }
-  xchdir((*ptr_to_globals).home_httpd);
+  crate::libbb::xfuncs_printf::xchdir((*ptr_to_globals).home_httpd);
   if opt & OPT_INETD as libc::c_int as libc::c_uint == 0 {
     signal(
       17i32,
@@ -3156,12 +3032,14 @@ pub unsafe extern "C" fn httpd_main(
     if opt & OPT_SETUID as libc::c_int as libc::c_uint != 0 {
       if ugid.gid != -1i32 as gid_t {
         if setgroups(1i32 as size_t, &mut ugid.gid) == -1i32 {
-          bb_simple_perror_msg_and_die(b"setgroups\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+            b"setgroups\x00" as *const u8 as *const libc::c_char,
+          );
           /* never returns */
         } /* don't change current directory */
-        xsetgid(ugid.gid);
+        crate::libbb::xfuncs_printf::xsetgid(ugid.gid);
       }
-      xsetuid(ugid.uid);
+      crate::libbb::xfuncs_printf::xsetuid(ugid.uid);
     }
   }
   parse_conf(DEFAULT_PATH_HTTPD_CONF.as_ptr(), FIRST_PARSE as libc::c_int);
@@ -3176,7 +3054,7 @@ pub unsafe extern "C" fn httpd_main(
     mini_httpd_inetd();
   }
   if opt & OPT_FOREGROUND as libc::c_int as libc::c_uint == 0 {
-    bb_daemonize_or_rexec(0i32);
+    crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(0i32);
   }
   mini_httpd(server_socket);
   /* never returns */

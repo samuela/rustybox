@@ -12,16 +12,8 @@ extern "C" {
   static bb_PATH_root_path: [libc::c_char; 0];
 
   #[no_mangle]
-  fn file_is_executable(name: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn find_executable(
-    filename: *const libc::c_char,
-    PATHp: *mut *mut libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
 }
 
 /*
@@ -65,13 +57,13 @@ pub unsafe extern "C" fn which_main(
         .offset(::std::mem::size_of::<[libc::c_char; 5]>() as libc::c_ulong as isize),
     )
   }
-  getopt32(argv, b"^a\x00-1\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::getopt32::getopt32(argv, b"^a\x00-1\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   loop {
     let mut missing: libc::c_int = 1i32;
     /* If file contains a slash don't use PATH */
     if !strchr(*argv, '/' as i32).is_null() {
-      if file_is_executable(*argv) != 0 {
+      if crate::libbb::executable::file_is_executable(*argv) != 0 {
         missing = 0i32;
         puts(*argv);
       }
@@ -82,7 +74,7 @@ pub unsafe extern "C" fn which_main(
       loop
       /* NOFORK NB: xmalloc inside find_executable(), must have no allocs above! */
       {
-        p = find_executable(*argv, &mut path);
+        p = crate::libbb::executable::find_executable(*argv, &mut path);
         if p.is_null() {
           break;
         }

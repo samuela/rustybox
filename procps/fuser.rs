@@ -38,36 +38,8 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstat(pathname: *const libc::c_char, buf: *mut stat);
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn concat_subpath_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn get_signum(name: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -86,8 +58,8 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub recursion_depth: libc::c_int,
   pub mypid: pid_t,
@@ -95,8 +67,9 @@ pub struct globals {
   pub kill_failed: smallint,
   pub killsig: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct inode_list {
   pub next: *mut inode_list,
   pub inode: ino_t,
@@ -130,7 +103,8 @@ unsafe extern "C" fn add_inode(mut st: *const stat) {
     }
     curr = &mut (**curr).next
   }
-  *curr = xzalloc(::std::mem::size_of::<inode_list>() as libc::c_ulong) as *mut inode_list;
+  *curr = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<inode_list>() as libc::c_ulong)
+    as *mut inode_list;
   (**curr).dev = (*st).st_dev;
   (**curr).inode = (*st).st_ino;
 }
@@ -167,7 +141,7 @@ unsafe extern "C" fn scan_proc_net_or_maps(
   let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
   let mut fag: *mut libc::c_void = 0 as *mut libc::c_void;
   let mut sag: *mut libc::c_void = 0 as *mut libc::c_void;
-  f = fopen_for_read(path);
+  f = crate::libbb::wfopen::fopen_for_read(path);
   if f.is_null() {
     return 0i32 as smallint;
   }
@@ -220,7 +194,9 @@ unsafe extern "C" fn scan_proc_net_or_maps(
       if !(major != 0i32 && minor != 0i32 && statbuf.st_ino != 0i32 as libc::c_ulong) {
         continue;
       }
-      statbuf.st_dev = bb_makedev(major as libc::c_uint, minor as libc::c_uint) as libc::dev_t;
+      statbuf.st_dev =
+        crate::libbb::makedev::bb_makedev(major as libc::c_uint, minor as libc::c_uint)
+          as libc::dev_t;
       retval = search_dev_inode(&mut statbuf);
       if retval != 0 {
         break;
@@ -250,14 +226,15 @@ unsafe extern "C" fn scan_recursive(mut path: *const libc::c_char) -> smallint {
     let mut statbuf: stat = std::mem::zeroed();
     let mut pid: pid_t = 0;
     let mut subpath: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    subpath = concat_subpath_file(path, (*d_ent).d_name.as_mut_ptr());
+    subpath =
+      crate::libbb::concat_subpath_file::concat_subpath_file(path, (*d_ent).d_name.as_mut_ptr());
     if subpath.is_null() {
       continue;
     }
     let mut current_block_25: u64;
     match (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).recursion_depth {
       1 => {
-        pid = bb_strtou(
+        pid = crate::libbb::bb_strtonum::bb_strtou(
           (*d_ent).d_name.as_mut_ptr(),
           0 as *mut *mut libc::c_char,
           10i32,
@@ -274,7 +251,7 @@ unsafe extern "C" fn scan_recursive(mut path: *const libc::c_char) -> smallint {
               (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).killsig,
             ) != 0i32
             {
-              bb_perror_msg(
+              crate::libbb::perror_msg::bb_perror_msg(
                 b"kill pid %s\x00" as *const u8 as *const libc::c_char,
                 (*d_ent).d_name.as_mut_ptr(),
               );
@@ -292,7 +269,7 @@ unsafe extern "C" fn scan_recursive(mut path: *const libc::c_char) -> smallint {
         }
       }
       2 => {
-        match index_in_substrings(
+        match crate::libbb::compare_string_array::index_in_substrings(
           b"cwd\x00exe\x00root\x00fd\x00lib\x00mmap\x00maps\x00\x00" as *const u8
             as *const libc::c_char,
           (*d_ent).d_name.as_mut_ptr(),
@@ -396,7 +373,7 @@ pub unsafe extern "C" fn fuser_main(
     {
       continue;
     }
-    sig = get_signum(&mut *arg.offset(1));
+    sig = crate::libbb::u_signal_names::get_signum(&mut *arg.offset(1));
     if sig < 0i32 {
       continue;
     }
@@ -413,7 +390,7 @@ pub unsafe extern "C" fn fuser_main(
     }
     break;
   }
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     b"^mks64\x00-1\x00" as *const u8 as *const libc::c_char,
   );
@@ -443,14 +420,14 @@ pub unsafe extern "C" fn fuser_main(
     } else {
       /* FILE */
       let mut statbuf: stat = std::mem::zeroed();
-      xstat(*pp, &mut statbuf);
+      crate::libbb::xfuncs_printf::xstat(*pp, &mut statbuf);
       add_inode(&mut statbuf);
     }
     pp = pp.offset(1)
   }
   if scan_recursive(b"/proc\x00" as *const u8 as *const libc::c_char) != 0 {
     if option_mask32 & OPT_SILENT as libc::c_int as libc::c_uint == 0 {
-      bb_putchar('\n' as i32);
+      crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     }
     return (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).kill_failed as libc::c_int;
   }

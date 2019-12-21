@@ -1,10 +1,5 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn auto_string(str: *mut libc::c_char) -> *mut libc::c_char;
-}
+
 /* If block_size == 0, display size without fractional part,
  * else display (size * block_size) with one decimal digit.
  * If display_unit == 0, show value no bigger than 1024 with suffix (K,M,G...),
@@ -95,7 +90,12 @@ pub unsafe extern "C" fn make_human_readable_str(
       frac = 1i32 as libc::c_uint
     }
   }
-  return auto_string(xasprintf(fmt, val, frac, *u as libc::c_int));
+  return crate::libbb::auto_string::auto_string(crate::libbb::xfuncs_printf::xasprintf(
+    fmt,
+    val,
+    frac,
+    *u as libc::c_int,
+  ));
 }
 /* vda's implementations of the similar idea */
 /* Convert unsigned long long value into compact 5-char representation.

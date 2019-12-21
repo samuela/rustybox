@@ -1,7 +1,7 @@
+use crate::libbb::parse_config::parser_t;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
 use crate::librb::smallint;
-
 use libc;
 use libc::close;
 use libc::closedir;
@@ -11,7 +11,6 @@ use libc::getenv;
 use libc::getpid;
 use libc::kill;
 use libc::mount;
-use libc::off_t;
 use libc::open;
 use libc::opendir;
 use libc::pid_t;
@@ -19,7 +18,6 @@ use libc::putenv;
 use libc::readdir;
 use libc::rmdir;
 use libc::sprintf;
-use libc::ssize_t;
 use libc::strchr;
 use libc::strcmp;
 use libc::strstr;
@@ -83,76 +81,8 @@ extern "C" {
   fn localtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
 
   #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
   static mut bb_got_signal: smallint;
-  #[no_mangle]
-  fn record_signo(signo: libc::c_int);
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn open_read_close(
-    filename: *const libc::c_char,
-    buf: *mut libc::c_void,
-    maxsz: size_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn xmalloc_open_read_close(
-    filename: *const libc::c_char,
-    maxsz_p: *mut size_t,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn xfopen(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn safe_gethostname() -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-  #[no_mangle]
-  fn xfork() -> pid_t;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn config_open2(
-    filename: *const libc::c_char,
-    fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
-  ) -> *mut parser_t;
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn find_pid_by_name(procName: *const libc::c_char) -> *mut pid_t;
+
   #[no_mangle]
   static bb_PATH_root_path: [libc::c_char; 0];
   #[no_mangle]
@@ -176,26 +106,14 @@ pub const PARSE_GREEDY: C2RustUnnamed = 262144;
 pub const PARSE_TRIM: C2RustUnnamed = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed = 65536;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
-
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct globals {
   pub jiffy_line: [libc::c_char; 1024],
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct utsname {
   pub sysname: [libc::c_char; 65],
   pub nodename: [libc::c_char; 65],
@@ -251,7 +169,7 @@ unsafe extern "C" fn dump_file(mut fp: *mut FILE, mut filename: *const libc::c_c
       fp,
     );
     fflush(fp);
-    bb_copyfd_eof(fd, fileno_unlocked(fp));
+    crate::libbb::copyfd::bb_copyfd_eof(fd, fileno_unlocked(fp));
     close(fd);
     putc_unlocked('\n' as i32, fp);
   };
@@ -276,7 +194,7 @@ unsafe extern "C" fn dump_procs(
     }
     let mut name: [libc::c_char; 29] = [0; 29];
     let mut stat_fd: libc::c_int = 0;
-    let mut pid: libc::c_uint = bb_strtou(
+    let mut pid: libc::c_uint = crate::libbb::bb_strtonum::bb_strtou(
       (*entry).d_name.as_mut_ptr(),
       0 as *mut *mut libc::c_char,
       10i32,
@@ -298,7 +216,7 @@ unsafe extern "C" fn dump_procs(
     }
     let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut stat_line: [libc::c_char; 4096] = [0; 4096];
-    let mut rd: libc::c_int = safe_read(
+    let mut rd: libc::c_int = crate::libbb::read::safe_read(
       stat_fd,
       stat_line.as_mut_ptr() as *mut libc::c_void,
       (::std::mem::size_of::<[libc::c_char; 4096]>() as libc::c_ulong)
@@ -343,7 +261,8 @@ unsafe extern "C" fn dump_procs(
 unsafe extern "C" fn make_tempdir() -> *mut libc::c_char {
   let mut template: [libc::c_char; 22] =
     *::std::mem::transmute::<&[u8; 22], &mut [libc::c_char; 22]>(b"/tmp/bootchart.XXXXXX\x00");
-  let mut tempdir: *mut libc::c_char = xstrdup(mkdtemp(template.as_mut_ptr()));
+  let mut tempdir: *mut libc::c_char =
+    crate::libbb::xfuncs_printf::xstrdup(mkdtemp(template.as_mut_ptr()));
   if tempdir.is_null() {
     /* /tmp is not writable (happens when we are used as init).
      * Try to mount a tmpfs, then cd and lazily unmount it.
@@ -365,22 +284,22 @@ unsafe extern "C" fn make_tempdir() -> *mut libc::c_char {
     {
       try_dir = try_dir.offset(strlen(try_dir).wrapping_add(1i32 as libc::c_ulong) as isize);
       if *try_dir.offset(0) == 0 {
-        bb_perror_msg_and_die(
+        crate::libbb::perror_msg::bb_perror_msg_and_die(
           b"can\'t %smount tmpfs\x00" as *const u8 as *const libc::c_char,
           b"\x00" as *const u8 as *const libc::c_char,
         );
       }
     }
     //bb_error_msg("mounted tmpfs on %s", try_dir);
-    xchdir(try_dir);
+    crate::libbb::xfuncs_printf::xchdir(try_dir);
     if umount2(try_dir, MNT_DETACH as libc::c_int) != 0i32 {
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"can\'t %smount tmpfs\x00" as *const u8 as *const libc::c_char,
         b"un\x00" as *const u8 as *const libc::c_char,
       );
     }
   } else {
-    xchdir(tempdir);
+    crate::libbb::xfuncs_printf::xchdir(tempdir);
   }
   return tempdir;
 }
@@ -388,16 +307,16 @@ unsafe extern "C" fn do_logging(
   mut sample_period_us: libc::c_uint,
   mut process_accounting: libc::c_int,
 ) {
-  let mut proc_stat: *mut FILE = xfopen(
+  let mut proc_stat: *mut FILE = crate::libbb::xfuncs_printf::xfopen(
     b"proc_stat.log\x00" as *const u8 as *const libc::c_char,
     b"w\x00" as *const u8 as *const libc::c_char,
   );
-  let mut proc_diskstats: *mut FILE = xfopen(
+  let mut proc_diskstats: *mut FILE = crate::libbb::xfuncs_printf::xfopen(
     b"proc_diskstats.log\x00" as *const u8 as *const libc::c_char,
     b"w\x00" as *const u8 as *const libc::c_char,
   );
   //FILE *proc_netdev = xfopen("proc_netdev.log", "w");
-  let mut proc_ps: *mut FILE = xfopen(
+  let mut proc_ps: *mut FILE = crate::libbb::xfuncs_printf::xfopen(
     b"proc_ps.log\x00" as *const u8 as *const libc::c_char,
     b"w\x00" as *const u8 as *const libc::c_char,
   ); /* ~1 minute */
@@ -405,7 +324,7 @@ unsafe extern "C" fn do_logging(
   let mut count: libc::c_uint =
     ((60i32 * 1000i32 * 1000i32) as libc::c_uint).wrapping_div(sample_period_us);
   if process_accounting != 0 {
-    close(xopen(
+    close(crate::libbb::xfuncs_printf::xopen(
       b"kernel_pacct\x00" as *const u8 as *const libc::c_char,
       0o1i32 | 0o100i32 | 0o1000i32,
     ));
@@ -417,7 +336,7 @@ unsafe extern "C" fn do_logging(
       break;
     }
     let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut len: libc::c_int = open_read_close(
+    let mut len: libc::c_int = crate::libbb::read::open_read_close(
       b"/proc/uptime\x00" as *const u8 as *const libc::c_char,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .jiffy_line
@@ -463,7 +382,7 @@ unsafe extern "C" fn do_logging(
             count = ((2i32 * 1000i32 * 1000i32) as libc::c_uint).wrapping_div(sample_period_us)
           }
         }
-        fflush_all();
+        crate::libbb::xfuncs_printf::fflush_all();
       }
     }
     usleep(sample_period_us);
@@ -477,7 +396,7 @@ unsafe extern "C" fn finalize(
   //# Stop process accounting if configured
   //local pacct=
   //[ -e kernel_pacct ] && pacct=kernel_pacct
-  let mut header_fp: *mut FILE = xfopen(
+  let mut header_fp: *mut FILE = crate::libbb::xfuncs_printf::xfopen(
     b"header\x00" as *const u8 as *const libc::c_char,
     b"w\x00" as *const u8 as *const libc::c_char,
   );
@@ -509,7 +428,7 @@ unsafe extern "C" fn finalize(
     machine: [0; 65],
     domainname: [0; 65],
   };
-  hostname = safe_gethostname();
+  hostname = crate::libbb::safe_gethostname::safe_gethostname();
   time(&mut t);
   localtime_r(&mut t, &mut tm_time);
   strftime(
@@ -536,7 +455,7 @@ unsafe extern "C" fn finalize(
   );
   //system.release = `cat /etc/DISTRO-release`
   //system.cpu = `grep '^model name' /proc/cpuinfo | head -1` ($cpucount)
-  kcmdline = xmalloc_open_read_close(
+  kcmdline = crate::libbb::read_printf::xmalloc_open_read_close(
     b"/proc/cmdline\x00" as *const u8 as *const libc::c_char,
     std::ptr::null_mut::<size_t>(),
   ) as *mut libc::c_char;
@@ -548,7 +467,7 @@ unsafe extern "C" fn finalize(
   );
   fclose(header_fp);
   /* Package log files */
-  system(xasprintf(
+  system(crate::libbb::xfuncs_printf::xasprintf(
     b"tar -zcf /var/log/bootlog.tgz header %s *.log\x00" as *const u8 as *const libc::c_char,
     if process_accounting != 0 {
       b"kernel_pacct\x00" as *const u8 as *const libc::c_char
@@ -592,16 +511,17 @@ pub unsafe extern "C" fn bootchartd_main(
   let mut process_accounting: libc::c_int = 0;
   parent_pid = getpid();
   if !(*argv.offset(1)).is_null() {
-    cmd = index_in_strings(
+    cmd = crate::libbb::compare_string_array::index_in_strings(
       b"stop\x00start\x00init\x00\x00" as *const u8 as *const libc::c_char,
       *argv.offset(1),
     ) as smallint;
     if (cmd as libc::c_int) < 0i32 {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     if cmd as libc::c_int == CMD_STOP as libc::c_int {
-      let mut pidList: *mut pid_t =
-        find_pid_by_name(b"bootchartd\x00" as *const u8 as *const libc::c_char);
+      let mut pidList: *mut pid_t = crate::libbb::find_pid_by_name::find_pid_by_name(
+        b"bootchartd\x00" as *const u8 as *const libc::c_char,
+      );
       while *pidList != 0i32 {
         if *pidList != parent_pid {
           kill(*pidList, 10i32);
@@ -612,7 +532,7 @@ pub unsafe extern "C" fn bootchartd_main(
     }
   } else {
     if parent_pid != 1i32 {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     cmd = CMD_PID1 as libc::c_int as smallint
   }
@@ -621,17 +541,23 @@ pub unsafe extern "C" fn bootchartd_main(
   sample_period_us = (200i32 * 1000i32) as libc::c_uint;
   process_accounting = 0i32;
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
-  let mut parser: *mut parser_t = config_open2(
+  let mut parser: *mut parser_t = crate::libbb::parse_config::config_open2(
     (b"/etc/bootchartd.conf\x00" as *const u8 as *const libc::c_char).offset(5),
-    Some(fopen_for_read as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE),
+    Some(
+      crate::libbb::wfopen::fopen_for_read
+        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+    ),
   );
   if parser.is_null() {
-    parser = config_open2(
+    parser = crate::libbb::parse_config::config_open2(
       b"/etc/bootchartd.conf\x00" as *const u8 as *const libc::c_char,
-      Some(fopen_for_read as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE),
+      Some(
+        crate::libbb::wfopen::fopen_for_read
+          as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+      ),
     )
   }
-  while config_read(
+  while crate::libbb::parse_config::config_read(
     parser,
     token.as_mut_ptr(),
     (PARSE_NORMAL as libc::c_int & !(PARSE_COLLAPSE as libc::c_int)
@@ -659,17 +585,17 @@ pub unsafe extern "C" fn bootchartd_main(
       process_accounting = 1i32
     }
   }
-  config_close(parser);
+  crate::libbb::parse_config::config_close(parser);
   if sample_period_us as libc::c_int <= 0i32 {
     sample_period_us = 1i32 as libc::c_uint
   }
   /* prevent division by 0 */
   /* Create logger child: */
-  logger_pid = xfork();
+  logger_pid = crate::libbb::xfuncs_printf::xfork();
   if logger_pid == 0i32 {
     /* child */
     let mut tempdir: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    bb_signals(
+    crate::libbb::signals::bb_signals(
       0i32
         + (1i32 << 10i32)
         + (1i32 << 12i32)
@@ -677,7 +603,7 @@ pub unsafe extern "C" fn bootchartd_main(
         + (1i32 << 3i32)
         + (1i32 << 2i32)
         + (1i32 << 1i32),
-      Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+      Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
     );
     /* Inform parent that we are ready */
     raise(19i32);
@@ -726,7 +652,7 @@ pub unsafe extern "C" fn bootchartd_main(
       b"init\x00" as *const u8 as *const libc::c_char,
       0 as *mut libc::c_void,
     );
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t execute \'%s\'\x00" as *const u8 as *const libc::c_char,
       b"/sbin/init\x00" as *const u8 as *const libc::c_char,
     );
@@ -736,14 +662,16 @@ pub unsafe extern "C" fn bootchartd_main(
     let mut pid: pid_t = {
       let mut bb__xvfork_pid: pid_t = vfork();
       if bb__xvfork_pid < 0i32 {
-        bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"vfork\x00" as *const u8 as *const libc::c_char,
+        );
       }
       bb__xvfork_pid
     };
     if pid == 0i32 {
       /* child */
       argv = argv.offset(2);
-      BB_EXECVP_or_die(argv);
+      crate::libbb::executable::BB_EXECVP_or_die(argv);
     }
     /* parent */
     waitpid(pid, 0 as *mut libc::c_int, 0i32);

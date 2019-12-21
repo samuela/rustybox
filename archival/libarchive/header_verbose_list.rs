@@ -1,25 +1,20 @@
+use crate::archival::libarchive::bb_archive::file_header_t;
 use libc;
 use libc::printf;
 use libc::sprintf;
+use libc::time_t;
+use libc::tm;
 extern "C" {
 
   #[no_mangle]
   fn localtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
-  //TODO: supply a pointer to char[11] buffer (avoid statics)?
-  #[no_mangle]
-  fn bb_mode_string(mode: mode_t) -> *const libc::c_char;
-  /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
-   * But potentially slow, don't use in one-billion-times loops */
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
+//TODO: supply a pointer to char[11] buffer (avoid statics)?
+
+/* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
+ * But potentially slow, don't use in one-billion-times loops */
+
 }
 
-use crate::archival::libarchive::bb_archive::file_header_t;
-use libc::mode_t;
-use libc::time_t;
-use libc::tm;
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
@@ -44,11 +39,11 @@ pub unsafe extern "C" fn header_verbose_list(mut file_header: *const file_header
   group = (*file_header).tar__gname;
   if group.is_null() {
     /*sprintf(gid, "%u", (unsigned)file_header->gid);*/
-    group = utoa((*file_header).gid)
+    group = crate::libbb::xfuncs::utoa((*file_header).gid)
   }
   printf(
     b"%s %s/%s %9lu %4u-%02u-%02u %02u:%02u:%02u %s\x00" as *const u8 as *const libc::c_char,
-    bb_mode_string((*file_header).mode),
+    crate::libbb::mode_string::bb_mode_string((*file_header).mode),
     user,
     group,
     (*file_header).size,
@@ -69,5 +64,5 @@ pub unsafe extern "C" fn header_verbose_list(mut file_header: *const file_header
       (*file_header).link_target,
     );
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
 }

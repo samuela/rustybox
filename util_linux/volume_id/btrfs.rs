@@ -3,31 +3,11 @@ extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
-  #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
-
-  #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
-
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off: u64, len: size_t) -> *mut libc::c_void;
 }
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+
+use crate::util_linux::volume_id::volume_id::volume_id;
 
 pub type uuid_format = libc::c_uint;
 // pub const UUID_DCE_STRING: uuid_format = 3;
@@ -35,8 +15,8 @@ pub const UUID_DCE: uuid_format = 2;
 // pub const UUID_NTFS: uuid_format = 1;
 // pub const UUID_DOS: uuid_format = 0;
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct btrfs_super_block {
   pub csum: [u8; 32],
   pub fsid: [u8; 16],
@@ -71,8 +51,8 @@ pub struct btrfs_super_block {
   // ...
 }
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct btrfs_dev_item {
   pub devid: u64,
   pub total_bytes: u64,
@@ -162,7 +142,7 @@ pub unsafe extern "C" fn volume_id_probe_btrfs(mut id: *mut volume_id) -> libc::
   let mut off: libc::c_uint = 64i32 as libc::c_uint;
   while off < (64i32 * 1024i32 * 1024i32) as libc::c_uint {
     off = off.wrapping_mul(1024i32 as libc::c_uint);
-    sb = volume_id_get_buffer(
+    sb = crate::util_linux::volume_id::util::volume_id_get_buffer(
       id,
       off as u64,
       ::std::mem::size_of::<btrfs_super_block>() as libc::c_ulong,
@@ -180,8 +160,12 @@ pub unsafe extern "C" fn volume_id_probe_btrfs(mut id: *mut volume_id) -> libc::
     }
   }
   // N.B.: btrfs natively supports 256 (>VOLUME_ID_LABEL_SIZE) size labels
-  volume_id_set_label_string(id, (*sb).label.as_mut_ptr(), 64i32 as size_t);
-  volume_id_set_uuid(id, (*sb).fsid.as_mut_ptr(), UUID_DCE);
+  crate::util_linux::volume_id::util::volume_id_set_label_string(
+    id,
+    (*sb).label.as_mut_ptr(),
+    64i32 as size_t,
+  );
+  crate::util_linux::volume_id::util::volume_id_set_uuid(id, (*sb).fsid.as_mut_ptr(), UUID_DCE);
   (*id).type_0 = b"btrfs\x00" as *const u8 as *const libc::c_char;
   return 0i32;
 }

@@ -38,29 +38,7 @@ extern "C" {
   fn localtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
   #[no_mangle]
   fn stime(__when: *const time_t) -> libc::c_int;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xstat(pathname: *const libc::c_char, buf: *mut stat);
-  #[no_mangle]
-  fn parse_datestr(date_str: *const libc::c_char, ptm: *mut tm);
-  #[no_mangle]
-  fn validate_tm_time(date_str: *const libc::c_char, ptm: *mut tm) -> time_t;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static bb_msg_invalid_date: [libc::c_char; 0];
   #[no_mangle]
@@ -261,7 +239,7 @@ pub unsafe extern "C" fn date_main(
   let mut fmt_str2dt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut isofmt_arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  opt = getopt32long(
+  opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"^Rs:ud:r:I::D:\x00d--s:s--d:R--I:I--R\x00" as *const u8 as *const libc::c_char,
     date_longopts.as_ptr(),
@@ -281,9 +259,10 @@ pub unsafe extern "C" fn date_main(
         100, 97, 116, 101, 0, 104, 111, 117, 114, 115, 0, 109, 105, 110, 117, 116, 101, 115, 0,
         115, 101, 99, 111, 110, 100, 115, 0, 0,
       ]; /* ns? */
-      ifmt = index_in_substrings(isoformats.as_ptr(), isofmt_arg);
+      ifmt =
+        crate::libbb::compare_string_array::index_in_substrings(isoformats.as_ptr(), isofmt_arg);
       if ifmt < 0 {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
     }
   }
@@ -316,7 +295,7 @@ pub unsafe extern "C" fn date_main(
          */
         len -= 8i32;
         if len < 0i32 || len > 4i32 || len & 1i32 != 0 {
-          bb_error_msg_and_die(bb_msg_invalid_date.as_ptr(), date_str);
+          crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_invalid_date.as_ptr(), date_str);
         }
         if len != 0i32 {
           /* move YY or CCYY to front */
@@ -342,13 +321,13 @@ pub unsafe extern "C" fn date_main(
     }
   }
   if !(*argv).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* Now we have parsed all the information except the date format
    * which depends on whether the clock is being set or read */
   if opt & OPT_REFERENCE as libc::c_int as libc::c_uint != 0 {
     let mut statbuf: stat = std::mem::zeroed();
-    xstat(filename, &mut statbuf);
+    crate::libbb::xfuncs_printf::xstat(filename, &mut statbuf);
     ts.tv_sec = statbuf.st_mtime
   } else {
     time(&mut ts.tv_sec);
@@ -363,20 +342,22 @@ pub unsafe extern "C" fn date_main(
     /* Process any date input to UNIX time since 1 Jan 1970 */
     if 1i32 != 0 && opt & OPT_HINT as libc::c_int as libc::c_uint != 0 {
       if strptime(date_str, fmt_str2dt, &mut tm_time).is_null() {
-        bb_error_msg_and_die(bb_msg_invalid_date.as_ptr(), date_str);
+        crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_invalid_date.as_ptr(), date_str);
       }
     } else {
-      parse_datestr(date_str, &mut tm_time);
+      crate::libbb::time::parse_datestr(date_str, &mut tm_time);
     }
     /* Correct any day of week and day of year etc. fields */
     /* Be sure to recheck dst (but not if date is time_t format) */
     if *date_str.offset(0) as libc::c_int != '@' as i32 {
       tm_time.tm_isdst = -1i32
     }
-    ts.tv_sec = validate_tm_time(date_str, &mut tm_time);
+    ts.tv_sec = crate::libbb::time::validate_tm_time(date_str, &mut tm_time);
     /* if setting time, set it */
     if opt & OPT_SET as libc::c_int as libc::c_uint != 0 && stime(&mut ts.tv_sec) < 0i32 {
-      bb_simple_perror_msg(b"can\'t set date\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg(
+        b"can\'t set date\x00" as *const u8 as *const libc::c_char,
+      );
     }
   }
   /* Display output */
@@ -439,7 +420,12 @@ pub unsafe extern "C" fn date_main(
     *bb_common_bufsiz1.as_mut_ptr().offset(0) = '\u{0}' as i32 as libc::c_char
   } else {
     /* Handle special conversions */
-    if !is_prefixed_with(fmt_dt2str, b"%f\x00" as *const u8 as *const libc::c_char).is_null() {
+    if !crate::libbb::compare_string_array::is_prefixed_with(
+      fmt_dt2str,
+      b"%f\x00" as *const u8 as *const libc::c_char,
+    )
+    .is_null()
+    {
       fmt_dt2str = b"%Y.%m.%d-%H:%M:%S\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
     }
     /* Generate output string */

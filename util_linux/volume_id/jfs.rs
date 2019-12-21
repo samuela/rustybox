@@ -1,33 +1,13 @@
 use libc;
 extern "C" {
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
-
-  #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
 
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 }
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+
+use crate::util_linux::volume_id::volume_id::volume_id;
 
 pub type uuid_format = libc::c_uint;
 // pub const UUID_DCE_STRING: uuid_format = 3;
@@ -59,8 +39,9 @@ pub const UUID_DCE: uuid_format = 2;
 //config:	default y
 //config:	depends on VOLUMEID
 //kbuild:lib-$(CONFIG_FEATURE_VOLUMEID_JFS) += jfs.o
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct jfs_super_block {
   pub magic: [u8; 4],
   pub version: u32,
@@ -144,7 +125,7 @@ pub struct jfs_super_block {
 pub unsafe extern "C" fn volume_id_probe_jfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut js: *mut jfs_super_block = 0 as *mut jfs_super_block;
-  js = volume_id_get_buffer(
+  js = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     (0i32 as u64).wrapping_add(0x8000i32 as libc::c_ulong),
     0x200i32 as size_t,
@@ -161,8 +142,12 @@ pub unsafe extern "C" fn volume_id_probe_jfs(mut id: *mut volume_id) -> libc::c_
     return -1i32;
   }
   //	volume_id_set_label_raw(id, js->label, 16);
-  volume_id_set_label_string(id, (*js).label.as_mut_ptr(), 16i32 as size_t);
-  volume_id_set_uuid(id, (*js).uuid.as_mut_ptr(), UUID_DCE);
+  crate::util_linux::volume_id::util::volume_id_set_label_string(
+    id,
+    (*js).label.as_mut_ptr(),
+    16i32 as size_t,
+  );
+  crate::util_linux::volume_id::util::volume_id_set_uuid(id, (*js).uuid.as_mut_ptr(), UUID_DCE);
   //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
   (*id).type_0 = b"jfs\x00" as *const u8 as *const libc::c_char;
   return 0i32;

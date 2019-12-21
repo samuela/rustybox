@@ -1,5 +1,6 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
@@ -25,66 +26,7 @@ extern "C" {
   fn inet_aton(__cp: *const libc::c_char, __inp: *mut in_addr) -> libc::c_int;
 
   #[no_mangle]
-  fn monotonic_us() -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xsetenv(key: *const libc::c_char, value: *const libc::c_char);
-  #[no_mangle]
-  fn bb_unsetenv_and_free(key: *mut libc::c_char);
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xbind(sockfd: libc::c_int, my_addr: *mut sockaddr, addrlen: socklen_t);
-  #[no_mangle]
-  fn xsendto(
-    s: libc::c_int,
-    buf: *const libc::c_void,
-    len: size_t,
-    to: *const sockaddr,
-    tolen: socklen_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn safe_poll(ufds: *mut pollfd, nfds: nfds_t, timeout_ms: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn spawn_and_wait(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_logenv_override();
-  #[no_mangle]
-  fn bb_info_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 
   #[no_mangle]
   static const_int_0: libc::c_int;
@@ -107,10 +49,8 @@ pub type bb__aliased_u32 = u32;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::ssize_t;
-pub type socklen_t = __socklen_t;
+
+use crate::librb::socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -123,11 +63,8 @@ pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 
 use libc::sockaddr;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
+use libc::in_addr;
 pub type in_addr_t = u32;
 pub type nfds_t = libc::c_ulong;
 use libc::pollfd;
@@ -136,27 +73,31 @@ pub const LOGMODE_BOTH: C2RustUnnamed = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;
 pub const LOGMODE_STDIO: C2RustUnnamed = 1;
 pub const LOGMODE_NONE: C2RustUnnamed = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub iface_sockaddr: sockaddr,
   pub our_ethaddr: ether_addr,
   pub localnet_ip: u32,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct ether_addr {
   pub ether_addr_octet: [u8; 6],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct ether_header {
   pub ether_dhost: [u8; 6],
   pub ether_shost: [u8; 6],
   pub ether_type: u16,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct arphdr {
   pub ar_hrd: libc::c_ushort,
   pub ar_pro: libc::c_ushort,
@@ -164,8 +105,9 @@ pub struct arphdr {
   pub ar_pln: libc::c_uchar,
   pub ar_op: libc::c_ushort,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ether_arp {
   pub ea_hdr: arphdr,
   pub arp_sha: [u8; 6],
@@ -173,8 +115,9 @@ pub struct ether_arp {
   pub arp_tha: [u8; 6],
   pub arp_tpa: [u8; 4],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifmap {
   pub mem_start: libc::c_ulong,
   pub mem_end: libc::c_ulong,
@@ -183,14 +126,16 @@ pub struct ifmap {
   pub dma: libc::c_uchar,
   pub port: libc::c_uchar,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifreq {
   pub ifr_ifrn: C2RustUnnamed_1,
   pub ifr_ifru: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub ifru_addr: sockaddr,
   pub ifru_dstaddr: sockaddr,
@@ -205,13 +150,15 @@ pub union C2RustUnnamed_0 {
   pub ifru_newname: [libc::c_char; 16],
   pub ifru_data: __caddr_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub ifrn_name: [libc::c_char; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct arp_packet {
   pub eth: ether_header,
   pub arp: ether_arp,
@@ -234,8 +181,9 @@ pub type C2RustUnnamed_4 = libc::c_uint;
 pub const sock_fd: C2RustUnnamed_4 = 3;
 pub const op: C2RustUnnamed_5 = 1;
 pub type C2RustUnnamed_5 = libc::c_uint;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_6 {
   pub null_ethaddr: ether_addr,
   pub ifr: ifreq,
@@ -272,8 +220,7 @@ unsafe extern "C" fn pick_nip() -> u32 {
       let fresh1;
       let fresh2 = __x;
       asm!("bswap $0" : "=r" (fresh1) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2))
-                         :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
@@ -329,8 +276,7 @@ unsafe extern "C" fn send_arp_request(
       let fresh4;
       let fresh5 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
     }
     __v
@@ -358,8 +304,7 @@ unsafe extern "C" fn send_arp_request(
       let fresh7;
       let fresh8 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
     }
     __v
@@ -375,8 +320,7 @@ unsafe extern "C" fn send_arp_request(
       let fresh10;
       let fresh11 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh10) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
     }
     __v
@@ -394,8 +338,7 @@ unsafe extern "C" fn send_arp_request(
       let fresh13;
       let fresh14 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
     }
     __v
@@ -428,7 +371,7 @@ unsafe extern "C" fn send_arp_request(
   // Thus we sendto() to G.iface_sockaddr. I wonder which sockaddr
   // (from bind() or from sendto()?) kernel actually uses
   // to determine iface to emit the packet from...
-  xsendto(
+  crate::libbb::xfuncs_printf::xsendto(
     sock_fd as libc::c_int,
     &mut p as *mut arp_packet as *const libc::c_void,
     ::std::mem::size_of::<arp_packet>() as libc::c_ulong,
@@ -457,17 +400,20 @@ unsafe extern "C" fn run(
   if nip != 0i32 as libc::c_uint {
     addr = nip_to_a(nip);
     /* Must not use setenv() repeatedly, it leaks memory. Use putenv() */
-    env_ip = xasprintf(b"ip=%s\x00" as *const u8 as *const libc::c_char, addr);
+    env_ip = crate::libbb::xfuncs_printf::xasprintf(
+      b"ip=%s\x00" as *const u8 as *const libc::c_char,
+      addr,
+    );
     putenv(env_ip);
     fmt = fmt.offset(-3)
   }
-  bb_info_msg(fmt, *argv.offset(2), *argv.offset(0), addr);
-  status = spawn_and_wait(argv.offset(1));
+  crate::libbb::verror_msg::bb_info_msg(fmt, *argv.offset(2), *argv.offset(0), addr);
+  status = crate::libbb::vfork_daemon_rexec::spawn_and_wait(argv.offset(1));
   if nip != 0i32 as libc::c_uint {
-    bb_unsetenv_and_free(env_ip);
+    crate::libbb::xfuncs_printf::bb_unsetenv_and_free(env_ip);
   }
   if status < 0i32 {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       (b"%s %s %s\x00" as *const u8 as *const libc::c_char).offset(3),
       *argv.offset(2),
       *argv.offset(0),
@@ -475,7 +421,7 @@ unsafe extern "C" fn run(
     return -*bb_errno;
   }
   if status != 0i32 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"script %s %s failed, exitcode=%d\x00" as *const u8 as *const libc::c_char,
       *argv.offset(1),
       *argv.offset(2),
@@ -531,7 +477,7 @@ pub unsafe extern "C" fn zcip_main(
   );
   // Parse commandline: prog [options] ifname script
   // exactly 2 args; -v accumulates and implies -f
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^fqr:l:v\x00=2:vv:vf\x00" as *const u8 as *const libc::c_char,
     &mut r_opt as *mut *mut libc::c_char,
@@ -541,8 +487,8 @@ pub unsafe extern "C" fn zcip_main(
   // Open an ARP socket
   // (need to do it before openlog to prevent openlog from taking
   // fd 3 (sock_fd==3))
-  xmove_fd(
-    xsocket(
+  crate::libbb::xfuncs_printf::xmove_fd(
+    crate::libbb::xfuncs_printf::xsocket(
       17i32,
       SOCK_PACKET as libc::c_int,
       ({
@@ -556,8 +502,7 @@ pub unsafe extern "C" fn zcip_main(
           let fresh17;
           let fresh18 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh17) : "0"
-                                   (c2rust_asm_casts::AsmCast::cast_in(fresh16, fresh18))
-                                   : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh16, fresh18)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh16, fresh18, fresh17);
         }
         __v
@@ -570,7 +515,7 @@ pub unsafe extern "C" fn zcip_main(
     openlog(applet_name, 0i32, 3i32 << 3i32);
     logmode = (logmode as libc::c_int | LOGMODE_SYSLOG as libc::c_int) as smallint
   }
-  bb_logenv_override();
+  crate::libbb::logenv::bb_logenv_override();
   // -l n.n.n.n
   let mut net: in_addr = in_addr { s_addr: 0 };
   if inet_aton(l_opt, &mut net) == 0i32
@@ -588,15 +533,16 @@ pub unsafe extern "C" fn zcip_main(
           let fresh20;
           let fresh21 = __x;
           asm!("bswap $0" : "=r" (fresh20) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh19, fresh21))
-                             :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh19, fresh21)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh19, fresh21, fresh20);
         }
         __v
       })
       != net.s_addr
   {
-    bb_simple_error_msg_and_die(b"invalid network address\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"invalid network address\x00" as *const u8 as *const libc::c_char,
+    );
   }
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).localnet_ip = {
     let mut __v: libc::c_uint = 0;
@@ -611,8 +557,7 @@ pub unsafe extern "C" fn zcip_main(
       let fresh23;
       let fresh24 = __x;
       asm!("bswap $0" : "=r" (fresh23) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh22, fresh24))
-                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh22, fresh24)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh22, fresh24, fresh23);
     }
     __v
@@ -634,15 +579,16 @@ pub unsafe extern "C" fn zcip_main(
           let fresh26;
           let fresh27 = __x;
           asm!("bswap $0" : "=r" (fresh26) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh25, fresh27))
-                             :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh25, fresh27)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh25, fresh27, fresh26);
         }
         __v
       }) & 0xffff0000u32
         != (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).localnet_ip
     {
-      bb_simple_error_msg_and_die(b"invalid link address\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"invalid link address\x00" as *const u8 as *const libc::c_char,
+      );
     }
     L.chosen_nip = ip.s_addr
   }
@@ -654,7 +600,7 @@ pub unsafe extern "C" fn zcip_main(
   let ref mut fresh29 = *argv.offset(1);
   *fresh29 = *argv.offset(2);
   /* Now: argv[0]:intf argv[1]:script argv[2]:junk argv[3]:NULL */
-  xsetenv(
+  crate::libbb::xfuncs_printf::xsetenv(
     b"interface\x00" as *const u8 as *const libc::c_char,
     *argv.offset(0),
   );
@@ -671,7 +617,7 @@ pub unsafe extern "C" fn zcip_main(
   // G.iface_sockaddr is: { u16 sa_family; u8 sa_data[14]; }
   //memset(&G.iface_sockaddr, 0, sizeof(G.iface_sockaddr));
   //TODO: are we leaving sa_family == 0 (AF_UNSPEC)?!
-  safe_strncpy(
+  crate::libbb::safe_strncpy::safe_strncpy(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .iface_sockaddr
       .sa_data
@@ -680,15 +626,15 @@ pub unsafe extern "C" fn zcip_main(
     ::std::mem::size_of::<[libc::c_char; 14]>() as libc::c_ulong,
   );
   // Bind to the interface's ARP socket
-  xbind(
+  crate::libbb::xfuncs_printf::xbind(
     sock_fd as libc::c_int,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).iface_sockaddr,
     ::std::mem::size_of::<sockaddr>() as libc::c_ulong as socklen_t,
   );
   // Get the interface's ethernet address
   //memset(&ifr, 0, sizeof(ifr));
-  strncpy_IFNAMSIZ(L.ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), *argv.offset(0));
-  bb_xioctl(
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(L.ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), *argv.offset(0));
+  crate::libbb::xfuncs_printf::bb_xioctl(
     sock_fd as libc::c_int,
     0x8927i32 as libc::c_uint,
     &mut L.ifr as *mut ifreq as *mut libc::c_void,
@@ -716,8 +662,8 @@ pub unsafe extern "C" fn zcip_main(
   //  - link already has local address... just defend/update
   // Daemonize now; don't delay system startup
   if opts & 1i32 as libc::c_uint == 0 {
-    bb_daemonize_or_rexec(0i32); /*was: DAEMON_CHDIR_ROOT*/
-    bb_info_msg(
+    crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(0i32); /*was: DAEMON_CHDIR_ROOT*/
+    crate::libbb::verror_msg::bb_info_msg(
       b"start, interface %s\x00" as *const u8 as *const libc::c_char,
       *argv.offset(0),
     );
@@ -800,10 +746,10 @@ pub unsafe extern "C" fn zcip_main(
           }
           if L.timeout_ms >= 0i32 {
             // Set deadline_us to the point in time when we timeout
-            deadline_us = (monotonic_us() as libc::c_uint)
+            deadline_us = (crate::libbb::time::monotonic_us() as libc::c_uint)
               .wrapping_add((L.timeout_ms * 1000i32) as libc::c_uint)
           }
-          n = safe_poll(fds.as_mut_ptr(), 1i32 as nfds_t, L.timeout_ms);
+          n = crate::libbb::safe_poll::safe_poll(fds.as_mut_ptr(), 1i32 as nfds_t, L.timeout_ms);
           if n < 0i32 {
             //bb_perror_msg("poll"); - done in safe_poll
             return 1i32;
@@ -878,7 +824,8 @@ pub unsafe extern "C" fn zcip_main(
             // We need to adjust the timeout in case we didn't receive
             // a conflicting packet.
             if L.timeout_ms > 0i32 {
-              let mut diff: libc::c_uint = deadline_us.wrapping_sub(monotonic_us() as libc::c_uint);
+              let mut diff: libc::c_uint =
+                deadline_us.wrapping_sub(crate::libbb::time::monotonic_us() as libc::c_uint);
               if (diff as libc::c_int) < 0i32 {
                 // never 0
                 // Current time is greater than the expected timeout time.
@@ -891,7 +838,7 @@ pub unsafe extern "C" fn zcip_main(
               if fds[0].revents as libc::c_int & 0x8i32 != 0 {
                 // FIXME: links routinely go down;
                 // this shouldn't necessarily exit.
-                bb_error_msg(
+                crate::libbb::verror_msg::bb_error_msg(
                   b"iface %s is down\x00" as *const u8 as *const libc::c_char,
                   *argv.offset(0),
                 );
@@ -907,13 +854,15 @@ pub unsafe extern "C" fn zcip_main(
               }
             } else {
               // Read ARP packet
-              if safe_read(
+              if crate::libbb::read::safe_read(
                 sock_fd as libc::c_int,
                 &mut p as *mut arp_packet as *mut libc::c_void,
                 ::std::mem::size_of::<arp_packet>() as libc::c_ulong,
               ) < 0
               {
-                bb_simple_perror_msg_and_die(b"read error\x00" as *const u8 as *const libc::c_char);
+                crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+                  b"read error\x00" as *const u8 as *const libc::c_char,
+                );
               }
               if p.eth.ether_type as libc::c_int
                 != ({
@@ -927,10 +876,8 @@ pub unsafe extern "C" fn zcip_main(
                     let fresh30 = &mut __v;
                     let fresh31;
                     let fresh32 = __x;
-                    asm!("rorw $$8, ${0:w}" : "=r"
-                                                 (fresh31) : "0"
-                                                 (c2rust_asm_casts::AsmCast::cast_in(fresh30, fresh32))
-                                                 : "cc");
+                    asm!("rorw $$8, ${0:w}" : "=r" (fresh31) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh30, fresh32)) : "cc");
                     c2rust_asm_casts::AsmCast::cast_out(fresh30, fresh32, fresh31);
                   }
                   __v
@@ -950,10 +897,8 @@ pub unsafe extern "C" fn zcip_main(
                     let fresh33 = &mut __v;
                     let fresh34;
                     let fresh35 = __x;
-                    asm!("rorw $$8, ${0:w}" : "=r"
-                                                 (fresh34) : "0"
-                                                 (c2rust_asm_casts::AsmCast::cast_in(fresh33, fresh35))
-                                                 : "cc");
+                    asm!("rorw $$8, ${0:w}" : "=r" (fresh34) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh33, fresh35)) : "cc");
                     c2rust_asm_casts::AsmCast::cast_out(fresh33, fresh35, fresh34);
                   }
                   __v
@@ -970,10 +915,8 @@ pub unsafe extern "C" fn zcip_main(
                       let fresh36 = &mut __v;
                       let fresh37;
                       let fresh38 = __x;
-                      asm!("rorw $$8, ${0:w}" : "=r"
-                                                     (fresh37) : "0"
-                                                     (c2rust_asm_casts::AsmCast::cast_in(fresh36, fresh38))
-                                                     : "cc");
+                      asm!("rorw $$8, ${0:w}" : "=r" (fresh37) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh36, fresh38)) : "cc");
                       c2rust_asm_casts::AsmCast::cast_out(fresh36, fresh38, fresh37);
                     }
                     __v
@@ -1010,10 +953,8 @@ pub unsafe extern "C" fn zcip_main(
                       let fresh39 = &mut __v;
                       let fresh40;
                       let fresh41 = __x;
-                      asm!("rorw $$8, ${0:w}" : "=r"
-                                                     (fresh40) : "0"
-                                                     (c2rust_asm_casts::AsmCast::cast_in(fresh39, fresh41))
-                                                     : "cc");
+                      asm!("rorw $$8, ${0:w}" : "=r" (fresh40) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh39, fresh41)) : "cc");
                       c2rust_asm_casts::AsmCast::cast_out(fresh39, fresh41, fresh40);
                     }
                     __v

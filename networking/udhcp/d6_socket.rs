@@ -1,9 +1,13 @@
+use crate::librb::in6_addr;
+use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 use libc::close;
 use libc::ioctl;
+use libc::sa_family_t;
+use libc::sockaddr;
+use libc::sockaddr_in6;
 use libc::strcmp;
 extern "C" {
   #[no_mangle]
@@ -14,32 +18,13 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xbind(sockfd: libc::c_int, my_addr: *mut sockaddr, addrlen: socklen_t);
   /* SO_REUSEADDR allows a server to rebind to an address that is already
    * "in use" by old connections to e.g. previous server instance which is
    * killed or crashed. Without it bind will fail until all such connections
    * time out. Linux does not allow multiple live binds on same ip:port
    * regardless of SO_REUSEADDR (unlike some other flavors of Unix).
    * Turn it on before you call bind(). */
-  #[no_mangle]
-  fn setsockopt_reuseaddr(fd: libc::c_int);
-  #[no_mangle]
-  fn setsockopt_broadcast(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn setsockopt_bindtodevice(fd: libc::c_int, iface: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_info_msg(s: *const libc::c_char, _: ...);
+
   // RFC 2131  Table 5: Fields and options used by DHCP clients
   //
   // Fields 'hops', 'yiaddr', 'siaddr', 'giaddr' are always zero, 'chaddr' is always client's MAC
@@ -90,7 +75,6 @@ extern "C" {
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
 
-pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -101,24 +85,9 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
@@ -152,8 +121,9 @@ pub const IPPROTO_IPIP: C2RustUnnamed_0 = 4;
 pub const IPPROTO_IGMP: C2RustUnnamed_0 = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed_0 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_0 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub ifru_addr: sockaddr,
   pub ifru_dstaddr: sockaddr,
@@ -168,8 +138,9 @@ pub union C2RustUnnamed_1 {
   pub ifru_newname: [libc::c_char; 16],
   pub ifru_data: __caddr_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifmap {
   pub mem_start: libc::c_ulong,
   pub mem_end: libc::c_ulong,
@@ -178,19 +149,22 @@ pub struct ifmap {
   pub dma: libc::c_uchar,
   pub port: libc::c_uchar,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifreq {
   pub ifr_ifrn: C2RustUnnamed_2,
   pub ifr_ifru: C2RustUnnamed_1,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_2 {
   pub ifrn_name: [libc::c_char; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifaddrs {
   pub ifa_next: *mut ifaddrs,
   pub ifa_name: *mut libc::c_char,
@@ -200,14 +174,16 @@ pub struct ifaddrs {
   pub ifa_ifu: C2RustUnnamed_3,
   pub ifa_data: *mut libc::c_void,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_3 {
   pub ifu_broadaddr: *mut sockaddr,
   pub ifu_dstaddr: *mut sockaddr,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sockaddr_ll {
   pub sll_family: libc::c_ushort,
   pub sll_protocol: libc::c_ushort,
@@ -246,7 +222,7 @@ pub unsafe extern "C" fn d6_read_interface(
           6i32 as libc::c_ulong,
         );
         if dhcp_verbose >= 2i32 as libc::c_uint {
-          bb_info_msg(
+          crate::libbb::verror_msg::bb_info_msg(
             b"MAC %02x:%02x:%02x:%02x:%02x:%02x\x00" as *const u8 as *const libc::c_char,
             *mac.offset(0) as libc::c_int,
             *mac.offset(1) as libc::c_int,
@@ -258,7 +234,7 @@ pub unsafe extern "C" fn d6_read_interface(
         }
         *ifindex = (*sll).sll_ifindex;
         if dhcp_verbose >= 2i32 as libc::c_uint {
-          bb_info_msg(
+          crate::libbb::verror_msg::bb_info_msg(
             b"ifindex %d\x00" as *const u8 as *const libc::c_char,
             *ifindex,
           );
@@ -277,7 +253,8 @@ pub unsafe extern "C" fn d6_read_interface(
       sip6 = (*ifa).ifa_addr as *mut libc::c_void as *mut sockaddr_in6; /* struct copy */
       if (*(*ifa).ifa_addr).sa_family as libc::c_int == 10i32
         && ({
-          let mut __a: *const in6_addr = &mut (*sip6).sin6_addr as *mut in6_addr as *const in6_addr;
+          let mut __a: *const in6_addr =
+            &mut (*sip6).sin6_addr as *mut libc::in6_addr as *const in6_addr;
           ((*__a).__in6_u.__u6_addr32[0]
             & ({
               let mut __v: libc::c_uint = 0;
@@ -292,8 +269,7 @@ pub unsafe extern "C" fn d6_read_interface(
                 let fresh1;
                 let fresh2 = __x;
                 asm!("bswap $0" : "=r" (fresh1) : "0"
-                                           (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2))
-                                           :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
                 c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
               }
               __v
@@ -311,17 +287,20 @@ pub unsafe extern "C" fn d6_read_interface(
                 let fresh4;
                 let fresh5 = __x;
                 asm!("bswap $0" : "=r" (fresh4) : "0"
-                                           (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                                           :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
                 c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
               }
               __v
             })) as libc::c_int
         }) != 0
       {
-        *nip6 = (*sip6).sin6_addr;
+        *nip6 = in6_addr {
+          __in6_u: crate::librb::in6_addr_payload {
+            __u6_addr8: (*sip6).sin6_addr.s6_addr,
+          },
+        };
         if dhcp_verbose >= 1i32 as libc::c_uint {
-          bb_info_msg(
+          crate::libbb::verror_msg::bb_info_msg(
             b"IPv6 %02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x\x00"
               as *const u8 as *const libc::c_char,
             (*nip6).__in6_u.__u6_addr8[0] as libc::c_int,
@@ -361,12 +340,16 @@ pub unsafe extern "C" fn d6_read_interface(
     };
     let mut fd: libc::c_int = 0;
     /*memset(&ifr, 0, sizeof(ifr)); - SIOCGIFINDEX does not need to clear all */
-    strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), interface);
-    fd = xsocket(10i32, SOCK_RAW as libc::c_int, IPPROTO_RAW as libc::c_int);
+    crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), interface);
+    fd = crate::libbb::xfuncs_printf::xsocket(
+      10i32,
+      SOCK_RAW as libc::c_int,
+      IPPROTO_RAW as libc::c_int,
+    );
     if ioctl(fd, 0x8933i32 as libc::c_ulong, &mut ifr as *mut ifreq) == 0i32 {
       *ifindex = ifr.ifr_ifru.ifru_ivalue;
       if dhcp_verbose >= 2i32 as libc::c_uint {
-        bb_info_msg(
+        crate::libbb::verror_msg::bb_info_msg(
           b"ifindex %d\x00" as *const u8 as *const libc::c_char,
           *ifindex,
         );
@@ -387,13 +370,13 @@ pub unsafe extern "C" fn d6_read_interface(
     return retval;
   }
   if retval & 1i32 << 0i32 != 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"can\'t get %s\x00" as *const u8 as *const libc::c_char,
       b"MAC\x00" as *const u8 as *const libc::c_char,
     );
   }
   if retval & 1i32 << 1i32 != 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"can\'t get %s\x00" as *const u8 as *const libc::c_char,
       b"link-local IPv6 address\x00" as *const u8 as *const libc::c_char,
     );
@@ -406,32 +389,28 @@ pub unsafe extern "C" fn d6_listen_socket(
   mut inf: *const libc::c_char,
 ) -> libc::c_int {
   let mut fd: libc::c_int = 0;
-  let mut addr: sockaddr_in6 = sockaddr_in6 {
-    sin6_family: 0,
-    sin6_port: 0,
-    sin6_flowinfo: 0,
-    sin6_addr: in6_addr {
-      __in6_u: C2RustUnnamed {
-        __u6_addr8: [0; 16],
-      },
-    },
-    sin6_scope_id: 0,
-  };
+  let mut addr: sockaddr_in6 = std::mem::zeroed();
   if dhcp_verbose >= 1i32 as libc::c_uint {
-    bb_info_msg(
+    crate::libbb::verror_msg::bb_info_msg(
       b"opening listen socket on *:%d %s\x00" as *const u8 as *const libc::c_char,
       port,
       inf,
     );
   }
-  fd = xsocket(10i32, SOCK_DGRAM as libc::c_int, IPPROTO_UDP as libc::c_int);
-  setsockopt_reuseaddr(fd);
-  if setsockopt_broadcast(fd) == -1i32 {
-    bb_simple_perror_msg_and_die(b"SO_BROADCAST\x00" as *const u8 as *const libc::c_char);
+  fd = crate::libbb::xfuncs_printf::xsocket(
+    10i32,
+    SOCK_DGRAM as libc::c_int,
+    IPPROTO_UDP as libc::c_int,
+  );
+  crate::libbb::xconnect::setsockopt_reuseaddr(fd);
+  if crate::libbb::xconnect::setsockopt_broadcast(fd) == -1i32 {
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"SO_BROADCAST\x00" as *const u8 as *const libc::c_char,
+    );
   }
   /* NB: bug 1032 says this doesn't work on ethernet aliases (ethN:M) */
-  if setsockopt_bindtodevice(fd, inf) != 0 {
-    xfunc_die(); /* warning is already printed */
+  if crate::libbb::xconnect::setsockopt_bindtodevice(fd, inf) != 0 {
+    crate::libbb::xfunc_die::xfunc_die(); /* warning is already printed */
   }
   memset(
     &mut addr as *mut sockaddr_in6 as *mut libc::c_void,
@@ -450,14 +429,13 @@ pub unsafe extern "C" fn d6_listen_socket(
       let fresh8;
       let fresh9 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh8) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh7, fresh9)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh7, fresh9)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh7, fresh9, fresh8);
     }
     __v
   };
   /* addr.sin6_addr is all-zeros */
-  xbind(
+  crate::libbb::xfuncs_printf::xbind(
     fd,
     &mut addr as *mut sockaddr_in6 as *mut sockaddr,
     ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong as socklen_t,

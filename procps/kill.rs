@@ -1,6 +1,6 @@
+use crate::librb::procps_status_t;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
-
 use libc;
 use libc::free;
 use libc::getpid;
@@ -16,88 +16,8 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_strtoi(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn find_pid_by_name(procName: *const libc::c_char) -> *mut pid_t;
-  #[no_mangle]
-  fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
-  #[no_mangle]
-  fn get_signum(name: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn get_signame(number: libc::c_int) -> *const libc::c_char;
-  #[no_mangle]
-  fn print_signames();
 }
 
-use libc::DIR;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct procps_status_t {
-  pub dir: *mut DIR,
-  pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: u8,
-  pub shift_pages_to_kb: u8,
-  pub argv_len: u16,
-  pub argv0: *mut libc::c_char,
-  pub exe: *mut libc::c_char,
-  pub main_thread_pid: libc::c_uint,
-  pub vsz: libc::c_ulong,
-  pub rss: libc::c_ulong,
-  pub stime: libc::c_ulong,
-  pub utime: libc::c_ulong,
-  pub start_time: libc::c_ulong,
-  pub pid: libc::c_uint,
-  pub ppid: libc::c_uint,
-  pub pgid: libc::c_uint,
-  pub sid: libc::c_uint,
-  pub uid: libc::c_uint,
-  pub gid: libc::c_uint,
-  pub ruid: libc::c_uint,
-  pub rgid: libc::c_uint,
-  pub niceness: libc::c_int,
-  pub tty_major: libc::c_uint,
-  pub tty_minor: libc::c_uint,
-  pub smaps: smaprec,
-  pub state: [libc::c_char; 4],
-  pub comm: [libc::c_char; 16],
-  pub last_seen_on_cpu: libc::c_int,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct smaprec {
-  pub mapped_rw: libc::c_ulong,
-  pub mapped_ro: libc::c_ulong,
-  pub shared_clean: libc::c_ulong,
-  pub shared_dirty: libc::c_ulong,
-  pub private_clean: libc::c_ulong,
-  pub private_dirty: libc::c_ulong,
-  pub stack: libc::c_ulong,
-  pub smap_pss: libc::c_ulong,
-  pub smap_swap: libc::c_ulong,
-  pub smap_size: libc::c_ulong,
-  pub smap_start: libc::c_ulonglong,
-  pub smap_mode: [libc::c_char; 5],
-  pub smap_name: *mut libc::c_char,
-}
 pub const PSSCAN_SID: C2RustUnnamed = 8;
 pub const PSSCAN_PID: C2RustUnnamed = 1;
 pub type C2RustUnnamed = libc::c_uint;
@@ -539,16 +459,17 @@ pub unsafe extern "C" fn kill_main(
       arg = *argv;
       if arg.is_null() {
         /* Print the whole signal list */
-        print_signames();
+        crate::libbb::u_signal_names::print_signames();
         return 0i32;
       }
       loop
       /* -l <sig list> */
       {
         if (*arg.offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
-          signo = bb_strtou(arg, 0 as *mut *mut libc::c_char, 10i32) as libc::c_int;
+          signo = crate::libbb::bb_strtonum::bb_strtou(arg, 0 as *mut *mut libc::c_char, 10i32)
+            as libc::c_int;
           if *bb_errno != 0 {
-            bb_error_msg(
+            crate::libbb::verror_msg::bb_error_msg(
               b"unknown signal \'%s\'\x00" as *const u8 as *const libc::c_char,
               arg,
             );
@@ -557,11 +478,11 @@ pub unsafe extern "C" fn kill_main(
           /* TODO: 'bad' signal# - coreutils says:
            * kill: 127: invalid signal
            * we just print "127" instead */
-          puts(get_signame(signo & 0x7fi32));
+          puts(crate::libbb::u_signal_names::get_signame(signo & 0x7fi32));
         } else {
-          signo = get_signum(arg);
+          signo = crate::libbb::u_signal_names::get_signum(arg);
           if signo < 0i32 {
-            bb_error_msg(
+            crate::libbb::verror_msg::bb_error_msg(
               b"unknown signal \'%s\'\x00" as *const u8 as *const libc::c_char,
               arg,
             );
@@ -589,7 +510,7 @@ pub unsafe extern "C" fn kill_main(
       argv = argv.offset(1);
       arg = *argv;
       if arg.is_null() {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
       if *arg.offset(0) as libc::c_int != '-' as i32 {
         current_block = 2454055584343734536;
@@ -622,9 +543,9 @@ pub unsafe extern "C" fn kill_main(
               argv = argv.offset(1);
               arg = *argv
             }
-            signo = get_signum(arg);
+            signo = crate::libbb::u_signal_names::get_signum(arg);
             if signo < 0i32 {
-              bb_error_msg(
+              crate::libbb::verror_msg::bb_error_msg(
                 b"bad signal name \'%s\'\x00" as *const u8 as *const libc::c_char,
                 arg,
               );
@@ -652,7 +573,8 @@ pub unsafe extern "C" fn kill_main(
     's_259: loop
     /* Signal all processes except those in our session */
     {
-      p = procps_scan(p, PSSCAN_PID as libc::c_int | PSSCAN_SID as libc::c_int);
+      p =
+        crate::libbb::procps::procps_scan(p, PSSCAN_PID as libc::c_int | PSSCAN_SID as libc::c_int);
       if p.is_null() {
         break;
       }
@@ -675,7 +597,7 @@ pub unsafe extern "C" fn kill_main(
         if *arg.offset(0) as libc::c_int != '-' as i32
           || *arg.offset(1) as libc::c_int != 'o' as i32
         {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"bad option \'%s\'\x00" as *const u8 as *const libc::c_char,
             arg,
           );
@@ -688,9 +610,9 @@ pub unsafe extern "C" fn kill_main(
             args = args.offset(1);
             arg = *fresh1
           }
-          omit = bb_strtoi(arg, 0 as *mut *mut libc::c_char, 10i32);
+          omit = crate::libbb::bb_strtonum::bb_strtoi(arg, 0 as *mut *mut libc::c_char, 10i32);
           if *bb_errno != 0 {
-            bb_error_msg(
+            crate::libbb::verror_msg::bb_error_msg(
               b"invalid number \'%s\'\x00" as *const u8 as *const libc::c_char,
               arg,
             );
@@ -712,7 +634,7 @@ pub unsafe extern "C" fn kill_main(
   } else {
     /* Pid or name is required for kill/killall */
     if arg.is_null() {
-      bb_simple_error_msg(
+      crate::libbb::verror_msg::bb_simple_error_msg(
         b"you need to specify whom to kill\x00" as *const u8 as *const libc::c_char,
       );
       return 1i32;
@@ -722,11 +644,11 @@ pub unsafe extern "C" fn kill_main(
       /* Looks like they want to do a killall.  Do that */
       {
         let mut pidList: *mut pid_t = 0 as *mut pid_t;
-        pidList = find_pid_by_name(arg);
+        pidList = crate::libbb::find_pid_by_name::find_pid_by_name(arg);
         if *pidList == 0i32 {
           errors += 1;
           if quiet == 0 {
-            bb_error_msg(
+            crate::libbb::verror_msg::bb_error_msg(
               b"%s: no process killed\x00" as *const u8 as *const libc::c_char,
               arg,
             );
@@ -739,7 +661,7 @@ pub unsafe extern "C" fn kill_main(
               if !(kill(*pl, signo) == 0i32) {
                 errors += 1;
                 if quiet == 0 {
-                  bb_perror_msg(
+                  crate::libbb::perror_msg::bb_perror_msg(
                     b"can\'t kill pid %d\x00" as *const u8 as *const libc::c_char,
                     *pl,
                   );
@@ -770,9 +692,9 @@ pub unsafe extern "C" fn kill_main(
         if *arg as libc::c_int == ' ' as i32 {
           arg = arg.offset(1)
         }
-        pid = bb_strtoi(arg, &mut end, 10i32);
+        pid = crate::libbb::bb_strtonum::bb_strtoi(arg, &mut end, 10i32);
         if *bb_errno != 0 && (*bb_errno != 22i32 || *end as libc::c_int != ' ' as i32) {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"invalid number \'%s\'\x00" as *const u8 as *const libc::c_char,
             arg,
           );
@@ -780,7 +702,7 @@ pub unsafe extern "C" fn kill_main(
           break;
         } else {
           if kill(pid, signo) != 0i32 {
-            bb_perror_msg(
+            crate::libbb::perror_msg::bb_perror_msg(
               b"can\'t kill pid %d\x00" as *const u8 as *const libc::c_char,
               pid,
             );

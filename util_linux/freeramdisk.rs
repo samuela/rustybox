@@ -1,30 +1,15 @@
 use crate::libbb::appletlib::applet_name;
 use libc;
-extern "C" {
 
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn single_argv(argv: *mut *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn ioctl_or_perror_and_die(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    fmt: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
-
-}
 #[no_mangle]
 pub unsafe extern "C" fn freeramdisk_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut fd: libc::c_int = 0;
-  fd = xopen(single_argv(argv), 0o2i32);
+  fd = crate::libbb::xfuncs_printf::xopen(crate::libbb::single_argv::single_argv(argv), 0o2i32);
   // Act like freeramdisk, fdflush, or both depending on configuration.
-  ioctl_or_perror_and_die(
+  crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
     fd,
     if 1i32 != 0 && *applet_name.offset(1) as libc::c_int == 'r' as i32 || 1i32 == 0 {
       (0u32 << 0i32 + 8i32 + 8i32 + 14i32

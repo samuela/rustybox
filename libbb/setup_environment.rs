@@ -8,12 +8,6 @@ extern "C" {
   fn clearenv() -> libc::c_int;
 
   #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn xsetenv(key: *const libc::c_char, value: *const libc::c_char);
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
   static bb_PATH_root_path: [libc::c_char; 0];
   #[no_mangle]
   static bb_default_login_shell: [libc::c_char; 0];
@@ -514,11 +508,11 @@ pub unsafe extern "C" fn setup_environment(
    * of the user */
   if flags & 1i32 << 4i32 == 0 {
     if chdir((*pw).pw_dir) != 0i32 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"can\'t change directory to \'%s\'\x00" as *const u8 as *const libc::c_char,
         (*pw).pw_dir,
       );
-      xchdir(if flags & 1i32 << 2i32 != 0 {
+      crate::libbb::xfuncs_printf::xchdir(if flags & 1i32 << 2i32 != 0 {
         b"/tmp\x00" as *const u8 as *const libc::c_char
       } else {
         b"/\x00" as *const u8 as *const libc::c_char
@@ -538,9 +532,9 @@ pub unsafe extern "C" fn setup_environment(
     term = getenv(b"TERM\x00" as *const u8 as *const libc::c_char);
     clearenv();
     if !term.is_null() {
-      xsetenv(b"TERM\x00" as *const u8 as *const libc::c_char, term);
+      crate::libbb::xfuncs_printf::xsetenv(b"TERM\x00" as *const u8 as *const libc::c_char, term);
     }
-    xsetenv(
+    crate::libbb::xfuncs_printf::xsetenv(
       b"PATH\x00" as *const u8 as *const libc::c_char,
       if (*pw).pw_uid != 0 {
         bb_PATH_root_path
@@ -566,11 +560,11 @@ pub unsafe extern "C" fn setup_environment(
   }
   match current_block_16 {
     13588217478468868360 => {
-      xsetenv(
+      crate::libbb::xfuncs_printf::xsetenv(
         b"USER\x00" as *const u8 as *const libc::c_char,
         (*pw).pw_name,
       );
-      xsetenv(
+      crate::libbb::xfuncs_printf::xsetenv(
         b"LOGNAME\x00" as *const u8 as *const libc::c_char,
         (*pw).pw_name,
       );
@@ -580,11 +574,11 @@ pub unsafe extern "C" fn setup_environment(
   }
   match current_block_16 {
     8457315219000651999 => {
-      xsetenv(
+      crate::libbb::xfuncs_printf::xsetenv(
         b"HOME\x00" as *const u8 as *const libc::c_char,
         (*pw).pw_dir,
       );
-      xsetenv(b"SHELL\x00" as *const u8 as *const libc::c_char, shell);
+      crate::libbb::xfuncs_printf::xsetenv(b"SHELL\x00" as *const u8 as *const libc::c_char, shell);
     }
     _ => {}
   };

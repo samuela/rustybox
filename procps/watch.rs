@@ -7,24 +7,6 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn strftime_YYYYMMDDHHMMSS(
-    buf: *mut libc::c_char,
-    len: libc::c_uint,
-    tp: *mut time_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn sleep_for_duration(duration: duration_t);
-  #[no_mangle]
-  fn parse_duration_str(str: *mut libc::c_char) -> duration_t;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn get_terminal_width(fd: libc::c_int) -> libc::c_int;
 }
 
 use libc::time_t;
@@ -85,7 +67,7 @@ pub unsafe extern "C" fn watch_main(
   // maybe ENABLE_DESKTOP?
   // "+": stop at first non-option (procps 3.x only); -n NUM
   // at least one param
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^+dtn:\x00-1\x00" as *const u8 as *const libc::c_char,
     &mut period_str as *mut *mut libc::c_char,
@@ -99,9 +81,13 @@ pub unsafe extern "C" fn watch_main(
     if (*argv).is_null() {
       break;
     }
-    cmd = xasprintf(b"%s %s\x00" as *const u8 as *const libc::c_char, cmd, *argv)
+    cmd = crate::libbb::xfuncs_printf::xasprintf(
+      b"%s %s\x00" as *const u8 as *const libc::c_char,
+      cmd,
+      *argv,
+    )
   }
-  period = parse_duration_str(period_str);
+  period = crate::libbb::duration::parse_duration_str(period_str);
   width = -1i32 as libc::c_uint;
   header = std::ptr::null_mut::<libc::c_char>();
   loop {
@@ -113,11 +99,11 @@ pub unsafe extern "C" fn watch_main(
         ::std::mem::size_of::<[libc::c_char; 20]>() as libc::c_ulong as libc::c_uint;
       // STDERR_FILENO is procps3 compat:
       // "watch ls 2>/dev/null" does not detect tty size
-      new_width = get_terminal_width(2i32) as libc::c_uint;
+      new_width = crate::libbb::xfuncs::get_terminal_width(2i32) as libc::c_uint;
       if new_width != width {
         width = new_width;
         free(header as *mut libc::c_void);
-        header = xasprintf(
+        header = crate::libbb::xfuncs_printf::xasprintf(
           b"Every %.1fs: %-*s\x00" as *const u8 as *const libc::c_char,
           period,
           width as libc::c_int,
@@ -125,7 +111,7 @@ pub unsafe extern "C" fn watch_main(
         )
       }
       if time_len < width {
-        strftime_YYYYMMDDHHMMSS(
+        crate::libbb::time::strftime_YYYYMMDDHHMMSS(
           header.offset(width as isize).offset(-(time_len as isize)),
           time_len,
           0 as *mut time_t,
@@ -134,12 +120,12 @@ pub unsafe extern "C" fn watch_main(
       // compat: empty line between header and cmd output
       printf(b"%s\n\n\x00" as *const u8 as *const libc::c_char, header);
     }
-    fflush_all();
+    crate::libbb::xfuncs_printf::fflush_all();
     // TODO: 'real' watch pipes cmd's output to itself
     // and does not allow it to overflow the screen
     // (taking into account linewrap!)
     system(cmd);
-    sleep_for_duration(period);
+    crate::libbb::duration::sleep_for_duration(period);
   }
   // gcc thinks we can reach this :)
 }

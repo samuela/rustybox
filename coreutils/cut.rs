@@ -22,36 +22,14 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn strsep(__stringp: *mut *mut libc::c_char, __delim: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn fclose_if_not_stdin(file: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct cut_list {
   pub startpos: libc::c_int,
   pub endpos: libc::c_int,
@@ -78,13 +56,14 @@ unsafe extern "C" fn cut_file(
   loop
   /* go through every line in the file */
   {
-    line = xmalloc_fgetline(file);
+    line = crate::libbb::get_line_from_file::xmalloc_fgetline(file);
     if line.is_null() {
       break;
     }
     /* set up a list so we can keep track of what's been printed */
     let mut linelen: libc::c_int = strlen(line) as libc::c_int;
-    let mut printed: *mut libc::c_char = xzalloc((linelen + 1i32) as size_t) as *mut libc::c_char;
+    let mut printed: *mut libc::c_char =
+      crate::libbb::xfuncs_printf::xzalloc((linelen + 1i32) as size_t) as *mut libc::c_char;
     let mut orig_line: *mut libc::c_char = line;
     let mut cl_pos: libc::c_uint = 0i32 as libc::c_uint;
     let mut spos: libc::c_int = 0;
@@ -231,7 +210,7 @@ pub unsafe extern "C" fn cut_main(
   let mut sopt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ltok: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_uint = 0;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^b:c:f:d:sn\x00b--bcf:c--bcf:f--bcf\x00" as *const u8 as *const libc::c_char,
     &mut sopt as *mut *mut libc::c_char,
@@ -242,14 +221,14 @@ pub unsafe extern "C" fn cut_main(
   //	argc -= optind;
   argv = argv.offset(optind as isize);
   if opt & (1i32 << 0i32 | 1i32 << 1i32 | 1i32 << 2i32) as libc::c_uint == 0 {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"expected a list of bytes, characters, or fields\x00" as *const u8 as *const libc::c_char,
     );
   }
   if opt & (1i32 << 3i32) as libc::c_uint != 0 {
     if *ltok.offset(0) as libc::c_int != 0 && *ltok.offset(1) as libc::c_int != 0 {
       /* more than 1 char? */
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"the delimiter must be a single character\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -262,13 +241,13 @@ pub unsafe extern "C" fn cut_main(
       103, 32, 111, 110, 32, 102, 105, 101, 108, 100, 115, 0,
     ];
     if opt & (1i32 << 4i32) as libc::c_uint != 0 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"suppressing non-delimited lines makes sense%s\x00" as *const u8 as *const libc::c_char,
         _op_on_field.as_ptr(),
       );
     }
     if delim as libc::c_int != '\t' as i32 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"a delimiter may be specified%s\x00" as *const u8 as *const libc::c_char,
         _op_on_field.as_ptr(),
       );
@@ -298,7 +277,7 @@ pub unsafe extern "C" fn cut_main(
     if *ntok.offset(0) == 0 {
       s = BOL as libc::c_int
     } else {
-      s = xatoi_positive(ntok);
+      s = crate::libbb::xatonum::xatoi_positive(ntok);
       /* account for the fact that arrays are zero based, while
        * the user expects the first char on the line to be char #1 */
       if s != 0i32 {
@@ -311,7 +290,7 @@ pub unsafe extern "C" fn cut_main(
     } else if *ltok.offset(0) == 0 {
       e = EOL as libc::c_int
     } else {
-      e = xatoi_positive(ltok);
+      e = crate::libbb::xatonum::xatoi_positive(ltok);
       /* if the user specified and end position of 0,
        * that means "til the end of the line" */
       if e == 0i32 {
@@ -323,7 +302,7 @@ pub unsafe extern "C" fn cut_main(
       }
     }
     /* add the new list */
-    cut_lists = xrealloc_vector_helper(
+    cut_lists = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
       cut_lists as *mut libc::c_void,
       ((::std::mem::size_of::<cut_list>() as libc::c_ulong) << 8i32)
         .wrapping_add(4i32 as libc::c_ulong) as libc::c_uint,
@@ -337,7 +316,7 @@ pub unsafe extern "C" fn cut_main(
   }
   /* make sure we got some cut positions out of all that */
   if nlists == 0i32 as libc::c_uint {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"missing list of positions\x00" as *const u8 as *const libc::c_char,
     );
   }
@@ -359,17 +338,17 @@ pub unsafe extern "C" fn cut_main(
     *argv = b"-\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
   }
   loop {
-    let mut file: *mut FILE = fopen_or_warn_stdin(*argv);
+    let mut file: *mut FILE = crate::libbb::wfopen_input::fopen_or_warn_stdin(*argv);
     if file.is_null() {
       retval = 1i32
     } else {
       cut_file(file, delim, cut_lists, nlists);
-      fclose_if_not_stdin(file);
+      crate::libbb::fclose_nonstdin::fclose_if_not_stdin(file);
     }
     argv = argv.offset(1);
     if (*argv).is_null() {
       break;
     }
   }
-  fflush_stdout_and_exit(retval);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(retval);
 }

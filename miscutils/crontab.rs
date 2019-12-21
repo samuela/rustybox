@@ -29,53 +29,6 @@ extern "C" {
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
 
   #[no_mangle]
-  fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn close_on_exec_on(fd: libc::c_int);
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn xopen3(pathname: *const libc::c_char, flags: libc::c_int, mode: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xopen_as_uid_gid(
-    pathname: *const libc::c_char,
-    flags: libc::c_int,
-    u: uid_t,
-    g: gid_t,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn xrename(oldpath: *const libc::c_char, newpath: *const libc::c_char);
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xgetpwnam(name: *const libc::c_char) -> *mut passwd;
-  #[no_mangle]
-  fn xgetpwuid(uid: uid_t) -> *mut passwd;
-  #[no_mangle]
-  fn wait4pid(pid: pid_t) -> libc::c_int;
-  #[no_mangle]
-  fn sanitize_env_if_suid() -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_cat(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn change_identity(pw: *const passwd);
-  #[no_mangle]
-  fn setup_environment(shell: *const libc::c_char, flags: libc::c_int, pw: *const passwd);
-  #[no_mangle]
   static bb_msg_you_must_be_root: [libc::c_char; 0];
 }
 
@@ -93,19 +46,25 @@ unsafe extern "C" fn edit_file(mut pas: *const passwd, mut file: *const libc::c_
   pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
     if bb__xvfork_pid < 0i32 {
-      bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"vfork\x00" as *const u8 as *const libc::c_char,
+      );
     }
     bb__xvfork_pid
   };
   if pid != 0 {
     /* parent */
-    wait4pid(pid);
+    crate::libbb::xfuncs::wait4pid(pid);
     return;
   }
   /* CHILD - change user and run editor */
   /* initgroups, setgid, setuid */
-  change_identity(pas); /* -u USER */
-  setup_environment((*pas).pw_shell, 1i32 << 0i32 | 1i32 << 2i32, pas);
+  crate::libbb::change_identity::change_identity(pas); /* -u USER */
+  crate::libbb::setup_environment::setup_environment(
+    (*pas).pw_shell,
+    1i32 << 0i32 | 1i32 << 2i32,
+    pas,
+  );
   ptr = getenv(b"VISUAL\x00" as *const u8 as *const libc::c_char);
   if ptr.is_null() {
     ptr = getenv(b"EDITOR\x00" as *const u8 as *const libc::c_char);
@@ -114,7 +73,7 @@ unsafe extern "C" fn edit_file(mut pas: *const passwd, mut file: *const libc::c_
     }
   }
   execlp(ptr, ptr, file, 0 as *mut libc::c_void);
-  bb_perror_msg_and_die(
+  crate::libbb::perror_msg::bb_perror_msg_and_die(
     b"can\'t execute \'%s\'\x00" as *const u8 as *const libc::c_char,
     ptr,
   );
@@ -143,46 +102,51 @@ pub unsafe extern "C" fn crontab_main(
    * bbox also supports -d == -r, but most other crontab
    * implementations do not. Deprecated.
    */
-  opt_ler = getopt32(
+  opt_ler = crate::libbb::getopt32::getopt32(
     argv,
     b"^u:c:lerd\x00?1:dr\x00" as *const u8 as *const libc::c_char,
     &mut user_name as *mut *mut libc::c_char,
     &mut crontab_dir as *mut *const libc::c_char,
   ) as libc::c_int;
   argv = argv.offset(optind as isize);
-  if sanitize_env_if_suid() != 0 {
+  if crate::libbb::login::sanitize_env_if_suid() != 0 {
     /* Clears dangerous stuff, sets PATH */
     /* Run by non-root */
     if opt_ler & (OPT_u as libc::c_int | OPT_c as libc::c_int) != 0 {
-      bb_simple_error_msg_and_die(bb_msg_you_must_be_root.as_ptr());
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(bb_msg_you_must_be_root.as_ptr());
     }
   }
   if opt_ler & OPT_u as libc::c_int != 0 {
-    pas = xgetpwnam(user_name)
+    pas = crate::libbb::bb_pwd::xgetpwnam(user_name)
   } else {
-    pas = xgetpwuid(getuid())
+    pas = crate::libbb::bb_pwd::xgetpwuid(getuid())
   }
   /* From now on, keep only -l, -e, -r bits */
   opt_ler &= OPT_ler as libc::c_int;
   if opt_ler - 1i32 & opt_ler != 0 {
     /* more than one bit set? */
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* Read replacement file under user's UID/GID/group vector */
   src_fd = 0i32;
   if opt_ler == 0 {
     /* Replace? */
     if (*argv.offset(0)).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     if *(*argv.offset(0)).offset(0) as libc::c_int != '-' as i32
       || *(*argv.offset(0)).offset(1) as libc::c_int != 0
     {
-      src_fd = xopen_as_uid_gid(*argv.offset(0), 0i32, (*pas).pw_uid, (*pas).pw_gid)
+      src_fd = crate::libbb::xfuncs_printf::xopen_as_uid_gid(
+        *argv.offset(0),
+        0i32,
+        (*pas).pw_uid,
+        (*pas).pw_gid,
+      )
     }
   }
   /* cd to our crontab directory */
-  xchdir(crontab_dir);
+  crate::libbb::xfuncs_printf::xchdir(crontab_dir);
   tmp_fname = std::ptr::null_mut::<libc::c_char>();
   let mut current_block_48: u64;
   /* Handle requested operation */
@@ -191,28 +155,29 @@ pub unsafe extern "C" fn crontab_main(
       /* switch */
       /* List */
       let mut args: [*mut libc::c_char; 2] = [(*pas).pw_name, std::ptr::null_mut::<libc::c_char>()];
-      return bb_cat(args.as_mut_ptr());
+      return crate::libbb::bb_cat::bb_cat(args.as_mut_ptr());
       /* list exits,
        * the rest go play with cron update file */
     }
     8 => {
       /* Edit */
-      tmp_fname = xasprintf(
+      tmp_fname = crate::libbb::xfuncs_printf::xasprintf(
         b"%s.%u\x00" as *const u8 as *const libc::c_char,
         crontab_dir,
         getpid() as libc::c_uint,
       );
       /* No O_EXCL: we don't want to be stuck if earlier crontabs
        * were killed, leaving stale temp file behind */
-      src_fd = xopen3(tmp_fname, 0o2i32 | 0o100i32 | 0o1000i32, 0o600i32); /* don't want editor to see this fd */
+      src_fd =
+        crate::libbb::xfuncs_printf::xopen3(tmp_fname, 0o2i32 | 0o100i32 | 0o1000i32, 0o600i32); /* don't want editor to see this fd */
       fchown(src_fd, (*pas).pw_uid, (*pas).pw_gid);
       fd = open((*pas).pw_name, 0i32);
       if fd >= 0i32 {
-        bb_copyfd_eof(fd, src_fd);
+        crate::libbb::copyfd::bb_copyfd_eof(fd, src_fd);
         close(fd);
-        xlseek(src_fd, 0i32 as off_t, 0i32);
+        crate::libbb::xfuncs_printf::xlseek(src_fd, 0i32 as off_t, 0i32);
       }
-      close_on_exec_on(src_fd);
+      crate::libbb::xfuncs::close_on_exec_on(src_fd);
       edit_file(pas, tmp_fname);
       current_block_48 = 16302727479442519837;
     }
@@ -232,7 +197,7 @@ pub unsafe extern "C" fn crontab_main(
     /* fall through */
     /* Replace (no -l, -e, or -r were given) */
     {
-      new_fname = xasprintf(
+      new_fname = crate::libbb::xfuncs_printf::xasprintf(
         b"%s.new\x00" as *const u8 as *const libc::c_char,
         (*pas).pw_name,
       );
@@ -242,11 +207,11 @@ pub unsafe extern "C" fn crontab_main(
         0o600i32,
       );
       if fd >= 0i32 {
-        bb_copyfd_eof(src_fd, fd);
+        crate::libbb::copyfd::bb_copyfd_eof(src_fd, fd);
         close(fd);
-        xrename(new_fname, (*pas).pw_name);
+        crate::libbb::xfuncs_printf::xrename(new_fname, (*pas).pw_name);
       } else {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"can\'t create %s/%s\x00" as *const u8 as *const libc::c_char,
           crontab_dir,
           new_fname,
@@ -284,7 +249,7 @@ pub unsafe extern "C" fn crontab_main(
     close(fd);
   }
   if fd < 0i32 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"can\'t append to %s/%s\x00" as *const u8 as *const libc::c_char,
       crontab_dir,
       b"cron.update\x00" as *const u8 as *const libc::c_char,

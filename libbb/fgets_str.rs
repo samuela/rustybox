@@ -11,8 +11,6 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
 }
 
 /*
@@ -46,7 +44,9 @@ unsafe extern "C" fn xmalloc_fgets_internal(
     } else {
       if idx >= linebufsz {
         linebufsz += 200i32;
-        linebuf = xrealloc(linebuf as *mut libc::c_void, linebufsz as size_t) as *mut libc::c_char;
+        linebuf =
+          crate::libbb::xfuncs_printf::xrealloc(linebuf as *mut libc::c_void, linebufsz as size_t)
+            as *mut libc::c_char;
         if idx as libc::c_ulong >= maxsz {
           *linebuf.offset(idx as isize) = ch as libc::c_char;
           idx += 1;
@@ -74,7 +74,9 @@ unsafe extern "C" fn xmalloc_fgets_internal(
     }
   }
   /* Grow/shrink *first*, then store NUL */
-  linebuf = xrealloc(linebuf as *mut libc::c_void, (idx + 1i32) as size_t) as *mut libc::c_char;
+  linebuf =
+    crate::libbb::xfuncs_printf::xrealloc(linebuf as *mut libc::c_void, (idx + 1i32) as size_t)
+      as *mut libc::c_char;
   *linebuf.offset(idx as isize) = '\u{0}' as i32 as libc::c_char;
   *maxsz_p = idx as size_t;
   return linebuf;

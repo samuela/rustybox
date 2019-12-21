@@ -24,45 +24,10 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xatoull_range(
-    str: *const libc::c_char,
-    l: libc::c_ulonglong,
-    u: libc::c_ulonglong,
-  ) -> libc::c_ulonglong;
-
-  #[no_mangle]
-  fn xstrtou_range(
-    str: *const libc::c_char,
-    b: libc::c_int,
-    l: libc::c_uint,
-    u: libc::c_uint,
-  ) -> libc::c_uint;
-
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sched_param {
   pub sched_priority: libc::c_int,
 }
@@ -73,7 +38,8 @@ unsafe extern "C" fn xatoul_range(
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
 ) -> libc::c_ulong {
-  return xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong)
+    as libc::c_ulong;
 }
 
 /*
@@ -108,9 +74,9 @@ unsafe extern "C" fn xatoul_range(
 //usage:       "You need CAP_SYS_NICE privileges to set scheduling attributes of a process"
 unsafe extern "C" fn policy_name(mut pol: libc::c_int) -> *const libc::c_char {
   if pol > 6i32 {
-    return utoa(pol as libc::c_uint);
+    return crate::libbb::xfuncs::utoa(pol as libc::c_uint);
   } /* for compiler */
-  return nth_string(
+  return crate::libbb::compare_string_array::nth_string(
     b"OTHER\x00FIFO\x00RR\x00BATCH\x00ISO\x00IDLE\x00DEADLINE\x00" as *const u8
       as *const libc::c_char,
     pol,
@@ -143,7 +109,7 @@ pub unsafe extern "C" fn chrt_main(
   priority = priority;
   let mut current_new: *const libc::c_char = 0 as *const libc::c_char;
   let mut policy: libc::c_int = 2i32;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^+mprfobi\x00r--fobi:f--robi:o--rfbi:b--rfoi:i--rfob\x00" as *const u8 as *const libc::c_char,
   );
@@ -154,7 +120,7 @@ pub unsafe extern "C" fn chrt_main(
     show_min_max(2i32);
     show_min_max(3i32);
     show_min_max(5i32);
-    fflush_stdout_and_exit(0i32);
+    crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
   }
   //if (opt & OPT_r)
   //	policy = SCHED_RR; - default, already set
@@ -172,7 +138,7 @@ pub unsafe extern "C" fn chrt_main(
   }
   argv = argv.offset(optind as isize);
   if (*argv.offset(0)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   if opt & (1i32 << 1i32) as libc::c_uint != 0 {
     let fresh0 = argv;
@@ -197,7 +163,7 @@ pub unsafe extern "C" fn chrt_main(
     argv = argv.offset(1);
     priority = *fresh1;
     if (*argv).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
   }
   current_new = b"current\x00new\x00" as *const u8 as *const libc::c_char;
@@ -210,14 +176,14 @@ pub unsafe extern "C" fn chrt_main(
   loop {
     match current_block {
       14447253356787937536 => {
-        sp.sched_priority = xstrtou_range(
+        sp.sched_priority = crate::libbb::xatonum::xstrtou_range(
           priority,
           0i32,
           sched_get_priority_min(policy) as libc::c_uint,
           sched_get_priority_max(policy) as libc::c_uint,
         ) as libc::c_int;
         if sched_setscheduler(pid, policy, &mut sp) < 0i32 {
-          bb_perror_msg_and_die(
+          crate::libbb::perror_msg::bb_perror_msg_and_die(
             b"can\'t %cet pid %u\'s policy\x00" as *const u8 as *const libc::c_char,
             's' as i32,
             pid,
@@ -234,7 +200,7 @@ pub unsafe extern "C" fn chrt_main(
       {
         pol = sched_getscheduler(pid);
         if pol < 0i32 {
-          bb_perror_msg_and_die(
+          crate::libbb::perror_msg::bb_perror_msg_and_die(
             b"can\'t %cet pid %u\'s policy\x00" as *const u8 as *const libc::c_char,
             'g' as i32,
             pid,
@@ -256,7 +222,7 @@ pub unsafe extern "C" fn chrt_main(
           policy_name(pol),
         );
         if sched_getparam(pid, &mut sp) != 0 {
-          bb_perror_msg_and_die(
+          crate::libbb::perror_msg::bb_perror_msg_and_die(
             b"can\'t get pid %u\'s attributes\x00" as *const u8 as *const libc::c_char,
             pid,
           );
@@ -279,5 +245,5 @@ pub unsafe extern "C" fn chrt_main(
       }
     }
   }
-  BB_EXECVP_or_die(argv);
+  crate::libbb::executable::BB_EXECVP_or_die(argv);
 }

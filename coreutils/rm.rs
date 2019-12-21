@@ -2,16 +2,7 @@ use libc;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn remove_file(path: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_get_last_path_component_strip(path: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
+
 }
 
 pub type C2RustUnnamed = libc::c_int;
@@ -72,7 +63,7 @@ pub unsafe extern "C" fn rm_main(
   let mut status: libc::c_int = 0i32;
   let mut flags: libc::c_int = 0i32;
   let mut opt: libc::c_uint = 0;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^fiRrv\x00f-i:i-f\x00" as *const u8 as *const libc::c_char,
   );
@@ -92,16 +83,17 @@ pub unsafe extern "C" fn rm_main(
   if !(*argv).is_null() {
     let mut current_block_12: u64;
     loop {
-      let mut base: *const libc::c_char = bb_get_last_path_component_strip(*argv);
+      let mut base: *const libc::c_char =
+        crate::libbb::get_last_path_component::bb_get_last_path_component_strip(*argv);
       if *base.offset(0) as libc::c_int == '.' as i32
         && (*base.offset(1) == 0
           || *base.offset(1) as libc::c_int == '.' as i32 && *base.offset(2) == 0)
       {
-        bb_simple_error_msg(
+        crate::libbb::verror_msg::bb_simple_error_msg(
           b"can\'t remove \'.\' or \'..\'\x00" as *const u8 as *const libc::c_char,
         );
         current_block_12 = 15652330335145281839;
-      } else if remove_file(*argv, flags) >= 0i32 {
+      } else if crate::libbb::remove_file::remove_file(*argv, flags) >= 0i32 {
         current_block_12 = 7651349459974463963;
       } else {
         current_block_12 = 15652330335145281839;
@@ -116,7 +108,7 @@ pub unsafe extern "C" fn rm_main(
       }
     }
   } else if flags & FILEUTILS_FORCE as libc::c_int == 0 {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   return status;
 }

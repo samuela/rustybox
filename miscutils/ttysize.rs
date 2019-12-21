@@ -2,11 +2,7 @@ use libc;
 use libc::ioctl;
 use libc::printf;
 use libc::winsize;
-extern "C" {
 
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-}
 
 /*
  * Replacement for "stty size", which is awkward for shell script use.
@@ -77,6 +73,6 @@ pub unsafe extern "C" fn ttysize_main(
       /* " %u" */
     }
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   return 0i32;
 }

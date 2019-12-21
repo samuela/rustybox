@@ -1,4 +1,7 @@
 use crate::libbb::skip_whitespace::skip_whitespace;
+use crate::librb::len_and_sockaddr;
+use crate::librb::size_t;
+use crate::librb::socklen_t;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
 use libc;
@@ -6,11 +9,16 @@ use libc::close;
 use libc::fclose;
 use libc::free;
 use libc::printf;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
+use libc::ssize_t;
 use libc::strcasecmp;
 use libc::strchr;
 use libc::strcmp;
 use libc::strcpy;
 use libc::strtok;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -79,11 +87,7 @@ extern "C" {
     __buf: *mut libc::c_char,
     __len: socklen_t,
   ) -> *const libc::c_char;
-  #[no_mangle]
-  fn monotonic_ms() -> libc::c_ulonglong;
 
-  #[no_mangle]
-  fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
   /* After v = xrealloc_vector(v, SHIFT, idx) it's ok to use
    * at least v[idx] and v[idx+1], for all idx values.
    * SHIFT specifies how many new elements are added (1:2, 2:4, ..., 8:256...)
@@ -91,50 +95,21 @@ extern "C" {
    * xrealloc_vector(v, SHIFT, idx) *MUST* be called with consecutive IDXs -
    * skipping an index is a bad bug - it may miss a realloc!
    */
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn ndelay_on(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xbind(sockfd: libc::c_int, my_addr: *mut sockaddr, addrlen: socklen_t);
-  #[no_mangle]
-  fn xconnect(s: libc::c_int, s_addr: *const sockaddr, addrlen: socklen_t);
+
   /* Create stream socket, and allocate suitable lsa.
    * (lsa of correct size and lsa->sa.sa_family (AF_INET/AF_INET6))
    * af == AF_UNSPEC will result in trying to create IPv6 socket,
    * and if kernel doesn't support it, fall back to IPv4.
    * This is useful if you plan to bind to resulting local lsa.
    */
-  #[no_mangle]
-  fn xsocket_type(
-    lsap: *mut *mut len_and_sockaddr,
-    af: libc::c_int,
-    sock_type: libc::c_int,
-  ) -> libc::c_int;
+
   /* Version which dies on error */
-  #[no_mangle]
-  fn xhost2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
+
   /* inet_[ap]ton on steroids */
-  #[no_mangle]
-  fn xmalloc_sockaddr2dotted(sa: *const sockaddr) -> *mut libc::c_char;
+
   /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
    * But potentially slow, don't use in one-billion-times loops */
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn auto_string(str: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_gethostname() -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
+
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
   #[no_mangle]
@@ -142,16 +117,7 @@ extern "C" {
   /* { "-", NULL } */
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
+
   /* NB: (bb_hexdigits_upcase[i] | 0x20) -> lowercase hex digit */
   #[no_mangle]
   static bb_hexdigits_upcase: [libc::c_char; 0];
@@ -161,10 +127,6 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::size_t;
-use libc::ssize_t;
-use libc::FILE;
-pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -175,43 +137,16 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
 pub type in_addr_t = u32;
 pub type __ns_sect = libc::c_uint;
 pub const ns_s_max: __ns_sect = 4;
@@ -223,8 +158,9 @@ pub const ns_s_an: __ns_sect = 1;
 pub const ns_s_zn: __ns_sect = 0;
 pub const ns_s_qd: __ns_sect = 0;
 pub type ns_sect = __ns_sect;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __ns_msg {
   pub _msg: *const libc::c_uchar,
   pub _eom: *const libc::c_uchar,
@@ -237,8 +173,9 @@ pub struct __ns_msg {
   pub _msg_ptr: *const libc::c_uchar,
 }
 pub type ns_msg = __ns_msg;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __ns_rr {
   pub name: [libc::c_char; 1025],
   pub type_0: u16,
@@ -352,8 +289,9 @@ pub const ns_c_chaos: __ns_class = 3;
 pub const ns_c_2: __ns_class = 2;
 pub const ns_c_in: __ns_class = 1;
 pub const ns_c_invalid: __ns_class = 0;
-#[derive(Copy, Clone, BitfieldStruct)]
+
 #[repr(C)]
+#[derive(Copy, Clone, BitfieldStruct)]
 pub struct HEADER {
   #[bitfield(name = "id", ty = "libc::c_uint", bits = "0..=15")]
   #[bitfield(name = "rd", ty = "libc::c_uint", bits = "16..=16")]
@@ -375,14 +313,9 @@ pub struct HEADER {
 pub type smalluint = libc::c_uchar;
 pub type nfds_t = libc::c_ulong;
 use libc::pollfd;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_0,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_0 {
   pub sa: sockaddr,
   pub sin: sockaddr_in,
@@ -391,8 +324,9 @@ pub union C2RustUnnamed_0 {
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub default_port: libc::c_uint,
   pub default_retry: libc::c_uint,
@@ -405,22 +339,25 @@ pub struct globals {
   pub have_search_directive: smalluint,
   pub exitcode: smalluint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct query {
   pub name: *const libc::c_char,
   pub qlen: libc::c_uint,
   pub query: [libc::c_uchar; 512],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ns {
   pub name: *const libc::c_char,
   pub lsa: *mut len_and_sockaddr,
   pub replies: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_1 {
   pub type_0: libc::c_uchar,
   pub name: [libc::c_char; 7],
@@ -867,7 +804,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
   let mut tsent: libc::c_uint = 0;
   let mut tcur: libc::c_uint = 0;
   pfd.events = 0x1i32 as libc::c_short;
-  pfd.fd = xsocket_type(
+  pfd.fd = crate::libbb::xconnect::xsocket_type(
     &mut local_lsa,
     (*(*ns).lsa).u.sa.sa_family as libc::c_int,
     SOCK_DGRAM as libc::c_int,
@@ -878,14 +815,14 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
    * and remembered in fd, thus later recv(fd)
    * receives only packets sent to this port.
    */
-  xbind(pfd.fd, &mut (*local_lsa).u.sa, (*local_lsa).len);
+  crate::libbb::xfuncs_printf::xbind(pfd.fd, &mut (*local_lsa).u.sa, (*local_lsa).len);
   free(local_lsa as *mut libc::c_void);
   /* Make read/writes know the destination */
-  xconnect(pfd.fd, &mut (*(*ns).lsa).u.sa, (*(*ns).lsa).len); /* this one was replied already */
-  ndelay_on(pfd.fd); /* "no go, try next server" */
+  crate::libbb::xconnect::xconnect(pfd.fd, &mut (*(*ns).lsa).u.sa, (*(*ns).lsa).len); /* this one was replied already */
+  crate::libbb::xfuncs::ndelay_on(pfd.fd); /* "no go, try next server" */
   retry_interval =
     timeout.wrapping_div((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).default_retry);
-  tcur = monotonic_ms() as libc::c_uint;
+  tcur = crate::libbb::time::monotonic_ms() as libc::c_uint;
   tstart = tcur;
   's_78: loop {
     qn = 0i32;
@@ -909,7 +846,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
           .qlen as size_t,
         ) < 0
         {
-          bb_perror_msg(
+          crate::libbb::perror_msg::bb_perror_msg(
             b"write to \'%s\'\x00" as *const u8 as *const libc::c_char,
             (*ns).name,
           );
@@ -940,7 +877,9 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
           ::std::mem::size_of::<[libc::c_uchar; 512]>() as libc::c_ulong,
         ) as libc::c_int;
         if recvlen < 0i32 {
-          bb_simple_perror_msg(b"read\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::perror_msg::bb_simple_perror_msg(
+            b"read\x00" as *const u8 as *const libc::c_char,
+          );
           current_block = 6236198777448170658;
         } else {
           let fresh0 = (*ns).replies;
@@ -952,7 +891,9 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
             );
             printf(
               b"Address:\t%s\n\n\x00" as *const u8 as *const libc::c_char,
-              auto_string(xmalloc_sockaddr2dotted(&mut (*(*ns).lsa).u.sa)),
+              crate::libbb::auto_string::auto_string(
+                crate::libbb::xconnect::xmalloc_sockaddr2dotted(&mut (*(*ns).lsa).u.sa),
+              ),
             );
             /* In "Address", bind-utils-9.11.3 show port after a hash: "1.2.3.4#53" */
             /* Should we do the same? */
@@ -1030,7 +971,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
                         .query
                         .offset(qn as isize))
                       .qlen = 0i32 as libc::c_uint; /* flag: "reply received" */
-                      tcur = monotonic_ms() as libc::c_uint; /* while() */
+                      tcur = crate::libbb::time::monotonic_ms() as libc::c_uint; /* while() */
                       if option_mask32 & OPT_debug as libc::c_int as libc::c_uint != 0 {
                         printf(
                           b"Query #%d completed in %ums:\n\x00" as *const u8 as *const libc::c_char,
@@ -1076,7 +1017,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
                           _ => {}
                         }
                       }
-                      bb_putchar('\n' as i32);
+                      crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
                       n_replies += 1;
                       if n_replies as libc::c_uint
                         >= (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).query_count
@@ -1093,7 +1034,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
         }
       }
       match current_block {
-        6236198777448170658 => tcur = monotonic_ms() as libc::c_uint,
+        6236198777448170658 => tcur = crate::libbb::time::monotonic_ms() as libc::c_uint,
         _ => {}
       }
       if !(tcur.wrapping_sub(tstart) < timeout) {
@@ -1117,7 +1058,7 @@ unsafe extern "C" fn add_ns(mut addr: *const libc::c_char) {
   *fresh1 = (*fresh1).wrapping_add(1);
   count = fresh2;
   let ref mut fresh3 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).server;
-  *fresh3 = xrealloc_vector_helper(
+  *fresh3 = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).server as *mut libc::c_void,
     ((::std::mem::size_of::<ns>() as libc::c_ulong) << 8i32).wrapping_add(3i32 as libc::c_ulong)
       as libc::c_uint,
@@ -1127,7 +1068,7 @@ unsafe extern "C" fn add_ns(mut addr: *const libc::c_char) {
     .server
     .offset(count as isize) as *mut ns;
   (*ns).name = addr;
-  (*ns).lsa = xhost2sockaddr(
+  (*ns).lsa = crate::libbb::xconnect::xhost2sockaddr(
     addr,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).default_port as libc::c_int,
   );
@@ -1179,12 +1120,12 @@ unsafe extern "C" fn parse_resolvconf() {
           continue;
         }
         /* nameserver DNS */
-        add_ns(xstrdup(arg));
+        add_ns(crate::libbb::xfuncs_printf::xstrdup(arg));
         continue;
       }
       free((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).search as *mut libc::c_void);
       let ref mut fresh4 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).search;
-      *fresh4 = xstrdup(arg)
+      *fresh4 = crate::libbb::xfuncs_printf::xstrdup(arg)
     }
     fclose(resolv);
   }
@@ -1193,7 +1134,7 @@ unsafe extern "C" fn parse_resolvconf() {
     .is_null()
   {
     /* default search domain is domain part of hostname */
-    let mut h: *mut libc::c_char = safe_gethostname();
+    let mut h: *mut libc::c_char = crate::libbb::safe_gethostname::safe_gethostname();
     let mut d: *mut libc::c_char = strchr(h, '.' as i32);
     if !d.is_null() {
       let ref mut fresh5 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).search;
@@ -1226,7 +1167,7 @@ unsafe extern "C" fn add_query(mut type_0: libc::c_int, mut dname: *const libc::
   *fresh7 = (*fresh7).wrapping_add(1);
   count = fresh8;
   let ref mut fresh9 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).query;
-  *fresh9 = xrealloc_vector_helper(
+  *fresh9 = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).query as *mut libc::c_void,
     ((::std::mem::size_of::<query>() as libc::c_ulong) << 8i32).wrapping_add(2i32 as libc::c_ulong)
       as libc::c_uint,
@@ -1267,8 +1208,8 @@ unsafe extern "C" fn add_query_with_search(
   loop {
     let mut fullname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut e: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    e = skip_non_whitespace(s);
-    fullname = xasprintf(
+    e = crate::libbb::skip_whitespace::skip_non_whitespace(s);
+    fullname = crate::libbb::xfuncs_printf::xasprintf(
       b"%s.%.*s\x00" as *const u8 as *const libc::c_char,
       dname,
       e.wrapping_offset_from(s) as libc::c_long as libc::c_int,
@@ -1318,9 +1259,9 @@ unsafe extern "C" fn make_ptr(mut addrstr: *const libc::c_char) -> *mut libc::c_
         i += 1
       }
       strcpy(ptr, b"ip6.arpa\x00" as *const u8 as *const libc::c_char);
-      return xstrdup(resbuf.as_mut_ptr());
+      return crate::libbb::xfuncs_printf::xstrdup(resbuf.as_mut_ptr());
     }
-    return xasprintf(
+    return crate::libbb::xfuncs_printf::xasprintf(
       b"%u.%u.%u.%u.in-addr.arpa\x00" as *const u8 as *const libc::c_char,
       addr[15] as libc::c_int,
       addr[14] as libc::c_int,
@@ -1329,7 +1270,7 @@ unsafe extern "C" fn make_ptr(mut addrstr: *const libc::c_char) -> *mut libc::c_
     );
   }
   if inet_pton(2i32, addrstr, addr.as_mut_ptr() as *mut libc::c_void) != 0 {
-    return xasprintf(
+    return crate::libbb::xfuncs_printf::xasprintf(
       b"%u.%u.%u.%u.in-addr.arpa\x00" as *const u8 as *const libc::c_char,
       addr[3] as libc::c_int,
       addr[2] as libc::c_int,
@@ -1363,7 +1304,7 @@ pub unsafe extern "C" fn nslookup_main(
     let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut val: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if (*argv).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     if *(*argv.offset(0)).offset(0) as libc::c_int != '-' as i32 {
       break;
@@ -1378,10 +1319,10 @@ pub unsafe extern "C" fn nslookup_main(
       val = val.offset(1);
       *fresh15 = '\u{0}' as i32 as libc::c_char
     }
-    i = index_in_substrings(options, arg);
+    i = crate::libbb::compare_string_array::index_in_substrings(options, arg);
     //bb_error_msg("i:%d arg:'%s' val:'%s'", i, arg, val);
     if i < 0i32 {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     if i <= 1i32 {
       i = 0i32;
@@ -1391,7 +1332,7 @@ pub unsafe extern "C" fn nslookup_main(
             .wrapping_div(::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong)
             as libc::c_uint
         {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"invalid query type \"%s\"\x00" as *const u8 as *const libc::c_char,
             val,
           );
@@ -1405,28 +1346,33 @@ pub unsafe extern "C" fn nslookup_main(
     } else {
       if i == 2i32 {
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).default_port =
-          xatou_range(val, 1i32 as libc::c_uint, 0xffffi32 as libc::c_uint)
+          crate::libbb::xatonum::xatou_range(val, 1i32 as libc::c_uint, 0xffffi32 as libc::c_uint)
       }
       if i == 3i32 {
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).default_retry =
-          xatou_range(val, 1i32 as libc::c_uint, 2147483647i32 as libc::c_uint)
+          crate::libbb::xatonum::xatou_range(
+            val,
+            1i32 as libc::c_uint,
+            2147483647i32 as libc::c_uint,
+          )
       }
       if i == 4i32 {
         option_mask32 |= OPT_debug as libc::c_int as libc::c_uint
       }
       if i > 4i32 {
-        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).default_timeout = xatou_range(
-          val,
-          1i32 as libc::c_uint,
-          (2147483647i32 / 1000i32) as libc::c_uint,
-        )
+        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).default_timeout =
+          crate::libbb::xatonum::xatou_range(
+            val,
+            1i32 as libc::c_uint,
+            (2147483647i32 / 1000i32) as libc::c_uint,
+          )
       }
     }
   }
   /* Use given DNS server if present */
   if !(*argv.offset(1)).is_null() {
     if !(*argv.offset(2)).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     add_ns(*argv.offset(1));
   } else {
@@ -1529,7 +1475,7 @@ pub unsafe extern "C" fn nslookup_main(
   }
   if err != 0 {
     /* should this affect exicode too? */
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   }
   return (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exitcode as libc::c_int;
 }

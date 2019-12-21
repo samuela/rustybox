@@ -2,7 +2,6 @@ use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
 use libc;
 use libc::pollfd;
-use libc::ssize_t;
 extern "C" {
   #[no_mangle]
   fn strtoul(
@@ -15,10 +14,6 @@ extern "C" {
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn safe_poll(ufds: *mut pollfd, nfds: nfds_t, timeout_ms: libc::c_int) -> libc::c_int;
 }
 
 pub type __int64_t = libc::c_long;
@@ -191,7 +186,7 @@ pub unsafe extern "C" fn read_key(
        * if fd can be in non-blocking mode.
        */
       if timeout >= -1i32 {
-        if safe_poll(&mut pfd, 1i32 as nfds_t, timeout) == 0i32 {
+        if crate::libbb::safe_poll::safe_poll(&mut pfd, 1i32 as nfds_t, timeout) == 0i32 {
           /* Timed out */
           *bb_errno = 11i32;
           return -1i32 as int64_t;
@@ -203,7 +198,8 @@ pub unsafe extern "C" fn read_key(
        * When we were reading 3 bytes here, we were eating
        * "li" too, and cat was getting wrong input.
        */
-      n = safe_read(fd, buffer as *mut libc::c_void, 1i32 as size_t) as libc::c_int;
+      n = crate::libbb::read::safe_read(fd, buffer as *mut libc::c_void, 1i32 as size_t)
+        as libc::c_int;
       if n <= 0i32 {
         return -1i32 as int64_t;
       }
@@ -241,12 +237,12 @@ pub unsafe extern "C" fn read_key(
            * so if we block for long it's not really an escape sequence.
            * Timeout is needed to reconnect escape sequences
            * split up by transmission over a serial console. */
-          if safe_poll(&mut pfd, 1i32 as nfds_t, 50i32) == 0i32 {
+          if crate::libbb::safe_poll::safe_poll(&mut pfd, 1i32 as nfds_t, 50i32) == 0i32 {
             current_block = 16551332604341906318;
             break 's_125;
           }
           *bb_errno = 0i32;
-          if safe_read(
+          if crate::libbb::read::safe_read(
             fd,
             buffer.offset(n as isize) as *mut libc::c_void,
             1i32 as size_t,
@@ -300,11 +296,11 @@ pub unsafe extern "C" fn read_key(
          */
         while n < KEYCODE_BUFFER_SIZE as libc::c_int - 1i32 {
           /* 1 for count byte at buffer[-1] */
-          if safe_poll(&mut pfd, 1i32 as nfds_t, 50i32) == 0i32 {
+          if crate::libbb::safe_poll::safe_poll(&mut pfd, 1i32 as nfds_t, 50i32) == 0i32 {
             break;
           }
           *bb_errno = 0i32;
-          if safe_read(
+          if crate::libbb::read::safe_read(
             fd,
             buffer.offset(n as isize) as *mut libc::c_void,
             1i32 as size_t,

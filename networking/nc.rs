@@ -3,7 +3,6 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 use libc::alarm;
 use libc::close;
@@ -13,6 +12,7 @@ use libc::free;
 use libc::pid_t;
 use libc::sigset_t;
 use libc::sleep;
+use libc::sockaddr_in;
 use libc::sprintf;
 use libc::ssize_t;
 use libc::strcmp;
@@ -78,117 +78,44 @@ extern "C" {
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn kill_myself_with_sig(sig: libc::c_int) -> !;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xbind(sockfd: libc::c_int, my_addr: *mut sockaddr, addrlen: socklen_t);
-  #[no_mangle]
-  fn xlisten(s: libc::c_int, backlog: libc::c_int);
-  #[no_mangle]
-  fn xconnect(s: libc::c_int, s_addr: *const sockaddr, addrlen: socklen_t);
   /* SO_REUSEADDR allows a server to rebind to an address that is already
    * "in use" by old connections to e.g. previous server instance which is
    * killed or crashed. Without it bind will fail until all such connections
    * time out. Linux does not allow multiple live binds on same ip:port
    * regardless of SO_REUSEADDR (unlike some other flavors of Unix).
    * Turn it on before you call bind(). */
-  #[no_mangle]
-  fn setsockopt_reuseaddr(fd: libc::c_int);
+
   /* NB: returns port in host byte order */
-  #[no_mangle]
-  fn bb_lookup_port(
-    port: *const libc::c_char,
-    protocol: *const libc::c_char,
-    default_port: libc::c_uint,
-  ) -> libc::c_uint;
+
   /* Create stream socket, and allocate suitable lsa.
    * (lsa of correct size and lsa->sa.sa_family (AF_INET/AF_INET6))
    * af == AF_UNSPEC will result in trying to create IPv6 socket,
    * and if kernel doesn't support it, fall back to IPv4.
    * This is useful if you plan to bind to resulting local lsa.
    */
-  #[no_mangle]
-  fn xsocket_type(
-    lsap: *mut *mut len_and_sockaddr,
-    af: libc::c_int,
-    sock_type: libc::c_int,
-  ) -> libc::c_int;
+
   /* Version which dies on error */
-  #[no_mangle]
-  fn xhost2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
+
   /* Assign sin[6]_port member if the socket is an AF_INET[6] one,
    * otherwise no-op. Useful for ftp.
    * NB: does NOT do htons() internally, just direct assignment. */
-  #[no_mangle]
-  fn set_nport(sa: *mut sockaddr, port: libc::c_uint);
+
   /* Retrieve sin[6]_port or return -1 for non-INET[6] lsa's */
-  #[no_mangle]
-  fn get_nport(sa: *const sockaddr) -> libc::c_int;
+
   /* Reverse DNS. Returns NULL on failure. */
-  #[no_mangle]
-  fn xmalloc_sockaddr2host(sa: *const sockaddr) -> *mut libc::c_char;
+
   /* inet_[ap]ton on steroids */
-  #[no_mangle]
-  fn xmalloc_sockaddr2dotted(sa: *const sockaddr) -> *mut libc::c_char;
-  #[no_mangle]
-  fn socket_want_pktinfo(fd: libc::c_int);
-  #[no_mangle]
-  fn recv_from_to(
-    fd: libc::c_int,
-    buf: *mut libc::c_void,
-    len: size_t,
-    flags: libc::c_int,
-    from: *mut sockaddr,
-    to: *mut sockaddr,
-    sa_size: socklen_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
+
   /* Put a string of hex bytes ("1b2e66fe"...), return advanced pointer */
-  #[no_mangle]
-  fn bin2hex(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    count: libc::c_int,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
+
   /* BB_EXECxx always execs (it's not doing NOFORK/NOEXEC stuff),
    * but it may exec busybox and call applet instead of searching PATH.
    */
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
+
   /* { "-", NULL } */
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   /* NB: (bb_hexdigits_upcase[i] | 0x20) -> lowercase hex digit */
   #[no_mangle]
   static bb_hexdigits_upcase: [libc::c_char; 0];
@@ -200,7 +127,7 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-pub type socklen_t = __socklen_t;
+use crate::librb::socklen_t;
 
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -241,8 +168,9 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 pub const SHUT_RDWR: C2RustUnnamed_0 = 2;
 pub const SHUT_WR: C2RustUnnamed_0 = 1;
 pub const SHUT_RD: C2RustUnnamed_0 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __SOCKADDR_ARG {
   pub __sockaddr__: *mut sockaddr,
   pub __sockaddr_at__: *mut sockaddr_at,
@@ -258,44 +186,28 @@ pub union __SOCKADDR_ARG {
   pub __sockaddr_un__: *mut sockaddr_un,
   pub __sockaddr_x25__: *mut sockaddr_x25,
 }
-#[derive(Copy, Clone)]
+
+use libc::sockaddr_in6;
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct in6_addr {
   pub __in6_u: C2RustUnnamed_1,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr__: *const sockaddr,
   pub __sockaddr_at__: *const sockaddr_at,
@@ -339,8 +251,9 @@ pub const IPPROTO_IGMP: C2RustUnnamed_2 = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed_2 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_2 = 0;
 pub type __jmp_buf = [libc::c_long; 8];
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __jmp_buf_tag {
   pub __jmpbuf: __jmp_buf,
   pub __mask_was_saved: libc::c_int,
@@ -349,14 +262,11 @@ pub struct __jmp_buf_tag {
 pub type jmp_buf = [__jmp_buf_tag; 1];
 pub type nfds_t = libc::c_ulong;
 use libc::pollfd;
-#[derive(Copy, Clone)]
+
+use crate::librb::len_and_sockaddr;
+
 #[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_3,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_3 {
   pub sa: sockaddr,
   pub sin: sockaddr_in,
@@ -368,8 +278,9 @@ pub const LSA_LEN_SIZE: C2RustUnnamed_4 = 4;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub o_verbose: libc::c_uint,
   pub o_wait: libc::c_uint,
@@ -420,7 +331,7 @@ unsafe extern "C" fn catch(mut sig: libc::c_int) {
     );
   }
   fprintf(stderr, b"punt!\n\x00" as *const u8 as *const libc::c_char);
-  kill_myself_with_sig(sig);
+  crate::libbb::signals::kill_myself_with_sig(sig);
 }
 /* unarm  */
 unsafe extern "C" fn unarm() {
@@ -482,11 +393,11 @@ unsafe extern "C" fn doexec(mut proggie: *mut *mut libc::c_char) -> ! {
     let ref mut fresh0 = *proggie.offset(0);
     *fresh0 = (*ptr_to_globals).proggie0saved
   }
-  xmove_fd(netfd as libc::c_int, 0i32);
+  crate::libbb::xfuncs_printf::xmove_fd(netfd as libc::c_int, 0i32);
   dup2(0i32, 1i32);
   /* dup2(0, 2); - do we *really* want this? NO!
    * exec'ed prog can do it yourself, if needed */
-  BB_EXECVP_or_die(proggie);
+  crate::libbb::executable::BB_EXECVP_or_die(proggie);
 }
 /* connect_w_timeout:
 return an fd for one of
@@ -522,7 +433,7 @@ in conjunction with local-address binding should limit things nicely... */
 unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut *mut libc::c_char) {
   let mut rr: libc::c_int = 0; /* TCP: gotta listen() before we can get */
   if option_mask32 & OPT_u as libc::c_int as libc::c_uint == 0 {
-    xlisten(netfd as libc::c_int, 1i32);
+    crate::libbb::xfuncs_printf::xlisten(netfd as libc::c_int, 1i32);
   }
   /* Various things that follow temporarily trash bigbuf_net, which might contain
   a copy of any recvfrom()ed packet, but we'll read() another copy later. */
@@ -543,7 +454,7 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
     );
     //if (rr < 0)
     //	bb_perror_msg_and_die("getsockname after bind");
-    addr = xmalloc_sockaddr2dotted(&mut (*(*ptr_to_globals).ouraddr).u.sa);
+    addr = crate::libbb::xconnect::xmalloc_sockaddr2dotted(&mut (*(*ptr_to_globals).ouraddr).u.sa);
     fprintf(
       stderr,
       b"listening on %s ...\n\x00" as *const u8 as *const libc::c_char,
@@ -572,7 +483,7 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
     (*ptr_to_globals).remend.len = LSA_SIZEOF_SA as libc::c_int as socklen_t;
     if !(*ptr_to_globals).themaddr.is_null() {
       (*ptr_to_globals).remend = *(*ptr_to_globals).themaddr;
-      xconnect(
+      crate::libbb::xconnect::xconnect(
         netfd as libc::c_int,
         &mut (*(*ptr_to_globals).themaddr).u.sa,
         (*(*ptr_to_globals).themaddr).len,
@@ -584,7 +495,7 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
       /* do timeout for initial connect */
       /* (*ouraddr) is prefilled with "default" address */
       /* and here we block... */
-      rr = recv_from_to(
+      rr = crate::libbb::udp_io::recv_from_to(
         netfd as libc::c_int,
         0 as *mut libc::c_void,
         0i32 as size_t,
@@ -594,11 +505,15 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
         (*(*ptr_to_globals).ouraddr).len,
       ) as libc::c_int;
       if rr < 0i32 {
-        bb_simple_perror_msg_and_die(b"recvfrom\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"recvfrom\x00" as *const u8 as *const libc::c_char,
+        );
       }
       unarm();
     } else {
-      bb_simple_error_msg_and_die(b"timeout\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"timeout\x00" as *const u8 as *const libc::c_char,
+      );
     }
     /* Now we learned *to which IP* peer has connected, and we want to anchor
     our socket on it, so that our outbound packets will have correct local IP.
@@ -607,7 +522,7 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
     Need to read the packet, save data, close this socket and
     create new one, and bind() it. TODO */
     if (*ptr_to_globals).themaddr.is_null() {
-      xconnect(
+      crate::libbb::xconnect::xconnect(
         netfd as libc::c_int,
         &mut (*ptr_to_globals).remend.u.sa,
         (*(*ptr_to_globals).ouraddr).len,
@@ -627,7 +542,9 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
             &mut (*ptr_to_globals).remend.len,
           );
           if rr < 0i32 {
-            bb_simple_perror_msg_and_die(b"accept\x00" as *const u8 as *const libc::c_char);
+            crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+              b"accept\x00" as *const u8 as *const libc::c_char,
+            );
           }
           if (*ptr_to_globals).themaddr.is_null() {
             break;
@@ -637,12 +554,15 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
           let mut r: libc::c_int = 0;
           //if (rr < 0)
           //	bb_perror_msg_and_die("getsockname after accept");
-          sv_port = get_nport(&mut (*ptr_to_globals).remend.u.sa); /* save */
-          port = get_nport(&mut (*(*ptr_to_globals).themaddr).u.sa);
+          sv_port = crate::libbb::xconnect::get_nport(&mut (*ptr_to_globals).remend.u.sa); /* save */
+          port = crate::libbb::xconnect::get_nport(&mut (*(*ptr_to_globals).themaddr).u.sa);
           if port == 0i32 {
             /* "nc -nl -p LPORT RHOST" (w/o RPORT!):
              * we should accept any remote port */
-            set_nport(&mut (*ptr_to_globals).remend.u.sa, 0i32 as libc::c_uint);
+            crate::libbb::xconnect::set_nport(
+              &mut (*ptr_to_globals).remend.u.sa,
+              0i32 as libc::c_uint,
+            );
             /* blot out remote port# */
           } /* restore */
           r = memcmp(
@@ -650,7 +570,10 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
             &mut (*(*ptr_to_globals).themaddr).u.sa as *mut sockaddr as *const libc::c_void,
             (*ptr_to_globals).remend.len as libc::c_ulong,
           );
-          set_nport(&mut (*ptr_to_globals).remend.u.sa, sv_port as libc::c_uint);
+          crate::libbb::xconnect::set_nport(
+            &mut (*ptr_to_globals).remend.u.sa,
+            sv_port as libc::c_uint,
+          );
           if !(r != 0i32) {
             break;
           }
@@ -658,8 +581,8 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
            * is not suppressed by o_verbose */
           if (*ptr_to_globals).o_verbose != 0 {
             let mut remaddr: *mut libc::c_char =
-              xmalloc_sockaddr2dotted(&mut (*ptr_to_globals).remend.u.sa);
-            bb_error_msg(
+              crate::libbb::xconnect::xmalloc_sockaddr2dotted(&mut (*ptr_to_globals).remend.u.sa);
+            crate::libbb::verror_msg::bb_error_msg(
               b"connect from wrong ip/port %s ignored\x00" as *const u8 as *const libc::c_char,
               remaddr,
             );
@@ -669,7 +592,9 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
         }
         unarm();
       } else {
-        bb_simple_error_msg_and_die(b"timeout\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+          b"timeout\x00" as *const u8 as *const libc::c_char,
+        );
       }
       if !(is_persistent != 0 && !proggie.is_null()) {
         break;
@@ -682,7 +607,9 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
       if ({
         let mut bb__xvfork_pid: pid_t = vfork();
         if bb__xvfork_pid < 0i32 {
-          bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+            b"vfork\x00" as *const u8 as *const libc::c_char,
+          );
         }
         bb__xvfork_pid
       }) != 0i32
@@ -695,7 +622,7 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
         break;
       }
     }
-    xmove_fd(rr, netfd as libc::c_int);
+    crate::libbb::xfuncs_printf::xmove_fd(rr, netfd as libc::c_int);
     /* find out what address the connection was *to* on our end, in case we're
     doing a listen-on-any on a multihomed machine.  This allows one to
     offer different services via different alias addresses, such as the
@@ -729,7 +656,7 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
     );
     if rr >= 0i32 && x != 0 {
       /* we've got options, lessee em... */
-      *bin2hex(
+      *crate::libbb::xfuncs::bin2hex(
         (*ptr_to_globals).bigbuf_net.as_mut_ptr(),
         optbuf.as_mut_ptr(),
         x as libc::c_int,
@@ -750,12 +677,13 @@ unsafe extern "C" fn dolisten(mut is_persistent: libc::c_int, mut proggie: *mut 
     accept the connection and then reject undesirable ones by closing.
     In other words, we need a TCP MSG_PEEK. */
     /* bbox: removed most of it */
-    lcladdr = xmalloc_sockaddr2dotted(&mut (*(*ptr_to_globals).ouraddr).u.sa);
-    remaddr_0 = xmalloc_sockaddr2dotted(&mut (*ptr_to_globals).remend.u.sa);
+    lcladdr =
+      crate::libbb::xconnect::xmalloc_sockaddr2dotted(&mut (*(*ptr_to_globals).ouraddr).u.sa);
+    remaddr_0 = crate::libbb::xconnect::xmalloc_sockaddr2dotted(&mut (*ptr_to_globals).remend.u.sa);
     remhostname = if option_mask32 & OPT_n as libc::c_int as libc::c_uint != 0 {
       remaddr_0
     } else {
-      xmalloc_sockaddr2host(&mut (*ptr_to_globals).remend.u.sa)
+      crate::libbb::xconnect::xmalloc_sockaddr2host(&mut (*ptr_to_globals).remend.u.sa)
     };
     fprintf(
       stderr,
@@ -792,7 +720,9 @@ unsafe extern "C" fn udptest() -> libc::c_int {
     1i32 as size_t,
   ) as libc::c_int;
   if rr != 1i32 {
-    bb_simple_perror_msg(b"udptest first write\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg(
+      b"udptest first write\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if (*ptr_to_globals).o_wait != 0 {
     sleep((*ptr_to_globals).o_wait);
@@ -803,12 +733,12 @@ unsafe extern "C" fn udptest() -> libc::c_int {
     /* Set a temporary connect timeout, so packet filtration doesn't cause
     us to hang forever, and hit it */
     (*ptr_to_globals).o_wait = 5i32 as libc::c_uint;
-    rr = xsocket(
+    rr = crate::libbb::xfuncs_printf::xsocket(
       (*(*ptr_to_globals).ouraddr).u.sa.sa_family as libc::c_int,
       SOCK_STREAM as libc::c_int,
       0i32,
     );
-    set_nport(
+    crate::libbb::xconnect::set_nport(
       &mut (*(*ptr_to_globals).themaddr).u.sa,
       ({
         let mut __v: libc::c_ushort = 0; /* enough that we'll notice?? */
@@ -821,8 +751,7 @@ unsafe extern "C" fn udptest() -> libc::c_int {
           let fresh2;
           let fresh3 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh2) : "0"
-                                (c2rust_asm_casts::AsmCast::cast_in(fresh1, fresh3))
-                                : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh1, fresh3)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh1, fresh3, fresh2);
         }
         __v
@@ -927,7 +856,7 @@ unsafe extern "C" fn oprint(
     let fresh7 = ap;
     ap = ap.offset(1);
     *fresh7 = '\n' as i32 as libc::c_uchar;
-    xwrite(
+    crate::libbb::xfuncs_printf::xwrite(
       ofd as libc::c_int,
       stage.as_mut_ptr() as *const libc::c_void,
       ap.wrapping_offset_from(stage.as_mut_ptr()) as libc::c_long as size_t,
@@ -985,7 +914,9 @@ unsafe extern "C" fn readwrite() -> libc::c_int {
     if rr < 0i32 && *bb_errno != 4i32 {
       /* might have gotten ^Zed, etc */
       if (*ptr_to_globals).o_verbose != 0 {
-        bb_simple_perror_msg(b"poll\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg(
+          b"poll\x00" as *const u8 as *const libc::c_char,
+        );
       }
       close(netfd as libc::c_int);
       return 1i32;
@@ -1022,7 +953,9 @@ unsafe extern "C" fn readwrite() -> libc::c_int {
       if rr <= 0i32 {
         if rr < 0i32 && (*ptr_to_globals).o_verbose > 1i32 as libc::c_uint {
           /* nc 1.10 doesn't do this */
-          bb_simple_perror_msg(b"net read\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::perror_msg::bb_simple_perror_msg(
+            b"net read\x00" as *const u8 as *const libc::c_char,
+          );
         }
         /* can't write anymore: broken pipe */
         pfds[1].fd = -1i32; /* don't poll for netfd anymore */
@@ -1118,7 +1051,9 @@ unsafe extern "C" fn readwrite() -> libc::c_int {
       if wretry == 0 {
         /* is something hung? */
         if (*ptr_to_globals).o_verbose != 0 {
-          bb_simple_error_msg(b"too many output retries\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::verror_msg::bb_simple_error_msg(
+            b"too many output retries\x00" as *const u8 as *const libc::c_char,
+          );
         }
         return 1i32;
       }
@@ -1155,15 +1090,16 @@ pub unsafe extern "C" fn nc_main(
   let mut o_lport: libc::c_uint = 0i32 as libc::c_uint;
   let ref mut fresh8 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh8 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh8 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   /* catch a signal or two for cleanup */
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     0i32 + (1i32 << 2i32) + (1i32 << 3i32) + (1i32 << 15i32),
     Some(catch as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   /* and suppress others... */
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     0i32 + (1i32 << 23i32) + (1i32 << 13i32),
     ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
   );
@@ -1205,7 +1141,7 @@ pub unsafe extern "C" fn nc_main(
     _ => {}
   }
   // -g -G -t -r deleted, unimplemented -a deleted too
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     b"^np:s:uvw:+lki:o:z\x00?2:vv:ll\x00" as *const u8 as *const libc::c_char,
     &mut str_p as *mut *mut libc::c_char,
@@ -1220,7 +1156,7 @@ pub unsafe extern "C" fn nc_main(
   if option_mask32 & OPT_i as libc::c_int as libc::c_uint != 0 {
     /* line-interval time */
     (*ptr_to_globals).o_interval =
-      xatou_range(str_i, 1i32 as libc::c_uint, 0xffffi32 as libc::c_uint)
+      crate::libbb::xatonum::xatou_range(str_i, 1i32 as libc::c_uint, 0xffffi32 as libc::c_uint)
   }
   //if (option_mask32 & OPT_l) /* listen mode */
   if option_mask32 & OPT_k as libc::c_int as libc::c_uint != 0 {
@@ -1231,7 +1167,7 @@ pub unsafe extern "C" fn nc_main(
   //if (option_mask32 & OPT_o) /* hexdump log */
   if option_mask32 & OPT_p as libc::c_int as libc::c_uint != 0 {
     /* local source port */
-    o_lport = bb_lookup_port(
+    o_lport = crate::libbb::xconnect::bb_lookup_port(
       str_p,
       if option_mask32 & OPT_u as libc::c_int as libc::c_uint != 0 {
         b"udp\x00" as *const u8 as *const libc::c_char
@@ -1241,7 +1177,7 @@ pub unsafe extern "C" fn nc_main(
       0i32 as libc::c_uint,
     );
     if o_lport == 0 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"bad local port \'%s\'\x00" as *const u8 as *const libc::c_char,
         str_p,
       );
@@ -1255,10 +1191,10 @@ pub unsafe extern "C" fn nc_main(
   /* We manage our fd's so that they are never 0,1,2 */
   /*bb_sanitize_stdio(); - not needed */
   if !(*argv.offset(0)).is_null() {
-    (*ptr_to_globals).themaddr = xhost2sockaddr(
+    (*ptr_to_globals).themaddr = crate::libbb::xconnect::xhost2sockaddr(
       *argv.offset(0),
       if !(*argv.offset(1)).is_null() {
-        bb_lookup_port(
+        crate::libbb::xconnect::bb_lookup_port(
           *argv.offset(1),
           if option_mask32 & OPT_u as libc::c_int as libc::c_uint != 0 {
             b"udp\x00" as *const u8 as *const libc::c_char
@@ -1281,8 +1217,9 @@ pub unsafe extern "C" fn nc_main(
   if option_mask32 & OPT_s as libc::c_int as libc::c_uint != 0 {
     /* local address */
     /* if o_lport is still 0, then we will use random port */
-    (*ptr_to_globals).ouraddr = xhost2sockaddr(str_s, o_lport as libc::c_int);
-    x = xsocket(
+    (*ptr_to_globals).ouraddr =
+      crate::libbb::xconnect::xhost2sockaddr(str_s, o_lport as libc::c_int);
+    x = crate::libbb::xfuncs_printf::xsocket(
       (*(*ptr_to_globals).ouraddr).u.sa.sa_family as libc::c_int,
       x,
       0i32,
@@ -1290,7 +1227,7 @@ pub unsafe extern "C" fn nc_main(
   } else {
     /* We try IPv6, then IPv4, unless addr family is
      * implicitly set by way of remote addr/port spec */
-    x = xsocket_type(
+    x = crate::libbb::xconnect::xsocket_type(
       &mut (*ptr_to_globals).ouraddr,
       if !(*ptr_to_globals).themaddr.is_null() {
         (*(*ptr_to_globals).themaddr).u.sa.sa_family as libc::c_int
@@ -1300,7 +1237,7 @@ pub unsafe extern "C" fn nc_main(
       x,
     ); /* won't need stdin */
     if o_lport != 0 {
-      set_nport(
+      crate::libbb::xconnect::set_nport(
         &mut (*(*ptr_to_globals).ouraddr).u.sa,
         ({
           let mut __v: libc::c_ushort = 0;
@@ -1313,8 +1250,7 @@ pub unsafe extern "C" fn nc_main(
             let fresh10;
             let fresh11 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh10) : "0"
-                                    (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11))
-                                    : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
           }
           __v
@@ -1322,16 +1258,16 @@ pub unsafe extern "C" fn nc_main(
       );
     }
   }
-  xmove_fd(x, netfd as libc::c_int);
-  setsockopt_reuseaddr(netfd as libc::c_int);
+  crate::libbb::xfuncs_printf::xmove_fd(x, netfd as libc::c_int);
+  crate::libbb::xconnect::setsockopt_reuseaddr(netfd as libc::c_int);
   if option_mask32 & OPT_u as libc::c_int as libc::c_uint != 0 {
-    socket_want_pktinfo(netfd as libc::c_int);
+    crate::libbb::udp_io::socket_want_pktinfo(netfd as libc::c_int);
   }
   if 0i32 == 0
     || cnt_l != 0i32 as libc::c_uint
     || (*(*ptr_to_globals).ouraddr).u.sa.sa_family as libc::c_int != 1i32
   {
-    xbind(
+    crate::libbb::xfuncs_printf::xbind(
       netfd as libc::c_int,
       &mut (*(*ptr_to_globals).ouraddr).u.sa,
       (*(*ptr_to_globals).ouraddr).len,
@@ -1343,8 +1279,8 @@ pub unsafe extern "C" fn nc_main(
     /* -o with -e is meaningless! */
   }
   if option_mask32 & OPT_o as libc::c_int as libc::c_uint != 0 {
-    xmove_fd(
-      xopen(str_o, 0o1i32 | 0o100i32 | 0o1000i32),
+    crate::libbb::xfuncs_printf::xmove_fd(
+      crate::libbb::xfuncs_printf::xopen(str_o, 0o1i32 | 0o100i32 | 0o1000i32),
       ofd as libc::c_int,
     );
   }
@@ -1359,11 +1295,12 @@ pub unsafe extern "C" fn nc_main(
     /* dolisten does its own connect reporting */
     /* Outbound connects.  Now we're more picky about args... */
     if (*ptr_to_globals).themaddr.is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     (*ptr_to_globals).remend = *(*ptr_to_globals).themaddr;
     if (*ptr_to_globals).o_verbose != 0 {
-      themdotted = xmalloc_sockaddr2dotted(&mut (*(*ptr_to_globals).themaddr).u.sa)
+      themdotted =
+        crate::libbb::xconnect::xmalloc_sockaddr2dotted(&mut (*(*ptr_to_globals).themaddr).u.sa)
     }
     x = connect_w_timeout(netfd as libc::c_int);
     if option_mask32 & OPT_z as libc::c_int as libc::c_uint != 0
@@ -1397,7 +1334,7 @@ pub unsafe extern "C" fn nc_main(
       if (*ptr_to_globals).o_verbose > 1i32 as libc::c_uint
         || (*ptr_to_globals).o_verbose != 0 && *bb_errno != 111i32
       {
-        bb_perror_msg(
+        crate::libbb::perror_msg::bb_perror_msg(
           b"%s (%s)\x00" as *const u8 as *const libc::c_char,
           *argv.offset(0),
           themdotted,

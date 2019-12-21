@@ -1,11 +1,16 @@
+use crate::librb::in6_addr;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 use libc::fclose;
 use libc::free;
 use libc::fscanf;
+use libc::in_addr;
 use libc::printf;
+use libc::sa_family_t;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::strchr;
 use libc::strcmp;
 extern "C" {
@@ -36,70 +41,25 @@ extern "C" {
     __cp: *const libc::c_char,
     __buf: *mut libc::c_void,
   ) -> libc::c_int;
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_clk_tck() -> libc::c_uint;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xatoull_range(
-    str: *const libc::c_char,
-    l: libc::c_ulonglong,
-    u: libc::c_ulonglong,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xatoull(str: *const libc::c_char) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 
-  /*
-   * stolen from net-tools-1.59 and stripped down for busybox by
-   *                      Erik Andersen <andersen@codepoet.org>
-   *
-   * Heavily modified by Manuel Novoa III       Mar 12, 2001
-   *
-   */
-  /* hostfirst!=0 If we expect this to be a hostname,
-    try hostname database first
-  */
-  #[no_mangle]
-  fn INET_resolve(
-    name: *const libc::c_char,
-    s_in: *mut sockaddr_in,
-    hostfirst: libc::c_int,
-  ) -> libc::c_int;
-  /* numeric: & 0x8000: "default" instead of "*",
-   *          & 0x4000: host instead of net,
-   *          & 0x0fff: don't resolve
-   */
-  #[no_mangle]
-  fn INET6_resolve(name: *const libc::c_char, sin6: *mut sockaddr_in6) -> libc::c_int;
-  /* These return malloced string */
-  #[no_mangle]
-  fn INET_rresolve(s_in: *mut sockaddr_in, numeric: libc::c_int, netmask: u32)
-    -> *mut libc::c_char;
-  #[no_mangle]
-  fn INET6_rresolve(sin6: *mut sockaddr_in6, numeric: libc::c_int) -> *mut libc::c_char;
+/*
+ * stolen from net-tools-1.59 and stripped down for busybox by
+ *                      Erik Andersen <andersen@codepoet.org>
+ *
+ * Heavily modified by Manuel Novoa III       Mar 12, 2001
+ *
+ */
+/* hostfirst!=0 If we expect this to be a hostname,
+  try hostname database first
+*/
+
+/* numeric: & 0x8000: "default" instead of "*",
+ *          & 0x4000: host instead of net,
+ *          & 0x0fff: don't resolve
+ */
+
+/* These return malloced string */
+
 }
 
 pub type __caddr_t = *mut libc::c_char;
@@ -113,25 +73,9 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 
-#[derive(Copy, Clone)]
 #[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
@@ -139,22 +83,11 @@ pub union C2RustUnnamed {
 }
 
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct rtentry {
   pub rt_pad1: libc::c_ulong,
   pub rt_dst: sockaddr,
@@ -172,8 +105,9 @@ pub struct rtentry {
   pub rt_window: libc::c_ulong,
   pub rt_irtt: libc::c_ushort,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct in6_rtmsg {
   pub rtmsg_dst: in6_addr,
   pub rtmsg_src: in6_addr,
@@ -186,8 +120,9 @@ pub struct in6_rtmsg {
   pub rtmsg_flags: u32,
   pub rtmsg_ifindex: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifmap {
   pub mem_start: libc::c_ulong,
   pub mem_end: libc::c_ulong,
@@ -196,14 +131,16 @@ pub struct ifmap {
   pub dma: libc::c_uchar,
   pub port: libc::c_uchar,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifreq {
   pub ifr_ifrn: C2RustUnnamed_1,
   pub ifr_ifru: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub ifru_addr: sockaddr,
   pub ifru_dstaddr: sockaddr,
@@ -218,8 +155,9 @@ pub union C2RustUnnamed_0 {
   pub ifru_newname: [libc::c_char; 16],
   pub ifru_data: __caddr_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub ifrn_name: [libc::c_char; 16],
 }
@@ -231,11 +169,12 @@ unsafe extern "C" fn xatoul_range(
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
 ) -> libc::c_ulong {
-  return xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong)
+    as libc::c_ulong;
 }
 #[inline(always)]
 unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
-  return xatoull(str) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull(str) as libc::c_ulong;
 }
 /* We remap '-' to '#' to avoid problems with getopt. */
 static mut tbl_hash_net_host: [libc::c_char; 15] =
@@ -266,7 +205,7 @@ unsafe extern "C" fn kw_lookup(
         if *kwtbl.offset(1) as libc::c_int & 0o20i32 != 0 {
           if (**pargs).is_null() {
             /* No more args! */
-            bb_show_usage();
+            crate::libbb::appletlib::bb_show_usage();
           }
           *pargs = (*pargs).offset(1)
           /* Calling routine will use args[-1]. */
@@ -295,7 +234,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
   xflag = kw_lookup(tbl_hash_net_host.as_ptr(), &mut args);
   /* If we did grab -net or -host, make sure we still have an arg left. */
   if (*args).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* Clean out the RTREQ structure. */
   memset(
@@ -331,8 +270,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
         let fresh2;
         let fresh3 = __x;
         asm!("bswap $0" : "=r" (fresh2) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh1, fresh3))
-                          :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh1, fresh3)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh1, fresh3, fresh2);
       }
       __v
@@ -344,13 +282,13 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
     netmask = b"default\x00" as *const u8 as *const libc::c_char
   }
   /* Prefer hostname lookup is -host flag (xflag==1) was given. */
-  isnet = INET_resolve(
+  isnet = crate::libbb::inet_common::INET_resolve(
     target,
     &mut (*rt).rt_dst as *mut sockaddr as *mut sockaddr_in,
     xflag & 2i32,
   );
   if isnet < 0i32 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"resolving %s\x00" as *const u8 as *const libc::c_char,
       target,
     );
@@ -388,16 +326,16 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
         .s_addr
         != 0
       {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
       netmask = args_m1;
-      isnet = INET_resolve(
+      isnet = crate::libbb::inet_common::INET_resolve(
         netmask,
         &mut mask as *mut sockaddr as *mut sockaddr_in,
         0i32,
       );
       if isnet < 0i32 {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"resolving %s\x00" as *const u8 as *const libc::c_char,
           netmask,
         );
@@ -405,9 +343,9 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
       (*rt).rt_genmask = mask
     } else if k == 0o22i32 {
       if (*rt).rt_flags as libc::c_int & 0x2i32 != 0 {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
-      isnet = INET_resolve(
+      isnet = crate::libbb::inet_common::INET_resolve(
         args_m1,
         &mut (*rt).rt_gateway as *mut sockaddr as *mut sockaddr_in,
         1i32,
@@ -415,12 +353,12 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
       (*rt).rt_flags = ((*rt).rt_flags as libc::c_int | 0x2i32) as libc::c_ushort;
       if isnet != 0 {
         if isnet < 0i32 {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"resolving %s\x00" as *const u8 as *const libc::c_char,
             args_m1,
           );
         }
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"gateway %s is a NETWORK\x00" as *const u8 as *const libc::c_char,
           args_m1,
         );
@@ -441,7 +379,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
       (*rt).rt_flags = ((*rt).rt_flags as libc::c_int | 0x100i32) as libc::c_ushort;
       (*rt).rt_irtt = xatoul(args_m1) as libc::c_ushort;
       (*rt).rt_irtt = ((*rt).rt_irtt as libc::c_uint)
-        .wrapping_mul(bb_clk_tck().wrapping_div(100i32 as libc::c_uint))
+        .wrapping_mul(crate::libbb::sysconf::bb_clk_tck().wrapping_div(100i32 as libc::c_uint))
         as libc::c_ushort as libc::c_ushort
     } else if (*rt).rt_dev.is_null()
       && (k == 0o26i32
@@ -456,7 +394,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
       (*rt).rt_dev = *args.offset(-1i32 as isize)
     } else {
       /* Nothing matched. */
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
   }
   if (*rt).rt_flags as libc::c_int & 0x200i32 != 0 && (*rt).rt_dev.is_null() {
@@ -484,20 +422,19 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
         let fresh5;
         let fresh6 = __x;
         asm!("bswap $0" : "=r" (fresh5) : "0"
-                           (c2rust_asm_casts::AsmCast::cast_in(fresh4, fresh6))
-                           :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh4, fresh6)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh4, fresh6, fresh5);
       }
       __v
     });
     if (*rt).rt_flags as libc::c_int & 0x4i32 != 0 && mask_0 != 0xffffffffu32 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"netmask %.8x and host route conflict\x00" as *const u8 as *const libc::c_char,
         mask_0,
       );
     }
     if mask_0 & mask_0.wrapping_add(1i32 as libc::c_uint) != 0 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"bogus netmask %s\x00" as *const u8 as *const libc::c_char,
         netmask,
       );
@@ -511,7 +448,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
         .s_addr
       != 0
     {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"netmask and route address conflict\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -523,16 +460,16 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
       .s_addr = 0xffffffffu32
   }
   /* Create a socket to the INET kernel. */
-  skfd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+  skfd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
   if action == 1i32 {
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       skfd,
       0x890bi32 as libc::c_uint,
       rt as *mut libc::c_void,
       b"SIOCADDRT\x00" as *const u8 as *const libc::c_char,
     );
   } else {
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       skfd,
       0x890ci32 as libc::c_uint,
       rt as *mut libc::c_void,
@@ -542,41 +479,8 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
 }
 #[inline(never)]
 unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut libc::c_char) {
-  let mut sa6: sockaddr_in6 = sockaddr_in6 {
-    sin6_family: 0,
-    sin6_port: 0,
-    sin6_flowinfo: 0,
-    sin6_addr: in6_addr {
-      __in6_u: C2RustUnnamed {
-        __u6_addr8: [0; 16],
-      },
-    },
-    sin6_scope_id: 0,
-  };
-  let mut rt: in6_rtmsg = in6_rtmsg {
-    rtmsg_dst: in6_addr {
-      __in6_u: C2RustUnnamed {
-        __u6_addr8: [0; 16],
-      },
-    },
-    rtmsg_src: in6_addr {
-      __in6_u: C2RustUnnamed {
-        __u6_addr8: [0; 16],
-      },
-    },
-    rtmsg_gateway: in6_addr {
-      __in6_u: C2RustUnnamed {
-        __u6_addr8: [0; 16],
-      },
-    },
-    rtmsg_type: 0,
-    rtmsg_dst_len: 0,
-    rtmsg_src_len: 0,
-    rtmsg_metric: 0,
-    rtmsg_info: 0,
-    rtmsg_flags: 0,
-    rtmsg_ifindex: 0,
-  };
+  let mut sa6: sockaddr_in6 = std::mem::zeroed();
+  let mut rt: in6_rtmsg = std::mem::zeroed();
   let mut prefix_len: libc::c_int = 0;
   let mut skfd: libc::c_int = 0;
   let mut devname: *const libc::c_char = 0 as *const libc::c_char;
@@ -601,8 +505,8 @@ unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut
     } else {
       prefix_len = 128i32
     }
-    if INET6_resolve(target, &mut sa6 as *mut sockaddr_in6) < 0i32 {
-      bb_error_msg_and_die(
+    if crate::libbb::inet_common::INET6_resolve(target, &mut sa6 as *mut sockaddr_in6) < 0i32 {
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"resolving %s\x00" as *const u8 as *const libc::c_char,
         target,
       );
@@ -616,7 +520,7 @@ unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut
   );
   memcpy(
     &mut rt.rtmsg_dst as *mut in6_addr as *mut libc::c_void,
-    sa6.sin6_addr.__in6_u.__u6_addr8.as_mut_ptr() as *const libc::c_void,
+    sa6.sin6_addr.s6_addr.as_mut_ptr() as *const libc::c_void,
     ::std::mem::size_of::<in6_addr>() as libc::c_ulong,
   );
   /* Fill in the other fields. */
@@ -637,17 +541,17 @@ unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut
       rt.rtmsg_metric = xatoul(args_m1) as u32
     } else if k == 0o22i32 {
       if rt.rtmsg_flags & 0x2i32 as libc::c_uint != 0 {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
-      if INET6_resolve(args_m1, &mut sa6 as *mut sockaddr_in6) < 0i32 {
-        bb_error_msg_and_die(
+      if crate::libbb::inet_common::INET6_resolve(args_m1, &mut sa6 as *mut sockaddr_in6) < 0i32 {
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"resolving %s\x00" as *const u8 as *const libc::c_char,
           args_m1,
         );
       }
       memcpy(
         &mut rt.rtmsg_gateway as *mut in6_addr as *mut libc::c_void,
-        sa6.sin6_addr.__in6_u.__u6_addr8.as_mut_ptr() as *const libc::c_void,
+        sa6.sin6_addr.s6_addr.as_mut_ptr() as *const libc::c_void,
         ::std::mem::size_of::<in6_addr>() as libc::c_ulong,
       );
       rt.rtmsg_flags |= 0x2i32 as libc::c_uint
@@ -664,11 +568,11 @@ unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut
       devname = *args.offset(-1i32 as isize)
     } else {
       /* Nothing matched. */
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
   }
   /* Create a socket to the INET6 kernel. */
-  skfd = xsocket(10i32, SOCK_DGRAM as libc::c_int, 0i32);
+  skfd = crate::libbb::xfuncs_printf::xsocket(10i32, SOCK_DGRAM as libc::c_int, 0i32);
   rt.rtmsg_ifindex = 0i32;
   if !devname.is_null() {
     let mut ifr: ifreq = ifreq {
@@ -681,8 +585,8 @@ unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut
       },
     };
     /*memset(&ifr, 0, sizeof(ifr)); - SIOCGIFINDEX does not need to clear all */
-    strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), devname);
-    bb_xioctl(
+    crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), devname);
+    crate::libbb::xfuncs_printf::bb_xioctl(
       skfd,
       0x8933i32 as libc::c_uint,
       &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -692,14 +596,14 @@ unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut
   }
   /* Tell the kernel to accept this route. */
   if action == 1i32 {
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       skfd,
       0x890bi32 as libc::c_uint,
       &mut rt as *mut in6_rtmsg as *mut libc::c_void,
       b"SIOCADDRT\x00" as *const u8 as *const libc::c_char,
     );
   } else {
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       skfd,
       0x890ci32 as libc::c_uint,
       &mut rt as *mut in6_rtmsg as *mut libc::c_void,
@@ -762,8 +666,9 @@ pub unsafe extern "C" fn bb_displayroutes(mut noresolve: libc::c_int, mut netsta
     sin_zero: [0; 8],
   };
   let mut mask: in_addr = in_addr { s_addr: 0 };
-  let mut fp: *mut FILE =
-    xfopen_for_read(b"/proc/net/route\x00" as *const u8 as *const libc::c_char);
+  let mut fp: *mut FILE = crate::libbb::wfopen::xfopen_for_read(
+    b"/proc/net/route\x00" as *const u8 as *const libc::c_char,
+  );
   printf(
     b"Kernel IP routing table\nDestination     Gateway         Genmask         Flags %s Iface\n\x00"
       as *const u8 as *const libc::c_char,
@@ -790,7 +695,9 @@ pub unsafe extern "C" fn bb_displayroutes(mut noresolve: libc::c_int, mut netsta
         if r < 0i32 && feof_unlocked(fp) != 0 {
           break;
         }
-        bb_simple_perror_msg_and_die(b"read error\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"read error\x00" as *const u8 as *const libc::c_char,
+        );
       }
       _ =>
       /* Skip interfaces that are down. */
@@ -832,9 +739,11 @@ pub unsafe extern "C" fn bb_displayroutes(mut noresolve: libc::c_int, mut netsta
         );
         s_addr.sin_family = 2i32 as sa_family_t;
         s_addr.sin_addr.s_addr = d as in_addr_t;
-        sdest = INET_rresolve(&mut s_addr, noresolve | 0x8000i32, m as u32);
+        sdest =
+          crate::libbb::inet_common::INET_rresolve(&mut s_addr, noresolve | 0x8000i32, m as u32);
         s_addr.sin_addr.s_addr = g as in_addr_t;
-        sgw = INET_rresolve(&mut s_addr, noresolve | 0x4000i32, m as u32);
+        sgw =
+          crate::libbb::inet_common::INET_rresolve(&mut s_addr, noresolve | 0x4000i32, m as u32);
         mask.s_addr = m as in_addr_t;
         /* "%15.15s" truncates hostnames, do we really want that? */
         printf(
@@ -888,19 +797,10 @@ unsafe extern "C" fn INET6_displayroutes() {
   let mut use_0: libc::c_int = 0;
   let mut prefix_len: libc::c_int = 0;
   let mut slen: libc::c_int = 0;
-  let mut snaddr6: sockaddr_in6 = sockaddr_in6 {
-    sin6_family: 0,
-    sin6_port: 0,
-    sin6_flowinfo: 0,
-    sin6_addr: in6_addr {
-      __in6_u: C2RustUnnamed {
-        __u6_addr8: [0; 16],
-      },
-    },
-    sin6_scope_id: 0,
-  };
-  let mut fp: *mut FILE =
-    xfopen_for_read(b"/proc/net/ipv6_route\x00" as *const u8 as *const libc::c_char);
+  let mut snaddr6: sockaddr_in6 = std::mem::zeroed();
+  let mut fp: *mut FILE = crate::libbb::wfopen::xfopen_for_read(
+    b"/proc/net/ipv6_route\x00" as *const u8 as *const libc::c_char,
+  );
   printf(
     b"Kernel IPv6 routing table\n%-44s%-40sFlags Metric Ref    Use Iface\n\x00" as *const u8
       as *const libc::c_char,
@@ -984,10 +884,13 @@ unsafe extern "C" fn INET6_displayroutes() {
             inet_pton(
               10i32,
               addr6x.as_mut_ptr().offset(r as isize),
-              &mut snaddr6.sin6_addr as *mut in6_addr as *mut sockaddr as *mut libc::c_void,
+              &mut snaddr6.sin6_addr as *mut libc::in6_addr as *mut sockaddr as *mut libc::c_void,
             );
             snaddr6.sin6_family = 10i32 as sa_family_t;
-            naddr6 = INET6_rresolve(&mut snaddr6 as *mut sockaddr_in6, 0xfffi32);
+            naddr6 = crate::libbb::inet_common::INET6_rresolve(
+              &mut snaddr6 as *mut sockaddr_in6,
+              0xfffi32,
+            );
             if r == 0 {
               /* 1st pass */
               snprintf(
@@ -1019,7 +922,9 @@ unsafe extern "C" fn INET6_displayroutes() {
         }
       }
     }
-    bb_simple_perror_msg_and_die(b"read error\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"read error\x00" as *const u8 as *const libc::c_char,
+    );
   }
   fclose(fp);
 }
@@ -1052,7 +957,7 @@ pub unsafe extern "C" fn route_main(
       *(*p.offset(0)).offset(0) = '#' as i32 as libc::c_char
     }
   }
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"A:ne\x00" as *const u8 as *const libc::c_char,
     &mut family as *mut *mut libc::c_char,
@@ -1064,7 +969,7 @@ pub unsafe extern "C" fn route_main(
       opt |= 0x8i32 as libc::c_uint
     /* Set flag for ipv6. */
     } else {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
   }
   argv = argv.offset(optind as isize);
@@ -1080,13 +985,13 @@ pub unsafe extern "C" fn route_main(
     } else {
       bb_displayroutes(noresolve, (opt & 0x4i32 as libc::c_uint) as libc::c_int);
     }
-    fflush_stdout_and_exit(0i32);
+    crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
   }
   /* Check verb.  At the moment, must be add, del, or delete. */
   what = kw_lookup(tbl_verb.as_ptr(), &mut argv);
   if what == 0 || (*argv).is_null() {
     /* Unknown verb or no more args. */
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   if opt & 0x8i32 as libc::c_uint != 0 {
     INET6_setroute(what, argv);

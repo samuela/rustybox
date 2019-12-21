@@ -10,27 +10,6 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn spawn_and_wait(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_perror_nomsg_and_die() -> !;
-  #[no_mangle]
-  fn get_shell_name() -> *const libc::c_char;
 }
 
 pub const OPT_c: C2RustUnnamed = 16;
@@ -71,7 +50,7 @@ pub unsafe extern "C" fn flock_main(
     115, 104, 97, 114, 101, 100, 0, 0, 115, 101, 120, 99, 108, 117, 115, 105, 118, 101, 0, 0, 120,
     117, 110, 108, 111, 99, 107, 0, 0, 117, 110, 111, 110, 98, 108, 111, 99, 107, 0, 0, 110, 0,
   ];
-  opt = getopt32long(
+  opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"^+sxnu\x00-1\x00" as *const u8 as *const libc::c_char,
     flock_longopts.as_ptr(),
@@ -83,14 +62,14 @@ pub unsafe extern "C" fn flock_main(
       fd = open(*argv.offset(0), 0i32 | 0o400i32)
     }
     if fd < 0i32 {
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
         *argv.offset(0),
       );
     }
   //TODO? close_on_exec_on(fd);
   } else {
-    fd = xatoi_positive(*argv.offset(0))
+    fd = crate::libbb::xatonum::xatoi_positive(*argv.offset(0))
   }
   argv = argv.offset(1);
   /* If it is "flock FILE -c PROG", then -c isn't caught by getopt32:
@@ -109,7 +88,7 @@ pub unsafe extern "C" fn flock_main(
   {
     argv = argv.offset(1);
     if !(*argv.offset(1)).is_null() {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"-c takes only one argument\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -141,7 +120,7 @@ pub unsafe extern "C" fn flock_main(
     if *bb_errno == 11i32 {
       return 1i32;
     }
-    bb_perror_nomsg_and_die();
+    crate::libbb::perror_nomsg_and_die::bb_perror_nomsg_and_die();
   }
   if !(*argv.offset(0)).is_null() {
     let mut rc: libc::c_int = 0;
@@ -149,15 +128,15 @@ pub unsafe extern "C" fn flock_main(
       /* -c 'PROG ARGS' means "run sh -c 'PROG ARGS'" */
       argv = argv.offset(-2);
       let ref mut fresh0 = *argv.offset(0);
-      *fresh0 = get_shell_name() as *mut libc::c_char;
+      *fresh0 = crate::libbb::get_shell_name::get_shell_name() as *mut libc::c_char;
       let ref mut fresh1 = *argv.offset(1);
       *fresh1 = b"-c\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
       /* argv[2] = "PROG ARGS"; */
       /* argv[3] = NULL; */
     }
-    rc = spawn_and_wait(argv);
+    rc = crate::libbb::vfork_daemon_rexec::spawn_and_wait(argv);
     if rc < 0i32 {
-      bb_simple_perror_msg(*argv.offset(0));
+      crate::libbb::perror_msg::bb_simple_perror_msg(*argv.offset(0));
     }
     return rc;
   }

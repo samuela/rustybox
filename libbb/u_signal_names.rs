@@ -9,14 +9,7 @@ extern "C" {
 
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-  #[no_mangle]
-  fn itoa(n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
+
 }
 
 /*
@@ -88,7 +81,7 @@ pub unsafe extern "C" fn get_signum(mut name: *const libc::c_char) -> libc::c_in
    * than UINT_MAX on any sane Unix. Hence no need
    * to check errno after bb_strtou().
    */
-  i = bb_strtou(name, 0 as *mut *mut libc::c_char, 10i32);
+  i = crate::libbb::bb_strtonum::bb_strtou(name, 0 as *mut *mut libc::c_char, 10i32);
   if i < (64i32 + 1i32) as libc::c_uint {
     /* for shells, we allow 0 too */
     return i as libc::c_int;
@@ -138,7 +131,7 @@ pub unsafe extern "C" fn get_signum(mut name: *const libc::c_char) -> libc::c_in
       return sigrtmin as libc::c_int;
     }
     if *name.offset(5) as libc::c_int == '+' as i32 {
-      i = bb_strtou(name.offset(6), 0 as *mut *mut libc::c_char, 10i32);
+      i = crate::libbb::bb_strtonum::bb_strtou(name.offset(6), 0 as *mut *mut libc::c_char, 10i32);
       if i <= sigrtmax.wrapping_sub(sigrtmin) {
         return sigrtmin.wrapping_add(i) as libc::c_int;
       }
@@ -153,7 +146,7 @@ pub unsafe extern "C" fn get_signum(mut name: *const libc::c_char) -> libc::c_in
       return sigrtmax as libc::c_int;
     }
     if *name.offset(5) as libc::c_int == '-' as i32 {
-      i = bb_strtou(name.offset(6), 0 as *mut *mut libc::c_char, 10i32);
+      i = crate::libbb::bb_strtonum::bb_strtou(name.offset(6), 0 as *mut *mut libc::c_char, 10i32);
       if i <= sigrtmax.wrapping_sub(sigrtmin) {
         return sigrtmax.wrapping_sub(i) as libc::c_int;
       }
@@ -174,7 +167,7 @@ pub unsafe extern "C" fn get_signame(mut number: libc::c_int) -> *const libc::c_
       return signals[number as usize].as_ptr();
     }
   }
-  return itoa(number);
+  return crate::libbb::xfuncs::itoa(number);
 }
 
 /*

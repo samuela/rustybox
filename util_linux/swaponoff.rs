@@ -23,61 +23,23 @@ extern "C" {
   fn hasmntopt(__mnt: *const mntent, __opt: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-
-  #[no_mangle]
   static mut option_mask32: u32;
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 
-  /* Returns:
-   * 0: no UUID= or LABEL= prefix found
-   * 1: UUID= or LABEL= prefix found. In this case,
-   *    *fsname is replaced if device with such UUID or LABEL is found
-   */
-  #[no_mangle]
-  fn resolve_mount_spec(fsname: *mut *mut libc::c_char) -> libc::c_int;
+/* Returns:
+ * 0: no UUID= or LABEL= prefix found
+ * 1: UUID= or LABEL= prefix found. In this case,
+ *    *fsname is replaced if device with such UUID or LABEL is found
+ */
+
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct mntent {
-  pub mnt_fsname: *mut libc::c_char,
-  pub mnt_dir: *mut libc::c_char,
-  pub mnt_type: *mut libc::c_char,
-  pub mnt_opts: *mut libc::c_char,
-  pub mnt_freq: libc::c_int,
-  pub mnt_passno: libc::c_int,
-}
+use libc::mntent;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub flags: libc::c_int,
 }
@@ -100,7 +62,7 @@ pub const OPT_a: C2RustUnnamed = 1;
 unsafe extern "C" fn swap_enable_disable(mut device: *mut libc::c_char) -> libc::c_int {
   let mut err: libc::c_int = 0i32;
   let mut quiet: libc::c_int = 0i32;
-  resolve_mount_spec(&mut device);
+  crate::util_linux::volume_id::get_devname::resolve_mount_spec(&mut device);
   if *applet_name.offset(5) as libc::c_int == 'f' as i32 {
     err = swapoff(device);
     /* Don't complain on OPT_ALL if not a swap device or if it doesn't exist */
@@ -113,7 +75,7 @@ unsafe extern "C" fn swap_enable_disable(mut device: *mut libc::c_char) -> libc:
     if err == 0 {
       if 1i32 != 0 && st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint {
         if (st.st_blocks * 512i32 as off_t) < st.st_size {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"%s: file has holes\x00" as *const u8 as *const libc::c_char,
             device,
           );
@@ -134,7 +96,7 @@ unsafe extern "C" fn swap_enable_disable(mut device: *mut libc::c_char) -> libc:
     }
   }
   if err != 0 && quiet == 0 {
-    bb_simple_perror_msg(device);
+    crate::libbb::perror_msg::bb_simple_perror_msg(device);
     return 1i32;
   }
   return 0i32;
@@ -168,7 +130,7 @@ unsafe extern "C" fn set_priority_flag(mut s: *mut libc::c_char) {
   /* For fstab parsing: remove other appended options */
   *strchrnul(s, ',' as i32) = '\u{0}' as i32 as libc::c_char;
   /* Max allowed 32767 (== SWAP_FLAG_PRIO_MASK) */
-  prio = bb_strtou(s, 0 as *mut *mut libc::c_char, 10i32);
+  prio = crate::libbb::bb_strtonum::bb_strtou(s, 0 as *mut *mut libc::c_char, 10i32);
   if *bb_errno == 0 {
     /* Unset the flag first to allow fstab options to override */
     /* options set on the command line */
@@ -185,7 +147,8 @@ unsafe extern "C" fn set_priority_flag(mut s: *mut libc::c_char) {
 unsafe extern "C" fn do_em_all_in_fstab() -> libc::c_int {
   let mut m: *mut mntent = 0 as *mut mntent;
   let mut err: libc::c_int = 0i32;
-  let mut f: *mut FILE = xfopen_for_read(b"/etc/fstab\x00" as *const u8 as *const libc::c_char);
+  let mut f: *mut FILE =
+    crate::libbb::wfopen::xfopen_for_read(b"/etc/fstab\x00" as *const u8 as *const libc::c_char);
   loop {
     m = getmntent(f);
     if m.is_null() {
@@ -228,11 +191,12 @@ unsafe extern "C" fn do_em_all_in_fstab() -> libc::c_int {
 unsafe extern "C" fn do_all_in_proc_swaps() -> libc::c_int {
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut err: libc::c_int = 0i32;
-  let mut f: *mut FILE = fopen_for_read(b"/proc/swaps\x00" as *const u8 as *const libc::c_char);
+  let mut f: *mut FILE =
+    crate::libbb::wfopen::fopen_for_read(b"/proc/swaps\x00" as *const u8 as *const libc::c_char);
   /* Don't complain if missing */
   if !f.is_null() {
     loop {
-      line = xmalloc_fgetline(f);
+      line = crate::libbb::get_line_from_file::xmalloc_fgetline(f);
       if line.is_null() {
         break;
       }
@@ -253,7 +217,7 @@ pub unsafe extern "C" fn swap_on_off_main(
   let mut prio: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut discard: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ret: libc::c_int = 0i32;
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     if *applet_name.offset(5) as libc::c_int == 'f' as i32 {
       b"ae\x00" as *const u8 as *const libc::c_char
@@ -278,7 +242,7 @@ pub unsafe extern "C" fn swap_on_off_main(
     ret |= do_em_all_in_fstab()
   } else if (*argv).is_null() {
     /* if not -a we need at least one arg */
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* Unset -a now to allow for more messages in swap_enable_disable */
   option_mask32 = option_mask32 & !(OPT_a as libc::c_int) as libc::c_uint;

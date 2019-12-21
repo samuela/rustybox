@@ -1,27 +1,12 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
-}
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+
+use crate::util_linux::volume_id::volume_id::volume_id;
 /* V3 minix super-block data on disk */
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct minix3_super_block {
   pub s_ninodes: u32,
   pub s_pad0: u16,
@@ -61,8 +46,9 @@ pub struct minix3_super_block {
 //config:	default y
 //config:	depends on VOLUMEID
 //kbuild:lib-$(CONFIG_FEATURE_VOLUMEID_MINIX) += minix.o
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct minix_super_block {
   pub s_ninodes: u16,
   pub s_nzones: u16,
@@ -152,7 +138,7 @@ pub unsafe extern "C" fn volume_id_probe_minix(mut id: *mut volume_id) -> libc::
 /*, u64 off*/ {
   let mut ms: *mut minix_super_block = 0 as *mut minix_super_block;
   let mut ms3: *mut minix3_super_block = 0 as *mut minix3_super_block;
-  ms = volume_id_get_buffer(
+  ms = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     (0i32 as u64).wrapping_add(0x400i32 as libc::c_ulong),
     0x200i32 as size_t,

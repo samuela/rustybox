@@ -15,22 +15,6 @@ extern "C" {
   #[no_mangle]
   fn strerror(_: libc::c_int) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_get_last_path_component_strip(path: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xrealloc_getcwd_or_warn(cwd: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-
 }
 
 use crate::librb::size_t;
@@ -57,7 +41,8 @@ pub unsafe extern "C" fn xmalloc_readlink(mut path: *const libc::c_char) -> *mut
   let mut readsize: libc::c_int = 0i32;
   loop {
     bufsize += GROWBY as libc::c_int;
-    buf = xrealloc(buf as *mut libc::c_void, bufsize as size_t) as *mut libc::c_char;
+    buf = crate::libbb::xfuncs_printf::xrealloc(buf as *mut libc::c_void, bufsize as size_t)
+      as *mut libc::c_char;
     readsize = readlink(path, buf, bufsize as size_t) as libc::c_int;
     if readsize == -1i32 {
       free(buf as *mut libc::c_void);
@@ -90,7 +75,7 @@ pub unsafe extern "C" fn xmalloc_follow_symlinks(
   let mut linkpath: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut bufsize: libc::c_int = 0;
   let mut looping: libc::c_int = 20i32 + 1i32;
-  buf = xstrdup(path);
+  buf = crate::libbb::xfuncs_printf::xstrdup(path);
   'c_6598: loop {
     bufsize = strlen(buf).wrapping_add(1i32 as libc::c_ulong) as libc::c_int;
     loop {
@@ -109,8 +94,9 @@ pub unsafe extern "C" fn xmalloc_follow_symlinks(
         } else if *linkpath as libc::c_int != '/' as i32 {
           bufsize =
             (bufsize as libc::c_ulong).wrapping_add(strlen(linkpath)) as libc::c_int as libc::c_int;
-          buf = xrealloc(buf as *mut libc::c_void, bufsize as size_t) as *mut libc::c_char;
-          lpc = bb_get_last_path_component_strip(buf);
+          buf = crate::libbb::xfuncs_printf::xrealloc(buf as *mut libc::c_void, bufsize as size_t)
+            as *mut libc::c_char;
+          lpc = crate::libbb::get_last_path_component::bb_get_last_path_component_strip(buf);
           strcpy(lpc, linkpath);
           free(linkpath as *mut libc::c_void);
         } else {
@@ -136,7 +122,7 @@ pub unsafe extern "C" fn xmalloc_readlink_or_warn(
     if err != 22i32 {
       errmsg = strerror(err)
     }
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"%s: cannot read link: %s\x00" as *const u8 as *const libc::c_char,
       path,
       errmsg,
@@ -296,7 +282,7 @@ pub unsafe extern "C" fn xmalloc_realpath_coreutils(
       buf = xmalloc_realpath(path);
       if !buf.is_null() {
         let mut len: libc::c_uint = strlen(buf) as libc::c_uint;
-        buf = xrealloc(
+        buf = crate::libbb::xfuncs_printf::xrealloc(
           buf as *mut libc::c_void,
           (len as libc::c_ulong)
             .wrapping_add(strlen(last_slash))
@@ -330,8 +316,8 @@ pub unsafe extern "C" fn xmalloc_realpath_coreutils(
          * $ realpath symlink
          * /CURDIR/target_does_not_exist
          */
-        cwd = xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
-        buf = concat_path_file(cwd, target);
+        cwd = crate::libbb::xgetcwd::xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
+        buf = crate::libbb::concat_path_file::concat_path_file(cwd, target);
         free(cwd as *mut libc::c_void);
         free(target as *mut libc::c_void);
         return buf;

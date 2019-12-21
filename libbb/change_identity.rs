@@ -1,55 +1,8 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::getuid;
-extern "C" {
-
-  /* Copyright (C) 1991,92,95,96,97,98,99,2000,01 Free Software Foundation, Inc.
-    This file is part of the GNU C Library.
-
-    The GNU C Library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
-
-    The GNU C Library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public
-    License along with the GNU C Library; if not, write to the Free
-    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-    02111-1307 USA.
-  */
-  /*
-   * POSIX Standard: 9.2.1 Group Database Access	<grp.h>
-   */
-  /* This file is #included after #include <grp.h>
-   * We will use libc-defined structures, but will #define function names
-   * so that function calls are directed to bb_internal_XXX replacements
-   */
-  /* All function names below should be remapped by #defines above
-   * in order to not collide with libc names. */
-  /* Close the group-file stream.  */
-  #[no_mangle]
-  fn bb_internal_endgrent();
-  /* Initialize the group set for the current user
-  by reading the group database and using all groups
-  of which USER is a member.  Also include GROUP.  */
-  #[no_mangle]
-  fn bb_internal_initgroups(__user: *const libc::c_char, __group: gid_t) -> libc::c_int;
-
-  #[no_mangle]
-  fn xsetgid(gid: gid_t);
-  #[no_mangle]
-  fn xsetuid(uid: uid_t);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-}
-
-use libc::gid_t;
 use libc::passwd;
-use libc::uid_t;
+
 /*
  * Busybox main internal header file
  *
@@ -513,8 +466,8 @@ use libc::uid_t;
 #[no_mangle]
 pub unsafe extern "C" fn change_identity(mut pw: *const passwd) {
   let mut res: libc::c_int = 0; /* helps to close a fd used internally by libc */
-  res = bb_internal_initgroups((*pw).pw_name, (*pw).pw_gid);
-  bb_internal_endgrent();
+  res = crate::libpwdgrp::pwd_grp::bb_internal_initgroups((*pw).pw_name, (*pw).pw_gid);
+  crate::libpwdgrp::pwd_grp::bb_internal_endgrent();
   if res != 0i32 {
     /*
      * If initgroups() fails because a system call is unimplemented
@@ -528,8 +481,10 @@ pub unsafe extern "C" fn change_identity(mut pw: *const passwd) {
     if *bb_errno == 38i32 && (*pw).pw_uid == getuid() {
       return;
     }
-    bb_simple_perror_msg_and_die(b"can\'t set groups\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"can\'t set groups\x00" as *const u8 as *const libc::c_char,
+    );
   }
-  xsetgid((*pw).pw_gid);
-  xsetuid((*pw).pw_uid);
+  crate::libbb::xfuncs_printf::xsetgid((*pw).pw_gid);
+  crate::libbb::xfuncs_printf::xsetuid((*pw).pw_uid);
 }

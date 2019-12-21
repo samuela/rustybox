@@ -15,8 +15,7 @@ extern "C" {
   /* (useful for mapping them to the type of the same width) */
   /* If long == long long, then just map them one-to-one */
   /* Same for int -> [long] long */
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
+
 }
 
 /*
@@ -276,15 +275,23 @@ pub unsafe extern "C" fn parse_pasv_epsv(mut buf: *mut libc::c_char) -> libc::c_
       return -1i32;
     }
     *ptr = '\u{0}' as i32 as libc::c_char;
-    port = xatou_range(ptr.offset(1), 0i32 as libc::c_uint, 255i32 as libc::c_uint) as libc::c_int;
+    port = crate::libbb::xatonum::xatou_range(
+      ptr.offset(1),
+      0i32 as libc::c_uint,
+      255i32 as libc::c_uint,
+    ) as libc::c_int;
     ptr = strrchr(buf, ',' as i32);
     if ptr.is_null() {
       return -1i32;
     }
     *ptr = '\u{0}' as i32 as libc::c_char;
     port = (port as libc::c_uint).wrapping_add(
-      xatou_range(ptr.offset(1), 0i32 as libc::c_uint, 255i32 as libc::c_uint)
-        .wrapping_mul(256i32 as libc::c_uint),
+      crate::libbb::xatonum::xatou_range(
+        ptr.offset(1),
+        0i32 as libc::c_uint,
+        255i32 as libc::c_uint,
+      )
+      .wrapping_mul(256i32 as libc::c_uint),
     ) as libc::c_int as libc::c_int
   } else {
     /* Response is "229 garbage(|||P1|)"
@@ -299,7 +306,7 @@ pub unsafe extern "C" fn parse_pasv_epsv(mut buf: *mut libc::c_char) -> libc::c_
       return -1i32;
     }
     *ptr = '\u{0}' as i32 as libc::c_char;
-    port = xatou_range(
+    port = crate::libbb::xatonum::xatou_range(
       ptr.offset(1),
       0i32 as libc::c_uint,
       65535i32 as libc::c_uint,

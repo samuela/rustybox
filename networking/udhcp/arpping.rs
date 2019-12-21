@@ -1,8 +1,14 @@
+use crate::librb::size_t;
+use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 use libc::close;
+use libc::pollfd;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
+use libc::ssize_t;
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -32,28 +38,12 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
-  #[no_mangle]
-  fn monotonic_ms() -> libc::c_ulonglong;
-  #[no_mangle]
-  fn setsockopt_broadcast(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
+
   /* Wrapper which restarts poll on EINTR or ENOMEM.
    * On other errors complains [perror("poll")] and returns.
    * Warning! May take (much) longer than timeout_ms to return!
    * If this is a problem, use bare poll and open-code EINTR/ENOMEM handling */
-  #[no_mangle]
-  fn safe_poll(ufds: *mut pollfd, nfds: nfds_t, timeout_ms: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_info_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   static bb_msg_can_not_create_raw_socket: [libc::c_char; 0];
   #[no_mangle]
@@ -61,9 +51,6 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::size_t;
-use libc::ssize_t;
-pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -74,46 +61,19 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr__: *const sockaddr,
   pub __sockaddr_at__: *const sockaddr_at,
@@ -130,15 +90,15 @@ pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr_x25__: *const sockaddr_x25,
 }
 pub type nfds_t = libc::c_ulong;
-use libc::pollfd;
 /*
  * Mostly stolen from: dhcpcd - DHCP client daemon
  * by Yoichi Hariguchi <yoichi@fore.com>
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct arpMsg {
   pub h_dest: [u8; 6],
   pub h_source: [u8; 6],
@@ -360,19 +320,18 @@ pub unsafe extern "C" fn arpping(
         let fresh1;
         let fresh2 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2))
-                             : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
       }
       __v
     }) as libc::c_int,
   );
   if pfd[0].fd == -1i32 {
-    bb_simple_perror_msg(bb_msg_can_not_create_raw_socket.as_ptr());
+    crate::libbb::perror_msg::bb_simple_perror_msg(bb_msg_can_not_create_raw_socket.as_ptr());
     return -1i32;
   }
-  if setsockopt_broadcast(pfd[0].fd) == -1i32 {
-    bb_simple_perror_msg(
+  if crate::libbb::xconnect::setsockopt_broadcast(pfd[0].fd) == -1i32 {
+    crate::libbb::perror_msg::bb_simple_perror_msg(
       b"can\'t enable bcast on raw socket\x00" as *const u8 as *const libc::c_char,
     );
   } else {
@@ -403,8 +362,7 @@ pub unsafe extern "C" fn arpping(
         let fresh4; /* protocol address length */
         let fresh5 = __x; /* ARP op code */
         asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                          : "cc"); /* source hardware address */
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc"); /* source hardware address */
         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4); /* source IP address */
       }
       __v
@@ -420,8 +378,7 @@ pub unsafe extern "C" fn arpping(
         let fresh7;
         let fresh8 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8))
-                          : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
       }
       __v
@@ -437,8 +394,7 @@ pub unsafe extern "C" fn arpping(
         let fresh10;
         let fresh11 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh10) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11))
-                          : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
       }
       __v
@@ -456,8 +412,7 @@ pub unsafe extern "C" fn arpping(
         let fresh13;
         let fresh14 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14))
-                          : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
       }
       __v
@@ -484,7 +439,7 @@ pub unsafe extern "C" fn arpping(
       0i32,
       ::std::mem::size_of::<sockaddr>() as libc::c_ulong,
     );
-    safe_strncpy(
+    crate::libbb::safe_strncpy::safe_strncpy(
       addr.sa_data.as_mut_ptr(),
       interface,
       ::std::mem::size_of::<[libc::c_char; 14]>() as libc::c_ulong,
@@ -504,14 +459,14 @@ pub unsafe extern "C" fn arpping(
       timeout_ms = timeo as libc::c_int;
       loop {
         let mut r: libc::c_int = 0;
-        let mut prevTime: libc::c_uint = monotonic_ms() as libc::c_uint;
+        let mut prevTime: libc::c_uint = crate::libbb::time::monotonic_ms() as libc::c_uint;
         pfd[0].events = 0x1i32 as libc::c_short;
-        r = safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, timeout_ms);
+        r = crate::libbb::safe_poll::safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, timeout_ms);
         if r < 0i32 {
           break;
         }
         if r != 0 {
-          r = safe_read(
+          r = crate::libbb::read::safe_read(
             pfd[0].fd,
             &mut arp as *mut arpMsg as *mut libc::c_void,
             ::std::mem::size_of::<arpMsg>() as libc::c_ulong,
@@ -535,10 +490,8 @@ pub unsafe extern "C" fn arpping(
                   let fresh15 = &mut __v;
                   let fresh16;
                   let fresh17 = __x;
-                  asm!("rorw $$8, ${0:w}" : "=r"
-                                             (fresh16) : "0"
-                                             (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17))
-                                             : "cc");
+                  asm!("rorw $$8, ${0:w}" : "=r" (fresh16) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17)) : "cc");
                   c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
                 }
                 __v
@@ -562,7 +515,7 @@ pub unsafe extern "C" fn arpping(
           }
         }
         timeout_ms = (timeout_ms as libc::c_uint).wrapping_sub(
-          (monotonic_ms() as libc::c_uint)
+          (crate::libbb::time::monotonic_ms() as libc::c_uint)
             .wrapping_sub(prevTime)
             .wrapping_add(1i32 as libc::c_uint),
         ) as libc::c_int as libc::c_int;
@@ -580,7 +533,7 @@ pub unsafe extern "C" fn arpping(
   // just returning 1 "no reply received" misleads it.
   close(pfd[0].fd);
   if dhcp_verbose >= 1i32 as libc::c_uint {
-    bb_info_msg(
+    crate::libbb::verror_msg::bb_info_msg(
       b"%srp reply received for this address\x00" as *const u8 as *const libc::c_char,
       if rv != 0 {
         b"no a\x00" as *const u8 as *const libc::c_char

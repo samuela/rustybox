@@ -3,8 +3,6 @@ use libc::printf;
 use libc::strcmp;
 extern "C" {
 
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
   /* Specialized: */
   /* Using xatoi() instead of naive atoi() is not always convenient -
    * in many places people want *non-negative* values, but store them
@@ -13,31 +11,18 @@ extern "C" {
    * It should really be named xatoi_nonnegative (since it allows 0),
    * but that would be too long.
    */
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn ioctl_or_perror_and_die(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    fmt: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
+
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct mtop {
   pub mt_op: libc::c_short,
   pub mt_count: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct mtpos {
   pub mt_blkno: libc::c_long,
 }
@@ -130,7 +115,7 @@ pub unsafe extern "C" fn mt_main(
   let mut mode: libc::c_int = 0;
   let mut idx: libc::c_int = 0;
   if (*argv.offset(1)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   if strcmp(
     *argv.offset(1),
@@ -138,21 +123,21 @@ pub unsafe extern "C" fn mt_main(
   ) == 0i32
   {
     if (*argv.offset(2)).is_null() || (*argv.offset(3)).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     file = *argv.offset(2);
     argv = argv.offset(2)
   }
-  idx = index_in_strings(opcode_name.as_ptr(), *argv.offset(1));
+  idx = crate::libbb::compare_string_array::index_in_strings(opcode_name.as_ptr(), *argv.offset(1));
   if idx < 0i32 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"unrecognized opcode %s\x00" as *const u8 as *const libc::c_char,
       *argv.offset(1),
     );
   }
   op.mt_op = opcode_value[idx as usize];
   if !(*argv.offset(2)).is_null() {
-    op.mt_count = xatoi_positive(*argv.offset(2))
+    op.mt_count = crate::libbb::xatonum::xatoi_positive(*argv.offset(2))
   } else {
     op.mt_count = 1i32
   }
@@ -160,10 +145,10 @@ pub unsafe extern "C" fn mt_main(
     5 | 13 | 27 | 24 => mode = 0o1i32,
     _ => mode = 0i32,
   }
-  fd = xopen(file, mode);
+  fd = crate::libbb::xfuncs_printf::xopen(file, mode);
   match opcode_value[idx as usize] as libc::c_int {
     23 => {
-      ioctl_or_perror_and_die(
+      crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
         fd,
         ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
           | (('m' as i32) << 0i32 + 8i32) as libc::c_uint
@@ -180,7 +165,7 @@ pub unsafe extern "C" fn mt_main(
       );
     }
     _ => {
-      ioctl_or_perror_and_die(
+      crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
         fd,
         ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
           | (('m' as i32) << 0i32 + 8i32) as libc::c_uint

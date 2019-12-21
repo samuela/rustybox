@@ -1,5 +1,5 @@
+use crate::libbb::parse_config::parser_t;
 use crate::libbb::ptr_to_globals::bb_errno;
-
 use libc;
 use libc::access;
 use libc::close;
@@ -26,45 +26,8 @@ extern "C" {
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn trim(s: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn xfchdir(fd: libc::c_int);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  #[no_mangle]
-  fn xmalloc_read(fd: libc::c_int, maxsz_p: *mut size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xwrite_str(fd: libc::c_int, str: *const libc::c_char);
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn config_open(filename: *const libc::c_char) -> *mut parser_t;
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
-  #[no_mangle]
-  fn concat_subpath_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
+
 }
 
 use crate::librb::size_t;
@@ -82,17 +45,6 @@ pub const PARSE_MIN_DIE: C2RustUnnamed = 1048576;
 pub const PARSE_GREEDY: C2RustUnnamed = 262144;
 pub const PARSE_TRIM: C2RustUnnamed = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed = 65536;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
 
 /*
  * Sysctl 1.01 - A utility to read and manipulate the sysctl parameters
@@ -222,7 +174,7 @@ unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> li
   let mut value: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   value = value;
   let mut writing: bool = option_mask32 & FLAG_WRITE as libc::c_int as libc::c_uint != 0;
-  outname = xstrdup(setting);
+  outname = crate::libbb::xfuncs_printf::xstrdup(setting);
   cptr = outname;
   while *cptr != 0 {
     if *cptr as libc::c_int == '/' as i32 {
@@ -238,7 +190,7 @@ unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> li
   }
   if writing {
     if cptr.is_null() {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"error: \'%s\' must be of the form name=value\x00" as *const u8 as *const libc::c_char,
         outname,
       );
@@ -249,7 +201,7 @@ unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> li
       if setting == cptr {
         /* "name" can't be empty */
         /* || !*value - WRONG: "sysctl net.ipv4.ip_local_reserved_ports=" is a valid syntax (clears the value) */
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"error: malformed setting \'%s\'\x00" as *const u8 as *const libc::c_char,
           outname,
         );
@@ -277,7 +229,7 @@ unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> li
             current_block = 4227907091559855388;
             match current_block {
               8559883396898198220 => {
-                bb_perror_msg(
+                crate::libbb::perror_msg::bb_perror_msg(
                   b"error %sing key \'%s\'\x00" as *const u8 as *const libc::c_char,
                   if writing as libc::c_int != 0 {
                     b"sett\x00" as *const u8 as *const libc::c_char
@@ -289,7 +241,7 @@ unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> li
               }
               _ => {
                 if option_mask32 & FLAG_SHOW_KEY_ERRORS as libc::c_int as libc::c_uint != 0 {
-                  bb_error_msg(
+                  crate::libbb::verror_msg::bb_error_msg(
                     b"error: \'%s\' is an unknown key\x00" as *const u8 as *const libc::c_char,
                     outname,
                   );
@@ -302,7 +254,7 @@ unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> li
             current_block = 8559883396898198220;
             match current_block {
               8559883396898198220 => {
-                bb_perror_msg(
+                crate::libbb::perror_msg::bb_perror_msg(
                   b"error %sing key \'%s\'\x00" as *const u8 as *const libc::c_char,
                   if writing as libc::c_int != 0 {
                     b"sett\x00" as *const u8 as *const libc::c_char
@@ -314,7 +266,7 @@ unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> li
               }
               _ => {
                 if option_mask32 & FLAG_SHOW_KEY_ERRORS as libc::c_int as libc::c_uint != 0 {
-                  bb_error_msg(
+                  crate::libbb::verror_msg::bb_error_msg(
                     b"error: \'%s\' is an unknown key\x00" as *const u8 as *const libc::c_char,
                     outname,
                   );
@@ -326,7 +278,7 @@ unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> li
         }
       } else if writing {
         //TODO: procps 3.2.7 writes "value\n", note trailing "\n"
-        xwrite_str(fd, value);
+        crate::libbb::xfuncs_printf::xwrite_str(fd, value);
         close(fd);
         if option_mask32 & FLAG_QUIET as libc::c_int as libc::c_uint == 0 {
           if option_mask32 & FLAG_SHOW_KEYS as libc::c_int as libc::c_uint != 0 {
@@ -336,11 +288,12 @@ unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> li
         }
       } else {
         let mut c: libc::c_char = 0;
-        cptr = xmalloc_read(fd, std::ptr::null_mut::<size_t>()) as *mut libc::c_char;
+        cptr = crate::libbb::read_printf::xmalloc_read(fd, std::ptr::null_mut::<size_t>())
+          as *mut libc::c_char;
         value = cptr;
         close(fd);
         if value.is_null() {
-          bb_perror_msg(
+          crate::libbb::perror_msg::bb_perror_msg(
             b"error reading key \'%s\'\x00" as *const u8 as *const libc::c_char,
             outname,
           );
@@ -398,7 +351,8 @@ unsafe extern "C" fn sysctl_act_recursive(mut path: *const libc::c_char) -> libc
       if entry.is_null() {
         break;
       }
-      let mut next: *mut libc::c_char = concat_subpath_file(path, (*entry).d_name.as_mut_ptr());
+      let mut next: *mut libc::c_char =
+        crate::libbb::concat_subpath_file::concat_subpath_file(path, (*entry).d_name.as_mut_ptr());
       if next.is_null() {
         continue;
       }
@@ -416,7 +370,7 @@ unsafe extern "C" fn sysctl_act_recursive(mut path: *const libc::c_char) -> libc
     }
     closedir(dirp);
   } else {
-    let mut name: *mut libc::c_char = xstrdup(path);
+    let mut name: *mut libc::c_char = crate::libbb::xfuncs_printf::xstrdup(path);
     retval |= sysctl_act_on_setting(name);
     free(name as *mut libc::c_void);
   }
@@ -430,9 +384,9 @@ unsafe extern "C" fn sysctl_handle_preload_file(mut filename: *const libc::c_cha
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   let mut parser: *mut parser_t = 0 as *mut parser_t;
   let mut parse_flags: libc::c_int = 0;
-  parser = config_open(filename);
+  parser = crate::libbb::parse_config::config_open(filename);
   /* Must do it _after_ config_open(): */
-  xchdir(b"/proc/sys\x00" as *const u8 as *const libc::c_char); // NO (var==val is not var=val) - treat consecutive delimiters as one
+  crate::libbb::xfuncs_printf::xchdir(b"/proc/sys\x00" as *const u8 as *const libc::c_char); // NO (var==val is not var=val) - treat consecutive delimiters as one
   parse_flags = 0i32; // NO - trim leading and trailing delimiters
   parse_flags &= !(PARSE_COLLAPSE as libc::c_int); // YES - last token takes entire remainder of the line
   parse_flags &= !(PARSE_TRIM as libc::c_int); // NO - die if < min tokens found
@@ -442,7 +396,7 @@ unsafe extern "C" fn sysctl_handle_preload_file(mut filename: *const libc::c_cha
   parse_flags |= PARSE_ALT_COMMENTS as libc::c_int;
   /* <space><tab><space>#comment is also comment, not strictly 1st char only */
   parse_flags |= PARSE_WS_COMMENTS as libc::c_int; // YES - comments are recognized even if there is whitespace before
-  while config_read(
+  while crate::libbb::parse_config::config_read(
     parser,
     token.as_mut_ptr(),
     (parse_flags | (2i32 & 0xffi32) << 8i32 | 2i32 & 0xffi32) as libc::c_uint,
@@ -450,15 +404,15 @@ unsafe extern "C" fn sysctl_handle_preload_file(mut filename: *const libc::c_cha
   ) != 0
   {
     let mut tp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    trim(token[1]);
-    tp = trim(token[0]);
+    crate::libbb::trim::trim(token[1]);
+    tp = crate::libbb::trim::trim(token[0]);
     sysctl_dots_to_slashes(token[0]);
     /* ^^^converted in-place. tp still points to NUL */
     /* now, add "=TOKEN1" */
     let fresh0 = tp; /* '+' - stop on first non-option */
     tp = tp.offset(1);
     *fresh0 = '=' as i32 as libc::c_char;
-    overlapping_strcpy(tp, token[1]);
+    crate::libbb::safe_strncpy::overlapping_strcpy(tp, token[1]);
     sysctl_act_on_setting(token[0]);
   }
   return 0i32;
@@ -470,7 +424,8 @@ pub unsafe extern "C" fn sysctl_main(
 ) -> libc::c_int {
   let mut retval: libc::c_int = 0;
   let mut opt: libc::c_int = 0;
-  opt = getopt32(argv, b"+neAapwq\x00" as *const u8 as *const libc::c_char) as libc::c_int;
+  opt = crate::libbb::getopt32::getopt32(argv, b"+neAapwq\x00" as *const u8 as *const libc::c_char)
+    as libc::c_int;
   argv = argv.offset(optind as isize);
   opt ^= FLAG_SHOW_KEYS as libc::c_int | FLAG_SHOW_KEY_ERRORS as libc::c_int;
   option_mask32 = opt as u32;
@@ -481,7 +436,7 @@ pub unsafe extern "C" fn sysctl_main(
       argv = argv.offset(-1);
       *argv = b"/etc/sysctl.conf\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
     }
-    cur_dir_fd = xopen(
+    cur_dir_fd = crate::libbb::xfuncs_printf::xopen(
       b".\x00" as *const u8 as *const libc::c_char,
       0i32 | 0o200000i32,
     );
@@ -489,7 +444,7 @@ pub unsafe extern "C" fn sysctl_main(
       /* procps-ng 3.3.10 does not flag parse errors */
       /* xchdir("/proc/sys") is inside */
       sysctl_handle_preload_file(*argv);
-      xfchdir(cur_dir_fd);
+      crate::libbb::xfuncs_printf::xfchdir(cur_dir_fd);
       argv = argv.offset(1);
       if (*argv).is_null() {
         break;
@@ -498,7 +453,7 @@ pub unsafe extern "C" fn sysctl_main(
     }
     return 0i32;
   }
-  xchdir(b"/proc/sys\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::xfuncs_printf::xchdir(b"/proc/sys\x00" as *const u8 as *const libc::c_char);
   if opt & (FLAG_TABLE_FORMAT as libc::c_int | FLAG_SHOW_ALL as libc::c_int) != 0 {
     return sysctl_act_recursive(b".\x00" as *const u8 as *const libc::c_char);
   }

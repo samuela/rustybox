@@ -40,40 +40,10 @@ extern "C" {
   fn wait(__stat_loc: *mut libc::c_int) -> pid_t;
 
   #[no_mangle]
-  fn monotonic_sec() -> libc::c_uint;
-
-  #[no_mangle]
-  fn close_on_exec_on(fd: libc::c_int);
-
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-
-  #[no_mangle]
   static mut bb_got_signal: smallint;
 
   #[no_mangle]
-  fn record_signo(signo: libc::c_int);
-
-  #[no_mangle]
-  fn spawn(argv: *mut *mut libc::c_char) -> pid_t;
-
-  #[no_mangle]
-  fn wait_any_nohang(wstat: *mut libc::c_int) -> pid_t;
-
-  #[no_mangle]
   static mut option_mask32: u32;
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
@@ -82,22 +52,24 @@ extern "C" {
 use libc::dirent;
 use libc::time_t;
 use libc::DIR;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub sv: *mut service,
   pub svdir: *mut libc::c_char,
   pub svnum: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct service {
   pub ino: ino_t,
   pub pid: pid_t,
   pub isgone: smallint,
 }
 unsafe extern "C" fn fatal2_cannot(mut m1: *const libc::c_char, mut m2: *const libc::c_char) {
-  bb_perror_msg_and_die(
+  crate::libbb::perror_msg::bb_perror_msg_and_die(
     b"%s: fatal: can\'t %s%s\x00" as *const u8 as *const libc::c_char,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).svdir,
     m1,
@@ -110,7 +82,7 @@ unsafe extern "C" fn warn3x(
   mut m2: *const libc::c_char,
   mut m3: *const libc::c_char,
 ) {
-  bb_error_msg(
+  crate::libbb::verror_msg::bb_error_msg(
     b"%s: warning: %s%s%s\x00" as *const u8 as *const libc::c_char,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).svdir,
     m1,
@@ -344,14 +316,14 @@ pub unsafe extern "C" fn runsvdir_main(
   let mut opt_s_argv: [*mut libc::c_char; 3] = [0 as *mut libc::c_char; 3];
   opt_s_argv[0] = std::ptr::null_mut::<libc::c_char>();
   opt_s_argv[2] = std::ptr::null_mut::<libc::c_char>();
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     b"^Ps:\x00-1\x00" as *const u8 as *const libc::c_char,
     &mut *opt_s_argv.as_mut_ptr().offset(0) as *mut *mut libc::c_char,
   );
   argv = argv.offset(optind as isize);
   i_am_init = getpid() == 1i32;
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     0i32
       | 1i32 << 15i32
       | 1i32 << 1i32
@@ -360,7 +332,7 @@ pub unsafe extern "C" fn runsvdir_main(
       } else {
         0i32
       }),
-    Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   let fresh3 = argv;
   argv = argv.offset(1);
@@ -376,8 +348,8 @@ pub unsafe extern "C" fn runsvdir_main(
       b"\x00" as *const u8 as *const libc::c_char,
     );
   }
-  close_on_exec_on(curdir);
-  stampcheck = monotonic_sec();
+  crate::libbb::xfuncs::close_on_exec_on(curdir);
+  stampcheck = crate::libbb::time::monotonic_sec();
   need_rescan = 1i32;
   last_mtime = 0i32 as time_t;
   loop {
@@ -387,7 +359,7 @@ pub unsafe extern "C" fn runsvdir_main(
     /* init continues to monitor services forever */
     /* collect children */
     {
-      let mut pid: pid_t = wait_any_nohang(0 as *mut libc::c_int);
+      let mut pid: pid_t = crate::libbb::xfuncs::wait_any_nohang(0 as *mut libc::c_int);
       if pid <= 0i32 {
         break;
       }
@@ -409,7 +381,7 @@ pub unsafe extern "C" fn runsvdir_main(
         i += 1
       }
     }
-    now = monotonic_sec();
+    now = crate::libbb::time::monotonic_sec();
     if now.wrapping_sub(stampcheck) as libc::c_int >= 0i32 {
       /* wait at least a second */
       stampcheck = now.wrapping_add(1i32 as libc::c_uint);
@@ -469,8 +441,8 @@ pub unsafe extern "C" fn runsvdir_main(
     if !opt_s_argv[0].is_null() {
       let mut pid_0: pid_t = 0;
       /* Single parameter: signal# */
-      opt_s_argv[1] = utoa(sig);
-      pid_0 = spawn(opt_s_argv.as_mut_ptr());
+      opt_s_argv[1] = crate::libbb::xfuncs::utoa(sig);
+      pid_0 = crate::libbb::vfork_daemon_rexec::spawn(opt_s_argv.as_mut_ptr());
       if pid_0 > 0i32 {
         /* Remembering to wait for _any_ children,
          * not just pid */

@@ -7,7 +7,6 @@ use libc::chmod;
 use libc::chown;
 use libc::geteuid;
 use libc::gid_t;
-use libc::group;
 use libc::mode_t;
 use libc::passwd;
 use libc::time;
@@ -26,64 +25,19 @@ extern "C" {
   fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
 
   /* Search for an entry with a matching user ID.  */
-  #[no_mangle]
-  fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;
+
   /* Search for an entry with a matching username.  */
 
   /* Search for an entry with a matching group ID.  */
 
   /* Search for an entry with a matching group name.  */
-  #[no_mangle]
-  fn bb_internal_getgrnam(__name: *const libc::c_char) -> *mut group;
 
   #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn copy_file(
-    source: *const libc::c_char,
-    dest: *const libc::c_char,
-    flags: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
-  #[no_mangle]
-  fn itoa(n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn xgroup2gid(name: *const libc::c_char) -> libc::c_long;
-  #[no_mangle]
-  fn spawn_and_wait(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
+
   #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn chown_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn get_shell_name() -> *const libc::c_char;
-  #[no_mangle]
-  fn update_passwd(
-    filename: *const libc::c_char,
-    username: *const libc::c_char,
-    data: *const libc::c_char,
-    member: *const libc::c_char,
-  ) -> libc::c_int;
+
   #[no_mangle]
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
 }
@@ -115,7 +69,7 @@ pub const LOGMODE_NONE: C2RustUnnamed_0 = 0;
 unsafe extern "C" fn passwd_study(mut p: *mut passwd) {
   let mut max: libc::c_int = 60000i32;
   if !bb_internal_getpwnam((*p).pw_name).is_null() {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"%s \'%s\' in use\x00" as *const u8 as *const libc::c_char,
       b"user\x00" as *const u8 as *const libc::c_char,
       (*p).pw_name,
@@ -131,20 +85,20 @@ unsafe extern "C" fn passwd_study(mut p: *mut passwd) {
     }
   }
   /* check for a free uid (and maybe gid) */
-  while !bb_internal_getpwuid((*p).pw_uid).is_null()
+  while !crate::libpwdgrp::pwd_grp::bb_internal_getpwuid((*p).pw_uid).is_null()
     || (*p).pw_gid == -1i32 as gid_t && !bb_internal_getgrgid((*p).pw_uid).is_null()
   {
     if option_mask32 & (1i32 << 7i32) as libc::c_uint != 0 {
       /* -u N, cannot pick uid other than N: error */
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"%s \'%s\' in use\x00" as *const u8 as *const libc::c_char,
         b"uid\x00" as *const u8 as *const libc::c_char,
-        itoa((*p).pw_uid as libc::c_int),
+        crate::libbb::xfuncs::itoa((*p).pw_uid as libc::c_int),
       );
       /* this format string is reused in adduser and addgroup */
     }
     if (*p).pw_uid == max as libc::c_uint {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"no %cids left\x00" as *const u8 as *const libc::c_char,
         'u' as i32,
       );
@@ -154,8 +108,8 @@ unsafe extern "C" fn passwd_study(mut p: *mut passwd) {
   }
   if (*p).pw_gid == -1i32 as gid_t {
     (*p).pw_gid = (*p).pw_uid;
-    if !bb_internal_getgrnam((*p).pw_name).is_null() {
-      bb_error_msg_and_die(
+    if !crate::libpwdgrp::pwd_grp::bb_internal_getgrnam((*p).pw_name).is_null() {
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"%s \'%s\' in use\x00" as *const u8 as *const libc::c_char,
         b"group\x00" as *const u8 as *const libc::c_char,
         (*p).pw_name,
@@ -181,12 +135,12 @@ unsafe extern "C" fn addgroup_wrapper(
      * found in passwd_study.
      */
     argv[1] = b"--gid\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-    argv[2] = utoa((*p).pw_gid);
+    argv[2] = crate::libbb::xfuncs::utoa((*p).pw_gid);
     argv[3] = b"--\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
     argv[4] = (*p).pw_name;
     argv[5] = std::ptr::null_mut::<libc::c_char>()
   }
-  return spawn_and_wait(argv.as_mut_ptr());
+  return crate::libbb::vfork_daemon_rexec::spawn_and_wait(argv.as_mut_ptr());
 }
 unsafe extern "C" fn passwd_wrapper(mut login_name: *const libc::c_char) -> ! {
   execlp(
@@ -196,7 +150,7 @@ unsafe extern "C" fn passwd_wrapper(mut login_name: *const libc::c_char) -> ! {
     login_name,
     0 as *mut libc::c_void,
   );
-  bb_simple_error_msg_and_die(
+  crate::libbb::verror_msg::bb_simple_error_msg_and_die(
     b"can\'t execute passwd, you must set password manually\x00" as *const u8
       as *const libc::c_char,
   );
@@ -236,13 +190,14 @@ pub unsafe extern "C" fn adduser_main(
   let mut skel: *const libc::c_char = b"/etc/skel\x00" as *const u8 as *const libc::c_char;
   /* got root? */
   if geteuid() != 0 {
-    bb_simple_error_msg_and_die(bb_msg_perm_denied_are_you_root.as_ptr());
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(bb_msg_perm_denied_are_you_root.as_ptr());
   }
   pw.pw_gecos = b"Linux User,,,\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
   /* We assume that newly created users "inherit" root's shell setting */
-  pw.pw_shell = xstrdup(get_shell_name()); /* might come from getpwnam(), need to make a copy */
+  pw.pw_shell =
+    crate::libbb::xfuncs_printf::xstrdup(crate::libbb::get_shell_name::get_shell_name()); /* might come from getpwnam(), need to make a copy */
   pw.pw_dir = std::ptr::null_mut::<libc::c_char>();
-  opts = getopt32long(
+  opts = crate::libbb::getopt32::getopt32long(
     argv,
     b"^h:g:s:G:DSHu:k:\x00-1:?2:SD\x00" as *const u8 as *const libc::c_char,
     adduser_longopts.as_ptr(),
@@ -254,7 +209,8 @@ pub unsafe extern "C" fn adduser_main(
     &mut skel as *mut *const libc::c_char,
   );
   if opts & (1i32 << 7i32) as libc::c_uint != 0 {
-    pw.pw_uid = xatou_range(uid, 0i32 as libc::c_uint, 60000i32 as libc::c_uint)
+    pw.pw_uid =
+      crate::libbb::xatonum::xatou_range(uid, 0i32 as libc::c_uint, 60000i32 as libc::c_uint)
   }
   argv = argv.offset(optind as isize);
   pw.pw_name = *argv.offset(0);
@@ -267,7 +223,7 @@ pub unsafe extern "C" fn adduser_main(
   /* fill in the passwd struct */
   if pw.pw_dir.is_null() {
     /* create string for $HOME if not specified already */
-    pw.pw_dir = xasprintf(
+    pw.pw_dir = crate::libbb::xfuncs_printf::xasprintf(
       b"/home/%s\x00" as *const u8 as *const libc::c_char,
       *argv.offset(0),
     )
@@ -282,13 +238,13 @@ pub unsafe extern "C" fn adduser_main(
     }
   }
   pw.pw_gid = if !usegroup.is_null() {
-    xgroup2gid(usegroup)
+    crate::libbb::bb_pwd::xgroup2gid(usegroup)
   } else {
     -1i32 as libc::c_long
   } as gid_t;
   /* make sure everything is kosher and setup uid && maybe gid */
   passwd_study(&mut pw);
-  p = xasprintf(
+  p = crate::libbb::xfuncs_printf::xasprintf(
     b"x:%u:%u:%s:%s:%s\x00" as *const u8 as *const libc::c_char,
     pw.pw_uid,
     pw.pw_gid,
@@ -296,7 +252,7 @@ pub unsafe extern "C" fn adduser_main(
     pw.pw_dir,
     pw.pw_shell,
   );
-  if update_passwd(
+  if crate::libbb::update_passwd::update_passwd(
     b"/etc/passwd\x00" as *const u8 as *const libc::c_char,
     pw.pw_name,
     p,
@@ -316,12 +272,12 @@ pub unsafe extern "C" fn adduser_main(
    * 8. unix date when login expires (i.e. when it may no longer be used)
    */
   /* fields:     2 3  4 5     6 78 */
-  p = xasprintf(
+  p = crate::libbb::xfuncs_printf::xasprintf(
     b"!:%u:0:99999:7:::\x00" as *const u8 as *const libc::c_char,
     (time(0 as *mut time_t) as libc::c_uint).wrapping_div((24i32 * 60i32 * 60i32) as libc::c_uint),
   );
   /* ignore errors: if file is missing we suppose admin doesn't want it */
-  update_passwd(
+  crate::libbb::update_passwd::update_passwd(
     b"/etc/shadow\x00" as *const u8 as *const libc::c_char,
     pw.pw_name,
     p,
@@ -342,7 +298,7 @@ pub unsafe extern "C" fn adduser_main(
       let mut args: [*const libc::c_char; 5] = [
         b"chown\x00" as *const u8 as *const libc::c_char,
         b"-R\x00" as *const u8 as *const libc::c_char,
-        xasprintf(
+        crate::libbb::xfuncs_printf::xasprintf(
           b"%u:%u\x00" as *const u8 as *const libc::c_char,
           pw.pw_uid as libc::c_int,
           pw.pw_gid as libc::c_int,
@@ -354,16 +310,16 @@ pub unsafe extern "C" fn adduser_main(
       if opts & (1i32 << 8i32) as libc::c_uint == 0 {
         logmode = LOGMODE_NONE as libc::c_int as smallint
       }
-      copy_file(skel, pw.pw_dir, FILEUTILS_RECUR as libc::c_int);
+      crate::libbb::copy_file::copy_file(skel, pw.pw_dir, FILEUTILS_RECUR as libc::c_int);
       logmode = LOGMODE_STDIO as libc::c_int as smallint;
-      chown_main(4i32, args.as_mut_ptr() as *mut *mut libc::c_char);
+      crate::coreutils::chown::chown_main(4i32, args.as_mut_ptr() as *mut *mut libc::c_char);
     }
     if mkdir_err != 0i32 && *bb_errno != 17i32
       || chown(pw.pw_dir, pw.pw_uid, pw.pw_gid) != 0i32
       || chmod(pw.pw_dir, 0o2755i32 as mode_t) != 0i32
     {
       /* set setgid bit on homedir */
-      bb_simple_perror_msg(pw.pw_dir);
+      crate::libbb::perror_msg::bb_simple_perror_msg(pw.pw_dir);
     }
   }
   if opts & (1i32 << 4i32) as libc::c_uint == 0 {

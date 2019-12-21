@@ -6,37 +6,17 @@ extern "C" {
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xopen_nonblocking(pathname: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static kmg_i_suffixes: [suffix_mult; 0];
-  #[no_mangle]
-  fn xatoull_sfx(str: *const libc::c_char, sfx: *const suffix_mult) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
+
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct suffix_mult {
-  pub suffix: [libc::c_char; 4],
-  pub mult: libc::c_uint,
-}
+use crate::librb::suffix_mult;
 pub type __u64 = libc::c_ulonglong;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fstrim_range {
   pub start: __u64,
   pub len: __u64,
@@ -99,7 +79,7 @@ pub unsafe extern "C" fn fstrim_main(
     111, 102, 102, 115, 101, 116, 0, 1, 111, 108, 101, 110, 103, 116, 104, 0, 1, 108, 109, 105,
     110, 105, 109, 117, 109, 0, 1, 109, 118, 101, 114, 98, 111, 115, 101, 0, 0, 118, 0,
   ];
-  opts = getopt32long(
+  opts = crate::libbb::getopt32::getopt32long(
     argv,
     b"^o:l:m:v\x00=1\x00" as *const u8 as *const libc::c_char,
     fstrim_longopts.as_ptr(),
@@ -116,22 +96,22 @@ pub unsafe extern "C" fn fstrim_main(
     .wrapping_mul(2u64)
     .wrapping_add(1u64);
   if opts & OPT_o as libc::c_int as libc::c_uint != 0 {
-    range.start = xatoull_sfx(arg_o, kmg_i_suffixes.as_ptr())
+    range.start = crate::libbb::xatonum::xatoull_sfx(arg_o, kmg_i_suffixes.as_ptr())
   }
   if opts & OPT_l as libc::c_int as libc::c_uint != 0 {
-    range.len = xatoull_sfx(arg_l, kmg_i_suffixes.as_ptr())
+    range.len = crate::libbb::xatonum::xatoull_sfx(arg_l, kmg_i_suffixes.as_ptr())
   }
   if opts & OPT_m as libc::c_int as libc::c_uint != 0 {
-    range.minlen = xatoull_sfx(arg_m, kmg_i_suffixes.as_ptr())
+    range.minlen = crate::libbb::xatonum::xatoull_sfx(arg_m, kmg_i_suffixes.as_ptr())
   }
   mp = *argv.offset(optind as isize);
   //Wwhy bother checking that it's a blockdev?
   //	if (find_block_device(mp)) {
-  fd = xopen_nonblocking(mp);
+  fd = crate::libbb::xfuncs_printf::xopen_nonblocking(mp);
   /* On ENOTTY error, util-linux 2.31 says:
    * "fstrim: FILE: the discard operation is not supported"
    */
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     (((2u32 | 1u32) << 0i32 + 8i32 + 8i32 + 14i32
       | (('X' as i32) << 0i32 + 8i32) as libc::c_uint

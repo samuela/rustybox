@@ -1,10 +1,6 @@
 use libc;
 use libc::strchr;
-extern "C" {
 
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-}
 /* Specialized: */
 /* Using xatoi() instead of naive atoi() is not always convenient -
  * in many places people want *non-negative* values, but store them
@@ -148,7 +144,8 @@ pub unsafe extern "C" fn fstype_matches(
     comma_list = comma_list.offset(2)
   }
   loop {
-    let mut after_mnt_type: *mut libc::c_char = is_prefixed_with(comma_list, fstype);
+    let mut after_mnt_type: *mut libc::c_char =
+      crate::libbb::compare_string_array::is_prefixed_with(comma_list, fstype);
     if !after_mnt_type.is_null()
       && (*after_mnt_type as libc::c_int == '\u{0}' as i32
         || *after_mnt_type as libc::c_int == ',' as i32)

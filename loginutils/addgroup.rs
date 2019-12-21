@@ -15,40 +15,10 @@ extern "C" {
   /* Search for an entry with a matching group ID.  */
 
   /* Search for an entry with a matching group name.  */
-  #[no_mangle]
-  fn bb_internal_getgrnam(__name: *const libc::c_char) -> *mut group;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn itoa(n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn xuname2uid(name: *const libc::c_char) -> libc::c_long;
-  #[no_mangle]
-  fn xgetgrnam(name: *const libc::c_char) -> *mut group;
+
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn update_passwd(
-    filename: *const libc::c_char,
-    username: *const libc::c_char,
-    data: *const libc::c_char,
-    member: *const libc::c_char,
-  ) -> libc::c_int;
+
   #[no_mangle]
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
 }
@@ -56,8 +26,8 @@ extern "C" {
 unsafe extern "C" fn xgroup_study(mut g: *mut group) {
   let mut max: libc::c_uint = 60000i32 as libc::c_uint;
   /* Make sure gr_name is unused */
-  if !bb_internal_getgrnam((*g).gr_name).is_null() {
-    bb_error_msg_and_die(
+  if !crate::libpwdgrp::pwd_grp::bb_internal_getgrnam((*g).gr_name).is_null() {
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"%s \'%s\' in use\x00" as *const u8 as *const libc::c_char,
       b"group\x00" as *const u8 as *const libc::c_char,
       (*g).gr_name,
@@ -85,16 +55,16 @@ unsafe extern "C" fn xgroup_study(mut g: *mut group) {
     }
     if option_mask32 & (1i32 << 0i32) as libc::c_uint != 0 {
       /* -g N, cannot pick gid other than N: error */
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"%s \'%s\' in use\x00" as *const u8 as *const libc::c_char,
         b"gid\x00" as *const u8 as *const libc::c_char,
-        itoa((*g).gr_gid as libc::c_int),
+        crate::libbb::xfuncs::itoa((*g).gr_gid as libc::c_int),
       );
       /* this format strings is reused in adduser and addgroup */
     }
     if (*g).gr_gid == max {
       /* overflowed: error */
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"no %cids left\x00" as *const u8 as *const libc::c_char,
         'g' as i32,
       );
@@ -117,8 +87,11 @@ unsafe extern "C" fn new_group(mut group: *mut libc::c_char, mut gid: gid_t) {
   gr.gr_name = group;
   xgroup_study(&mut gr);
   /* add entry to group */
-  p = xasprintf(b"x:%u:\x00" as *const u8 as *const libc::c_char, gr.gr_gid);
-  if update_passwd(
+  p = crate::libbb::xfuncs_printf::xasprintf(
+    b"x:%u:\x00" as *const u8 as *const libc::c_char,
+    gr.gr_gid,
+  );
+  if crate::libbb::update_passwd::update_passwd(
     b"/etc/group\x00" as *const u8 as *const libc::c_char,
     group,
     p,
@@ -143,7 +116,7 @@ unsafe extern "C" fn new_group(mut group: *mut libc::c_char, mut gid: gid_t) {
    * 4. Group members (comma delimited list).
    */
   /* Ignore errors: if file is missing we assume admin doesn't want it */
-  update_passwd(
+  crate::libbb::update_passwd::update_passwd(
     b"/etc/gshadow\x00" as *const u8 as *const libc::c_char,
     group,
     b"!::\x00" as *const u8 as *const libc::c_char,
@@ -170,14 +143,14 @@ pub unsafe extern "C" fn addgroup_main(
   let mut gid: *const libc::c_char = b"0\x00" as *const u8 as *const libc::c_char;
   /* need to be root */
   if geteuid() != 0 {
-    bb_simple_error_msg_and_die(bb_msg_perm_denied_are_you_root.as_ptr());
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(bb_msg_perm_denied_are_you_root.as_ptr());
   }
   /* Syntax:
    *  addgroup group
    *  addgroup --gid num group
    *  addgroup user group
    * Check for min, max and missing args */
-  opts = getopt32long(
+  opts = crate::libbb::getopt32::getopt32long(
     argv,
     b"^g:S\x00-1:?2\x00" as *const u8 as *const libc::c_char,
     addgroup_longopts.as_ptr(),
@@ -191,11 +164,11 @@ pub unsafe extern "C" fn addgroup_main(
     if opts & (1i32 << 0i32) as libc::c_uint != 0 {
       /* -g was there, but "addgroup -g num user group"
        * is a no-no */
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     /* check if group and user exist */
-    xuname2uid(*argv.offset(0)); /* unknown user: exit */
-    gr = xgetgrnam(*argv.offset(1)); /* unknown group: exit */
+    crate::libbb::bb_pwd::xuname2uid(*argv.offset(0)); /* unknown user: exit */
+    gr = crate::libbb::bb_pwd::xgetgrnam(*argv.offset(1)); /* unknown group: exit */
     /* check if user is already in this group */
     while !(*(*gr).gr_mem).is_null() {
       if strcmp(*argv.offset(0), *(*gr).gr_mem) == 0i32 {
@@ -204,7 +177,7 @@ pub unsafe extern "C" fn addgroup_main(
       }
       (*gr).gr_mem = (*gr).gr_mem.offset(1)
     }
-    if update_passwd(
+    if crate::libbb::update_passwd::update_passwd(
       b"/etc/group\x00" as *const u8 as *const libc::c_char,
       *argv.offset(1),
       0 as *const libc::c_char,
@@ -213,7 +186,7 @@ pub unsafe extern "C" fn addgroup_main(
     {
       return 1i32;
     }
-    update_passwd(
+    crate::libbb::update_passwd::update_passwd(
       b"/etc/gshadow\x00" as *const u8 as *const libc::c_char,
       *argv.offset(1),
       0 as *const libc::c_char,
@@ -223,7 +196,7 @@ pub unsafe extern "C" fn addgroup_main(
     /* ENABLE_FEATURE_ADDUSER_TO_GROUP */
     new_group(
       *argv.offset(0),
-      xatou_range(gid, 0i32 as libc::c_uint, 60000i32 as libc::c_uint),
+      crate::libbb::xatonum::xatou_range(gid, 0i32 as libc::c_uint, 60000i32 as libc::c_uint),
     );
   }
   /* Reached only on success */

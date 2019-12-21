@@ -12,12 +12,6 @@ extern "C" {
   #[no_mangle]
   fn fdatasync(__fildes: libc::c_int) -> libc::c_int;
 
-  #[no_mangle]
-  fn open_or_warn(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
 pub const OPT_DATASYNC: C2RustUnnamed = 1;
@@ -68,7 +62,8 @@ unsafe extern "C" fn sync_common(
   ret = 0i32;
   loop {
     /* GNU "sync FILE" uses O_NONBLOCK open */
-    let mut fd: libc::c_int = open_or_warn(*argv, 0o400i32 | 0i32 | 0o4000i32);
+    let mut fd: libc::c_int =
+      crate::libbb::xfuncs_printf::open_or_warn(*argv, 0o400i32 | 0i32 | 0o4000i32);
     /* open(NOATIME) can only be used by owner or root, don't use NOATIME here */
     if fd < 0i32 {
       ret = 1i32
@@ -85,7 +80,7 @@ unsafe extern "C" fn sync_common(
         fsync(fd)
       }) != 0i32
       {
-        bb_simple_perror_msg(*argv);
+        crate::libbb::perror_msg::bb_simple_perror_msg(*argv);
         ret = 1i32
       }
       close(fd);
@@ -102,7 +97,7 @@ pub unsafe extern "C" fn sync_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut opts: libc::c_uint = getopt32(
+  let mut opts: libc::c_uint = crate::libbb::getopt32::getopt32(
     argv,
     b"^df\x00d--f:f--d\x00" as *const u8 as *const libc::c_char,
   );
@@ -139,7 +134,8 @@ pub unsafe extern "C" fn fsync_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_int =
-    getopt32(argv, b"^d\x00-1\x00" as *const u8 as *const libc::c_char) as libc::c_int;
+    crate::libbb::getopt32::getopt32(argv, b"^d\x00-1\x00" as *const u8 as *const libc::c_char)
+      as libc::c_int;
   argv = argv.offset(optind as isize);
   return sync_common(opts, argv);
 }

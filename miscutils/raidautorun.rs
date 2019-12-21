@@ -1,17 +1,5 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn single_argv(argv: *mut *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
-}
+
 
 /*
  * raidautorun implementation for busybox
@@ -41,8 +29,8 @@ pub unsafe extern "C" fn raidautorun_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  bb_xioctl(
-    xopen(single_argv(argv), 0),
+  crate::libbb::xfuncs_printf::bb_xioctl(
+    crate::libbb::xfuncs_printf::xopen(crate::libbb::single_argv::single_argv(argv), 0),
     0u32 << 0 + 8 + 8 + 14
       | (9 << 0 + 8) as libc::c_uint
       | (0x14 << 0) as libc::c_uint

@@ -8,9 +8,6 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-
 }
 /*
  * Utility routines.
@@ -21,8 +18,9 @@ extern "C" {
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
 pub type ino_dev_hashtable_bucket_t = ino_dev_hash_bucket_struct;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ino_dev_hash_bucket_struct {
   pub ino: ino_t,
   pub dev: libc::dev_t,
@@ -557,7 +555,7 @@ pub unsafe extern "C" fn add_to_ino_dev_hashtable(
     as libc::c_int as libc::c_char;
   strcpy((*bucket).name.as_mut_ptr(), name);
   if ino_dev_hashtable.is_null() {
-    ino_dev_hashtable = xzalloc(
+    ino_dev_hashtable = crate::libbb::xfuncs_printf::xzalloc(
       (311u32 as libc::c_ulong)
         .wrapping_mul(::std::mem::size_of::<*mut ino_dev_hashtable_bucket_t>() as libc::c_ulong),
     ) as *mut *mut ino_dev_hashtable_bucket_t

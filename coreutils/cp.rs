@@ -11,44 +11,6 @@ extern "C" {
   #[no_mangle]
   fn dirname(__path: *mut libc::c_char) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn copy_file(
-    source: *const libc::c_char,
-    dest: *const libc::c_char,
-    flags: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_get_last_path_component_strip(path: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_make_directory(
-    path: *mut libc::c_char,
-    mode: libc::c_long,
-    flags: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn cp_mv_stat2(fn_0: *const libc::c_char, fn_stat: *mut stat, sf: stat_func) -> libc::c_int;
-  #[no_mangle]
-  fn cp_mv_stat(fn_0: *const libc::c_char, fn_stat: *mut stat) -> libc::c_int;
 }
 
 pub type C2RustUnnamed = libc::c_int;
@@ -149,7 +111,7 @@ pub unsafe extern "C" fn cp_main(
   let mut status: libc::c_int = 0;
   let mut reflink: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   flags =
-        getopt32long(argv,
+        crate::libbb::getopt32::getopt32long(argv,
                      b"^pdRfilsLHarPvuT\x00-2:l--s:s--l:Pd:rRd:Rd:apdR\x00" as
                          *const u8 as *const libc::c_char,
                      b"archive\x00\x00aforce\x00\x00finteractive\x00\x00ilink\x00\x00ldereference\x00\x00Lno-dereference\x00\x00Precursive\x00\x00Rsymbolic-link\x00\x00sno-target-directory\x00\x00Tverbose\x00\x00vupdate\x00\x00uremove-destination\x00\x00\xffparents\x00\x00\xfereflink\x00\x02\xfd\x00"
@@ -161,7 +123,7 @@ pub unsafe extern "C" fn cp_main(
     } else if strcmp(reflink, b"always\x00" as *const u8 as *const libc::c_char) == 0i32 {
       flags |= FILEUTILS_REFLINK_ALWAYS as libc::c_int
     } else if strcmp(reflink, b"auto\x00" as *const u8 as *const libc::c_char) != 0i32 {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
   }
   /* Options of cp from GNU coreutils 6.10:
@@ -226,7 +188,7 @@ pub unsafe extern "C" fn cp_main(
   last = *argv.offset((argc - 1i32) as isize);
   /* If there are only two arguments and...  */
   if argc == 2i32 {
-    s_flags = cp_mv_stat2(
+    s_flags = crate::coreutils::libcoreutils::cp_mv_stat::cp_mv_stat2(
       *argv,
       &mut source_stat,
       if flags & FILEUTILS_DEREFERENCE as libc::c_int != 0 {
@@ -238,7 +200,7 @@ pub unsafe extern "C" fn cp_main(
     if s_flags < 0i32 {
       return 1i32;
     }
-    d_flags = cp_mv_stat(last, &mut dest_stat);
+    d_flags = crate::coreutils::libcoreutils::cp_mv_stat::cp_mv_stat(last, &mut dest_stat);
     if d_flags < 0i32 {
       return 1i32;
     }
@@ -246,7 +208,7 @@ pub unsafe extern "C" fn cp_main(
       /* -T */
       if s_flags & 2i32 == 0 && d_flags & 2i32 != 0 {
         /* cp -T NOTDIR DIR */
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"\'%s\' is a directory\x00" as *const u8 as *const libc::c_char,
           last,
         );
@@ -256,7 +218,7 @@ pub unsafe extern "C" fn cp_main(
     //	flags, FILEUTILS_RMDEST, OPT_parents);
     if flags & OPT_parents as libc::c_int != 0 {
       if d_flags & 2i32 == 0 {
-        bb_simple_error_msg_and_die(
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
           b"with --parents, the destination must be a directory\x00" as *const u8
             as *const libc::c_char,
         );
@@ -279,14 +241,16 @@ pub unsafe extern "C" fn cp_main(
     }
   } else {
     if flags & FILEUTILS_NO_TARGET_DIR as libc::c_int != 0 {
-      bb_simple_error_msg_and_die(b"too many arguments\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"too many arguments\x00" as *const u8 as *const libc::c_char,
+      );
     }
     current_block = 790185930182612747;
   }
   loop {
     match current_block {
       1243268177428749716 => {
-        if copy_file(*argv, dest, flags) < 0i32 {
+        if crate::libbb::copy_file::copy_file(*argv, dest, flags) < 0i32 {
           status = 1i32
         }
         argv = argv.offset(1);
@@ -301,10 +265,10 @@ pub unsafe extern "C" fn cp_main(
         if flags & OPT_parents as libc::c_int != 0 {
           let mut dest_dup: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           let mut dest_dir: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-          dest = concat_path_file(last, *argv);
-          dest_dup = xstrdup(dest);
+          dest = crate::libbb::concat_path_file::concat_path_file(last, *argv);
+          dest_dup = crate::libbb::xfuncs_printf::xstrdup(dest);
           dest_dir = dirname(dest_dup);
-          if bb_make_directory(
+          if crate::libbb::make_directory::bb_make_directory(
             dest_dir,
             -1i32 as libc::c_long,
             FILEUTILS_RECUR as libc::c_int,
@@ -315,7 +279,10 @@ pub unsafe extern "C" fn cp_main(
           free(dest_dup as *mut libc::c_void);
           current_block = 1243268177428749716;
         } else {
-          dest = concat_path_file(last, bb_get_last_path_component_strip(*argv));
+          dest = crate::libbb::concat_path_file::concat_path_file(
+            last,
+            crate::libbb::get_last_path_component::bb_get_last_path_component_strip(*argv),
+          );
           current_block = 1243268177428749716;
         }
       }

@@ -14,18 +14,6 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
 }
 
 pub type __u8 = libc::c_uchar;
@@ -42,8 +30,9 @@ pub type __u8 = libc::c_uchar;
 // Commented out per Rob's request
 //# include "fix_u32.h" /* some old toolchains need __u64 for linux/loop.h */
 pub type bb_loop_info = loop_info64;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct loop_info64 {
   pub lo_device: __u64,
   pub lo_inode: __u64,
@@ -88,7 +77,7 @@ pub unsafe extern "C" fn query_loop(mut device: *const libc::c_char) -> *mut lib
       &mut loopinfo as *mut bb_loop_info,
     ) == 0i32
     {
-      dev = xasprintf(
+      dev = crate::libbb::xfuncs_printf::xasprintf(
         b"%lu %s\x00" as *const u8 as *const libc::c_char,
         loopinfo.lo_offset as off_t,
         loopinfo.lo_file_name.as_mut_ptr() as *mut libc::c_char,
@@ -604,7 +593,10 @@ pub unsafe extern "C" fn set_loop(
           return -1i32;
           /* no free loop devices */
         }
-        *device = xasprintf(b"/dev/loop%u\x00" as *const u8 as *const libc::c_char, i);
+        *device = crate::libbb::xfuncs_printf::xasprintf(
+          b"/dev/loop%u\x00" as *const u8 as *const libc::c_char,
+          i,
+        );
         try_0 = *device;
         current_block = 5504172152099367553;
       }
@@ -644,7 +636,8 @@ pub unsafe extern "C" fn set_loop(
           if mknod(
             dev.as_mut_ptr(),
             (0o60000i32 | 0o644i32) as mode_t,
-            bb_makedev(7i32 as libc::c_uint, i as libc::c_uint) as libc::dev_t,
+            crate::libbb::makedev::bb_makedev(7i32 as libc::c_uint, i as libc::c_uint)
+              as libc::dev_t,
           ) == 0i32
           {
             current_block = 5504172152099367553;
@@ -683,7 +676,7 @@ pub unsafe extern "C" fn set_loop(
                 0i32,
                 ::std::mem::size_of::<bb_loop_info>() as libc::c_ulong,
               );
-              safe_strncpy(
+              crate::libbb::safe_strncpy::safe_strncpy(
                 loopinfo.lo_file_name.as_mut_ptr() as *mut libc::c_char,
                 file,
                 64i32 as size_t,
@@ -736,7 +729,7 @@ pub unsafe extern "C" fn set_loop(
   close(ffd);
   if rc == 0i32 {
     if (*device).is_null() {
-      *device = xstrdup(dev.as_mut_ptr())
+      *device = crate::libbb::xfuncs_printf::xstrdup(dev.as_mut_ptr())
     }
     return dfd;
   }

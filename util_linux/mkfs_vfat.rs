@@ -27,46 +27,10 @@ extern "C" {
   #[no_mangle]
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xfstat(fd: libc::c_int, buf: *mut stat, errmsg: *const libc::c_char);
-
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn get_volume_size_in_bytes(
-    fd: libc::c_int,
-    override_0: *const libc::c_char,
-    override_units: libc::c_uint,
-    extend: libc::c_int,
-  ) -> uoff_t;
-
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct hd_geometry {
   pub heads: libc::c_uchar,
   pub sectors: libc::c_uchar,
@@ -74,8 +38,8 @@ pub struct hd_geometry {
   pub start: libc::c_ulong,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct floppy_struct {
   pub size: libc::c_uint,
   pub sect: libc::c_uint,
@@ -121,8 +85,8 @@ pub const backup_boot_sector: C2RustUnnamed = 3;
 pub const info_sector_number: C2RustUnnamed = 1;
 // how many blocks we try to read while testing
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct msdos_dir_entry {
   pub name: [libc::c_char; 11],
   pub attr: u8,
@@ -146,8 +110,9 @@ pub struct msdos_dir_entry {
 0040  80 00 29 71 df 51 e0 4e  4f 20 4e 41 4d 45 20 20  |..)q.Q.NO NAME  |
 0050  20 20 46 41 54 33 32 20  20 20 33 c9 8e d1 bc f4  |  FAT32   3.....|
 */
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct msdos_volume_info {
   pub drive_number: u8,
   pub reserved: u8,
@@ -159,8 +124,9 @@ pub struct msdos_volume_info {
 }
 
 /* 05a end. Total size 26 (0x1a) bytes */
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct msdos_boot_sector {
   pub boot_jump_and_sys_id: [libc::c_char; 11],
   pub bytes_per_sect: u16,
@@ -188,8 +154,8 @@ pub struct msdos_boot_sector {
   /* 1fe */
 }
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct fat32_fsinfo {
   pub signature1: u32,
   pub reserved1: [u32; 120],
@@ -275,7 +241,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
   let mut media_byte: u8 = 0;
   let mut sect_per_clust: u8 = 0;
   let mut heads: u8 = 0;
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^Ab:cCf:F:h:Ii:l:m:n:r:R:s:S:v\x00-1\x00" as *const u8 as *const libc::c_char,
     0 as *mut libc::c_void,
@@ -296,8 +262,8 @@ pub unsafe extern "C" fn mkfs_vfat_main(
   device_name = *argv.offset(0);
   // default volume ID = creation time
   volume_id = time(0 as *mut time_t) as u32;
-  dev = xopen(device_name, 0o2i32);
-  xfstat(dev, &mut st, device_name);
+  dev = crate::libbb::xfuncs_printf::xopen(device_name, 0o2i32);
+  crate::libbb::xfuncs_printf::xfstat(dev, &mut st, device_name);
   //
   // Get image size and sector size
   //
@@ -305,7 +271,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
   if !(st.st_mode & 0o170000i32 as libc::c_uint == 0o60000i32 as libc::c_uint) {
     if !(st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint) {
       if (*argv.offset(1)).is_null() {
-        bb_simple_error_msg_and_die(
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
           b"image size must be specified\x00" as *const u8 as *const libc::c_char,
         );
       }
@@ -316,7 +282,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     let mut min_bytes_per_sect: libc::c_int = 0;
     // get true sector size
     // (parameter must be int*, not long* or size_t*)
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       dev,
       0u32 << 0i32 + 8i32 + 8i32 + 14i32
         | (0x12i32 << 0i32 + 8i32) as libc::c_uint
@@ -327,13 +293,18 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     );
     if min_bytes_per_sect > 512i32 {
       bytes_per_sect = min_bytes_per_sect as libc::c_uint;
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"for this device sector size is %u\x00" as *const u8 as *const libc::c_char,
         min_bytes_per_sect,
       );
     }
   }
-  volume_size_bytes = get_volume_size_in_bytes(dev, *argv.offset(1), 1024i32 as libc::c_uint, 1i32);
+  volume_size_bytes = crate::libbb::get_volsize::get_volume_size_in_bytes(
+    dev,
+    *argv.offset(1),
+    1024i32 as libc::c_uint,
+    1i32,
+  );
   volume_size_sect = volume_size_bytes.wrapping_div(bytes_per_sect as libc::c_ulong);
   //
   // Find out or guess media parameters
@@ -480,7 +451,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
   if (volume_size_sect.wrapping_sub(reserved_sect as libc::c_int as libc::c_ulong) as off_t)
     < 4i32 as libc::c_long
   {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"the image is too small for FAT32\x00" as *const u8 as *const libc::c_char,
     );
   }
@@ -527,7 +498,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     }
     // yes, total_clust is _a bit_ too big
     if sect_per_clust as libc::c_int == 128i32 {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"can\'t make FAT32 with >128 sectors/cluster\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -553,7 +524,8 @@ pub unsafe extern "C" fn mkfs_vfat_main(
   let mut bufsize: libc::c_uint = reserved_sect as libc::c_int as libc::c_uint;
   bufsize |= 2i32 as libc::c_uint;
   bufsize |= sect_per_clust as libc::c_uint;
-  buf = xzalloc(bufsize.wrapping_mul(bytes_per_sect) as size_t) as *mut libc::c_char;
+  buf = crate::libbb::xfuncs_printf::xzalloc(bufsize.wrapping_mul(bytes_per_sect) as size_t)
+    as *mut libc::c_char;
   //bufsize |= sect_per_fat; // can be quite large
   // use this instead
   // boot and fsinfo sectors, and their copies
@@ -783,13 +755,13 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     BUG_wrong_field_size();
   }
   // 1st copy
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     dev,
     buf as *const libc::c_void,
     bytes_per_sect.wrapping_mul(backup_boot_sector as libc::c_int as libc::c_uint) as size_t,
   );
   // 2nd copy and possibly zero sectors
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     dev,
     buf as *const libc::c_void,
     bytes_per_sect.wrapping_mul(
@@ -812,10 +784,10 @@ pub unsafe extern "C" fn mkfs_vfat_main(
   *(fat as *mut u32).offset(2) = 0xffffff8i32 as u32;
   i = 0i32 as libc::c_uint;
   while i < 2i32 as libc::c_uint {
-    xwrite(dev, buf as *const libc::c_void, bytes_per_sect as size_t);
+    crate::libbb::xfuncs_printf::xwrite(dev, buf as *const libc::c_void, bytes_per_sect as size_t);
     j = 1i32 as libc::c_uint;
     while j < sect_per_fat {
-      xwrite(
+      crate::libbb::xfuncs_printf::xwrite(
         dev,
         buf.offset(bytes_per_sect as isize) as *const libc::c_void,
         bytes_per_sect as size_t,
@@ -850,7 +822,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
       BUG_wrong_field_size();
     }
   }
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     dev,
     buf as *const libc::c_void,
     (sect_per_clust as libc::c_uint).wrapping_mul(bytes_per_sect) as size_t,

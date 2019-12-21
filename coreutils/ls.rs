@@ -74,78 +74,16 @@ extern "C" {
   fn ctime(__timer: *const time_t) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn bb_mode_string(mode: mode_t) -> *const libc::c_char;
-
-  #[no_mangle]
-  fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
-
-  #[no_mangle]
-  fn warn_opendir(path: *const libc::c_char) -> *mut DIR;
-
-  #[no_mangle]
-  fn xmalloc_readlink_or_warn(path: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn printable_string2(stats: *mut uni_stat_t, str: *const libc::c_char) -> *const libc::c_char;
-
-  #[no_mangle]
-  fn make_human_readable_str(
-    size: libc::c_ulonglong,
-    block_size: libc::c_ulong,
-    display_unit: libc::c_ulong,
-  ) -> *const libc::c_char;
-
-  #[no_mangle]
-  fn get_cached_username(uid: uid_t) -> *const libc::c_char;
-
-  #[no_mangle]
-  fn get_cached_groupname(gid: gid_t) -> *const libc::c_char;
-
-  #[no_mangle]
   static mut option_mask32: u32;
-
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn get_terminal_width(fd: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-#[derive(Copy, Clone)]
+use crate::librb::uni_stat_t;
+
 #[repr(C)]
-pub struct uni_stat_t {
-  pub byte_count: libc::c_uint,
-  pub unicode_count: libc::c_uint,
-  pub unicode_width: libc::c_uint,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct globals {
   pub show_color: smallint,
   pub exit_code: smallint,
@@ -153,8 +91,9 @@ pub struct globals {
   pub terminal_width: libc::c_uint,
   pub current_time_t: time_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct dnode {
   pub name: *const libc::c_char,
   pub fullname: *const libc::c_char,
@@ -306,7 +245,7 @@ unsafe extern "C" fn calc_name_len(mut name: *const libc::c_char) -> libc::c_uin
     unicode_width: 0,
   };
   // TODO: quote tab as \t, etc, if -Q
-  name = printable_string2(&mut uni_stat, name);
+  name = crate::libbb::printable_string::printable_string2(&mut uni_stat, name);
   if option_mask32 & OPT_Q as libc::c_int as libc::c_uint == 0 {
     return uni_stat.unicode_width;
   }
@@ -334,7 +273,7 @@ unsafe extern "C" fn print_name(mut name: *const libc::c_char) -> libc::c_uint {
     unicode_width: 0,
   };
   // TODO: quote tab as \t, etc, if -Q
-  name = printable_string2(&mut uni_stat, name);
+  name = crate::libbb::printable_string::printable_string2(&mut uni_stat, name);
   if option_mask32 & OPT_Q as libc::c_int as libc::c_uint == 0 {
     fputs_unlocked(name, stdout);
     return uni_stat.unicode_width;
@@ -369,7 +308,7 @@ unsafe extern "C" fn display_single(mut dn: *const dnode) -> libc::c_uint {
   lpath = std::ptr::null_mut::<libc::c_char>();
   if opt & OPT_l as libc::c_int != 0 {
     if (*dn).dn_mode & 0o170000i32 as libc::c_uint == 0o120000i32 as libc::c_uint {
-      lpath = xmalloc_readlink_or_warn((*dn).fullname)
+      lpath = crate::libbb::xreadlink::xmalloc_readlink_or_warn((*dn).fullname)
     }
   }
   if opt & OPT_i as libc::c_int != 0 {
@@ -391,7 +330,7 @@ unsafe extern "C" fn display_single(mut dn: *const dnode) -> libc::c_uint {
     /* long listing: show mode */
     column = column.wrapping_add(printf(
       b"%-10s \x00" as *const u8 as *const libc::c_char,
-      bb_mode_string((*dn).dn_mode) as *mut libc::c_char,
+      crate::libbb::mode_string::bb_mode_string((*dn).dn_mode) as *mut libc::c_char,
     ) as libc::c_uint);
     /* long listing: show number of links */
     column = column.wrapping_add(printf(
@@ -415,13 +354,13 @@ unsafe extern "C" fn display_single(mut dn: *const dnode) -> libc::c_uint {
     } else if opt & OPT_g as libc::c_int != 0 {
       column = column.wrapping_add(printf(
         b"%-8.8s \x00" as *const u8 as *const libc::c_char,
-        get_cached_groupname((*dn).dn_gid),
+        crate::libbb::procps::get_cached_groupname((*dn).dn_gid),
       ) as libc::c_uint)
     } else {
       column = column.wrapping_add(printf(
         b"%-8.8s %-8.8s \x00" as *const u8 as *const libc::c_char,
-        get_cached_username((*dn).dn_uid),
-        get_cached_groupname((*dn).dn_gid),
+        crate::libbb::procps::get_cached_username((*dn).dn_uid),
+        crate::libbb::procps::get_cached_groupname((*dn).dn_gid),
       ) as libc::c_uint)
     }
     /* long listing: show size */
@@ -436,7 +375,7 @@ unsafe extern "C" fn display_single(mut dn: *const dnode) -> libc::c_uint {
     } else if opt & OPT_h as libc::c_int != 0 {
       column = column.wrapping_add(printf(
         b"%7s \x00" as *const u8 as *const libc::c_char,
-        make_human_readable_str(
+        crate::libbb::human_readable::make_human_readable_str(
           (*dn).dn_size as libc::c_ulonglong,
           1i32 as libc::c_ulong,
           0i32 as libc::c_ulong,
@@ -639,12 +578,13 @@ unsafe extern "C" fn my_stat(
 ) -> *mut dnode {
   let mut statbuf: stat = std::mem::zeroed();
   let mut cur: *mut dnode = 0 as *mut dnode;
-  cur = xzalloc(::std::mem::size_of::<dnode>() as libc::c_ulong) as *mut dnode;
+  cur = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<dnode>() as libc::c_ulong)
+    as *mut dnode;
   (*cur).fullname = fullname;
   (*cur).name = name;
   if option_mask32 & OPT_L as libc::c_int as libc::c_uint != 0 || force_follow != 0 {
     if stat(fullname, &mut statbuf) != 0 {
-      bb_simple_perror_msg(fullname);
+      crate::libbb::perror_msg::bb_simple_perror_msg(fullname);
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exit_code = 1i32 as smallint;
       free(cur as *mut libc::c_void);
       return 0 as *mut dnode;
@@ -652,7 +592,7 @@ unsafe extern "C" fn my_stat(
     (*cur).dn_mode_stat = statbuf.st_mode
   } else {
     if lstat(fullname, &mut statbuf) != 0 {
-      bb_simple_perror_msg(fullname);
+      crate::libbb::perror_msg::bb_simple_perror_msg(fullname);
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exit_code = 1i32 as smallint;
       free(cur as *mut libc::c_void);
       return 0 as *mut dnode;
@@ -713,7 +653,7 @@ unsafe extern "C" fn dnalloc(mut num: libc::c_uint) -> *mut *mut dnode {
     return 0 as *mut *mut dnode;
   } /* so that we have terminating NULL */
   num = num.wrapping_add(1);
-  return xzalloc(
+  return crate::libbb::xfuncs_printf::xzalloc(
     (num as libc::c_ulong).wrapping_mul(::std::mem::size_of::<*mut dnode>() as libc::c_ulong),
   ) as *mut *mut dnode;
 }
@@ -867,7 +807,7 @@ unsafe extern "C" fn scan_one_dir(
   let mut i: libc::c_uint = 0;
   let mut nfiles: libc::c_uint = 0;
   *nfiles_p = 0i32 as libc::c_uint;
-  dir = warn_opendir(path);
+  dir = crate::libbb::xfuncs_printf::warn_opendir(path);
   if dir.is_null() {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exit_code = 1i32 as smallint;
     return 0 as *mut *mut dnode;
@@ -894,8 +834,12 @@ unsafe extern "C" fn scan_one_dir(
         continue;
       }
     }
-    fullname = concat_path_file(path, (*entry).d_name.as_mut_ptr());
-    cur = my_stat(fullname, bb_basename(fullname), 0i32);
+    fullname = crate::libbb::concat_path_file::concat_path_file(path, (*entry).d_name.as_mut_ptr());
+    cur = my_stat(
+      fullname,
+      crate::libbb::get_last_path_component::bb_basename(fullname),
+      0i32,
+    );
     if cur.is_null() {
       free(fullname as *mut libc::c_void);
     } else {
@@ -959,7 +903,7 @@ unsafe extern "C" fn scan_and_display_dirs_recur(mut dn: *mut *mut dnode, mut fi
       || option_mask32 & OPT_R as libc::c_int as libc::c_uint != 0
     {
       if first == 0 {
-        bb_putchar('\n' as i32);
+        crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
       }
       first = 0i32;
       printf(
@@ -972,7 +916,7 @@ unsafe extern "C" fn scan_and_display_dirs_recur(mut dn: *mut *mut dnode, mut fi
       if option_mask32 & OPT_h as libc::c_int as libc::c_uint != 0 {
         printf(
           b"total %-7s\n\x00" as *const u8 as *const libc::c_char,
-          make_human_readable_str(
+          crate::libbb::human_readable::make_human_readable_str(
             (calculate_blocks(subdnp) * 1024i32 as libc::c_long) as libc::c_ulonglong,
             0i32 as libc::c_ulong,
             0i32 as libc::c_ulong,
@@ -1442,13 +1386,13 @@ pub unsafe extern "C" fn ls_main(
   time(&mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_time_t);
   /* obtain the terminal width */
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).terminal_width =
-    get_terminal_width(0i32) as libc::c_uint;
+    crate::libbb::xfuncs::get_terminal_width(0i32) as libc::c_uint;
   /* go one less... */
   let ref mut fresh5 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).terminal_width;
   *fresh5 = (*fresh5).wrapping_sub(1);
   /* process options */
   opt =
-        getopt32long(argv,
+        crate::libbb::getopt32::getopt32long(argv,
                      b"^Cadi1lgnsxAkFpRQctuSXrvLHhT:w:\x00nl:gl:\xffl:t-S:S-t:H-L:L-H:C-xl:x-Cl:l-xC:C-1:1-C:x-1:1-x:c-u:u-c:w+\x00"
                          as *const u8 as *const libc::c_char,
                      ls_longopts.as_ptr(), 0 as *mut libc::c_void,
@@ -1473,7 +1417,7 @@ pub unsafe extern "C" fn ls_main(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).show_color = 0i32 as smallint
     } else {
       let mut current_block_15: u64;
-      match index_in_substrings(color_str.as_ptr(), color_opt) {
+      match crate::libbb::compare_string_array::index_in_substrings(color_str.as_ptr(), color_opt) {
         3 | 4 | 5 => {
           if isatty(1i32) != 0 {
             current_block_15 = 1012356763440963274;

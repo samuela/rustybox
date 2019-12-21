@@ -23,30 +23,10 @@ extern "C" {
   #[no_mangle]
   fn wait3(__stat_loc: *mut libc::c_int, __options: libc::c_int, __usage: *mut rusage) -> pid_t;
 
-  #[no_mangle]
-  fn monotonic_ms() -> libc::c_ulonglong;
-  #[no_mangle]
-  fn close_on_exec_on(fd: libc::c_int);
-  #[no_mangle]
-  fn xdup2(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct rusage {
   pub ru_utime: timeval,
   pub ru_stime: timeval,
@@ -65,92 +45,107 @@ pub struct rusage {
   pub c2rust_unnamed_11: C2RustUnnamed_0,
   pub c2rust_unnamed_12: C2RustUnnamed,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub ru_nivcsw: libc::c_long,
   pub __ru_nivcsw_word: __syscall_slong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub ru_nvcsw: libc::c_long,
   pub __ru_nvcsw_word: __syscall_slong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub ru_nsignals: libc::c_long,
   pub __ru_nsignals_word: __syscall_slong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_2 {
   pub ru_msgrcv: libc::c_long,
   pub __ru_msgrcv_word: __syscall_slong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_3 {
   pub ru_msgsnd: libc::c_long,
   pub __ru_msgsnd_word: __syscall_slong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_4 {
   pub ru_oublock: libc::c_long,
   pub __ru_oublock_word: __syscall_slong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_5 {
   pub ru_inblock: libc::c_long,
   pub __ru_inblock_word: __syscall_slong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_6 {
   pub ru_nswap: libc::c_long,
   pub __ru_nswap_word: __syscall_slong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_7 {
   pub ru_majflt: libc::c_long,
   pub __ru_majflt_word: __syscall_slong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_8 {
   pub ru_minflt: libc::c_long,
   pub __ru_minflt_word: __syscall_slong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_9 {
   pub ru_isrss: libc::c_long,
   pub __ru_isrss_word: __syscall_slong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_10 {
   pub ru_idrss: libc::c_long,
   pub __ru_idrss_word: __syscall_slong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_11 {
   pub ru_ixrss: libc::c_long,
   pub __ru_ixrss_word: __syscall_slong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_12 {
   pub ru_maxrss: libc::c_long,
   pub __ru_maxrss_word: __syscall_slong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct resource_t {
   pub waitstatus: libc::c_int,
   pub ru: rusage,
@@ -224,12 +219,14 @@ unsafe extern "C" fn resuse_end(mut pid: pid_t, mut resp: *mut resource_t) {
       break;
     }
     if caught == -1i32 && *bb_errno != 4i32 {
-      bb_simple_perror_msg(b"wait\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg(
+        b"wait\x00" as *const u8 as *const libc::c_char,
+      );
       return;
     }
   }
-  (*resp).elapsed_ms =
-    monotonic_ms().wrapping_sub((*resp).elapsed_ms as libc::c_ulonglong) as libc::c_uint;
+  (*resp).elapsed_ms = crate::libbb::time::monotonic_ms()
+    .wrapping_sub((*resp).elapsed_ms as libc::c_ulonglong) as libc::c_uint;
 }
 unsafe extern "C" fn printargv(mut argv: *const *mut libc::c_char) {
   let mut fmt: *const libc::c_char = (b" %s\x00" as *const u8 as *const libc::c_char).offset(1);
@@ -585,7 +582,7 @@ unsafe extern "C" fn summarize(
     }
   }
   /* ret: */
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
 }
 /* Run command CMD and return statistics on it.
 Put the statistics in *RESP.  */
@@ -593,17 +590,19 @@ unsafe extern "C" fn run_command(mut cmd: *const *mut libc::c_char, mut resp: *m
   let mut pid: pid_t = 0;
   let mut interrupt_signal: Option<unsafe extern "C" fn(_: libc::c_int) -> ()> = None;
   let mut quit_signal: Option<unsafe extern "C" fn(_: libc::c_int) -> ()> = None;
-  (*resp).elapsed_ms = monotonic_ms() as libc::c_uint;
+  (*resp).elapsed_ms = crate::libbb::time::monotonic_ms() as libc::c_uint;
   pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
     if bb__xvfork_pid < 0i32 {
-      bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"vfork\x00" as *const u8 as *const libc::c_char,
+      );
     }
     bb__xvfork_pid
   };
   if pid == 0i32 {
     /* Child */
-    BB_EXECVP_or_die(cmd as *mut *mut libc::c_char);
+    crate::libbb::executable::BB_EXECVP_or_die(cmd as *mut *mut libc::c_char);
   }
   /* Have signals kill the child but not self (if possible).  */
   //TODO: just block all sigs? and re-enable them in the very end in main?
@@ -665,7 +664,7 @@ pub unsafe extern "C" fn time_main(
   let mut opt: libc::c_int = 0;
   let mut ex: libc::c_int = 0;
   /* "+": stop on first non-option */
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^+vpao:f:\x00-1\x00" as *const u8 as *const libc::c_char,
     &mut output_filename as *mut *mut libc::c_char,
@@ -680,7 +679,7 @@ pub unsafe extern "C" fn time_main(
   }
   output_fd = 2i32;
   if opt & OPT_o as libc::c_int != 0 {
-    output_fd = xopen(
+    output_fd = crate::libbb::xfuncs_printf::xopen(
       output_filename,
       if opt & OPT_a as libc::c_int != 0 {
         (0o100i32 | 0o1i32 | 0o2000000i32) | 0o2000i32
@@ -689,12 +688,12 @@ pub unsafe extern "C" fn time_main(
       },
     );
     if 0o2000000i32 == 0 {
-      close_on_exec_on(output_fd);
+      crate::libbb::xfuncs::close_on_exec_on(output_fd);
     }
   }
   run_command(argv, &mut res);
   /* Cheat. printf's are shorter :) */
-  xdup2(output_fd, 1i32);
+  crate::libbb::xfuncs_printf::xdup2(output_fd, 1i32);
   summarize(output_format, argv, &mut res);
   ex = (res.waitstatus & 0xff00i32) >> 8i32;
   /* Impossible: we do not use WUNTRACED flag in wait()...
@@ -704,5 +703,5 @@ pub unsafe extern "C" fn time_main(
   if ((res.waitstatus & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0i32 {
     ex = res.waitstatus & 0x7fi32
   }
-  fflush_stdout_and_exit(ex);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(ex);
 }

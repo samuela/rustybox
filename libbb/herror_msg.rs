@@ -4,14 +4,12 @@ extern "C" {
   fn __h_errno_location() -> *mut libc::c_int;
   #[no_mangle]
   fn hstrerror(__err_num: libc::c_int) -> *const libc::c_char;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_verror_msg(s: *const libc::c_char, p: ::std::ffi::VaList, strerr: *const libc::c_char);
+
 }
 pub type __builtin_va_list = [__va_list_tag; 1];
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __va_list_tag {
   pub gp_offset: libc::c_uint,
   pub fp_offset: libc::c_uint,
@@ -31,14 +29,14 @@ pub type va_list = __builtin_va_list;
 pub unsafe extern "C" fn bb_herror_msg(mut s: *const libc::c_char, mut args: ...) {
   let mut p: ::std::ffi::VaListImpl;
   p = args.clone();
-  bb_verror_msg(s, p.as_va_list(), hstrerror(*__h_errno_location()));
+  crate::libbb::verror_msg::bb_verror_msg(s, p.as_va_list(), hstrerror(*__h_errno_location()));
 }
 #[no_mangle]
 pub unsafe extern "C" fn bb_herror_msg_and_die(mut s: *const libc::c_char, mut args: ...) -> ! {
   let mut p: ::std::ffi::VaListImpl;
   p = args.clone();
-  bb_verror_msg(s, p.as_va_list(), hstrerror(*__h_errno_location()));
-  xfunc_die();
+  crate::libbb::verror_msg::bb_verror_msg(s, p.as_va_list(), hstrerror(*__h_errno_location()));
+  crate::libbb::xfunc_die::xfunc_die();
 }
 #[no_mangle]
 pub unsafe extern "C" fn bb_simple_herror_msg(mut s: *const libc::c_char) {

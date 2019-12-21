@@ -9,8 +9,9 @@ pub const NUM_SPEEDS: C2RustUnnamed = 31;
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct speed_map {
   pub speed: libc::c_ushort,
   pub value: libc::c_ushort,

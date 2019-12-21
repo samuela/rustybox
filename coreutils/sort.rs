@@ -40,41 +40,11 @@ extern "C" {
   ) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_get_chunk_from_file(file: *mut FILE, end: *mut size_t) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn fclose_if_not_stdin(file: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn xfopen_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
+
   #[no_mangle]
   static mut xfunc_error_retval: u8;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
 }
 
 use libc::tm;
@@ -205,8 +175,9 @@ pub const FLAG_M: C2RustUnnamed = 4;
 /* Numeric sort */
 pub const FLAG_g: C2RustUnnamed = 2;
 pub const FLAG_n: C2RustUnnamed = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sort_key {
   pub next_key: *mut sort_key,
   pub range: [libc::c_uint; 4],
@@ -383,7 +354,7 @@ unsafe extern "C" fn get_key(
   if end < start {
     end = start
   }
-  str = xstrndup(str.offset(start as isize), end - start);
+  str = crate::libbb::xfuncs_printf::xstrndup(str.offset(start as isize), end - start);
   /* Handle -d */
   if flags & FLAG_d as libc::c_int != 0 {
     end = 0i32;
@@ -437,7 +408,8 @@ unsafe extern "C" fn add_key() -> *mut sort_key {
   while !(*pkey).is_null() {
     pkey = &mut (**pkey).next_key
   }
-  *pkey = xzalloc(::std::mem::size_of::<sort_key>() as libc::c_ulong) as *mut sort_key;
+  *pkey = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<sort_key>() as libc::c_ulong)
+    as *mut sort_key;
   return *pkey;
 }
 /* Iterate through keys list and perform comparisons */
@@ -561,7 +533,9 @@ unsafe extern "C" fn compare_keys(
         }
       }
       _ => {
-        bb_simple_error_msg_and_die(b"unknown sort type\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+          b"unknown sort type\x00" as *const u8 as *const libc::c_char,
+        );
       }
     }
     if x != *(xarg as *mut *mut libc::c_char) {
@@ -613,7 +587,9 @@ unsafe extern "C" fn compare_keys(
 unsafe extern "C" fn str2u(mut str: *mut *mut libc::c_char) -> libc::c_uint {
   let mut lu: libc::c_ulong = 0;
   if !((*(*str).offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32) {
-    bb_simple_error_msg_and_die(b"bad field specification\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"bad field specification\x00" as *const u8 as *const libc::c_char,
+    );
   }
   lu = strtoul(*str, str, 10i32);
   if ::std::mem::size_of::<libc::c_long>() as libc::c_ulong
@@ -621,7 +597,9 @@ unsafe extern "C" fn str2u(mut str: *mut *mut libc::c_char) -> libc::c_uint {
     && lu > 2147483647i32 as libc::c_ulong
     || lu == 0
   {
-    bb_simple_error_msg_and_die(b"bad field specification\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"bad field specification\x00" as *const u8 as *const libc::c_char,
+    );
   }
   return lu as libc::c_uint;
 }
@@ -640,7 +618,7 @@ pub unsafe extern "C" fn sort_main(
   let mut opts: libc::c_uint = 0;
   xfunc_error_retval = 2i32 as u8;
   /* Parse command line options */
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     sort_opt_str.as_ptr(),
     &mut str_ignored as *mut *mut libc::c_char,
@@ -655,7 +633,9 @@ pub unsafe extern "C" fn sort_main(
   }
   if opts & FLAG_t as libc::c_int as libc::c_uint != 0 {
     if *str_t.offset(0) == 0 || *str_t.offset(1) as libc::c_int != 0 {
-      bb_simple_error_msg_and_die(b"bad -t parameter\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"bad -t parameter\x00" as *const u8 as *const libc::c_char,
+      );
     }
     key_separator = *str_t.offset(0)
   }
@@ -664,7 +644,8 @@ pub unsafe extern "C" fn sort_main(
   /* Parse sort key */
   while !lst_k.is_null() {
     let mut key: *mut sort_key = add_key(); /* i==0 before comma, 1 after (-k3,6) */
-    let mut str_k: *mut libc::c_char = llist_pop(&mut lst_k) as *mut libc::c_char;
+    let mut str_k: *mut libc::c_char =
+      crate::libbb::llist::llist_pop(&mut lst_k) as *mut libc::c_char;
     i = 0i32;
     while *str_k != 0 {
       /* Start of range */
@@ -688,13 +669,13 @@ pub unsafe extern "C" fn sort_main(
         } else {
           idx = strchr(sort_opt_str.as_ptr().offset(1), *str_k as libc::c_int);
           if idx.is_null() {
-            bb_simple_error_msg_and_die(
+            crate::libbb::verror_msg::bb_simple_error_msg_and_die(
               b"unknown key option\x00" as *const u8 as *const libc::c_char,
             );
           }
           flag = 1i32 << idx.wrapping_offset_from(sort_opt_str.as_ptr().offset(1)) as libc::c_long;
           if flag & !(FLAG_allowed_for_k as libc::c_int) != 0 {
-            bb_simple_error_msg_and_die(
+            crate::libbb::verror_msg::bb_simple_error_msg_and_die(
               b"unknown sort type\x00" as *const u8 as *const libc::c_char,
             );
           }
@@ -719,19 +700,20 @@ pub unsafe extern "C" fn sort_main(
   loop {
     /* coreutils 6.9 compat: abort on first open error,
      * do not continue to next file: */
-    let mut fp: *mut FILE = xfopen_stdin(*argv);
+    let mut fp: *mut FILE = crate::libbb::wfopen_input::xfopen_stdin(*argv);
     loop {
-      let mut line: *mut libc::c_char =
-        if option_mask32 & FLAG_z as libc::c_int as libc::c_uint != 0 {
-          bb_get_chunk_from_file(fp, std::ptr::null_mut::<size_t>())
-        } else {
-          xmalloc_fgetline(fp)
-        };
+      let mut line: *mut libc::c_char = if option_mask32 & FLAG_z as libc::c_int as libc::c_uint
+        != 0
+      {
+        crate::libbb::get_line_from_file::bb_get_chunk_from_file(fp, std::ptr::null_mut::<size_t>())
+      } else {
+        crate::libbb::get_line_from_file::xmalloc_fgetline(fp)
+      };
       if line.is_null() {
         break;
       }
       //TODO: lighter version which only drops total dups if can_drop_dups == true
-      lines = xrealloc_vector_helper(
+      lines = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
         lines as *mut libc::c_void,
         ((::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong) << 8i32)
           .wrapping_add(6i32 as libc::c_ulong) as libc::c_uint,
@@ -742,7 +724,7 @@ pub unsafe extern "C" fn sort_main(
       let ref mut fresh4 = *lines.offset(fresh3 as isize);
       *fresh4 = line
     }
-    fclose_if_not_stdin(fp);
+    crate::libbb::fclose_nonstdin::fclose_if_not_stdin(fp);
     argv = argv.offset(1);
     if (*argv).is_null() {
       break;
@@ -787,7 +769,7 @@ pub unsafe extern "C" fn sort_main(
       line_0 = *lines.offset(i as isize);
       len = (strlen(line_0).wrapping_add(4i32 as libc::c_ulong) & !3u32 as libc::c_ulong)
         as libc::c_uint;
-      line_0 = xrealloc(
+      line_0 = crate::libbb::xfuncs_printf::xrealloc(
         line_0 as *mut libc::c_void,
         len.wrapping_add(4i32 as libc::c_uint) as size_t,
       ) as *mut libc::c_char;
@@ -840,7 +822,10 @@ pub unsafe extern "C" fn sort_main(
   /* Print it */
   /* Open output file _after_ we read all input ones */
   if option_mask32 & FLAG_o as libc::c_int as libc::c_uint != 0 {
-    xmove_fd(xopen(str_o, 0o1i32 | 0o100i32 | 0o1000i32), 1i32);
+    crate::libbb::xfuncs_printf::xmove_fd(
+      crate::libbb::xfuncs_printf::xopen(str_o, 0o1i32 | 0o100i32 | 0o1000i32),
+      1i32,
+    );
   }
   let mut ch: libc::c_int = if option_mask32 & FLAG_z as libc::c_int as libc::c_uint != 0 {
     '\u{0}' as i32
@@ -856,5 +841,5 @@ pub unsafe extern "C" fn sort_main(
     );
     i += 1
   }
-  fflush_stdout_and_exit(0i32);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
 }

@@ -5,23 +5,6 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
 }
 
 pub type C2RustUnnamed = libc::c_uint;
@@ -89,7 +72,7 @@ pub unsafe extern "C" fn ionice_main(
   let mut opt: libc::c_int = 0;
   /* Numeric params */
   /* '+': stop at first non-option */
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"+n:+c:+p:+\x00" as *const u8 as *const libc::c_char,
     &mut pri as *mut libc::c_int,
@@ -99,7 +82,7 @@ pub unsafe extern "C" fn ionice_main(
   argv = argv.offset(optind as isize);
   if opt & OPT_c as libc::c_int != 0 {
     if ioclass > 3i32 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"bad class %d\x00" as *const u8 as *const libc::c_char,
         ioclass,
       );
@@ -115,11 +98,11 @@ pub unsafe extern "C" fn ionice_main(
   }
   if opt & (OPT_n as libc::c_int | OPT_c as libc::c_int) == 0 {
     if opt & OPT_p as libc::c_int == 0 && !(*argv).is_null() {
-      pid = xatoi_positive(*argv)
+      pid = crate::libbb::xatonum::xatoi_positive(*argv)
     }
     pri = ioprio_get(IOPRIO_WHO_PROCESS as libc::c_int, pid);
     if pri == -1i32 {
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"ioprio_%cet\x00" as *const u8 as *const libc::c_char,
         'g' as i32,
       );
@@ -132,7 +115,7 @@ pub unsafe extern "C" fn ionice_main(
       } else {
         b"%s: prio %d\n\x00" as *const u8 as *const libc::c_char
       },
-      nth_string(to_prio.as_ptr(), ioclass),
+      crate::libbb::compare_string_array::nth_string(to_prio.as_ptr(), ioclass),
       pri,
     );
   } else {
@@ -140,13 +123,13 @@ pub unsafe extern "C" fn ionice_main(
     //pri, ioclass, pri | (ioclass << IOPRIO_CLASS_SHIFT));
     pri |= ioclass << 13i32;
     if ioprio_set(IOPRIO_WHO_PROCESS as libc::c_int, pid, pri) == -1i32 {
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"ioprio_%cet\x00" as *const u8 as *const libc::c_char,
         's' as i32,
       );
     }
     if !(*argv.offset(0)).is_null() {
-      BB_EXECVP_or_die(argv);
+      crate::libbb::executable::BB_EXECVP_or_die(argv);
     }
   }
   return 0i32;

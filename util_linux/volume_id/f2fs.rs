@@ -1,35 +1,8 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn volume_id_set_label_unicode16(
-    id: *mut volume_id,
-    buf: *const u8,
-    endianess: endian,
-    count: size_t,
-  );
-
-  #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
-
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off: u64, len: size_t) -> *mut libc::c_void;
-}
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+
+use crate::util_linux::volume_id::volume_id::volume_id;
 
 pub type uuid_format = libc::c_uint;
 // pub const UUID_DCE_STRING: uuid_format = 3;
@@ -45,8 +18,9 @@ pub const LE: endian = 0;
 /*
 #define F2FS_SB2_OFFSET		0x1400		// offset for 2:nd super block
 */
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct f2fs_super_block {
   pub magic: u32,
   pub major_ver: u16,
@@ -161,7 +135,7 @@ pub unsafe extern "C" fn volume_id_probe_f2fs(mut id: *mut volume_id) -> libc::c
 /*,u64 off*/ {
   let mut sb: *mut f2fs_super_block = 0 as *mut f2fs_super_block;
   // Go for primary super block (ignore second sb)
-  sb = volume_id_get_buffer(
+  sb = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     0x400i32 as u64,
     ::std::mem::size_of::<f2fs_super_block>() as libc::c_ulong,
@@ -179,12 +153,12 @@ pub unsafe extern "C" fn volume_id_probe_f2fs(mut id: *mut volume_id) -> libc::c
   {
     return 0i32;
   }
-  volume_id_set_label_unicode16(
+  crate::util_linux::volume_id::util::volume_id_set_label_unicode16(
     id,
     (*sb).volume_name.as_mut_ptr() as *mut u8,
     LE,
     if 1024i32 < 64i32 { 1024i32 } else { 64i32 } as size_t,
   );
-  volume_id_set_uuid(id, (*sb).uuid.as_mut_ptr(), UUID_DCE);
+  crate::util_linux::volume_id::util::volume_id_set_uuid(id, (*sb).uuid.as_mut_ptr(), UUID_DCE);
   return 0i32;
 }

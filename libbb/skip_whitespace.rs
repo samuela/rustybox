@@ -1,8 +1,5 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-}
+
 
 /*
  * skip_whitespace implementation for busybox
@@ -106,8 +103,10 @@ pub unsafe extern "C" fn skip_non_whitespace(mut s: *const libc::c_char) -> *mut
 /* We can just memorize it once - no multithreading in busybox :) */
 #[no_mangle]
 pub unsafe extern "C" fn skip_dev_pfx(mut tty_name: *const libc::c_char) -> *mut libc::c_char {
-  let mut unprefixed: *mut libc::c_char =
-    is_prefixed_with(tty_name, b"/dev/\x00" as *const u8 as *const libc::c_char);
+  let mut unprefixed: *mut libc::c_char = crate::libbb::compare_string_array::is_prefixed_with(
+    tty_name,
+    b"/dev/\x00" as *const u8 as *const libc::c_char,
+  );
   return if !unprefixed.is_null() {
     unprefixed
   } else {

@@ -1,14 +1,18 @@
+use crate::libbb::llist::llist_t;
+use crate::librb::size_t;
 use libc;
 use libc::alarm;
 use libc::atoi;
 use libc::free;
 use libc::getenv;
 use libc::getuid;
+use libc::pid_t;
 use libc::printf;
 use libc::sleep;
 use libc::strchr;
 use libc::strcpy;
 use libc::strrchr;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -26,76 +30,13 @@ extern "C" {
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
   #[no_mangle]
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn trim(s: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xdup2(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn create_and_connect_stream_or_die(peer: *const libc::c_char, port: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xgethostbyname(name: *const libc::c_char) -> *mut hostent;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfdopen_for_read(fd: libc::c_int) -> *mut FILE;
-  #[no_mangle]
-  fn safe_gethostname() -> *mut libc::c_char;
-  #[no_mangle]
-  fn xuid2uname(uid: uid_t) -> *mut libc::c_char;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  //char FAST_FUNC *parse_url(char *url, char **user, char **pass);
-  #[no_mangle]
-  fn launch_helper(argv: *mut *const libc::c_char);
-  #[no_mangle]
-  fn get_cred_or_die(fd: libc::c_int);
-  #[no_mangle]
-  fn send_mail_command(fmt: *const libc::c_char, param: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn printbuf_base64(buf: *const libc::c_char, len: libc::c_uint);
-  #[no_mangle]
-  fn printstr_base64(buf: *const libc::c_char);
+
+//char FAST_FUNC *parse_url(char *url, char **user, char **pass);
+
 }
 
-use crate::librb::size_t;
-use libc::pid_t;
-use libc::uid_t;
-#[derive(Copy, Clone)]
 #[repr(C)]
-pub struct hostent {
-  pub h_name: *mut libc::c_char,
-  pub h_aliases: *mut *mut libc::c_char,
-  pub h_addrtype: libc::c_int,
-  pub h_length: libc::c_int,
-  pub h_addr_list: *mut *mut libc::c_char,
-}
-
-use crate::libbb::llist::llist_t;
-use libc::FILE;
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct globals {
   pub helper_pid: pid_t,
   pub timeout: libc::c_uint,
@@ -149,7 +90,10 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
 }
 unsafe extern "C" fn send_r_n(mut s: *const libc::c_char) {
   if (*ptr_to_globals).verbose != 0 {
-    bb_error_msg(b"send:\'%s\'\x00" as *const u8 as *const libc::c_char, s);
+    crate::libbb::verror_msg::bb_error_msg(
+      b"send:\'%s\'\x00" as *const u8 as *const libc::c_char,
+      s,
+    );
   }
   printf(b"%s\r\n\x00" as *const u8 as *const libc::c_char, s);
 }
@@ -159,7 +103,7 @@ unsafe extern "C" fn smtp_checkp(
   mut code: libc::c_int,
 ) -> libc::c_int {
   let mut answer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut msg: *mut libc::c_char = send_mail_command(fmt, param);
+  let mut msg: *mut libc::c_char = crate::mailutils::mail::send_mail_command(fmt, param);
   loop
   // read stdin
   // if the string has a form NNN- -- read next string. E.g. EHLO response
@@ -168,12 +112,12 @@ unsafe extern "C" fn smtp_checkp(
   // if code != -1 then checks whether the number equals the code
   // if not equal -> die saying msg
   {
-    answer = xmalloc_fgetline(stdin);
+    answer = crate::libbb::get_line_from_file::xmalloc_fgetline(stdin);
     if answer.is_null() {
       break;
     }
     if (*ptr_to_globals).verbose != 0 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"recv:\'%.*s\'\x00" as *const u8 as *const libc::c_char,
         strchrnul(answer, '\r' as i32).wrapping_offset_from(answer) as libc::c_long as libc::c_int,
         answer,
@@ -195,7 +139,10 @@ unsafe extern "C" fn smtp_checkp(
       return n;
     }
   }
-  bb_error_msg_and_die(b"%s failed\x00" as *const u8 as *const libc::c_char, msg);
+  crate::libbb::verror_msg::bb_error_msg_and_die(
+    b"%s failed\x00" as *const u8 as *const libc::c_char,
+    msg,
+  );
 }
 unsafe extern "C" fn smtp_check(
   mut fmt: *const libc::c_char,
@@ -206,7 +153,7 @@ unsafe extern "C" fn smtp_check(
 // strip argument of bad chars
 unsafe extern "C" fn sane_address(mut str: *mut libc::c_char) -> *mut libc::c_char {
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  trim(str);
+  crate::libbb::trim::trim(str);
   s = str;
   while *s != 0 {
     /* Standard allows these chars in username without quoting:
@@ -222,7 +169,7 @@ unsafe extern "C" fn sane_address(mut str: *mut libc::c_char) -> *mut libc::c_ch
       )
       .is_null()
     {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"bad address \'%s\'\x00" as *const u8 as *const libc::c_char,
         str,
       );
@@ -238,7 +185,7 @@ unsafe extern "C" fn sane_address(mut str: *mut libc::c_char) -> *mut libc::c_ch
 unsafe extern "C" fn angle_address(mut str: *mut libc::c_char) -> *mut libc::c_char {
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut e: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  e = trim(str);
+  e = crate::libbb::trim::trim(str);
   if e != str && {
     e = e.offset(-1);
     (*e as libc::c_int) == '>' as i32
@@ -263,7 +210,7 @@ unsafe extern "C" fn rcptto(mut s: *const libc::c_char) {
       -1i32,
     )
   {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"Bad recipient: <%s>\x00" as *const u8 as *const libc::c_char,
       s,
     );
@@ -271,7 +218,7 @@ unsafe extern "C" fn rcptto(mut s: *const libc::c_char) {
 }
 // send to a list of comma separated addresses
 unsafe extern "C" fn rcptto_list(mut list: *const libc::c_char) {
-  let mut free_me: *mut libc::c_char = xstrdup(list);
+  let mut free_me: *mut libc::c_char = crate::libbb::xfuncs_printf::xstrdup(list);
   let mut str: *mut libc::c_char = free_me;
   let mut s: *mut libc::c_char = free_me;
   let mut prev: libc::c_char = 0i32 as libc::c_char;
@@ -304,7 +251,8 @@ pub unsafe extern "C" fn sendmail_main(
   let mut opt_from: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut list: *mut llist_t = 0 as *mut llist_t;
-  let mut host: *mut libc::c_char = sane_address(safe_gethostname());
+  let mut host: *mut libc::c_char =
+    sane_address(crate::libbb::safe_gethostname::safe_gethostname());
   let mut nheaders: libc::c_uint = 0i32 as libc::c_uint;
   let mut code: libc::c_int = 0;
   let mut last_hdr: C2RustUnnamed = HDR_OTHER;
@@ -313,7 +261,8 @@ pub unsafe extern "C" fn sendmail_main(
   // init global variables
   let ref mut fresh1 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh1 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh1 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).opt_charset =
     b"us-ascii\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
@@ -323,13 +272,13 @@ pub unsafe extern "C" fn sendmail_main(
     opt_connect = b"127.0.0.1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
   }
   // save initial stdin since body is piped!
-  xdup2(0i32, 3i32);
-  (*ptr_to_globals).fp0 = xfdopen_for_read(3i32);
+  crate::libbb::xfuncs_printf::xdup2(0i32, 3i32);
+  (*ptr_to_globals).fp0 = crate::libbb::wfopen::xfdopen_for_read(3i32);
   // parse options
   // N.B. since -H and -S are mutually exclusive they do not interfere in opt_connect
   // -a is for ssmtp (http://downloads.openwrt.org/people/nico/man/man8/ssmtp.8.html) compatibility,
   // it is still under development.
-  (*ptr_to_globals).opts = getopt32(
+  (*ptr_to_globals).opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^tf:o:iw:+H:S:a:*:v\x00vv:H--S:S--H\x00" as *const u8 as *const libc::c_char,
     &mut opt_from as *mut *mut libc::c_char,
@@ -344,15 +293,15 @@ pub unsafe extern "C" fn sendmail_main(
   argv = argv.offset(optind as isize);
   // process -a[upm]<token> options
   if (*ptr_to_globals).opts & OPT_a as libc::c_int as libc::c_uint != 0 && list.is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   while !list.is_null() {
-    let mut a: *mut libc::c_char = llist_pop(&mut list) as *mut libc::c_char;
+    let mut a: *mut libc::c_char = crate::libbb::llist::llist_pop(&mut list) as *mut libc::c_char;
     if 'u' as i32 == *a.offset(0) as libc::c_int {
-      (*ptr_to_globals).user = xstrdup(a.offset(1))
+      (*ptr_to_globals).user = crate::libbb::xfuncs_printf::xstrdup(a.offset(1))
     }
     if 'p' as i32 == *a.offset(0) as libc::c_int {
-      (*ptr_to_globals).pass = xstrdup(a.offset(1))
+      (*ptr_to_globals).pass = crate::libbb::xfuncs_printf::xstrdup(a.offset(1))
     }
     if 'm' as i32 == *a.offset(0) as libc::c_int {
       if *a.offset(1) as libc::c_int | 0x20i32 == 'p' as i32 {
@@ -360,7 +309,7 @@ pub unsafe extern "C" fn sendmail_main(
         (*ptr_to_globals).opts |= OPT_am_plain as libc::c_int as libc::c_uint
       } else if *a.offset(1) as libc::c_int | 0x20i32 == 'l' as i32 {
       } else {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"unsupported AUTH method %s\x00" as *const u8 as *const libc::c_char,
           a.offset(1),
         );
@@ -380,7 +329,7 @@ pub unsafe extern "C" fn sendmail_main(
       0 as *const libc::c_char,
     ];
     // plug it in
-    launch_helper(args.as_mut_ptr());
+    crate::mailutils::mail::launch_helper(args.as_mut_ptr());
     // Now:
     // our stdout will go to helper's stdin,
     // helper's stdout will be available on our stdin.
@@ -408,15 +357,17 @@ pub unsafe extern "C" fn sendmail_main(
       // eat 250 response to our NOOP
       smtp_check(0 as *const libc::c_char, 250i32);
     } else if code != 250i32 {
-      bb_simple_error_msg_and_die(b"SMTP init failed\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"SMTP init failed\x00" as *const u8 as *const libc::c_char,
+      );
     }
   } else {
     // vanilla connection
     let mut fd: libc::c_int = 0;
-    fd = create_and_connect_stream_or_die(opt_connect, 25i32);
+    fd = crate::libbb::xconnect::create_and_connect_stream_or_die(opt_connect, 25i32);
     // and make ourselves a simple IO filter
-    xmove_fd(fd, 0i32);
-    xdup2(0i32, 1i32);
+    crate::libbb::xfuncs_printf::xmove_fd(fd, 0i32);
+    crate::libbb::xfuncs_printf::xdup2(0i32, 1i32);
     // Wait for initial server 220 message
     smtp_check(0 as *const libc::c_char, 220i32);
   }
@@ -438,7 +389,7 @@ pub unsafe extern "C" fn sendmail_main(
   if (*ptr_to_globals).opts & OPT_a as libc::c_int as libc::c_uint != 0 {
     // read credentials unless they are given via -a[up] options
     if (*ptr_to_globals).user.is_null() || (*ptr_to_globals).pass.is_null() {
-      get_cred_or_die(4i32);
+      crate::mailutils::mail::get_cred_or_die(4i32);
     }
     if (*ptr_to_globals).opts & OPT_am_plain as libc::c_int as libc::c_uint != 0 {
       // C: AUTH PLAIN
@@ -468,7 +419,7 @@ pub unsafe extern "C" fn sendmail_main(
         stpcpy(plain_auth.as_mut_ptr().offset(1), (*ptr_to_globals).user).offset(1),
         (*ptr_to_globals).pass,
       );
-      printbuf_base64(plain_auth.as_mut_ptr(), sz);
+      crate::mailutils::mail::printbuf_base64(plain_auth.as_mut_ptr(), sz);
     } else {
       // C: AUTH LOGIN
       // S: 334 VXNlcm5hbWU6
@@ -482,9 +433,9 @@ pub unsafe extern "C" fn sendmail_main(
         b"AUTH LOGIN\x00" as *const u8 as *const libc::c_char,
         334i32,
       );
-      printstr_base64((*ptr_to_globals).user);
+      crate::mailutils::mail::printstr_base64((*ptr_to_globals).user);
       smtp_check(b"\x00" as *const u8 as *const libc::c_char, 334i32);
-      printstr_base64((*ptr_to_globals).pass);
+      crate::mailutils::mail::printstr_base64((*ptr_to_globals).pass);
     }
     smtp_check(b"\x00" as *const u8 as *const libc::c_char, 235i32);
   }
@@ -500,14 +451,14 @@ pub unsafe extern "C" fn sendmail_main(
   //	file descriptor (e.g. 4), or again from a secured file.
   // got no sender address? use auth name, then UID username as a last resort
   if opt_from.is_null() {
-    opt_from = xasprintf(
+    opt_from = crate::libbb::xfuncs_printf::xasprintf(
       b"%s@%s\x00" as *const u8 as *const libc::c_char,
       if !(*ptr_to_globals).user.is_null() {
         (*ptr_to_globals).user
       } else {
-        xuid2uname(getuid())
+        crate::libbb::bb_pwd::xuid2uname(getuid())
       },
-      (*xgethostbyname(host)).h_name,
+      (*crate::libbb::xgethostbyname::xgethostbyname(host)).h_name,
     )
   }
   free(host as *mut libc::c_void);
@@ -522,7 +473,7 @@ pub unsafe extern "C" fn sendmail_main(
   // and then use the rest of stdin as message body
   code = 0i32; // set "analyze headers" mode
   's_369: loop {
-    s = xmalloc_fgetline((*ptr_to_globals).fp0);
+    s = crate::libbb::get_line_from_file::xmalloc_fgetline((*ptr_to_globals).fp0);
     if !s.is_null() {
       current_block = 16252544171633782868;
     } else {
@@ -550,7 +501,7 @@ pub unsafe extern "C" fn sendmail_main(
             // whether it is single or not character on the line
             if '.' as i32 == *s.offset(0) as libc::c_int {
               /*&& '\0' == s[1] */
-              bb_putchar('.' as i32);
+              crate::libbb::xfuncs_printf::bb_putchar('.' as i32);
             }
             // dump read line
             send_r_n(s);
@@ -639,7 +590,10 @@ pub unsafe extern "C" fn sendmail_main(
           } else {
             hdr = (b"To: %s\x00" as *const u8 as *const libc::c_char).offset(3)
           }
-          llist_add_to_end(&mut list, xasprintf(hdr, t) as *mut libc::c_void);
+          crate::libbb::llist::llist_add_to_end(
+            &mut list,
+            crate::libbb::xfuncs_printf::xasprintf(hdr, t) as *mut libc::c_void,
+          );
           check_hdr = 0i32
         }
         argv = argv.offset(1)
@@ -652,7 +606,7 @@ pub unsafe extern "C" fn sendmail_main(
       }
       // dump the headers
       while !list.is_null() {
-        send_r_n(llist_pop(&mut list) as *mut libc::c_char);
+        send_r_n(crate::libbb::llist::llist_pop(&mut list) as *mut libc::c_char);
       }
       // stop analyzing headers
       code += 1;
@@ -685,7 +639,7 @@ pub unsafe extern "C" fn sendmail_main(
     } {
       break;
     }
-    llist_add_to_end(&mut list, s as *mut libc::c_void);
+    crate::libbb::llist::llist_add_to_end(&mut list, s as *mut libc::c_void);
   }
   // ... and say goodbye
   smtp_check(b"QUIT\x00" as *const u8 as *const libc::c_char, 221i32);

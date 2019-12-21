@@ -33,43 +33,13 @@ extern "C" {
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn tcsendbreak(__fd: libc::c_int, __duration: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn trim(s: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_process_escape_sequence(ptr: *mut *const libc::c_char) -> libc::c_char;
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
+
   #[no_mangle]
   static mut bb_got_signal: smallint;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf_0: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xmalloc_xopen_read_close(
-    filename: *const libc::c_char,
-    maxsz_p: *mut size_t,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn safe_write(fd: libc::c_int, buf_0: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf_0: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf_0: *const libc::c_void, count: size_t);
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
-  #[no_mangle]
-  fn llist_unlink(head: *mut *mut llist_t, elm: *mut llist_t);
+
   #[no_mangle]
   static mut xfunc_error_retval: u8;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -133,7 +103,7 @@ unsafe extern "C" fn unescape(mut s: *mut libc::c_char, mut nocr: *mut libc::c_i
           // unescape leading dash only
           // TODO: and only for expect, not command string
           } else if !('-' as i32 == c as libc::c_int && start.offset(1) == s) {
-            c = bb_process_escape_sequence(
+            c = crate::libbb::process_escape_sequence::bb_process_escape_sequence(
               &mut s as *mut *mut libc::c_char as *mut *const libc::c_char,
             );
             s = s.offset(-1)
@@ -183,17 +153,17 @@ pub unsafe extern "C" fn chat_main(
   // make x* functions fail with correct exitcode
   xfunc_error_retval = ERR_IO as libc::c_int as u8;
   // trap vanilla signals to prevent process from being killed suddenly
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     0i32 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 15i32) + (1i32 << 13i32),
     Some(signal_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
-  getopt32(argv, b"vVsSE\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::getopt32::getopt32(argv, b"vVsSE\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   // handle chat expect-send pairs
   while !(*argv).is_null() {
     /* while (*argv) */
     // directive given? process it
-    let mut key: libc::c_int = index_in_strings(
+    let mut key: libc::c_int = crate::libbb::compare_string_array::index_in_strings(
       b"HANGUP\x00ABORT\x00CLR_ABORT\x00TIMEOUT\x00ECHO\x00SAY\x00RECORD\x00\x00" as *const u8
         as *const libc::c_char,
       *argv,
@@ -204,7 +174,7 @@ pub unsafe extern "C" fn chat_main(
       argv = argv.offset(1);
       let mut arg: *mut libc::c_char = *argv;
       if arg.is_null() {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
       onoff = 0i32 != strcmp(b"OFF\x00" as *const u8 as *const libc::c_char, arg);
       if DIR_HANGUP as libc::c_int == key {
@@ -226,7 +196,7 @@ pub unsafe extern "C" fn chat_main(
         if len > max_abort_len {
           max_abort_len = len
         }
-        llist_add_to_end(&mut aborts, arg as *mut libc::c_void);
+        crate::libbb::llist::llist_add_to_end(&mut aborts, arg as *mut libc::c_void);
       } else if DIR_CLR_ABORT as libc::c_int == key {
         let mut l: *mut llist_t = 0 as *mut llist_t;
         // remove the string from abort conditions
@@ -236,7 +206,7 @@ pub unsafe extern "C" fn chat_main(
         while !l.is_null() {
           let mut len_0: size_t = strlen((*l).data);
           if strcmp(arg, (*l).data) == 0i32 {
-            llist_unlink(&mut aborts, l);
+            crate::libbb::llist::llist_unlink(&mut aborts, l);
           } else if len_0 > max_abort_len {
             max_abort_len = len_0
           }
@@ -264,14 +234,14 @@ pub unsafe extern "C" fn chat_main(
         }
         // N.B. do we have to die here on open error?
         record_fd = if onoff as libc::c_int != 0 {
-          xopen(arg, 0o1i32 | 0o100i32 | 0o1000i32)
+          crate::libbb::xfuncs_printf::xopen(arg, 0o1i32 | 0o100i32 | 0o1000i32)
         } else {
           -1i32
         }
       } else if DIR_SAY as libc::c_int == key {
         // just print argument verbatim
         // TODO: should we use full_write() to avoid unistd/stdio conflict?
-        bb_simple_error_msg(arg);
+        crate::libbb::verror_msg::bb_simple_error_msg(arg);
       }
       argv = argv.offset(1)
     } else {
@@ -327,7 +297,7 @@ pub unsafe extern "C" fn chat_main(
               let mut l_0: *mut llist_t = 0 as *mut llist_t;
               let mut delta: ssize_t = 0;
               // read next char from device
-              if safe_read(
+              if crate::libbb::read::safe_read(
                 0i32,
                 bb_common_bufsiz1.as_mut_ptr().offset(buf_len as isize) as *mut libc::c_void,
                 1i32 as size_t,
@@ -335,7 +305,7 @@ pub unsafe extern "C" fn chat_main(
               {
                 // dump device input if RECORD fname
                 if record_fd > 0i32 {
-                  full_write(
+                  crate::libbb::full_write::full_write(
                     record_fd,
                     bb_common_bufsiz1.as_mut_ptr().offset(buf_len as isize) as *const libc::c_void,
                     1i32 as size_t,
@@ -347,7 +317,7 @@ pub unsafe extern "C" fn chat_main(
                   //							full_write(STDERR_FILENO, "^", 1);
                   //							buf[buf_len] += '@';
                   //						}
-                  full_write(
+                  crate::libbb::full_write::full_write(
                     2i32,
                     bb_common_bufsiz1.as_mut_ptr().offset(buf_len as isize) as *const libc::c_void,
                     1i32 as size_t,
@@ -463,9 +433,11 @@ pub unsafe extern "C" fn chat_main(
       if '@' as i32 == *buf_0 as libc::c_int {
         // skip the @ and any following white-space
         buf_0 = buf_0.offset(1);
-        trim(buf_0);
-        loaded =
-          xmalloc_xopen_read_close(buf_0, std::ptr::null_mut::<size_t>()) as *mut libc::c_char;
+        crate::libbb::trim::trim(buf_0);
+        loaded = crate::libbb::read_printf::xmalloc_xopen_read_close(
+          buf_0,
+          std::ptr::null_mut::<size_t>(),
+        ) as *mut libc::c_char;
         buf_0 = loaded
       }
       // expand escape sequences in command
@@ -501,7 +473,9 @@ pub unsafe extern "C" fn chat_main(
             buf_0 = buf_0.offset(-1)
           }
         }
-        if safe_write(1i32, buf_0 as *const libc::c_void, 1i32 as size_t) != 1 {
+        if crate::libbb::safe_write::safe_write(1i32, buf_0 as *const libc::c_void, 1i32 as size_t)
+          != 1
+        {
           break;
         }
         len_2 = len_2.wrapping_sub(1);
@@ -516,7 +490,7 @@ pub unsafe extern "C" fn chat_main(
       if !loaded.is_null() {
         free(loaded as *mut libc::c_void);
       } else if nocr == 0 {
-        xwrite(
+        crate::libbb::xfuncs_printf::xwrite(
           1i32,
           b"\r\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
           1i32 as size_t,

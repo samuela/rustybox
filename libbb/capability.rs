@@ -6,19 +6,11 @@ extern "C" {
   #[no_mangle]
   fn capget(header: cap_user_header_t, data: cap_user_data_t) -> libc::c_int;
 
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 pub type u32 = libc::c_uint;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __user_cap_header_struct {
   pub version: u32,
   pub pid: libc::c_int,
@@ -26,8 +18,8 @@ pub struct __user_cap_header_struct {
 
 pub type cap_user_header_t = *mut __user_cap_header_struct;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __user_cap_data_struct {
   pub effective: u32,
   pub permitted: u32,
@@ -36,8 +28,8 @@ pub struct __user_cap_data_struct {
 
 pub type cap_user_data_t = *mut __user_cap_data_struct;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct caps {
   pub header: __user_cap_header_struct,
   pub u32s: libc::c_uint,
@@ -119,7 +111,7 @@ pub unsafe extern "C" fn cap_name_to_number(mut cap: *const libc::c_char) -> lib
     match current_block {
       8071902191298939548 => {}
       _ => {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"unknown capability \'%s\'\x00" as *const u8 as *const libc::c_char,
           cap,
         );
@@ -127,7 +119,7 @@ pub unsafe extern "C" fn cap_name_to_number(mut cap: *const libc::c_char) -> lib
     }
   }
   if !(i >= 0i32 as libc::c_uint && i <= 37i32 as libc::c_uint) {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"unknown capability \'%s\'\x00" as *const u8 as *const libc::c_char,
       cap,
     );
@@ -617,7 +609,9 @@ pub unsafe extern "C" fn getcaps(mut arg: *mut libc::c_void) {
   }
   match current_block {
     11006700562992250127 => {
-      bb_simple_perror_msg_and_die(b"capget\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"capget\x00" as *const u8 as *const libc::c_char,
+      );
     }
     _ => {
       match (*caps).header.version {
@@ -625,13 +619,15 @@ pub unsafe extern "C" fn getcaps(mut arg: *mut libc::c_void) {
         537333798 => (*caps).u32s = 2i32 as libc::c_uint,
         537396514 => (*caps).u32s = 2i32 as libc::c_uint,
         _ => {
-          bb_simple_error_msg_and_die(
+          crate::libbb::verror_msg::bb_simple_error_msg_and_die(
             b"unsupported capability version\x00" as *const u8 as *const libc::c_char,
           );
         }
       }
       if capget(&mut (*caps).header, (*caps).data.as_mut_ptr()) != 0i32 {
-        bb_simple_perror_msg_and_die(b"capget\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"capget\x00" as *const u8 as *const libc::c_char,
+        );
       }
       return;
     }

@@ -13,8 +13,7 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
 }
 
 pub type C2RustUnnamed = libc::c_uint;
@@ -931,7 +930,7 @@ pub unsafe extern "C" fn read_base64(
         return;
       }
       /* No */
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"truncated base64 input\x00" as *const u8 as *const libc::c_char,
       );
     }

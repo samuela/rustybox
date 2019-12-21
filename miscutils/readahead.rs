@@ -4,12 +4,6 @@ extern "C" {
   #[no_mangle]
   fn readahead(__fd: libc::c_int, __offset: off64_t, __count: size_t) -> ssize_t;
 
-  #[no_mangle]
-  fn open_or_warn(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
 }
 use crate::librb::size_t;
 use libc::off64_t;
@@ -55,20 +49,20 @@ pub unsafe extern "C" fn readahead_main(
 ) -> libc::c_int {
   let mut retval: libc::c_int = 0i32;
   if (*argv.offset(1)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   loop {
     argv = argv.offset(1);
     if (*argv).is_null() {
       break;
     }
-    let mut fd: libc::c_int = open_or_warn(*argv, 0i32);
+    let mut fd: libc::c_int = crate::libbb::xfuncs_printf::open_or_warn(*argv, 0i32);
     if fd >= 0i32 {
       let mut len: off_t = 0;
       let mut r: libc::c_int = 0;
       /* fdlength was reported to be unreliable - use seek */
-      len = xlseek(fd, 0i32 as off_t, 2i32);
-      xlseek(fd, 0i32 as off_t, 0i32);
+      len = crate::libbb::xfuncs_printf::xlseek(fd, 0i32 as off_t, 2i32);
+      crate::libbb::xfuncs_printf::xlseek(fd, 0i32 as off_t, 0i32);
       r = readahead(fd, 0i32 as off64_t, len as size_t) as libc::c_int;
       close(fd);
       if r >= 0i32 {

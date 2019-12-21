@@ -1,10 +1,12 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
+use crate::librb::size_t;
 use libc;
 use libc::chdir;
 use libc::close;
 use libc::fchmod;
 use libc::free;
+use libc::mode_t;
+use libc::off_t;
 use libc::printf;
 use libc::puts;
 use libc::strchr;
@@ -14,67 +16,8 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn chomp(s: *mut libc::c_char);
-
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn bb_copyfd_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t) -> off_t;
-
-  #[no_mangle]
-  fn xdup2(_: libc::c_int, _: libc::c_int);
-
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-
-  #[no_mangle]
-  fn xsetenv(key: *const libc::c_char, value: *const libc::c_char);
-
-  #[no_mangle]
-  fn open3_or_warn(
-    pathname: *const libc::c_char,
-    flags: libc::c_int,
-    mode: libc::c_int,
-  ) -> libc::c_int;
-
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-
-  #[no_mangle]
-  fn xmalloc_reads(fd: libc::c_int, maxsz_p: *mut size_t) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xmalloc_xopen_read_close(
-    filename: *const libc::c_char,
-    maxsz_p: *mut size_t,
-  ) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn safe_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
 }
 
-use crate::librb::size_t;
-use libc::mode_t;
-use libc::off_t;
-use libc::ssize_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed = 4;
@@ -199,7 +142,7 @@ unsafe extern "C" fn sane(mut string: *mut libc::c_char) -> *mut libc::c_char {
 unsafe extern "C" fn xmalloc_read_stdin() -> *mut libc::c_char {
   // SECURITY:
   let mut max: size_t = (4i32 * 1024i32) as size_t; // more than enough for commands!
-  return xmalloc_reads(0i32, &mut max); // for compiler
+  return crate::libbb::read_printf::xmalloc_reads(0i32, &mut max); // for compiler
 }
 
 #[no_mangle]
@@ -219,11 +162,11 @@ pub unsafe extern "C" fn lpd_main(
   if !(*argv).is_null() {
     let fresh1 = argv;
     argv = argv.offset(1);
-    xchdir(*fresh1);
+    crate::libbb::xfuncs_printf::xchdir(*fresh1);
   }
 
   // error messages of xfuncs will be sent over network
-  xdup2(1i32, 2i32);
+  crate::libbb::xfuncs_printf::xdup2(1i32, 2i32);
 
   // nullify ctrl/data filenames
   memset(
@@ -267,7 +210,7 @@ pub unsafe extern "C" fn lpd_main(
       let mut expected_len: libc::c_int = 0;
       let mut real_len: libc::c_int = 0;
       // signal OK
-      safe_write(
+      crate::libbb::safe_write::safe_write(
         1i32,
         b"\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
         1i32 as size_t,
@@ -294,12 +237,14 @@ pub unsafe extern "C" fn lpd_main(
         // (we exit 127 if helper cannot be executed)
         var[1] = '\u{0}' as i32 as libc::c_char;
         // read and delete ctrlfile
-        q = xmalloc_xopen_read_close(filenames[0], std::ptr::null_mut::<size_t>())
-          as *mut libc::c_char;
+        q = crate::libbb::read_printf::xmalloc_xopen_read_close(
+          filenames[0],
+          std::ptr::null_mut::<size_t>(),
+        ) as *mut libc::c_char;
         unlink(filenames[0]);
         // provide datafile name
         // we can use leaky setenv since we are about to exec or exit
-        xsetenv(
+        crate::libbb::xfuncs_printf::xsetenv(
           b"DATAFILE\x00" as *const u8 as *const libc::c_char,
           filenames[1],
         );
@@ -321,7 +266,7 @@ pub unsafe extern "C" fn lpd_main(
             let fresh3 = q;
             q = q.offset(1);
             var[0] = *fresh3;
-            xsetenv(var.as_mut_ptr(), q);
+            crate::libbb::xfuncs_printf::xsetenv(var.as_mut_ptr(), q);
           }
           q = p
         }
@@ -330,10 +275,10 @@ pub unsafe extern "C" fn lpd_main(
         // Ignoring "l<datafile>", exporting others:
         // helper should not talk over network.
         // this call reopens stdio fds to "/dev/null".
-        bb_daemonize_or_rexec(
+        crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(
           DAEMON_DEVNULL_STDIO as libc::c_int | DAEMON_ONLY_SANITIZE as libc::c_int,
         );
-        BB_EXECVP_or_die(argv);
+        crate::libbb::executable::BB_EXECVP_or_die(argv);
       } else {
         // validate input.
         // we understand only "control file" or "data file" subcmds
@@ -347,7 +292,7 @@ pub unsafe extern "C" fn lpd_main(
           break;
         } else {
           // get filename
-          chomp(s);
+          crate::libbb::chomp::chomp(s);
           fname = strchr(s, ' ' as i32);
           if fname.is_null() {
             // bad_fname:
@@ -364,7 +309,8 @@ pub unsafe extern "C" fn lpd_main(
             //			goto bad_fname;
             // get length
             expected_len =
-              bb_strtou(s.offset(1), 0 as *mut *mut libc::c_char, 10i32) as libc::c_int;
+              crate::libbb::bb_strtonum::bb_strtou(s.offset(1), 0 as *mut *mut libc::c_char, 10i32)
+                as libc::c_int;
             if *bb_errno != 0 || expected_len < 0i32 {
               puts(b"Bad length\x00" as *const u8 as *const libc::c_char);
               current_block = 12481496603591474651;
@@ -381,28 +327,34 @@ pub unsafe extern "C" fn lpd_main(
                 // spooling mode: dump both files
                 // job in flight has mode 0200 "only writable"
                 sane(fname);
-                fd = open3_or_warn(fname, 0o100i32 | 0o1i32 | 0o1000i32 | 0o200i32, 0o200i32);
+                fd = crate::libbb::xfuncs_printf::open3_or_warn(
+                  fname,
+                  0o100i32 | 0o1i32 | 0o1000i32 | 0o200i32,
+                  0o200i32,
+                );
                 if fd < 0i32 {
                   current_block = 12481496603591474651;
                   break;
                 }
-                filenames[(*s.offset(0) as libc::c_int - 2i32) as usize] = xstrdup(fname)
+                filenames[(*s.offset(0) as libc::c_int - 2i32) as usize] =
+                  crate::libbb::xfuncs_printf::xstrdup(fname)
               } else {
                 // non-spooling mode:
                 // 2: control file (ignoring), 3: data file
                 fd = -1i32;
                 if 3i32 == *s.offset(0) as libc::c_int {
-                  fd = xopen(queue, 0o2i32 | 0o2000i32)
+                  fd = crate::libbb::xfuncs_printf::xopen(queue, 0o2i32 | 0o2000i32)
                 }
               }
               // signal OK
-              safe_write(
+              crate::libbb::safe_write::safe_write(
                 1i32,
                 b"\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
                 1i32 as size_t,
               );
               // copy the file
-              real_len = bb_copyfd_size(0i32, fd, expected_len as off_t) as libc::c_int;
+              real_len = crate::libbb::copyfd::bb_copyfd_size(0i32, fd, expected_len as off_t)
+                as libc::c_int;
               if real_len != expected_len {
                 printf(
                   b"Expected %d but got %d bytes\n\x00" as *const u8 as *const libc::c_char,
@@ -414,7 +366,7 @@ pub unsafe extern "C" fn lpd_main(
               } else {
                 // get EOF indicator, see whether it is NUL (ok)
                 // (and don't trash s[0]!)
-                if safe_read(
+                if crate::libbb::read::safe_read(
                   0i32,
                   &mut *s.offset(1) as *mut libc::c_char as *mut libc::c_void,
                   1i32 as size_t,

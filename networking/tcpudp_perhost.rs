@@ -1,12 +1,7 @@
 use libc;
 use libc::free;
 use libc::strcmp;
-extern "C" {
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-}
-use crate::librb::size_t;
 /* Based on ipsvd utilities written by Gerrit Pape <pape@smarden.org>
  * which are released into public domain by the author.
  * Homepage: http://smarden.sunsite.dk/ipsvd/
@@ -15,8 +10,9 @@ use crate::librb::size_t;
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct hcc {
   pub ip: *mut libc::c_char,
   pub pid: libc::c_int,
@@ -32,7 +28,7 @@ pub struct hcc {
 #[no_mangle]
 pub unsafe extern "C" fn ipsvd_perhost_init(mut c: libc::c_uint) -> *mut hcc {
   //	free(cc);
-  let mut cc: *mut hcc = xzalloc(
+  let mut cc: *mut hcc = crate::libbb::xfuncs_printf::xzalloc(
     (c.wrapping_add(1i32 as libc::c_uint) as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<hcc>() as libc::c_ulong),
   ) as *mut hcc; /* "end" marker */

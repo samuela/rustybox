@@ -1,4 +1,5 @@
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
 use libc;
 use libc::atoi;
 use libc::close;
@@ -7,9 +8,11 @@ use libc::free;
 use libc::fstat;
 use libc::printf;
 use libc::rename;
+use libc::stat;
 use libc::strcmp;
 use libc::strrchr;
 use libc::unlink;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -33,57 +36,10 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xunlink(pathname: *const libc::c_char);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xopen_stdin(pathname: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn xmkstemp(template: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_reads(fd: libc::c_int, maxsz_p: *mut size_t) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xclose(fd: libc::c_int);
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatoi(str: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_make_directory(
-    path: *mut libc::c_char,
-    mode: libc::c_long,
-    flags: libc::c_int,
-  ) -> libc::c_int;
 
 }
 
-use crate::librb::size_t;
-use libc::off_t;
-use libc::stat;
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_int;
 pub const FILEUTILS_IGNORE_CHMOD_ERR: C2RustUnnamed = -2147483648;
 pub const FILEUTILS_REFLINK_ALWAYS: C2RustUnnamed = 262144;
@@ -101,8 +57,9 @@ pub const FILEUTILS_FORCE: C2RustUnnamed = 8;
 pub const FILEUTILS_RECUR: C2RustUnnamed = 4;
 pub const FILEUTILS_DEREFERENCE: C2RustUnnamed = 2;
 pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub infile: *mut libc::c_char,
   pub prefix: libc::c_long,
@@ -120,8 +77,9 @@ pub struct globals {
   pub tempname: *mut libc::c_char,
   pub exitval: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct double_list {
   pub next: *mut double_list,
   pub prev: *mut double_list,
@@ -199,13 +157,13 @@ unsafe extern "C" fn finish_oldfile() {
     // Copy the rest of the data and replace the original with the copy.
     let mut temp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if (*ptr_to_globals).filein != -1i32 {
-      bb_copyfd_eof((*ptr_to_globals).filein, (*ptr_to_globals).fileout);
-      xclose((*ptr_to_globals).filein);
+      crate::libbb::copyfd::bb_copyfd_eof((*ptr_to_globals).filein, (*ptr_to_globals).fileout);
+      crate::libbb::xfuncs_printf::xclose((*ptr_to_globals).filein);
     }
-    xclose((*ptr_to_globals).fileout);
+    crate::libbb::xfuncs_printf::xclose((*ptr_to_globals).fileout);
     if 1i32 == 0 || *(*ptr_to_globals).tempname.offset(0) as libc::c_int != 0 {
       /* not --dry-run? */
-      temp = xstrdup((*ptr_to_globals).tempname);
+      temp = crate::libbb::xfuncs_printf::xstrdup((*ptr_to_globals).tempname);
       *temp.offset(strlen(temp).wrapping_sub(6i32 as libc::c_ulong) as isize) =
         '\u{0}' as i32 as libc::c_char;
       rename((*ptr_to_globals).tempname, temp);
@@ -313,8 +271,10 @@ unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
       _ =>
       //FIXME: this performs 1-byte reads:
       {
-        let mut data: *mut libc::c_char =
-          xmalloc_reads((*ptr_to_globals).filein, std::ptr::null_mut::<size_t>());
+        let mut data: *mut libc::c_char = crate::libbb::read_printf::xmalloc_reads(
+          (*ptr_to_globals).filein,
+          std::ptr::null_mut::<size_t>(),
+        );
         (*ptr_to_globals).linenum += 1;
         // Figure out which line of hunk to compare with next.  (Skip lines
         // of the hunk we'd be adding.)
@@ -459,9 +419,10 @@ pub unsafe extern "C" fn patch_main(
   ];
   let ref mut fresh0 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh0 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh0 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
-  opts = getopt32long(
+  opts = crate::libbb::getopt32::getopt32long(
     argv,
     b"Rup:i:NEfg\x00" as *const u8 as *const libc::c_char,
     patch_longopts.as_ptr(),
@@ -473,22 +434,25 @@ pub unsafe extern "C" fn patch_main(
   argv = argv.offset(optind as isize); // can be negative!
   reverse = opts & 1i32 << 0i32;
   (*ptr_to_globals).prefix = if opts & 1i32 << 2i32 != 0 {
-    xatoi(opt_p)
+    crate::libbb::xatonum::xatoi(opt_p)
   } else {
     0i32
   } as libc::c_long;
   (*ptr_to_globals).fileout = -1i32;
   (*ptr_to_globals).filein = (*ptr_to_globals).fileout;
   if opts & 1i32 << 3i32 != 0 {
-    xmove_fd(xopen_stdin(opt_i), 0i32);
+    crate::libbb::xfuncs_printf::xmove_fd(crate::libbb::wfopen_input::xopen_stdin(opt_i), 0i32);
   } else if !(*argv.offset(0)).is_null() && !(*argv.offset(1)).is_null() {
-    xmove_fd(xopen_stdin(*argv.offset(1)), 0i32);
+    crate::libbb::xfuncs_printf::xmove_fd(
+      crate::libbb::wfopen_input::xopen_stdin(*argv.offset(1)),
+      0i32,
+    );
   }
   loop
   // Loop through the lines in the patch
   {
     let mut patchline: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    patchline = xmalloc_fgetline(stdin);
+    patchline = crate::libbb::get_line_from_file::xmalloc_fgetline(stdin);
     if patchline.is_null() {
       break;
     }
@@ -496,7 +460,7 @@ pub unsafe extern "C" fn patch_main(
     // so we need to also.
     if *patchline == 0 {
       free(patchline as *mut libc::c_void);
-      patchline = xstrdup(b" \x00" as *const u8 as *const libc::c_char)
+      patchline = crate::libbb::xfuncs_printf::xstrdup(b" \x00" as *const u8 as *const libc::c_char)
     }
     // Are we assembling a hunk?
     if state >= 2i32 {
@@ -527,8 +491,16 @@ pub unsafe extern "C" fn patch_main(
       }
     } else {
       // Open a new file?
-      if !is_prefixed_with(patchline, b"--- \x00" as *const u8 as *const libc::c_char).is_null()
-        || !is_prefixed_with(patchline, b"+++ \x00" as *const u8 as *const libc::c_char).is_null()
+      if !crate::libbb::compare_string_array::is_prefixed_with(
+        patchline,
+        b"--- \x00" as *const u8 as *const libc::c_char,
+      )
+      .is_null()
+        || !crate::libbb::compare_string_array::is_prefixed_with(
+          patchline,
+          b"+++ \x00" as *const u8 as *const libc::c_char,
+        )
+        .is_null()
       {
         let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut name: *mut *mut libc::c_char = if reverse != 0 {
@@ -564,14 +536,20 @@ pub unsafe extern "C" fn patch_main(
           }
           i = atoi(s);
           if i > 1900i32 && i <= 1970i32 {
-            *name = xstrdup(b"/dev/null\x00" as *const u8 as *const libc::c_char)
+            *name = crate::libbb::xfuncs_printf::xstrdup(
+              b"/dev/null\x00" as *const u8 as *const libc::c_char,
+            )
           } else {
             *s = 0i32 as libc::c_char;
-            *name = xstrdup(patchline.offset(4))
+            *name = crate::libbb::xfuncs_printf::xstrdup(patchline.offset(4))
           }
         }
       } else if state == 1i32
-        && !is_prefixed_with(patchline, b"@@ -\x00" as *const u8 as *const libc::c_char).is_null()
+        && !crate::libbb::compare_string_array::is_prefixed_with(
+          patchline,
+          b"@@ -\x00" as *const u8 as *const libc::c_char,
+        )
+        .is_null()
       {
         let mut i_0: libc::c_int = 0;
         let mut s_0: *mut libc::c_char = patchline.offset(4);
@@ -591,7 +569,7 @@ pub unsafe extern "C" fn patch_main(
           (*ptr_to_globals).newlen = newlen
         }
         if oldlen < 1 && newlen < 1 {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"Really? %s\x00" as *const u8 as *const libc::c_char,
             patchline,
           );
@@ -602,10 +580,14 @@ pub unsafe extern "C" fn patch_main(
         // or (for -R) newname could be NULL -- but not both.  Like
         // GNU patch, proceed based on the +++ line, and avoid SEGVs.
         if oldname.is_null() {
-          oldname = xstrdup(b"MISSING_FILENAME\x00" as *const u8 as *const libc::c_char)
+          oldname = crate::libbb::xfuncs_printf::xstrdup(
+            b"MISSING_FILENAME\x00" as *const u8 as *const libc::c_char,
+          )
         }
         if newname.is_null() {
-          newname = xstrdup(b"MISSING_FILENAME\x00" as *const u8 as *const libc::c_char)
+          newname = crate::libbb::xfuncs_printf::xstrdup(
+            b"MISSING_FILENAME\x00" as *const u8 as *const libc::c_char,
+          )
         }
         // If this is the first hunk, open the file.
         if (*ptr_to_globals).filein == -1i32 {
@@ -659,7 +641,7 @@ pub unsafe extern "C" fn patch_main(
                 name_0,
               );
               if opts & (1i32 << 8i32) * 1i32 == 0 {
-                xunlink(name_0);
+                crate::libbb::xfuncs_printf::xunlink(name_0);
               }
             } else {
               printf(
@@ -667,7 +649,10 @@ pub unsafe extern "C" fn patch_main(
                 name_0,
               );
               if opts & (1i32 << 8i32) * 1i32 == 0 {
-                xclose(xopen(name_0, 0o1i32 | 0o1000i32));
+                crate::libbb::xfuncs_printf::xclose(crate::libbb::xfuncs_printf::xopen(
+                  name_0,
+                  0o1i32 | 0o1000i32,
+                ));
               }
             }
           } else if option_mask32 & (1i32 << 2i32) as libc::c_uint == 0
@@ -689,37 +674,45 @@ pub unsafe extern "C" fn patch_main(
                 s_0 = strrchr(name_0, '/' as i32);
                 if !s_0.is_null() {
                   *s_0 = '\u{0}' as i32 as libc::c_char;
-                  bb_make_directory(
+                  crate::libbb::make_directory::bb_make_directory(
                     name_0,
                     -1i32 as libc::c_long,
                     FILEUTILS_RECUR as libc::c_int,
                   );
                   *s_0 = '/' as i32 as libc::c_char
                 }
-                (*ptr_to_globals).filein = xopen(name_0, 0o100i32 | 0o200i32 | 0o2i32)
-              } else {
                 (*ptr_to_globals).filein =
-                  xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0i32)
+                  crate::libbb::xfuncs_printf::xopen(name_0, 0o100i32 | 0o200i32 | 0o2i32)
+              } else {
+                (*ptr_to_globals).filein = crate::libbb::xfuncs_printf::xopen(
+                  b"/dev/null\x00" as *const u8 as *const libc::c_char,
+                  0i32,
+                )
               }
             } else {
               printf(
                 b"patching file %s\n\x00" as *const u8 as *const libc::c_char,
                 name_0,
               );
-              (*ptr_to_globals).filein = xopen(name_0, 0i32)
+              (*ptr_to_globals).filein = crate::libbb::xfuncs_printf::xopen(name_0, 0i32)
             }
             if opts & (1i32 << 8i32) * 1i32 == 0 {
-              (*ptr_to_globals).tempname =
-                xasprintf(b"%sXXXXXX\x00" as *const u8 as *const libc::c_char, name_0);
-              (*ptr_to_globals).fileout = xmkstemp((*ptr_to_globals).tempname);
+              (*ptr_to_globals).tempname = crate::libbb::xfuncs_printf::xasprintf(
+                b"%sXXXXXX\x00" as *const u8 as *const libc::c_char,
+                name_0,
+              );
+              (*ptr_to_globals).fileout =
+                crate::libbb::xfuncs_printf::xmkstemp((*ptr_to_globals).tempname);
               // Set permissions of output file
               fstat((*ptr_to_globals).filein, &mut statbuf);
               fchmod((*ptr_to_globals).fileout, statbuf.st_mode);
             } else {
               (*ptr_to_globals).tempname =
                 b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-              (*ptr_to_globals).fileout =
-                xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0o1i32)
+              (*ptr_to_globals).fileout = crate::libbb::xfuncs_printf::xopen(
+                b"/dev/null\x00" as *const u8 as *const libc::c_char,
+                0o1i32,
+              )
             }
             (*ptr_to_globals).linenum = 0;
             (*ptr_to_globals).hunknum = 0i32

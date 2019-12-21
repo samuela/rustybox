@@ -1,6 +1,5 @@
+use crate::libbb::parse_config::parser_t;
 use crate::libbb::ptr_to_globals::bb_errno;
-use crate::librb::size_t;
-
 use libc;
 use libc::chmod;
 use libc::chown;
@@ -16,50 +15,11 @@ use libc::sscanf;
 use libc::stat;
 use libc::uid_t;
 use libc::umask;
-use libc::FILE;
 extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xuname2uid(name: *const libc::c_char) -> libc::c_long;
-  #[no_mangle]
-  fn xgroup2gid(name: *const libc::c_char) -> libc::c_long;
-  #[no_mangle]
-  fn get_ug_id(
-    s: *const libc::c_char,
-    xname2id: Option<unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long>,
-  ) -> libc::c_ulong;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn config_open(filename: *const libc::c_char) -> *mut parser_t;
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
-  #[no_mangle]
-  fn bb_make_directory(
-    path: *mut libc::c_char,
-    mode: libc::c_long,
-    flags: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
 }
 
 pub type C2RustUnnamed = libc::c_int;
@@ -89,17 +49,6 @@ pub const PARSE_MIN_DIE: C2RustUnnamed_0 = 1048576;
 pub const PARSE_GREEDY: C2RustUnnamed_0 = 262144;
 pub const PARSE_TRIM: C2RustUnnamed_0 = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed_0 = 65536;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
 
 /*
  * public domain -- Dave 'Kill a Cop' Cinege <dcinege@psychosis.com>
@@ -210,13 +159,13 @@ pub unsafe extern "C" fn makedevs_main(
   let mut line: *mut libc::c_char =
     b"-\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
   let mut ret: libc::c_int = 0i32;
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     b"^d:\x00=1\x00" as *const u8 as *const libc::c_char,
     &mut line as *mut *mut libc::c_char,
   );
   argv = argv.offset(optind as isize);
-  xchdir(*argv);
+  crate::libbb::xfuncs_printf::xchdir(*argv);
   umask(0i32 as mode_t);
   printf(
     b"rootdir=%s\ntable=\x00" as *const u8 as *const libc::c_char,
@@ -227,9 +176,9 @@ pub unsafe extern "C" fn makedevs_main(
   } else {
     puts(b"<stdin>\x00" as *const u8 as *const libc::c_char);
   }
-  parser = config_open(line);
+  parser = crate::libbb::parse_config::config_open(line);
   let mut current_block_56: u64;
-  while config_read(
+  while crate::libbb::parse_config::config_read(
     parser,
     &mut line,
     (PARSE_NORMAL as libc::c_int | (1i32 & 0xffi32) << 8i32 | 1i32 & 0xffi32) as libc::c_uint,
@@ -268,7 +217,7 @@ pub unsafe extern "C" fn makedevs_main(
       )
       || major | minor | start | count | increment > 255i32 as libc::c_uint
     {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"invalid line %d: \'%s\'\x00" as *const u8 as *const libc::c_char,
         linenum,
         line,
@@ -276,17 +225,23 @@ pub unsafe extern "C" fn makedevs_main(
       ret = 1i32
     } else {
       gid = if *group.as_mut_ptr() as libc::c_int != 0 {
-        get_ug_id(
+        crate::libbb::bb_pwd::get_ug_id(
           group.as_mut_ptr(),
-          Some(xgroup2gid as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long),
+          Some(
+            crate::libbb::bb_pwd::xgroup2gid
+              as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long,
+          ),
         )
       } else {
         getgid() as libc::c_ulong
       } as gid_t;
       uid = if *user.as_mut_ptr() as libc::c_int != 0 {
-        get_ug_id(
+        crate::libbb::bb_pwd::get_ug_id(
           user.as_mut_ptr(),
-          Some(xuname2uid as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long),
+          Some(
+            crate::libbb::bb_pwd::xuname2uid
+              as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long,
+          ),
         )
       } else {
         getuid() as libc::c_ulong
@@ -299,7 +254,7 @@ pub unsafe extern "C" fn makedevs_main(
         full_name = full_name.offset(1)
       }
       if type_0 as libc::c_int == 'd' as i32 {
-        bb_make_directory(
+        crate::libbb::make_directory::bb_make_directory(
           full_name,
           (mode | 0o40000i32 as libc::c_uint) as libc::c_long,
           FILEUTILS_RECUR as libc::c_int,
@@ -317,7 +272,7 @@ pub unsafe extern "C" fn makedevs_main(
         if stat(full_name, &mut st) < 0i32
           || !(st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
         {
-          bb_perror_msg(
+          crate::libbb::perror_msg::bb_perror_msg(
             b"line %d: regular file \'%s\' does not exist\x00" as *const u8 as *const libc::c_char,
             linenum,
             full_name,
@@ -341,7 +296,7 @@ pub unsafe extern "C" fn makedevs_main(
         } else if type_0 as libc::c_int == 'b' as i32 {
           mode |= 0o60000i32 as libc::c_uint
         } else {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"line %d: unsupported file type %c\x00" as *const u8 as *const libc::c_char,
             linenum,
             type_0 as libc::c_int,
@@ -357,29 +312,31 @@ pub unsafe extern "C" fn makedevs_main(
           let mut rdev: libc::dev_t = 0;
           let mut nameN: *mut libc::c_char = full_name;
           if count != 0i32 as libc::c_uint {
-            nameN = xasprintf(
+            nameN = crate::libbb::xfuncs_printf::xasprintf(
               b"%s%u\x00" as *const u8 as *const libc::c_char,
               full_name,
               start.wrapping_add(i),
             )
           }
-          rdev = bb_makedev(major, minor.wrapping_add(i.wrapping_mul(increment))) as libc::dev_t;
+          rdev =
+            crate::libbb::makedev::bb_makedev(major, minor.wrapping_add(i.wrapping_mul(increment)))
+              as libc::dev_t;
           if mknod(nameN, mode, rdev) != 0i32 && *bb_errno != 17i32 {
-            bb_perror_msg(
+            crate::libbb::perror_msg::bb_perror_msg(
               b"line %d: can\'t create node %s\x00" as *const u8 as *const libc::c_char,
               linenum,
               nameN,
             );
             ret = 1i32
           } else if chown(nameN, uid, gid) < 0i32 {
-            bb_perror_msg(
+            crate::libbb::perror_msg::bb_perror_msg(
               b"line %d: can\'t chown %s\x00" as *const u8 as *const libc::c_char,
               linenum,
               nameN,
             );
             ret = 1i32
           } else if chmod(nameN, mode) < 0i32 {
-            bb_perror_msg(
+            crate::libbb::perror_msg::bb_perror_msg(
               b"line %d: can\'t chmod %s\x00" as *const u8 as *const libc::c_char,
               linenum,
               nameN,
@@ -395,7 +352,7 @@ pub unsafe extern "C" fn makedevs_main(
       }
       match current_block_56 {
         1050926138102375056 => {
-          bb_perror_msg(
+          crate::libbb::perror_msg::bb_perror_msg(
             b"line %d: can\'t chmod %s\x00" as *const u8 as *const libc::c_char,
             linenum,
             full_name,
@@ -403,7 +360,7 @@ pub unsafe extern "C" fn makedevs_main(
           ret = 1i32
         }
         _ => {
-          bb_perror_msg(
+          crate::libbb::perror_msg::bb_perror_msg(
             b"line %d: can\'t chown %s\x00" as *const u8 as *const libc::c_char,
             linenum,
             full_name,

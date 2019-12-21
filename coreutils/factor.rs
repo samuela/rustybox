@@ -9,37 +9,23 @@ extern "C" {
   #[no_mangle]
   static mut stdin: *mut FILE;
 
-  #[no_mangle]
-  fn isqrt(N: libc::c_ulonglong) -> libc::c_ulong;
+/* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
+ * But potentially slow, don't use in one-billion-times loops */
 
-  #[no_mangle]
-  fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
-  /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
-   * But potentially slow, don't use in one-billion-times loops */
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  /* Chops off '\n' from the end, unlike fgets: */
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  /* Non-aborting kind of convertors: bb_strto[u][l]l */
-  /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
-   * errno = EINVAL if value was not '\0' terminated, but otherwise ok
-   *    Return value is still valid, caller should just check whether end[0]
-   *    is a valid terminating char for particular case. OTOH, if caller
-   *    requires '\0' terminated input, [s]he can just check errno == 0.
-   * errno = ERANGE if value had alphanumeric terminating char ("1234abcg").
-   * errno = ERANGE if value is out of range, missing, etc.
-   * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
-   *    return value is all-ones in this case.
-   */
-  #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
+/* Chops off '\n' from the end, unlike fgets: */
+
+/* Non-aborting kind of convertors: bb_strto[u][l]l */
+/* On exit: errno = 0 only if there was non-empty, '\0' terminated value
+ * errno = EINVAL if value was not '\0' terminated, but otherwise ok
+ *    Return value is still valid, caller should just check whether end[0]
+ *    is a valid terminating char for particular case. OTOH, if caller
+ *    requires '\0' terminated input, [s]he can just check errno == 0.
+ * errno = ERANGE if value had alphanumeric terminating char ("1234abcg").
+ * errno = ERANGE if value is out of range, missing, etc.
+ * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
+ *    return value is all-ones in this case.
+ */
+
 }
 
 /*
@@ -71,7 +57,7 @@ pub const MULTIPLE_DETECTED: C2RustUnnamed = 2116;
 pub const INCREMENT_EACH: C2RustUnnamed = 137;
 pub type C2RustUnnamed = libc::c_uint;
 unsafe extern "C" fn isqrt_odd(mut N: wide_t) -> half_t {
-  let mut s: half_t = isqrt(N) as half_t;
+  let mut s: half_t = crate::libbb::isqrt::isqrt(N) as half_t;
   /* Subtract 1 from even s, odd s won't change: */
   /* (doesnt work for zero, but we know that s != 0 here) */
   s = s.wrapping_sub(1i32 as libc::c_uint) | 1i32 as libc::c_uint;
@@ -180,7 +166,7 @@ unsafe extern "C" fn factorize(mut N: wide_t) {
   if N > 1i32 as libc::c_ulonglong {
     printf(b" %llu\x00" as *const u8 as *const libc::c_char, N);
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
 }
 unsafe extern "C" fn factorize_numstr(mut numstr: *const libc::c_char) {
   let mut N: wide_t = 0;
@@ -188,9 +174,9 @@ unsafe extern "C" fn factorize_numstr(mut numstr: *const libc::c_char) {
   if *numstr as libc::c_int == '+' as i32 {
     numstr = numstr.offset(1)
   }
-  N = bb_strtoull(numstr, 0 as *mut *mut libc::c_char, 10i32);
+  N = crate::libbb::bb_strtonum::bb_strtoull(numstr, 0 as *mut *mut libc::c_char, 10i32);
   if *bb_errno != 0 {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   printf(b"%llu:\x00" as *const u8 as *const libc::c_char, N);
   factorize(N);
@@ -210,7 +196,7 @@ pub unsafe extern "C" fn factor_main(
     {
       let mut numstr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-      line = xmalloc_fgetline(stdin);
+      line = crate::libbb::get_line_from_file::xmalloc_fgetline(stdin);
       if line.is_null() {
         return 0i32;
       }
@@ -221,7 +207,7 @@ pub unsafe extern "C" fn factor_main(
         if *numstr.offset(0) == 0 {
           break;
         }
-        end = skip_non_whitespace(numstr);
+        end = crate::libbb::skip_whitespace::skip_non_whitespace(numstr);
         if *end as libc::c_int != '\u{0}' as i32 {
           let fresh0 = end;
           end = end.offset(1);

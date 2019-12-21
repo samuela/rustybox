@@ -24,10 +24,7 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
+
 }
 
 use crate::librb::size_t;
@@ -66,7 +63,7 @@ pub unsafe extern "C" fn setfattr_main(
   let mut value: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
   let mut status: libc::c_int = 0;
   let mut opt: libc::c_int = 0;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^hx:n:v:\x00-1:x:n:n--x:x--nv:v--x\x00" as *const u8 as *const libc::c_char,
     &mut name as *mut *const libc::c_char,
@@ -123,7 +120,7 @@ pub unsafe extern "C" fn setfattr_main(
       )
     }
     if r != 0 {
-      bb_simple_perror_msg(*argv);
+      crate::libbb::perror_msg::bb_simple_perror_msg(*argv);
       status = 1i32
     }
     argv = argv.offset(1);

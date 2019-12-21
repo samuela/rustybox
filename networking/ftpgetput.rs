@@ -1,12 +1,19 @@
 use crate::libbb::appletlib::applet_name;
+use crate::librb::len_and_sockaddr;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::close;
 use libc::fprintf;
+use libc::off_t;
 use libc::printf;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::sprintf;
+use libc::stat;
 use libc::strcpy;
+use libc::FILE;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -23,50 +30,18 @@ extern "C" {
   ) -> *mut libc::c_char;
 
   /* bb_copyfd_XX print read/write errors and return -1 if they occur */
-  #[no_mangle]
-  fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
+
   /* NB: returns port in host byte order */
-  #[no_mangle]
-  fn bb_lookup_port(
-    port: *const libc::c_char,
-    protocol: *const libc::c_char,
-    default_port: libc::c_uint,
-  ) -> libc::c_uint;
+
   /* Connect to peer identified by lsa */
-  #[no_mangle]
-  fn xconnect_stream(lsa: *const len_and_sockaddr) -> libc::c_int;
+
   /* Version which dies on error */
-  #[no_mangle]
-  fn xhost2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
+
   /* Assign sin[6]_port member if the socket is an AF_INET[6] one,
    * otherwise no-op. Useful for ftp.
    * NB: does NOT do htons() internally, just direct assignment. */
-  #[no_mangle]
-  fn set_nport(sa: *mut sockaddr, port: libc::c_uint);
+
   /* inet_[ap]ton on steroids */
-  #[no_mangle]
-  fn xmalloc_sockaddr2dotted(sa: *const sockaddr) -> *mut libc::c_char;
-  #[no_mangle]
-  fn parse_pasv_epsv(buf_0: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn xatou(str: *const libc::c_char) -> libc::c_uint;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_nomsg_and_die() -> !;
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
@@ -74,57 +49,19 @@ extern "C" {
 
 pub type __socklen_t = libc::c_uint;
 
-use libc::off_t;
-pub type socklen_t = __socklen_t;
-use libc::sa_family_t;
-use libc::sockaddr;
-use libc::stat;
-#[derive(Copy, Clone)]
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
 pub type in_addr_t = u32;
 
-use libc::FILE;
-#[derive(Copy, Clone)]
 #[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_0,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_0 {
   pub sa: sockaddr,
   pub sin: sockaddr_in,
@@ -133,8 +70,9 @@ pub union C2RustUnnamed_0 {
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub user: *const libc::c_char,
   pub password: *const libc::c_char,
@@ -156,7 +94,7 @@ unsafe extern "C" fn ftp_die(mut msg: *const libc::c_char) -> ! {
     cp = cp.offset(1)
   } /* for ftp_die */
   *cp = '\u{0}' as i32 as libc::c_char;
-  bb_error_msg_and_die(
+  crate::libbb::verror_msg::bb_error_msg_and_die(
     b"unexpected server response%s%s: %s\x00" as *const u8 as *const libc::c_char,
     if !msg.is_null() {
       b" to \x00" as *const u8 as *const libc::c_char
@@ -179,7 +117,11 @@ unsafe extern "C" fn ftpcmd(
 ) -> libc::c_int {
   let mut n: libc::c_uint = 0;
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose_flag != 0 {
-    bb_error_msg(b"cmd %s %s\x00" as *const u8 as *const libc::c_char, s1, s2);
+    crate::libbb::verror_msg::bb_error_msg(
+      b"cmd %s %s\x00" as *const u8 as *const libc::c_char,
+      s1,
+      s2,
+    );
   }
   if !s1.is_null() {
     fprintf(
@@ -221,7 +163,7 @@ unsafe extern "C" fn ftpcmd(
     }
   }
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).buf[3] = '\u{0}' as i32 as libc::c_char;
-  n = xatou(
+  n = crate::libbb::xatonum::xatou(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .buf
       .as_mut_ptr(),
@@ -233,7 +175,9 @@ unsafe extern "C" fn ftp_login() {
   /* Connect to the command socket */
   let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).control_stream;
   *fresh0 = fdopen(
-    xconnect_stream((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lsa),
+    crate::libbb::xconnect::xconnect_stream(
+      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lsa,
+    ),
     b"r+\x00" as *const u8 as *const libc::c_char,
   );
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -241,7 +185,7 @@ unsafe extern "C" fn ftp_login() {
     .is_null()
   {
     /* fdopen failed - extremely unlikely */
-    bb_perror_nomsg_and_die();
+    crate::libbb::perror_nomsg_and_die::bb_perror_nomsg_and_die();
   }
   if ftpcmd(0 as *const libc::c_char, 0 as *const libc::c_char) != 220i32 {
     ftp_die(0 as *const libc::c_char);
@@ -286,7 +230,7 @@ unsafe extern "C" fn xconnect_ftpdata() -> libc::c_int {
       ftp_die(b"PASV\x00" as *const u8 as *const libc::c_char);
     }
   }
-  port_num = parse_pasv_epsv(
+  port_num = crate::networking::parse_pasv_epsv::parse_pasv_epsv(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .buf
       .as_mut_ptr(),
@@ -294,7 +238,7 @@ unsafe extern "C" fn xconnect_ftpdata() -> libc::c_int {
   if port_num < 0i32 {
     ftp_die(b"PASV\x00" as *const u8 as *const libc::c_char);
   }
-  set_nport(
+  crate::libbb::xconnect::set_nport(
     &mut (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lsa)
       .u
       .sa,
@@ -309,18 +253,19 @@ unsafe extern "C" fn xconnect_ftpdata() -> libc::c_int {
         let fresh2;
         let fresh3 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh2) : "0"
-                            (c2rust_asm_casts::AsmCast::cast_in(fresh1, fresh3))
-                            : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh1, fresh3)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh1, fresh3, fresh2);
       }
       __v
     }) as libc::c_uint,
   );
-  return xconnect_stream((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lsa);
+  return crate::libbb::xconnect::xconnect_stream(
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lsa,
+  );
 }
 unsafe extern "C" fn pump_data_and_QUIT(mut from: libc::c_int, mut to: libc::c_int) -> libc::c_int {
   /* copy the file */
-  if bb_copyfd_eof(from, to) == -1i32 as libc::c_long {
+  if crate::libbb::copyfd::bb_copyfd_eof(from, to) == -1i32 as libc::c_long {
     /* error msg is already printed by bb_copyfd_eof */
     return 1i32;
   }
@@ -357,7 +302,9 @@ unsafe extern "C" fn ftp_receive(
     let mut sbuf: stat = std::mem::zeroed();
     /* lstat would be wrong here! */
     if stat(local_path, &mut sbuf) < 0i32 {
-      bb_simple_perror_msg_and_die(b"stat\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"stat\x00" as *const u8 as *const libc::c_char,
+      );
     }
     if sbuf.st_size > 0 {
       beg_range = sbuf.st_size
@@ -388,7 +335,7 @@ unsafe extern "C" fn ftp_receive(
   }
   /* create local file _after_ we know that remote file exists */
   if fd_local == -1i32 {
-    fd_local = xopen(
+    fd_local = crate::libbb::xfuncs_printf::xopen(
       local_path,
       if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_continue != 0 {
         (0o2000i32) | 0o1i32
@@ -412,7 +359,7 @@ unsafe extern "C" fn ftp_send(
   fd_local = 0i32;
   if *local_path.offset(0) as libc::c_int != '-' as i32 || *local_path.offset(1) as libc::c_int != 0
   {
-    fd_local = xopen(local_path, 0i32)
+    fd_local = crate::libbb::xfuncs_printf::xopen(local_path, 0i32)
   }
   response = ftpcmd(b"STOR\x00" as *const u8 as *const libc::c_char, server_path);
   match response {
@@ -456,7 +403,7 @@ pub unsafe extern "C" fn ftpgetput_main(
    * Decipher the command line
    */
   /* must have 2 to 3 params; -v and -c count */
-  getopt32long(
+  crate::libbb::getopt32::getopt32long(
     argv,
     b"^cvu:p:P:\x00-2:?3:vv:cc\x00" as *const u8 as *const libc::c_char,
     ftpgetput_longopts.as_ptr(),
@@ -471,9 +418,9 @@ pub unsafe extern "C" fn ftpgetput_main(
    * sites (i.e. ftp.us.debian.org) use round-robin DNS
    * and we want to connect to only one IP... */
   let ref mut fresh6 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lsa;
-  *fresh6 = xhost2sockaddr(
+  *fresh6 = crate::libbb::xconnect::xhost2sockaddr(
     *argv.offset(0),
-    bb_lookup_port(
+    crate::libbb::xconnect::bb_lookup_port(
       port,
       b"tcp\x00" as *const u8 as *const libc::c_char,
       21i32 as libc::c_uint,
@@ -483,7 +430,7 @@ pub unsafe extern "C" fn ftpgetput_main(
     printf(
       b"Connecting to %s (%s)\n\x00" as *const u8 as *const libc::c_char,
       *argv.offset(0),
-      xmalloc_sockaddr2dotted(
+      crate::libbb::xconnect::xmalloc_sockaddr2dotted(
         &mut (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lsa)
           .u
           .sa,

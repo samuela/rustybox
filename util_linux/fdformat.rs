@@ -1,36 +1,16 @@
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
 use libc;
 use libc::printf;
 use libc::puts;
+use libc::stat;
 extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn xstat(pathname: *const libc::c_char, buf: *mut stat);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 }
 
-use crate::librb::size_t;
-use libc::ssize_t;
-use libc::stat;
 /*
  * fdformat.c  -  Low-level formats a floppy disk - Werner Almesberger
  * 5 July 2003 -- modified for Busybox by Erik Andersen
@@ -51,8 +31,9 @@ use libc::stat;
 //usage:       "Format floppy disk\n"
 //usage:     "\n	-n	Don't verify after format"
 /* Stuff extracted from linux/fd.h */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct floppy_struct {
   pub size: libc::c_uint,
   pub sect: libc::c_uint,
@@ -66,8 +47,9 @@ pub struct floppy_struct {
   pub name: *const libc::c_char,
   /* used only for predefined formats */
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct format_descr {
   pub device: libc::c_uint,
   pub head: libc::c_uint,
@@ -104,20 +86,21 @@ pub unsafe extern "C" fn fdformat_main(
     track: 0,
   };
   verify =
-    (getopt32(argv, b"^n\x00=1\x00" as *const u8 as *const libc::c_char) == 0) as libc::c_int;
+    (crate::libbb::getopt32::getopt32(argv, b"^n\x00=1\x00" as *const u8 as *const libc::c_char)
+      == 0) as libc::c_int;
   argv = argv.offset(optind as isize);
-  xstat(*argv, &mut st);
+  crate::libbb::xfuncs_printf::xstat(*argv, &mut st);
   if !(st.st_mode & 0o170000i32 as libc::c_uint == 0o60000i32 as libc::c_uint) {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"%s: not a block device\x00" as *const u8 as *const libc::c_char,
       *argv,
     );
     /* do not test major - perhaps this was an USB floppy */
   }
   /* O_RDWR for formatting and verifying */
-  fd = xopen(*argv, 0o2i32);
+  fd = crate::libbb::xfuncs_printf::xopen(*argv, 0o2i32);
   /* original message was: "Could not determine current format type" */
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
       | (2i32 << 0i32 + 8i32) as libc::c_uint
@@ -141,7 +124,7 @@ pub unsafe extern "C" fn fdformat_main(
   );
   /* FORMAT */
   printf(b"Formatting... \x00" as *const u8 as *const libc::c_char);
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     0u32 << 0i32 + 8i32 + 8i32 + 14i32
       | (2i32 << 0i32 + 8i32) as libc::c_uint
@@ -155,7 +138,7 @@ pub unsafe extern "C" fn fdformat_main(
   while (n as libc::c_uint) < param.track {
     descr.head = 0i32 as libc::c_uint;
     descr.track = n as libc::c_uint;
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
         | (2i32 << 0i32 + 8i32) as libc::c_uint
@@ -171,7 +154,7 @@ pub unsafe extern "C" fn fdformat_main(
     );
     if param.head == 2i32 as libc::c_uint {
       descr.head = 1i32 as libc::c_uint;
-      bb_xioctl(
+      crate::libbb::xfuncs_printf::bb_xioctl(
         fd,
         ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
           | (2i32 << 0i32 + 8i32) as libc::c_uint
@@ -184,7 +167,7 @@ pub unsafe extern "C" fn fdformat_main(
     }
     n += 1
   }
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     0u32 << 0i32 + 8i32 + 8i32 + 14i32
       | (2i32 << 0i32 + 8i32) as libc::c_uint
@@ -209,12 +192,15 @@ pub unsafe extern "C" fn fdformat_main(
         b"%3d\x08\x08\x08\x00" as *const u8 as *const libc::c_char,
         cyl,
       );
-      read_bytes = safe_read(fd, data as *mut libc::c_void, n as size_t) as libc::c_int;
+      read_bytes =
+        crate::libbb::read::safe_read(fd, data as *mut libc::c_void, n as size_t) as libc::c_int;
       if read_bytes != n {
         if read_bytes < 0i32 {
-          bb_simple_perror_msg(b"read error\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::perror_msg::bb_simple_perror_msg(
+            b"read error\x00" as *const u8 as *const libc::c_char,
+          );
         }
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"problem reading cylinder %d, expected %d, read %d\x00" as *const u8
             as *const libc::c_char,
           cyl,

@@ -1,12 +1,10 @@
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::re_pattern_buffer;
 use crate::librb::size_t;
 use c2rust_bitfields;
-use c2rust_bitfields::BitfieldStruct;
 use libc;
 extern "C" {
 
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
   #[no_mangle]
   fn regcomp(
     __preg: *mut regex_t,
@@ -22,28 +20,6 @@ extern "C" {
   ) -> size_t;
 }
 
-pub type reg_syntax_t = libc::c_ulong;
-#[derive(Copy, Clone, BitfieldStruct)]
-#[repr(C)]
-pub struct re_pattern_buffer {
-  pub buffer: *mut libc::c_uchar,
-  pub allocated: libc::c_ulong,
-  pub used: libc::c_ulong,
-  pub syntax: reg_syntax_t,
-  pub fastmap: *mut libc::c_char,
-  pub translate: *mut libc::c_uchar,
-  pub re_nsub: size_t,
-  #[bitfield(name = "can_be_null", ty = "libc::c_uint", bits = "0..=0")]
-  #[bitfield(name = "regs_allocated", ty = "libc::c_uint", bits = "1..=2")]
-  #[bitfield(name = "fastmap_accurate", ty = "libc::c_uint", bits = "3..=3")]
-  #[bitfield(name = "no_sub", ty = "libc::c_uint", bits = "4..=4")]
-  #[bitfield(name = "not_bol", ty = "libc::c_uint", bits = "5..=5")]
-  #[bitfield(name = "not_eol", ty = "libc::c_uint", bits = "6..=6")]
-  #[bitfield(name = "newline_anchor", ty = "libc::c_uint", bits = "7..=7")]
-  pub can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [u8; 1],
-  #[bitfield(padding)]
-  pub c2rust_padding: [u8; 7],
-}
 pub type regex_t = re_pattern_buffer;
 
 /*
@@ -92,7 +68,7 @@ pub unsafe extern "C" fn xregcomp(
 ) {
   let mut errmsg: *mut libc::c_char = regcomp_or_errmsg(preg, regex, cflags);
   if !errmsg.is_null() {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"bad regex \'%s\': %s\x00" as *const u8 as *const libc::c_char,
       regex,
       errmsg,

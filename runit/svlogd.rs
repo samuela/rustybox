@@ -94,70 +94,8 @@ extern "C" {
   fn gmtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
 
   #[no_mangle]
-  fn monotonic_sec() -> libc::c_uint;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn close_on_exec_on(fd: libc::c_int);
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn bb_signals_recursive_norestart(
-    sigs: libc::c_int,
-    f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
-  );
-  #[no_mangle]
-  fn sig_block(sig: libc::c_int);
-  #[no_mangle]
-  fn sig_unblock(sig: libc::c_int);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn open_read_close(
-    filename: *const libc::c_char,
-    buf: *mut libc::c_void,
-    maxsz: size_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn xatou_sfx(str: *const libc::c_char, sfx: *const suffix_mult) -> libc::c_uint;
-  #[no_mangle]
   static bkm_suffixes: [suffix_mult; 0];
-  #[no_mangle]
-  fn bin2hex(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    count: libc::c_int,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn safe_waitpid(pid: pid_t, wstat: *mut libc::c_int, options: libc::c_int) -> pid_t;
-  #[no_mangle]
-  fn wait_any_nohang(wstat: *mut libc::c_int) -> pid_t;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn get_shell_name() -> *const libc::c_char;
+
   /* '*const' ptr makes gcc optimize code much better.
    * Magic prevents ptr_to_globals from going into rodata.
    * If you want to assign a value, use SET_PTR_TO_GLOBALS(x) */
@@ -171,20 +109,17 @@ use libc::dirent;
 use libc::DIR;
 pub type nfds_t = libc::c_ulong;
 use libc::pollfd;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct timezone {
   pub tz_minuteswest: libc::c_int,
   pub tz_dsttime: libc::c_int,
 }
 pub type __timezone_ptr_t = *mut timezone;
 use libc::tm;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct suffix_mult {
-  pub suffix: [libc::c_char; 4],
-  pub mult: libc::c_uint,
-}
+
+use crate::librb::suffix_mult;
 /* Some older linkers don't perform string merging, we used to have common strings
  * as global arrays to do it by hand. But:
  * (1) newer linkers do it themselves,
@@ -206,8 +141,9 @@ pub struct suffix_mult {
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub dir: *mut logdir,
   pub verbose: libc::c_uint,
@@ -232,8 +168,9 @@ pub struct globals {
   pub dirn: libc::c_uint,
   pub blocked_sigset: sigset_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct logdir {
   pub inst: *mut libc::c_char,
   pub processor: *mut libc::c_char,
@@ -261,38 +198,46 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
 }
 /*buflen = 1024;*/
 unsafe extern "C" fn fatalx(mut m0: *const libc::c_char) {
-  bb_error_msg_and_die(b"fatal: %s\x00" as *const u8 as *const libc::c_char, m0);
+  crate::libbb::verror_msg::bb_error_msg_and_die(
+    b"fatal: %s\x00" as *const u8 as *const libc::c_char,
+    m0,
+  );
 }
 unsafe extern "C" fn warn(mut m0: *const libc::c_char) {
-  bb_perror_msg(b"warning: %s\x00" as *const u8 as *const libc::c_char, m0);
+  crate::libbb::perror_msg::bb_perror_msg(
+    b"warning: %s\x00" as *const u8 as *const libc::c_char,
+    m0,
+  );
 }
 unsafe extern "C" fn warn2(mut m0: *const libc::c_char, mut m1: *const libc::c_char) {
-  bb_perror_msg(
+  crate::libbb::perror_msg::bb_perror_msg(
     b"warning: %s: %s\x00" as *const u8 as *const libc::c_char,
     m0,
     m1,
   );
 }
 unsafe extern "C" fn warnx(mut m0: *const libc::c_char, mut m1: *const libc::c_char) {
-  bb_error_msg(
+  crate::libbb::verror_msg::bb_error_msg(
     b"warning: %s: %s\x00" as *const u8 as *const libc::c_char,
     m0,
     m1,
   );
 }
 unsafe extern "C" fn pause_nomem() {
-  bb_simple_error_msg(b"pausing: out of memory\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::verror_msg::bb_simple_error_msg(
+    b"pausing: out of memory\x00" as *const u8 as *const libc::c_char,
+  );
   sleep(3i32 as libc::c_uint);
 }
 unsafe extern "C" fn pause1cannot(mut m0: *const libc::c_char) {
-  bb_perror_msg(
+  crate::libbb::perror_msg::bb_perror_msg(
     b"pausing: can\'t %s\x00" as *const u8 as *const libc::c_char,
     m0,
   );
   sleep(3i32 as libc::c_uint);
 }
 unsafe extern "C" fn pause2cannot(mut m0: *const libc::c_char, mut m1: *const libc::c_char) {
-  bb_perror_msg(
+  crate::libbb::perror_msg::bb_perror_msg(
     b"pausing: can\'t %s %s\x00" as *const u8 as *const libc::c_char,
     m0,
     m1,
@@ -435,7 +380,7 @@ unsafe extern "C" fn fmt_time_bernstein_25(mut s: *mut libc::c_char) {
       let fresh3;
       let fresh4 = __x;
       asm!("bswap $0" : "=r" (fresh3) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh2, fresh4)) :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh2, fresh4)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh2, fresh4, fresh3);
     }
     __v
@@ -453,7 +398,7 @@ unsafe extern "C" fn fmt_time_bernstein_25(mut s: *mut libc::c_char) {
       let fresh6;
       let fresh7 = __x;
       asm!("bswap $0" : "=r" (fresh6) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh5, fresh7)) :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh5, fresh7)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh5, fresh7, fresh6);
     }
     __v
@@ -471,8 +416,7 @@ unsafe extern "C" fn fmt_time_bernstein_25(mut s: *mut libc::c_char) {
       let fresh9;
       let fresh10 = __x;
       asm!("bswap $0" : "=r" (fresh9) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh8, fresh10))
-                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh8, fresh10)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh8, fresh10, fresh9);
     }
     __v
@@ -480,7 +424,7 @@ unsafe extern "C" fn fmt_time_bernstein_25(mut s: *mut libc::c_char) {
   let fresh11 = s;
   s = s.offset(1);
   *fresh11 = '@' as i32 as libc::c_char;
-  bin2hex(s, pack.as_mut_ptr() as *mut libc::c_char, 12i32);
+  crate::libbb::xfuncs::bin2hex(s, pack.as_mut_ptr() as *mut libc::c_char, 12i32);
 }
 unsafe extern "C" fn processorstart(mut ld: *mut logdir) {
   let mut sv_ch: libc::c_char = 0;
@@ -498,7 +442,8 @@ unsafe extern "C" fn processorstart(mut ld: *mut logdir) {
   /* vfork'ed child trashes this byte, save... */
   sv_ch = (*ld).fnsave[26];
   if (*ptr_to_globals).shell.is_null() {
-    (*ptr_to_globals).shell = xstrdup(get_shell_name())
+    (*ptr_to_globals).shell =
+      crate::libbb::xfuncs_printf::xstrdup(crate::libbb::get_shell_name::get_shell_name())
   }
   loop {
     pid = vfork();
@@ -519,51 +464,51 @@ unsafe extern "C" fn processorstart(mut ld: *mut logdir) {
     + (1 << SIGALRM)
     + (1 << SIGHUP)
     , SIG_DFL);*/
-    sig_unblock(15i32); /* <- that's why we need sv_ch! */
-    sig_unblock(14i32); /* ...restore */
-    sig_unblock(1i32);
+    crate::libbb::signals::sig_unblock(15i32); /* <- that's why we need sv_ch! */
+    crate::libbb::signals::sig_unblock(14i32); /* ...restore */
+    crate::libbb::signals::sig_unblock(1i32);
     if (*ptr_to_globals).verbose != 0 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"info: processing: %s/%s\x00" as *const u8 as *const libc::c_char,
         (*ld).name,
         (*ld).fnsave.as_mut_ptr(),
       );
     }
-    fd = xopen((*ld).fnsave.as_mut_ptr(), 0i32 | 0o4000i32);
-    xmove_fd(fd, 0i32);
+    fd = crate::libbb::xfuncs_printf::xopen((*ld).fnsave.as_mut_ptr(), 0i32 | 0o4000i32);
+    crate::libbb::xfuncs_printf::xmove_fd(fd, 0i32);
     (*ld).fnsave[26] = 't' as i32 as libc::c_char;
-    fd = xopen(
+    fd = crate::libbb::xfuncs_printf::xopen(
       (*ld).fnsave.as_mut_ptr(),
       0o1i32 | 0o4000i32 | 0o1000i32 | 0o100i32,
     );
-    xmove_fd(fd, 1i32);
+    crate::libbb::xfuncs_printf::xmove_fd(fd, 1i32);
     fd = open(
       b"state\x00" as *const u8 as *const libc::c_char,
       0i32 | 0o4000i32,
     );
     if fd == -1i32 {
       if *bb_errno != 2i32 {
-        bb_perror_msg_and_die(
+        crate::libbb::perror_msg::bb_perror_msg_and_die(
           b"fatal: can\'t %s processor %s\x00" as *const u8 as *const libc::c_char,
           b"open state for\x00" as *const u8 as *const libc::c_char,
           (*ld).name,
         );
       }
-      close(xopen(
+      close(crate::libbb::xfuncs_printf::xopen(
         b"state\x00" as *const u8 as *const libc::c_char,
         0o1i32 | 0o4000i32 | 0o1000i32 | 0o100i32,
       ));
-      fd = xopen(
+      fd = crate::libbb::xfuncs_printf::xopen(
         b"state\x00" as *const u8 as *const libc::c_char,
         0i32 | 0o4000i32,
       )
     }
-    xmove_fd(fd, 4i32);
-    fd = xopen(
+    crate::libbb::xfuncs_printf::xmove_fd(fd, 4i32);
+    fd = crate::libbb::xfuncs_printf::xopen(
       b"newstate\x00" as *const u8 as *const libc::c_char,
       0o1i32 | 0o4000i32 | 0o1000i32 | 0o100i32,
     );
-    xmove_fd(fd, 5i32);
+    crate::libbb::xfuncs_printf::xmove_fd(fd, 5i32);
     execl(
       (*ptr_to_globals).shell,
       (*ptr_to_globals).shell,
@@ -571,7 +516,7 @@ unsafe extern "C" fn processorstart(mut ld: *mut logdir) {
       (*ld).processor,
       0 as *mut libc::c_void as *mut libc::c_char,
     );
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"fatal: can\'t %s processor %s\x00" as *const u8 as *const libc::c_char,
       b"run\x00" as *const u8 as *const libc::c_char,
       (*ld).name,
@@ -583,14 +528,16 @@ unsafe extern "C" fn processorstart(mut ld: *mut logdir) {
 unsafe extern "C" fn processorstop(mut ld: *mut logdir) -> libc::c_uint {
   let mut f: [libc::c_char; 28] = [0; 28];
   if (*ld).ppid != 0 {
-    sig_unblock(1i32);
-    while safe_waitpid((*ld).ppid, &mut (*ptr_to_globals).wstat, 0i32) == -1i32 {
+    crate::libbb::signals::sig_unblock(1i32);
+    while crate::libbb::xfuncs::safe_waitpid((*ld).ppid, &mut (*ptr_to_globals).wstat, 0i32)
+      == -1i32
+    {
       pause2cannot(
         b"wait for processor\x00" as *const u8 as *const libc::c_char,
         (*ld).name,
       );
     }
-    sig_block(1i32);
+    crate::libbb::signals::sig_block(1i32);
     (*ld).ppid = 0i32
   }
   if (*ld).fddir == -1i32 {
@@ -642,7 +589,7 @@ unsafe extern "C" fn processorstop(mut ld: *mut logdir) -> libc::c_uint {
   }
   (*ld).fnsave[26] = 'u' as i32 as libc::c_char;
   if unlink((*ld).fnsave.as_mut_ptr()) == -1i32 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"warning: can\'t unlink: %s/%s\x00" as *const u8 as *const libc::c_char,
       (*ld).name,
       (*ld).fnsave.as_mut_ptr(),
@@ -659,7 +606,7 @@ unsafe extern "C" fn processorstop(mut ld: *mut logdir) -> libc::c_uint {
     );
   }
   if (*ptr_to_globals).verbose != 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"info: processed: %s/%s\x00" as *const u8 as *const libc::c_char,
       (*ld).name,
       f.as_mut_ptr(),
@@ -726,7 +673,7 @@ unsafe extern "C" fn rmoldest(mut ld: *mut logdir) {
   closedir(d);
   if (*ld).nmax != 0 && n as libc::c_uint > (*ld).nmax {
     if (*ptr_to_globals).verbose != 0 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"info: delete: %s/%s\x00" as *const u8 as *const libc::c_char,
         (*ld).name,
         oldest.as_mut_ptr(),
@@ -771,7 +718,7 @@ unsafe extern "C" fn rotate(mut ld: *mut logdir) -> libc::c_uint {
       break;
     }
   }
-  now = monotonic_sec();
+  now = crate::libbb::time::monotonic_sec();
   if (*ld).rotate_period != 0 && now.wrapping_sub((*ld).next_rotate) as libc::c_int > 0i32 {
     (*ld).next_rotate = now.wrapping_add((*ld).rotate_period);
     if (*ptr_to_globals)
@@ -798,7 +745,7 @@ unsafe extern "C" fn rotate(mut ld: *mut logdir) -> libc::c_uint {
     // //close(ld->fdcur);
     fclose((*ld).filecur); /* very unlikely */
     if (*ptr_to_globals).verbose != 0 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"info: rename: %s/current %s %u\x00" as *const u8 as *const libc::c_char,
         (*ld).name,
         (*ld).fnsave.as_mut_ptr(),
@@ -846,7 +793,7 @@ unsafe extern "C" fn rotate(mut ld: *mut logdir) -> libc::c_uint {
       0i32,
       (*ptr_to_globals).linelen as size_t,
     );
-    close_on_exec_on((*ld).fdcur);
+    crate::libbb::xfuncs::close_on_exec_on((*ld).fdcur);
     (*ld).size = 0i32 as libc::c_uint;
     while fchmod((*ld).fdcur, 0o644i32 as mode_t) == -1i32 {
       pause2cannot(
@@ -942,7 +889,7 @@ unsafe extern "C" fn buffer_pwrite(
       *bb_errno = 28i32;
       if j as libc::c_uint > (*ld).nmin {
         if *oldest.as_mut_ptr() as libc::c_int == '@' as i32 {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"warning: out of disk space, delete: %s/%s\x00" as *const u8 as *const libc::c_char,
             (*ld).name,
             oldest.as_mut_ptr(),
@@ -989,7 +936,7 @@ unsafe extern "C" fn logdir_close(mut ld: *mut logdir) {
     return;
   }
   if (*ptr_to_globals).verbose != 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"info: close: %s\x00" as *const u8 as *const libc::c_char,
       (*ld).name,
     );
@@ -1034,7 +981,7 @@ unsafe extern "C" fn logdir_open(
   let mut np: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_int = 0;
   let mut st: stat = std::mem::zeroed();
-  now = monotonic_sec();
+  now = crate::libbb::time::monotonic_sec();
   (*ld).fddir = open(fn_0, 0i32 | 0o4000i32);
   if (*ld).fddir == -1i32 {
     warn2(
@@ -1043,7 +990,7 @@ unsafe extern "C" fn logdir_open(
     );
     return 0i32 as libc::c_uint;
   }
-  close_on_exec_on((*ld).fddir);
+  crate::libbb::xfuncs::close_on_exec_on((*ld).fddir);
   if fchdir((*ld).fddir) == -1i32 {
     logdir_close(ld);
     warn2(
@@ -1068,7 +1015,7 @@ unsafe extern "C" fn logdir_open(
     }
     return 0i32 as libc::c_uint;
   }
-  close_on_exec_on((*ld).fdlock);
+  crate::libbb::xfuncs::close_on_exec_on((*ld).fdlock);
   (*ld).size = 0i32 as libc::c_uint;
   (*ld).sizemax = 1000000i32 as libc::c_uint;
   (*ld).nmin = 10i32 as libc::c_uint;
@@ -1082,14 +1029,14 @@ unsafe extern "C" fn logdir_open(
   free((*ld).processor as *mut libc::c_void);
   (*ld).processor = std::ptr::null_mut::<libc::c_char>();
   /* read config */
-  i = open_read_close(
+  i = crate::libbb::read::open_read_close(
     b"config\x00" as *const u8 as *const libc::c_char,
     buf.as_mut_ptr() as *mut libc::c_void,
     (::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong)
       .wrapping_sub(1i32 as libc::c_ulong),
   ) as libc::c_int;
   if i < 0i32 && *bb_errno != 2i32 {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"warning: %s/config\x00" as *const u8 as *const libc::c_char,
       (*ld).name,
     );
@@ -1097,7 +1044,7 @@ unsafe extern "C" fn logdir_open(
   if i > 0i32 {
     buf[i as usize] = '\u{0}' as i32 as libc::c_char;
     if (*ptr_to_globals).verbose != 0 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"info: read: %s/config\x00" as *const u8 as *const libc::c_char,
         (*ld).name,
       );
@@ -1144,9 +1091,14 @@ unsafe extern "C" fn logdir_open(
           free((*ld).inst as *mut libc::c_void);
           (*ld).inst = new
         }
-        115 => (*ld).sizemax = xatou_sfx(&mut *s.offset(1), bkm_suffixes.as_ptr().offset(1)),
-        110 => (*ld).nmax = xatoi_positive(&mut *s.offset(1)) as libc::c_uint,
-        78 => (*ld).nmin = xatoi_positive(&mut *s.offset(1)) as libc::c_uint,
+        115 => {
+          (*ld).sizemax =
+            crate::libbb::xatonum::xatou_sfx(&mut *s.offset(1), bkm_suffixes.as_ptr().offset(1))
+        }
+        110 => {
+          (*ld).nmax = crate::libbb::xatonum::xatoi_positive(&mut *s.offset(1)) as libc::c_uint
+        }
+        78 => (*ld).nmin = crate::libbb::xatonum::xatoi_positive(&mut *s.offset(1)) as libc::c_uint,
         116 => {
           static mut mh_suffixes: [suffix_mult; 3] = [
             {
@@ -1171,7 +1123,8 @@ unsafe extern "C" fn logdir_open(
               init
             },
           ];
-          (*ld).rotate_period = xatou_sfx(&mut *s.offset(1), mh_suffixes.as_ptr());
+          (*ld).rotate_period =
+            crate::libbb::xatonum::xatou_sfx(&mut *s.offset(1), mh_suffixes.as_ptr());
           if (*ld).rotate_period != 0 {
             (*ld).next_rotate = now.wrapping_add((*ld).rotate_period);
             if (*ptr_to_globals).tmaxflag == 0
@@ -1285,7 +1238,7 @@ unsafe extern "C" fn logdir_open(
     0i32,
     (*ptr_to_globals).linelen as size_t,
   );
-  close_on_exec_on((*ld).fdcur);
+  crate::libbb::xfuncs::close_on_exec_on((*ld).fdcur);
   while fchmod((*ld).fdcur, 0o644i32 as mode_t) == -1i32 {
     pause2cannot(
       b"set mode of current\x00" as *const u8 as *const libc::c_char,
@@ -1294,12 +1247,12 @@ unsafe extern "C" fn logdir_open(
   }
   if (*ptr_to_globals).verbose != 0 {
     if i == 0i32 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"info: append: %s/current\x00" as *const u8 as *const libc::c_char,
         (*ld).name,
       );
     } else {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"info: new: %s/current\x00" as *const u8 as *const libc::c_char,
         (*ld).name,
       );
@@ -1339,7 +1292,7 @@ unsafe extern "C" fn ndelay_read(
   if (*ptr_to_globals).fl_flag_0 & 0o4000i32 == 0 {
     fcntl(fd, 4i32, (*ptr_to_globals).fl_flag_0 | 0o4000i32);
   }
-  count = safe_read(fd, buf, count) as size_t;
+  count = crate::libbb::read::safe_read(fd, buf, count) as size_t;
   if (*ptr_to_globals).fl_flag_0 & 0o4000i32 == 0 {
     fcntl(fd, 4i32, (*ptr_to_globals).fl_flag_0);
   }
@@ -1375,7 +1328,7 @@ unsafe extern "C" fn buffer_pread(mut s: *mut libc::c_char, mut len: libc::c_uin
       logdirs_reopen();
       (*ptr_to_globals).reopenasap = 0i32 as smallint
     }
-    now = monotonic_sec();
+    now = crate::libbb::time::monotonic_sec();
     (*ptr_to_globals).nearest_rotate = now.wrapping_add((45i32 * 60i32 + 45i32) as libc::c_uint);
     i = 0i32;
     while (i as libc::c_uint) < (*ptr_to_globals).dirn {
@@ -1466,7 +1419,7 @@ unsafe extern "C" fn buffer_pread(mut s: *mut libc::c_char, mut len: libc::c_uin
 }
 unsafe extern "C" fn sig_term_handler(mut _sig_no: libc::c_int) {
   if (*ptr_to_globals).verbose != 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"info: sig%s received\x00" as *const u8 as *const libc::c_char,
       b"term\x00" as *const u8 as *const libc::c_char,
     );
@@ -1477,13 +1430,13 @@ unsafe extern "C" fn sig_child_handler(mut _sig_no: libc::c_int) {
   let mut pid: pid_t = 0;
   let mut l: libc::c_int = 0;
   if (*ptr_to_globals).verbose != 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"info: sig%s received\x00" as *const u8 as *const libc::c_char,
       b"child\x00" as *const u8 as *const libc::c_char,
     );
   }
   loop {
-    pid = wait_any_nohang(&mut (*ptr_to_globals).wstat);
+    pid = crate::libbb::xfuncs::wait_any_nohang(&mut (*ptr_to_globals).wstat);
     if !(pid > 0i32) {
       break;
     }
@@ -1501,7 +1454,7 @@ unsafe extern "C" fn sig_child_handler(mut _sig_no: libc::c_int) {
 }
 unsafe extern "C" fn sig_alarm_handler(mut _sig_no: libc::c_int) {
   if (*ptr_to_globals).verbose != 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"info: sig%s received\x00" as *const u8 as *const libc::c_char,
       b"alarm\x00" as *const u8 as *const libc::c_char,
     );
@@ -1510,7 +1463,7 @@ unsafe extern "C" fn sig_alarm_handler(mut _sig_no: libc::c_int) {
 }
 unsafe extern "C" fn sig_hangup_handler(mut _sig_no: libc::c_int) {
   if (*ptr_to_globals).verbose != 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"info: sig%s received\x00" as *const u8 as *const libc::c_char,
       b"hangup\x00" as *const u8 as *const libc::c_char,
     );
@@ -1558,12 +1511,13 @@ pub unsafe extern "C" fn svlogd_main(
   let ref mut fresh14 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
-  *fresh14 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh14 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).linemax = 1000i32;
   (*ptr_to_globals).linecomplete = 1i32 as smallint;
   (*ptr_to_globals).replace = b"\x00" as *const u8 as *const libc::c_char;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^r:R:l:b:tv\x00tt:vv\x00" as *const u8 as *const libc::c_char,
     &mut r as *mut *mut libc::c_char,
@@ -1577,7 +1531,7 @@ pub unsafe extern "C" fn svlogd_main(
     // -r
     (*ptr_to_globals).repl = *r.offset(0); // -R
     if (*ptr_to_globals).repl == 0 || *r.offset(1) as libc::c_int != 0 {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
   }
   if opt & 2i32 as libc::c_uint != 0 {
@@ -1587,7 +1541,7 @@ pub unsafe extern "C" fn svlogd_main(
   }
   if opt & 4i32 as libc::c_uint != 0 {
     // -l
-    (*ptr_to_globals).linemax = xatou_range(
+    (*ptr_to_globals).linemax = crate::libbb::xatonum::xatou_range(
       l,
       0i32 as libc::c_uint,
       (COMMON_BUFSIZE as libc::c_int - 26i32) as libc::c_uint,
@@ -1610,15 +1564,15 @@ pub unsafe extern "C" fn svlogd_main(
   argc -= optind;
   (*ptr_to_globals).dirn = argc as libc::c_uint;
   if (*ptr_to_globals).dirn <= 0i32 as libc::c_uint {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   // //if (buflen <= linemax) bb_show_usage();
-  (*ptr_to_globals).fdwdir = xopen(
+  (*ptr_to_globals).fdwdir = crate::libbb::xfuncs_printf::xopen(
     b".\x00" as *const u8 as *const libc::c_char,
     0i32 | 0o4000i32,
   );
-  close_on_exec_on((*ptr_to_globals).fdwdir);
-  (*ptr_to_globals).dir = xzalloc(
+  crate::libbb::xfuncs::close_on_exec_on((*ptr_to_globals).fdwdir);
+  (*ptr_to_globals).dir = crate::libbb::xfuncs_printf::xzalloc(
     ((*ptr_to_globals).dirn as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<logdir>() as libc::c_ulong),
   ) as *mut logdir;
@@ -1646,19 +1600,19 @@ pub unsafe extern "C" fn svlogd_main(
     &mut (*ptr_to_globals).blocked_sigset,
     0 as *mut sigset_t,
   );
-  bb_signals_recursive_norestart(
+  crate::libbb::signals::bb_signals_recursive_norestart(
     1i32 << 15i32,
     Some(sig_term_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
-  bb_signals_recursive_norestart(
+  crate::libbb::signals::bb_signals_recursive_norestart(
     1i32 << 17i32,
     Some(sig_child_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
-  bb_signals_recursive_norestart(
+  crate::libbb::signals::bb_signals_recursive_norestart(
     1i32 << 14i32,
     Some(sig_alarm_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
-  bb_signals_recursive_norestart(
+  crate::libbb::signals::bb_signals_recursive_norestart(
     1i32 << 1i32,
     Some(sig_hangup_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
@@ -1898,7 +1852,7 @@ pub unsafe extern "C" fn svlogd_main(
         }
       }
     }
-    fflush_all();
+    crate::libbb::xfuncs_printf::fflush_all();
   }
   i = 0i32;
   while (i as libc::c_uint) < (*ptr_to_globals).dirn {

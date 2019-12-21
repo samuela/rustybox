@@ -10,55 +10,21 @@ extern "C" {
   static mut stdout: *mut FILE;
 
   #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
 
-  /*
-   * See README for additional information
-   *
-   * This file can be redistributed under the terms of the GNU Library General
-   * Public License
-   */
-  /* Constants and structures */
-  /* Iterate a function on each entry of a directory */
-  #[no_mangle]
-  fn iterate_on_dir(
-    dir_name: *const libc::c_char,
-    func: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut dirent,
-        _: *mut libc::c_void,
-      ) -> libc::c_int,
-    >,
-    private: *mut libc::c_void,
-  ) -> libc::c_int;
-  /* Get/set a file version on an ext2 file system */
-  #[no_mangle]
-  fn fgetsetversion(
-    name: *const libc::c_char,
-    get_version: *mut libc::c_ulong,
-    set_version: libc::c_ulong,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn fgetsetflags(
-    name: *const libc::c_char,
-    get_flags: *mut libc::c_ulong,
-    set_flags: libc::c_ulong,
-  ) -> libc::c_int;
-  /* Print file attributes on an ext2 file system */
-  #[no_mangle]
-  fn print_e2flags(f: *mut FILE, flags: libc::c_ulong, options: libc::c_uint);
+/*
+ * See README for additional information
+ *
+ * This file can be redistributed under the terms of the GNU Library General
+ * Public License
+ */
+/* Constants and structures */
+/* Iterate a function on each entry of a directory */
+
+/* Get/set a file version on an ext2 file system */
+
+/* Print file attributes on an ext2 file system */
+
 }
 
 use libc::dirent;
@@ -102,9 +68,12 @@ unsafe extern "C" fn list_attributes(mut name: *const libc::c_char) {
   let mut current_block: u64;
   let mut fsflags: libc::c_ulong = 0;
   let mut generation: libc::c_ulong = 0;
-  if !(fgetsetflags(name, &mut fsflags, 0i32 as libc::c_ulong) != 0i32) {
+  if !(crate::e2fsprogs::e2fs_lib::fgetsetflags(name, &mut fsflags, 0i32 as libc::c_ulong) != 0i32)
+  {
     if option_mask32 & OPT_GENERATION as libc::c_int as libc::c_uint != 0 {
-      if fgetsetversion(name, &mut generation, 0i32 as libc::c_ulong) != 0i32 {
+      if crate::e2fsprogs::e2fs_lib::fgetsetversion(name, &mut generation, 0i32 as libc::c_ulong)
+        != 0i32
+      {
         current_block = 3114758340063453716;
       } else {
         printf(b"%5lu \x00" as *const u8 as *const libc::c_char, generation);
@@ -118,17 +87,20 @@ unsafe extern "C" fn list_attributes(mut name: *const libc::c_char) {
       _ => {
         if option_mask32 & OPT_PF_LONG as libc::c_int as libc::c_uint != 0 {
           printf(b"%-28s \x00" as *const u8 as *const libc::c_char, name);
-          print_e2flags(stdout, fsflags, 1i32 as libc::c_uint);
-          bb_putchar('\n' as i32);
+          crate::e2fsprogs::e2fs_lib::print_e2flags(stdout, fsflags, 1i32 as libc::c_uint);
+          crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
         } else {
-          print_e2flags(stdout, fsflags, 0i32 as libc::c_uint);
+          crate::e2fsprogs::e2fs_lib::print_e2flags(stdout, fsflags, 0i32 as libc::c_uint);
           printf(b" %s\n\x00" as *const u8 as *const libc::c_char, name);
         }
         return;
       }
     }
   }
-  bb_perror_msg(b"reading %s\x00" as *const u8 as *const libc::c_char, name);
+  crate::libbb::perror_msg::bb_perror_msg(
+    b"reading %s\x00" as *const u8 as *const libc::c_char,
+    name,
+  );
 }
 unsafe extern "C" fn lsattr_dir_proc(
   mut dir_name: *const libc::c_char,
@@ -137,9 +109,12 @@ unsafe extern "C" fn lsattr_dir_proc(
 ) -> libc::c_int {
   let mut st: stat = std::mem::zeroed();
   let mut path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  path = concat_path_file(dir_name, (*de).d_name.as_mut_ptr());
+  path = crate::libbb::concat_path_file::concat_path_file(dir_name, (*de).d_name.as_mut_ptr());
   if lstat(path, &mut st) != 0i32 {
-    bb_perror_msg(b"stat %s\x00" as *const u8 as *const libc::c_char, path);
+    crate::libbb::perror_msg::bb_perror_msg(
+      b"stat %s\x00" as *const u8 as *const libc::c_char,
+      path,
+    );
   } else if (*de).d_name[0] as libc::c_int != '.' as i32
     || option_mask32 & OPT_ALL as libc::c_int as libc::c_uint != 0
   {
@@ -151,7 +126,7 @@ unsafe extern "C" fn lsattr_dir_proc(
           || (*de).d_name[1] as libc::c_int == '.' as i32 && (*de).d_name[2] == 0))
     {
       printf(b"\n%s:\n\x00" as *const u8 as *const libc::c_char, path);
-      iterate_on_dir(
+      crate::e2fsprogs::e2fs_lib::iterate_on_dir(
         path,
         Some(
           lsattr_dir_proc
@@ -163,7 +138,7 @@ unsafe extern "C" fn lsattr_dir_proc(
         ),
         0 as *mut libc::c_void,
       );
-      bb_putchar('\n' as i32);
+      crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     }
   }
   free(path as *mut libc::c_void);
@@ -172,11 +147,14 @@ unsafe extern "C" fn lsattr_dir_proc(
 unsafe extern "C" fn lsattr_args(mut name: *const libc::c_char) {
   let mut st: stat = std::mem::zeroed();
   if lstat(name, &mut st) == -1i32 {
-    bb_perror_msg(b"stat %s\x00" as *const u8 as *const libc::c_char, name);
+    crate::libbb::perror_msg::bb_perror_msg(
+      b"stat %s\x00" as *const u8 as *const libc::c_char,
+      name,
+    );
   } else if st.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint
     && option_mask32 & OPT_DIRS_OPT as libc::c_int as libc::c_uint == 0
   {
-    iterate_on_dir(
+    crate::e2fsprogs::e2fs_lib::iterate_on_dir(
       name,
       Some(
         lsattr_dir_proc
@@ -197,7 +175,7 @@ pub unsafe extern "C" fn lsattr_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  getopt32(argv, b"Radlv\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::getopt32::getopt32(argv, b"Radlv\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   if (*argv).is_null() {
     argv = argv.offset(-1);

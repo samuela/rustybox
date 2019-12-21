@@ -12,21 +12,6 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 /*
  * env implementation for busybox
@@ -77,7 +62,7 @@ pub unsafe extern "C" fn env_main(
 ) -> libc::c_int {
   let mut opts: libc::c_uint = 0;
   let mut unset_env: *mut llist_t = 0 as *mut llist_t;
-  opts = getopt32long(
+  opts = crate::libbb::getopt32::getopt32long(
     argv,
     b"+iu:*\x00" as *const u8 as *const libc::c_char,
     b"ignore-environment\x00\x00iunset\x00\x01u\x00" as *const u8 as *const libc::c_char,
@@ -95,7 +80,8 @@ pub unsafe extern "C" fn env_main(
     clearenv();
   }
   while !unset_env.is_null() {
-    let mut var: *mut libc::c_char = llist_pop(&mut unset_env) as *mut libc::c_char;
+    let mut var: *mut libc::c_char =
+      crate::libbb::llist::llist_pop(&mut unset_env) as *mut libc::c_char;
     /* This does not handle -uVAR=VAL
      * (coreutils _sets_ the variable in that case): */
     /*unsetenv(var);*/
@@ -105,12 +91,14 @@ pub unsafe extern "C" fn env_main(
   }
   while !(*argv).is_null() && !strchr(*argv, '=' as i32).is_null() {
     if putenv(*argv) < 0i32 {
-      bb_simple_perror_msg_and_die(b"putenv\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"putenv\x00" as *const u8 as *const libc::c_char,
+      );
     }
     argv = argv.offset(1)
   }
   if !(*argv.offset(0)).is_null() {
-    BB_EXECVP_or_die(argv);
+    crate::libbb::executable::BB_EXECVP_or_die(argv);
   }
   if !environ.is_null() {
     /* clearenv() may set environ == NULL! */
@@ -121,7 +109,7 @@ pub unsafe extern "C" fn env_main(
       ep = ep.offset(1)
     }
   }
-  fflush_stdout_and_exit(0i32);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
 }
 /*
  * Copyright (c) 1988, 1993, 1994

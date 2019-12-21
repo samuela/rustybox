@@ -6,8 +6,9 @@ extern "C" {
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct utsname {
   pub sysname: [libc::c_char; 65],
   pub nodename: [libc::c_char; 65],

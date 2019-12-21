@@ -22,33 +22,12 @@ extern "C" {
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrtoull(str: *const libc::c_char, b: libc::c_int) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xatoull_range(
-    str: *const libc::c_char,
-    l: libc::c_ulonglong,
-    u: libc::c_ulonglong,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
 pub type __cpu_mask = libc::c_ulong;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct cpu_set_t {
   pub __bits: [__cpu_mask; 16],
 }
@@ -101,7 +80,7 @@ pub struct cpu_set_t {
 pub type ul = libc::c_ulong;
 #[inline(always)]
 unsafe extern "C" fn xstrtoul(mut str: *const libc::c_char, mut b: libc::c_int) -> libc::c_ulong {
-  return xstrtoull(str, b) as libc::c_ulong;
+  return crate::libbb::xatonum::xstrtoull(str, b) as libc::c_ulong;
 }
 #[inline(always)]
 unsafe extern "C" fn xatoul_range(
@@ -109,14 +88,15 @@ unsafe extern "C" fn xatoul_range(
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
 ) -> libc::c_ulong {
-  return xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong)
+    as libc::c_ulong;
 }
 /* craft a string from the mask */
 unsafe extern "C" fn from_mask(
   mut mask: *const ul,
   mut sz_in_bytes: libc::c_uint,
 ) -> *mut libc::c_char {
-  let mut str: *mut libc::c_char = xzalloc(
+  let mut str: *mut libc::c_char = crate::libbb::xfuncs_printf::xzalloc(
     sz_in_bytes
       .wrapping_add(1i32 as libc::c_uint)
       .wrapping_mul(2i32 as libc::c_uint) as size_t,
@@ -154,7 +134,8 @@ unsafe extern "C" fn get_aff(
   let mut mask: *mut libc::c_ulong = 0 as *mut libc::c_ulong;
   let mut sz_in_bytes: libc::c_uint = *sz;
   loop {
-    mask = xrealloc(mask as *mut libc::c_void, sz_in_bytes as size_t) as *mut libc::c_ulong;
+    mask = crate::libbb::xfuncs_printf::xrealloc(mask as *mut libc::c_void, sz_in_bytes as size_t)
+      as *mut libc::c_ulong;
     r = sched_getaffinity(
       pid,
       sz_in_bytes as size_t,
@@ -167,7 +148,7 @@ unsafe extern "C" fn get_aff(
     if *bb_errno == 22i32 && sz_in_bytes as libc::c_int > 0i32 {
       continue;
     }
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t %cet pid %d\'s affinity\x00" as *const u8 as *const libc::c_char,
       'g' as i32,
       pid,
@@ -192,7 +173,8 @@ pub unsafe extern "C" fn taskset_main(
    * an argument, i.e., "-pN" is NOT valid, only "-p N"!
    * Indeed, util-linux-2.13-pre7 uses:
    * getopt_long(argc, argv, "+pchV", ...), not "...p:..." */
-  opt_p = getopt32(argv, b"^+p\x00-1\x00" as *const u8 as *const libc::c_char);
+  opt_p =
+    crate::libbb::getopt32::getopt32(argv, b"^+p\x00-1\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   let fresh1 = argv;
   argv = argv.offset(1);
@@ -214,7 +196,7 @@ pub unsafe extern "C" fn taskset_main(
         >> 1i32) as libc::c_ulong,
     ) as pid_t
   } else if (*argv).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   mask_size_in_bytes = ::std::mem::size_of::<ul>() as libc::c_ulong as libc::c_uint;
   current_new = b"current\x00" as *const u8 as *const libc::c_char;
@@ -276,7 +258,7 @@ pub unsafe extern "C" fn taskset_main(
         {
           val = ((c as libc::c_int | 0x20i32) - ('a' as i32 - 10i32)) as ul
         } else {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"bad affinity \'%s\'\x00" as *const u8 as *const libc::c_char,
             aff,
           );
@@ -312,7 +294,7 @@ pub unsafe extern "C" fn taskset_main(
       mask as *mut libc::c_void as *const cpu_set_t,
     ) != 0
     {
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"can\'t %cet pid %d\'s affinity\x00" as *const u8 as *const libc::c_char,
         's' as i32,
         pid,
@@ -323,5 +305,5 @@ pub unsafe extern "C" fn taskset_main(
       break; /* print new affinity and exit */
     }
   }
-  BB_EXECVP_or_die(argv);
+  crate::libbb::executable::BB_EXECVP_or_die(argv);
 }

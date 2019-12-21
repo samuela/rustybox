@@ -1,16 +1,10 @@
 use crate::libbb::xfuncs_printf::xmalloc;
-use crate::librb::size_t;
 use libc;
 use libc::free;
 use libc::strcmp;
-extern "C" {
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-}
-
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct llist_t {
   pub link: *mut llist_t,
   pub data: *mut libc::c_char,
@@ -38,7 +32,9 @@ pub unsafe extern "C" fn llist_add_to_end(
   while !(*list_head).is_null() {
     list_head = &mut (**list_head).link
   }
-  *list_head = xzalloc(::std::mem::size_of::<llist_t>() as libc::c_ulong) as *mut llist_t;
+  *list_head =
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<llist_t>() as libc::c_ulong)
+      as *mut llist_t;
   (**list_head).data = data as *mut libc::c_char;
   /*(*list_head)->link = NULL;*/
 }

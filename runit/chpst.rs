@@ -4,13 +4,13 @@ use crate::librb::size_t;
 use libc;
 use libc::close;
 use libc::closedir;
+use libc::dirent;
 use libc::gid_t;
 use libc::open;
 use libc::readdir;
 use libc::setsid;
-use libc::ssize_t;
 use libc::strchr;
-use libc::uid_t;
+use libc::DIR;
 extern "C" {
 
   #[no_mangle]
@@ -29,49 +29,12 @@ extern "C" {
   fn setgroups(__n: size_t, __groups: *const gid_t) -> libc::c_int;
 
   #[no_mangle]
-  fn xopendir(path: *const libc::c_char) -> *mut DIR;
-  #[no_mangle]
-  fn xsetgid(gid: gid_t);
-  #[no_mangle]
-  fn xsetuid(uid: uid_t);
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn xfchdir(fd: libc::c_int);
-  #[no_mangle]
-  fn xchroot(path: *const libc::c_char);
-  #[no_mangle]
-  fn xsetenv(key: *const libc::c_char, value: *const libc::c_char);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatoi(str: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn xget_uidgid(_: *mut bb_uidgid_t, _: *const libc::c_char);
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
 }
 
 pub type __rlim64_t = libc::c_ulong;
 
-use libc::dirent;
-use libc::DIR;
 pub type __rlimit_resource = libc::c_uint;
 pub const __RLIM_NLIMITS: __rlimit_resource = 16;
 pub const __RLIMIT_NLIMITS: __rlimit_resource = 16;
@@ -93,8 +56,9 @@ pub const RLIMIT_DATA: __rlimit_resource = 2;
 pub const RLIMIT_FSIZE: __rlimit_resource = 1;
 pub const RLIMIT_CPU: __rlimit_resource = 0;
 pub type rlim_t = __rlim64_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct rlimit {
   pub rlim_cur: rlim_t,
   pub rlim_max: rlim_t,
@@ -296,12 +260,12 @@ unsafe extern "C" fn edir(mut directory_name: *const libc::c_char) {
   let mut dir: *mut DIR = 0 as *mut DIR;
   let mut d: *mut dirent = 0 as *mut dirent;
   let mut fd: libc::c_int = 0;
-  wdir = xopen(
+  wdir = crate::libbb::xfuncs_printf::xopen(
     b".\x00" as *const u8 as *const libc::c_char,
     0i32 | 0o4000i32,
   );
-  xchdir(directory_name);
-  dir = xopendir(b".\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::xfuncs_printf::xchdir(directory_name);
+  dir = crate::libbb::xfuncs_printf::xopendir(b".\x00" as *const u8 as *const libc::c_char);
   loop {
     let mut buf: [libc::c_char; 256] = [0; 256];
     let mut tail: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -310,7 +274,7 @@ unsafe extern "C" fn edir(mut directory_name: *const libc::c_char) {
     d = readdir(dir);
     if d.is_null() {
       if *bb_errno != 0 {
-        bb_perror_msg_and_die(
+        crate::libbb::perror_msg::bb_perror_msg_and_die(
           b"readdir %s\x00" as *const u8 as *const libc::c_char,
           directory_name,
         );
@@ -324,21 +288,21 @@ unsafe extern "C" fn edir(mut directory_name: *const libc::c_char) {
       if fd < 0i32 {
         if *bb_errno == 21i32 && !directory_name.is_null() {
           if option_mask32 & OPT_v as libc::c_int as libc::c_uint != 0 {
-            bb_perror_msg(
+            crate::libbb::perror_msg::bb_perror_msg(
               b"warning: %s/%s is a directory\x00" as *const u8 as *const libc::c_char,
               directory_name,
               (*d).d_name.as_mut_ptr(),
             );
           }
         } else {
-          bb_perror_msg_and_die(
+          crate::libbb::perror_msg::bb_perror_msg_and_die(
             b"open %s/%s\x00" as *const u8 as *const libc::c_char,
             directory_name,
             (*d).d_name.as_mut_ptr(),
           );
         }
       } else {
-        size = full_read(
+        size = crate::libbb::read::full_read(
           fd,
           buf.as_mut_ptr() as *mut libc::c_void,
           (::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong)
@@ -346,7 +310,7 @@ unsafe extern "C" fn edir(mut directory_name: *const libc::c_char) {
         ) as libc::c_int;
         close(fd);
         if size < 0i32 {
-          bb_perror_msg_and_die(
+          crate::libbb::perror_msg::bb_perror_msg_and_die(
             b"read %s/%s\x00" as *const u8 as *const libc::c_char,
             directory_name,
             (*d).d_name.as_mut_ptr(),
@@ -372,13 +336,13 @@ unsafe extern "C" fn edir(mut directory_name: *const libc::c_char) {
               break;
             }
           }
-          xsetenv((*d).d_name.as_mut_ptr(), buf.as_mut_ptr());
+          crate::libbb::xfuncs_printf::xsetenv((*d).d_name.as_mut_ptr(), buf.as_mut_ptr());
         }
       }
     }
   }
   closedir(dir);
-  xfchdir(wdir);
+  crate::libbb::xfuncs_printf::xfchdir(wdir);
   close(wdir);
 }
 unsafe extern "C" fn limit(mut what: libc::c_int, mut l: libc::c_long) {
@@ -394,7 +358,9 @@ unsafe extern "C" fn limit(mut what: libc::c_int, mut l: libc::c_long) {
     r.rlim_cur = l as rlim_t
   }
   if setrlimit(what as __rlimit_resource_t, &mut r) == -1i32 {
-    bb_simple_perror_msg_and_die(b"setrlimit\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"setrlimit\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 #[no_mangle]
@@ -427,7 +393,7 @@ pub unsafe extern "C" fn chpst_main(
     // FIXME: can we live with int-sized limits?
     // can we live with 40000 days?
     // if yes -> getopt converts strings to numbers for us
-    opt = getopt32(
+    opt = crate::libbb::getopt32::getopt32(
       argv,
       b"^+a:+c:+d:+f:+l:+m:+o:+p:+r:+s:+t:+u:U:e:/:n:vP012\x00-1\x00" as *const u8
         as *const libc::c_char,
@@ -464,7 +430,7 @@ pub unsafe extern "C" fn chpst_main(
     option_mask32 = opt;
     argv = argv.offset(1);
     if (*argv).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
   }
   // envdir?
@@ -493,7 +459,7 @@ pub unsafe extern "C" fn chpst_main(
   }
   // we must have PROG [ARGS]
   if (*argv).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   // set limits
   if opt & OPT_d as libc::c_int as libc::c_uint != 0 {
@@ -533,37 +499,41 @@ pub unsafe extern "C" fn chpst_main(
     edir(env_dir);
   }
   if opt & (OPT_u as libc::c_int | OPT_U as libc::c_int) as libc::c_uint != 0 {
-    xget_uidgid(&mut ugid, set_user);
+    crate::libpwdgrp::uidgid_get::xget_uidgid(&mut ugid, set_user);
   }
   // chrooted jail must have /etc/passwd if we move this after chroot.
   // OTOH chroot fails for non-roots.
   // Solution: cache uid/gid before chroot, apply uid/gid after.
   if opt & OPT_U as libc::c_int as libc::c_uint != 0 {
-    xsetenv(
+    crate::libbb::xfuncs_printf::xsetenv(
       b"GID\x00" as *const u8 as *const libc::c_char,
-      utoa(ugid.gid),
+      crate::libbb::xfuncs::utoa(ugid.gid),
     );
-    xsetenv(
+    crate::libbb::xfuncs_printf::xsetenv(
       b"UID\x00" as *const u8 as *const libc::c_char,
-      utoa(ugid.uid),
+      crate::libbb::xfuncs::utoa(ugid.uid),
     );
   }
   if opt & OPT_root as libc::c_int as libc::c_uint != 0 {
-    xchroot(root);
+    crate::libbb::xfuncs_printf::xchroot(root);
   }
   /* nice should be done before xsetuid */
   if opt & OPT_n as libc::c_int as libc::c_uint != 0 {
     *bb_errno = 0i32;
-    if nice(xatoi(nicestr)) == -1i32 {
-      bb_simple_perror_msg_and_die(b"nice\x00" as *const u8 as *const libc::c_char);
+    if nice(crate::libbb::xatonum::xatoi(nicestr)) == -1i32 {
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"nice\x00" as *const u8 as *const libc::c_char,
+      );
     }
   }
   if opt & OPT_u as libc::c_int as libc::c_uint != 0 {
     if setgroups(1i32 as size_t, &mut ugid.gid) == -1i32 {
-      bb_simple_perror_msg_and_die(b"setgroups\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"setgroups\x00" as *const u8 as *const libc::c_char,
+      );
     }
-    xsetgid(ugid.gid);
-    xsetuid(ugid.uid);
+    crate::libbb::xfuncs_printf::xsetgid(ugid.gid);
+    crate::libbb::xfuncs_printf::xsetuid(ugid.uid);
   }
   if opt & OPT_0 as libc::c_int as libc::c_uint != 0 {
     close(0i32);
@@ -574,5 +544,5 @@ pub unsafe extern "C" fn chpst_main(
   if opt & OPT_2 as libc::c_int as libc::c_uint != 0 {
     close(2i32);
   }
-  BB_EXECVP_or_die(argv);
+  crate::libbb::executable::BB_EXECVP_or_die(argv);
 }

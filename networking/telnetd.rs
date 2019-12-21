@@ -1,5 +1,6 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::len_and_sockaddr;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -13,6 +14,8 @@ use libc::ioctl;
 use libc::openlog;
 use libc::pid_t;
 use libc::setsid;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::ssize_t;
 use libc::suseconds_t;
 use libc::termios;
@@ -59,64 +62,11 @@ extern "C" {
   fn tcgetattr(__fd: libc::c_int, __termios_p: *mut termios) -> libc::c_int;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xgetpty(line: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn ndelay_on(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn close_on_exec_on(fd: libc::c_int);
-  #[no_mangle]
-  fn xdup2(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xlisten(s: libc::c_int, backlog: libc::c_int);
-  #[no_mangle]
-  fn setsockopt_keepalive(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn create_and_bind_stream_or_die(bindaddr: *const libc::c_char, port: libc::c_int)
-    -> libc::c_int;
-  #[no_mangle]
-  fn get_peer_lsa(fd: libc::c_int) -> *mut len_and_sockaddr;
-  #[no_mangle]
-  fn xmalloc_sockaddr2dotted(sa: *const sockaddr) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn safe_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn xatou16(numstr: *const libc::c_char) -> u16;
-  #[no_mangle]
-  fn write_new_utmp(
-    pid: pid_t,
-    new_type: libc::c_int,
-    tty_name: *const libc::c_char,
-    username: *const libc::c_char,
-    hostname: *const libc::c_char,
-  );
-  #[no_mangle]
-  fn update_utmp_DEAD_PROCESS(pid: pid_t);
-  #[no_mangle]
-  fn wait_any_nohang(wstat: *mut libc::c_int) -> pid_t;
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn print_login_issue(issue_file: *const libc::c_char, tty: *const libc::c_char);
-  #[no_mangle]
-  fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
+
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
@@ -134,17 +84,19 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-pub type socklen_t = __socklen_t;
+use crate::librb::socklen_t;
 pub type __fd_mask = libc::c_long;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fd_set {
   pub fds_bits: [__fd_mask; 16],
 }
 use libc::sa_family_t;
 use libc::sockaddr;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __SOCKADDR_ARG {
   pub __sockaddr__: *mut sockaddr,
   pub __sockaddr_at__: *mut sockaddr_at,
@@ -160,50 +112,20 @@ pub union __SOCKADDR_ARG {
   pub __sockaddr_un__: *mut sockaddr_un,
   pub __sockaddr_x25__: *mut sockaddr_x25,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_0,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_0 {
   pub sa: sockaddr,
   pub sin: sockaddr_in,
@@ -214,16 +136,18 @@ pub const LOGMODE_BOTH: C2RustUnnamed_1 = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed_1 = 2;
 pub const LOGMODE_STDIO: C2RustUnnamed_1 = 1;
 pub const LOGMODE_NONE: C2RustUnnamed_1 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub sessions: *mut tsession,
   pub loginpath: *const libc::c_char,
   pub issuefile: *const libc::c_char,
   pub maxfd: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct tsession {
   pub next: *mut tsession,
   pub shell_pid: pid_t,
@@ -302,7 +226,8 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
       if !found.is_null() {
         rc = found.wrapping_offset_from(buf) + 1
       }
-      rc = safe_write((*ts).ptyfd, buf as *const libc::c_void, rc as size_t);
+      rc =
+        crate::libbb::safe_write::safe_write((*ts).ptyfd, buf as *const libc::c_void, rc as size_t);
       if rc <= 0 {
         return rc;
       }
@@ -361,7 +286,7 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
       if *buf.offset(1) as libc::c_int == 255i32 {
         /* Literal 255 (emacs M-DEL) */
         //bb_error_msg("255!");
-        rc = safe_write(
+        rc = crate::libbb::safe_write::safe_write(
           (*ts).ptyfd,
           &mut *buf.offset(1) as *mut libc::c_uchar as *const libc::c_void,
           1i32 as size_t,
@@ -501,7 +426,11 @@ unsafe extern "C" fn safe_write_double_iac(
     }
     if *buf as libc::c_int == 255i32 as libc::c_char as libc::c_int {
       static mut IACIAC: [libc::c_char; 2] = [255i32 as libc::c_char, 255i32 as libc::c_char];
-      rc = safe_write(fd, IACIAC.as_ptr() as *const libc::c_void, 2i32 as size_t) as size_t;
+      rc = crate::libbb::safe_write::safe_write(
+        fd,
+        IACIAC.as_ptr() as *const libc::c_void,
+        2i32 as size_t,
+      ) as size_t;
       /* BUG: if partial write was only 1 byte long, we end up emitting just one IAC */
       if rc != 2i32 as libc::c_ulong {
         break;
@@ -516,7 +445,7 @@ unsafe extern "C" fn safe_write_double_iac(
       if !IACptr.is_null() {
         wr = IACptr.wrapping_offset_from(buf) as libc::c_long as size_t
       }
-      rc = safe_write(fd, buf as *const libc::c_void, wr) as size_t;
+      rc = crate::libbb::safe_write::safe_write(fd, buf as *const libc::c_void, wr) as size_t;
       if rc != wr {
         break;
       }
@@ -550,28 +479,28 @@ unsafe extern "C" fn make_new_session(mut sock: libc::c_int) -> *mut tsession {
   let mut fd: libc::c_int = 0;
   let mut pid: libc::c_int = 0;
   let mut tty_name: [libc::c_char; 16] = [0; 16];
-  let mut ts: *mut tsession = xzalloc(
+  let mut ts: *mut tsession = crate::libbb::xfuncs_printf::xzalloc(
     (::std::mem::size_of::<tsession>() as libc::c_ulong)
       .wrapping_add((BUFSIZE as libc::c_int * 2i32) as libc::c_ulong),
   ) as *mut tsession;
   /*ts->buf1 = (char *)(ts + 1);*/
   /*ts->buf2 = ts->buf1 + BUFSIZE;*/
   /* Got a new connection, set up a tty */
-  fd = xgetpty(tty_name.as_mut_ptr());
+  fd = crate::libbb::getpty::xgetpty(tty_name.as_mut_ptr());
   if fd > (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).maxfd {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).maxfd = fd
   }
   (*ts).ptyfd = fd;
-  ndelay_on(fd);
-  close_on_exec_on(fd);
+  crate::libbb::xfuncs::ndelay_on(fd);
+  crate::libbb::xfuncs::close_on_exec_on(fd);
   /* SO_KEEPALIVE by popular demand */
-  setsockopt_keepalive(sock);
+  crate::libbb::xconnect::setsockopt_keepalive(sock);
   (*ts).sockfd_read = sock;
-  ndelay_on(sock);
+  crate::libbb::xfuncs::ndelay_on(sock);
   if sock == 0i32 {
     /* We are called with fd 0 - we are in inetd mode */
     sock += 1; /* so use fd 1 for output */
-    ndelay_on(sock);
+    crate::libbb::xfuncs::ndelay_on(sock);
   }
   (*ts).sockfd_write = sock;
   if sock > (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).maxfd {
@@ -597,12 +526,12 @@ unsafe extern "C" fn make_new_session(mut sock: libc::c_int) -> *mut tsession {
   ];
   /*ts->rdidx2 = 0; - xzalloc did it */
   /*ts->size2 = 0;*/
-  safe_write(
+  crate::libbb::safe_write::safe_write(
     sock,
     iacs_to_send.as_ptr() as *const libc::c_void,
     ::std::mem::size_of::<[libc::c_char; 12]>() as libc::c_ulong,
   );
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   /* This confuses safe_write_double_iac(), it will try to duplicate
    * each IAC... */
   //memcpy(TS_BUF2(ts), iacs_to_send, sizeof(iacs_to_send));
@@ -614,7 +543,9 @@ unsafe extern "C" fn make_new_session(mut sock: libc::c_int) -> *mut tsession {
     free(ts as *mut libc::c_void);
     close(fd);
     /* sock will be closed by caller */
-    bb_simple_perror_msg(b"vfork\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg(
+      b"vfork\x00" as *const u8 as *const libc::c_char,
+    );
     return 0 as *mut tsession;
   }
   if pid > 0i32 {
@@ -625,15 +556,15 @@ unsafe extern "C" fn make_new_session(mut sock: libc::c_int) -> *mut tsession {
   /* Child */
   /* Careful - we are after vfork! */
   /* Restore default signal handling ASAP */
-  bb_signals((1i32 << 17i32) + (1i32 << 13i32), None);
+  crate::libbb::signals::bb_signals((1i32 << 17i32) + (1i32 << 13i32), None);
   pid = getpid();
-  let mut lsa: *mut len_and_sockaddr = get_peer_lsa(sock);
+  let mut lsa: *mut len_and_sockaddr = crate::libbb::xconnect::get_peer_lsa(sock);
   let mut hostname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if !lsa.is_null() {
-    hostname = xmalloc_sockaddr2dotted(&mut (*lsa).u.sa);
+    hostname = crate::libbb::xconnect::xmalloc_sockaddr2dotted(&mut (*lsa).u.sa);
     free(lsa as *mut libc::c_void);
   }
-  write_new_utmp(
+  crate::libbb::utmp::write_new_utmp(
     pid,
     6i32,
     tty_name.as_mut_ptr(),
@@ -647,9 +578,9 @@ unsafe extern "C" fn make_new_session(mut sock: libc::c_int) -> *mut tsession {
   /* NB: setsid() disconnects from any previous ctty's. Therefore
    * we must open child's side of the tty AFTER setsid! */
   close(0i32); /* becomes our ctty */
-  xopen(tty_name.as_mut_ptr(), 0o2i32); /* switch this tty's process group to us */
-  xdup2(0i32, 1i32);
-  xdup2(0i32, 2i32);
+  crate::libbb::xfuncs_printf::xopen(tty_name.as_mut_ptr(), 0o2i32); /* switch this tty's process group to us */
+  crate::libbb::xfuncs_printf::xdup2(0i32, 1i32);
+  crate::libbb::xfuncs_printf::xdup2(0i32, 2i32);
   tcsetpgrp(0i32, pid);
   /* The pseudo-terminal allocated to the client is configured to operate
    * in cooked mode, and with XTABS CRMOD enabled (see tty(4)) */
@@ -659,14 +590,14 @@ unsafe extern "C" fn make_new_session(mut sock: libc::c_int) -> *mut tsession {
   termbuf.c_iflag |= 0o400i32 as libc::c_uint;
   termbuf.c_iflag &= !0o10000i32 as libc::c_uint;
   /*termbuf.c_lflag &= ~ICANON;*/
-  tcsetattr_stdin_TCSANOW(&mut termbuf);
+  crate::libbb::xfuncs::tcsetattr_stdin_TCSANOW(&mut termbuf);
   /* Uses FILE-based I/O to stdout, but does fflush_all(),
    * so should be safe with vfork.
    * I fear, though, that some users will have ridiculously big
    * issue files, and they may block writing to fd 1,
    * (parent is supposed to read it, but parent waits
    * for vforked child to exec!) */
-  print_login_issue(
+  crate::libbb::login::print_login_issue(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).issuefile,
     tty_name.as_mut_ptr(),
   );
@@ -730,7 +661,7 @@ unsafe extern "C" fn handle_sigchld(mut _sig: libc::c_int) {
   loop
   /* Looping: more than one child may have exited */
   {
-    pid = wait_any_nohang(0 as *mut libc::c_int); /* for compiler */
+    pid = crate::libbb::xfuncs::wait_any_nohang(0 as *mut libc::c_int); /* for compiler */
     if pid <= 0i32 {
       break;
     }
@@ -738,7 +669,7 @@ unsafe extern "C" fn handle_sigchld(mut _sig: libc::c_int) {
     while !ts.is_null() {
       if (*ts).shell_pid == pid {
         (*ts).shell_pid = -1i32;
-        update_utmp_DEAD_PROCESS(pid);
+        crate::libbb::utmp::update_utmp_DEAD_PROCESS(pid);
         break;
       } else {
         ts = (*ts).next
@@ -770,7 +701,7 @@ pub unsafe extern "C" fn telnetd_main(
   *fresh2 = b"/etc/issue.net\x00" as *const u8 as *const libc::c_char;
   /* Even if !STANDALONE, we accept (and ignore) -i, thus people
    * don't need to guess whether it's ok to pass -i to us */
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^f:l:Kip:b:FSw:+\x00wF:i--w:w--i\x00" as *const u8 as *const libc::c_char,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).issuefile as *mut *const libc::c_char,
@@ -787,7 +718,7 @@ pub unsafe extern "C" fn telnetd_main(
     if opt & OPT_FOREGROUND as libc::c_int as libc::c_uint == 0 {
       /* DAEMON_CHDIR_ROOT was giving inconsistent
        * behavior with/without -F, -i */
-      bb_daemonize_or_rexec(0i32);
+      crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(0i32);
       /*was DAEMON_CHDIR_ROOT*/
     }
   }
@@ -815,12 +746,13 @@ pub unsafe extern "C" fn telnetd_main(
     if opt & OPT_WAIT as libc::c_int as libc::c_uint == 0 {
       let mut portnbr: libc::c_uint = 23i32 as libc::c_uint;
       if opt & OPT_PORT as libc::c_int as libc::c_uint != 0 {
-        portnbr = xatou16(opt_portnbr) as libc::c_uint
+        portnbr = crate::libbb::xatonum::xatou16(opt_portnbr) as libc::c_uint
       }
-      master_fd = create_and_bind_stream_or_die(opt_bindaddr, portnbr as libc::c_int);
-      xlisten(master_fd, 1i32);
+      master_fd =
+        crate::libbb::xconnect::create_and_bind_stream_or_die(opt_bindaddr, portnbr as libc::c_int);
+      crate::libbb::xfuncs_printf::xlisten(master_fd, 1i32);
     }
-    close_on_exec_on(master_fd);
+    crate::libbb::xfuncs::close_on_exec_on(master_fd);
   }
   /* We don't want to die if just one session is broken */
   signal(
@@ -868,10 +800,10 @@ pub unsafe extern "C" fn telnetd_main(
     let fresh8 = (::std::mem::size_of::<fd_set>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<__fd_mask>() as libc::c_ulong);
     let fresh9 = &mut *rdfdset.fds_bits.as_mut_ptr().offset(0) as *mut __fd_mask;
-    asm!("cld; rep; stosq" : "={cx}" (fresh5), "={di}" (fresh7) : "{ax}"
-             (0i32), "0" (c2rust_asm_casts::AsmCast::cast_in(fresh4, fresh8)),
-             "1" (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh9)) :
-             "memory" : "volatile");
+    asm!("cld; rep; stosq" : "={cx}" (fresh5), "={di}" (fresh7) : "{ax}" (0i32),
+     "0" (c2rust_asm_casts::AsmCast::cast_in(fresh4, fresh8)), "1"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh9)) : "memory" :
+     "volatile");
     c2rust_asm_casts::AsmCast::cast_out(fresh4, fresh8, fresh5);
     c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh9, fresh7);
     let mut __d0_0: libc::c_int = 0;
@@ -883,11 +815,10 @@ pub unsafe extern "C" fn telnetd_main(
     let fresh14 = (::std::mem::size_of::<fd_set>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<__fd_mask>() as libc::c_ulong);
     let fresh15 = &mut *wrfdset.fds_bits.as_mut_ptr().offset(0) as *mut __fd_mask;
-    asm!("cld; rep; stosq" : "={cx}" (fresh11), "={di}" (fresh13) : "{ax}"
-             (0i32), "0"
-             (c2rust_asm_casts::AsmCast::cast_in(fresh10, fresh14)), "1"
-             (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh15)) : "memory"
-             : "volatile");
+    asm!("cld; rep; stosq" : "={cx}" (fresh11), "={di}" (fresh13) : "{ax}" (0i32),
+     "0" (c2rust_asm_casts::AsmCast::cast_in(fresh10, fresh14)), "1"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh15)) : "memory" :
+     "volatile");
     c2rust_asm_casts::AsmCast::cast_out(fresh10, fresh14, fresh11);
     c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh15, fresh13);
     /* Select on the master socket, all telnet sockets and their
@@ -1004,7 +935,7 @@ pub unsafe extern "C" fn telnetd_main(
       if fd < 0i32 {
         continue;
       }
-      close_on_exec_on(fd);
+      crate::libbb::xfuncs::close_on_exec_on(fd);
       /* Create a new session and link it into active list */
       new_ts = make_new_session(fd);
       if !new_ts.is_null() {
@@ -1109,7 +1040,7 @@ pub unsafe extern "C" fn telnetd_main(
                   } else {
                     (BUFSIZE as libc::c_int) - (*ts).size1
                   };
-                count = safe_read(
+                count = crate::libbb::read::safe_read(
                   (*ts).sockfd_read,
                   (ts.offset(1) as *mut libc::c_uchar).offset((*ts).rdidx1 as isize)
                     as *mut libc::c_void,
@@ -1163,7 +1094,7 @@ pub unsafe extern "C" fn telnetd_main(
                       } else {
                         (BUFSIZE as libc::c_int) - (*ts).size2
                       };
-                      count = safe_read(
+                      count = crate::libbb::read::safe_read(
                         (*ts).ptyfd,
                         (ts.offset(1) as *mut libc::c_uchar)
                           .offset(BUFSIZE as libc::c_int as isize)
@@ -1220,7 +1151,7 @@ pub unsafe extern "C" fn telnetd_main(
         _ => {}
       }
       if (*ts).shell_pid > 0i32 {
-        update_utmp_DEAD_PROCESS((*ts).shell_pid);
+        crate::libbb::utmp::update_utmp_DEAD_PROCESS((*ts).shell_pid);
       }
       free_session(ts);
       ts = next_0

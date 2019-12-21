@@ -8,19 +8,12 @@ use libc::passwd;
 use libc::uid_t;
 extern "C" {
   /* Search for an entry with a matching user ID.  */
-  #[no_mangle]
-  fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;
 
   /* Search for an entry with a matching username.  */
 
   /* Search for an entry with a matching group ID.  */
 
   /* Search for an entry with a matching group name.  */
-  #[no_mangle]
-  fn bb_internal_getgrnam(__name: *const libc::c_char) -> *mut group;
-
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
 
   /* Non-aborting kind of convertors: bb_strto[u][l]l */
   /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
@@ -33,15 +26,7 @@ extern "C" {
    * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
    *    return value is all-ones in this case.
    */
-  #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
 
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
 #[inline(always)]
@@ -50,7 +35,7 @@ unsafe extern "C" fn bb_strtoul(
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_ulong {
-  return bb_strtoull(arg, endp, base) as libc::c_ulong;
+  return crate::libbb::bb_strtonum::bb_strtoull(arg, endp, base) as libc::c_ulong;
 }
 
 /*
@@ -69,7 +54,7 @@ unsafe extern "C" fn bb_strtoul(
 pub unsafe extern "C" fn xgetpwnam(mut name: *const libc::c_char) -> *mut passwd {
   let mut pw: *mut passwd = bb_internal_getpwnam(name);
   if pw.is_null() {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"unknown user %s\x00" as *const u8 as *const libc::c_char,
       name,
     );
@@ -78,9 +63,9 @@ pub unsafe extern "C" fn xgetpwnam(mut name: *const libc::c_char) -> *mut passwd
 }
 #[no_mangle]
 pub unsafe extern "C" fn xgetgrnam(mut name: *const libc::c_char) -> *mut group {
-  let mut gr: *mut group = bb_internal_getgrnam(name);
+  let mut gr: *mut group = crate::libpwdgrp::pwd_grp::bb_internal_getgrnam(name);
   if gr.is_null() {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"unknown group %s\x00" as *const u8 as *const libc::c_char,
       name,
     );
@@ -90,9 +75,9 @@ pub unsafe extern "C" fn xgetgrnam(mut name: *const libc::c_char) -> *mut group 
 #[no_mangle]
 pub unsafe extern "C" fn xgetpwuid(mut uid: uid_t) -> *mut passwd {
   /* Note: used in nofork applets (whoami), be careful not to leak anything */
-  let mut pw: *mut passwd = bb_internal_getpwuid(uid);
+  let mut pw: *mut passwd = crate::libpwdgrp::pwd_grp::bb_internal_getpwuid(uid);
   if pw.is_null() {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"unknown uid %u\x00" as *const u8 as *const libc::c_char,
       uid,
     );
@@ -103,7 +88,7 @@ pub unsafe extern "C" fn xgetpwuid(mut uid: uid_t) -> *mut passwd {
 pub unsafe extern "C" fn xgetgrgid(mut gid: gid_t) -> *mut group {
   let mut gr: *mut group = bb_internal_getgrgid(gid);
   if gr.is_null() {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"unknown gid %u\x00" as *const u8 as *const libc::c_char,
       gid,
     );
@@ -123,7 +108,7 @@ pub unsafe extern "C" fn xgid2group(mut gid: gid_t) -> *mut libc::c_char {
 }
 #[no_mangle]
 pub unsafe extern "C" fn uid2uname(mut uid: uid_t) -> *mut libc::c_char {
-  let mut pw: *mut passwd = bb_internal_getpwuid(uid);
+  let mut pw: *mut passwd = crate::libpwdgrp::pwd_grp::bb_internal_getpwuid(uid);
   return if !pw.is_null() {
     (*pw).pw_name
   } else {
@@ -142,7 +127,11 @@ pub unsafe extern "C" fn gid2group(mut gid: gid_t) -> *mut libc::c_char {
 #[no_mangle]
 pub unsafe extern "C" fn uid2uname_utoa(mut uid: uid_t) -> *mut libc::c_char {
   let mut name: *mut libc::c_char = uid2uname(uid);
-  return if !name.is_null() { name } else { utoa(uid) };
+  return if !name.is_null() {
+    name
+  } else {
+    crate::libbb::xfuncs::utoa(uid)
+  };
 }
 /* always sets uid and gid; returns 0 on failure */
 /* always sets uid and gid; exits on failure */
@@ -150,7 +139,11 @@ pub unsafe extern "C" fn uid2uname_utoa(mut uid: uid_t) -> *mut libc::c_char {
 #[no_mangle]
 pub unsafe extern "C" fn gid2group_utoa(mut gid: gid_t) -> *mut libc::c_char {
   let mut name: *mut libc::c_char = gid2group(gid);
-  return if !name.is_null() { name } else { utoa(gid) };
+  return if !name.is_null() {
+    name
+  } else {
+    crate::libbb::xfuncs::utoa(gid)
+  };
 }
 #[no_mangle]
 pub unsafe extern "C" fn xuname2uid(mut name: *const libc::c_char) -> libc::c_long {

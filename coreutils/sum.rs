@@ -6,14 +6,6 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn open_or_warn_stdin(pathname: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf_0: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
@@ -65,12 +57,12 @@ unsafe extern "C" fn sum_file(
   let mut r: libc::c_int = 0;
   /* The sum of all the input bytes, modulo (UINT_MAX + 1).  */
   let mut s: libc::c_uint = 0i32 as libc::c_uint;
-  fd = open_or_warn_stdin(file);
+  fd = crate::libbb::wfopen_input::open_or_warn_stdin(file);
   if fd == -1i32 {
     return 0i32 as libc::c_uint;
   }
   loop {
-    let mut bytes_read: size_t = safe_read(
+    let mut bytes_read: size_t = crate::libbb::read::safe_read(
       fd,
       bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
       COMMON_BUFSIZE as libc::c_int as size_t,
@@ -80,7 +72,7 @@ unsafe extern "C" fn sum_file(
       if bytes_read == 0 && r == 0 {
         break;
       }
-      bb_simple_perror_msg(file);
+      crate::libbb::perror_msg::bb_simple_perror_msg(file);
       return 0i32 as libc::c_uint;
     } else {
       total_bytes = total_bytes.wrapping_add(bytes_read as libc::c_ulonglong);
@@ -145,7 +137,7 @@ pub unsafe extern "C" fn sum_main(
 ) -> libc::c_int {
   let mut n: libc::c_uint = 0;
   let mut type_0: libc::c_uint = SUM_BSD as libc::c_int as libc::c_uint;
-  n = getopt32(argv, b"sr\x00" as *const u8 as *const libc::c_char);
+  n = crate::libbb::getopt32::getopt32(argv, b"sr\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   if n & 1i32 as libc::c_uint != 0 {
     type_0 = SUM_SYSV as libc::c_int as libc::c_uint

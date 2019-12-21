@@ -1,4 +1,6 @@
+use crate::librb::size_t;
 use libc;
+use libc::sockaddr;
 use libc::sscanf;
 extern "C" {
   #[no_mangle]
@@ -9,43 +11,7 @@ extern "C" {
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xsendto(
-    s: libc::c_int,
-    buf: *const libc::c_void,
-    len: size_t,
-    to: *const sockaddr,
-    tolen: socklen_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn setsockopt_broadcast(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn ioctl_or_perror_and_die(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    fmt: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
+
   #[no_mangle]
   fn ether_aton_r(__asc: *const libc::c_char, __addr: *mut ether_addr) -> *mut ether_addr;
   #[no_mangle]
@@ -53,9 +19,8 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::size_t;
-use libc::ssize_t;
-pub type socklen_t = __socklen_t;
+
+use crate::librb::socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -67,9 +32,8 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 
-use libc::sockaddr;
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sockaddr_ll {
   pub sll_family: libc::c_ushort,
   pub sll_protocol: libc::c_ushort,
@@ -79,34 +43,39 @@ pub struct sockaddr_ll {
   pub sll_halen: libc::c_uchar,
   pub sll_addr: [libc::c_uchar; 8],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct ether_addr {
   pub ether_addr_octet: [u8; 6],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sync_serial_settings {
   pub clock_rate: libc::c_uint,
   pub clock_type: libc::c_uint,
   pub loopback: libc::c_ushort,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct te1_settings {
   pub clock_rate: libc::c_uint,
   pub clock_type: libc::c_uint,
   pub loopback: libc::c_ushort,
   pub slot_map: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct raw_hdlc_proto {
   pub encoding: libc::c_ushort,
   pub parity: libc::c_ushort,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fr_proto {
   pub t391: libc::c_uint,
   pub t392: libc::c_uint,
@@ -116,25 +85,29 @@ pub struct fr_proto {
   pub lmi: libc::c_ushort,
   pub dce: libc::c_ushort,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fr_proto_pvc {
   pub dlci: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fr_proto_pvc_info {
   pub dlci: libc::c_uint,
   pub master: [libc::c_char; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct cisco_proto {
   pub interval: libc::c_uint,
   pub timeout: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifmap {
   pub mem_start: libc::c_ulong,
   pub mem_end: libc::c_ulong,
@@ -143,15 +116,17 @@ pub struct ifmap {
   pub dma: libc::c_uchar,
   pub port: libc::c_uchar,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct if_settings {
   pub type_0: libc::c_uint,
   pub size: libc::c_uint,
   pub ifs_ifsu: C2RustUnnamed,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub raw_hdlc: *mut raw_hdlc_proto,
   pub cisco: *mut cisco_proto,
@@ -161,14 +136,16 @@ pub union C2RustUnnamed {
   pub sync: *mut sync_serial_settings,
   pub te1: *mut te1_settings,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifreq {
   pub ifr_ifrn: C2RustUnnamed_1,
   pub ifr_ifru: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub ifru_addr: sockaddr,
   pub ifru_dstaddr: sockaddr,
@@ -184,8 +161,9 @@ pub union C2RustUnnamed_0 {
   pub ifru_data: *mut libc::c_void,
   pub ifru_settings: if_settings,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub ifrn_name: [libc::c_char; 16],
 }
@@ -287,7 +265,7 @@ unsafe extern "C" fn get_dest_addr(mut hostid: *const libc::c_char, mut eaddr: *
   if eap.is_null() {
     if ether_hostton(hostid, eaddr) == 0i32 {
     } else {
-      bb_show_usage(); /* 13 */
+      crate::libbb::appletlib::bb_show_usage(); /* 13 */
     }
   }; /* 14 */
 }
@@ -365,7 +343,9 @@ unsafe extern "C" fn get_wol_pw(
     )
   }
   if byte_cnt < 4i32 {
-    bb_simple_error_msg(b"can\'t read Wake-On-LAN pass\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg(
+      b"can\'t read Wake-On-LAN pass\x00" as *const u8 as *const libc::c_char,
+    );
     return 0i32;
   }
   // TODO: check invalid numbers >255??
@@ -404,7 +384,7 @@ pub unsafe extern "C" fn ether_wake_main(
     sll_addr: [0; 8],
   }; /* who to wake up */
   /* handle misc user options */
-  flags = getopt32(
+  flags = crate::libbb::getopt32::getopt32(
     argv,
     b"^bi:p:\x00=1\x00" as *const u8 as *const libc::c_char,
     &mut ifname as *mut *const libc::c_char,
@@ -416,7 +396,7 @@ pub unsafe extern "C" fn ether_wake_main(
   } /* we further interested only in -b [bcast] flag */
   flags &= 1i32 as libc::c_uint;
   /* create the raw socket */
-  s = xsocket(17i32, SOCK_RAW as libc::c_int, 0i32);
+  s = crate::libbb::xfuncs_printf::xsocket(17i32, SOCK_RAW as libc::c_int, 0i32);
   /* now that we have a raw socket we can drop root */
   /* xsetuid(getuid()); - but save on code size... */
   /* look up the dest mac address */
@@ -433,8 +413,8 @@ pub unsafe extern "C" fn ether_wake_main(
       },
     },
   };
-  strncpy_IFNAMSIZ(if_hwaddr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
-  ioctl_or_perror_and_die(
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(if_hwaddr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
+  crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
     s,
     0x8927i32 as libc::c_uint,
     &mut if_hwaddr as *mut ifreq as *mut libc::c_void,
@@ -459,8 +439,10 @@ pub unsafe extern "C" fn ether_wake_main(
   /* This is necessary for broadcasts to work */
   if flags != 0 {
     /* & 1 OPT_BROADCAST */
-    if setsockopt_broadcast(s) != 0i32 {
-      bb_simple_perror_msg(b"SO_BROADCAST\x00" as *const u8 as *const libc::c_char);
+    if crate::libbb::xconnect::setsockopt_broadcast(s) != 0i32 {
+      crate::libbb::perror_msg::bb_simple_perror_msg(
+        b"SO_BROADCAST\x00" as *const u8 as *const libc::c_char,
+      );
     }
   }
   let mut ifr: ifreq = ifreq {
@@ -472,8 +454,8 @@ pub unsafe extern "C" fn ether_wake_main(
       },
     },
   };
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
-  bb_xioctl(
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
+  crate::libbb::xfuncs_printf::bb_xioctl(
     s,
     0x8933i32 as libc::c_uint,
     &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -494,7 +476,7 @@ pub unsafe extern "C" fn ether_wake_main(
     outpack.as_mut_ptr() as *const libc::c_void,
     6i32 as libc::c_ulong,
   );
-  xsendto(
+  crate::libbb::xfuncs_printf::xsendto(
     s,
     outpack.as_mut_ptr() as *const libc::c_void,
     pktsize as size_t,

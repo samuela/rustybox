@@ -1,7 +1,12 @@
 use crate::libbb::appletlib::applet_name;
+use crate::librb::rtattr;
+use crate::networking::libiproute::libnetlink::rtnl_handle;
+use crate::networking::libiproute::utils::inet_prefix;
 use libc;
+use libc::nlmsghdr;
 use libc::printf;
 use libc::puts;
+use libc::sockaddr_nl;
 use libc::strcmp;
 extern "C" {
   #[no_mangle]
@@ -10,111 +15,37 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
   static bb_msg_requires_arg: [libc::c_char; 0];
   #[no_mangle]
   static bb_msg_invalid_arg_to: [libc::c_char; 0];
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
-  #[no_mangle]
-  fn ll_addr_n2a(
-    addr: *mut libc::c_uchar,
-    alen: libc::c_int,
-    type_0: libc::c_int,
-    buf: *mut libc::c_char,
-    blen: libc::c_int,
-  ) -> *const libc::c_char;
 
   #[no_mangle]
   static mut preferred_family: family_t;
 
-  /* We need linux/types.h because older kernels use u32 etc
-   * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
-  /* bbox doesn't use parameters no. 3, 4, 6, 7, stub them out */
-  //TODO: pass rth->fd instead of full rth?
-  // Used to be:
-  //struct sockaddr_nl nladdr;
-  //memset(&nladdr, 0, sizeof(nladdr));
-  //nladdr.nl_family = AF_NETLINK;
-  //return xsendto(rth->fd, buf, len, (struct sockaddr*)&nladdr, sizeof(nladdr));
-  // iproute2-4.2.0 simplified the above to:
-  //return send(rth->fd, buf, len, 0);
-  // We are using even shorter:
-  // and convert to void, inline.
-  #[no_mangle]
-  fn parse_rtattr(tb: *mut *mut rtattr, max: libc::c_int, rta: *mut rtattr, len: libc::c_int);
-  #[no_mangle]
-  fn next_arg(argv: *mut *mut libc::c_char) -> *mut *mut libc::c_char;
+/* We need linux/types.h because older kernels use u32 etc
+ * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
+/* bbox doesn't use parameters no. 3, 4, 6, 7, stub them out */
+//TODO: pass rth->fd instead of full rth?
+// Used to be:
+//struct sockaddr_nl nladdr;
+//memset(&nladdr, 0, sizeof(nladdr));
+//nladdr.nl_family = AF_NETLINK;
+//return xsendto(rth->fd, buf, len, (struct sockaddr*)&nladdr, sizeof(nladdr));
+// iproute2-4.2.0 simplified the above to:
+//return send(rth->fd, buf, len, 0);
+// We are using even shorter:
+// and convert to void, inline.
 
-  #[no_mangle]
-  fn ll_init_map(rth: *mut rtnl_handle) -> libc::c_int;
-  #[no_mangle]
-  fn xrtnl_open(rth: *mut rtnl_handle);
-  #[no_mangle]
-  fn xll_name_to_index(name: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn xrtnl_wilddump_request(rth: *mut rtnl_handle, fam: libc::c_int, type_0: libc::c_int);
-  #[no_mangle]
-  fn rtnl_dump_request(
-    rth: *mut rtnl_handle,
-    type_0: libc::c_int,
-    req: *mut libc::c_void,
-    len: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn xrtnl_dump_filter(
-    rth: *mut rtnl_handle,
-    filter: Option<
-      unsafe extern "C" fn(
-        _: *const sockaddr_nl,
-        _: *mut nlmsghdr,
-        _: *mut libc::c_void,
-      ) -> libc::c_int,
-    >,
-    arg1: *mut libc::c_void,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn inet_addr_match(
-    a: *const inet_prefix,
-    b: *const inet_prefix,
-    bits: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn rtnl_send_check(
-    rth: *mut rtnl_handle,
-    buf: *const libc::c_void,
-    len: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn rt_addr_n2a(af: libc::c_int, addr: *mut libc::c_void) -> *const libc::c_char;
-  //static: const char *ll_idx_n2a(int idx, char *buf) FAST_FUNC;
-  #[no_mangle]
-  fn ll_index_to_name(idx: libc::c_int) -> *const libc::c_char;
-  //const char *dnet_ntop(int af, const void *addr, char *str, size_t len);
-  //int dnet_pton(int af, const char *src, void *addr);
-  //const char *ipx_ntop(int af, const void *addr, char *str, size_t len);
-  //int ipx_pton(int af, const char *src, void *addr);
-  #[no_mangle]
-  fn get_hz() -> libc::c_uint;
-  #[no_mangle]
-  fn invarg_1_to_2(_: *const libc::c_char, _: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn get_prefix(dst: *mut inet_prefix, arg: *mut libc::c_char, family: libc::c_int);
+//static: const char *ll_idx_n2a(int idx, char *buf) FAST_FUNC;
+
+//const char *dnet_ntop(int af, const void *addr, char *str, size_t len);
+//int dnet_pton(int af, const char *src, void *addr);
+//const char *ipx_ntop(int af, const void *addr, char *str, size_t len);
+//int ipx_pton(int af, const char *src, void *addr);
+
 }
 
 pub type family_t = i8;
@@ -123,25 +54,9 @@ pub type __u16 = libc::c_ushort;
 pub type __s32 = libc::c_int;
 pub type u32 = libc::c_uint;
 pub type __kernel_sa_family_t = libc::c_ushort;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_nl {
-  pub nl_family: __kernel_sa_family_t,
-  pub nl_pad: libc::c_ushort,
-  pub nl_pid: u32,
-  pub nl_groups: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct nlmsghdr {
-  pub nlmsg_len: u32,
-  pub nlmsg_type: __u16,
-  pub nlmsg_flags: __u16,
-  pub nlmsg_seq: u32,
-  pub nlmsg_pid: u32,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub struct ndmsg {
   pub ndm_family: __u8,
   pub ndm_pad1: __u8,
@@ -165,8 +80,9 @@ pub const NDA_CACHEINFO: C2RustUnnamed = 3;
 pub const NDA_LLADDR: C2RustUnnamed = 2;
 pub const NDA_DST: C2RustUnnamed = 1;
 pub const NDA_UNSPEC: C2RustUnnamed = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct nda_cacheinfo {
   pub ndm_confirmed: u32,
   pub ndm_used: u32,
@@ -228,15 +144,11 @@ pub const RTM_GETLINK: C2RustUnnamed_0 = 18;
 pub const RTM_DELLINK: C2RustUnnamed_0 = 17;
 pub const RTM_NEWLINK: C2RustUnnamed_0 = 16;
 pub const RTM_BASE: C2RustUnnamed_0 = 16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct rtattr {
-  pub rta_len: libc::c_ushort,
-  pub rta_type: libc::c_ushort,
-}
+
 pub const xshow_stats: C2RustUnnamed_2 = 3;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct filter_t {
   pub family: libc::c_int,
   pub index: libc::c_int,
@@ -249,23 +161,7 @@ pub struct filter_t {
   pub flushe: libc::c_int,
   pub rth: *mut rtnl_handle,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct rtnl_handle {
-  pub fd: libc::c_int,
-  pub local: sockaddr_nl,
-  pub peer: sockaddr_nl,
-  pub seq: u32,
-  pub dump: u32,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct inet_prefix {
-  pub family: u8,
-  pub bytelen: u8,
-  pub bitlen: i16,
-  pub data: [u32; 4],
-}
+
 pub const KW_to: C2RustUnnamed_1 = 0;
 pub const KW_nud: C2RustUnnamed_1 = 2;
 pub const KW_dev: C2RustUnnamed_1 = 1;
@@ -291,13 +187,15 @@ unsafe extern "C" fn rta_getattr_u32(mut rta: *const rtattr) -> u32 {
   ) as *mut libc::c_void as *mut u32);
 }
 unsafe extern "C" fn flush_update() -> libc::c_int {
-  if rtnl_send_check(
+  if crate::networking::libiproute::libnetlink::rtnl_send_check(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).rth,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushb as *const libc::c_void,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp,
   ) < 0i32
   {
-    bb_simple_perror_msg(b"can\'t send flush request\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg(
+      b"can\'t send flush request\x00" as *const u8 as *const libc::c_char,
+    );
     return -1i32;
   }
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp = 0i32;
@@ -322,9 +220,9 @@ unsafe extern "C" fn nud_state_a2n(mut arg: *mut libc::c_char) -> libc::c_uint {
     0x20i32 as u8,
   ];
   let mut id: libc::c_int = 0;
-  id = index_in_substrings(keywords.as_ptr(), arg);
+  id = crate::libbb::compare_string_array::index_in_substrings(keywords.as_ptr(), arg);
   if id < 0i32 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       bb_msg_invalid_arg_to.as_ptr(),
       arg,
       b"nud state\x00" as *const u8 as *const libc::c_char,
@@ -349,7 +247,7 @@ unsafe extern "C" fn print_neigh(
   if (*n).nlmsg_type as libc::c_int != RTM_NEWNEIGH as libc::c_int
     && (*n).nlmsg_type as libc::c_int != RTM_DELNEIGH as libc::c_int
   {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"not RTM_NEWNEIGH: %08x %08x %08x\x00" as *const u8 as *const libc::c_char,
       (*n).nlmsg_len,
       (*n).nlmsg_type as libc::c_int,
@@ -366,7 +264,7 @@ unsafe extern "C" fn print_neigh(
     ),
   ) as libc::c_int as libc::c_int;
   if len < 0i32 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"BUG: wrong nlmsg len %d\x00" as *const u8 as *const libc::c_char,
       len,
     );
@@ -396,7 +294,7 @@ unsafe extern "C" fn print_neigh(
   {
     return 0i32;
   }
-  parse_rtattr(
+  crate::networking::libiproute::libnetlink::parse_rtattr(
     tb.as_mut_ptr(),
     __NDA_MAX as libc::c_int - 1i32,
     (r as *mut libc::c_char).offset(
@@ -451,7 +349,7 @@ unsafe extern "C" fn print_neigh(
               .wrapping_add(0i32 as libc::c_ulong),
           ),
       );
-      if inet_addr_match(
+      if crate::networking::libiproute::utils::inet_addr_match(
         &mut dst,
         &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).pfx,
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
@@ -526,7 +424,7 @@ unsafe extern "C" fn print_neigh(
   if !tb[NDA_DST as libc::c_int as usize].is_null() {
     printf(
       b"%s \x00" as *const u8 as *const libc::c_char,
-      rt_addr_n2a(
+      crate::networking::libiproute::utils::rt_addr_n2a(
         (*r).ndm_family as libc::c_int,
         (tb[NDA_DST as libc::c_int as usize] as *mut libc::c_char).offset(
           ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
@@ -541,14 +439,14 @@ unsafe extern "C" fn print_neigh(
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).index == 0 && (*r).ndm_ifindex != 0 {
     printf(
       b"dev %s \x00" as *const u8 as *const libc::c_char,
-      ll_index_to_name((*r).ndm_ifindex),
+      crate::networking::libiproute::ll_map::ll_index_to_name((*r).ndm_ifindex),
     );
   }
   if !tb[NDA_LLADDR as libc::c_int as usize].is_null() {
     let mut b1: [libc::c_char; 64] = [0; 64];
     printf(
       b"lladdr %s\x00" as *const u8 as *const libc::c_char,
-      ll_addr_n2a(
+      crate::networking::libiproute::ll_addr::ll_addr_n2a(
         (tb[NDA_LLADDR as libc::c_int as usize] as *mut libc::c_char).offset(
           ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
             .wrapping_add(4u32 as libc::c_ulong)
@@ -585,7 +483,7 @@ unsafe extern "C" fn print_neigh(
           & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
           .wrapping_add(0i32 as libc::c_ulong) as isize,
       ) as *mut libc::c_void as *mut nda_cacheinfo;
-    let mut hz: libc::c_int = get_hz() as libc::c_int;
+    let mut hz: libc::c_int = crate::networking::libiproute::utils::get_hz() as libc::c_int;
     if (*ci_0).ndm_refcnt != 0 {
       printf(
         b" ref %d\x00" as *const u8 as *const libc::c_char,
@@ -662,7 +560,7 @@ unsafe extern "C" fn print_neigh(
     );
     c = ',' as i32 as libc::c_char
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   return 0i32;
 }
 unsafe extern "C" fn ipneigh_reset_filter() {
@@ -679,23 +577,7 @@ unsafe extern "C" fn ipneigh_list_or_flush(
   mut flush: libc::c_int,
 ) -> libc::c_int {
   static mut keywords: [libc::c_char; 12] = [116, 111, 0, 100, 101, 118, 0, 110, 117, 100, 0, 0];
-  let mut rth: rtnl_handle = rtnl_handle {
-    fd: 0,
-    local: sockaddr_nl {
-      nl_family: 0,
-      nl_pad: 0,
-      nl_pid: 0,
-      nl_groups: 0,
-    },
-    peer: sockaddr_nl {
-      nl_family: 0,
-      nl_pad: 0,
-      nl_pid: 0,
-      nl_groups: 0,
-    },
-    seq: 0,
-    dump: 0,
-  };
+  let mut rth: rtnl_handle = std::mem::zeroed();
   let mut ndm: ndmsg = {
     let mut init = ndmsg {
       ndm_family: 0i32 as __u8,
@@ -713,7 +595,7 @@ unsafe extern "C" fn ipneigh_list_or_flush(
   let mut arg: libc::c_int = 0;
   ipneigh_reset_filter();
   if flush != 0 && (*argv).is_null() {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       bb_msg_requires_arg.as_ptr(),
       b"\"ip neigh flush\"\x00" as *const u8 as *const libc::c_char,
     );
@@ -727,13 +609,13 @@ unsafe extern "C" fn ipneigh_list_or_flush(
     (0xffi32) & !0x40i32
   };
   while !(*argv).is_null() {
-    arg = index_in_substrings(keywords.as_ptr(), *argv);
+    arg = crate::libbb::compare_string_array::index_in_substrings(keywords.as_ptr(), *argv);
     if arg == KW_dev as libc::c_int {
-      argv = next_arg(argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
       filter_dev = *argv
     } else if arg == KW_nud as libc::c_int {
       let mut state: libc::c_uint = 0;
-      argv = next_arg(argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
       if state_given == 0 {
         state_given = 1i32;
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).state = 0i32
@@ -753,9 +635,9 @@ unsafe extern "C" fn ipneigh_list_or_flush(
       *fresh2 = (*fresh2 as libc::c_uint | state) as libc::c_int
     } else {
       if arg == KW_to as libc::c_int {
-        argv = next_arg(argv)
+        argv = crate::networking::libiproute::utils::next_arg(argv)
       }
-      get_prefix(
+      crate::networking::libiproute::utils::get_prefix(
         &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).pfx,
         *argv,
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family,
@@ -769,12 +651,13 @@ unsafe extern "C" fn ipneigh_list_or_flush(
     }
     argv = argv.offset(1)
   }
-  xrtnl_open(&mut rth);
-  ll_init_map(&mut rth);
+  crate::networking::libiproute::libnetlink::xrtnl_open(&mut rth);
+  crate::networking::libiproute::ll_map::ll_init_map(&mut rth);
   if !filter_dev.is_null() {
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).index = xll_name_to_index(filter_dev);
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).index =
+      crate::networking::libiproute::ll_map::xll_name_to_index(filter_dev);
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).index == 0i32 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"can\'t find device \'%s\'\x00" as *const u8 as *const libc::c_char,
         filter_dev,
       );
@@ -792,13 +675,13 @@ unsafe extern "C" fn ipneigh_list_or_flush(
     let ref mut fresh4 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).rth;
     *fresh4 = &mut rth;
     while round < 10i32 {
-      xrtnl_wilddump_request(
+      crate::networking::libiproute::libnetlink::xrtnl_wilddump_request(
         &mut rth,
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family,
         RTM_GETNEIGH as libc::c_int,
       );
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed = 0i32;
-      if xrtnl_dump_filter(
+      if crate::networking::libiproute::libnetlink::xrtnl_dump_filter(
         &mut rth,
         Some(
           print_neigh
@@ -811,7 +694,9 @@ unsafe extern "C" fn ipneigh_list_or_flush(
         0 as *mut libc::c_void,
       ) < 0i32
       {
-        bb_simple_perror_msg_and_die(b"flush terminated\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"flush terminated\x00" as *const u8 as *const libc::c_char,
+        );
       }
       if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed == 0i32 {
         if round == 0i32 {
@@ -827,7 +712,7 @@ unsafe extern "C" fn ipneigh_list_or_flush(
       }
       round += 1;
       if flush_update() < 0i32 {
-        xfunc_die();
+        crate::libbb::xfunc_die::xfunc_die();
       }
       printf(
         b"\n*** Round %d, deleting %d entries ***\n\x00" as *const u8 as *const libc::c_char,
@@ -835,24 +720,24 @@ unsafe extern "C" fn ipneigh_list_or_flush(
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed,
       );
     }
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"*** Flush not complete bailing out after %d rounds\x00" as *const u8 as *const libc::c_char,
       10i32,
     );
   }
   ndm.ndm_family = (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family as __u8;
-  if rtnl_dump_request(
+  if crate::networking::libiproute::libnetlink::rtnl_dump_request(
     &mut rth,
     RTM_GETNEIGH as libc::c_int,
     &mut ndm as *mut ndmsg as *mut libc::c_void,
     ::std::mem::size_of::<ndmsg>() as libc::c_ulong as libc::c_int,
   ) < 0i32
   {
-    bb_simple_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
       b"can\'t send dump request\x00" as *const u8 as *const libc::c_char,
     );
   }
-  if xrtnl_dump_filter(
+  if crate::networking::libiproute::libnetlink::xrtnl_dump_filter(
     &mut rth,
     Some(
       print_neigh
@@ -865,7 +750,9 @@ unsafe extern "C" fn ipneigh_list_or_flush(
     0 as *mut libc::c_void,
   ) < 0i32
   {
-    bb_simple_error_msg_and_die(b"dump terminated\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"dump terminated\x00" as *const u8 as *const libc::c_char,
+    );
   }
   return 0i32;
 }
@@ -882,7 +769,8 @@ pub unsafe extern "C" fn do_ipneigh(mut argv: *mut *mut libc::c_char) -> libc::c
   if (*argv).is_null() {
     return ipneigh_list_or_flush(argv, 0i32);
   }
-  command_num = index_in_substrings(ip_neigh_commands.as_ptr(), *argv);
+  command_num =
+    crate::libbb::compare_string_array::index_in_substrings(ip_neigh_commands.as_ptr(), *argv);
   match command_num {
     0 => {
       /* show */
@@ -894,5 +782,5 @@ pub unsafe extern "C" fn do_ipneigh(mut argv: *mut *mut libc::c_char) -> libc::c
     }
     _ => {}
   }
-  invarg_1_to_2(*argv, applet_name);
+  crate::networking::libiproute::utils::invarg_1_to_2(*argv, applet_name);
 }

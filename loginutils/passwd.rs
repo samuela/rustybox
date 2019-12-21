@@ -1,12 +1,18 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::signal::__sighandler_t;
+use crate::librb::smallint;
+use crate::librb::spwd;
 use libc;
 use libc::getuid;
+use libc::mode_t;
 use libc::openlog;
+use libc::passwd;
 use libc::printf;
 use libc::puts;
 use libc::strcmp;
 use libc::syslog;
+use libc::uid_t;
 use libc::umask;
 extern "C" {
 
@@ -18,75 +24,13 @@ extern "C" {
 
   /* All function names below should be remapped by #defines above
    * in order to not collide with libc names. */
-  #[no_mangle]
-  fn bb_internal_getspnam_r(
-    __name: *const libc::c_char,
-    __result_buf: *mut spwd,
-    __buffer: *mut libc::c_char,
-    __buflen: size_t,
-    __result: *mut *mut spwd,
-  ) -> libc::c_int;
 
   #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn xsetuid(uid: uid_t);
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xgetpwnam(name: *const libc::c_char) -> *mut passwd;
-  #[no_mangle]
-  fn xuid2uname(uid: uid_t) -> *mut libc::c_char;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_info_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_ask_noecho_stdin(prompt: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_do_delay(seconds: libc::c_int);
-  #[no_mangle]
-  fn nuke_str(str: *mut libc::c_char);
-  #[no_mangle]
-  fn pw_encrypt(
-    clear: *const libc::c_char,
-    salt: *const libc::c_char,
-    cleanup: libc::c_int,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn obscure(
-    old: *const libc::c_char,
-    newval: *const libc::c_char,
-    pwdp: *const passwd,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn crypt_make_pw_salt(p: *mut libc::c_char, algo: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn update_passwd(
-    filename: *const libc::c_char,
-    username: *const libc::c_char,
-    data: *const libc::c_char,
-    member: *const libc::c_char,
-  ) -> libc::c_int;
 
 }
 
-use libc::mode_t;
 pub type __rlim64_t = libc::c_ulong;
-use crate::librb::signal::__sighandler_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::uid_t;
 pub type __rlimit_resource = libc::c_uint;
 pub const __RLIM_NLIMITS: __rlimit_resource = 16;
 pub const __RLIMIT_NLIMITS: __rlimit_resource = 16;
@@ -108,27 +52,14 @@ pub const RLIMIT_DATA: __rlimit_resource = 2;
 pub const RLIMIT_FSIZE: __rlimit_resource = 1;
 pub const RLIMIT_CPU: __rlimit_resource = 0;
 pub type rlim_t = __rlim64_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct rlimit {
   pub rlim_cur: rlim_t,
   pub rlim_max: rlim_t,
 }
 pub type __rlimit_resource_t = __rlimit_resource;
-use libc::passwd;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct spwd {
-  pub sp_namp: *mut libc::c_char,
-  pub sp_pwdp: *mut libc::c_char,
-  pub sp_lstchg: libc::c_long,
-  pub sp_min: libc::c_long,
-  pub sp_max: libc::c_long,
-  pub sp_warn: libc::c_long,
-  pub sp_inact: libc::c_long,
-  pub sp_expire: libc::c_long,
-  pub sp_flag: libc::c_ulong,
-}
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;
@@ -192,18 +123,20 @@ unsafe extern "C" fn new_password(
   let mut ret: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if myuid != 0i32 as libc::c_uint && *(*pw).pw_passwd.offset(0) as libc::c_int != 0 {
     let mut encrypted: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    orig = bb_ask_noecho_stdin(b"Old password: \x00" as *const u8 as *const libc::c_char);
+    orig = crate::libbb::bb_askpass::bb_ask_noecho_stdin(
+      b"Old password: \x00" as *const u8 as *const libc::c_char,
+    );
     if orig.is_null() {
       current_block = 8393339141576953219;
     } else {
-      encrypted = pw_encrypt(orig, (*pw).pw_passwd, 1i32);
+      encrypted = crate::libbb::pw_encrypt::pw_encrypt(orig, (*pw).pw_passwd, 1i32);
       if strcmp(encrypted, (*pw).pw_passwd) != 0i32 {
         syslog(
           4i32,
           b"incorrect password for %s\x00" as *const u8 as *const libc::c_char,
           (*pw).pw_name,
         );
-        bb_do_delay(3i32);
+        crate::libbb::bb_do_delay::bb_do_delay(3i32);
         puts(b"Incorrect password\x00" as *const u8 as *const libc::c_char);
         current_block = 8393339141576953219;
       } else {
@@ -215,17 +148,24 @@ unsafe extern "C" fn new_password(
   }
   match current_block {
     4166486009154926805 => {
-      newp = bb_ask_noecho_stdin(b"New password: \x00" as *const u8 as *const libc::c_char);
+      newp = crate::libbb::bb_askpass::bb_ask_noecho_stdin(
+        b"New password: \x00" as *const u8 as *const libc::c_char,
+      );
       if !newp.is_null() {
-        if !(1i32 != 0 && obscure(orig, newp, pw) != 0 && myuid != 0i32 as libc::c_uint) {
-          cp = bb_ask_noecho_stdin(b"Retype password: \x00" as *const u8 as *const libc::c_char);
+        if !(1i32 != 0
+          && crate::libbb::obscure::obscure(orig, newp, pw) != 0
+          && myuid != 0i32 as libc::c_uint)
+        {
+          cp = crate::libbb::bb_askpass::bb_ask_noecho_stdin(
+            b"Retype password: \x00" as *const u8 as *const libc::c_char,
+          );
           if !cp.is_null() {
             if strcmp(cp, newp) != 0i32 {
               puts(b"Passwords don\'t match\x00" as *const u8 as *const libc::c_char);
             } else {
-              crypt_make_pw_salt(salt.as_mut_ptr(), algo);
+              crate::libbb::pw_encrypt::crypt_make_pw_salt(salt.as_mut_ptr(), algo);
               /* pw_encrypt returns malloced str */
-              ret = pw_encrypt(newp, salt.as_mut_ptr(), 1i32)
+              ret = crate::libbb::pw_encrypt::pw_encrypt(newp, salt.as_mut_ptr(), 1i32)
             }
           }
         }
@@ -234,9 +174,9 @@ unsafe extern "C" fn new_password(
     _ => {}
   }
   /* whee, success! */
-  nuke_str(orig);
-  nuke_str(newp);
-  nuke_str(cp);
+  crate::libbb::nuke_str::nuke_str(orig);
+  crate::libbb::nuke_str::nuke_str(newp);
+  crate::libbb::nuke_str::nuke_str(cp);
   return ret;
 }
 #[no_mangle]
@@ -274,7 +214,7 @@ pub unsafe extern "C" fn passwd_main(
   let mut buffer: [libc::c_char; 256] = [0; 256];
   logmode = LOGMODE_BOTH as libc::c_int as smallint;
   openlog(applet_name, 0i32, 4i32 << 3i32);
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"a:lud\x00" as *const u8 as *const libc::c_char,
     &mut opt_a as *mut *const libc::c_char,
@@ -286,19 +226,19 @@ pub unsafe extern "C" fn passwd_main(
   if opt & OPT_lud as libc::c_int as libc::c_uint != 0
     && (myuid != 0i32 as libc::c_uint || (*argv.offset(0)).is_null())
   {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* Will complain and die if username not found */
-  myname = xstrdup(xuid2uname(myuid));
+  myname = crate::libbb::xfuncs_printf::xstrdup(crate::libbb::bb_pwd::xuid2uname(myuid));
   name = if !(*argv.offset(0)).is_null() {
     *argv.offset(0)
   } else {
     myname
   };
-  pw = xgetpwnam(name);
+  pw = crate::libbb::bb_pwd::xgetpwnam(name);
   if myuid != 0i32 as libc::c_uint && (*pw).pw_uid != myuid {
     /* LOGMODE_BOTH */
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"%s can\'t change password for %s\x00" as *const u8 as *const libc::c_char,
       myname,
       name,
@@ -308,7 +248,7 @@ pub unsafe extern "C" fn passwd_main(
    * At least glibc 2.4 does this. Be extra paranoid here. */
   let mut result: *mut spwd = 0 as *mut spwd;
   *bb_errno = 0i32;
-  if bb_internal_getspnam_r(
+  if crate::libpwdgrp::pwd_grp::bb_internal_getspnam_r(
     (*pw).pw_name,
     &mut spw,
     buffer.as_mut_ptr(),
@@ -321,7 +261,7 @@ pub unsafe extern "C" fn passwd_main(
     /* paranoia */
     if *bb_errno != 2i32 {
       /* LOGMODE_BOTH */
-      bb_perror_msg(
+      crate::libbb::perror_msg::bb_perror_msg(
         b"no record of %s in %s, using %s\x00" as *const u8 as *const libc::c_char,
         name,
         b"/etc/shadow\x00" as *const u8 as *const libc::c_char,
@@ -341,7 +281,7 @@ pub unsafe extern "C" fn passwd_main(
     if myuid != 0i32 as libc::c_uint && c == 0 {
       /* passwd starts with '!' */
       /* LOGMODE_BOTH */
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"can\'t change locked password for %s\x00" as *const u8 as *const libc::c_char,
         name,
       ); /* passwd starts with '!' */
@@ -353,7 +293,7 @@ pub unsafe extern "C" fn passwd_main(
     newp = new_password(pw, myuid, opt_a);
     if newp.is_null() {
       logmode = LOGMODE_STDIO as libc::c_int as smallint;
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"password for %s is unchanged\x00" as *const u8 as *const libc::c_char,
         name,
       );
@@ -363,7 +303,7 @@ pub unsafe extern "C" fn passwd_main(
     if c == 0 {
       current_block = 9419412629514855253;
     } else {
-      newp = xasprintf(
+      newp = crate::libbb::xfuncs_printf::xasprintf(
         b"!%s\x00" as *const u8 as *const libc::c_char,
         (*pw).pw_passwd,
       );
@@ -375,7 +315,7 @@ pub unsafe extern "C" fn passwd_main(
     } else {
       /* pw->pw_passwd points to static storage,
        * strdup'ing to avoid nasty surprizes */
-      newp = xstrdup(&mut *(*pw).pw_passwd.offset(1));
+      newp = crate::libbb::xfuncs_printf::xstrdup(&mut *(*pw).pw_passwd.offset(1));
       current_block = 11763295167351361500;
     }
   } else {
@@ -389,14 +329,14 @@ pub unsafe extern "C" fn passwd_main(
       rlimit_fsize.rlim_max = (512i64 * 30000i32 as libc::c_long) as rlim_t;
       rlimit_fsize.rlim_cur = rlimit_fsize.rlim_max;
       setrlimit(RLIMIT_FSIZE, &mut rlimit_fsize);
-      bb_signals(
+      crate::libbb::signals::bb_signals(
         0i32 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 3i32),
         ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
       );
       umask(0o77i32 as mode_t);
-      xsetuid(0i32 as uid_t);
+      crate::libbb::xfuncs_printf::xsetuid(0i32 as uid_t);
       filename = b"/etc/shadow\x00" as *const u8 as *const libc::c_char;
-      rc = update_passwd(
+      rc = crate::libbb::update_passwd::update_passwd(
         b"/etc/shadow\x00" as *const u8 as *const libc::c_char,
         name,
         newp,
@@ -409,7 +349,7 @@ pub unsafe extern "C" fn passwd_main(
       if rc >= 0i32 {
         /* 0 = /etc/shadow missing (not an error), >0 = passwd changed in /etc/shadow */
         filename = b"/etc/passwd\x00" as *const u8 as *const libc::c_char;
-        rc = update_passwd(
+        rc = crate::libbb::update_passwd::update_passwd(
           b"/etc/passwd\x00" as *const u8 as *const libc::c_char,
           name,
           newp,
@@ -418,12 +358,12 @@ pub unsafe extern "C" fn passwd_main(
       }
       /* LOGMODE_BOTH */
       if rc < 0i32 {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"can\'t update password file %s\x00" as *const u8 as *const libc::c_char,
           filename,
         );
       }
-      bb_info_msg(
+      crate::libbb::verror_msg::bb_info_msg(
         b"password for %s changed by %s\x00" as *const u8 as *const libc::c_char,
         name,
         myname,
@@ -433,7 +373,7 @@ pub unsafe extern "C" fn passwd_main(
   }
   /*if (ENABLE_FEATURE_CLEAN_UP) free(newp); - can't, it may be non-malloced */
   if newp.is_null() {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"password for %s is already %slocked\x00" as *const u8 as *const libc::c_char,
       name,
       if opt & OPT_unlock as libc::c_int as libc::c_uint != 0 {

@@ -10,20 +10,6 @@ extern "C" {
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
 
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-  #[no_mangle]
-  fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
 /*
@@ -51,8 +37,9 @@ extern "C" {
 //usage:#define tac_full_usage "\n\n"
 //usage:	"Concatenate FILEs and print them in reverse"
 /* This is a NOEXEC applet. Be very careful! */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct lstring {
   pub size: libc::c_int,
   pub buf: [libc::c_char; 1],
@@ -76,7 +63,7 @@ pub unsafe extern "C" fn tac_main(
                 use STRING as the separator instead of newline
   We support none, but at least we will complain or handle "--":
   */
-  getopt32(argv, b"\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::getopt32::getopt32(argv, b"\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   if (*argv).is_null() {
     argv = argv.offset(-1);
@@ -91,7 +78,7 @@ pub unsafe extern "C" fn tac_main(
     let mut ch: libc::c_int = 0;
     let mut i: libc::c_int = 0;
     name = name.offset(-1);
-    f = fopen_or_warn_stdin(*name);
+    f = crate::libbb::wfopen_input::fopen_or_warn_stdin(*name);
     if f.is_null() {
       /* error message is printed by fopen_or_warn_stdin */
       retval = 1i32
@@ -103,7 +90,7 @@ pub unsafe extern "C" fn tac_main(
         if ch != -1i32 {
           if i & 0x7fi32 == 0 {
             /* Grow on every 128th char */
-            line = xrealloc(
+            line = crate::libbb::xfuncs_printf::xrealloc(
               line as *mut libc::c_void,
               ((i + 0x7fi32) as libc::c_ulong)
                 .wrapping_add(::std::mem::size_of::<libc::c_int>() as libc::c_ulong)
@@ -115,13 +102,13 @@ pub unsafe extern "C" fn tac_main(
           *(*line).buf.as_mut_ptr().offset(fresh0 as isize) = ch as libc::c_char
         }
         if ch == '\n' as i32 || ch == -1i32 && i != 0i32 {
-          line = xrealloc(
+          line = crate::libbb::xfuncs_printf::xrealloc(
             line as *mut libc::c_void,
             (i as libc::c_ulong)
               .wrapping_add(::std::mem::size_of::<libc::c_int>() as libc::c_ulong),
           ) as *mut lstring;
           (*line).size = i;
-          llist_add_to(&mut list, line as *mut libc::c_void);
+          crate::libbb::llist::llist_add_to(&mut list, line as *mut libc::c_void);
           line = 0 as *mut lstring;
           i = 0i32
         }
@@ -132,7 +119,7 @@ pub unsafe extern "C" fn tac_main(
       /* fgetc sets errno to ENOENT on EOF, we don't want
        * to warn on this non-error! */
       if *bb_errno != 0 && *bb_errno != 2i32 {
-        bb_simple_perror_msg(*name);
+        crate::libbb::perror_msg::bb_simple_perror_msg(*name);
         retval = 1i32
       }
     }
@@ -142,7 +129,7 @@ pub unsafe extern "C" fn tac_main(
   }
   while !list.is_null() {
     line = (*list).data as *mut lstring;
-    xwrite(
+    crate::libbb::xfuncs_printf::xwrite(
       1i32,
       (*line).buf.as_mut_ptr() as *const libc::c_void,
       (*line).size as size_t,

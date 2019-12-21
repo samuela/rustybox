@@ -26,19 +26,6 @@ extern "C" {
   #[no_mangle]
   fn tzset();
 
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 }
 
 use crate::librb::size_t;
@@ -50,8 +37,9 @@ use libc::FILE;
  * Everything below this point has been copied from linux/rtc.h
  * to eliminate the kernel header dependency
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct linux_rtc_time {
   pub tm_sec: libc::c_int,
   pub tm_min: libc::c_int,
@@ -71,7 +59,8 @@ pub struct linux_rtc_time {
 #[no_mangle]
 pub unsafe extern "C" fn rtc_adjtime_is_utc() -> libc::c_int {
   let mut utc: libc::c_int = 0i32;
-  let mut f: *mut FILE = fopen_for_read(b"/etc/adjtime\x00" as *const u8 as *const libc::c_char);
+  let mut f: *mut FILE =
+    crate::libbb::wfopen::fopen_for_read(b"/etc/adjtime\x00" as *const u8 as *const libc::c_char);
   if !f.is_null() {
     let mut buffer: [libc::c_char; 128] = [0; 128];
     while !fgets_unlocked(
@@ -81,7 +70,7 @@ pub unsafe extern "C" fn rtc_adjtime_is_utc() -> libc::c_int {
     )
     .is_null()
     {
-      if is_prefixed_with(
+      if crate::libbb::compare_string_array::is_prefixed_with(
         buffer.as_mut_ptr(),
         b"UTC\x00" as *const u8 as *const libc::c_char,
       )
@@ -121,7 +110,7 @@ unsafe extern "C" fn open_loop_on_busy(
         continue;
       }
       /* EBUSY. Last try, exit on error instead of returning -1 */
-      return xopen(name, flags);
+      return crate::libbb::xfuncs_printf::xopen(name, flags);
     } else {
       return rtc;
     }
@@ -156,7 +145,7 @@ pub unsafe extern "C" fn rtc_xopen(
           return rtc;
         }
         if *name.offset(0) == 0 {
-          return xopen(*default_rtc, flags);
+          return crate::libbb::xfuncs_printf::xopen(*default_rtc, flags);
         }
         current_block = 9167590035537892259;
       }
@@ -170,7 +159,7 @@ pub unsafe extern "C" fn rtc_read_tm(mut ptm: *mut tm, mut fd: libc::c_int) {
     0i32,
     ::std::mem::size_of::<tm>() as libc::c_ulong,
   );
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
       | (('p' as i32) << 0i32 + 8i32) as libc::c_uint

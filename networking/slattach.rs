@@ -37,51 +37,14 @@ extern "C" {
     __optional_actions: libc::c_int,
     __termios_p: *const termios,
   ) -> libc::c_int;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn tty_value_to_baud(value: libc::c_uint) -> speed_t;
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn bb_ioctl_or_warn(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn xatoi(str: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
-  #[no_mangle]
-  fn invarg_1_to_2(_: *const libc::c_char, _: *const libc::c_char) -> !;
+
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub saved_disc: libc::c_int,
   pub saved_state: termios,
@@ -99,7 +62,9 @@ unsafe extern "C" fn tcsetattr_serial_or_warn(mut state: *mut termios) -> libc::
   let mut ret: libc::c_int = 0;
   ret = tcsetattr(3i32, 0i32, state);
   if ret != 0i32 {
-    bb_simple_perror_msg(b"tcsetattr\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg(
+      b"tcsetattr\x00" as *const u8 as *const libc::c_char,
+    );
     return 1i32;
     /* used as exitcode */
   }
@@ -118,7 +83,7 @@ unsafe extern "C" fn restore_state_and_exit(mut exitcode: libc::c_int) -> ! {
     c_ospeed: 0,
   };
   /* Restore line discipline */
-  if bb_ioctl_or_warn(
+  if crate::libbb::xfuncs_printf::bb_ioctl_or_warn(
     3i32,
     0x5423i32 as libc::c_uint,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).saved_disc as *mut libc::c_int
@@ -181,7 +146,7 @@ pub unsafe extern "C" fn slattach_main(
   let mut baud_code: libc::c_int = 0;
   baud_code = baud_code;
   /* Parse command line options */
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^p:s:c:ehmLF\x00=1\x00" as *const u8 as *const libc::c_char,
     &mut proto as *mut *const libc::c_char,
@@ -190,18 +155,23 @@ pub unsafe extern "C" fn slattach_main(
   ) as libc::c_int;
   /*argc -= optind;*/
   argv = argv.offset(optind as isize);
-  encap = index_in_strings(proto_names.as_ptr(), proto);
+  encap = crate::libbb::compare_string_array::index_in_strings(proto_names.as_ptr(), proto);
   if encap < 0i32 {
-    invarg_1_to_2(proto, b"protocol\x00" as *const u8 as *const libc::c_char);
+    crate::networking::libiproute::utils::invarg_1_to_2(
+      proto,
+      b"protocol\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if encap > 3i32 {
     encap = 8i32
   }
   /* We want to know if the baud rate is valid before we start touching the ttys */
   if opt & OPT_s_baud as libc::c_int != 0 {
-    baud_code = tty_value_to_baud(xatoi(baud_str) as libc::c_uint) as libc::c_int;
+    baud_code = crate::libbb::speed_table::tty_value_to_baud(
+      crate::libbb::xatonum::xatoi(baud_str) as libc::c_uint
+    ) as libc::c_int;
     if baud_code < 0i32 {
-      invarg_1_to_2(
+      crate::networking::libiproute::utils::invarg_1_to_2(
         baud_str,
         b"baud rate\x00" as *const u8 as *const libc::c_char,
       );
@@ -210,23 +180,27 @@ pub unsafe extern "C" fn slattach_main(
   /* Open tty */
   fd = open(*argv, 0o2i32 | 0o4000i32);
   if fd < 0i32 {
-    let mut buf: *mut libc::c_char =
-      concat_path_file(b"/dev\x00" as *const u8 as *const libc::c_char, *argv);
-    fd = xopen(buf, 0o2i32 | 0o4000i32);
+    let mut buf: *mut libc::c_char = crate::libbb::concat_path_file::concat_path_file(
+      b"/dev\x00" as *const u8 as *const libc::c_char,
+      *argv,
+    );
+    fd = crate::libbb::xfuncs_printf::xopen(buf, 0o2i32 | 0o4000i32);
     /* maybe if (ENABLE_FEATURE_CLEAN_UP) ?? */
     free(buf as *mut libc::c_void);
   }
-  xmove_fd(fd, 3i32);
+  crate::libbb::xfuncs_printf::xmove_fd(fd, 3i32);
   /* Save current tty state */
   if tcgetattr(
     3i32,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).saved_state,
   ) != 0i32
   {
-    bb_simple_perror_msg_and_die(b"tcgetattr\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"tcgetattr\x00" as *const u8 as *const libc::c_char,
+    );
   }
   /* Save line discipline */
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     3i32,
     0x5424i32 as libc::c_uint,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).saved_disc as *mut libc::c_int
@@ -235,7 +209,7 @@ pub unsafe extern "C" fn slattach_main(
   );
   /* Trap signals in order to restore tty states upon exit */
   if opt & OPT_e_quit as libc::c_int == 0 {
-    bb_signals(
+    crate::libbb::signals::bb_signals(
       0i32 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 3i32) + (1i32 << 15i32),
       Some(sig_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
     );
@@ -287,7 +261,7 @@ pub unsafe extern "C" fn slattach_main(
   /* Set line status */
   if !(tcsetattr_serial_or_warn(&mut state) != 0) {
     /* Set line disclipline (N_SLIP always) */
-    if !(bb_ioctl_or_warn(
+    if !(crate::libbb::xfuncs_printf::bb_ioctl_or_warn(
       3i32,
       0x5423i32 as libc::c_uint,
       &int_N_SLIP as *const libc::c_int as *mut libc::c_void,
@@ -295,7 +269,7 @@ pub unsafe extern "C" fn slattach_main(
     ) != 0)
     {
       /* Set encapsulation (SLIP, CSLIP, etc) */
-      if !(bb_ioctl_or_warn(
+      if !(crate::libbb::xfuncs_printf::bb_ioctl_or_warn(
         3i32,
         0x8926i32 as libc::c_uint,
         &mut encap as *mut libc::c_int as *mut libc::c_void,

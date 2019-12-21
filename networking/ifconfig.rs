@@ -1,7 +1,11 @@
+use crate::librb::in6_addr;
+use crate::librb::len_and_sockaddr;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
-
 use libc;
+use libc::sa_family_t;
+use libc::sockaddr;
+use libc::sockaddr_in;
 use libc::strchr;
 use libc::strcmp;
 extern "C" {
@@ -14,51 +18,13 @@ extern "C" {
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_ulong;
-
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xhost2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn display_interfaces(ifname: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn in_ether(bufp: *const libc::c_char, sap: *mut sockaddr) -> libc::c_int;
-  #[no_mangle]
-  fn in_ib(bufp: *const libc::c_char, sap: *mut sockaddr) -> libc::c_int;
-  #[no_mangle]
-  fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn ioctl_or_perror_and_die(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    fmt: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 }
 
 pub type __caddr_t = *mut libc::c_char;
-pub type __socklen_t = libc::c_uint;
+pub type caddr_t = __caddr_t;
 
 pub type intptr_t = libc::c_long;
 pub type smalluint = libc::c_uchar;
-pub type socklen_t = __socklen_t;
-pub type caddr_t = __caddr_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -69,57 +35,11 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed {
-  pub __u6_addr8: [u8; 16],
-  pub __u6_addr16: [u16; 8],
-  pub __u6_addr32: [u32; 4],
-}
+
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_0,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed_0 {
-  pub sa: sockaddr,
-  pub sin: sockaddr_in,
-  pub sin6: sockaddr_in6,
-}
+
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const IFF_DYNAMIC: C2RustUnnamed_1 = 32768;
 pub const IFF_AUTOMEDIA: C2RustUnnamed_1 = 16384;
@@ -137,8 +57,9 @@ pub const IFF_LOOPBACK: C2RustUnnamed_1 = 8;
 pub const IFF_DEBUG: C2RustUnnamed_1 = 4;
 pub const IFF_BROADCAST: C2RustUnnamed_1 = 2;
 pub const IFF_UP: C2RustUnnamed_1 = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifmap {
   pub mem_start: libc::c_ulong,
   pub mem_end: libc::c_ulong,
@@ -147,14 +68,16 @@ pub struct ifmap {
   pub dma: libc::c_uchar,
   pub port: libc::c_uchar,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifreq {
   pub ifr_ifrn: C2RustUnnamed_3,
   pub ifr_ifru: C2RustUnnamed_2,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_2 {
   pub ifru_addr: sockaddr,
   pub ifru_dstaddr: sockaddr,
@@ -169,8 +92,9 @@ pub union C2RustUnnamed_2 {
   pub ifru_newname: [libc::c_char; 16],
   pub ifru_data: __caddr_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_3 {
   pub ifrn_name: [libc::c_char; 16],
 }
@@ -271,22 +195,25 @@ pub union C2RustUnnamed_3 {
 /* I don't know if this is needed for busybox or not.  Anyone? */
 /* Defines for glibc2.0 users. */
 /* ifr_qlen is ifru_ivalue, but it isn't present in 2.0 kernel headers */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct in6_ifreq {
   pub ifr6_addr: in6_addr,
   pub ifr6_prefixlen: u32,
   pub ifr6_ifindex: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct arg1opt {
   pub name: *const libc::c_char,
   pub selector: libc::c_ushort,
   pub ifr_offset: libc::c_ushort,
 }
-#[derive(Copy, Clone, BitfieldStruct)]
+
 #[repr(C)]
+#[derive(Copy, Clone, BitfieldStruct)]
 pub struct options {
   pub name: *const libc::c_char,
   #[bitfield(name = "flags", ty = "libc::c_uint", bits = "0..=5")]
@@ -438,25 +365,9 @@ pub unsafe extern "C" fn ifconfig_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut ifr: ifreq = ifreq {
-    ifr_ifrn: C2RustUnnamed_3 { ifrn_name: [0; 16] },
-    ifr_ifru: C2RustUnnamed_2 {
-      ifru_addr: sockaddr {
-        sa_family: 0,
-        sa_data: [0; 14],
-      },
-    },
-  }; /* socket fd we use to manipulate stuff with */
-  let mut sai: sockaddr_in = sockaddr_in {
-    sin_family: 0,
-    sin_port: 0,
-    sin_addr: in_addr { s_addr: 0 },
-    sin_zero: [0; 8],
-  };
-  let mut sa: sockaddr = sockaddr {
-    sa_family: 0,
-    sa_data: [0; 14],
-  };
+  let mut ifr: ifreq = std::mem::zeroed(); /* socket fd we use to manipulate stuff with */
+  let mut sai: sockaddr_in = std::mem::zeroed();
+  let mut sa: sockaddr = std::mem::zeroed();
   let mut a1op: *const arg1opt = 0 as *const arg1opt;
   let mut op: *const options = 0 as *const options;
   let mut sockfd: libc::c_int = 0;
@@ -481,20 +392,20 @@ pub unsafe extern "C" fn ifconfig_main(
     && *(*argv.offset(0)).offset(2) == 0
   {
     argv = argv.offset(1);
-    show_all_param = 1i32 as intptr_t as *mut libc::c_char
+    show_all_param = 1 as intptr_t as *mut libc::c_char
   }
   if (*argv.offset(0)).is_null() || (*argv.offset(1)).is_null() {
     /* one or no args */
-    return display_interfaces(if !(*argv.offset(0)).is_null() {
+    return crate::networking::interface::display_interfaces(if !(*argv.offset(0)).is_null() {
       *argv.offset(0)
     } else {
       show_all_param
     });
   }
   /* Create a channel to the NET kernel. */
-  sockfd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+  sockfd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
   /* get interface name */
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), *argv);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), *argv);
   let mut current_block_97: u64;
   loop
   /* Process the remaining arguments. */
@@ -504,11 +415,11 @@ pub unsafe extern "C" fn ifconfig_main(
       break;
     }
     p = *argv;
-    mask = (0x1i32 | 0x4i32 | 0x10i32) as libc::c_uint;
+    mask = (0x1 | 0x4 | 0x10) as libc::c_uint;
     if *p as libc::c_int == '-' as i32 {
       /* If the arg starts with '-'... */
       p = p.offset(1);
-      mask = (0x2i32 | 0x8i32 | 0x20i32) as libc::c_uint /*    advance past it and */
+      mask = (0x2 | 0x8 | 0x20) as libc::c_uint /*    advance past it and */
       /*    set the appropriate mask. */
     }
     op = OptArray.as_ptr();
@@ -528,7 +439,7 @@ pub unsafe extern "C" fn ifconfig_main(
         } else {
           /* If we get here, there was a valid arg with an */
           /* invalid '-' prefix. */
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"bad: \'%s\'\x00" as *const u8 as *const libc::c_char,
             p.offset(-1),
           );
@@ -552,21 +463,21 @@ pub unsafe extern "C" fn ifconfig_main(
         current_block_97 = 15570335776229543684;
       }
       _ => {
-        if mask & (0x20i32 | 0x10i32) as libc::c_uint != 0 {
+        if mask & (0x20 | 0x10) as libc::c_uint != 0 {
           mask = (*op).arg_flags();
-          if mask & 0x20i32 as libc::c_uint & did_flags != 0 {
-            bb_show_usage();
+          if mask & 0x20 as libc::c_uint & did_flags != 0 {
+            crate::libbb::appletlib::bb_show_usage();
           }
           a1op = Arg1Opt
             .as_ptr()
             .offset(op.wrapping_offset_from(OptArray.as_ptr()) as libc::c_long as isize);
           argv = argv.offset(1);
           if (*argv).is_null() {
-            if mask & 0x10i32 as libc::c_uint != 0 {
-              bb_show_usage();
+            if mask & 0x10 as libc::c_uint != 0 {
+              crate::libbb::appletlib::bb_show_usage();
             }
             argv = argv.offset(-1);
-            mask &= 0x40i32 as libc::c_uint;
+            mask &= 0x40 as libc::c_uint;
             current_block_97 = 1677945370889843322;
           /* just for broadcast */
           } else {
@@ -579,42 +490,41 @@ pub unsafe extern "C" fn ifconfig_main(
     }
     match current_block_97 {
       15570335776229543684 => {
-        did_flags |= mask & (0x20i32 | 0x100i32) as libc::c_uint;
-        if mask & 0x2i32 as libc::c_uint != 0 {
-          if mask & 0x1i32 as libc::c_uint != 0 {
+        did_flags |= mask & (0x20 | 0x100) as libc::c_uint;
+        if mask & 0x2 as libc::c_uint != 0 {
+          if mask & 0x1 as libc::c_uint != 0 {
             host = *argv;
-            if strcmp(host, b"inet\x00" as *const u8 as *const libc::c_char) == 0i32 {
+            if strcmp(host, b"inet\x00" as *const u8 as *const libc::c_char) == 0 {
               continue;
             }
-            sai.sin_family = 2i32 as sa_family_t;
-            sai.sin_port = 0i32 as in_port_t;
-            if strcmp(host, b"default\x00" as *const u8 as *const libc::c_char) == 0i32 {
+            sai.sin_family = 2 as sa_family_t;
+            sai.sin_port = 0 as in_port_t;
+            if strcmp(host, b"default\x00" as *const u8 as *const libc::c_char) == 0 {
               /* Default is special, meaning 0.0.0.0. */
-              sai.sin_addr.s_addr = 0i32 as in_addr_t
+              sai.sin_addr.s_addr = 0 as in_addr_t
             } else if *host.offset(0) as libc::c_int == '+' as i32
               && *host.offset(1) == 0
-              && mask & 0x200i32 as libc::c_uint != 0
-              && did_flags & (0x20i32 | 0x100i32) as libc::c_uint
-                == (0x20i32 | 0x100i32) as libc::c_uint
+              && mask & 0x200 as libc::c_uint != 0
+              && did_flags & (0x20 | 0x100) as libc::c_uint == (0x20 | 0x100) as libc::c_uint
             {
               /* + is special, meaning broadcast is derived. */
               sai.sin_addr.s_addr = !sai_netmask | sai_hostname & sai_netmask
             } else {
               let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
               let mut prefix: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-              let mut prefix_len: libc::c_int = 0i32;
+              let mut prefix_len: libc::c_int = 0;
               prefix = strchr(host, '/' as i32);
               if !prefix.is_null() {
-                prefix_len = xatou_range(
+                prefix_len = crate::libbb::xatonum::xatou_range(
                   prefix.offset(1),
-                  0i32 as libc::c_uint,
-                  128i32 as libc::c_uint,
+                  0 as libc::c_uint,
+                  128 as libc::c_uint,
                 ) as libc::c_int;
                 *prefix = '\u{0}' as i32 as libc::c_char
               }
               loop {
-                lsa = xhost2sockaddr(host, 0i32);
-                if !((*lsa).u.sa.sa_family as libc::c_int != 10i32 && !prefix.is_null()) {
+                lsa = crate::libbb::xconnect::xhost2sockaddr(host, 0);
+                if !((*lsa).u.sa.sa_family as libc::c_int != 10 && !prefix.is_null()) {
                   break;
                 }
                 /* TODO: we do not support "ifconfig eth0 up 1.2.3.4/17".
@@ -622,21 +532,13 @@ pub unsafe extern "C" fn ifconfig_main(
                  */
                 *prefix = '/' as i32 as libc::c_char
               }
-              if (*lsa).u.sa.sa_family as libc::c_int == 10i32 {
+              if (*lsa).u.sa.sa_family as libc::c_int == 10 {
                 let mut sockfd6: libc::c_int = 0;
-                let mut ifr6: in6_ifreq = in6_ifreq {
-                  ifr6_addr: in6_addr {
-                    __in6_u: C2RustUnnamed {
-                      __u6_addr8: [0; 16],
-                    },
-                  },
-                  ifr6_prefixlen: 0,
-                  ifr6_ifindex: 0,
-                };
-                sockfd6 = xsocket(10i32, SOCK_DGRAM as libc::c_int, 0i32);
-                bb_xioctl(
+                let mut ifr6: in6_ifreq = std::mem::zeroed();
+                sockfd6 = crate::libbb::xfuncs_printf::xsocket(10, SOCK_DGRAM as libc::c_int, 0);
+                crate::libbb::xfuncs_printf::bb_xioctl(
                   sockfd6,
-                  0x8933i32 as libc::c_uint,
+                  0x8933 as libc::c_uint,
                   &mut ifr as *mut ifreq as *mut libc::c_void,
                   b"SIOCGIFINDEX\x00" as *const u8 as *const libc::c_char,
                 );
@@ -644,10 +546,10 @@ pub unsafe extern "C" fn ifconfig_main(
                 ifr6.ifr6_prefixlen = prefix_len as u32;
                 memcpy(
                   &mut ifr6.ifr6_addr as *mut in6_addr as *mut libc::c_void,
-                  &mut (*lsa).u.sin6.sin6_addr as *mut in6_addr as *const libc::c_void,
+                  &mut (*lsa).u.sin6.sin6_addr as *mut libc::in6_addr as *const libc::c_void,
                   ::std::mem::size_of::<in6_addr>() as libc::c_ulong,
                 );
-                ioctl_or_perror_and_die(
+                crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
                   sockfd6,
                   (*a1op).selector as libc::c_uint,
                   &mut ifr6 as *mut in6_ifreq as *mut libc::c_void,
@@ -668,7 +570,7 @@ pub unsafe extern "C" fn ifconfig_main(
             p = &mut sai as *mut sockaddr_in as *mut libc::c_char
           } else {
             /* This is the "hw" arg case. */
-            let mut hw_class: smalluint = (index_in_substrings(
+            let mut hw_class: smalluint = (crate::libbb::compare_string_array::index_in_substrings(
               b"ether\x00infiniband\x00\x00" as *const u8 as *const libc::c_char,
               *argv,
             ) + 1i32) as smalluint;
@@ -676,16 +578,16 @@ pub unsafe extern "C" fn ifconfig_main(
               argv = argv.offset(1);
               (*argv).is_null()
             } {
-              bb_show_usage();
+              crate::libbb::appletlib::bb_show_usage();
             }
             host = *argv;
             if if hw_class as libc::c_int == 1i32 {
-              in_ether(host, &mut sa)
+              crate::libbb::in_ether::in_ether(host, &mut sa)
             } else {
-              in_ib(host, &mut sa)
+              crate::networking::interface::in_ib(host, &mut sa)
             } != 0
             {
-              bb_error_msg_and_die(
+              crate::libbb::verror_msg::bb_error_msg_and_die(
                 b"invalid hw-addr %s\x00" as *const u8 as *const libc::c_char,
                 host,
               );
@@ -704,7 +606,7 @@ pub unsafe extern "C" fn ifconfig_main(
           p = (&mut ifr as *mut ifreq as *mut libc::c_char)
             .offset((*a1op).ifr_offset as libc::c_int as isize);
           if mask & 0xci32 as libc::c_uint != 0 {
-            bb_xioctl(
+            crate::libbb::xfuncs_printf::bb_xioctl(
               sockfd,
               0x8970i32 as libc::c_uint,
               &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -725,7 +627,7 @@ pub unsafe extern "C" fn ifconfig_main(
             *(p as *mut libc::c_int) = i as libc::c_int
           }
         }
-        ioctl_or_perror_and_die(
+        crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
           sockfd,
           (*a1op).selector as libc::c_uint,
           &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -770,7 +672,7 @@ pub unsafe extern "C" fn ifconfig_main(
       }
       _ => {}
     }
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       sockfd,
       0x8913i32 as libc::c_uint,
       &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -783,7 +685,7 @@ pub unsafe extern "C" fn ifconfig_main(
       ifr.ifr_ifru.ifru_flags =
         (ifr.ifr_ifru.ifru_flags as libc::c_int & !selector) as libc::c_short
     }
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       sockfd,
       0x8914i32 as libc::c_uint,
       &mut ifr as *mut ifreq as *mut libc::c_void,

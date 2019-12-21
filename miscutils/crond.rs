@@ -1,7 +1,7 @@
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::parse_config::parser_t;
 use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
-use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
 use libc::chdir;
@@ -75,60 +75,8 @@ extern "C" {
   /* Search for an entry with a matching username.  */
 
   #[no_mangle]
-  fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn bb_unsetenv_and_free(key: *mut libc::c_char);
-  #[no_mangle]
-  fn open_or_warn(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_putchar_stderr(ch: libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn write_pidfile_std_path_and_ext(path: *const libc::c_char);
-  #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_info_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_vinfo_msg(s: *const libc::c_char, p: ::std::ffi::VaList);
-  #[no_mangle]
-  fn config_open(filename: *const libc::c_char) -> *mut parser_t;
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
-  #[no_mangle]
-  fn change_identity(pw: *const passwd);
-  #[no_mangle]
-  fn get_shell_name() -> *const libc::c_char;
+
   #[no_mangle]
   fn fgets_unlocked(
     __s: *mut libc::c_char,
@@ -142,8 +90,9 @@ extern "C" {
 
 }
 pub type __builtin_va_list = [__va_list_tag; 1];
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __va_list_tag {
   pub gp_offset: libc::c_uint,
   pub fp_offset: libc::c_uint,
@@ -175,19 +124,9 @@ pub const PARSE_MIN_DIE: C2RustUnnamed_1 = 1048576;
 pub const PARSE_GREEDY: C2RustUnnamed_1 = 262144;
 pub const PARSE_TRIM: C2RustUnnamed_1 = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed_1 = 65536;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct globals {
   pub log_level: libc::c_uint,
   pub crontab_dir_mtime: time_t,
@@ -200,8 +139,9 @@ pub struct globals {
   pub env_var_shell: *mut libc::c_char,
   pub env_var_logname: *mut libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct CronFile {
   pub cf_next: *mut CronFile,
   pub cf_lines: *mut CronLine,
@@ -210,8 +150,9 @@ pub struct CronFile {
   pub cf_has_running: smallint,
   pub cf_deleted: smallint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct CronLine {
   pub cl_next: *mut CronLine,
   pub cl_cmd: *mut libc::c_char,
@@ -233,8 +174,9 @@ pub const OPT_b: C2RustUnnamed_2 = 8;
 pub const OPT_f: C2RustUnnamed_2 = 4;
 pub const OPT_L: C2RustUnnamed_2 = 2;
 pub const OPT_l: C2RustUnnamed_2 = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct SpecialEntry {
   pub name: *const libc::c_char,
   pub tokens: [libc::c_char; 8],
@@ -255,7 +197,7 @@ unsafe extern "C" fn crondlog(
      * need not touch syslog_level
      * (they are ok with LOG_ERR default).
      */
-    bb_vinfo_msg(msg, va.as_va_list());
+    crate::libbb::verror_msg::bb_vinfo_msg(msg, va.as_va_list());
   };
 }
 unsafe extern "C" fn log5(mut msg: *const libc::c_char, mut args: ...) {
@@ -405,14 +347,14 @@ unsafe extern "C" fn ParseField(
             );
             i_0 += 1
           }
-          bb_putchar_stderr('\n' as i32 as libc::c_char);
+          crate::libbb::xfuncs::bb_putchar_stderr('\n' as i32 as libc::c_char);
         }
         return;
       }
     }
     _ => {}
   }
-  bb_error_msg(
+  crate::libbb::verror_msg::bb_error_msg(
     b"user %s: parse error at %s\x00" as *const u8 as *const libc::c_char,
     user,
     base,
@@ -535,7 +477,7 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
     );
     return;
   }
-  parser = config_open(fileName);
+  parser = crate::libbb::parse_config::config_open(fileName);
   if parser.is_null() {
     return;
   }
@@ -547,22 +489,23 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
   if fstat(fileno_unlocked((*parser).fp), &mut sbuf) == 0i32 && sbuf.st_uid == 0i32 as libc::c_uint
   {
     let mut file: *mut CronFile =
-      xzalloc(::std::mem::size_of::<CronFile>() as libc::c_ulong) as *mut CronFile;
+      crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<CronFile>() as libc::c_ulong)
+        as *mut CronFile;
     let mut pline: *mut *mut CronLine = 0 as *mut *mut CronLine;
     let mut n: libc::c_int = 0;
-    (*file).cf_username = xstrdup(fileName);
+    (*file).cf_username = crate::libbb::xfuncs_printf::xstrdup(fileName);
     pline = &mut (*file).cf_lines;
     's_80: loop {
       let mut line: *mut CronLine = 0 as *mut CronLine;
       maxLines -= 1;
       if maxLines == 0 {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"user %s: too many lines\x00" as *const u8 as *const libc::c_char,
           fileName,
         );
         break;
       } else {
-        n = config_read(
+        n = crate::libbb::parse_config::config_read(
           parser,
           tokens.as_mut_ptr(),
           (PARSE_NORMAL as libc::c_int
@@ -581,7 +524,7 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
         );
         //bb_error_msg("M[%s]F[%s][%s][%s][%s][%s][%s]", mailTo, tokens[0], tokens[1], tokens[2], tokens[3], tokens[4], tokens[5]);
         /* check if line is setting MAILTO= */
-        if !is_prefixed_with(
+        if !crate::libbb::compare_string_array::is_prefixed_with(
           tokens[0],
           b"MAILTO=\x00" as *const u8 as *const libc::c_char,
         )
@@ -589,15 +532,19 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
         {
           free(mailTo as *mut libc::c_void);
           mailTo = if *tokens[0].offset(7) as libc::c_int != 0 {
-            xstrdup(&mut *(*tokens.as_mut_ptr().offset(0)).offset(7))
+            crate::libbb::xfuncs_printf::xstrdup(&mut *(*tokens.as_mut_ptr().offset(0)).offset(7))
           } else {
             std::ptr::null_mut::<libc::c_char>()
           }
-        } else if !is_prefixed_with(tokens[0], b"SHELL=\x00" as *const u8 as *const libc::c_char)
-          .is_null()
+        } else if !crate::libbb::compare_string_array::is_prefixed_with(
+          tokens[0],
+          b"SHELL=\x00" as *const u8 as *const libc::c_char,
+        )
+        .is_null()
         {
           free(shell as *mut libc::c_void);
-          shell = xstrdup(&mut *(*tokens.as_mut_ptr().offset(0)).offset(6))
+          shell =
+            crate::libbb::xfuncs_printf::xstrdup(&mut *(*tokens.as_mut_ptr().offset(0)).offset(6))
         } else {
           //TODO: handle HOME= too? "man crontab" says:
           //name = value
@@ -684,7 +631,9 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
                  * can'r use it.
                  * find the entire command in unmodified string:
                  */
-                tokens[5] = skip_whitespace(skip_non_whitespace(skip_whitespace((*parser).data)));
+                tokens[5] = skip_whitespace(crate::libbb::skip_whitespace::skip_non_whitespace(
+                  skip_whitespace((*parser).data),
+                ));
                 if (*e).tokens[0] != 0 {
                   let mut et: *mut libc::c_char = (*e).tokens.as_ptr() as *mut libc::c_char;
                   /* minute is "0" for all specials */
@@ -708,7 +657,9 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
           {
             continue;
           }
-          line = xzalloc(::std::mem::size_of::<CronLine>() as libc::c_ulong) as *mut CronLine;
+          line = crate::libbb::xfuncs_printf::xzalloc(
+            ::std::mem::size_of::<CronLine>() as libc::c_ulong
+          ) as *mut CronLine;
           *pline = line;
           if *tokens[0].offset(0) as libc::c_int == '@' as i32 {
             /* "@reboot" line */
@@ -765,10 +716,10 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
             FixDayDow(line);
           }
           /* copy mailto (can be NULL) */
-          (*line).cl_mailto = xstrdup(mailTo);
-          (*line).cl_shell = xstrdup(shell);
+          (*line).cl_mailto = crate::libbb::xfuncs_printf::xstrdup(mailTo);
+          (*line).cl_shell = crate::libbb::xfuncs_printf::xstrdup(shell);
           /* copy command */
-          (*line).cl_cmd = xstrdup(tokens[5]);
+          (*line).cl_cmd = crate::libbb::xfuncs_printf::xstrdup(tokens[5]);
           pline = &mut (*line).cl_next
         }
       }
@@ -778,14 +729,14 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
     let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cron_files;
     *fresh0 = file
   }
-  config_close(parser);
+  crate::libbb::parse_config::config_close(parser);
   free(mailTo as *mut libc::c_void);
   free(shell as *mut libc::c_void);
 }
 unsafe extern "C" fn process_cron_update_file() {
   let mut fi: *mut FILE = 0 as *mut FILE;
   let mut buf: [libc::c_char; 256] = [0; 256];
-  fi = fopen_for_read(b"cron.update\x00" as *const u8 as *const libc::c_char);
+  fi = crate::libbb::wfopen::fopen_for_read(b"cron.update\x00" as *const u8 as *const libc::c_char);
   if !fi.is_null() {
     unlink(b"cron.update\x00" as *const u8 as *const libc::c_char);
     while !fgets_unlocked(
@@ -796,7 +747,8 @@ unsafe extern "C" fn process_cron_update_file() {
     .is_null()
     {
       /* use first word only */
-      *skip_non_whitespace(buf.as_mut_ptr()).offset(0) = '\u{0}' as i32 as libc::c_char;
+      *crate::libbb::skip_whitespace::skip_non_whitespace(buf.as_mut_ptr()).offset(0) =
+        '\u{0}' as i32 as libc::c_char;
       load_crontab(buf.as_mut_ptr());
     }
     fclose(fi);
@@ -823,13 +775,15 @@ unsafe extern "C" fn rescan_crontab_dir() {
   /* Remove cron update file */
   unlink(b"cron.update\x00" as *const u8 as *const libc::c_char);
   /* Re-chdir, in case directory was renamed & deleted */
-  xchdir((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).crontab_dir_name);
+  crate::libbb::xfuncs_printf::xchdir(
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).crontab_dir_name,
+  );
   /* Scan directory and add associated users */
   let mut dir: *mut DIR = opendir(b".\x00" as *const u8 as *const libc::c_char);
   let mut den: *mut dirent = 0 as *mut dirent;
   /* xopendir exists, but "can't open '.'" is not informative */
   if dir.is_null() {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).crontab_dir_name,
     );
@@ -856,9 +810,13 @@ unsafe extern "C" fn safe_setenv(
 ) {
   let mut var_val: *mut libc::c_char = *pvar_val;
   if !var_val.is_null() {
-    bb_unsetenv_and_free(var_val);
+    crate::libbb::xfuncs_printf::bb_unsetenv_and_free(var_val);
   }
-  *pvar_val = xasprintf(b"%s=%s\x00" as *const u8 as *const libc::c_char, var, val);
+  *pvar_val = crate::libbb::xfuncs_printf::xasprintf(
+    b"%s=%s\x00" as *const u8 as *const libc::c_char,
+    var,
+    val,
+  );
   putenv(*pvar_val);
 }
 unsafe extern "C" fn set_env_vars(mut pas: *mut passwd, mut shell: *const libc::c_char) {
@@ -888,13 +846,13 @@ unsafe extern "C" fn set_env_vars(mut pas: *mut passwd, mut shell: *const libc::
 }
 unsafe extern "C" fn change_user(mut pas: *mut passwd) {
   /* careful: we're after vfork! */
-  change_identity(pas); /* - initgroups, setgid, setuid */
+  crate::libbb::change_identity::change_identity(pas); /* - initgroups, setgid, setuid */
   if chdir((*pas).pw_dir) < 0i32 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"can\'t change directory to \'%s\'\x00" as *const u8 as *const libc::c_char,
       (*pas).pw_dir,
     );
-    xchdir(b"/var/spool/cron\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::xfuncs_printf::xchdir(b"/var/spool/cron\x00" as *const u8 as *const libc::c_char);
   };
 }
 // TODO: sendmail should be _run-time_ option, not compile-time!
@@ -913,7 +871,7 @@ unsafe extern "C" fn fork_job(
   /* prepare things before vfork */
   pas = bb_internal_getpwnam(user);
   if pas.is_null() {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"can\'t get uid for %s\x00" as *const u8 as *const libc::c_char,
       user,
     );
@@ -941,7 +899,7 @@ unsafe extern "C" fn fork_job(
         prog,
       );
       if mailFd >= 0i32 {
-        xmove_fd(
+        crate::libbb::xfuncs_printf::xmove_fd(
           mailFd,
           if run_sendmail as libc::c_int != 0 {
             0i32
@@ -974,7 +932,7 @@ unsafe extern "C" fn fork_job(
        * even if other messages go only to syslog:
        */
       logmode = (logmode as libc::c_int | LOGMODE_STDIO as libc::c_int) as smallint; /* else: PARENT, FORK SUCCESS */
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"can\'t execute \'%s\' for user %s\x00" as *const u8 as *const libc::c_char,
         prog,
         user,
@@ -982,7 +940,9 @@ unsafe extern "C" fn fork_job(
     }
     logmode = sv_logmode;
     if pid < 0i32 {
-      bb_simple_perror_msg(b"vfork\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg(
+        b"vfork\x00" as *const u8 as *const libc::c_char,
+      );
       current_block = 12835897963350252569;
     } else {
       current_block = 18386322304582297246;
@@ -1033,7 +993,7 @@ unsafe extern "C" fn start_one_job(
       );
       (*line).cl_empty_mail_size = lseek(mailFd, 0i32 as off64_t, 1i32) as libc::c_int
     } else {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"can\'t create mail file %s for user %s, discarding output\x00" as *const u8
           as *const libc::c_char,
         mailFile.as_mut_ptr(),
@@ -1047,7 +1007,7 @@ unsafe extern "C" fn start_one_job(
       unlink(mailFile.as_mut_ptr());
     } else {
       /* rename mail-file based on pid of process */
-      let mut mailFile2: *mut libc::c_char = xasprintf(
+      let mut mailFile2: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
         b"%s/cron.%s.%d\x00" as *const u8 as *const libc::c_char,
         b"/var/spool/cron\x00" as *const u8 as *const libc::c_char,
         user,
@@ -1265,12 +1225,12 @@ unsafe extern "C" fn reopen_logfile_to_stderr() {
     .log_filename
     .is_null()
   {
-    let mut logfd: libc::c_int = open_or_warn(
+    let mut logfd: libc::c_int = crate::libbb::xfuncs_printf::open_or_warn(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).log_filename,
       0o1i32 | 0o100i32 | 0o2000i32,
     );
     if logfd >= 0i32 {
-      xmove_fd(logfd, 2i32);
+      crate::libbb::xfuncs_printf::xmove_fd(logfd, 2i32);
     }
   };
 }
@@ -1286,7 +1246,7 @@ pub unsafe extern "C" fn crond_main(
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).log_level = 8i32 as libc::c_uint;
   let ref mut fresh1 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).crontab_dir_name;
   *fresh1 = b"/var/spool/cron/crontabs\x00" as *const u8 as *const libc::c_char;
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^l:L:fbSc:d:\x00f-b:b-f:S-L:L-S:d-l:l+:d+\x00" as *const u8 as *const libc::c_char,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).log_level as *mut libc::c_uint,
@@ -1300,7 +1260,7 @@ pub unsafe extern "C" fn crond_main(
   if opts & OPT_f as libc::c_int as libc::c_uint == 0 {
     /* close stdin, stdout, stderr.
      * close unused descriptors - don't need them. */
-    bb_daemonize_or_rexec(DAEMON_CLOSE_EXTRA_FDS as libc::c_int);
+    crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(DAEMON_CLOSE_EXTRA_FDS as libc::c_int);
   }
   if opts & OPT_d as libc::c_int as libc::c_uint == 0
     && (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -1313,17 +1273,21 @@ pub unsafe extern "C" fn crond_main(
   }
   //signal(SIGHUP, SIG_IGN); /* ? original crond dies on HUP... */
   reopen_logfile_to_stderr();
-  xchdir((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).crontab_dir_name);
+  crate::libbb::xfuncs_printf::xchdir(
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).crontab_dir_name,
+  );
   /* $SHELL, or current UID's shell, or DEFAULT_SHELL */
   /* Useful on Android where DEFAULT_SHELL /bin/sh may not exist */
   let ref mut fresh2 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).default_shell; /* start @reboot entries, if any */
-  *fresh2 = xstrdup(get_shell_name());
+  *fresh2 = crate::libbb::xfuncs_printf::xstrdup(crate::libbb::get_shell_name::get_shell_name());
   log8(
     b"crond (busybox 1.32.0.git) started, log level %d\x00" as *const u8 as *const libc::c_char,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).log_level,
   );
   rescan_crontab_dir();
-  write_pidfile_std_path_and_ext(b"crond\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::pidfile::write_pidfile_std_path_and_ext(
+    b"crond\x00" as *const u8 as *const libc::c_char,
+  );
   if touch_reboot_file() != 0 {
     start_jobs(-2i32);
   }
@@ -1381,7 +1345,7 @@ pub unsafe extern "C" fn crond_main(
     process_cron_update_file();
     log5(b"wakeup dt=%ld\x00" as *const u8 as *const libc::c_char, dt);
     if dt < (-60i32 * 60i32) as libc::c_long || dt > (60i32 * 60i32) as libc::c_long {
-      bb_info_msg(
+      crate::libbb::verror_msg::bb_info_msg(
         b"time disparity of %ld minutes detected\x00" as *const u8 as *const libc::c_char,
         dt / 60i32 as libc::c_long,
       );

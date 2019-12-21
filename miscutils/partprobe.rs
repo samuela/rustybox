@@ -4,18 +4,7 @@ extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn ioctl_or_perror_and_die(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    fmt: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
+
 }
 
 /*
@@ -44,11 +33,11 @@ pub unsafe extern "C" fn partprobe_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  getopt32(argv, b"\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::getopt32::getopt32(argv, b"\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   /* "partprobe" with no arguments just does nothing */
   while !(*argv).is_null() {
-    let mut fd: libc::c_int = xopen(*argv, 0i32);
+    let mut fd: libc::c_int = crate::libbb::xfuncs_printf::xopen(*argv, 0i32);
     /*
      * Newer versions of parted scan partition tables themselves and
      * use BLKPG ioctl (BLKPG_DEL_PARTITION / BLKPG_ADD_PARTITION)
@@ -56,7 +45,7 @@ pub unsafe extern "C" fn partprobe_main(
      * partition table formats.
      * We use good old BLKRRPART:
      */
-    ioctl_or_perror_and_die(
+    crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
       fd,
       0u32 << 0i32 + 8i32 + 8i32 + 14i32
         | (0x12i32 << 0i32 + 8i32) as libc::c_uint

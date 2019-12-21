@@ -1,10 +1,5 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn last_char_is(s: *const libc::c_char, c: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-}
+
 
 /*
  * Busybox main internal header file
@@ -457,11 +452,11 @@ pub unsafe extern "C" fn concat_path_file(
   if path.is_null() {
     path = b"\x00" as *const u8 as *const libc::c_char
   }
-  lc = last_char_is(path, '/' as i32);
+  lc = crate::libbb::last_char_is::last_char_is(path, '/' as i32);
   while *filename as libc::c_int == '/' as i32 {
     filename = filename.offset(1)
   }
-  return xasprintf(
+  return crate::libbb::xfuncs_printf::xasprintf(
     b"%s%s%s\x00" as *const u8 as *const libc::c_char,
     path,
     if lc.is_null() {

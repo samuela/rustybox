@@ -1,27 +1,10 @@
 use libc;
 use libc::strcasecmp;
 extern "C" {
-  #[no_mangle]
-  fn ioctl_or_perror_and_die(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    fmt: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
+
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn xatou(str: *const libc::c_char) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
 }
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -80,16 +63,18 @@ pub const VLAN_NAME_TYPE_PLUS_VID_NO_PAD: vlan_name_types = 2;
 /* Name will look like:  vlan0005 */
 pub const VLAN_NAME_TYPE_RAW_PLUS_VID: vlan_name_types = 1;
 pub const VLAN_NAME_TYPE_PLUS_VID: vlan_name_types = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct vlan_ioctl_args {
   pub cmd: libc::c_int,
   pub device1: [libc::c_char; 24],
   pub u: C2RustUnnamed,
   pub vlan_qos: libc::c_short,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub device2: [libc::c_char; 24],
   pub VID: libc::c_int,
@@ -108,7 +93,7 @@ unsafe extern "C" fn xfind_str(
 ) -> *const libc::c_char {
   while strcasecmp(str, table.offset(1)) != 0i32 {
     if *table.offset(0) == 0 {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     table = table.offset(*table.offset(0) as libc::c_int as isize)
   }
@@ -294,18 +279,18 @@ pub unsafe extern "C" fn vconfig_main(
   );
   argv = argv.offset(1);
   if (*argv.offset(0)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   p = xfind_str(cmds.as_ptr().offset(2), *argv.offset(0));
   ifr.cmd = *p as libc::c_int;
   if argc != *p.offset(-1i32 as isize) as libc::c_int {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   if ifr.cmd == SET_VLAN_NAME_TYPE_CMD as libc::c_int {
     /* set_name_type */
     ifr.u.name_type = *xfind_str(name_types.as_ptr().offset(1), *argv.offset(1)) as libc::c_uint
   } else {
-    strncpy_IFNAMSIZ(ifr.device1.as_mut_ptr(), *argv.offset(1));
+    crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.device1.as_mut_ptr(), *argv.offset(1));
     p = *argv.offset(2);
     /* I suppose one could try to combine some of the function calls below,
      * since ifr.u.flag, ifr.u.VID, and ifr.u.skb_priority are all same-sized
@@ -315,23 +300,33 @@ pub unsafe extern "C" fn vconfig_main(
      */
     if ifr.cmd == SET_VLAN_FLAG_CMD as libc::c_int {
       /* set_flag */
-      ifr.u.flag = xatou_range(p, 0i32 as libc::c_uint, 1i32 as libc::c_uint);
+      ifr.u.flag =
+        crate::libbb::xatonum::xatou_range(p, 0i32 as libc::c_uint, 1i32 as libc::c_uint);
       /* DM: in order to set reorder header, qos must be set */
-      ifr.vlan_qos =
-        xatou_range(*argv.offset(3), 0i32 as libc::c_uint, 7i32 as libc::c_uint) as libc::c_short
+      ifr.vlan_qos = crate::libbb::xatonum::xatou_range(
+        *argv.offset(3),
+        0i32 as libc::c_uint,
+        7i32 as libc::c_uint,
+      ) as libc::c_short
     } else if ifr.cmd == ADD_VLAN_CMD as libc::c_int {
       /* add */
-      ifr.u.VID =
-        xatou_range(p, 0i32 as libc::c_uint, (4096i32 - 1i32) as libc::c_uint) as libc::c_int
+      ifr.u.VID = crate::libbb::xatonum::xatou_range(
+        p,
+        0i32 as libc::c_uint,
+        (4096i32 - 1i32) as libc::c_uint,
+      ) as libc::c_int
     } else if ifr.cmd != DEL_VLAN_CMD as libc::c_int {
       /* set_{egress|ingress}_map */
-      ifr.u.skb_priority = xatou(p);
-      ifr.vlan_qos =
-        xatou_range(*argv.offset(3), 0i32 as libc::c_uint, 7i32 as libc::c_uint) as libc::c_short
+      ifr.u.skb_priority = crate::libbb::xatonum::xatou(p);
+      ifr.vlan_qos = crate::libbb::xatonum::xatou_range(
+        *argv.offset(3),
+        0i32 as libc::c_uint,
+        7i32 as libc::c_uint,
+      ) as libc::c_short
     }
   }
-  fd = xsocket(2i32, SOCK_STREAM as libc::c_int, 0i32);
-  ioctl_or_perror_and_die(
+  fd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_STREAM as libc::c_int, 0i32);
+  crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
     fd,
     0x8983i32 as libc::c_uint,
     &mut ifr as *mut vlan_ioctl_args as *mut libc::c_void,

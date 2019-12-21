@@ -22,18 +22,6 @@ extern "C" {
   #[no_mangle]
   fn strspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
 }
 
 pub type C2RustUnnamed = libc::c_uint;
@@ -47,8 +35,8 @@ pub const PARSE_GREEDY: C2RustUnnamed = 262144;
 pub const PARSE_TRIM: C2RustUnnamed = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed = 65536;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct parser_t {
   pub fp: *mut FILE,
   pub data: *mut libc::c_char,
@@ -96,7 +84,8 @@ pub unsafe extern "C" fn config_open2(
   if fp.is_null() {
     return 0 as *mut parser_t;
   }
-  parser = xzalloc(::std::mem::size_of::<parser_t>() as libc::c_ulong) as *mut parser_t;
+  parser = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<parser_t>() as libc::c_ulong)
+    as *mut parser_t;
   (*parser).fp = fp;
   return parser;
 }
@@ -104,7 +93,10 @@ pub unsafe extern "C" fn config_open2(
 pub unsafe extern "C" fn config_open(mut filename: *const libc::c_char) -> *mut parser_t {
   return config_open2(
     filename,
-    Some(fopen_or_warn_stdin as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE),
+    Some(
+      crate::libbb::wfopen_input::fopen_or_warn_stdin
+        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+    ),
   );
 }
 #[no_mangle]
@@ -154,7 +146,8 @@ unsafe extern "C" fn get_line_with_continuation(mut parser: *mut parser_t) -> li
     if (*parser).line_alloc < (len + nlen + 1) as libc::c_ulong {
       (*parser).line_alloc = (len + nlen + 1) as size_t;
       (*parser).line =
-        xrealloc(line as *mut libc::c_void, (*parser).line_alloc) as *mut libc::c_char;
+        crate::libbb::xfuncs_printf::xrealloc(line as *mut libc::c_void, (*parser).line_alloc)
+          as *mut libc::c_char;
       line = (*parser).line
     }
     memcpy(
@@ -667,7 +660,7 @@ pub unsafe extern "C" fn config_read(
     }
     if flags & PARSE_KEEP_COPY as libc::c_int as libc::c_uint != 0 {
       free((*parser).data as *mut libc::c_void);
-      (*parser).data = xstrdup(line)
+      (*parser).data = crate::libbb::xfuncs_printf::xstrdup(line)
     }
     /* Tokenize the line */
     t = 0i32;
@@ -737,14 +730,14 @@ pub unsafe extern "C" fn config_read(
     if !(t < mintokens) {
       break;
     }
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"bad line %u: %d tokens found, %d needed\x00" as *const u8 as *const libc::c_char,
       (*parser).lineno,
       t,
       mintokens,
     );
     if flags & PARSE_MIN_DIE as libc::c_int as libc::c_uint != 0 {
-      xfunc_die();
+      crate::libbb::xfunc_die::xfunc_die();
     }
   }
   return t;

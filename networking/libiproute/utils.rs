@@ -1,12 +1,14 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::size_t;
+use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 use libc::fclose;
 use libc::fscanf;
 use libc::strchr;
 use libc::strcmp;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -35,35 +37,13 @@ extern "C" {
   ) -> *const libc::c_char;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn auto_string(str: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn bb_clk_tck() -> libc::c_uint;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
   static bb_msg_invalid_arg_to: [libc::c_char; 0];
 }
 
 pub type __socklen_t = libc::c_uint;
 
-use crate::librb::size_t;
-pub type socklen_t = __socklen_t;
-
-use libc::FILE;
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct inet_prefix {
   pub family: u8,
   pub bytelen: u8,
@@ -91,7 +71,9 @@ pub unsafe extern "C" fn get_hz() -> libc::c_uint {
   if hz_internal != 0 {
     return hz_internal;
   }
-  fp = fopen_for_read(b"/proc/net/psched\x00" as *const u8 as *const libc::c_char);
+  fp = crate::libbb::wfopen::fopen_for_read(
+    b"/proc/net/psched\x00" as *const u8 as *const libc::c_char,
+  );
   if !fp.is_null() {
     let mut nom: libc::c_uint = 0;
     let mut denom: libc::c_uint = 0;
@@ -109,7 +91,7 @@ pub unsafe extern "C" fn get_hz() -> libc::c_uint {
     fclose(fp);
   }
   if hz_internal == 0 {
-    hz_internal = bb_clk_tck()
+    hz_internal = crate::libbb::sysconf::bb_clk_tck()
   }
   return hz_internal;
 }
@@ -276,7 +258,8 @@ unsafe extern "C" fn get_prefix_1(
         data: [0; 4],
       };
       netmask_pfx.family = 0i32 as u8;
-      plen = bb_strtou(slash.offset(1), 0 as *mut *mut libc::c_char, 0i32);
+      plen =
+        crate::libbb::bb_strtonum::bb_strtou(slash.offset(1), 0 as *mut *mut libc::c_char, 0i32);
       if (*bb_errno != 0 || plen > (*dst).bitlen as libc::c_uint)
         && get_addr_1(&mut netmask_pfx, slash.offset(1), family) != 0i32
       {
@@ -297,8 +280,7 @@ unsafe extern "C" fn get_prefix_1(
               let fresh1;
               let fresh2 = __x;
               asm!("bswap $0" : "=r" (fresh1) : "0"
-                                      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2))
-                                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
               c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
             }
             __v
@@ -334,7 +316,7 @@ unsafe extern "C" fn get_prefix_1(
       match current_block {
         17478428563724192186 => {}
         _ => {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"an %s %s is expected rather than \"%s\"\x00" as *const u8 as *const libc::c_char,
             b"inet\x00" as *const u8 as *const libc::c_char,
             b"prefix\x00" as *const u8 as *const libc::c_char,
@@ -355,7 +337,7 @@ pub unsafe extern "C" fn get_addr(
   mut family: libc::c_int,
 ) -> libc::c_int {
   if family == 17i32 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"\"%s\" may be inet %s, but it is not allowed in this context\x00" as *const u8
         as *const libc::c_char,
       arg,
@@ -363,7 +345,7 @@ pub unsafe extern "C" fn get_addr(
     );
   }
   if get_addr_1(dst, arg, family) != 0 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"an %s %s is expected rather than \"%s\"\x00" as *const u8 as *const libc::c_char,
       b"inet\x00" as *const u8 as *const libc::c_char,
       b"address\x00" as *const u8 as *const libc::c_char,
@@ -379,7 +361,7 @@ pub unsafe extern "C" fn get_prefix(
   mut family: libc::c_int,
 ) {
   if family == 17i32 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"\"%s\" may be inet %s, but it is not allowed in this context\x00" as *const u8
         as *const libc::c_char,
       arg,
@@ -397,7 +379,7 @@ pub unsafe extern "C" fn get_addr32(mut name: *mut libc::c_char) -> u32 {
     data: [0; 4],
   };
   if get_addr_1(&mut addr, name, 2i32) != 0 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"an %s %s is expected rather than \"%s\"\x00" as *const u8 as *const libc::c_char,
       b"IP\x00" as *const u8 as *const libc::c_char,
       b"address\x00" as *const u8 as *const libc::c_char,
@@ -410,7 +392,7 @@ pub unsafe extern "C" fn get_addr32(mut name: *mut libc::c_char) -> u32 {
 pub unsafe extern "C" fn next_arg(mut argv: *mut *mut libc::c_char) -> *mut *mut libc::c_char {
   argv = argv.offset(1);
   if (*argv).is_null() {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"command line is not complete, try \"help\"\x00" as *const u8 as *const libc::c_char,
     );
   }
@@ -421,11 +403,11 @@ pub unsafe extern "C" fn invarg_1_to_2(
   mut arg: *const libc::c_char,
   mut opt: *const libc::c_char,
 ) -> ! {
-  bb_error_msg_and_die(bb_msg_invalid_arg_to.as_ptr(), arg, opt);
+  crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_invalid_arg_to.as_ptr(), arg, opt);
 }
 #[no_mangle]
 pub unsafe extern "C" fn duparg(mut key: *const libc::c_char, mut arg: *const libc::c_char) -> ! {
-  bb_error_msg_and_die(
+  crate::libbb::verror_msg::bb_error_msg_and_die(
     b"duplicate \"%s\": \"%s\" is the second value\x00" as *const u8 as *const libc::c_char,
     key,
     arg,
@@ -433,7 +415,7 @@ pub unsafe extern "C" fn duparg(mut key: *const libc::c_char, mut arg: *const li
 }
 #[no_mangle]
 pub unsafe extern "C" fn duparg2(mut key: *const libc::c_char, mut arg: *const libc::c_char) -> ! {
-  bb_error_msg_and_die(
+  crate::libbb::verror_msg::bb_error_msg_and_die(
     b"either \"%s\" is duplicate, or \"%s\" is garbage\x00" as *const u8 as *const libc::c_char,
     key,
     arg,
@@ -478,8 +460,7 @@ pub unsafe extern "C" fn inet_addr_match(
         let fresh4;
         let fresh5 = __x;
         asm!("bswap $0" : "=r" (fresh4) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                          :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
       }
       __v
@@ -506,7 +487,9 @@ pub unsafe extern "C" fn rt_addr_n2a(
       return inet_ntop(
         af,
         addr,
-        auto_string(xzalloc(46i32 as size_t) as *mut libc::c_char),
+        crate::libbb::auto_string::auto_string(
+          crate::libbb::xfuncs_printf::xzalloc(46i32 as size_t) as *mut libc::c_char,
+        ),
         46i32 as socklen_t,
       )
     }

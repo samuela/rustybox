@@ -13,22 +13,7 @@ extern "C" {
 
   #[no_mangle]
   fn wait(__stat_loc: *mut libc::c_int) -> pid_t;
-  #[no_mangle]
-  fn parse_duration_str(str: *mut libc::c_char) -> duration_t;
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn get_signum(name: *const libc::c_char) -> libc::c_int;
+
 }
 
 pub type duration_t = libc::c_double;
@@ -88,29 +73,30 @@ pub unsafe extern "C" fn timeout_main(
   /* -p option is not documented, it is needed to support NOMMU. */
   /* -t SECONDS; -p PARENT_PID */
   /* '+': stop at first non-option */
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     b"+s:\x00" as *const u8 as *const libc::c_char,
     &mut opt_s as *mut *const libc::c_char,
     &mut parent as *mut libc::c_int,
   );
   /*argv += optind; - no, wait for bb_daemonize_or_rexec! */
-  signo = get_signum(opt_s);
+  signo = crate::libbb::u_signal_names::get_signum(opt_s);
   if signo < 0i32 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"unknown signal \'%s\'\x00" as *const u8 as *const libc::c_char,
       opt_s,
     );
   }
   if (*argv.offset(optind as isize)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   let fresh0 = optind;
   optind = optind + 1;
-  timeout = parse_duration_str(*argv.offset(fresh0 as isize)) as libc::c_int;
+  timeout =
+    crate::libbb::duration::parse_duration_str(*argv.offset(fresh0 as isize)) as libc::c_int;
   if (*argv.offset(optind as isize)).is_null() {
     /* no PROG? */
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* We want to create a grandchild which will watch
    * and kill the grandparent. Other methods:
@@ -123,7 +109,9 @@ pub unsafe extern "C" fn timeout_main(
     pid = {
       let mut bb__xvfork_pid: pid_t = vfork();
       if bb__xvfork_pid < 0i32 {
-        bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"vfork\x00" as *const u8 as *const libc::c_char,
+        );
       }
       bb__xvfork_pid
     };
@@ -131,7 +119,7 @@ pub unsafe extern "C" fn timeout_main(
       /* Child: spawn grandchild and exit */
       parent = getppid();
       /* NB: exits with nonzero on error: */
-      bb_daemonize_or_rexec(0i32);
+      crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(0i32);
     } else {
       /* Parent */
       wait(&mut status); /* wait for child to die */
@@ -141,7 +129,7 @@ pub unsafe extern "C" fn timeout_main(
       }
       /* Ok, exec a program as requested */
       argv = argv.offset(optind as isize);
-      BB_EXECVP_or_die(argv);
+      crate::libbb::executable::BB_EXECVP_or_die(argv);
     }
   }
   /* Here we are grandchild. Sleep, then kill grandparent */

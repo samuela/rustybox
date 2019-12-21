@@ -1,23 +1,6 @@
 use libc;
 use libc::printf;
 use libc::ptrdiff_t;
-extern "C" {
-
-  #[no_mangle]
-  fn get_console_fd_or_die() -> libc::c_int;
-  #[no_mangle]
-  fn xopen_nonblocking(pathname: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
-
-}
 
 pub const UNICODE: C2RustUnnamed = 8;
 pub type C2RustUnnamed = libc::c_uint;
@@ -59,27 +42,27 @@ pub unsafe extern "C" fn kbd_mode_main(
   let mut fd: libc::c_int = 0; /* clear -C bit, see (*) */
   let mut opt: libc::c_uint = 0;
   let mut tty_name: *const libc::c_char = 0 as *const libc::c_char;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"sakuC:\x00" as *const u8 as *const libc::c_char,
     &mut tty_name as *mut *const libc::c_char,
   );
   if opt & 0x10i32 as libc::c_uint != 0 {
     opt &= 0xfi32 as libc::c_uint;
-    fd = xopen_nonblocking(tty_name)
+    fd = crate::libbb::xfuncs_printf::xopen_nonblocking(tty_name)
   } else {
     /* kbd-2.0.3 tries in sequence:
      * fd#0, /dev/tty, /dev/tty0.
      * get_console_fd_or_die: /dev/console, /dev/tty0, /dev/tty.
      * kbd-2.0.3 checks KDGKBTYPE, get_console_fd_or_die checks too.
      */
-    fd = get_console_fd_or_die()
+    fd = crate::libbb::get_console::get_console_fd_or_die()
   }
   if opt == 0 {
     /* print current setting */
     let mut mode: *const libc::c_char = b"unknown\x00" as *const u8 as *const libc::c_char;
     let mut m: libc::c_int = 0;
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       0x4b44i32 as libc::c_uint,
       &mut m as *mut libc::c_int as *mut libc::c_void,
@@ -118,7 +101,7 @@ pub unsafe extern "C" fn kbd_mode_main(
       (opt) >> 1i32
     };
     /* double cast prevents warnings about widening conversion */
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       0x4b45i32 as libc::c_uint,
       opt as ptrdiff_t as *mut libc::c_void,

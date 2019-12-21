@@ -24,23 +24,7 @@ extern "C" {
 
   #[no_mangle]
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
-  #[no_mangle]
-  fn trim(s: *mut libc::c_char) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn create_and_connect_stream_or_die(peer: *const libc::c_char, port: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xfdopen_for_read(fd: libc::c_int) -> *mut FILE;
-  #[no_mangle]
-  fn str_tolower(str: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 }
 
 use crate::librb::size_t;
@@ -94,14 +78,14 @@ unsafe extern "C" fn query(
       pfx,
       domain,
     );
-    fd = create_and_connect_stream_or_die(host, port);
+    fd = crate::libbb::xconnect::create_and_connect_stream_or_die(host, port);
     dprintf(
       fd,
       b"%s%s\r\n\x00" as *const u8 as *const libc::c_char,
       pfx,
       domain,
     );
-    fp = xfdopen_for_read(fd);
+    fp = crate::libbb::wfopen::xfdopen_for_read(fd);
     success = 0i32 != 0;
     while !fgets_unlocked(
       linebuf.as_mut_ptr(),
@@ -120,7 +104,7 @@ unsafe extern "C" fn query(
       len = len.wrapping_add(1);
       linebuf[fresh0 as usize] = '\n' as i32 as libc::c_char;
       linebuf[len as usize] = '\u{0}' as i32 as libc::c_char;
-      buf = xrealloc(
+      buf = crate::libbb::xfuncs_printf::xrealloc(
         buf as *mut libc::c_void,
         bufpos.wrapping_add(len).wrapping_add(1i32 as libc::c_uint) as size_t,
       ) as *mut libc::c_char;
@@ -132,32 +116,32 @@ unsafe extern "C" fn query(
       bufpos = bufpos.wrapping_add(len);
       *buf.offset(bufpos as isize) = '\u{0}' as i32 as libc::c_char;
       if redir.is_null() || !success {
-        trim(linebuf.as_mut_ptr());
-        str_tolower(linebuf.as_mut_ptr());
+        crate::libbb::trim::trim(linebuf.as_mut_ptr());
+        crate::libbb::str_tolower::str_tolower(linebuf.as_mut_ptr());
         if !success {
-          success = !is_prefixed_with(
+          success = !crate::libbb::compare_string_array::is_prefixed_with(
             linebuf.as_mut_ptr(),
             b"domain:\x00" as *const u8 as *const libc::c_char,
           )
           .is_null()
-            || !is_prefixed_with(
+            || !crate::libbb::compare_string_array::is_prefixed_with(
               linebuf.as_mut_ptr(),
               b"domain name:\x00" as *const u8 as *const libc::c_char,
             )
             .is_null()
         } else if redir.is_null() {
-          let mut p: *mut libc::c_char = is_prefixed_with(
+          let mut p: *mut libc::c_char = crate::libbb::compare_string_array::is_prefixed_with(
             linebuf.as_mut_ptr(),
             b"whois server:\x00" as *const u8 as *const libc::c_char,
           );
           if p.is_null() {
-            p = is_prefixed_with(
+            p = crate::libbb::compare_string_array::is_prefixed_with(
               linebuf.as_mut_ptr(),
               b"whois:\x00" as *const u8 as *const libc::c_char,
             )
           }
           if !p.is_null() {
-            redir = xstrdup(skip_whitespace(p))
+            redir = crate::libbb::xfuncs_printf::xstrdup(skip_whitespace(p))
           }
         }
       }
@@ -267,7 +251,7 @@ pub unsafe extern "C" fn whois_main(
 ) -> libc::c_int {
   let mut port: libc::c_int = 43i32;
   let mut host: *const libc::c_char = b"whois.iana.org\x00" as *const u8 as *const libc::c_char;
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     b"^ih:p:+\x00-1\x00" as *const u8 as *const libc::c_char,
     &mut host as *mut *const libc::c_char,

@@ -2,12 +2,10 @@ use libc;
 use libc::getenv;
 use libc::getuid;
 use libc::passwd;
-use libc::uid_t;
 extern "C" {
 
   /* Search for an entry with a matching user ID.  */
-  #[no_mangle]
-  fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;
+
   #[no_mangle]
   static bb_default_login_shell: [libc::c_char; 0];
 }
@@ -460,7 +458,7 @@ pub unsafe extern "C" fn get_shell_name() -> *const libc::c_char {
   if !shell.is_null() && *shell.offset(0) as libc::c_int != 0 {
     return shell;
   }
-  pw = bb_internal_getpwuid(getuid());
+  pw = crate::libpwdgrp::pwd_grp::bb_internal_getpwuid(getuid());
   if !pw.is_null() && !(*pw).pw_shell.is_null() && *(*pw).pw_shell.offset(0) as libc::c_int != 0 {
     return (*pw).pw_shell;
   }

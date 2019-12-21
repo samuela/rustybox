@@ -13,7 +13,6 @@ use libc::printf;
 use libc::puts;
 use libc::readdir;
 use libc::sprintf;
-use libc::ssize_t;
 use libc::strchr;
 use libc::strcmp;
 use libc::strcpy;
@@ -60,43 +59,6 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn chomp(s: *mut libc::c_char);
-
-  #[no_mangle]
-  fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn fopen_for_write(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn safe_poll(ufds: *mut pollfd, nfds: nfds_t, timeout_ms: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn smart_ulltoa5(
-    ul: libc::c_ulonglong,
-    buf: *mut libc::c_char,
-    scale: *const libc::c_char,
-  ) -> *mut libc::c_char;
   /* Non-aborting kind of convertors: bb_strto[u][l]l */
   /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
    * errno = EINVAL if value was not '\0' terminated, but otherwise ok
@@ -108,36 +70,10 @@ extern "C" {
    * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
    *    return value is all-ones in this case.
    */
-  #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
+
   #[no_mangle]
   static mut die_func: Option<unsafe extern "C" fn() -> ()>;
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn get_terminal_width_height(
-    fd: libc::c_int,
-    width: *mut libc::c_uint,
-    height: *mut libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
-  #[no_mangle]
-  fn set_termios_to_raw(fd: libc::c_int, oldterm: *mut termios, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn get_cpu_count() -> libc::c_uint;
+
 }
 
 use libc::dirent;
@@ -146,8 +82,9 @@ pub type nfds_t = libc::c_ulong;
 use libc::pollfd;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub lines: *mut line,
   pub lines_cnt: libc::c_int,
@@ -165,16 +102,18 @@ pub struct globals {
   pub init_settings: termios,
 }
 pub type ullong = libc::c_ulonglong;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct irqdata {
   pub active: smallint,
   pub number: libc::c_int,
   pub count: ullong,
   pub irq_desc: [libc::c_char; 32],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct line {
   pub string: *mut libc::c_char,
   pub count: libc::c_int,
@@ -184,7 +123,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
   return p as *mut libc::c_void;
 }
 unsafe extern "C" fn reset_term() {
-  tcsetattr_stdin_TCSANOW(&mut (*ptr_to_globals).init_settings);
+  crate::libbb::xfuncs::tcsetattr_stdin_TCSANOW(&mut (*ptr_to_globals).init_settings);
 }
 unsafe extern "C" fn sig_handler(mut _signo: libc::c_int) {
   reset_term();
@@ -194,7 +133,7 @@ unsafe extern "C" fn write_str_to_file(
   mut fname: *const libc::c_char,
   mut str: *const libc::c_char,
 ) -> libc::c_int {
-  let mut fp: *mut FILE = fopen_for_write(fname);
+  let mut fp: *mut FILE = crate::libbb::wfopen::fopen_for_write(fname);
   if fp.is_null() {
     return 1i32;
   }
@@ -271,7 +210,7 @@ unsafe extern "C" fn read_cstate_counts(mut usage: *mut ullong, mut duration: *m
       b"/proc/acpi/processor\x00" as *const u8 as *const libc::c_char,
       (*d).d_name.as_mut_ptr(),
     );
-    fp = fopen_for_read(buf.as_mut_ptr());
+    fp = crate::libbb::wfopen::fopen_for_read(buf.as_mut_ptr());
     if fp.is_null() {
       continue;
     }
@@ -301,7 +240,8 @@ unsafe extern "C" fn read_cstate_counts(mut usage: *mut ullong, mut duration: *m
       p = p.offset(4);
       let ref mut fresh0 = *usage.offset(level as isize);
       *fresh0 = (*fresh0 as libc::c_ulonglong).wrapping_add(
-        bb_strtoull(p, 0 as *mut *mut libc::c_char, 10i32).wrapping_add(1i32 as libc::c_ulonglong),
+        crate::libbb::bb_strtonum::bb_strtoull(p, 0 as *mut *mut libc::c_char, 10i32)
+          .wrapping_add(1i32 as libc::c_ulonglong),
       ) as ullong as ullong;
       p = strstr(
         buf.as_mut_ptr(),
@@ -312,7 +252,7 @@ unsafe extern "C" fn read_cstate_counts(mut usage: *mut ullong, mut duration: *m
       }
       p = p.offset(6);
       let ref mut fresh1 = *duration.offset(level as isize);
-      *fresh1 = (*fresh1 as libc::c_ulonglong).wrapping_add(bb_strtoull(
+      *fresh1 = (*fresh1 as libc::c_ulonglong).wrapping_add(crate::libbb::bb_strtonum::bb_strtoull(
         p,
         0 as *mut *mut libc::c_char,
         10i32,
@@ -343,7 +283,7 @@ unsafe extern "C" fn save_line(mut string: *const libc::c_char, mut count: libc:
     i += 1
   }
   /* Add new line */
-  (*ptr_to_globals).lines = xrealloc_vector_helper(
+  (*ptr_to_globals).lines = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
     (*ptr_to_globals).lines as *mut libc::c_void,
     ((::std::mem::size_of::<line>() as libc::c_ulong) << 8i32).wrapping_add(4i32 as libc::c_ulong)
       as libc::c_uint,
@@ -353,7 +293,7 @@ unsafe extern "C" fn save_line(mut string: *const libc::c_char, mut count: libc:
     .lines
     .offset((*ptr_to_globals).lines_cnt as isize))
   .string;
-  *fresh2 = xstrdup(string);
+  *fresh2 = crate::libbb::xfuncs_printf::xstrdup(string);
   (*(*ptr_to_globals)
     .lines
     .offset((*ptr_to_globals).lines_cnt as isize))
@@ -406,7 +346,9 @@ unsafe extern "C" fn process_irq_counts() {
   /* Reset values */
   (*ptr_to_globals).interrupt_0 = 0i32;
   (*ptr_to_globals).total_interrupt = 0i32;
-  fp = xfopen_for_read(b"/proc/interrupts\x00" as *const u8 as *const libc::c_char);
+  fp = crate::libbb::wfopen::xfopen_for_read(
+    b"/proc/interrupts\x00" as *const u8 as *const libc::c_char,
+  );
   while !fgets_unlocked(
     buf.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong as libc::c_int,
@@ -429,7 +371,7 @@ unsafe extern "C" fn process_irq_counts() {
      */
     *p = '\u{0}' as i32 as libc::c_char;
     /* Deal with non-maskable interrupts -- make up fake numbers */
-    nr = index_in_strings(
+    nr = crate::libbb::compare_string_array::index_in_strings(
       b"NMI\x00RES\x00CAL\x00TLB\x00TRM\x00THR\x00SPU\x00\x00" as *const u8 as *const libc::c_char,
       buf.as_mut_ptr(),
     );
@@ -455,8 +397,9 @@ unsafe extern "C" fn process_irq_counts() {
       if !((*p as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32) {
         break;
       }
-      count = (count as libc::c_ulonglong).wrapping_add(bb_strtoull(p, &mut tmp, 10i32)) as ullong
-        as ullong;
+      count = (count as libc::c_ulonglong)
+        .wrapping_add(crate::libbb::bb_strtonum::bb_strtoull(p, &mut tmp, 10i32))
+        as ullong as ullong;
       p = tmp
     }
     /*   0:  143646045  153901007   IO-APIC-edge      timer
@@ -472,7 +415,7 @@ unsafe extern "C" fn process_irq_counts() {
       p = skip_whitespace(p)
     }
     name = p;
-    chomp(p);
+    crate::libbb::chomp::chomp(p);
     /* Save description of the interrupt */
     if nr >= 20000i32 {
       sprintf(
@@ -515,7 +458,9 @@ unsafe extern "C" fn process_timer_stats() -> libc::c_int {
   n = 0i32;
   fp = 0 as *mut FILE;
   if (*ptr_to_globals).cant_enable_timer_stats == 0 {
-    fp = fopen_for_read(b"/proc/timer_stats\x00" as *const u8 as *const libc::c_char)
+    fp = crate::libbb::wfopen::fopen_for_read(
+      b"/proc/timer_stats\x00" as *const u8 as *const libc::c_char,
+    )
   }
   if !fp.is_null() {
     // Example file contents:
@@ -550,9 +495,9 @@ unsafe extern "C" fn process_timer_stats() -> libc::c_int {
       let fresh3 = p;
       p = p.offset(1);
       *fresh3 = '\u{0}' as i32 as libc::c_char;
-      cnt = bb_strtou(count, 0 as *mut *mut libc::c_char, 10i32);
+      cnt = crate::libbb::bb_strtonum::bb_strtou(count, 0 as *mut *mut libc::c_char, 10i32);
       if strcmp(
-        skip_non_whitespace(count),
+        crate::libbb::skip_whitespace::skip_non_whitespace(count),
         b" total events\x00" as *const u8 as *const libc::c_char,
       ) == 0i32
       {
@@ -593,11 +538,15 @@ unsafe extern "C" fn process_timer_stats() -> libc::c_int {
         //	process = "[kernel scheduler]";
         //	func = "Load balancing tick";
         //}
-        if !is_prefixed_with(func, b"tick_nohz_\x00" as *const u8 as *const libc::c_char).is_null()
+        if !crate::libbb::compare_string_array::is_prefixed_with(
+          func,
+          b"tick_nohz_\x00" as *const u8 as *const libc::c_char,
+        )
+        .is_null()
         {
           continue;
         }
-        if !is_prefixed_with(
+        if !crate::libbb::compare_string_array::is_prefixed_with(
           func,
           b"tick_setup_sched_timer\x00" as *const u8 as *const libc::c_char,
         )
@@ -607,7 +556,7 @@ unsafe extern "C" fn process_timer_stats() -> libc::c_int {
         }
         //if (strcmp(process, "powertop") == 0)
         //	continue;
-        idx = index_in_strings(
+        idx = crate::libbb::compare_string_array::index_in_strings(
           b"insmod\x00modprobe\x00swapper\x00\x00" as *const u8 as *const libc::c_char,
           process,
         );
@@ -618,7 +567,7 @@ unsafe extern "C" fn process_timer_stats() -> libc::c_int {
             b"<kernel core>\x00" as *const u8 as *const libc::c_char
           }
         }
-        chomp(p);
+        crate::libbb::chomp::chomp(p);
         // 46D\01136\0kondemand/1\0do_dbs_timer (delayed_work_timer_fn)
         // ^          ^            ^
         // count      process      func
@@ -641,7 +590,7 @@ unsafe extern "C" fn process_timer_stats() -> libc::c_int {
 unsafe extern "C" fn show_timerstats() {
   let mut lines: libc::c_uint = 0;
   /* Get terminal height */
-  get_terminal_width_height(1i32, 0 as *mut libc::c_uint, &mut lines);
+  crate::libbb::xfuncs::get_terminal_width_height(1i32, 0 as *mut libc::c_uint, &mut lines);
   /* We don't have whole terminal just for timerstats */
   lines = lines.wrapping_sub(12i32 as libc::c_uint);
   if (*ptr_to_globals).cant_enable_timer_stats == 0 {
@@ -662,7 +611,7 @@ unsafe extern "C" fn show_timerstats() {
         /*char c = ' ';
         if (G.lines[i].disk_count)
           c = 'D';*/
-        *smart_ulltoa5(
+        *crate::libbb::human_readable::smart_ulltoa5(
           (*(*ptr_to_globals).lines.offset(i as isize)).count as libc::c_ulonglong,
           strbuf6.as_mut_ptr(),
           b" KMGTPEZY\x00" as *const u8 as *const libc::c_char,
@@ -679,8 +628,8 @@ unsafe extern "C" fn show_timerstats() {
       i += 1
     }
   } else {
-    bb_putchar('\n' as i32);
-    bb_simple_error_msg(
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
+    crate::libbb::verror_msg::bb_simple_error_msg(
       b"no stats available; run as root or enable the timer_stats module\x00" as *const u8
         as *const libc::c_char,
     );
@@ -724,20 +673,25 @@ pub unsafe extern "C" fn powertop_main(
   pfd[0].events = 0x1i32 as libc::c_short;
   let ref mut fresh6 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh6 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh6 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   /* Print warning when we don't have superuser privileges */
   if geteuid() != 0i32 as libc::c_uint {
-    bb_simple_error_msg(
+    crate::libbb::verror_msg::bb_simple_error_msg(
       b"run as root to collect enough information\x00" as *const u8 as *const libc::c_char,
     );
   }
   /* Get number of CPUs */
-  (*ptr_to_globals).total_cpus = get_cpu_count();
+  (*ptr_to_globals).total_cpus = crate::libbb::get_cpu_count::get_cpu_count();
   puts(b"Collecting data for 10 seconds\x00" as *const u8 as *const libc::c_char);
   /* Turn on unbuffered input; turn off echoing, ^C ^Z etc */
-  set_termios_to_raw(0i32, &mut (*ptr_to_globals).init_settings, 1i32 << 0i32);
-  bb_signals(
+  crate::libbb::xfuncs::set_termios_to_raw(
+    0i32,
+    &mut (*ptr_to_globals).init_settings,
+    1i32 << 0i32,
+  );
+  crate::libbb::signals::bb_signals(
     BB_FATAL_SIGS as libc::c_int,
     Some(sig_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
@@ -782,9 +736,10 @@ pub unsafe extern "C" fn powertop_main(
         b"/proc/timer_stats\x00" as *const u8 as *const libc::c_char,
         b"1\n\x00" as *const u8 as *const libc::c_char,
       )) as smallint; /* 1 on error */
-    if safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, 10i32 * 1000i32) > 0i32 {
+    if crate::libbb::safe_poll::safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, 10i32 * 1000i32) > 0i32
+    {
       let mut c: libc::c_uchar = 0;
-      if safe_read(
+      if crate::libbb::read::safe_read(
         0i32,
         &mut c as *mut libc::c_uchar as *mut libc::c_void,
         1i32 as size_t,
@@ -966,7 +921,7 @@ pub unsafe extern "C" fn powertop_main(
       ::std::mem::size_of::<[ullong; 8]>() as libc::c_ulong,
     );
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   reset_term();
   return 0i32;
 }

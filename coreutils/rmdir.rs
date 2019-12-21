@@ -10,17 +10,6 @@ extern "C" {
   #[no_mangle]
   fn dirname(__path: *mut libc::c_char) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
 }
 
 #[no_mangle]
@@ -31,7 +20,7 @@ pub unsafe extern "C" fn rmdir_main(
   let mut status: libc::c_int = 0i32; /* Match gnu rmdir msg. */
   let mut flags: libc::c_int = 0;
   let mut path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  flags = getopt32long(
+  flags = crate::libbb::getopt32::getopt32long(
     argv,
     b"pv\x00" as *const u8 as *const libc::c_char,
     b"parents\x00\x00pignore-fail-on-non-empty\x00\x00\xffverbose\x00\x00v\x00" as *const u8
@@ -39,7 +28,7 @@ pub unsafe extern "C" fn rmdir_main(
   ) as libc::c_int;
   argv = argv.offset(optind as isize);
   if (*argv).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   loop {
     path = *argv;
@@ -54,7 +43,10 @@ pub unsafe extern "C" fn rmdir_main(
         if flags & (1i32 << 2i32) * 1i32 != 0 && *bb_errno == 39i32 {
           break;
         }
-        bb_perror_msg(b"\'%s\'\x00" as *const u8 as *const libc::c_char, path);
+        crate::libbb::perror_msg::bb_perror_msg(
+          b"\'%s\'\x00" as *const u8 as *const libc::c_char,
+          path,
+        );
         status = 1i32;
         break;
       } else {

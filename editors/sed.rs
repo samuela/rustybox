@@ -1,6 +1,7 @@
 use crate::libbb::llist::llist_t;
 use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::re_pattern_buffer;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use c2rust_bitfields;
@@ -65,69 +66,23 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xrename(oldpath: *const libc::c_char, newpath: *const libc::c_char);
-  #[no_mangle]
-  fn xmkstemp(template: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
   /* Reads a line from a text file, up to a newline or NUL byte, inclusive.
    * Returns malloc'ed char*. If end is NULL '\n' isn't considered
    * end of line. If end isn't NULL, length of the chunk is stored in it.
    * Returns NULL if EOF/error.
    */
-  #[no_mangle]
-  fn bb_get_chunk_from_file(file: *mut FILE, end: *mut size_t) -> *mut libc::c_char;
+
   /* Chops off '\n' from the end, unlike fgets: */
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fclose_if_not_stdin(file: *mut FILE) -> libc::c_int;
+
   /* Prints warning to stderr and returns NULL on failure: */
-  #[no_mangle]
-  fn fopen_or_warn(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
+
   /* "Opens" stdin if filename is special, else just opens file: */
-  #[no_mangle]
-  fn xfopen_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xfopen_for_write(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xfdopen_for_write(fd: libc::c_int) -> *mut FILE;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
+
   #[no_mangle]
   static mut xfunc_error_retval: u8;
   #[no_mangle]
   static mut die_func: Option<unsafe extern "C" fn() -> ()>;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
+
   #[no_mangle]
   static bb_msg_requires_arg: [libc::c_char; 0];
   #[no_mangle]
@@ -142,8 +97,7 @@ extern "C" {
     __pmatch: *mut regmatch_t,
     __eflags: libc::c_int,
   ) -> libc::c_int;
-  #[no_mangle]
-  fn xregcomp(preg: *mut regex_t, regex: *const libc::c_char, cflags: libc::c_int);
+
   #[no_mangle]
   fn sed_free_and_close_stuff();
 }
@@ -173,8 +127,9 @@ extern "C" {
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub be_quiet: libc::c_int,
   pub regex_type: libc::c_int,
@@ -194,16 +149,18 @@ pub struct globals {
   pub add_cmd_line: *mut libc::c_char,
   pub pipeline: pipeline,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct pipeline {
   pub buf: *mut libc::c_char,
   pub idx: libc::c_int,
   pub len: libc::c_int,
 }
 pub type sed_cmd_t = sed_cmd_s;
-#[derive(Copy, Clone, BitfieldStruct)]
+
 #[repr(C)]
+#[derive(Copy, Clone, BitfieldStruct)]
 pub struct sed_cmd_s {
   pub next: *mut sed_cmd_s,
   pub beg_match: *mut regex_t,
@@ -224,30 +181,9 @@ pub struct sed_cmd_s {
   pub cmd: libc::c_char,
 }
 pub type regex_t = re_pattern_buffer;
-#[derive(Copy, Clone, BitfieldStruct)]
+
 #[repr(C)]
-pub struct re_pattern_buffer {
-  pub buffer: *mut libc::c_uchar,
-  pub allocated: libc::c_ulong,
-  pub used: libc::c_ulong,
-  pub syntax: reg_syntax_t,
-  pub fastmap: *mut libc::c_char,
-  pub translate: *mut libc::c_uchar,
-  pub re_nsub: size_t,
-  #[bitfield(name = "can_be_null", ty = "libc::c_uint", bits = "0..=0")]
-  #[bitfield(name = "regs_allocated", ty = "libc::c_uint", bits = "1..=2")]
-  #[bitfield(name = "fastmap_accurate", ty = "libc::c_uint", bits = "3..=3")]
-  #[bitfield(name = "no_sub", ty = "libc::c_uint", bits = "4..=4")]
-  #[bitfield(name = "not_bol", ty = "libc::c_uint", bits = "5..=5")]
-  #[bitfield(name = "not_eol", ty = "libc::c_uint", bits = "6..=6")]
-  #[bitfield(name = "newline_anchor", ty = "libc::c_uint", bits = "7..=7")]
-  pub can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [u8; 1],
-  #[bitfield(padding)]
-  pub c2rust_padding: [u8; 7],
-}
-pub type reg_syntax_t = libc::c_ulong;
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct regmatch_t {
   pub rm_so: regoff_t,
   pub rm_eo: regoff_t,
@@ -435,7 +371,7 @@ unsafe extern "C" fn index_of_next_unescaped_regexp_delim(
     idx += 1
   }
   /* if we make it to here, we've hit the end of the string */
-  bb_error_msg_and_die(
+  crate::libbb::verror_msg::bb_error_msg_and_die(
     b"unmatched \'%c\'\x00" as *const u8 as *const libc::c_char,
     delimiter,
   );
@@ -454,7 +390,7 @@ unsafe extern "C" fn parse_regex_delim(
   /* verify that the 's' or 'y' is followed by something.  That something
    * (typically a 'slash') is now our regexp delimiter... */
   if *cmdstr as libc::c_int == '\u{0}' as i32 {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"bad format in substitution expression\x00" as *const u8 as *const libc::c_char,
     );
   }
@@ -503,10 +439,12 @@ unsafe extern "C" fn get_address(
     next = index_of_next_unescaped_regexp_delim(delimiter as libc::c_int, pos);
     if next != 0i32 {
       temp = copy_parsing_escapes(pos, next);
-      *regex = xzalloc(::std::mem::size_of::<regex_t>() as libc::c_ulong) as *mut regex_t;
+      *regex =
+        crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<regex_t>() as libc::c_ulong)
+          as *mut regex_t;
       let ref mut fresh3 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).previous_regex_ptr;
       *fresh3 = *regex;
-      xregcomp(
+      crate::libbb::xregcomp::xregcomp(
         *regex,
         temp,
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).regex_type,
@@ -518,7 +456,9 @@ unsafe extern "C" fn get_address(
         .previous_regex_ptr
         .is_null()
       {
-        bb_simple_error_msg_and_die(b"no previous regexp\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+          b"no previous regexp\x00" as *const u8 as *const libc::c_char,
+        );
       }
     }
     /* Move position to next character after last delimiter */
@@ -537,11 +477,13 @@ unsafe extern "C" fn parse_file_cmd(
   start = skip_whitespace(filecmdstr);
   eol = strchrnul(start, '\n' as i32);
   if eol == start {
-    bb_simple_error_msg_and_die(b"empty filename\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"empty filename\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if *eol != 0 {
     /* If lines glued together, put backslash back. */
-    *retval = xstrndup(
+    *retval = crate::libbb::xfuncs_printf::xstrndup(
       start,
       (eol.wrapping_offset_from(start) as libc::c_long + 1) as libc::c_int,
     );
@@ -549,7 +491,7 @@ unsafe extern "C" fn parse_file_cmd(
       '\\' as i32 as libc::c_char
   } else {
     /* eol is NUL */
-    *retval = xstrdup(start)
+    *retval = crate::libbb::xfuncs_printf::xstrdup(start)
   }
   return eol.wrapping_offset_from(filecmdstr) as libc::c_long as libc::c_int;
 }
@@ -619,7 +561,7 @@ unsafe extern "C" fn parse_subst_cmd(
           /* Write to file */
           let mut fname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           idx += parse_file_cmd(substr.offset(idx as isize).offset(1), &mut fname);
-          (*sed_cmd).sw_file = xfopen_for_write(fname);
+          (*sed_cmd).sw_file = crate::libbb::wfopen::xfopen_for_write(fname);
           (*sed_cmd).sw_last_char = '\n' as i32 as libc::c_char;
           free(fname as *mut libc::c_void);
         }
@@ -638,7 +580,7 @@ unsafe extern "C" fn parse_subst_cmd(
           break;
         }
         _ => {
-          bb_simple_error_msg_and_die(
+          crate::libbb::verror_msg::bb_simple_error_msg_and_die(
             b"bad option in substitution expression\x00" as *const u8 as *const libc::c_char,
           );
         }
@@ -651,8 +593,9 @@ unsafe extern "C" fn parse_subst_cmd(
   if *match_0 as libc::c_int != '\u{0}' as i32 {
     /* If match is empty, we use last regex used at runtime */
     (*sed_cmd).sub_match =
-      xzalloc(::std::mem::size_of::<regex_t>() as libc::c_ulong) as *mut regex_t;
-    xregcomp((*sed_cmd).sub_match, match_0, cflags);
+      crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<regex_t>() as libc::c_ulong)
+        as *mut regex_t;
+    crate::libbb::xregcomp::xregcomp((*sed_cmd).sub_match, match_0, cflags);
   }
   free(match_0 as *mut libc::c_void);
   return idx;
@@ -681,7 +624,7 @@ unsafe extern "C" fn parse_cmd_args(
     if idx < IDX_c as libc::c_int as libc::c_uint {
       /* a,i */
       if (*sed_cmd).end_line != 0 || !(*sed_cmd).end_match.is_null() {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"command \'%c\' uses only one address\x00" as *const u8 as *const libc::c_char,
           (*sed_cmd).cmd as libc::c_int,
         );
@@ -720,7 +663,7 @@ unsafe extern "C" fn parse_cmd_args(
     if idx < IDX_w as libc::c_int as libc::c_uint {
       /* r */
       if (*sed_cmd).end_line != 0 || !(*sed_cmd).end_match.is_null() {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"command \'%c\' uses only one address\x00" as *const u8 as *const libc::c_char,
           (*sed_cmd).cmd as libc::c_int,
         );
@@ -728,7 +671,7 @@ unsafe extern "C" fn parse_cmd_args(
     }
     cmdstr = cmdstr.offset(parse_file_cmd(cmdstr, &mut (*sed_cmd).string) as isize);
     if (*sed_cmd).cmd as libc::c_int == 'w' as i32 {
-      (*sed_cmd).sw_file = xfopen_for_write((*sed_cmd).string);
+      (*sed_cmd).sw_file = crate::libbb::wfopen::xfopen_for_write((*sed_cmd).string);
       (*sed_cmd).sw_last_char = '\n' as i32 as libc::c_char
     }
   } else if idx <= IDX_T as libc::c_int as libc::c_uint {
@@ -738,7 +681,7 @@ unsafe extern "C" fn parse_cmd_args(
     cmdstr = skip_whitespace(cmdstr);
     length = strcspn(cmdstr, semicolon_whitespace.as_ptr()) as libc::c_int;
     if length != 0 {
-      (*sed_cmd).string = xstrndup(cmdstr, length);
+      (*sed_cmd).string = crate::libbb::xfuncs_printf::xstrndup(cmdstr, length);
       cmdstr = cmdstr.offset(length as isize)
     }
   } else if idx == IDX_y as libc::c_int as libc::c_uint {
@@ -762,7 +705,7 @@ unsafe extern "C" fn parse_cmd_args(
       i as libc::c_char,
       i as libc::c_char,
     );
-    (*sed_cmd).string = xzalloc(
+    (*sed_cmd).string = crate::libbb::xfuncs_printf::xzalloc(
       strlen(match_0)
         .wrapping_add(1i32 as libc::c_ulong)
         .wrapping_mul(2i32 as libc::c_ulong),
@@ -782,7 +725,7 @@ unsafe extern "C" fn parse_cmd_args(
      * then it must be an invalid command.
      */
     /* not d,D,g,G,h,H,l,n,N,p,P,q,x,=,{,} */
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"unsupported command %c\x00" as *const u8 as *const libc::c_char,
       (*sed_cmd).cmd as libc::c_int,
     );
@@ -800,7 +743,7 @@ unsafe extern "C" fn add_cmd(mut cmdstr: *const libc::c_char) {
     .add_cmd_line
     .is_null()
   {
-    let mut tp: *mut libc::c_char = xasprintf(
+    let mut tp: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
       b"%s\n%s\x00" as *const u8 as *const libc::c_char,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).add_cmd_line,
       cmdstr,
@@ -825,7 +768,7 @@ unsafe extern "C" fn add_cmd(mut cmdstr: *const libc::c_char) {
       .is_null()
     {
       let ref mut fresh5 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).add_cmd_line;
-      *fresh5 = xstrdup(cmdstr)
+      *fresh5 = crate::libbb::xfuncs_printf::xstrdup(cmdstr)
     }
     *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .add_cmd_line
@@ -857,7 +800,9 @@ unsafe extern "C" fn add_cmd(mut cmdstr: *const libc::c_char) {
        *            |----||-----||-|
        *            part1 part2  part3
        */
-      sed_cmd = xzalloc(::std::mem::size_of::<sed_cmd_t>() as libc::c_ulong) as *mut sed_cmd_t;
+      sed_cmd =
+        crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<sed_cmd_t>() as libc::c_ulong)
+          as *mut sed_cmd_t;
       /* first part (if present) is an address: either a '$', a number or a /regex/ */
       cmdstr =
         cmdstr.offset(
@@ -892,7 +837,7 @@ unsafe extern "C" fn add_cmd(mut cmdstr: *const libc::c_char) {
           /* if 0, trigger error check below */
         }
         if idx < 0i32 {
-          bb_simple_error_msg_and_die(
+          crate::libbb::verror_msg::bb_simple_error_msg_and_die(
             b"no address after comma\x00" as *const u8 as *const libc::c_char,
           );
         }
@@ -909,7 +854,9 @@ unsafe extern "C" fn add_cmd(mut cmdstr: *const libc::c_char) {
       }
       /* last part (mandatory) will be a command */
       if *cmdstr == 0 {
-        bb_simple_error_msg_and_die(b"missing command\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+          b"missing command\x00" as *const u8 as *const libc::c_char,
+        );
       }
       let fresh7 = cmdstr;
       cmdstr = cmdstr.offset(1);
@@ -943,7 +890,7 @@ unsafe extern "C" fn pipe_putc(mut c: libc::c_char) {
     let ref mut fresh11 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .pipeline
       .buf;
-    *fresh11 = xrealloc(
+    *fresh11 = crate::libbb::xfuncs_printf::xrealloc(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .pipeline
         .buf as *mut libc::c_void,
@@ -1031,7 +978,9 @@ unsafe extern "C" fn do_subst_command(
   if current_regex.is_null() {
     current_regex = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).previous_regex_ptr;
     if current_regex.is_null() {
-      bb_simple_error_msg_and_die(b"no previous regexp\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"no previous regexp\x00" as *const u8 as *const libc::c_char,
+      );
     }
   }
   let ref mut fresh16 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).previous_regex_ptr;
@@ -1176,13 +1125,13 @@ unsafe extern "C" fn branch_to(mut label: *mut libc::c_char) -> *mut sed_cmd_t {
     }
     sed_cmd = (*sed_cmd).next
   }
-  bb_error_msg_and_die(
+  crate::libbb::verror_msg::bb_error_msg_and_die(
     b"can\'t find label for jump to \'%s\'\x00" as *const u8 as *const libc::c_char,
     label,
   );
 }
 unsafe extern "C" fn append(mut s: *mut libc::c_char) {
-  llist_add_to_end(
+  crate::libbb::llist::llist_add_to_end(
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).append_head,
     s as *mut libc::c_void,
   );
@@ -1217,7 +1166,9 @@ unsafe extern "C" fn puts_maybe_newline(
   if ferror_unlocked(file) != 0 {
     /* had trailing '\n' or '\0'? */
     xfunc_error_retval = 4i32 as u8; /* It's what gnu sed exits with... */
-    bb_simple_error_msg_and_die(b"write error\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"write error\x00" as *const u8 as *const libc::c_char,
+    );
   }
   *last_puts_char = lpc;
 }
@@ -1226,8 +1177,9 @@ unsafe extern "C" fn flush_append(mut last_puts_char: *mut libc::c_char) {
   loop
   /* Output appended lines. */
   {
-    data = llist_pop(&mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).append_head)
-      as *mut libc::c_char;
+    data = crate::libbb::llist::llist_pop(
+      &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).append_head,
+    ) as *mut libc::c_char;
     if data.is_null() {
       break;
     }
@@ -1274,7 +1226,8 @@ unsafe extern "C" fn get_next_line(
         .offset((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_input_file as isize);
       fp = stdin;
       if path != bb_msg_standard_input.as_ptr() {
-        fp = fopen_or_warn(path, b"r\x00" as *const u8 as *const libc::c_char);
+        fp =
+          crate::libbb::wfopen::fopen_or_warn(path, b"r\x00" as *const u8 as *const libc::c_char);
         if fp.is_null() {
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exitcode = 1i32 as smallint;
           current_block_17 = 17179679302217393232;
@@ -1300,7 +1253,7 @@ unsafe extern "C" fn get_next_line(
         /* Read line up to a newline or NUL byte, inclusive,
          * return malloc'ed char[]. length of the chunk read
          * is stored in len. NULL if EOF/error */
-        temp = bb_get_chunk_from_file(fp, &mut len);
+        temp = crate::libbb::get_line_from_file::bb_get_chunk_from_file(fp, &mut len);
         if !temp.is_null() {
           /* len > 0 here, it's ok to do temp[len-1] */
           let mut c: libc::c_char = *temp.offset(len.wrapping_sub(1i32 as libc::c_ulong) as isize);
@@ -1327,7 +1280,7 @@ unsafe extern "C" fn get_next_line(
          * (note: *no* newline after "b bang"!) */
         } else {
           /* Close this file and advance to next one */
-          fclose_if_not_stdin(fp);
+          crate::libbb::fclose_nonstdin::fclose_if_not_stdin(fp);
           let ref mut fresh22 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_fp;
           *fresh22 = 0 as *mut FILE
         }
@@ -1473,7 +1426,7 @@ unsafe extern "C" fn process_files() {
               }
               sed_cmd = (*sed_cmd).next;
               if sed_cmd.is_null() {
-                bb_simple_error_msg_and_die(
+                crate::libbb::verror_msg::bb_simple_error_msg_and_die(
                   b"unterminated {\x00" as *const u8 as *const libc::c_char,
                 );
               }
@@ -1516,7 +1469,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -1545,7 +1498,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 =>
@@ -1566,7 +1519,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -1589,7 +1542,7 @@ unsafe extern "C" fn process_files() {
                 14127364983570718321 => {
                   /* Replace pattern space with hold space */
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -1654,7 +1607,7 @@ unsafe extern "C" fn process_files() {
                   } else {
                     /* Append next_line, read new next_line. */
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -1697,11 +1650,11 @@ unsafe extern "C" fn process_files() {
                 /* Read file, append contents to output */
                 {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -1762,7 +1715,7 @@ unsafe extern "C" fn process_files() {
                 {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     /* discard this line. */
@@ -1790,7 +1743,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -1811,7 +1764,7 @@ unsafe extern "C" fn process_files() {
                 17152203569385922329 =>
                 /* Append line to linked list to be printed later */
                 {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 =>
@@ -1919,7 +1872,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -1947,7 +1900,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -1966,7 +1919,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -1988,7 +1941,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -2036,7 +1989,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -2074,11 +2027,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -2131,7 +2084,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -2153,7 +2106,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -2170,7 +2123,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -2259,7 +2212,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -2287,7 +2240,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -2306,7 +2259,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -2328,7 +2281,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -2376,7 +2329,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -2414,11 +2367,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -2471,7 +2424,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -2493,7 +2446,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -2510,7 +2463,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -2599,7 +2552,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -2627,7 +2580,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -2646,7 +2599,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -2668,7 +2621,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -2716,7 +2669,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -2754,11 +2707,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -2811,7 +2764,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -2833,7 +2786,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -2850,7 +2803,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -2943,7 +2896,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -2971,7 +2924,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -2990,7 +2943,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -3012,7 +2965,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -3060,7 +3013,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -3098,11 +3051,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -3155,7 +3108,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -3177,7 +3130,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -3194,7 +3147,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -3283,7 +3236,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -3311,7 +3264,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -3330,7 +3283,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -3352,7 +3305,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -3400,7 +3353,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -3438,11 +3391,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -3495,7 +3448,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -3517,7 +3470,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -3534,7 +3487,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -3623,7 +3576,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -3651,7 +3604,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -3670,7 +3623,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -3692,7 +3645,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -3740,7 +3693,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -3778,11 +3731,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -3835,7 +3788,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -3857,7 +3810,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -3874,7 +3827,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -3963,7 +3916,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -3991,7 +3944,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -4010,7 +3963,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -4032,7 +3985,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -4080,7 +4033,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -4118,11 +4071,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -4175,7 +4128,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -4197,7 +4150,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -4214,7 +4167,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -4303,7 +4256,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -4331,7 +4284,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -4350,7 +4303,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -4372,7 +4325,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -4420,7 +4373,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -4458,11 +4411,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -4515,7 +4468,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -4537,7 +4490,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -4554,7 +4507,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -4643,7 +4596,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -4671,7 +4624,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -4690,7 +4643,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -4712,7 +4665,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -4760,7 +4713,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -4798,11 +4751,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -4855,7 +4808,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -4877,7 +4830,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -4894,7 +4847,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -4983,7 +4936,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -5011,7 +4964,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -5030,7 +4983,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -5052,7 +5005,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -5100,7 +5053,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -5138,11 +5091,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -5195,7 +5148,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -5217,7 +5170,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -5234,7 +5187,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -5323,7 +5276,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -5351,7 +5304,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -5370,7 +5323,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -5392,7 +5345,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -5440,7 +5393,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -5478,11 +5431,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -5535,7 +5488,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -5557,7 +5510,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -5574,7 +5527,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -5663,7 +5616,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -5691,7 +5644,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -5710,7 +5663,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -5732,7 +5685,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -5780,7 +5733,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -5818,11 +5771,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -5875,7 +5828,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -5897,7 +5850,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -5914,7 +5867,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -6003,7 +5956,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -6031,7 +5984,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -6050,7 +6003,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -6072,7 +6025,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -6120,7 +6073,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -6158,11 +6111,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -6215,7 +6168,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -6237,7 +6190,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -6254,7 +6207,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -6343,7 +6296,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -6371,7 +6324,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -6390,7 +6343,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -6412,7 +6365,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -6460,7 +6413,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -6498,11 +6451,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -6555,7 +6508,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -6577,7 +6530,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -6594,7 +6547,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -6683,7 +6636,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -6711,7 +6664,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -6730,7 +6683,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -6752,7 +6705,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -6800,7 +6753,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -6838,11 +6791,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -6895,7 +6848,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -6917,7 +6870,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -6934,7 +6887,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -7023,7 +6976,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -7051,7 +7004,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -7070,7 +7023,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -7092,7 +7045,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -7140,7 +7093,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -7178,11 +7131,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -7235,7 +7188,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -7257,7 +7210,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -7274,7 +7227,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -7363,7 +7316,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -7391,7 +7344,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -7410,7 +7363,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -7432,7 +7385,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -7480,7 +7433,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -7518,11 +7471,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -7575,7 +7528,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -7597,7 +7550,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -7614,7 +7567,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -7703,7 +7656,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -7731,7 +7684,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -7750,7 +7703,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -7772,7 +7725,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -7820,7 +7773,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -7858,11 +7811,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -7915,7 +7868,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -7937,7 +7890,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -7954,7 +7907,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -8043,7 +7996,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -8071,7 +8024,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -8090,7 +8043,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -8112,7 +8065,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -8160,7 +8113,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -8198,11 +8151,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -8255,7 +8208,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -8277,7 +8230,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -8294,7 +8247,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -8383,7 +8336,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -8411,7 +8364,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -8430,7 +8383,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -8452,7 +8405,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -8500,7 +8453,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -8538,11 +8491,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -8595,7 +8548,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -8617,7 +8570,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -8634,7 +8587,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -8723,7 +8676,7 @@ unsafe extern "C" fn process_files() {
                   }
                   let ref mut fresh27 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh27 = xrealloc(
+                  *fresh27 = crate::libbb::xfuncs_printf::xrealloc(
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void,
                     (hold_space_size_0 + pattern_space_size_0) as size_t,
@@ -8751,7 +8704,7 @@ unsafe extern "C" fn process_files() {
                   );
                   let ref mut fresh26 =
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space;
-                  *fresh26 = xstrdup(pattern_space);
+                  *fresh26 = crate::libbb::xfuncs_printf::xstrdup(pattern_space);
                   current_block = 17965632435239708295;
                 }
                 10468276026569382870 => {
@@ -8770,7 +8723,7 @@ unsafe extern "C" fn process_files() {
                       strlen((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space)
                         as libc::c_int
                   }
-                  pattern_space = xrealloc(
+                  pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                     pattern_space as *mut libc::c_void,
                     (pattern_space_size + hold_space_size) as size_t,
                   ) as *mut libc::c_char;
@@ -8792,7 +8745,7 @@ unsafe extern "C" fn process_files() {
                 }
                 14127364983570718321 => {
                   free(pattern_space as *mut libc::c_void);
-                  pattern_space = xstrdup(
+                  pattern_space = crate::libbb::xfuncs_printf::xstrdup(
                     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                       .hold_space
                       .is_null()
@@ -8840,7 +8793,7 @@ unsafe extern "C" fn process_files() {
                     break 's_54;
                   } else {
                     len = strlen(pattern_space) as libc::c_int;
-                    pattern_space = xrealloc(
+                    pattern_space = crate::libbb::xfuncs_printf::xrealloc(
                       pattern_space as *mut libc::c_void,
                       (len as libc::c_ulong)
                         .wrapping_add(strlen(next_line))
@@ -8878,11 +8831,11 @@ unsafe extern "C" fn process_files() {
                 }
                 726525485109251713 => {
                   let mut rfile: *mut FILE = 0 as *mut FILE;
-                  rfile = fopen_for_read((*sed_cmd).string);
+                  rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
                     loop {
-                      line = xmalloc_fgetline(rfile);
+                      line = crate::libbb::get_line_from_file::xmalloc_fgetline(rfile);
                       if line.is_null() {
                         break;
                       }
@@ -8935,7 +8888,7 @@ unsafe extern "C" fn process_files() {
                 3546145585875536353 => {
                   let mut tmp_0: *mut libc::c_char = strchr(pattern_space, '\n' as i32);
                   if !tmp_0.is_null() {
-                    overlapping_strcpy(pattern_space, tmp_0.offset(1));
+                    crate::libbb::safe_strncpy::overlapping_strcpy(pattern_space, tmp_0.offset(1));
                     break;
                   } else {
                     current_block = 4142149688065477410;
@@ -8957,7 +8910,7 @@ unsafe extern "C" fn process_files() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).hold_space
                       as *mut libc::c_void
                   } else {
-                    xzalloc(1i32 as size_t)
+                    crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
                   } as *mut libc::c_char;
                   last_gets_char = '\n' as i32 as libc::c_char;
                   let ref mut fresh28 =
@@ -8974,7 +8927,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 17152203569385922329 => {
-                  append(xstrdup((*sed_cmd).string));
+                  append(crate::libbb::xfuncs_printf::xstrdup((*sed_cmd).string));
                   current_block = 17965632435239708295;
                 }
                 14487425527653873875 => {
@@ -9082,7 +9035,7 @@ unsafe extern "C" fn process_files() {
 unsafe extern "C" fn add_cmd_block(mut cmdstr: *mut libc::c_char) {
   let mut sv: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut eol: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  sv = xstrdup(cmdstr);
+  sv = crate::libbb::xfuncs_printf::xstrdup(cmdstr);
   cmdstr = sv;
   loop {
     eol = strchr(cmdstr, '\n' as i32);
@@ -9134,7 +9087,7 @@ pub unsafe extern "C" fn sed_main(
    * GNU sed 4.2.1 mentions it in neither --help
    * nor manpage, but does recognize it.
    */
-  opt = getopt32long(
+  opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"^i::rEne:*f:*\x00nn\x00" as *const u8 as *const libc::c_char,
     sed_longopts.as_ptr(),
@@ -9156,27 +9109,29 @@ pub unsafe extern "C" fn sed_main(
   //	G.be_quiet++; // -n (implemented with a counter instead)
   while !opt_e.is_null() {
     // -e
-    add_cmd_block(llist_pop(&mut opt_e) as *mut libc::c_char);
+    add_cmd_block(crate::libbb::llist::llist_pop(&mut opt_e) as *mut libc::c_char);
   }
   while !opt_f.is_null() {
     // -f
     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut cmdfile: *mut FILE = 0 as *mut FILE;
-    cmdfile = xfopen_stdin(llist_pop(&mut opt_f) as *const libc::c_char);
+    cmdfile = crate::libbb::wfopen_input::xfopen_stdin(
+      crate::libbb::llist::llist_pop(&mut opt_f) as *const libc::c_char
+    );
     loop {
-      line = xmalloc_fgetline(cmdfile);
+      line = crate::libbb::get_line_from_file::xmalloc_fgetline(cmdfile);
       if line.is_null() {
         break;
       }
       add_cmd(line);
       free(line as *mut libc::c_void);
     }
-    fclose_if_not_stdin(cmdfile);
+    crate::libbb::fclose_nonstdin::fclose_if_not_stdin(cmdfile);
   }
   /* if we didn't get a pattern from -e or -f, use argv[0] */
   if opt & 0x30i32 as libc::c_uint == 0 {
     if (*argv).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     let fresh30 = argv;
     argv = argv.offset(1);
@@ -9194,7 +9149,7 @@ pub unsafe extern "C" fn sed_main(
   *fresh32 = argv;
   if (*argv.offset(0)).is_null() {
     if opt & OPT_in_place as libc::c_int as libc::c_uint != 0 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         bb_msg_requires_arg.as_ptr(),
         b"-i\x00" as *const u8 as *const libc::c_char,
       );
@@ -9213,17 +9168,22 @@ pub unsafe extern "C" fn sed_main(
           process_files();
         }
       } else if stat(*argv, &mut statbuf) != 0i32 {
-        bb_simple_perror_msg(*argv);
+        crate::libbb::perror_msg::bb_simple_perror_msg(*argv);
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exitcode = 1i32 as smallint;
         let ref mut fresh35 =
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_input_file;
         *fresh35 += 1
       } else {
         let ref mut fresh36 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).outname;
-        *fresh36 = xasprintf(b"%sXXXXXX\x00" as *const u8 as *const libc::c_char, *argv);
-        nonstdoutfd = xmkstemp((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).outname);
+        *fresh36 = crate::libbb::xfuncs_printf::xasprintf(
+          b"%sXXXXXX\x00" as *const u8 as *const libc::c_char,
+          *argv,
+        );
+        nonstdoutfd = crate::libbb::xfuncs_printf::xmkstemp(
+          (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).outname,
+        );
         let ref mut fresh37 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout;
-        *fresh37 = xfdopen_for_write(nonstdoutfd);
+        *fresh37 = crate::libbb::wfopen::xfdopen_for_write(nonstdoutfd);
         /* -i: process each FILE separately: */
         /* Set permissions/owner of output file */
         /* chmod'ing AFTER chown would preserve suid/sgid bits,
@@ -9235,16 +9195,16 @@ pub unsafe extern "C" fn sed_main(
         let ref mut fresh38 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nonstdout;
         *fresh38 = stdout;
         if !opt_i.is_null() {
-          let mut backupname: *mut libc::c_char = xasprintf(
+          let mut backupname: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
             b"%s%s\x00" as *const u8 as *const libc::c_char,
             *argv,
             opt_i,
           );
-          xrename(*argv, backupname);
+          crate::libbb::xfuncs_printf::xrename(*argv, backupname);
           free(backupname as *mut libc::c_void);
         }
         /* else unlink(*argv); - rename below does this */
-        xrename(
+        crate::libbb::xfuncs_printf::xrename(
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).outname,
           *argv,
         ); //TODO: rollback backup on error?

@@ -1,5 +1,4 @@
 use crate::archival::libarchive::bb_archive::file_header_t;
-use crate::libbb::llist::llist_t;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::size_t;
@@ -11,7 +10,6 @@ use libc::gid_t;
 use libc::mode_t;
 use libc::off64_t;
 use libc::off_t;
-use libc::ssize_t;
 use libc::time_t;
 use libc::uid_t;
 extern "C" {
@@ -27,63 +25,19 @@ extern "C" {
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
-  /* Some useful definitions */
-  /* Macros for min/max.  */
-  /* buffer allocation schemes */
-  /* glibc uses __errno_location() to get a ptr to errno */
-  /* We can just memorize it once - no multithreading in busybox :) */
+/* Some useful definitions */
+/* Macros for min/max.  */
+/* buffer allocation schemes */
+/* glibc uses __errno_location() to get a ptr to errno */
+/* We can just memorize it once - no multithreading in busybox :) */
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-  /* NB: can violate const-ness (similarly to strchr) */
-  #[no_mangle]
-  fn last_char_is(s: *const libc::c_char, c: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  // NB: will return short read on error, not -1,
-  // if some data was read before error occurred
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xread(fd: libc::c_int, buf: *mut libc::c_void, count: size_t);
-  /* Autodetects gzip/bzip2 formats. fd may be in the middle of the file! */
-  #[no_mangle]
-  fn setup_unzip_on_fd(fd: libc::c_int, fail_if_not_compressed: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn data_skip(archive_handle: *mut archive_handle_t);
-  #[no_mangle]
-  fn strip_unsafe_prefix(str: *const libc::c_char) -> *const libc::c_char;
-  #[no_mangle]
-  fn data_align(archive_handle: *mut archive_handle_t, boundary: libc::c_uint);
+/* NB: can violate const-ness (similarly to strchr) */
+
+// NB: will return short read on error, not -1,
+// if some data was read before error occurred
+
+/* Autodetects gzip/bzip2 formats. fd may be in the middle of the file! */
+
 }
 
 /* Busybox does not use threads, we can speed up stdio. */
@@ -106,8 +60,9 @@ extern "C" {
 /* "long" is long enough on this system */
 
 use crate::archival::libarchive::bb_archive::archive_handle_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct tar_header_t {
   pub name: [libc::c_char; 100],
   pub mode: [libc::c_char; 8],
@@ -157,7 +112,7 @@ unsafe extern "C" fn getOctal(
   if *end as libc::c_int != '\u{0}' as i32 && *end as libc::c_int != ' ' as i32 {
     let mut first: i8 = *str.offset(0) as i8;
     if first as libc::c_int & 0x80i32 == 0 {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"corrupted octal value in tar header\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -203,7 +158,7 @@ unsafe extern "C" fn process_pax_hdr(
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   buf = xmalloc(blk_sz.wrapping_add(1i32 as libc::c_uint) as size_t) as *mut libc::c_char;
   p = buf;
-  xread(
+  crate::libbb::read_printf::xread(
     (*archive_handle).src_fd,
     buf as *mut libc::c_void,
     blk_sz as size_t,
@@ -216,7 +171,7 @@ unsafe extern "C" fn process_pax_hdr(
     let mut value: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut len: libc::c_uint = 0;
     /* Every record has this format: "LEN NAME=VALUE\n" */
-    len = bb_strtou(p, &mut end, 10i32);
+    len = crate::libbb::bb_strtonum::bb_strtou(p, &mut end, 10i32);
     /* expect errno to be EINVAL, because the character
      * following the digits should be a space
      */
@@ -227,7 +182,7 @@ unsafe extern "C" fn process_pax_hdr(
       || *bb_errno != 22i32
       || *end as libc::c_int != ' ' as i32
     {
-      bb_simple_error_msg(
+      crate::libbb::verror_msg::bb_simple_error_msg(
         b"malformed extended header, skipped\x00" as *const u8 as *const libc::c_char,
       );
       break;
@@ -240,15 +195,25 @@ unsafe extern "C" fn process_pax_hdr(
       if !(global == 0) {
         continue;
       }
-      if !is_prefixed_with(value, b"path=\x00" as *const u8 as *const libc::c_char).is_null() {
+      if !crate::libbb::compare_string_array::is_prefixed_with(
+        value,
+        b"path=\x00" as *const u8 as *const libc::c_char,
+      )
+      .is_null()
+      {
         value = value.offset(
           (::std::mem::size_of::<[libc::c_char; 6]>() as libc::c_ulong)
             .wrapping_sub(1i32 as libc::c_ulong) as isize,
         );
         free((*archive_handle).tar__longname as *mut libc::c_void);
-        (*archive_handle).tar__longname = xstrdup(value)
+        (*archive_handle).tar__longname = crate::libbb::xfuncs_printf::xstrdup(value)
       } else {
-        if is_prefixed_with(value, b"linkpath=\x00" as *const u8 as *const libc::c_char).is_null() {
+        if crate::libbb::compare_string_array::is_prefixed_with(
+          value,
+          b"linkpath=\x00" as *const u8 as *const libc::c_char,
+        )
+        .is_null()
+        {
           continue;
         }
         value = value.offset(
@@ -256,7 +221,7 @@ unsafe extern "C" fn process_pax_hdr(
             .wrapping_sub(1i32 as libc::c_ulong) as isize,
         );
         free((*archive_handle).tar__linkname as *mut libc::c_void);
-        (*archive_handle).tar__linkname = xstrdup(value)
+        (*archive_handle).tar__linkname = crate::libbb::xfuncs_printf::xstrdup(value)
       }
     }
   }
@@ -296,13 +261,13 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
   /* return get_header_tar(archive_handle); */
   /* Align header */
   {
-    data_align(archive_handle, 512i32 as libc::c_uint);
+    crate::archival::libarchive::data_align::data_align(archive_handle, 512i32 as libc::c_uint);
     loop
     /* return get_header_tar(archive_handle); */
     /* to prevent misdetection of bz2 sig */
     {
       *(&mut tar as *mut tar_header_t as *mut aliased_u32) = 0i32 as aliased_u32;
-      i = full_read(
+      i = crate::libbb::read::full_read(
         (*archive_handle).src_fd,
         &mut tar as *mut tar_header_t as *mut libc::c_void,
         512i32 as size_t,
@@ -321,7 +286,9 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
          * the very first read fails. Grrr.
          */
         if (*archive_handle).offset == 0 {
-          bb_simple_error_msg(b"short read\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::verror_msg::bb_simple_error_msg(
+            b"short read\x00" as *const u8 as *const libc::c_char,
+          );
         }
         /* this merely signals end of archive, not exit(1): */
         return 1i32 as libc::c_char;
@@ -337,7 +304,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
             /* Second consecutive empty header - end of archive.
              * Read until the end to empty the pipe from gz or bz2
              */
-            while full_read(
+            while crate::libbb::read::full_read(
               (*archive_handle).src_fd,
               &mut tar as *mut tar_header_t as *mut libc::c_void,
               512i32 as size_t,
@@ -353,7 +320,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
         (*archive_handle).tar__end = 0i32 as smallint;
         /* Check header has valid magic, "ustar" is for the proper tar,
          * five NULs are for the old tar format  */
-        if !(is_prefixed_with(
+        if !(crate::libbb::compare_string_array::is_prefixed_with(
           tar.magic.as_mut_ptr(),
           b"ustar\x00" as *const u8 as *const libc::c_char,
         )
@@ -402,7 +369,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
             ::std::mem::size_of::<[libc::c_char; 8]>() as libc::c_ulong as libc::c_int,
           ) as libc::c_int;
           if sum_u != sum && sum_s != sum {
-            bb_simple_error_msg_and_die(
+            crate::libbb::verror_msg::bb_simple_error_msg_and_die(
               b"invalid tar header checksum\x00" as *const u8 as *const libc::c_char,
             );
           }
@@ -419,7 +386,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
               tar.devmajor.as_mut_ptr(),
               ::std::mem::size_of::<[libc::c_char; 8]>() as libc::c_ulong as libc::c_int,
             ) as libc::c_uint;
-            (*file_header).device = bb_makedev(major, minor) as libc::dev_t;
+            (*file_header).device = crate::libbb::makedev::bb_makedev(major, minor) as libc::dev_t;
             tar.prefix[0] = t
           }
           /* 0 is reserved for high perf file, treat as normal file */
@@ -432,7 +399,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
             && parse_names != 0
             && tar.linkname[0] as libc::c_int != 0
           {
-            (*file_header).link_target = xstrndup(
+            (*file_header).link_target = crate::libbb::xfuncs_printf::xstrndup(
               tar.linkname.as_mut_ptr(),
               ::std::mem::size_of::<[libc::c_char; 100]>() as libc::c_ulong as libc::c_int,
             )
@@ -440,7 +407,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
             /* Will link_target be free()ed? */
           }
           (*file_header).tar__uname = if tar.uname[0] as libc::c_int != 0 {
-            xstrndup(
+            crate::libbb::xfuncs_printf::xstrndup(
               tar.uname.as_mut_ptr(),
               ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
             )
@@ -448,7 +415,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
             std::ptr::null_mut::<libc::c_char>()
           };
           (*file_header).tar__gname = if tar.gname[0] as libc::c_int != 0 {
-            xstrndup(
+            crate::libbb::xfuncs_printf::xstrndup(
               tar.gname.as_mut_ptr(),
               ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong as libc::c_int,
             )
@@ -486,9 +453,12 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
               /* and padding[0] */
               //tar.prefix[sizeof(tar.prefix)] = '\0'; - gcc 4.3.0 would complain
               tar.padding[0] = '\u{0}' as i32 as libc::c_char;
-              (*file_header).name = concat_path_file(tar.prefix.as_mut_ptr(), tar.name.as_mut_ptr())
+              (*file_header).name = crate::libbb::concat_path_file::concat_path_file(
+                tar.prefix.as_mut_ptr(),
+                tar.name.as_mut_ptr(),
+              )
             } else {
-              (*file_header).name = xstrdup(tar.name.as_mut_ptr())
+              (*file_header).name = crate::libbb::xfuncs_printf::xstrdup(tar.name.as_mut_ptr())
             }
           }
           /* Set bits 12-15 of the files mode */
@@ -513,7 +483,9 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
             }
             55 | 48 => {
               /* case 0: */
-              if !last_char_is((*file_header).name, '/' as i32).is_null() {
+              if !crate::libbb::last_char_is::last_char_is((*file_header).name, '/' as i32)
+                .is_null()
+              {
                 current_block = 7455596087214207069;
                 break 'c_8845;
               } else {
@@ -560,9 +532,10 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
               free((*archive_handle).tar__longname as *mut libc::c_void);
               /* For paranoia reasons we allocate extra NUL char */
               (*archive_handle).tar__longname =
-                xzalloc(((*file_header).size + 1) as size_t) as *mut libc::c_char;
+                crate::libbb::xfuncs_printf::xzalloc(((*file_header).size + 1) as size_t)
+                  as *mut libc::c_char;
               /* We read ASCIZ string, including NUL */
-              xread(
+              crate::libbb::read_printf::xread(
                 (*archive_handle).src_fd,
                 (*archive_handle).tar__longname as *mut libc::c_void,
                 (*file_header).size as size_t,
@@ -576,8 +549,9 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
             75 => {
               free((*archive_handle).tar__linkname as *mut libc::c_void);
               (*archive_handle).tar__linkname =
-                xzalloc(((*file_header).size + 1) as size_t) as *mut libc::c_char;
-              xread(
+                crate::libbb::xfuncs_printf::xzalloc(((*file_header).size + 1) as size_t)
+                  as *mut libc::c_char;
+              crate::libbb::read_printf::xread(
                 (*archive_handle).src_fd,
                 (*archive_handle).tar__linkname as *mut libc::c_void,
                 (*file_header).size as size_t,
@@ -589,7 +563,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
               current_block = 4488496028633655612;
             }
             _ => {
-              bb_error_msg_and_die(
+              crate::libbb::verror_msg::bb_error_msg_and_die(
                 b"unknown typeflag: 0x%x\x00" as *const u8 as *const libc::c_char,
                 tar_typeflag,
               );
@@ -612,7 +586,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
           }
           /* Volume header */
           let mut sz: off_t = 0; /* sz /= 512 but w/o contortions for signed div */
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"warning: skipping header \'%c\'\x00" as *const u8 as *const libc::c_char,
             tar_typeflag,
           );
@@ -625,7 +599,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
             if !(fresh0 != 0) {
               break;
             }
-            xread(
+            crate::libbb::read_printf::xread(
               (*archive_handle).src_fd,
               &mut tar as *mut tar_header_t as *mut libc::c_void,
               512i32 as size_t,
@@ -641,7 +615,11 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
         current_block = 25209135276526723; /* paranoia */
         break 'c_8845;
       }
-      if setup_unzip_on_fd((*archive_handle).src_fd, 0i32) != 0i32 {
+      if crate::archival::libarchive::open_transformer::setup_unzip_on_fd(
+        (*archive_handle).src_fd,
+        0i32,
+      ) != 0i32
+      {
         current_block = 25209135276526723;
         break 'c_8845;
       }
@@ -650,7 +628,9 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
   }
   match current_block {
     25209135276526723 => {
-      bb_simple_error_msg_and_die(b"invalid tar magic\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"invalid tar magic\x00" as *const u8 as *const libc::c_char,
+      );
     }
     7455596087214207069 => {
       (*file_header).mode |= 0o40000i32 as libc::c_uint;
@@ -675,14 +655,14 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
     (*archive_handle).tar__linkname = std::ptr::null_mut::<libc::c_char>()
   }
   /* Everything up to and including last ".." component is stripped */
-  overlapping_strcpy(
+  crate::libbb::safe_strncpy::overlapping_strcpy(
     (*file_header).name,
-    strip_unsafe_prefix((*file_header).name),
+    crate::archival::libarchive::unsafe_prefix::strip_unsafe_prefix((*file_header).name),
   );
   //TODO: do the same for file_header->link_target?
   /* Strip trailing '/' in directories */
   /* Must be done after mode is set as '/' is used to check if it's a directory */
-  cp = last_char_is((*file_header).name, '/' as i32);
+  cp = crate::libbb::last_char_is::last_char_is((*file_header).name, '/' as i32);
   if (*archive_handle).filter.expect("non-null function pointer")(archive_handle) as libc::c_int
     == 0i32
   {
@@ -701,7 +681,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
       || !(*archive_handle).reject.is_null()
       || (*archive_handle).ah_flags & (1i32 << 8i32) as libc::c_uint != 0
     {
-      llist_add_to(
+      crate::libbb::llist::llist_add_to(
         &mut (*archive_handle).passed,
         (*file_header).name as *mut libc::c_void,
       );
@@ -709,7 +689,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
       free((*file_header).name as *mut libc::c_void);
     }
   } else {
-    data_skip(archive_handle);
+    crate::archival::libarchive::data_skip::data_skip(archive_handle);
     free((*file_header).name as *mut libc::c_void);
   }
   (*archive_handle).offset += (*file_header).size;

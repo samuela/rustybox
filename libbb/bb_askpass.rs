@@ -10,7 +10,6 @@ extern "C" {
 
   #[no_mangle]
   fn sigaction(__sig: libc::c_int, __act: *const sigaction, __oact: *mut sigaction) -> libc::c_int;
-
   #[no_mangle]
   static mut stdout: *mut FILE;
 
@@ -36,20 +35,6 @@ extern "C" {
   #[no_mangle]
   fn tcflush(__fd: libc::c_int, __queue_selector: libc::c_int) -> libc::c_int;
 
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn sigaction_set(sig: libc::c_int, act: *const sigaction) -> libc::c_int;
-
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-
-  #[no_mangle]
-  fn nuke_str(str: *mut libc::c_char);
 }
 
 /* do nothing signal handler */
@@ -90,7 +75,7 @@ pub unsafe extern "C" fn bb_ask_noecho(
    * which was upsetting "expect" based scripts of some users.
    */
   fputs_unlocked(prompt, stdout);
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   tcgetattr(fd, &mut oldtio);
   tio = oldtio;
   /* Switch off echo. ECHOxyz meaning:
@@ -117,7 +102,7 @@ pub unsafe extern "C" fn bb_ask_noecho(
     Some(askpass_timeout as unsafe extern "C" fn(_: libc::c_int) -> ());
   sigaction(2i32, &mut sa, &mut oldsa);
   if timeout != 0 {
-    sigaction_set(14i32, &mut sa);
+    crate::libbb::signals::sigaction_set(14i32, &mut sa);
     alarm(timeout as libc::c_uint);
   }
   ret = std::ptr::null_mut::<libc::c_char>();
@@ -127,7 +112,8 @@ pub unsafe extern "C" fn bb_ask_noecho(
     /* User input is uber-slow, no need to optimize reallocs.
      * Grow it on every char.
      */
-    ret = xrealloc(ret as *mut libc::c_void, (i + 2i32) as size_t) as *mut libc::c_char;
+    ret = crate::libbb::xfuncs_printf::xrealloc(ret as *mut libc::c_void, (i + 2i32) as size_t)
+      as *mut libc::c_char;
     r = read(
       fd,
       &mut *ret.offset(i as isize) as *mut libc::c_char as *mut libc::c_void,
@@ -136,7 +122,7 @@ pub unsafe extern "C" fn bb_ask_noecho(
     if i == 0i32 && r == 0i32 || r < 0i32 {
       /* read is interrupted by timeout or ^C */
       *ret.offset(i as isize) = '\u{0}' as i32 as libc::c_char; /* paranoia */
-      nuke_str(ret); /* paranoia */
+      crate::libbb::nuke_str::nuke_str(ret); /* paranoia */
       free(ret as *mut libc::c_void);
       ret = std::ptr::null_mut::<libc::c_char>();
       break;
@@ -159,10 +145,10 @@ pub unsafe extern "C" fn bb_ask_noecho(
   if timeout != 0 {
     alarm(0i32 as libc::c_uint);
   }
-  sigaction_set(2i32, &mut oldsa);
+  crate::libbb::signals::sigaction_set(2i32, &mut oldsa);
   tcsetattr(fd, 0i32, &mut oldtio);
-  bb_putchar('\n' as i32);
-  fflush_all();
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::fflush_all();
   return ret;
 }
 

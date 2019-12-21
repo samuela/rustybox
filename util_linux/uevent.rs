@@ -23,20 +23,7 @@ extern "C" {
   ) -> *mut libc::c_void;
   #[no_mangle]
   fn munmap(__addr: *mut libc::c_void, __len: size_t) -> libc::c_int;
-  #[no_mangle]
-  fn bb_unsetenv(key: *const libc::c_char);
-  #[no_mangle]
-  fn create_and_bind_to_netlink(
-    proto: libc::c_int,
-    grp: libc::c_int,
-    rcvbuf: libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn spawn_and_wait(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -62,7 +49,11 @@ pub unsafe extern "C" fn uevent_main(
   // Reproducer:
   //	uevent mdev &
   // 	find /sys -name uevent -exec sh -c 'echo add >"{}"' ';'
-  fd = create_and_bind_to_netlink(15i32, 1i32 << 0i32, RCVBUF as libc::c_int as libc::c_uint);
+  fd = crate::libbb::xconnect::create_and_bind_to_netlink(
+    15i32,
+    1i32 << 0i32,
+    RCVBUF as libc::c_int as libc::c_uint,
+  );
   loop {
     let mut netbuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -82,16 +73,20 @@ pub unsafe extern "C" fn uevent_main(
       0i32 as off64_t,
     ) as *mut libc::c_char;
     if netbuf == -1i32 as *mut libc::c_void as *mut libc::c_char {
-      bb_simple_perror_msg_and_die(b"mmap\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"mmap\x00" as *const u8 as *const libc::c_char,
+      );
     }
     // Here we block, possibly for a very long time
-    len = safe_read(
+    len = crate::libbb::read::safe_read(
       fd,
       netbuf as *mut libc::c_void,
       (16i32 * 1024i32 - 1i32) as size_t,
     );
     if len < 0 {
-      bb_simple_perror_msg_and_die(b"read\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"read\x00" as *const u8 as *const libc::c_char,
+      );
     }
     end = netbuf.offset(len as isize);
     *end = '\u{0}' as i32 as libc::c_char;
@@ -128,14 +123,14 @@ pub unsafe extern "C" fn uevent_main(
         idx = idx + 1;
         putenv(*(bb_common_bufsiz1.as_mut_ptr() as *mut *mut libc::c_char).offset(fresh3 as isize));
       }
-      spawn_and_wait(argv);
+      crate::libbb::vfork_daemon_rexec::spawn_and_wait(argv);
       idx = 0i32;
       while !(*(bb_common_bufsiz1.as_mut_ptr() as *mut *mut libc::c_char).offset(idx as isize))
         .is_null()
       {
         let fresh4 = idx;
         idx = idx + 1;
-        bb_unsetenv(
+        crate::libbb::xfuncs_printf::bb_unsetenv(
           *(bb_common_bufsiz1.as_mut_ptr() as *mut *mut libc::c_char).offset(fresh4 as isize),
         );
       }

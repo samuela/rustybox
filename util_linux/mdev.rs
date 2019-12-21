@@ -1,4 +1,5 @@
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::parse_config::parser_t;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::libbb::xfuncs_printf::xmalloc;
@@ -6,8 +7,6 @@ use crate::librb::__syscall_slong_t;
 use crate::librb::bb_uidgid_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use c2rust_bitfields;
-use c2rust_bitfields::BitfieldStruct;
 use libc;
 use libc::chdir;
 use libc::chmod;
@@ -49,7 +48,6 @@ use libc::timeval;
 use libc::uid_t;
 use libc::umask;
 use libc::unlink;
-use libc::DIR;
 extern "C" {
 
   #[no_mangle]
@@ -57,12 +55,6 @@ extern "C" {
 
   #[no_mangle]
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
-
-  #[no_mangle]
-  fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
 
   #[no_mangle]
   fn gnu_dev_major(__dev: libc::dev_t) -> libc::c_uint;
@@ -91,187 +83,6 @@ extern "C" {
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
 
   #[no_mangle]
-  fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xmemdup(s: *const libc::c_void, n: libc::c_int) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn recursive_action(
-    fileName: *const libc::c_char,
-    flags: libc::c_uint,
-    fileAction_0: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    dirAction_0: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    userData: *mut libc::c_void,
-    depth: libc::c_uint,
-  ) -> libc::c_int;
-
-  #[no_mangle]
-  fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
-
-  #[no_mangle]
-  fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
-
-  #[no_mangle]
-  fn endofname(name: *const libc::c_char) -> *const libc::c_char;
-
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn close_on_exec_on(fd: libc::c_int);
-
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_unsetenv(key: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_unsetenv_and_free(key: *mut libc::c_char);
-
-  #[no_mangle]
-  fn xstat(pathname: *const libc::c_char, buf: *mut stat);
-
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-
-  #[no_mangle]
-  fn strftime_HHMMSS(
-    buf: *mut libc::c_char,
-    len: libc::c_uint,
-    tp: *mut time_t,
-  ) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn create_and_bind_to_netlink(
-    proto: libc::c_int,
-    grp: libc::c_int,
-    rcvbuf: libc::c_uint,
-  ) -> libc::c_int;
-
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-
-  #[no_mangle]
-  fn open_read_close(
-    filename: *const libc::c_char,
-    buf: *mut libc::c_void,
-    maxsz: size_t,
-  ) -> ssize_t;
-
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-
-  #[no_mangle]
-  fn xwrite_str(fd: libc::c_int, str: *const libc::c_char);
-
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn get_uidgid(_: *mut bb_uidgid_t, _: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
-
-  #[no_mangle]
-  fn bb_sanitize_stdio();
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn bb_parse_mode(s: *const libc::c_char, cur_mode: libc::c_uint) -> libc::c_int;
-
-  #[no_mangle]
-  fn config_open2(
-    filename: *const libc::c_char,
-    fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
-  ) -> *mut parser_t;
-
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
-
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn bb_make_directory(
-    path: *mut libc::c_char,
-    mode: libc::c_long,
-    flags: libc::c_int,
-  ) -> libc::c_int;
-
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
   fn pread(
     __fd: libc::c_int,
     __buf: *mut libc::c_void,
@@ -297,8 +108,6 @@ extern "C" {
   #[no_mangle]
   fn regfree(__preg: *mut regex_t);
 
-  #[no_mangle]
-  fn xregcomp(preg: *mut regex_t, regex: *const libc::c_char, cflags: libc::c_int);
 }
 
 /* NB: unaligned parameter should be a pointer, aligned one -
@@ -314,8 +123,8 @@ extern "C" {
 
 pub type smalluint = libc::c_uchar;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub _pad: [libc::c_int; 28],
   pub _kill: C2RustUnnamed_8,
@@ -327,45 +136,45 @@ pub union C2RustUnnamed {
   pub _sigsys: C2RustUnnamed_0,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_0 {
   pub _call_addr: *mut libc::c_void,
   pub _syscall: libc::c_int,
   pub _arch: libc::c_uint,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_1 {
   pub si_band: libc::c_long,
   pub si_fd: libc::c_int,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_2 {
   pub si_addr: *mut libc::c_void,
   pub si_addr_lsb: libc::c_short,
   pub _bounds: C2RustUnnamed_3,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_3 {
   pub _addr_bnd: C2RustUnnamed_4,
   pub _pkey: u32,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_4 {
   pub _lower: *mut libc::c_void,
   pub _upper: *mut libc::c_void,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_5 {
   pub si_pid: pid_t,
   pub si_uid: uid_t,
@@ -374,32 +183,33 @@ pub struct C2RustUnnamed_5 {
   pub si_stime: libc::clock_t,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_6 {
   pub si_pid: pid_t,
   pub si_uid: uid_t,
   pub si_sigval: sigval,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_7 {
   pub si_tid: libc::c_int,
   pub si_overrun: libc::c_int,
   pub si_sigval: sigval,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_8 {
   pub si_pid: pid_t,
   pub si_uid: uid_t,
 }
 
 use libc::FILE;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct timezone {
   pub tz_minuteswest: libc::c_int,
   pub tz_dsttime: libc::c_int,
@@ -444,68 +254,7 @@ pub const PARSE_EOL_COMMENTS: C2RustUnnamed_11 = 4194304;
 // pub const PARSE_TRIM: C2RustUnnamed_11 = 131072;
 // pub const PARSE_COLLAPSE: C2RustUnnamed_11 = 65536;
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct smaprec {
-  pub mapped_rw: libc::c_ulong,
-  pub mapped_ro: libc::c_ulong,
-  pub shared_clean: libc::c_ulong,
-  pub shared_dirty: libc::c_ulong,
-  pub private_clean: libc::c_ulong,
-  pub private_dirty: libc::c_ulong,
-  pub stack: libc::c_ulong,
-  pub smap_pss: libc::c_ulong,
-  pub smap_swap: libc::c_ulong,
-  pub smap_size: libc::c_ulong,
-  pub smap_start: libc::c_ulonglong,
-  pub smap_mode: [libc::c_char; 5],
-  pub smap_name: *mut libc::c_char,
-}
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct procps_status_t {
-  pub dir: *mut DIR,
-  pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: u8,
-  pub shift_pages_to_kb: u8,
-  pub argv_len: u16,
-  pub argv0: *mut libc::c_char,
-  pub exe: *mut libc::c_char,
-  pub main_thread_pid: libc::c_uint,
-  pub vsz: libc::c_ulong,
-  pub rss: libc::c_ulong,
-  pub stime: libc::c_ulong,
-  pub utime: libc::c_ulong,
-  pub start_time: libc::c_ulong,
-  pub pid: libc::c_uint,
-  pub ppid: libc::c_uint,
-  pub pgid: libc::c_uint,
-  pub sid: libc::c_uint,
-  pub uid: libc::c_uint,
-  pub gid: libc::c_uint,
-  pub ruid: libc::c_uint,
-  pub rgid: libc::c_uint,
-  pub niceness: libc::c_int,
-  pub tty_major: libc::c_uint,
-  pub tty_minor: libc::c_uint,
-  pub smaps: smaprec,
-  pub state: [libc::c_char; 4],
-  pub comm: [libc::c_char; 16],
-  pub last_seen_on_cpu: libc::c_int,
-}
+use crate::librb::procps_status_t;
 
 pub type C2RustUnnamed_12 = libc::c_uint;
 // pub const PSSCAN_TASKS: C2RustUnnamed_12 = 4194304;
@@ -531,8 +280,8 @@ pub const PSSCAN_ARGV0: C2RustUnnamed_12 = 128;
 // pub const PSSCAN_PPID: C2RustUnnamed_12 = 2;
 // pub const PSSCAN_PID: C2RustUnnamed_12 = 1;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub root_major: libc::c_int,
   pub root_minor: libc::c_int,
@@ -546,8 +295,9 @@ pub struct globals {
   pub cur_rule: rule,
   pub timestr: [libc::c_char; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct rule {
   pub keep_matching: bool,
   pub regex_compiled: bool,
@@ -562,39 +312,21 @@ pub struct rule {
   pub match_0: regex_t,
   pub envmatch: *mut envmatch,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct envmatch {
   pub next: *mut envmatch,
   pub envname: *mut libc::c_char,
   pub match_0: regex_t,
 }
 pub type regex_t = re_pattern_buffer;
-#[derive(Copy, Clone, BitfieldStruct)]
-#[repr(C)]
-pub struct re_pattern_buffer {
-  pub buffer: *mut libc::c_uchar,
-  pub allocated: libc::c_ulong,
-  pub used: libc::c_ulong,
-  pub syntax: reg_syntax_t,
-  pub fastmap: *mut libc::c_char,
-  pub translate: *mut libc::c_uchar,
-  pub re_nsub: size_t,
-  #[bitfield(name = "can_be_null", ty = "libc::c_uint", bits = "0..=0")]
-  #[bitfield(name = "regs_allocated", ty = "libc::c_uint", bits = "1..=2")]
-  #[bitfield(name = "fastmap_accurate", ty = "libc::c_uint", bits = "3..=3")]
-  #[bitfield(name = "no_sub", ty = "libc::c_uint", bits = "4..=4")]
-  #[bitfield(name = "not_bol", ty = "libc::c_uint", bits = "5..=5")]
-  #[bitfield(name = "not_eol", ty = "libc::c_uint", bits = "6..=6")]
-  #[bitfield(name = "newline_anchor", ty = "libc::c_uint", bits = "7..=7")]
-  pub can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [u8; 1],
-  #[bitfield(padding)]
-  pub c2rust_padding: [u8; 7],
-}
-pub type reg_syntax_t = libc::c_ulong;
+
+use crate::librb::re_pattern_buffer;
 pub type regoff_t = libc::c_int;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct regmatch_t {
   pub rm_so: regoff_t,
   pub rm_eo: regoff_t,
@@ -670,7 +402,7 @@ unsafe extern "C" fn parse_envmatch_pfx(mut val: *mut libc::c_char) -> *mut libc
       /* || eq == val? */
       return val;
     }
-    if endofname(val) != eq {
+    if crate::libbb::endofname::endofname(val) != eq {
       return val;
     }
     semicolon = strchr(eq, ';' as i32);
@@ -678,15 +410,16 @@ unsafe extern "C" fn parse_envmatch_pfx(mut val: *mut libc::c_char) -> *mut libc
       return val;
     }
     /* ENVVAR=regex;... */
-    e = xzalloc(::std::mem::size_of::<envmatch>() as libc::c_ulong) as *mut envmatch;
+    e = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<envmatch>() as libc::c_ulong)
+      as *mut envmatch;
     *nextp = e;
     nextp = &mut (*e).next;
-    (*e).envname = xstrndup(
+    (*e).envname = crate::libbb::xfuncs_printf::xstrndup(
       val,
       eq.wrapping_offset_from(val) as libc::c_long as libc::c_int,
     );
     *semicolon = '\u{0}' as i32 as libc::c_char;
-    xregcomp(&mut (*e).match_0, eq.offset(1), 1i32);
+    crate::libbb::xregcomp::xregcomp(&mut (*e).match_0, eq.offset(1), 1i32);
     *semicolon = ';' as i32 as libc::c_char;
     val = semicolon.offset(1)
   }
@@ -699,7 +432,7 @@ unsafe extern "C" fn parse_next_rule() {
     let mut tokens: [*mut libc::c_char; 4] = [0 as *mut libc::c_char; 4]; /* while (config_read) */
     let mut val: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /* No PARSE_EOL_COMMENTS, because command may contain '#' chars */
-    if config_read(
+    if crate::libbb::parse_config::config_read(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser,
       tokens.as_mut_ptr(),
       (PARSE_NORMAL as libc::c_int & !(PARSE_EOL_COMMENTS as libc::c_int)
@@ -747,7 +480,7 @@ unsafe extern "C" fn parse_next_rule() {
           .maj
           < 0i32
       {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"bad @maj,min on line %d\x00" as *const u8 as *const libc::c_char,
           (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser).lineno,
         );
@@ -768,7 +501,7 @@ unsafe extern "C" fn parse_next_rule() {
         /* $ENVVAR=regex ... */
         val = val.offset(1);
         if eq.is_null() {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"bad $envvar=regex on line %d\x00" as *const u8 as *const libc::c_char,
             (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser).lineno,
           );
@@ -777,7 +510,7 @@ unsafe extern "C" fn parse_next_rule() {
           let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
             .cur_rule
             .envvar;
-          *fresh0 = xstrndup(
+          *fresh0 = crate::libbb::xfuncs_printf::xstrndup(
             val,
             eq.wrapping_offset_from(val) as libc::c_long as libc::c_int,
           );
@@ -790,7 +523,7 @@ unsafe extern "C" fn parse_next_rule() {
       match current_block {
         8958142635377293549 => {}
         _ => {
-          xregcomp(
+          crate::libbb::xregcomp::xregcomp(
             &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
               .cur_rule
               .match_0,
@@ -808,14 +541,14 @@ unsafe extern "C" fn parse_next_rule() {
       11307063007268554308 =>
       /* 2nd field: uid:gid - device ownership */
       {
-        if get_uidgid(
+        if crate::libpwdgrp::uidgid_get::get_uidgid(
           &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
             .cur_rule
             .ugid,
           tokens[1],
         ) == 0i32
         {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"unknown user/group \'%s\' on line %d\x00" as *const u8 as *const libc::c_char,
             tokens[1],
             (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser).lineno,
@@ -824,7 +557,7 @@ unsafe extern "C" fn parse_next_rule() {
           /* 3rd field: mode - device permissions */
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
             .cur_rule
-            .mode = bb_parse_mode(
+            .mode = crate::libbb::parse_mode::bb_parse_mode(
             tokens[2],
             (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
               .cur_rule
@@ -840,11 +573,11 @@ unsafe extern "C" fn parse_next_rule() {
             )
             .is_null()
           {
-            let mut s: *mut libc::c_char = skip_non_whitespace(val);
+            let mut s: *mut libc::c_char = crate::libbb::skip_whitespace::skip_non_whitespace(val);
             let ref mut fresh1 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
               .cur_rule
               .ren_mov;
-            *fresh1 = xstrndup(
+            *fresh1 = crate::libbb::xfuncs_printf::xstrndup(
               val,
               s.wrapping_offset_from(val) as libc::c_long as libc::c_int,
             );
@@ -854,7 +587,7 @@ unsafe extern "C" fn parse_next_rule() {
             let mut s_0: *const libc::c_char = b"$@*\x00" as *const u8 as *const libc::c_char;
             let mut s2: *const libc::c_char = strchr(s_0, *val.offset(0) as libc::c_int);
             if s2.is_null() {
-              bb_error_msg(
+              crate::libbb::verror_msg::bb_error_msg(
                 b"bad line %u\x00" as *const u8 as *const libc::c_char,
                 (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser).lineno,
               );
@@ -863,7 +596,7 @@ unsafe extern "C" fn parse_next_rule() {
               let ref mut fresh2 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                 .cur_rule
                 .r_cmd;
-              *fresh2 = xstrdup(val);
+              *fresh2 = crate::libbb::xfuncs_printf::xstrdup(val);
               current_block = 4090602189656566074;
             }
           } else {
@@ -879,7 +612,9 @@ unsafe extern "C" fn parse_next_rule() {
     }
     clean_up_cur_rule();
   }
-  config_close((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser);
+  crate::libbb::parse_config::config_close(
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser,
+  );
   let ref mut fresh3 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser;
   *fresh3 = 0 as *mut parser_t;
 }
@@ -898,9 +633,12 @@ unsafe extern "C" fn next_rule() -> *const rule {
       .is_null()
   {
     let ref mut fresh4 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser;
-    *fresh4 = config_open2(
+    *fresh4 = crate::libbb::parse_config::config_open2(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filename,
-      Some(fopen_for_read as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE),
+      Some(
+        crate::libbb::wfopen::fopen_for_read
+          as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+      ),
     );
     let ref mut fresh5 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filename;
     *fresh5 = 0 as *const libc::c_char
@@ -940,13 +678,13 @@ unsafe extern "C" fn next_rule() -> *const rule {
       .is_null()
     {
       /* mdev -s */
-      rule = xmemdup(
+      rule = crate::libbb::xfuncs_printf::xmemdup(
         &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_rule as *mut rule
           as *const libc::c_void,
         ::std::mem::size_of::<rule>() as libc::c_ulong as libc::c_int,
       ) as *mut rule;
       let ref mut fresh8 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).rule_vec;
-      *fresh8 = xrealloc_vector_helper(
+      *fresh8 = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).rule_vec as *mut libc::c_void,
         ((::std::mem::size_of::<*mut rule>() as libc::c_ulong) << 8i32)
           .wrapping_add(4i32 as libc::c_ulong) as libc::c_uint,
@@ -992,7 +730,7 @@ unsafe extern "C" fn mkdir_recursive(mut name: *mut libc::c_char) {
    * Since we run with umask=0, need to temporarily switch it.
    */
   umask(0o22i32 as mode_t); /* "dir1" (if any) will be 0755 too */
-  bb_make_directory(
+  crate::libbb::make_directory::bb_make_directory(
     name,
     0o755i32 as libc::c_long,
     FILEUTILS_RECUR as libc::c_int,
@@ -1019,7 +757,7 @@ unsafe extern "C" fn build_alias(
     if *dest.offset(1) as libc::c_int == '\u{0}' as i32 {
       /* ">bar/" => ">bar/device_name" */
       dest = alias;
-      alias = concat_path_file(alias, device_name);
+      alias = crate::libbb::concat_path_file::concat_path_file(alias, device_name);
       free(dest as *mut libc::c_void);
     }
   }
@@ -1051,7 +789,7 @@ unsafe extern "C" fn make_device(
   major = -1i32;
   if operation == OP_add as libc::c_int {
     strcpy(path_end, b"/dev\x00" as *const u8 as *const libc::c_char);
-    len = open_read_close(
+    len = crate::libbb::read::open_read_close(
       path,
       path_end.offset(1) as *mut libc::c_void,
       (128i32 - 1i32) as size_t,
@@ -1071,7 +809,7 @@ unsafe extern "C" fn make_device(
     ) == 2i32
     {
       if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose != 0 {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"dev %u,%u\x00" as *const u8 as *const libc::c_char,
           major,
           minor,
@@ -1094,7 +832,7 @@ unsafe extern "C" fn make_device(
      * DEVNAME=snd/controlC0
      */
     strcpy(path_end, b"/uevent\x00" as *const u8 as *const libc::c_char);
-    len = open_read_close(
+    len = crate::libbb::read::open_read_close(
       path,
       path_end.offset(1) as *mut libc::c_void,
       (128i32 - 1i32) as size_t,
@@ -1116,7 +854,7 @@ unsafe extern "C" fn make_device(
       *strchrnul(device_name, '\n' as i32).offset(0) = '\u{0}' as i32 as libc::c_char
     } else {
       /* Fall back to just basename */
-      device_name = bb_basename(path) as *mut libc::c_char
+      device_name = crate::libbb::get_last_path_component::bb_basename(path) as *mut libc::c_char
     }
   }
   /* Determine device type */
@@ -1131,7 +869,7 @@ unsafe extern "C" fn make_device(
     || !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .subsystem
       .is_null()
-      && !is_prefixed_with(
+      && !crate::libbb::compare_string_array::is_prefixed_with(
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).subsystem,
         b"block\x00" as *const u8 as *const libc::c_char,
       )
@@ -1204,7 +942,7 @@ unsafe extern "C" fn make_device(
     }
     /* else: it's final implicit "match-all" rule */
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose as libc::c_int >= 2i32 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"rule matched, line %d\x00" as *const u8 as *const libc::c_char,
         if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
           .parser
@@ -1237,7 +975,7 @@ unsafe extern "C" fn make_device(
             n = n.wrapping_add(1)
           }
         }
-        alias = xzalloc(
+        alias = crate::libbb::xfuncs_printf::xzalloc(
           strlen((*rule).ren_mov)
             .wrapping_add((n as libc::c_ulong).wrapping_mul(strlen(str_to_match))),
         ) as *mut libc::c_char;
@@ -1292,7 +1030,7 @@ unsafe extern "C" fn make_device(
         *slash = '/' as i32 as libc::c_char
       }
       if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose != 0 {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"mknod %s (%d,%d) %o %u:%u\x00" as *const u8 as *const libc::c_char,
           node_name,
           major,
@@ -1305,11 +1043,12 @@ unsafe extern "C" fn make_device(
       if mknod(
         node_name,
         (*rule).mode | type_0 as libc::c_uint,
-        bb_makedev(major as libc::c_uint, minor as libc::c_uint) as libc::dev_t,
+        crate::libbb::makedev::bb_makedev(major as libc::c_uint, minor as libc::c_uint)
+          as libc::dev_t,
       ) != 0
         && *bb_errno != 17i32
       {
-        bb_perror_msg(
+        crate::libbb::perror_msg::bb_perror_msg(
           b"can\'t create \'%s\'\x00" as *const u8 as *const libc::c_char,
           node_name,
         );
@@ -1327,7 +1066,7 @@ unsafe extern "C" fn make_device(
           //End result is that instead of symlink, we have two nodes.
           //What should be done?
           if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose != 0 {
-            bb_error_msg(
+            crate::libbb::verror_msg::bb_error_msg(
               b"symlink: %s\x00" as *const u8 as *const libc::c_char,
               device_name,
             );
@@ -1338,31 +1077,31 @@ unsafe extern "C" fn make_device(
     }
     if 1i32 != 0 && !command.is_null() {
       /* setenv will leak memory, use putenv/unsetenv/free */
-      let mut s_0: *mut libc::c_char = xasprintf(
+      let mut s_0: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
         b"%s=%s\x00" as *const u8 as *const libc::c_char,
         b"MDEV\x00" as *const u8 as *const libc::c_char,
         node_name,
       );
       putenv(s_0);
       if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose != 0 {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"running: %s\x00" as *const u8 as *const libc::c_char,
           command,
         );
       }
       if system(command) == -1i32 {
-        bb_perror_msg(
+        crate::libbb::perror_msg::bb_perror_msg(
           b"can\'t run \'%s\'\x00" as *const u8 as *const libc::c_char,
           command,
         );
       }
-      bb_unsetenv_and_free(s_0);
+      crate::libbb::xfuncs_printf::bb_unsetenv_and_free(s_0);
     }
     if operation == OP_remove as libc::c_int && major >= -1i32 {
       if 1i32 != 0 && !alias.is_null() {
         if aliaslink as libc::c_int == '>' as i32 {
           if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose != 0 {
-            bb_error_msg(
+            crate::libbb::verror_msg::bb_error_msg(
               b"unlink: %s\x00" as *const u8 as *const libc::c_char,
               device_name,
             );
@@ -1371,7 +1110,7 @@ unsafe extern "C" fn make_device(
         }
       }
       if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose != 0 {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"unlink: %s\x00" as *const u8 as *const libc::c_char,
           node_name,
         );
@@ -1439,7 +1178,9 @@ unsafe extern "C" fn fileAction(
       .subsys_env
       .is_null()
     {
-      bb_unsetenv_and_free((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).subsys_env);
+      crate::libbb::xfuncs_printf::bb_unsetenv_and_free(
+        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).subsys_env,
+      );
       let ref mut fresh13 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).subsys_env;
       *fresh13 = std::ptr::null_mut::<libc::c_char>()
     }
@@ -1451,13 +1192,13 @@ unsafe extern "C" fn fileAction(
       .is_null()
     {
       let ref mut fresh15 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).subsystem;
-      *fresh15 = xstrdup(
+      *fresh15 = crate::libbb::xfuncs_printf::xstrdup(
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
           .subsystem
           .offset(1),
       );
       let ref mut fresh16 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).subsys_env;
-      *fresh16 = xasprintf(
+      *fresh16 = crate::libbb::xfuncs_printf::xasprintf(
         b"%s=%s\x00" as *const u8 as *const libc::c_char,
         b"SUBSYSTEM\x00" as *const u8 as *const libc::c_char,
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).subsystem,
@@ -1502,7 +1243,7 @@ unsafe extern "C" fn load_firmware(
     firmware_fd = open(firmware, 0i32)
   }
   /* check for /sys/$DEVPATH/loading ... give 30 seconds to appear */
-  xchdir(sysfs_path);
+  crate::libbb::xfuncs_printf::xchdir(sysfs_path);
   cnt = 0i32;
   loop {
     if !(cnt < 30i32) {
@@ -1523,7 +1264,7 @@ unsafe extern "C" fn load_firmware(
       if firmware_fd >= 0i32 {
         let mut data_fd: libc::c_int = 0;
         /* tell kernel we're loading by "echo 1 > /sys/$DEVPATH/loading" */
-        if full_write(
+        if crate::libbb::full_write::full_write(
           loading_fd,
           b"1\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
           1i32 as size_t,
@@ -1536,7 +1277,7 @@ unsafe extern "C" fn load_firmware(
           if data_fd < 0i32 {
             current_block = 128850887951311672;
           } else {
-            cnt = bb_copyfd_eof(firmware_fd, data_fd) as libc::c_int;
+            cnt = crate::libbb::copyfd::bb_copyfd_eof(firmware_fd, data_fd) as libc::c_int;
             current_block = 12124785117276362961;
           }
         }
@@ -1552,13 +1293,13 @@ unsafe extern "C" fn load_firmware(
            * before timing out.
            */
           if cnt > 0i32 {
-            full_write(
+            crate::libbb::full_write::full_write(
               loading_fd,
               b"0\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
               1i32 as size_t,
             );
           } else {
-            full_write(
+            crate::libbb::full_write::full_write(
               loading_fd,
               b"-1\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
               2i32 as size_t,
@@ -1569,7 +1310,7 @@ unsafe extern "C" fn load_firmware(
     }
     _ => {}
   }
-  xchdir(b"/dev\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::xfuncs_printf::xchdir(b"/dev\x00" as *const u8 as *const libc::c_char);
 }
 unsafe extern "C" fn curtime() -> *mut libc::c_char {
   let mut tv: timeval = timeval {
@@ -1578,7 +1319,7 @@ unsafe extern "C" fn curtime() -> *mut libc::c_char {
   };
   gettimeofday(&mut tv, 0 as *mut timezone);
   sprintf(
-    strftime_HHMMSS(
+    crate::libbb::time::strftime_HHMMSS(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .timestr
         .as_mut_ptr(),
@@ -1598,12 +1339,16 @@ unsafe extern "C" fn open_mdev_log(mut seq: *const libc::c_char, mut my_pid: lib
     0o1i32 | 0o2000i32,
   );
   if logfd >= 0i32 {
-    xmove_fd(logfd, 2i32);
+    crate::libbb::xfuncs_printf::xmove_fd(logfd, 2i32);
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose = 2i32 as smallint;
-    applet_name = xasprintf(
+    applet_name = crate::libbb::xfuncs_printf::xasprintf(
       b"%s[%s]\x00" as *const u8 as *const libc::c_char,
       applet_name,
-      if !seq.is_null() { seq } else { utoa(my_pid) },
+      if !seq.is_null() {
+        seq
+      } else {
+        crate::libbb::xfuncs::utoa(my_pid)
+      },
     )
   };
 }
@@ -1637,7 +1382,7 @@ unsafe extern "C" fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c
       if seq_fd < 0i32 {
         break;
       }
-      close_on_exec_on(seq_fd);
+      crate::libbb::xfuncs::close_on_exec_on(seq_fd);
     }
     seqlen = pread(
       seq_fd,
@@ -1655,10 +1400,12 @@ unsafe extern "C" fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c
       if seqbuf[0] as libc::c_int == '\n' as i32 || seqbuf[0] as libc::c_int == '\u{0}' as i32 {
         /* don't decrement timeout! */
         /* seed file: write out seq ASAP */
-        xwrite_str(seq_fd, utoa(expected_seq));
-        xlseek(seq_fd, 0i32 as off_t, 0i32);
+        crate::libbb::xfuncs_printf::xwrite_str(seq_fd, crate::libbb::xfuncs::utoa(expected_seq));
+        crate::libbb::xfuncs_printf::xlseek(seq_fd, 0i32 as off_t, 0i32);
         if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose as libc::c_int >= 2i32 {
-          bb_simple_error_msg(b"first seq written\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::verror_msg::bb_simple_error_msg(
+            b"first seq written\x00" as *const u8 as *const libc::c_char,
+          );
         }
         break;
       } else {
@@ -1675,7 +1422,7 @@ unsafe extern "C" fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c
         } else {
           if do_once != 0 {
             if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose as libc::c_int >= 2i32 {
-              bb_error_msg(
+              crate::libbb::verror_msg::bb_error_msg(
                 b"%s mdev.seq=\'%s\', need \'%u\'\x00" as *const u8 as *const libc::c_char,
                 curtime(),
                 seqbuf.as_mut_ptr(),
@@ -1692,7 +1439,7 @@ unsafe extern "C" fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c
             continue;
           }
           if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose != 0 {
-            bb_error_msg(
+            crate::libbb::verror_msg::bb_error_msg(
               b"%s mdev.seq=\'%s\'\x00" as *const u8 as *const libc::c_char,
               b"timed out\x00" as *const u8 as *const libc::c_char,
               seqbuf.as_mut_ptr(),
@@ -1709,14 +1456,14 @@ unsafe extern "C" fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c
 unsafe extern "C" fn signal_mdevs(mut my_pid: libc::c_uint) {
   let mut p: *mut procps_status_t = 0 as *mut procps_status_t;
   loop {
-    p = procps_scan(p, PSSCAN_ARGV0 as libc::c_int);
+    p = crate::libbb::procps::procps_scan(p, PSSCAN_ARGV0 as libc::c_int);
     if p.is_null() {
       break;
     }
     if (*p).pid != my_pid
       && !(*p).argv0.is_null()
       && strcmp(
-        bb_basename((*p).argv0),
+        crate::libbb::get_last_path_component::bb_basename((*p).argv0),
         b"mdev\x00" as *const u8 as *const libc::c_char,
       ) == 0i32
     {
@@ -1746,11 +1493,11 @@ unsafe extern "C" fn process_action(mut temp: *mut libc::c_char, mut my_pid: lib
   env_devpath = getenv(b"DEVPATH\x00" as *const u8 as *const libc::c_char);
   if action.is_null() || env_devpath.is_null() {
     /*|| !G.subsystem*/
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   fw = getenv(b"FIRMWARE\x00" as *const u8 as *const libc::c_char);
   seq = getenv(b"SEQNUM\x00" as *const u8 as *const libc::c_char);
-  op = index_in_strings(keywords.as_ptr(), action) as smalluint;
+  op = crate::libbb::compare_string_array::index_in_strings(keywords.as_ptr(), action) as smalluint;
   if my_pid != 0 {
     open_mdev_log(seq, my_pid);
   }
@@ -1760,7 +1507,7 @@ unsafe extern "C" fn process_action(mut temp: *mut libc::c_char, mut my_pid: lib
     seq_fd = wait_for_seqfile(seqnum)
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose != 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"%s ACTION:%s SEQNUM:%s SUBSYSTEM:%s DEVNAME:%s DEVPATH:%s%s%s\x00" as *const u8
         as *const libc::c_char,
       curtime(),
@@ -1801,20 +1548,23 @@ unsafe extern "C" fn process_action(mut temp: *mut libc::c_char, mut my_pid: lib
     }
   }
   if seq_fd >= 0i32 {
-    xwrite_str(seq_fd, utoa(seqnum.wrapping_add(1i32 as libc::c_uint)));
+    crate::libbb::xfuncs_printf::xwrite_str(
+      seq_fd,
+      crate::libbb::xfuncs::utoa(seqnum.wrapping_add(1i32 as libc::c_uint)),
+    );
     signal_mdevs(my_pid);
   };
 }
 unsafe extern "C" fn initial_scan(mut temp: *mut libc::c_char) {
   let mut st: stat = std::mem::zeroed();
-  xstat(b"/\x00" as *const u8 as *const libc::c_char, &mut st);
+  crate::libbb::xfuncs_printf::xstat(b"/\x00" as *const u8 as *const libc::c_char, &mut st);
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).root_major =
     gnu_dev_major(st.st_dev) as libc::c_int;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).root_minor =
     gnu_dev_minor(st.st_dev) as libc::c_int;
   putenv(b"ACTION=add\x00" as *const u8 as *const libc::c_char as *mut libc::c_char);
   /* Create all devices from /sys/dev hierarchy */
-  recursive_action(
+  crate::libbb::recursive_action::recursive_action(
     b"/sys/dev\x00" as *const u8 as *const libc::c_char,
     (ACTION_RECURSE as libc::c_int | ACTION_FOLLOWLINKS as libc::c_int) as libc::c_uint,
     Some(
@@ -1847,21 +1597,23 @@ unsafe extern "C" fn daemon_loop(mut temp: *mut libc::c_char, mut fd: libc::c_in
     let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut len: ssize_t = 0;
     let mut idx: libc::c_int = 0;
-    len = safe_read(
+    len = crate::libbb::read::safe_read(
       fd,
       netbuf.as_mut_ptr() as *mut libc::c_void,
       (::std::mem::size_of::<[libc::c_char; 2048]>() as libc::c_ulong)
         .wrapping_sub(1i32 as libc::c_ulong),
     );
     if len < 0 {
-      bb_simple_perror_msg_and_die(b"read\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"read\x00" as *const u8 as *const libc::c_char,
+      );
     }
     end = netbuf.as_mut_ptr().offset(len as isize);
     *end = '\u{0}' as i32 as libc::c_char;
     idx = 0i32;
     s = netbuf.as_mut_ptr();
     while s < end && idx < 32i32 {
-      if *endofname(s).offset(0) as libc::c_int == '=' as i32 {
+      if *crate::libbb::endofname::endofname(s).offset(0) as libc::c_int == '=' as i32 {
         let fresh18 = idx;
         idx = idx + 1;
         env[fresh18 as usize] = s;
@@ -1872,7 +1624,7 @@ unsafe extern "C" fn daemon_loop(mut temp: *mut libc::c_char, mut fd: libc::c_in
     process_action(temp, 0i32 as libc::c_uint);
     while idx != 0 {
       idx -= 1;
-      bb_unsetenv(env[idx as usize]);
+      crate::libbb::xfuncs_printf::bb_unsetenv(env[idx as usize]);
     }
   }
 }
@@ -1885,17 +1637,18 @@ pub unsafe extern "C" fn mdev_main(
   let mut temp: *mut libc::c_char = xmalloc((4096i32 + 128i32) as size_t) as *mut libc::c_char;
   /* We can be called as hotplug helper */
   /* Kernel cannot provide suitable stdio fds for us, do it ourself */
-  bb_sanitize_stdio();
+  crate::libbb::vfork_daemon_rexec::bb_sanitize_stdio();
   /* Force the configuration file settings exactly */
   umask(0i32 as mode_t);
-  xchdir(b"/dev\x00" as *const u8 as *const libc::c_char);
-  opt = getopt32(argv, b"sdf\x00" as *const u8 as *const libc::c_char) as libc::c_int;
+  crate::libbb::xfuncs_printf::xchdir(b"/dev\x00" as *const u8 as *const libc::c_char);
+  opt = crate::libbb::getopt32::getopt32(argv, b"sdf\x00" as *const u8 as *const libc::c_char)
+    as libc::c_int;
   let ref mut fresh19 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filename;
   *fresh19 = b"/etc/mdev.conf\x00" as *const u8 as *const libc::c_char;
   if opt & (MDEV_OPT_SCAN as libc::c_int | MDEV_OPT_DAEMON as libc::c_int) != 0 {
     /* Same as xrealloc_vector(NULL, 4, 0): */
     let ref mut fresh20 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).rule_vec;
-    *fresh20 = xzalloc(
+    *fresh20 = crate::libbb::xfuncs_printf::xzalloc(
       ((1i32 << 4i32) as libc::c_ulong)
         .wrapping_mul(::std::mem::size_of::<*mut rule>() as libc::c_ulong),
     ) as *mut *mut rule
@@ -1912,7 +1665,7 @@ pub unsafe extern "C" fn mdev_main(
      *	mdev -d
      *	find /sys -name uevent -exec sh -c 'echo add >"{}"' ';'
      */
-    fd = create_and_bind_to_netlink(
+    fd = crate::libbb::xconnect::create_and_bind_to_netlink(
       15i32,
       1i32 << 0i32,
       (2i32 * 1024i32 * 1024i32) as libc::c_uint,
@@ -1923,7 +1676,7 @@ pub unsafe extern "C" fn mdev_main(
      */
     initial_scan(temp);
     if opt & MDEV_OPT_FOREGROUND as libc::c_int == 0 {
-      bb_daemonize_or_rexec(0i32);
+      crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(0i32);
     }
     open_mdev_log(0 as *const libc::c_char, getpid() as libc::c_uint);
     daemon_loop(temp, fd);
@@ -1936,7 +1689,7 @@ pub unsafe extern "C" fn mdev_main(
   } else {
     process_action(temp, getpid() as libc::c_uint);
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose != 0 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"%s exiting\x00" as *const u8 as *const libc::c_char,
         curtime(),
       );

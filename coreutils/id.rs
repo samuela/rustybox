@@ -1,7 +1,6 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::xfuncs_printf::xmalloc;
-use crate::librb::size_t;
 use libc;
 use libc::getegid;
 use libc::geteuid;
@@ -20,34 +19,9 @@ extern "C" {
   /* Store at most *NGROUPS members of the group set for USER into
   *GROUPS.  Also include GROUP.  The actual number of groups found is
   returned in *NGROUPS.  Return -1 if the if *NGROUPS is too small.  */
-  #[no_mangle]
-  fn bb_internal_getgrouplist(
-    __user: *const libc::c_char,
-    __group: gid_t,
-    __groups: *mut gid_t,
-    __ngroups: *mut libc::c_int,
-  ) -> libc::c_int;
 
   #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn xgetpwnam(name: *const libc::c_char) -> *mut passwd;
-  #[no_mangle]
-  fn uid2uname(uid: uid_t) -> *mut libc::c_char;
-  #[no_mangle]
-  fn gid2group(gid: gid_t) -> *mut libc::c_char;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 
   #[no_mangle]
   fn getgroups(__size: libc::c_int, __list: *mut gid_t) -> libc::c_int;
@@ -135,17 +109,20 @@ unsafe extern "C" fn print_common(
         name,
       );
     } else if option_mask32 != 0 {
-      bb_error_msg(b"unknown ID %u\x00" as *const u8 as *const libc::c_char, id);
+      crate::libbb::verror_msg::bb_error_msg(
+        b"unknown ID %u\x00" as *const u8 as *const libc::c_char,
+        id,
+      );
       return 1i32;
     }
   }
   return 0i32;
 }
 unsafe extern "C" fn print_group(mut id: gid_t, mut prefix: *const libc::c_char) -> libc::c_int {
-  return print_common(id, gid2group(id), prefix);
+  return print_common(id, crate::libbb::bb_pwd::gid2group(id), prefix);
 }
 unsafe extern "C" fn print_user(mut id: uid_t, mut prefix: *const libc::c_char) -> libc::c_int {
-  return print_common(id, uid2uname(id), prefix);
+  return print_common(id, crate::libbb::bb_pwd::uid2uname(id), prefix);
 }
 /* Don't set error status flag in default mode */
 /* On error set *n < 0 and return >= 0
@@ -164,7 +141,7 @@ unsafe extern "C" fn get_groups(
     /* If the user is a member of more than
      * *n groups, then -1 is returned. Otherwise >= 0.
      * (and no defined way of detecting errors?!) */
-    m = bb_internal_getgrouplist(username, rgid, groups, n);
+    m = crate::libpwdgrp::pwd_grp::bb_internal_getgrouplist(username, rgid, groups, n);
     /* I guess *n < 0 might indicate error. Anyway,
      * malloc'ing -1 bytes won't be good, so: */
     if *n < 0i32 {
@@ -206,14 +183,15 @@ pub unsafe extern "C" fn id_main(
      * root : root
      * root : root
      */
-    option_mask32 = getopt32(argv, b"\x00" as *const u8 as *const libc::c_char)
-      | JUST_ALL_GROUPS as libc::c_int as libc::c_uint
-      | NAME_NOT_NUMBER as libc::c_int as libc::c_uint;
+    option_mask32 =
+      crate::libbb::getopt32::getopt32(argv, b"\x00" as *const u8 as *const libc::c_char)
+        | JUST_ALL_GROUPS as libc::c_int as libc::c_uint
+        | NAME_NOT_NUMBER as libc::c_int as libc::c_uint;
     opt = option_mask32
   } else {
     /* Don't allow -n -r -nr -ug -rug -nug -rnug -uZ -gZ -GZ*/
     /* Don't allow more than one username */
-    opt = getopt32(
+    opt = crate::libbb::getopt32::getopt32(
       argv,
       b"^rnugG\x00?1:u--g:g--u:G--u:u--G:g--G:G--g:r?ugG:n?ugG\x00" as *const u8
         as *const libc::c_char,
@@ -221,7 +199,7 @@ pub unsafe extern "C" fn id_main(
   }
   username = *argv.offset(optind as isize);
   if !username.is_null() {
-    let mut p: *mut passwd = xgetpwnam(username);
+    let mut p: *mut passwd = crate::libbb::bb_pwd::xgetpwnam(username);
     ruid = (*p).pw_uid;
     euid = ruid;
     rgid = (*p).pw_gid;
@@ -264,7 +242,7 @@ pub unsafe extern "C" fn id_main(
     n = 64i32;
     if get_groups(username, rgid, groups, &mut n) < 0i32 {
       /* Need bigger buffer after all */
-      groups = xrealloc(
+      groups = crate::libbb::xfuncs_printf::xrealloc(
         groups as *mut libc::c_void,
         (n as libc::c_ulong).wrapping_mul(::std::mem::size_of::<gid_t>() as libc::c_ulong),
       ) as *mut gid_t;
@@ -291,7 +269,9 @@ pub unsafe extern "C" fn id_main(
       }
     } else if n < 0i32 {
       /* error in get_groups() */
-      bb_simple_error_msg_and_die(b"can\'t get groups\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"can\'t get groups\x00" as *const u8 as *const libc::c_char,
+      );
     }
   } else if opt & PRINT_REAL as libc::c_int as libc::c_uint != 0 {
     euid = ruid;
@@ -302,6 +282,6 @@ pub unsafe extern "C" fn id_main(
   } else if opt & JUST_GROUP as libc::c_int as libc::c_uint != 0 {
     status |= print_group(egid, 0 as *const libc::c_char)
   }
-  bb_putchar('\n' as i32);
-  fflush_stdout_and_exit(status);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(status);
 }

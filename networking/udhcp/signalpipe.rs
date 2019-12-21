@@ -5,22 +5,6 @@ extern "C" {
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
-  #[no_mangle]
-  fn ndelay_on(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn close_on_exec_on(fd: libc::c_int);
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn xpipe(filedes: *mut libc::c_int);
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn bb_sanitize_stdio();
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
 use crate::librb::fd_pair;
@@ -36,7 +20,9 @@ unsafe extern "C" fn signal_handler(mut sig: libc::c_int) {
     1i32 as size_t,
   ) != 1
   {
-    bb_simple_perror_msg(b"can\'t send signal\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg(
+      b"can\'t send signal\x00" as *const u8 as *const libc::c_char,
+    );
   }
   *bb_errno = sv;
 }
@@ -46,21 +32,21 @@ unsafe extern "C" fn signal_handler(mut sig: libc::c_int) {
 pub unsafe extern "C" fn udhcp_sp_setup() {
   let mut signal_pipe: fd_pair = fd_pair { rd: 0, wr: 0 };
   /* All callers also want this, so... */
-  bb_sanitize_stdio();
+  crate::libbb::vfork_daemon_rexec::bb_sanitize_stdio();
   /* was socketpair, but it needs AF_UNIX in kernel */
-  xpipe(&mut signal_pipe.rd);
+  crate::libbb::xfuncs_printf::xpipe(&mut signal_pipe.rd);
   /* usually we get fds 3 and 4, but if we get higher ones... */
   if signal_pipe.rd != 3i32 {
-    xmove_fd(signal_pipe.rd, 3i32);
+    crate::libbb::xfuncs_printf::xmove_fd(signal_pipe.rd, 3i32);
   }
   if signal_pipe.wr != 4i32 {
-    xmove_fd(signal_pipe.wr, 4i32);
+    crate::libbb::xfuncs_printf::xmove_fd(signal_pipe.wr, 4i32);
   }
-  close_on_exec_on(3i32);
-  close_on_exec_on(4i32);
-  ndelay_on(3i32);
-  ndelay_on(4i32);
-  bb_signals(
+  crate::libbb::xfuncs::close_on_exec_on(3i32);
+  crate::libbb::xfuncs::close_on_exec_on(4i32);
+  crate::libbb::xfuncs::ndelay_on(3i32);
+  crate::libbb::xfuncs::ndelay_on(4i32);
+  crate::libbb::signals::bb_signals(
     0i32 + (1i32 << 10i32) + (1i32 << 12i32) + (1i32 << 15i32),
     Some(signal_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
@@ -74,7 +60,7 @@ pub unsafe extern "C" fn udhcp_sp_fd_set(mut pfds: *mut pollfd, mut extra_fd: li
   (*pfds.offset(0)).events = 0x1i32 as libc::c_short;
   (*pfds.offset(1)).fd = -1i32;
   if extra_fd >= 0i32 {
-    close_on_exec_on(extra_fd);
+    crate::libbb::xfuncs::close_on_exec_on(extra_fd);
     (*pfds.offset(1)).fd = extra_fd;
     (*pfds.offset(1)).events = 0x1i32 as libc::c_short
   }
@@ -234,7 +220,7 @@ pub unsafe extern "C" fn udhcp_sp_fd_set(mut pfds: *mut pollfd, mut extra_fd: li
 pub unsafe extern "C" fn udhcp_sp_read() -> libc::c_int {
   let mut sig: libc::c_uchar = 0;
   /* Can't block here, fd is in nonblocking mode */
-  if safe_read(
+  if crate::libbb::read::safe_read(
     3i32,
     &mut sig as *mut libc::c_uchar as *mut libc::c_void,
     1i32 as size_t,

@@ -16,7 +16,6 @@ use libc::mode_t;
 use libc::passwd;
 use libc::setresgid;
 use libc::setresuid;
-use libc::ssize_t;
 use libc::strcasecmp;
 use libc::uid_t;
 use std::ffi::CStr;
@@ -38,74 +37,22 @@ extern "C" {
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn xzalloc(size: libc::size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn bb_get_last_path_component_nostrip(path: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
-
-  #[no_mangle]
-  fn full_write1_str(str: *const libc::c_char) -> ssize_t;
-
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut libc::FILE;
-
-  #[no_mangle]
-  fn get_uidgid(_: *mut bb_uidgid_t, _: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
   static bb_busybox_exec_path: [libc::c_char; 0];
-
-  #[no_mangle]
-  fn xfunc_die() -> !;
 
   #[no_mangle]
   static bb_msg_requires_arg: [libc::c_char; 0];
 
   #[no_mangle]
-  fn get_terminal_width(fd: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn set_task_comm(comm: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn llist_free(
-    elm: *mut llist_t,
-    freeit: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
-  );
-
-  #[no_mangle]
   static mut xfunc_error_retval: u8;
 
-  /* A bit of bunzip2 internals are exposed for compressed help support: */
-  #[no_mangle]
-  fn unpack_bz2_data(
-    packed: *const libc::c_char,
-    packed_len: libc::c_int,
-    unpacked_len: libc::c_int,
-  ) -> *mut libc::c_char;
+/* A bit of bunzip2 internals are exposed for compressed help support: */
+
 }
 
 // This struct is actually defined in appletlib.c.
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct suid_config_t {
   /* next ptr must be first: this struct needs to be llist-compatible */
   pub m_next: *mut suid_config_t,
@@ -134,7 +81,7 @@ pub unsafe extern "C" fn bb_show_usage() -> ! {
   let aname = ptr_to_str(applet_name);
   let usage_msg = usage(&aname).expect("Applet usage failed.");
   println!("Usage: {} {}", aname, usage_msg);
-  xfunc_die();
+  crate::libbb::xfunc_die::xfunc_die();
 }
 
 /* The code below can well be in applets/applets.c, as it is used only
@@ -203,7 +150,7 @@ unsafe fn parse_config_file() {
     || st.st_mode & (0o200 >> 3 | 0o200 >> 3 >> 3) != 0     /* Writable by non-root? */
     || {
       /* Cannot open? */
-      f = fopen_for_read(str_to_ptr(config_file));
+      f = crate::libbb::wfopen::fopen_for_read(str_to_ptr(config_file));
       f.is_null()
     }
   {
@@ -314,7 +261,8 @@ unsafe fn parse_config_file() {
            * The last config line for each applet will be the
            * one used since we insert at the head of the list.
            * I suppose this could be considered a feature. */
-          sct = xzalloc(::std::mem::size_of::<suid_config_t>()) as *mut suid_config_t;
+          sct = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<suid_config_t>() as u64)
+            as *mut suid_config_t;
           (*sct).m_applet = applet_no;
           /*sct->m_mode = 0;*/
           (*sct).m_next = sct_head;
@@ -378,7 +326,7 @@ unsafe fn parse_config_file() {
             break;
           } else {
             *e_0 = ':' as i32 as libc::c_char;
-            if !(get_uidgid(&mut (*sct).m_ugid, s) == 0i32) {
+            if !(crate::libpwdgrp::uidgid_get::get_uidgid(&mut (*sct).m_ugid, s) == 0i32) {
               continue;
             }
             errmsg = b"unknown user/group\x00" as *const u8 as *const libc::c_char;
@@ -401,7 +349,7 @@ unsafe fn parse_config_file() {
     }
   }
   libc::fclose(f);
-  bb_error_msg(
+  crate::libbb::verror_msg::bb_error_msg(
     b"parse error in %s, line %u: %s\x00" as *const u8 as *const libc::c_char,
     config_file.as_ptr(),
     lc,
@@ -409,7 +357,7 @@ unsafe fn parse_config_file() {
   );
 
   /* Release any allocated memory before returning. */
-  llist_free(sct_head as *mut llist_t, None);
+  crate::libbb::llist::llist_free(sct_head as *mut llist_t, None);
 }
 
 /* check if u is member of group g */
@@ -471,7 +419,7 @@ unsafe fn check_suid(applet_no: usize) {
         }
         if m & (0o100i32 >> 3i32 >> 3i32) as libc::c_uint == 0 {
           /* is x bit not set? */
-          bb_simple_error_msg_and_die(
+          crate::libbb::verror_msg::bb_simple_error_msg_and_die(
             b"you have no permission to run this applet\x00" as *const u8 as *const libc::c_char,
           );
         }
@@ -485,7 +433,9 @@ unsafe fn check_suid(applet_no: usize) {
         }
         /* else: we will set egid = rgid, thus dropping sgid effect */
         if setresgid(-1i32 as gid_t, rgid, rgid) != 0 {
-          bb_simple_perror_msg_and_die(b"setresgid\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+            b"setresgid\x00" as *const u8 as *const libc::c_char,
+          );
         }
         /* Are we directed to change uid
          * (APPLET = s** USER.GROUP or APPLET = S** USER.GROUP)?
@@ -496,7 +446,9 @@ unsafe fn check_suid(applet_no: usize) {
         }
         /* else: we will set euid = ruid, thus dropping suid effect */
         if setresuid(-1i32 as uid_t, uid, uid) != 0 {
-          bb_simple_perror_msg_and_die(b"setresuid\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+            b"setresuid\x00" as *const u8 as *const libc::c_char,
+          );
         }
         current_block = 14136749492126903395;
       }
@@ -510,7 +462,7 @@ unsafe fn check_suid(applet_no: usize) {
         /* Real uid is not 0. If euid isn't 0 too, suid bit
          * is most probably not set on our executable */
         if libc::geteuid() != 0 {
-          bb_simple_error_msg_and_die(
+          crate::libbb::verror_msg::bb_simple_error_msg_and_die(
             b"must be suid to work properly\x00" as *const u8 as *const libc::c_char,
           );
         }
@@ -534,7 +486,7 @@ unsafe fn check_suid(applet_no: usize) {
     }
     _ => {}
   }
-  llist_free(suid_config as *mut llist_t, None);
+  crate::libbb::llist::llist_free(suid_config as *mut llist_t, None);
 }
 
 /* create (sym)links for each applet */
@@ -592,7 +544,7 @@ pub unsafe extern "C" fn scripted_main(
 
 unsafe fn print_rustybox_help() {
   /* -1 prevent last comma to be in the very last pos */
-  let output_width = get_terminal_width(2) - 1;
+  let output_width = crate::libbb::xfuncs::get_terminal_width(2) - 1;
 
   // TODO: add version info to this banner.
   eprintln!(
@@ -695,7 +647,9 @@ unsafe fn rustybox_main(argv: &[&str]) -> i32 {
     /* "busybox <applet> arg1 arg2 ..." */
     /* We support "busybox /a/path/to/applet args..." too. Allows for
      * "#!/bin/busybox"-style wrappers */
-    applet_name = bb_get_last_path_component_nostrip(str_to_ptr(&argv[1]));
+    applet_name = crate::libbb::get_last_path_component::bb_get_last_path_component_nostrip(
+      str_to_ptr(&argv[1]),
+    );
     run_applet_and_exit(&ptr_to_str(applet_name), &argv[1..]);
   }
 }
@@ -725,7 +679,7 @@ unsafe fn run_applet_no_and_exit(applet_no: usize, name: &str, argv: &[&str]) ->
   xfunc_error_retval = (applets[applet_no].entrypoint)(argc, str_vec_to_ptrs(argv)) as u8;
 
   /* Note: applet_main() may also not return (die on a xfunc or such) */
-  xfunc_die();
+  crate::libbb::xfunc_die::xfunc_die();
 }
 
 unsafe fn run_applet_and_exit(name: &str, argv: &[&str]) -> ! {
@@ -753,7 +707,8 @@ pub unsafe fn main() {
   *bb_errno = 0;
 
   let argv: Vec<String> = ::std::env::args().collect();
-  applet_name = bb_basename(str_to_ptr(argv[0].trim_start_matches('-')));
+  applet_name =
+    crate::libbb::get_last_path_component::bb_basename(str_to_ptr(argv[0].trim_start_matches('-')));
   parse_config_file(); /* ...maybe, if FEATURE_SUID_CONFIG */
   run_applet_and_exit(
     &ptr_to_str(applet_name),

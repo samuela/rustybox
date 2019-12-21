@@ -5,12 +5,7 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   fn mkfifo(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn getopt_mk_fifo_nod(argv: *mut *mut libc::c_char) -> mode_t;
+
 }
 /*
  * mkfifo implementation for busybox
@@ -45,14 +40,14 @@ pub unsafe extern "C" fn mkfifo_main(
 ) -> libc::c_int {
   let mut mode: mode_t = 0; /* Avoid multibyte problems. */
   let mut retval: libc::c_int = 0i32;
-  mode = getopt_mk_fifo_nod(argv);
+  mode = crate::coreutils::libcoreutils::getopt_mk_fifo_nod::getopt_mk_fifo_nod(argv);
   argv = argv.offset(optind as isize);
   if (*argv).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   loop {
     if mkfifo(*argv, mode) < 0i32 {
-      bb_simple_perror_msg(*argv);
+      crate::libbb::perror_msg::bb_simple_perror_msg(*argv);
       retval = 1i32
     }
     argv = argv.offset(1);

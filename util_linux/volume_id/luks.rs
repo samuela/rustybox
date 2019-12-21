@@ -1,30 +1,11 @@
+use crate::librb::size_t;
+use crate::util_linux::volume_id::volume_id::volume_id;
 use libc;
 extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
-
-  #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
-
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
 }
 
-use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
 
 pub type uuid_format = libc::c_uint;
 pub const UUID_DCE_STRING: uuid_format = 3;
@@ -32,8 +13,8 @@ pub const UUID_DCE_STRING: uuid_format = 3;
 // pub const UUID_NTFS: uuid_format = 1;
 // pub const UUID_DOS: uuid_format = 0;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct luks_phdr {
   pub magic: [u8; 6],
   pub version: u16,
@@ -49,8 +30,8 @@ pub struct luks_phdr {
   pub keyblock: [C2RustUnnamed; 8],
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed {
   pub active: u32,
   pub passwordIterations: u32,
@@ -142,7 +123,7 @@ static mut LUKS_MAGIC: [u8; 6] = [
 pub unsafe extern "C" fn volume_id_probe_luks(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut header: *mut luks_phdr = 0 as *mut luks_phdr;
-  header = volume_id_get_buffer(
+  header = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     0i32 as u64,
     ::std::mem::size_of::<luks_phdr>() as libc::c_ulong,
@@ -159,7 +140,11 @@ pub unsafe extern "C" fn volume_id_probe_luks(mut id: *mut volume_id) -> libc::c
     return -1i32;
   }
   //	volume_id_set_usage(id, VOLUME_ID_CRYPTO);
-  volume_id_set_uuid(id, (*header).uuid.as_mut_ptr(), UUID_DCE_STRING);
+  crate::util_linux::volume_id::util::volume_id_set_uuid(
+    id,
+    (*header).uuid.as_mut_ptr(),
+    UUID_DCE_STRING,
+  );
   (*id).type_0 = b"crypto_LUKS\x00" as *const u8 as *const libc::c_char;
   return 0i32;
 }

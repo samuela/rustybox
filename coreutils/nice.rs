@@ -6,16 +6,7 @@ extern "C" {
   fn getpriority(__which: __priority_which_t, __who: id_t) -> libc::c_int;
   #[no_mangle]
   fn setpriority(__which: __priority_which_t, __who: id_t, __prio: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn xatoi_range(str: *const libc::c_char, l: libc::c_int, u: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
 }
 pub type __id_t = libc::c_uint;
 pub type id_t = __id_t;
@@ -59,7 +50,7 @@ pub unsafe extern "C" fn nice_main(
       b"%d\n\x00" as *const u8 as *const libc::c_char,
       old_priority,
     ); /* Set default adjustment. */
-    fflush_stdout_and_exit(0i32);
+    crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
   }
   adjustment = 10i32;
   if *(*argv.offset(0)).offset(0) as libc::c_int == '-' as i32 {
@@ -77,18 +68,19 @@ pub unsafe extern "C" fn nice_main(
     /* else: "-NNN" (NNN may be negative) - same as "-n NNN" */
     if nnn.is_null() || (*argv.offset(1)).is_null() {
       /* Missing priority or PROG! */
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
-    adjustment = xatoi_range(nnn, (-2147483647i32 - 1i32) / 2i32, 2147483647i32 / 2i32);
+    adjustment =
+      crate::libbb::xatonum::xatoi_range(nnn, (-2147483647i32 - 1i32) / 2i32, 2147483647i32 / 2i32);
     argv = argv.offset(1)
   }
   /* Set our priority. */
   let mut prio: libc::c_int = old_priority + adjustment;
   if setpriority(PRIO_PROCESS, 0i32 as id_t, prio) < 0i32 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"setpriority(%d)\x00" as *const u8 as *const libc::c_char,
       prio,
     );
   }
-  BB_EXECVP_or_die(argv);
+  crate::libbb::executable::BB_EXECVP_or_die(argv);
 }

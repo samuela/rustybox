@@ -1,27 +1,5 @@
+use crate::util_linux::volume_id::volume_id::volume_id;
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
-}
-
-use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
 
 pub type uuid_format = libc::c_uint;
 // pub const UUID_DCE_STRING: uuid_format = 3;
@@ -58,8 +36,9 @@ pub const UUID_DCE: uuid_format = 2;
  * @uuid: UUID generated when the file system image was created
  * @ro_compat_version: UBIFS R/O compatibility version
  */
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct ubifs_sb_node {
   pub ch: ubifs_ch,
   pub padding: [u8; 2],
@@ -103,8 +82,9 @@ pub struct ubifs_sb_node {
  * Every UBIFS node starts with this common part. If the node has a key, the
  * key always goes next.
  */
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct ubifs_ch {
   pub magic: u32,
   pub crc: u32,
@@ -204,7 +184,7 @@ pub struct ubifs_ch {
 pub unsafe extern "C" fn volume_id_probe_ubifs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut sb: *mut ubifs_sb_node = 0 as *mut ubifs_sb_node;
-  sb = volume_id_get_buffer(
+  sb = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     0i32 as u64,
     ::std::mem::size_of::<ubifs_sb_node>() as libc::c_ulong,
@@ -216,6 +196,6 @@ pub unsafe extern "C" fn volume_id_probe_ubifs(mut id: *mut volume_id) -> libc::
     return -1i32;
   }
   (*id).type_0 = b"ubifs\x00" as *const u8 as *const libc::c_char;
-  volume_id_set_uuid(id, (*sb).uuid.as_mut_ptr(), UUID_DCE);
+  crate::util_linux::volume_id::util::volume_id_set_uuid(id, (*sb).uuid.as_mut_ptr(), UUID_DCE);
   return 0i32;
 }

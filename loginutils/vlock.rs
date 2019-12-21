@@ -1,56 +1,23 @@
+use crate::librb::signal::__sighandler_t;
 use libc;
 use libc::getuid;
 use libc::ioctl;
+use libc::passwd;
 use libc::printf;
 use libc::puts;
+use libc::termios;
 extern "C" {
 
   #[no_mangle]
   fn tcgetattr(__fd: libc::c_int, __termios_p: *mut termios) -> libc::c_int;
-  #[no_mangle]
-  fn xdup2(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn signal_SA_RESTART_empty_mask(
-    sig: libc::c_int,
-    handler: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
-  );
-  #[no_mangle]
-  fn sig_unblock(sig: libc::c_int);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn xgetpwuid(uid: uid_t) -> *mut passwd;
+
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_do_delay(seconds: libc::c_int);
-  #[no_mangle]
-  fn ask_and_check_password(pw: *const passwd) -> libc::c_int;
-  #[no_mangle]
-  fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
+
 }
 
-use crate::librb::signal::__sighandler_t;
-use libc::passwd;
-use libc::termios;
-use libc::uid_t;
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct vt_mode {
   pub mode: libc::c_char,
   pub waitv: libc::c_char,
@@ -143,10 +110,10 @@ pub unsafe extern "C" fn vlock_main(
     c_ospeed: 0,
   };
   let mut pw: *mut passwd = 0 as *mut passwd;
-  pw = xgetpwuid(getuid());
-  getopt32(argv, b"^a\x00=0\x00" as *const u8 as *const libc::c_char);
+  pw = crate::libbb::bb_pwd::xgetpwuid(getuid());
+  crate::libbb::getopt32::getopt32(argv, b"^a\x00=0\x00" as *const u8 as *const libc::c_char);
   /* Ignore some signals so that we don't get killed by them */
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     0i32
       + (1i32 << 20i32)
       + (1i32 << 21i32)
@@ -159,25 +126,25 @@ pub unsafe extern "C" fn vlock_main(
   );
   /* We will use SIGUSRx for console switch control: */
   /* 1: set handlers */
-  signal_SA_RESTART_empty_mask(
+  crate::libbb::signals::signal_SA_RESTART_empty_mask(
     10i32,
     Some(release_vt as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
-  signal_SA_RESTART_empty_mask(
+  crate::libbb::signals::signal_SA_RESTART_empty_mask(
     12i32,
     Some(acquire_vt as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   /* 2: unmask them */
-  sig_unblock(10i32);
-  sig_unblock(12i32);
+  crate::libbb::signals::sig_unblock(10i32);
+  crate::libbb::signals::sig_unblock(12i32);
   /* Revert stdin/out to our controlling tty
    * (or die if we have none) */
-  xmove_fd(
-    xopen(b"/dev/tty\x00" as *const u8 as *const libc::c_char, 0o2i32),
+  crate::libbb::xfuncs_printf::xmove_fd(
+    crate::libbb::xfuncs_printf::xopen(b"/dev/tty\x00" as *const u8 as *const libc::c_char, 0o2i32),
     0i32,
   );
-  xdup2(0i32, 1i32);
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::xdup2(0i32, 1i32);
+  crate::libbb::xfuncs_printf::bb_xioctl(
     0i32,
     0x5601i32 as libc::c_uint,
     &mut vtm as *mut vt_mode as *mut libc::c_void,
@@ -195,7 +162,7 @@ pub unsafe extern "C" fn vlock_main(
   term.c_iflag |= 0o1i32 as libc::c_uint; /* ignore ^C ^Z, echo off */
   term.c_iflag &= !0o2i32 as libc::c_uint;
   term.c_lflag &= !(0o1i32 | 0o10i32 | 0o1000i32) as libc::c_uint;
-  tcsetattr_stdin_TCSANOW(&mut term);
+  crate::libbb::xfuncs::tcsetattr_stdin_TCSANOW(&mut term);
   loop {
     printf(
       b"Virtual console%s locked by %s.\n\x00" as *const u8 as *const libc::c_char,
@@ -203,13 +170,13 @@ pub unsafe extern "C" fn vlock_main(
         .offset((option_mask32 == 0) as libc::c_int as isize),
       (*pw).pw_name,
     );
-    if ask_and_check_password(pw) > 0i32 {
+    if crate::libbb::correct_password::ask_and_check_password(pw) > 0i32 {
       break;
     }
-    bb_do_delay(3i32);
+    crate::libbb::bb_do_delay::bb_do_delay(3i32);
     puts(b"Incorrect password\x00" as *const u8 as *const libc::c_char);
   }
   ioctl(0i32, 0x5602i32 as libc::c_ulong, &mut ovtm as *mut vt_mode);
-  tcsetattr_stdin_TCSANOW(&mut oterm);
-  fflush_stdout_and_exit(0i32);
+  crate::libbb::xfuncs::tcsetattr_stdin_TCSANOW(&mut oterm);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
 }

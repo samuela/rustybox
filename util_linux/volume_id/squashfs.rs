@@ -1,24 +1,8 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
-}
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+
+use crate::util_linux::volume_id::volume_id::volume_id;
 /*
  * volume_id - reads filesystem label and uuid
  *
@@ -36,8 +20,9 @@ pub struct volume_id {
 //config:	device/memory systems (e.g. embedded systems) where low overhead is
 //config:	needed.
 //kbuild:lib-$(CONFIG_FEATURE_VOLUMEID_SQUASHFS) += squashfs.o
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct squashfs_superblock {
   pub magic: u32,
   /*
@@ -131,7 +116,8 @@ pub struct squashfs_superblock {
 pub unsafe extern "C" fn volume_id_probe_squashfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut sb: *mut squashfs_superblock = 0 as *mut squashfs_superblock;
-  sb = volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t) as *mut squashfs_superblock;
+  sb = crate::util_linux::volume_id::util::volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t)
+    as *mut squashfs_superblock;
   if sb.is_null() {
     return -1i32;
   }

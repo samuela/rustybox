@@ -1,14 +1,4 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn xchroot(path: *const libc::c_char);
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn get_shell_name() -> *const libc::c_char;
-}
 
 /*
  * Mini chroot implementation for busybox
@@ -45,19 +35,19 @@ pub unsafe extern "C" fn chroot_main(
 ) -> libc::c_int {
   argv = argv.offset(1);
   if (*argv).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
-  xchroot(*argv);
+  crate::libbb::xfuncs_printf::xchroot(*argv);
   argv = argv.offset(1);
   if (*argv).is_null() {
     /* no 2nd param (PROG), use shell */
     argv = argv.offset(-2);
     let ref mut fresh0 = *argv.offset(0);
-    *fresh0 = get_shell_name() as *mut libc::c_char;
+    *fresh0 = crate::libbb::get_shell_name::get_shell_name() as *mut libc::c_char;
     let ref mut fresh1 = *argv.offset(1);
     *fresh1 = b"-i\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
     /* GNU coreutils 8.4 compat */
     /*argv[2] = NULL; - already is */
   }
-  BB_EXECVP_or_die(argv);
+  crate::libbb::executable::BB_EXECVP_or_die(argv);
 }

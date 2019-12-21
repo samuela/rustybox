@@ -13,7 +13,6 @@ use libc::ioctl;
 use libc::lstat;
 use libc::mknod;
 use libc::mode_t;
-use libc::off_t;
 use libc::open;
 use libc::opendir;
 use libc::printf;
@@ -42,187 +41,155 @@ extern "C" {
   #[no_mangle]
   fn utimes(__file: *const libc::c_char, __tvp: *const timeval) -> libc::c_int;
 
-  // Reads one line a-la fgets (but doesn't save terminating '\n').
-  // Reads byte-by-byte. Useful when it is important to not read ahead.
-  // Bytes are appended to pfx (which must be malloced, or NULL).
-  /* Reads block up to *maxsz_p (default: INT_MAX - 4095) */
-  /* Returns NULL if file can't be opened (default max size: INT_MAX - 4095) */
-  /* Never returns NULL */
-  /* Else use variable one (a bit more expensive) */
-  /* Autodetects gzip/bzip2 formats. fd may be in the middle of the file! */
-  /* Autodetects .gz etc */
-  /* lzma has no signature, need a little helper. NB: exist only for ENABLE_FEATURE_SEAMLESS_LZMA=y */
-  // NB: will return short write on error, not -1,
-  // if some data was written before error occurred
-  /* Close fd, but check for failures (some types of write errors) */
-  /* Reads and prints to stdout till eof, then closes FILE. Exits on error: */
-  /* Reads a line from a text file, up to a newline or NUL byte, inclusive.
-   * Returns malloc'ed char*. If end is NULL '\n' isn't considered
-   * end of line. If end isn't NULL, length of the chunk is stored in it.
-   * Returns NULL if EOF/error.
-   */
-  /* Reads up to (and including) TERMINATING_STRING: */
-  /* Same, with limited max size, and returns the length (excluding NUL): */
-  /* Chops off TERMINATING_STRING from the end: */
-  /* Reads up to (and including) "\n" or NUL byte: */
-  /* Chops off '\n' from the end, unlike fgets: */
-  /* Same, but doesn't try to conserve space (may have some slack after the end) */
-  /* extern char *xmalloc_fgetline_fast(FILE *file) FAST_FUNC RETURNS_MALLOC; */
-  /* Prints warning to stderr and returns NULL on failure: */
-  /* "Opens" stdin if filename is special, else just opens file: */
-  /* not FAST_FUNC! */
-  /* Wrapper which restarts poll on EINTR or ENOMEM.
-   * On other errors complains [perror("poll")] and returns.
-   * Warning! May take (much) longer than timeout_ms to return!
-   * If this is a problem, use bare poll and open-code EINTR/ENOMEM handling */
-  /* Convert each alpha char in str to lower-case */
-  /* Returns a pointer past the formatted number, does NOT null-terminate */
-  /* Intelligent formatters of bignums */
-  /* If block_size == 0, display size without fractional part,
-   * else display (size * block_size) with one decimal digit.
-   * If display_unit == 0, show value no bigger than 1024 with suffix (K,M,G...),
-   * else divide by display_unit and do not use suffix. */
-  /* "1024.0G" */
-  //TODO: provide pointer to buf (avoid statics)?
-  /* Put a string of hex bytes ("1b2e66fe"...), return advanced pointer */
-  /* Reverse */
-  /* Generate a UUID */
-  /* Last element is marked by mult == 0 */
-  /* Specialized: */
-  /* Using xatoi() instead of naive atoi() is not always convenient -
-   * in many places people want *non-negative* values, but store them
-   * in signed int. Therefore we need this one:
-   * dies if input is not in [0, INT_MAX] range. Also will reject '-0' etc.
-   * It should really be named xatoi_nonnegative (since it allows 0),
-   * but that would be too long.
-   */
-  /* Useful for reading port numbers */
-  /* These parse entries in /etc/passwd and /etc/group.  This is desirable
-   * for BusyBox since we want to avoid using the glibc NSS stuff, which
-   * increases target size and is often not needed on embedded systems.  */
-  /* wrapper: allows string to contain numeric uid or gid */
-  /* always sets uid and gid; returns 0 on failure */
-  /* always sets uid and gid; exits on failure */
-  /* chown-like handling of "user[:[group]" */
-  /* versions which cache results (useful for ps, ls etc) */
-  /* internally usernames are saved in fixed-sized char[] buffers */
-  /*
-   * Returns (-1) terminated malloced result of getgroups().
-   * Reallocs group_array (useful for repeated calls).
-   * ngroups is an initial size of array. It is rounded up to 32 for realloc.
-   * ngroups is updated on return.
-   * ngroups can be NULL: bb_getgroups(NULL, NULL) is valid usage.
-   * Dies on errors (on Linux, only xrealloc can cause this, not internal getgroups call).
-   */
-  /* BB_EXECxx always execs (it's not doing NOFORK/NOEXEC stuff),
-   * but it may exec busybox and call applet instead of searching PATH.
-   */
-  /* xvfork() can't be a _function_, return after vfork in child mangles stack
-   * in the parent. It must be a macro. */
-  /* NOMMU friendy fork+exec: */
-  /* wait4pid: unlike waitpid, waits ONLY for one process.
-   * Returns sig + 0x180 if child is killed by signal.
-   * It's safe to pass negative 'pids' from failed [v]fork -
-   * wait4pid will return -1 (and will not clobber [v]fork's errno).
-   * IOW: rc = wait4pid(spawn(argv));
-   *      if (rc < 0) bb_perror_msg("%s", argv[0]);
-   *      if (rc > 0) bb_error_msg("exit code: %d", rc & 0xff);
-   */
-  /* ***********************************************************************/
-  /* spawn_and_wait/run_nofork_applet/run_applet_no_and_exit need to work */
-  /* carefully together to reinit some global state while not disturbing  */
-  /* other. Be careful if you change them. Consult docs/nofork_noexec.txt */
-  /* ***********************************************************************/
-  /* Same as wait4pid(spawn(argv)), but with NOFORK/NOEXEC if configured: */
-  /* Does NOT check that applet is NOFORK, just blindly runs it */
-  /* Helpers for daemonization.
-   *
-   * bb_daemonize(flags) = daemonize, does not compile on NOMMU
-   *
-   * bb_daemonize_or_rexec(flags, argv) = daemonizes on MMU (and ignores argv),
-   *      rexec's itself on NOMMU with argv passed as command line.
-   * Thus bb_daemonize_or_rexec may cause your <applet>_main() to be re-executed
-   * from the start. (It will detect it and not reexec again second time).
-   * You have to audit carefully that you don't do something twice as a result
-   * (opening files/sockets, parsing config files etc...)!
-   *
-   * Both of the above will redirect fd 0,1,2 to /dev/null and drop ctty
-   * (will do setsid()).
-   *
-   * fork_or_rexec(argv) = bare-bones fork on MMU,
-   *      "vfork + re-exec ourself" on NOMMU. No fd redirection, no setsid().
-   *      On MMU ignores argv.
-   *
-   * Helper for network daemons in foreground mode:
-   *
-   * bb_sanitize_stdio() = make sure that fd 0,1,2 are opened by opening them
-   * to /dev/null if they are not.
-   */
-  /* internal use */
-  //DAEMON_DOUBLE_FORK     = 1 << 4, /* double fork to avoid controlling tty */
-  /* Clear dangerous stuff, set PATH. Return 1 if was run by different user. */
-  /* For top, ps. Some argv[i] are replaced by malloced "-opt" strings */
-  /* { "-", NULL } */
-  /* BSD-derived getopt() functions require that optind be set to 1 in
-   * order to reset getopt() state.  This used to be generally accepted
-   * way of resetting getopt().  However, glibc's getopt()
-   * has additional getopt() state beyond optind (specifically, glibc
-   * extensions such as '+' and '-' at the start of the string), and requires
-   * that optind be set to zero to reset its state.  BSD-derived versions
-   * of getopt() misbehaved if optind is set to 0 in order to reset getopt(),
-   * and glibc's getopt() used to coredump if optind is set 1 in order
-   * to reset getopt().
-   * Then BSD introduced additional variable "optreset" which should be
-   * set to 1 in order to reset getopt().  Sigh.  Standards, anyone?
-   *
-   * By ~2008, OpenBSD 3.4 was changed to survive glibc-like optind = 0
-   * (to interpret it as if optreset was set).
-   */
-  /*def __GLIBC__*/
-  /* BSD style */
-  /* Having next pointer as a first member allows easy creation
-   * of "llist-compatible" structs, and using llist_FOO functions
-   * on them.
-   */
-  /* BTW, surprisingly, changing API to
-   *   llist_t *llist_add_to(llist_t *old_head, void *data)
-   * etc does not result in smaller code... */
-  /* start_stop_daemon and udhcpc are special - they want
-   * to create pidfiles regardless of FEATURE_PIDFILE */
-  /* True only if we created pidfile which is *file*, not /dev/null etc */
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn xmalloc_readlink_or_warn(path: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_ask_y_confirmation() -> libc::c_int;
+// Reads one line a-la fgets (but doesn't save terminating '\n').
+// Reads byte-by-byte. Useful when it is important to not read ahead.
+// Bytes are appended to pfx (which must be malloced, or NULL).
+/* Reads block up to *maxsz_p (default: INT_MAX - 4095) */
+/* Returns NULL if file can't be opened (default max size: INT_MAX - 4095) */
+/* Never returns NULL */
+/* Else use variable one (a bit more expensive) */
+/* Autodetects gzip/bzip2 formats. fd may be in the middle of the file! */
+/* Autodetects .gz etc */
+/* lzma has no signature, need a little helper. NB: exist only for ENABLE_FEATURE_SEAMLESS_LZMA=y */
+// NB: will return short write on error, not -1,
+// if some data was written before error occurred
+/* Close fd, but check for failures (some types of write errors) */
+/* Reads and prints to stdout till eof, then closes FILE. Exits on error: */
+/* Reads a line from a text file, up to a newline or NUL byte, inclusive.
+ * Returns malloc'ed char*. If end is NULL '\n' isn't considered
+ * end of line. If end isn't NULL, length of the chunk is stored in it.
+ * Returns NULL if EOF/error.
+ */
+/* Reads up to (and including) TERMINATING_STRING: */
+/* Same, with limited max size, and returns the length (excluding NUL): */
+/* Chops off TERMINATING_STRING from the end: */
+/* Reads up to (and including) "\n" or NUL byte: */
+/* Chops off '\n' from the end, unlike fgets: */
+/* Same, but doesn't try to conserve space (may have some slack after the end) */
+/* extern char *xmalloc_fgetline_fast(FILE *file) FAST_FUNC RETURNS_MALLOC; */
+/* Prints warning to stderr and returns NULL on failure: */
+/* "Opens" stdin if filename is special, else just opens file: */
+/* not FAST_FUNC! */
+/* Wrapper which restarts poll on EINTR or ENOMEM.
+ * On other errors complains [perror("poll")] and returns.
+ * Warning! May take (much) longer than timeout_ms to return!
+ * If this is a problem, use bare poll and open-code EINTR/ENOMEM handling */
+/* Convert each alpha char in str to lower-case */
+/* Returns a pointer past the formatted number, does NOT null-terminate */
+/* Intelligent formatters of bignums */
+/* If block_size == 0, display size without fractional part,
+ * else display (size * block_size) with one decimal digit.
+ * If display_unit == 0, show value no bigger than 1024 with suffix (K,M,G...),
+ * else divide by display_unit and do not use suffix. */
+/* "1024.0G" */
+//TODO: provide pointer to buf (avoid statics)?
+/* Put a string of hex bytes ("1b2e66fe"...), return advanced pointer */
+/* Reverse */
+/* Generate a UUID */
+/* Last element is marked by mult == 0 */
+/* Specialized: */
+/* Using xatoi() instead of naive atoi() is not always convenient -
+ * in many places people want *non-negative* values, but store them
+ * in signed int. Therefore we need this one:
+ * dies if input is not in [0, INT_MAX] range. Also will reject '-0' etc.
+ * It should really be named xatoi_nonnegative (since it allows 0),
+ * but that would be too long.
+ */
+/* Useful for reading port numbers */
+/* These parse entries in /etc/passwd and /etc/group.  This is desirable
+ * for BusyBox since we want to avoid using the glibc NSS stuff, which
+ * increases target size and is often not needed on embedded systems.  */
+/* wrapper: allows string to contain numeric uid or gid */
+/* always sets uid and gid; returns 0 on failure */
+/* always sets uid and gid; exits on failure */
+/* chown-like handling of "user[:[group]" */
+/* versions which cache results (useful for ps, ls etc) */
+/* internally usernames are saved in fixed-sized char[] buffers */
+/*
+ * Returns (-1) terminated malloced result of getgroups().
+ * Reallocs group_array (useful for repeated calls).
+ * ngroups is an initial size of array. It is rounded up to 32 for realloc.
+ * ngroups is updated on return.
+ * ngroups can be NULL: bb_getgroups(NULL, NULL) is valid usage.
+ * Dies on errors (on Linux, only xrealloc can cause this, not internal getgroups call).
+ */
+/* BB_EXECxx always execs (it's not doing NOFORK/NOEXEC stuff),
+ * but it may exec busybox and call applet instead of searching PATH.
+ */
+/* xvfork() can't be a _function_, return after vfork in child mangles stack
+ * in the parent. It must be a macro. */
+/* NOMMU friendy fork+exec: */
+/* wait4pid: unlike waitpid, waits ONLY for one process.
+ * Returns sig + 0x180 if child is killed by signal.
+ * It's safe to pass negative 'pids' from failed [v]fork -
+ * wait4pid will return -1 (and will not clobber [v]fork's errno).
+ * IOW: rc = wait4pid(spawn(argv));
+ *      if (rc < 0) bb_perror_msg("%s", argv[0]);
+ *      if (rc > 0) bb_error_msg("exit code: %d", rc & 0xff);
+ */
+/* ***********************************************************************/
+/* spawn_and_wait/run_nofork_applet/run_applet_no_and_exit need to work */
+/* carefully together to reinit some global state while not disturbing  */
+/* other. Be careful if you change them. Consult docs/nofork_noexec.txt */
+/* ***********************************************************************/
+/* Same as wait4pid(spawn(argv)), but with NOFORK/NOEXEC if configured: */
+/* Does NOT check that applet is NOFORK, just blindly runs it */
+/* Helpers for daemonization.
+ *
+ * bb_daemonize(flags) = daemonize, does not compile on NOMMU
+ *
+ * bb_daemonize_or_rexec(flags, argv) = daemonizes on MMU (and ignores argv),
+ *      rexec's itself on NOMMU with argv passed as command line.
+ * Thus bb_daemonize_or_rexec may cause your <applet>_main() to be re-executed
+ * from the start. (It will detect it and not reexec again second time).
+ * You have to audit carefully that you don't do something twice as a result
+ * (opening files/sockets, parsing config files etc...)!
+ *
+ * Both of the above will redirect fd 0,1,2 to /dev/null and drop ctty
+ * (will do setsid()).
+ *
+ * fork_or_rexec(argv) = bare-bones fork on MMU,
+ *      "vfork + re-exec ourself" on NOMMU. No fd redirection, no setsid().
+ *      On MMU ignores argv.
+ *
+ * Helper for network daemons in foreground mode:
+ *
+ * bb_sanitize_stdio() = make sure that fd 0,1,2 are opened by opening them
+ * to /dev/null if they are not.
+ */
+/* internal use */
+//DAEMON_DOUBLE_FORK     = 1 << 4, /* double fork to avoid controlling tty */
+/* Clear dangerous stuff, set PATH. Return 1 if was run by different user. */
+/* For top, ps. Some argv[i] are replaced by malloced "-opt" strings */
+/* { "-", NULL } */
+/* BSD-derived getopt() functions require that optind be set to 1 in
+ * order to reset getopt() state.  This used to be generally accepted
+ * way of resetting getopt().  However, glibc's getopt()
+ * has additional getopt() state beyond optind (specifically, glibc
+ * extensions such as '+' and '-' at the start of the string), and requires
+ * that optind be set to zero to reset its state.  BSD-derived versions
+ * of getopt() misbehaved if optind is set to 0 in order to reset getopt(),
+ * and glibc's getopt() used to coredump if optind is set 1 in order
+ * to reset getopt().
+ * Then BSD introduced additional variable "optreset" which should be
+ * set to 1 in order to reset getopt().  Sigh.  Standards, anyone?
+ *
+ * By ~2008, OpenBSD 3.4 was changed to survive glibc-like optind = 0
+ * (to interpret it as if optreset was set).
+ */
+/*def __GLIBC__*/
+/* BSD style */
+/* Having next pointer as a first member allows easy creation
+ * of "llist-compatible" structs, and using llist_FOO functions
+ * on them.
+ */
+/* BTW, surprisingly, changing API to
+ *   llist_t *llist_add_to(llist_t *old_head, void *data)
+ * etc does not result in smaller code... */
+/* start_stop_daemon and udhcpc are special - they want
+ * to create pidfiles regardless of FEATURE_PIDFILE */
+/* True only if we created pidfile which is *file*, not /dev/null etc */
 
-  #[no_mangle]
-  fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn open3_or_warn(
-    pathname: *const libc::c_char,
-    flags: libc::c_int,
-    mode: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn open_or_warn(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn add_to_ino_dev_hashtable(statbuf: *const stat, name: *const libc::c_char);
-  #[no_mangle]
-  fn is_in_ino_dev_hashtable(statbuf: *const stat) -> *mut libc::c_char;
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn concat_subpath_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
 }
 
 use libc::dirent;
@@ -289,14 +256,14 @@ unsafe extern "C" fn ask_and_unlink(
       applet_name,
       dest,
     );
-    if bb_ask_y_confirmation() == 0 {
+    if crate::libbb::ask_confirmation::bb_ask_y_confirmation() == 0 {
       return 0i32;
     }
     /* not allowed to overwrite */
   } /* do not use errno from unlink */
   if unlink(dest) < 0i32 {
     *bb_errno = e;
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"can\'t create \'%s\'\x00" as *const u8 as *const libc::c_char,
       dest,
     );
@@ -351,7 +318,7 @@ pub unsafe extern "C" fn copy_file(
     if !(flags & (FILEUTILS_MAKE_SOFTLINK as libc::c_int | FILEUTILS_MAKE_HARDLINK as libc::c_int)
       != 0)
     {
-      bb_perror_msg(
+      crate::libbb::perror_msg::bb_perror_msg(
         b"can\'t stat \'%s\'\x00" as *const u8 as *const libc::c_char,
         source,
       );
@@ -360,7 +327,7 @@ pub unsafe extern "C" fn copy_file(
   } else {
     if lstat(dest, &mut dest_stat) < 0i32 {
       if *bb_errno != 2i32 {
-        bb_perror_msg(
+        crate::libbb::perror_msg::bb_perror_msg(
           b"can\'t stat \'%s\'\x00" as *const u8 as *const libc::c_char,
           dest,
         );
@@ -368,7 +335,7 @@ pub unsafe extern "C" fn copy_file(
       }
     } else {
       if source_stat.st_dev == dest_stat.st_dev && source_stat.st_ino == dest_stat.st_ino {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"\'%s\' and \'%s\' are the same file\x00" as *const u8 as *const libc::c_char,
           source,
           dest,
@@ -383,17 +350,17 @@ pub unsafe extern "C" fn copy_file(
       let mut d: *mut dirent = 0 as *mut dirent;
       let mut saved_umask: mode_t = 0i32 as mode_t;
       if flags & FILEUTILS_RECUR as libc::c_int == 0 {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"omitting directory \'%s\'\x00" as *const u8 as *const libc::c_char,
           source,
         );
         return -1i32;
       }
       /* Did we ever create source ourself before? */
-      tp = is_in_ino_dev_hashtable(&mut source_stat);
+      tp = crate::libbb::inode_hash::is_in_ino_dev_hashtable(&mut source_stat);
       if !tp.is_null() {
         /* We did! it's a recursion! man the lifeboats... */
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"recursion detected, omitting directory \'%s\'\x00" as *const u8 as *const libc::c_char,
           source,
         );
@@ -401,7 +368,7 @@ pub unsafe extern "C" fn copy_file(
       }
       if dest_exists != 0 {
         if !(dest_stat.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint) {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"target \'%s\' is not a directory\x00" as *const u8 as *const libc::c_char,
             dest,
           );
@@ -421,7 +388,7 @@ pub unsafe extern "C" fn copy_file(
         mode |= (0o400i32 | 0o200i32 | 0o100i32) as libc::c_uint;
         if mkdir(dest, mode) < 0i32 {
           umask(saved_umask);
-          bb_perror_msg(
+          crate::libbb::perror_msg::bb_perror_msg(
             b"can\'t create directory \'%s\'\x00" as *const u8 as *const libc::c_char,
             dest,
           );
@@ -430,7 +397,7 @@ pub unsafe extern "C" fn copy_file(
         umask(saved_umask);
         /* need stat info for add_to_ino_dev_hashtable */
         if lstat(dest, &mut dest_stat) < 0i32 {
-          bb_perror_msg(
+          crate::libbb::perror_msg::bb_perror_msg(
             b"can\'t stat \'%s\'\x00" as *const u8 as *const libc::c_char,
             dest,
           );
@@ -439,7 +406,7 @@ pub unsafe extern "C" fn copy_file(
       }
       /* remember (dev,inode) of each created dir.
        * NULL: name is not remembered */
-      add_to_ino_dev_hashtable(&mut dest_stat, 0 as *const libc::c_char);
+      crate::libbb::inode_hash::add_to_ino_dev_hashtable(&mut dest_stat, 0 as *const libc::c_char);
       /* Recursively copy files in SOURCE */
       dp = opendir(source);
       if dp.is_null() {
@@ -452,11 +419,15 @@ pub unsafe extern "C" fn copy_file(
           }
           let mut new_source: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           let mut new_dest: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-          new_source = concat_subpath_file(source, (*d).d_name.as_mut_ptr());
+          new_source = crate::libbb::concat_subpath_file::concat_subpath_file(
+            source,
+            (*d).d_name.as_mut_ptr(),
+          );
           if new_source.is_null() {
             continue;
           }
-          new_dest = concat_path_file(dest, (*d).d_name.as_mut_ptr());
+          new_dest =
+            crate::libbb::concat_path_file::concat_path_file(dest, (*d).d_name.as_mut_ptr());
           if copy_file(
             new_source,
             new_dest,
@@ -470,7 +441,7 @@ pub unsafe extern "C" fn copy_file(
         }
         closedir(dp);
         if dest_exists == 0 && chmod(dest, source_stat.st_mode & !saved_umask) < 0i32 {
-          bb_perror_msg(
+          crate::libbb::perror_msg::bb_perror_msg(
             b"can\'t preserve %s of \'%s\'\x00" as *const u8 as *const libc::c_char,
             b"permissions\x00" as *const u8 as *const libc::c_char,
             dest,
@@ -522,7 +493,7 @@ pub unsafe extern "C" fn copy_file(
                 == 0
             {
               let mut link_target: *const libc::c_char = 0 as *const libc::c_char;
-              link_target = is_in_ino_dev_hashtable(&mut source_stat);
+              link_target = crate::libbb::inode_hash::is_in_ino_dev_hashtable(&mut source_stat);
               if !link_target.is_null() {
                 if link(link_target, dest) < 0i32 {
                   ovr = ask_and_unlink(dest, flags) as smallint;
@@ -530,7 +501,7 @@ pub unsafe extern "C" fn copy_file(
                     return ovr as libc::c_int;
                   }
                   if link(link_target, dest) < 0i32 {
-                    bb_perror_msg(
+                    crate::libbb::perror_msg::bb_perror_msg(
                       b"can\'t create link \'%s\'\x00" as *const u8 as *const libc::c_char,
                       dest,
                     );
@@ -539,9 +510,9 @@ pub unsafe extern "C" fn copy_file(
                 }
                 return 0i32;
               }
-              add_to_ino_dev_hashtable(&mut source_stat, dest);
+              crate::libbb::inode_hash::add_to_ino_dev_hashtable(&mut source_stat, dest);
             }
-            src_fd = open_or_warn(source, 0i32);
+            src_fd = crate::libbb::xfuncs_printf::open_or_warn(source, 0i32);
             if src_fd < 0i32 {
               return -1i32;
             }
@@ -568,7 +539,11 @@ pub unsafe extern "C" fn copy_file(
                 return ovr as libc::c_int;
               }
               /* It shouldn't exist. If it exists, do not open (symlink attack?) */
-              dst_fd = open3_or_warn(dest, 0o1i32 | 0o100i32 | 0o200i32, new_mode as libc::c_int);
+              dst_fd = crate::libbb::xfuncs_printf::open3_or_warn(
+                dest,
+                0o1i32 | 0o100i32 | 0o200i32,
+                new_mode as libc::c_int,
+              );
               if dst_fd < 0i32 {
                 close(src_fd);
                 return -1i32;
@@ -586,7 +561,7 @@ pub unsafe extern "C" fn copy_file(
               if retval as libc::c_int == 0i32 {
                 current_block = 10903821241939442503;
               } else if flags & FILEUTILS_REFLINK_ALWAYS as libc::c_int != 0 {
-                bb_perror_msg(
+                crate::libbb::perror_msg::bb_perror_msg(
                   b"failed to clone \'%s\' from \'%s\'\x00" as *const u8 as *const libc::c_char,
                   dest,
                   source,
@@ -603,7 +578,7 @@ pub unsafe extern "C" fn copy_file(
             }
             match current_block {
               3921975509081277429 => {
-                if bb_copyfd_eof(src_fd, dst_fd) == -1i32 as libc::c_long {
+                if crate::libbb::copyfd::bb_copyfd_eof(src_fd, dst_fd) == -1i32 as libc::c_long {
                   retval = -1i32 as smallint
                 }
               }
@@ -611,7 +586,7 @@ pub unsafe extern "C" fn copy_file(
             }
             /* Careful with writing... */
             if close(dst_fd) < 0i32 {
-              bb_perror_msg(
+              crate::libbb::perror_msg::bb_perror_msg(
                 b"error writing to \'%s\'\x00" as *const u8 as *const libc::c_char,
                 dest,
               );
@@ -644,12 +619,13 @@ pub unsafe extern "C" fn copy_file(
               }
             }
             if source_stat.st_mode & 0o170000i32 as libc::c_uint == 0o120000i32 as libc::c_uint {
-              let mut lpath: *mut libc::c_char = xmalloc_readlink_or_warn(source);
+              let mut lpath: *mut libc::c_char =
+                crate::libbb::xreadlink::xmalloc_readlink_or_warn(source);
               if !lpath.is_null() {
                 let mut r: libc::c_int = symlink(lpath, dest);
                 if r < 0i32 {
                   /* shared message */
-                  bb_perror_msg(
+                  crate::libbb::perror_msg::bb_perror_msg(
                     b"can\'t create %slink \'%s\' to \'%s\'\x00" as *const u8
                       as *const libc::c_char,
                     b"sym\x00" as *const u8 as *const libc::c_char,
@@ -662,7 +638,7 @@ pub unsafe extern "C" fn copy_file(
                 free(lpath as *mut libc::c_void);
                 if flags & FILEUTILS_PRESERVE_STATUS as libc::c_int != 0 {
                   if lchown(dest, source_stat.st_uid, source_stat.st_gid) < 0i32 {
-                    bb_perror_msg(
+                    crate::libbb::perror_msg::bb_perror_msg(
                       b"can\'t preserve %s of \'%s\'\x00" as *const u8 as *const libc::c_char,
                       b"ownership\x00" as *const u8 as *const libc::c_char,
                       dest,
@@ -678,14 +654,14 @@ pub unsafe extern "C" fn copy_file(
                 || source_stat.st_mode & 0o170000i32 as libc::c_uint == 0o10000i32 as libc::c_uint
               {
                 if mknod(dest, source_stat.st_mode, source_stat.st_rdev) < 0i32 {
-                  bb_perror_msg(
+                  crate::libbb::perror_msg::bb_perror_msg(
                     b"can\'t create \'%s\'\x00" as *const u8 as *const libc::c_char,
                     dest,
                   );
                   return -1i32;
                 }
               } else {
-                bb_error_msg(
+                crate::libbb::verror_msg::bb_error_msg(
                   b"unrecognized file \'%s\' with mode %x\x00" as *const u8 as *const libc::c_char,
                   source,
                   source_stat.st_mode,
@@ -716,7 +692,7 @@ pub unsafe extern "C" fn copy_file(
               times[1].tv_usec = times[0].tv_usec;
               /* BTW, utimes sets usec-precision time - just FYI */
               if utimes(dest, times.as_mut_ptr() as *const timeval) < 0i32 {
-                bb_perror_msg(
+                crate::libbb::perror_msg::bb_perror_msg(
                   b"can\'t preserve %s of \'%s\'\x00" as *const u8 as *const libc::c_char,
                   b"times\x00" as *const u8 as *const libc::c_char,
                   dest,
@@ -724,14 +700,14 @@ pub unsafe extern "C" fn copy_file(
               }
               if chown(dest, source_stat.st_uid, source_stat.st_gid) < 0i32 {
                 source_stat.st_mode &= !(0o4000i32 | 0o2000i32) as libc::c_uint;
-                bb_perror_msg(
+                crate::libbb::perror_msg::bb_perror_msg(
                   b"can\'t preserve %s of \'%s\'\x00" as *const u8 as *const libc::c_char,
                   b"ownership\x00" as *const u8 as *const libc::c_char,
                   dest,
                 );
               }
               if chmod(dest, source_stat.st_mode) < 0i32 {
-                bb_perror_msg(
+                crate::libbb::perror_msg::bb_perror_msg(
                   b"can\'t preserve %s of \'%s\'\x00" as *const u8 as *const libc::c_char,
                   b"permissions\x00" as *const u8 as *const libc::c_char,
                   dest,
@@ -773,7 +749,7 @@ pub unsafe extern "C" fn copy_file(
       return ovr as libc::c_int;
     }
     if lf.expect("non-null function pointer")(source, dest) < 0i32 {
-      bb_perror_msg(
+      crate::libbb::perror_msg::bb_perror_msg(
         b"can\'t create link \'%s\'\x00" as *const u8 as *const libc::c_char,
         dest,
       );

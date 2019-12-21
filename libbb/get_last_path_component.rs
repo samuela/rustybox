@@ -1,10 +1,6 @@
 use libc;
 use libc::strrchr;
-extern "C" {
 
-  #[no_mangle]
-  fn last_char_is(s: *const libc::c_char, c: libc::c_int) -> *mut libc::c_char;
-}
 
 /*
  * bb_get_last_path_component implementation for busybox
@@ -58,7 +54,7 @@ pub unsafe extern "C" fn bb_get_last_path_component_nostrip(
 pub unsafe extern "C" fn bb_get_last_path_component_strip(
   mut path: *mut libc::c_char,
 ) -> *mut libc::c_char {
-  let mut slash: *mut libc::c_char = last_char_is(path, '/' as i32);
+  let mut slash: *mut libc::c_char = crate::libbb::last_char_is::last_char_is(path, '/' as i32);
   if !slash.is_null() {
     while *slash as libc::c_int == '/' as i32 && slash != path {
       let fresh0 = slash;

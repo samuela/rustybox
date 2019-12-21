@@ -1,7 +1,9 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
+use crate::librb::smallint;
 use libc;
 use libc::ioctl;
+use libc::sa_family_t;
+use libc::sockaddr;
 use libc::strcpy;
 extern "C" {
   #[no_mangle]
@@ -12,41 +14,6 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn display_interfaces(ifname: *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
   static ptr_to_globals: *mut globals;
 }
@@ -63,8 +30,7 @@ pub type __caddr_t = *mut libc::c_char;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::size_t;
-use crate::librb::smallint;
+
 pub type caddr_t = __caddr_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -76,34 +42,37 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
+
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub abi_ver: libc::c_uint,
   pub hwaddr_set: smallint,
   pub master: dev_data,
   pub slave: dev_data,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct dev_data {
   pub mtu: ifreq,
   pub flags: ifreq,
   pub hwaddr: ifreq,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifreq {
   pub ifr_ifrn: C2RustUnnamed_1,
   pub ifr_ifru: C2RustUnnamed,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub ifru_addr: sockaddr,
   pub ifru_dstaddr: sockaddr,
@@ -119,15 +88,17 @@ pub union C2RustUnnamed {
   pub ifru_data: *mut libc::c_void,
   pub ifru_settings: if_settings,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct if_settings {
   pub type_0: libc::c_uint,
   pub size: libc::c_uint,
   pub ifs_ifsu: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub raw_hdlc: *mut raw_hdlc_proto,
   pub cisco: *mut cisco_proto,
@@ -137,34 +108,39 @@ pub union C2RustUnnamed_0 {
   pub sync: *mut sync_serial_settings,
   pub te1: *mut te1_settings,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct te1_settings {
   pub clock_rate: libc::c_uint,
   pub clock_type: libc::c_uint,
   pub loopback: libc::c_ushort,
   pub slot_map: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sync_serial_settings {
   pub clock_rate: libc::c_uint,
   pub clock_type: libc::c_uint,
   pub loopback: libc::c_ushort,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fr_proto_pvc_info {
   pub dlci: libc::c_uint,
   pub master: [libc::c_char; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fr_proto_pvc {
   pub dlci: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fr_proto {
   pub t391: libc::c_uint,
   pub t392: libc::c_uint,
@@ -174,20 +150,23 @@ pub struct fr_proto {
   pub lmi: libc::c_ushort,
   pub dce: libc::c_ushort,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct cisco_proto {
   pub interval: libc::c_uint,
   pub timeout: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct raw_hdlc_proto {
   pub encoding: libc::c_ushort,
   pub parity: libc::c_ushort,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifmap {
   pub mem_start: libc::c_ulong,
   pub mem_end: libc::c_ulong,
@@ -196,8 +175,9 @@ pub struct ifmap {
   pub dma: libc::c_uchar,
   pub port: libc::c_uchar,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub ifrn_name: [libc::c_char; 16],
 }
@@ -222,8 +202,9 @@ pub const IFF_LOOPBACK: net_device_flags = 8;
 pub const IFF_DEBUG: net_device_flags = 4;
 pub const IFF_BROADCAST: net_device_flags = 2;
 pub const IFF_UP: net_device_flags = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ethtool_drvinfo {
   pub cmd: u32,
   pub driver: [libc::c_char; 32],
@@ -240,8 +221,9 @@ pub struct ethtool_drvinfo {
 }
 pub type C2RustUnnamed_2 = libc::c_uint;
 pub const skfd: C2RustUnnamed_2 = 3;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_3 {
   pub g_ioctl: u16,
   pub s_ioctl: u16,
@@ -263,7 +245,7 @@ unsafe extern "C" fn set_ifrname_and_do_ioctl(
   mut ifr: *mut ifreq,
   mut ifname: *const libc::c_char,
 ) -> libc::c_int {
-  strncpy_IFNAMSIZ((*ifr).ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ((*ifr).ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
   return ioctl_on_skfd(request, ifr);
 }
 unsafe extern "C" fn get_if_settings(
@@ -338,7 +320,7 @@ unsafe extern "C" fn set_if_up(
 ) -> libc::c_int {
   let mut res: libc::c_int = set_if_flags(ifname, flags | IFF_UP as libc::c_int);
   if res != 0 {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"%s: can\'t up\x00" as *const u8 as *const libc::c_char,
       ifname,
     );
@@ -351,7 +333,7 @@ unsafe extern "C" fn set_if_down(
 ) -> libc::c_int {
   let mut res: libc::c_int = set_if_flags(ifname, flags & !(IFF_UP as libc::c_int));
   if res != 0 {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"%s: can\'t down\x00" as *const u8 as *const libc::c_char,
       ifname,
     );
@@ -467,16 +449,16 @@ unsafe extern "C" fn change_active(
   if (*ptr_to_globals).slave.flags.ifr_ifru.ifru_flags as libc::c_int & IFF_SLAVE as libc::c_int
     == 0
   {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"%s is not a slave\x00" as *const u8 as *const libc::c_char,
       slave_ifname,
     );
   }
-  strncpy_IFNAMSIZ(ifr.ifr_ifru.ifru_slave.as_mut_ptr(), slave_ifname);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifru.ifru_slave.as_mut_ptr(), slave_ifname);
   if set_ifrname_and_do_ioctl(0x8995i32 as libc::c_uint, &mut ifr, master_ifname) != 0
     && ioctl_on_skfd((0x89f0i32 + 13i32) as libc::c_uint, &mut ifr) != 0
   {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"master %s, slave %s: can\'t change active\x00" as *const u8 as *const libc::c_char,
       master_ifname,
       slave_ifname,
@@ -502,7 +484,7 @@ unsafe extern "C" fn enslave(
   if (*ptr_to_globals).slave.flags.ifr_ifru.ifru_flags as libc::c_int & IFF_SLAVE as libc::c_int
     != 0
   {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"%s is already a slave\x00" as *const u8 as *const libc::c_char,
       slave_ifname,
     );
@@ -521,7 +503,7 @@ unsafe extern "C" fn enslave(
      */
     res = set_if_addr(master_ifname, slave_ifname);
     if res != 0 {
-      bb_perror_msg(
+      crate::libbb::perror_msg::bb_perror_msg(
         b"%s: can\'t set address\x00" as *const u8 as *const libc::c_char,
         slave_ifname,
       );
@@ -530,7 +512,7 @@ unsafe extern "C" fn enslave(
   } else {
     res = clear_if_addr(slave_ifname);
     if res != 0 {
-      bb_perror_msg(
+      crate::libbb::perror_msg::bb_perror_msg(
         b"%s: can\'t clear address\x00" as *const u8 as *const libc::c_char,
         slave_ifname,
       );
@@ -541,7 +523,7 @@ unsafe extern "C" fn enslave(
   {
     res = set_mtu(slave_ifname, (*ptr_to_globals).master.mtu.ifr_ifru.ifru_mtu);
     if res != 0 {
-      bb_perror_msg(
+      crate::libbb::perror_msg::bb_perror_msg(
         b"%s: can\'t set MTU\x00" as *const u8 as *const libc::c_char,
         slave_ifname,
       );
@@ -562,7 +544,7 @@ unsafe extern "C" fn enslave(
         &mut (*ptr_to_globals).master.hwaddr.ifr_ifru.ifru_hwaddr,
       ) != 0
       {
-        bb_perror_msg(
+        crate::libbb::perror_msg::bb_perror_msg(
           b"%s: can\'t set hw address\x00" as *const u8 as *const libc::c_char,
           slave_ifname,
         );
@@ -619,7 +601,7 @@ unsafe extern "C" fn enslave(
           &mut (*ptr_to_globals).slave.hwaddr.ifr_ifru.ifru_hwaddr,
         ) != 0
         {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"%s: can\'t set hw address\x00" as *const u8 as *const libc::c_char,
             master_ifname,
           );
@@ -655,7 +637,7 @@ unsafe extern "C" fn enslave(
   match current_block {
     7226443171521532240 => {
       /* Do the real thing */
-      strncpy_IFNAMSIZ(ifr.ifr_ifru.ifru_slave.as_mut_ptr(), slave_ifname);
+      crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifru.ifru_slave.as_mut_ptr(), slave_ifname);
       if set_ifrname_and_do_ioctl(0x8990i32 as libc::c_uint, &mut ifr, master_ifname) != 0
         && ioctl_on_skfd(0x89f0i32 as libc::c_uint, &mut ifr) != 0
       {
@@ -698,13 +680,13 @@ unsafe extern "C" fn release(
   if (*ptr_to_globals).slave.flags.ifr_ifru.ifru_flags as libc::c_int & IFF_SLAVE as libc::c_int
     == 0
   {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"%s is not a slave\x00" as *const u8 as *const libc::c_char,
       slave_ifname,
     );
     return 1i32;
   }
-  strncpy_IFNAMSIZ(ifr.ifr_ifru.ifru_slave.as_mut_ptr(), slave_ifname);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifru.ifru_slave.as_mut_ptr(), slave_ifname);
   if set_ifrname_and_do_ioctl(0x8991i32 as libc::c_uint, &mut ifr, master_ifname) < 0i32
     && ioctl_on_skfd((0x89f0i32 + 1i32) as libc::c_uint, &mut ifr) < 0i32
   {
@@ -760,23 +742,26 @@ unsafe extern "C" fn get_drv_info(mut master_ifname: *mut libc::c_char) {
     info.driver.as_mut_ptr(),
     b"ifenslave\x00" as *const u8 as *const libc::c_char,
   );
-  strcpy(info.fw_version.as_mut_ptr(), utoa(2i32 as libc::c_uint));
+  strcpy(
+    info.fw_version.as_mut_ptr(),
+    crate::libbb::xfuncs::utoa(2i32 as libc::c_uint),
+  );
   if set_ifrname_and_do_ioctl(0x8946i32 as libc::c_uint, &mut ifr, master_ifname) < 0i32 {
     if *bb_errno == 95i32 {
       return;
     }
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"%s: SIOCETHTOOL error\x00" as *const u8 as *const libc::c_char,
       master_ifname,
     );
   }
-  (*ptr_to_globals).abi_ver = bb_strtou(
+  (*ptr_to_globals).abi_ver = crate::libbb::bb_strtonum::bb_strtou(
     info.fw_version.as_mut_ptr(),
     0 as *mut *mut libc::c_char,
     0i32,
   );
   if *bb_errno != 0 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"%s: SIOCETHTOOL error\x00" as *const u8 as *const libc::c_char,
       master_ifname,
     );
@@ -794,9 +779,10 @@ pub unsafe extern "C" fn ifenslave_main(
   let mut opt: libc::c_uint = 0;
   let ref mut fresh0 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh0 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh0 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
-  opt = getopt32long(
+  opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"cdfa\x00" as *const u8 as *const libc::c_char,
     b"change-active\x00\x00cdetach\x00\x00dforce\x00\x00f\x00" as *const u8 as *const libc::c_char,
@@ -804,19 +790,19 @@ pub unsafe extern "C" fn ifenslave_main(
   argv = argv.offset(optind as isize);
   if opt & opt.wrapping_sub(1i32 as libc::c_uint) != 0 {
     /* Only one option can be given */
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   let fresh1 = argv;
   argv = argv.offset(1);
   master_ifname = *fresh1;
   /* No interface names - show all interfaces. */
   if master_ifname.is_null() {
-    display_interfaces(0 as *mut libc::c_char);
+    crate::networking::interface::display_interfaces(0 as *mut libc::c_char);
     return 0i32;
   }
   /* Open a basic socket */
-  xmove_fd(
-    xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32),
+  crate::libbb::xfuncs_printf::xmove_fd(
+    crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32),
     skfd as libc::c_int,
   );
   /* Exchange abi version with bonding module */
@@ -828,19 +814,19 @@ pub unsafe extern "C" fn ifenslave_main(
     if opt & (OPT_d as libc::c_int | OPT_c as libc::c_int) as libc::c_uint != 0 {
       /* --change or --detach, and no slaves given -
        * show all interfaces. */
-      display_interfaces(slave_ifname);
+      crate::networking::interface::display_interfaces(slave_ifname);
       return 2i32;
       /* why 2? */
     }
     /* A single arg means show the
      * configuration for this interface
      */
-    display_interfaces(master_ifname);
+    crate::networking::interface::display_interfaces(master_ifname);
     return 0i32;
   }
   if get_if_settings(master_ifname, &mut (*ptr_to_globals).master) != 0 {
     /* Probably a good reason not to go on */
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"%s: can\'t get settings\x00" as *const u8 as *const libc::c_char,
       master_ifname,
     );
@@ -851,7 +837,7 @@ pub unsafe extern "C" fn ifenslave_main(
   if (*ptr_to_globals).master.flags.ifr_ifru.ifru_flags as libc::c_int & IFF_MASTER as libc::c_int
     == 0
   {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"%s is not a master\x00" as *const u8 as *const libc::c_char,
       master_ifname,
     );
@@ -859,7 +845,7 @@ pub unsafe extern "C" fn ifenslave_main(
   /* Check if master is up; if not then fail any operation */
   if (*ptr_to_globals).master.flags.ifr_ifru.ifru_flags as libc::c_int & IFF_UP as libc::c_int == 0
   {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"%s is not up\x00" as *const u8 as *const libc::c_char,
       master_ifname,
     );
@@ -868,7 +854,7 @@ pub unsafe extern "C" fn ifenslave_main(
   if opt & OPT_c as libc::c_int as libc::c_uint != 0 {
     /* Change active slave */
     if get_slave_flags(slave_ifname) != 0 {
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"%s: can\'t get flags\x00" as *const u8 as *const libc::c_char,
         slave_ifname,
       );
@@ -885,7 +871,7 @@ pub unsafe extern "C" fn ifenslave_main(
       if rv != 0 {
         /* Can't work with this slave, */
         /* remember the error and skip it */
-        bb_perror_msg(
+        crate::libbb::perror_msg::bb_perror_msg(
           b"skipping %s: can\'t get %s\x00" as *const u8 as *const libc::c_char,
           slave_ifname,
           b"flags\x00" as *const u8 as *const libc::c_char,
@@ -894,7 +880,7 @@ pub unsafe extern "C" fn ifenslave_main(
       } else {
         rv = release(master_ifname, slave_ifname);
         if rv != 0 {
-          bb_perror_msg(
+          crate::libbb::perror_msg::bb_perror_msg(
             b"can\'t release %s from %s\x00" as *const u8 as *const libc::c_char,
             slave_ifname,
             master_ifname,
@@ -908,7 +894,7 @@ pub unsafe extern "C" fn ifenslave_main(
       if rv != 0 {
         /* Can't work with this slave, */
         /* remember the error and skip it */
-        bb_perror_msg(
+        crate::libbb::perror_msg::bb_perror_msg(
           b"skipping %s: can\'t get %s\x00" as *const u8 as *const libc::c_char,
           slave_ifname,
           b"settings\x00" as *const u8 as *const libc::c_char,
@@ -917,7 +903,7 @@ pub unsafe extern "C" fn ifenslave_main(
       } else {
         rv = enslave(master_ifname, slave_ifname);
         if rv != 0 {
-          bb_perror_msg(
+          crate::libbb::perror_msg::bb_perror_msg(
             b"can\'t enslave %s to %s\x00" as *const u8 as *const libc::c_char,
             slave_ifname,
             master_ifname,

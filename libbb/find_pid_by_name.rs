@@ -1,77 +1,17 @@
+use crate::librb::procps_status_t;
 use crate::librb::size_t;
 use libc;
 use libc::pid_t;
 use libc::strcmp;
-use libc::DIR;
 extern "C" {
 
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
-  #[no_mangle]
-  fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
+
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct smaprec {
-  pub mapped_rw: libc::c_ulong,
-  pub mapped_ro: libc::c_ulong,
-  pub shared_clean: libc::c_ulong,
-  pub shared_dirty: libc::c_ulong,
-  pub private_clean: libc::c_ulong,
-  pub private_dirty: libc::c_ulong,
-  pub stack: libc::c_ulong,
-  pub smap_pss: libc::c_ulong,
-  pub smap_swap: libc::c_ulong,
-  pub smap_size: libc::c_ulong,
-  pub smap_start: libc::c_ulonglong,
-  pub smap_mode: [libc::c_char; 5],
-  pub smap_name: *mut libc::c_char,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct procps_status_t {
-  pub dir: *mut DIR,
-  pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: u8,
-  pub shift_pages_to_kb: u8,
-  pub argv_len: u16,
-  pub argv0: *mut libc::c_char,
-  pub exe: *mut libc::c_char,
-  pub main_thread_pid: libc::c_uint,
-  pub vsz: libc::c_ulong,
-  pub rss: libc::c_ulong,
-  pub stime: libc::c_ulong,
-  pub utime: libc::c_ulong,
-  pub start_time: libc::c_ulong,
-  pub pid: libc::c_uint,
-  pub ppid: libc::c_uint,
-  pub pgid: libc::c_uint,
-  pub sid: libc::c_uint,
-  pub uid: libc::c_uint,
-  pub gid: libc::c_uint,
-  pub ruid: libc::c_uint,
-  pub rgid: libc::c_uint,
-  pub niceness: libc::c_int,
-  pub tty_major: libc::c_uint,
-  pub tty_minor: libc::c_uint,
-  pub smaps: smaprec,
-  pub state: [libc::c_char; 4],
-  pub comm: [libc::c_char; 16],
-  pub last_seen_on_cpu: libc::c_int,
-}
 pub type C2RustUnnamed = libc::c_uint;
 pub const PSSCAN_TASKS: C2RustUnnamed = 4194304;
 pub const PSSCAN_RUIDGID: C2RustUnnamed = 2097152;
@@ -157,7 +97,11 @@ unsafe extern "C" fn comm_match(
     return 0i32;
   }
   argv1 = (*p).argv0.offset(argv1idx as isize);
-  if strcmp(bb_basename(argv1), procName) != 0i32 {
+  if strcmp(
+    crate::libbb::get_last_path_component::bb_basename(argv1),
+    procName,
+  ) != 0i32
+  {
     return 0i32;
   }
   return 1i32;
@@ -176,9 +120,10 @@ pub unsafe extern "C" fn find_pid_by_name(mut procName: *const libc::c_char) -> 
   let mut pidList: *mut pid_t = 0 as *mut pid_t;
   let mut i: libc::c_int = 0i32;
   let mut p: *mut procps_status_t = 0 as *mut procps_status_t;
-  pidList = xzalloc(::std::mem::size_of::<pid_t>() as libc::c_ulong) as *mut pid_t;
+  pidList = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<pid_t>() as libc::c_ulong)
+    as *mut pid_t;
   loop {
-    p = procps_scan(
+    p = crate::libbb::procps::procps_scan(
       p,
       PSSCAN_PID as libc::c_int
         | PSSCAN_COMM as libc::c_int
@@ -189,18 +134,22 @@ pub unsafe extern "C" fn find_pid_by_name(mut procName: *const libc::c_char) -> 
       break;
     }
     if comm_match(p, procName) != 0
-      || !(*p).argv0.is_null() && strcmp(bb_basename((*p).argv0), procName) == 0i32
+      || !(*p).argv0.is_null()
+        && strcmp(
+          crate::libbb::get_last_path_component::bb_basename((*p).argv0),
+          procName,
+        ) == 0i32
       || !(*p).exe.is_null()
         && strcmp(
           if *procName.offset(0) as libc::c_int == '/' as i32 {
             (*p).exe
           } else {
-            bb_basename((*p).exe)
+            crate::libbb::get_last_path_component::bb_basename((*p).exe)
           },
           procName,
         ) == 0i32
     {
-      pidList = xrealloc_vector_helper(
+      pidList = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
         pidList as *mut libc::c_void,
         ((::std::mem::size_of::<pid_t>() as libc::c_ulong) << 8i32)
           .wrapping_add(2i32 as libc::c_ulong) as libc::c_uint,

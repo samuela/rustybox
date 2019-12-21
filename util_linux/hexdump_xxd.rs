@@ -12,33 +12,6 @@ extern "C" {
   #[no_mangle]
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn xstrtoull_range(
-    str: *const libc::c_char,
-    b: libc::c_int,
-    l: libc::c_ulonglong,
-    u: libc::c_ulonglong,
-  ) -> libc::c_ulonglong;
-
-  #[no_mangle]
-  fn xstrtou_range(
-    str: *const libc::c_char,
-    b: libc::c_int,
-    l: libc::c_uint,
-    u: libc::c_uint,
-  ) -> libc::c_uint;
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn alloc_dumper() -> *mut dumper_t;
-
-  #[no_mangle]
-  fn bb_dump_add(dumper: *mut dumper_t, fmt: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_dump_dump(dumper: *mut dumper_t, argv: *mut *mut libc::c_char) -> libc::c_int;
 }
 
 /* %_A */
@@ -61,8 +34,8 @@ pub type dump_vflag_t = libc::c_uint;
 // pub const DUP: dump_vflag_t = 1;
 pub const ALL: dump_vflag_t = 0;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct PR {
   pub nextpr: *mut PR,
   pub flags: libc::c_uint,
@@ -72,8 +45,8 @@ pub struct PR {
   pub nospace: *mut libc::c_char,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct FU {
   pub nextfu: *mut FU,
   pub nextpr: *mut PR,
@@ -83,22 +56,15 @@ pub struct FU {
   pub fmt: *mut libc::c_char,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct FS {
   pub nextfs: *mut FS,
   pub nextfu: *mut FU,
   pub bcnt: libc::c_int,
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct dumper_t {
-  pub dump_skip: off_t,
-  pub dump_length: libc::c_int,
-  pub dump_vflag: smallint,
-  pub fshead: *mut FS,
-}
+use crate::libbb::dump::dumper_t;
 
 /*
  * xxd implementation for busybox
@@ -161,8 +127,8 @@ pub unsafe extern "C" fn xxd_main(
   let mut bytes: libc::c_uint = 2i32 as libc::c_uint;
   let mut cols: libc::c_uint = 0i32 as libc::c_uint;
   let mut opt: libc::c_uint = 0;
-  dumper = alloc_dumper();
-  opt = getopt32(
+  dumper = crate::libbb::dump::alloc_dumper();
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^l:s:apg:+c:+\x00?1\x00" as *const u8 as *const libc::c_char,
     &mut opt_l as *mut *mut libc::c_char,
@@ -175,7 +141,7 @@ pub unsafe extern "C" fn xxd_main(
   //	if (opt & OPT_a)
   //		dumper->dump_vflag = SKIPNUL; ..does not exist
   if opt & (1i32 << 0i32) as libc::c_uint != 0 {
-    (*dumper).dump_length = xstrtou_range(
+    (*dumper).dump_length = crate::libbb::xatonum::xstrtou_range(
       opt_l,
       0i32,
       0i32 as libc::c_uint,
@@ -183,7 +149,7 @@ pub unsafe extern "C" fn xxd_main(
     ) as libc::c_int
   }
   if opt & (1i32 << 1i32) as libc::c_uint != 0 {
-    (*dumper).dump_skip = xstrtoull_range(
+    (*dumper).dump_skip = crate::libbb::xatonum::xstrtoull_range(
       opt_s,
       0i32,
       0i32 as libc::c_ulonglong,
@@ -204,7 +170,7 @@ pub unsafe extern "C" fn xxd_main(
     if cols == 0i32 as libc::c_uint {
       cols = 16i32 as libc::c_uint
     }
-    bb_dump_add(
+    crate::libbb::dump::bb_dump_add(
       dumper,
       b"\"%08.8_ax: \"\x00" as *const u8 as *const libc::c_char,
     );
@@ -216,14 +182,14 @@ pub unsafe extern "C" fn xxd_main(
       b"%u/1 \"%%02x\"\x00" as *const u8 as *const libc::c_char,
       cols,
     ); // cols * "xx "
-    bb_dump_add(dumper, buf.as_mut_ptr());
+    crate::libbb::dump::bb_dump_add(dumper, buf.as_mut_ptr());
   } else if bytes == 1i32 as libc::c_uint {
     sprintf(
       buf.as_mut_ptr(),
       b"%u/1 \"%%02x \"\x00" as *const u8 as *const libc::c_char,
       cols,
     );
-    bb_dump_add(dumper, buf.as_mut_ptr());
+    crate::libbb::dump::bb_dump_add(dumper, buf.as_mut_ptr());
   } else {
     /* Format "print byte" with and without trailing space */
     let mut i: libc::c_uint = 0;
@@ -247,7 +213,7 @@ pub unsafe extern "C" fn xxd_main(
     // todo: can be more clever and use
     // one 'bytes-1/1 "%02x"' format instead of many "B B B..." formats
     //bb_error_msg("ADDED:'%s'", bigbuf);
-    bb_dump_add(dumper, bigbuf); // "  ASCII\n"
+    crate::libbb::dump::bb_dump_add(dumper, bigbuf); // "  ASCII\n"
     free(bigbuf as *mut libc::c_void);
   }
   if opt & (1i32 << 3i32) as libc::c_uint == 0 {
@@ -256,9 +222,9 @@ pub unsafe extern "C" fn xxd_main(
       b"\"  \"%u/1 \"%%_p\"\"\n\"\x00" as *const u8 as *const libc::c_char,
       cols,
     );
-    bb_dump_add(dumper, buf.as_mut_ptr());
+    crate::libbb::dump::bb_dump_add(dumper, buf.as_mut_ptr());
   } else {
-    bb_dump_add(dumper, b"\"\n\"\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::dump::bb_dump_add(dumper, b"\"\n\"\x00" as *const u8 as *const libc::c_char);
   }
-  return bb_dump_dump(dumper, argv);
+  return crate::libbb::dump::bb_dump_dump(dumper, argv);
 }

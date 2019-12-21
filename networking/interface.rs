@@ -1,6 +1,11 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::aftype;
+use crate::librb::hwtype;
+use crate::librb::in6_addr;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
 use libc::close;
 use libc::fclose;
@@ -9,10 +14,13 @@ use libc::fscanf;
 use libc::ioctl;
 use libc::printf;
 use libc::puts;
+use libc::sa_family_t;
+use libc::sockaddr;
 use libc::sprintf;
 use libc::sscanf;
 use libc::strcmp;
 use libc::strstr;
+use libc::FILE;
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -39,70 +47,24 @@ extern "C" {
     __buf: *mut libc::c_void,
   ) -> libc::c_int;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn auto_string(str: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fopen_or_warn(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn hex2bin(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    count: libc::c_int,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn in_ether(bufp: *const libc::c_char, sap: *mut sockaddr) -> libc::c_int;
+/*
+ * stolen from net-tools-1.59 and stripped down for busybox by
+ *                      Erik Andersen <andersen@codepoet.org>
+ *
+ * Heavily modified by Manuel Novoa III       Mar 12, 2001
+ *
+ */
+/* hostfirst!=0 If we expect this to be a hostname,
+  try hostname database first
+*/
 
-  /*
-   * stolen from net-tools-1.59 and stripped down for busybox by
-   *                      Erik Andersen <andersen@codepoet.org>
-   *
-   * Heavily modified by Manuel Novoa III       Mar 12, 2001
-   *
-   */
-  /* hostfirst!=0 If we expect this to be a hostname,
-    try hostname database first
-  */
-  #[no_mangle]
-  fn INET_resolve(
-    name: *const libc::c_char,
-    s_in: *mut sockaddr_in,
-    hostfirst: libc::c_int,
-  ) -> libc::c_int;
-  /* numeric: & 0x8000: "default" instead of "*",
-   *          & 0x4000: host instead of net,
-   *          & 0x0fff: don't resolve
-   */
-  #[no_mangle]
-  fn INET6_resolve(name: *const libc::c_char, sin6: *mut sockaddr_in6) -> libc::c_int;
-  /* These return malloced string */
-  #[no_mangle]
-  fn INET_rresolve(s_in: *mut sockaddr_in, numeric: libc::c_int, netmask: u32)
-    -> *mut libc::c_char;
-  #[no_mangle]
-  fn INET6_rresolve(sin6: *mut sockaddr_in6, numeric: libc::c_int) -> *mut libc::c_char;
+/* numeric: & 0x8000: "default" instead of "*",
+ *          & 0x4000: host instead of net,
+ *          & 0x0fff: don't resolve
+ */
+
+/* These return malloced string */
+
 }
 
 pub type __caddr_t = *mut libc::c_char;
@@ -118,8 +80,6 @@ pub type intptr_t = libc::c_long;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::size_t;
-use crate::librb::smallint;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -130,83 +90,24 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
-#[derive(Copy, Clone)]
+
+use libc::sockaddr_in6;
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
+use libc::sockaddr_in;
+
 pub type in_addr_t = u32;
 
-use libc::FILE;
-#[derive(Copy, Clone)]
 #[repr(C)]
-pub struct aftype {
-  pub name: *const libc::c_char,
-  pub title: *const libc::c_char,
-  pub af: libc::c_int,
-  pub alen: libc::c_int,
-  pub print: Option<unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char>,
-  pub sprint: Option<unsafe extern "C" fn(_: *mut sockaddr, _: libc::c_int) -> *const libc::c_char>,
-  pub input: Option<unsafe extern "C" fn(_: *const libc::c_char, _: *mut sockaddr) -> libc::c_int>,
-  pub herror: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> ()>,
-  pub rprint: Option<unsafe extern "C" fn(_: libc::c_int) -> libc::c_int>,
-  pub rinput: Option<
-    unsafe extern "C" fn(_: libc::c_int, _: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-  >,
-  pub getmask: Option<
-    unsafe extern "C" fn(
-      _: *mut libc::c_char,
-      _: *mut sockaddr,
-      _: *mut libc::c_char,
-    ) -> libc::c_int,
-  >,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct hwtype {
-  pub name: *const libc::c_char,
-  pub title: *const libc::c_char,
-  pub type_0: libc::c_int,
-  pub alen: libc::c_int,
-  pub print: Option<unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char>,
-  pub input: Option<unsafe extern "C" fn(_: *const libc::c_char, _: *mut sockaddr) -> libc::c_int>,
-  pub activate: Option<unsafe extern "C" fn(_: libc::c_int) -> libc::c_int>,
-  pub suppress_null_addr: libc::c_int,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub struct interface {
   pub next: *mut interface,
   pub prev: *mut interface,
@@ -228,8 +129,9 @@ pub struct interface {
   /* statistics            */
   /* UNUSED */
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct user_net_device_stats {
   pub rx_packets: libc::c_ulonglong,
   pub tx_packets: libc::c_ulonglong,
@@ -255,8 +157,9 @@ pub struct user_net_device_stats {
   pub tx_heartbeat_errors: libc::c_ulong,
   pub tx_window_errors: libc::c_ulong,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifmap {
   pub mem_start: libc::c_ulong,
   pub mem_end: libc::c_ulong,
@@ -280,8 +183,9 @@ pub const IFF_BROADCAST: C2RustUnnamed_3 = 2;
 pub const IFF_UP: C2RustUnnamed_3 = 1;
 pub const IFF_AUTOMEDIA: C2RustUnnamed_3 = 16384;
 pub const IFF_PORTSEL: C2RustUnnamed_3 = 8192;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub ifru_addr: sockaddr,
   pub ifru_dstaddr: sockaddr,
@@ -296,31 +200,36 @@ pub union C2RustUnnamed_0 {
   pub ifru_newname: [libc::c_char; 16],
   pub ifru_data: __caddr_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifreq {
   pub ifr_ifrn: C2RustUnnamed_1,
   pub ifr_ifru: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub ifrn_name: [libc::c_char; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct iface_list {
   pub int_list: *mut interface,
   pub int_last: *mut interface,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_2 {
   pub ifcu_buf: __caddr_t,
   pub ifcu_req: *mut ifreq,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifconf {
   pub ifc_len: libc::c_int,
   pub ifc_ifcu: C2RustUnnamed_2,
@@ -338,7 +247,7 @@ unsafe extern "C" fn INET_sprint(
   if (*sap).sa_family as libc::c_int == 0xffffi32 || (*sap).sa_family as libc::c_int == 0i32 {
     return b"[NONE SET]\x00" as *const u8 as *const libc::c_char;
   }
-  return auto_string(INET_rresolve(
+  return crate::libbb::auto_string::auto_string(crate::libbb::inet_common::INET_rresolve(
     sap as *mut sockaddr_in,
     numeric,
     0xffffff00u32,
@@ -348,7 +257,7 @@ unsafe extern "C" fn INET_input(
   mut bufp: *const libc::c_char,
   mut sap: *mut sockaddr,
 ) -> libc::c_int {
-  return INET_resolve(bufp, sap as *mut sockaddr_in, 0i32);
+  return crate::libbb::inet_common::INET_resolve(bufp, sap as *mut sockaddr_in, 0i32);
   /*
     switch (type) {
     case 1:
@@ -391,14 +300,17 @@ unsafe extern "C" fn INET6_sprint(
   if (*sap).sa_family as libc::c_int == 0xffffi32 || (*sap).sa_family as libc::c_int == 0i32 {
     return b"[NONE SET]\x00" as *const u8 as *const libc::c_char;
   }
-  return auto_string(INET6_rresolve(sap as *mut sockaddr_in6, numeric));
+  return crate::libbb::auto_string::auto_string(crate::libbb::inet_common::INET6_rresolve(
+    sap as *mut sockaddr_in6,
+    numeric,
+  ));
 }
 
 unsafe extern "C" fn INET6_input(
   mut bufp: *const libc::c_char,
   mut sap: *mut sockaddr,
 ) -> libc::c_int {
-  return INET6_resolve(bufp, sap as *mut sockaddr_in6);
+  return crate::libbb::inet_common::INET6_resolve(bufp, sap as *mut sockaddr_in6);
   /*
     switch (type) {
     case 1:
@@ -436,7 +348,7 @@ unsafe extern "C" fn UNSPEC_print(mut ptr: *mut libc::c_uchar) -> *mut libc::c_c
   let mut buff: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pos: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_uint = 0;
-  buff = auto_string(xmalloc(
+  buff = crate::libbb::auto_string::auto_string(xmalloc(
     (::std::mem::size_of::<sockaddr>() as libc::c_ulong)
       .wrapping_mul(3i32 as libc::c_ulong)
       .wrapping_add(1i32 as libc::c_ulong),
@@ -542,8 +454,9 @@ unsafe extern "C" fn add_interface(
     }
     ife = (*ife).prev
   }
-  new = xzalloc(::std::mem::size_of::<interface>() as libc::c_ulong) as *mut interface;
-  strncpy_IFNAMSIZ((*new).name.as_mut_ptr(), name);
+  new = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<interface>() as libc::c_ulong)
+    as *mut interface;
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ((*new).name.as_mut_ptr(), name);
   nextp = if !ife.is_null() {
     &mut (*ife).next
   } else {
@@ -673,15 +586,15 @@ unsafe extern "C" fn if_readconf(mut ilist: *mut iface_list) {
   ifc.ifc_ifcu.ifcu_buf = 0 as __caddr_t;
   /* SIOCGIFCONF currently seems to only work properly on AF_INET sockets
   (as of 2.1.128) */
-  skfd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+  skfd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
   loop {
     ifc.ifc_len = (::std::mem::size_of::<ifreq>() as libc::c_ulong)
       .wrapping_mul(numreqs as libc::c_ulong) as libc::c_int;
-    ifc.ifc_ifcu.ifcu_buf = xrealloc(
+    ifc.ifc_ifcu.ifcu_buf = crate::libbb::xfuncs_printf::xrealloc(
       ifc.ifc_ifcu.ifcu_buf as *mut libc::c_void,
       ifc.ifc_len as size_t,
     ) as __caddr_t;
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       skfd,
       0x8912i32 as libc::c_uint,
       &mut ifc as *mut ifconf as *mut libc::c_void,
@@ -716,7 +629,7 @@ unsafe extern "C" fn if_readlist_proc(
   let mut ife: *mut interface = 0 as *mut interface;
   let mut procnetdev_vsn: libc::c_int = 0;
   let mut ret: libc::c_int = 0;
-  fh = fopen_or_warn(
+  fh = crate::libbb::wfopen::fopen_or_warn(
     b"/proc/net/dev\x00" as *const u8 as *const libc::c_char,
     b"r\x00" as *const u8 as *const libc::c_char,
   );
@@ -778,8 +691,8 @@ unsafe extern "C" fn if_fetch(mut ife: *mut interface) -> libc::c_int {
   };
   let mut ifname: *mut libc::c_char = (*ife).name.as_mut_ptr();
   let mut skfd: libc::c_int = 0;
-  skfd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
+  skfd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
   if ioctl(skfd, 0x8913i32 as libc::c_ulong, &mut ifr as *mut ifreq) < 0i32 {
     close(skfd);
     return -1i32;
@@ -794,7 +707,7 @@ unsafe extern "C" fn if_fetch(mut ife: *mut interface) -> libc::c_int {
       .wrapping_sub(40u64)
       .wrapping_add(::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong),
   );
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
   if ioctl(skfd, 0x8927i32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0i32 {
     memcpy(
       (*ife).hwaddr.as_mut_ptr() as *mut libc::c_void,
@@ -804,36 +717,36 @@ unsafe extern "C" fn if_fetch(mut ife: *mut interface) -> libc::c_int {
   }
   //er.... why this _isnt_ inside if()?
   (*ife).type_0 = ifr.ifr_ifru.ifru_hwaddr.sa_family as libc::c_short;
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
   if ioctl(skfd, 0x891di32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0i32 {
     (*ife).metric = ifr.ifr_ifru.ifru_ivalue
   }
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
   if ioctl(skfd, 0x8921i32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0i32 {
     (*ife).mtu = ifr.ifr_ifru.ifru_mtu
   }
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
   if ioctl(skfd, 0x8970i32 as libc::c_ulong, &mut ifr as *mut ifreq) == 0i32 {
     (*ife).map = ifr.ifr_ifru.ifru_map
   }
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
   if ioctl(skfd, 0x8942i32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0i32 {
     (*ife).tx_queue_len = ifr.ifr_ifru.ifru_ivalue
   }
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
   ifr.ifr_ifru.ifru_addr.sa_family = 2i32 as sa_family_t;
   if ioctl(skfd, 0x8915i32 as libc::c_ulong, &mut ifr as *mut ifreq) == 0i32 {
     (*ife).has_ip = 1i32 as smallint;
     (*ife).addr = ifr.ifr_ifru.ifru_addr;
-    strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
+    crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
     if ioctl(skfd, 0x8917i32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0i32 {
       (*ife).dstaddr = ifr.ifr_ifru.ifru_dstaddr
     }
-    strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
+    crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
     if ioctl(skfd, 0x8919i32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0i32 {
       (*ife).broadaddr = ifr.ifr_ifru.ifru_broadaddr
     }
-    strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
+    crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
     if ioctl(skfd, 0x891bi32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0i32 {
       (*ife).netmask = ifr.ifr_ifru.ifru_netmask
     }
@@ -850,7 +763,7 @@ unsafe extern "C" fn do_if_fetch(mut ife: *mut interface) -> libc::c_int {
     } else {
       errmsg = strerror(*bb_errno)
     }
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"%s: error fetching interface information: %s\x00" as *const u8 as *const libc::c_char,
       (*ife).name.as_mut_ptr(),
       errmsg,
@@ -890,7 +803,7 @@ static mut loop_hwtype: hwtype = {
 /* Display an Ethernet address in readable format. */
 unsafe extern "C" fn ether_print(mut ptr: *mut libc::c_uchar) -> *mut libc::c_char {
   let mut buff: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  buff = xasprintf(
+  buff = crate::libbb::xfuncs_printf::xasprintf(
     b"%02X:%02X:%02X:%02X:%02X:%02X\x00" as *const u8 as *const libc::c_char,
     *ptr.offset(0) as libc::c_int,
     *ptr.offset(1) as libc::c_int,
@@ -899,7 +812,7 @@ unsafe extern "C" fn ether_print(mut ptr: *mut libc::c_uchar) -> *mut libc::c_ch
     *ptr.offset(4) as libc::c_int,
     *ptr.offset(5) as libc::c_int,
   );
-  return auto_string(buff);
+  return crate::libbb::auto_string::auto_string(buff);
 }
 
 static mut ether_hwtype: hwtype = {
@@ -910,7 +823,8 @@ static mut ether_hwtype: hwtype = {
     alen: 6i32,
     print: Some(ether_print as unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char),
     input: Some(
-      in_ether as unsafe extern "C" fn(_: *const libc::c_char, _: *mut sockaddr) -> libc::c_int,
+      crate::libbb::in_ether::in_ether
+        as unsafe extern "C" fn(_: *const libc::c_char, _: *mut sockaddr) -> libc::c_int,
     ),
     activate: None,
     suppress_null_addr: 0,
@@ -1063,23 +977,15 @@ unsafe extern "C" fn ife_print6(mut ptr: *mut interface) {
   let mut f: *mut FILE = 0 as *mut FILE;
   let mut addr6: [libc::c_char; 40] = [0; 40];
   let mut devname: [libc::c_char; 21] = [0; 21];
-  let mut sap: sockaddr_in6 = sockaddr_in6 {
-    sin6_family: 0,
-    sin6_port: 0,
-    sin6_flowinfo: 0,
-    sin6_addr: in6_addr {
-      __in6_u: C2RustUnnamed {
-        __u6_addr8: [0; 16],
-      },
-    },
-    sin6_scope_id: 0,
-  };
+  let mut sap: sockaddr_in6 = std::mem::zeroed();
   let mut plen: libc::c_int = 0;
   let mut scope: libc::c_int = 0;
   let mut dad_status: libc::c_int = 0;
   let mut if_idx: libc::c_int = 0;
   let mut addr6p: [[libc::c_char; 5]; 8] = [[0; 5]; 8];
-  f = fopen_for_read(b"/proc/net/if_inet6\x00" as *const u8 as *const libc::c_char);
+  f = crate::libbb::wfopen::fopen_for_read(
+    b"/proc/net/if_inet6\x00" as *const u8 as *const libc::c_char,
+  );
   if f.is_null() {
     return;
   }
@@ -1122,7 +1028,7 @@ unsafe extern "C" fn ife_print6(mut ptr: *mut interface) {
       inet_pton(
         10i32,
         addr6.as_mut_ptr(),
-        &mut sap.sin6_addr as *mut in6_addr as *mut sockaddr as *mut libc::c_void,
+        &mut sap.sin6_addr as *mut libc::in6_addr as *mut sockaddr as *mut libc::c_void,
       );
       sap.sin6_family = 10i32 as sa_family_t;
       printf(
@@ -1199,7 +1105,7 @@ unsafe extern "C" fn ife_print(mut ptr: *mut interface) {
       printf(b"(auto)\x00" as *const u8 as *const libc::c_char);
     }
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   if (*ptr).has_ip != 0 {
     printf(
       b"          %s addr:%s \x00" as *const u8 as *const libc::c_char,
@@ -1274,7 +1180,7 @@ unsafe extern "C" fn ife_print(mut ptr: *mut interface) {
       1i32
     },
   );
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   /* If needed, display the interface statistics. */
   if (*ptr).statistics_valid != 0 {
     /* XXX: statistics are currently only printed for the primary address,
@@ -1365,9 +1271,9 @@ unsafe extern "C" fn ife_print(mut ptr: *mut interface) {
         (*ptr).map.dma as libc::c_int,
       );
     }
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
 }
 unsafe extern "C" fn do_if_print(
   mut ife: *mut interface,
@@ -1828,6 +1734,6 @@ pub unsafe extern "C" fn in_ib(
 ) -> libc::c_int {
   (*sap).sa_family = ib_hwtype.type_0 as sa_family_t;
   //TODO: error check?
-  hex2bin((*sap).sa_data.as_mut_ptr(), bufp, 20i32);
+  crate::libbb::xfuncs::hex2bin((*sap).sa_data.as_mut_ptr(), bufp, 20i32);
   return 0i32;
 }

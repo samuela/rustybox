@@ -10,15 +10,16 @@ extern "C" {
   fn utmpxname(__file: *const libc::c_char) -> libc::c_int;
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __exit_status {
   pub e_termination: libc::c_short,
   pub e_exit: libc::c_short,
 }
 use libc::utmpx;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed {
   pub tv_sec: i32,
   pub tv_usec: i32,

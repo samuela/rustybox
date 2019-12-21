@@ -5,30 +5,9 @@ extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
-  #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
-
-  #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
-
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+use crate::util_linux::volume_id::volume_id::volume_id;
 
 pub type uuid_format = libc::c_uint;
 // pub const UUID_DCE_STRING: uuid_format = 3;
@@ -39,8 +18,9 @@ pub const UUID_DCE: uuid_format = 2;
 /* This is the superblock. The OCFS2 header files have structs in structs.
 This is one has been simplified since we only care about the superblock.
 */
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct ocfs2_super_block {
   pub i_signature: [u8; 8],
   pub i_generation: u32,
@@ -172,7 +152,7 @@ pub struct ocfs2_super_block {
 pub unsafe extern "C" fn volume_id_probe_ocfs2(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut os: *mut ocfs2_super_block = 0 as *mut ocfs2_super_block;
-  os = volume_id_get_buffer(
+  os = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     (0i32 as u64).wrapping_add(0x2000i32 as libc::c_ulong),
     0x200i32 as size_t,
@@ -191,12 +171,12 @@ pub unsafe extern "C" fn volume_id_probe_ocfs2(mut id: *mut volume_id) -> libc::
   //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
   //	volume_id_set_label_raw(id, os->s_label, OCFS2_MAX_VOL_LABEL_LEN < VOLUME_ID_LABEL_SIZE ?
   //					OCFS2_MAX_VOL_LABEL_LEN : VOLUME_ID_LABEL_SIZE);
-  volume_id_set_label_string(
+  crate::util_linux::volume_id::util::volume_id_set_label_string(
     id,
     (*os).s_label.as_mut_ptr(),
     if 64i32 < 64i32 { 64i32 } else { 64i32 } as size_t,
   );
-  volume_id_set_uuid(id, (*os).s_uuid.as_mut_ptr(), UUID_DCE);
+  crate::util_linux::volume_id::util::volume_id_set_uuid(id, (*os).s_uuid.as_mut_ptr(), UUID_DCE);
   (*id).type_0 = b"ocfs2\x00" as *const u8 as *const libc::c_char;
   return 0i32;
 }

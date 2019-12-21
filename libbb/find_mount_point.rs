@@ -11,16 +11,7 @@ extern "C" {
 
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct mntent {
-  pub mnt_fsname: *mut libc::c_char,
-  pub mnt_dir: *mut libc::c_char,
-  pub mnt_type: *mut libc::c_char,
-  pub mnt_opts: *mut libc::c_char,
-  pub mnt_freq: libc::c_int,
-  pub mnt_passno: libc::c_int,
-}
+use libc::mntent;
 
 /*
  * Busybox main internal header file

@@ -12,6 +12,7 @@ use libc::puts;
 use libc::ssize_t;
 use libc::strchr;
 use libc::strcmp;
+use libc::termios;
 use libc::FILE;
 extern "C" {
 
@@ -48,52 +49,26 @@ extern "C" {
     __optional_actions: libc::c_int,
     __termios_p: *const termios,
   ) -> libc::c_int;
-  /* Some useful definitions */
-  /* Macros for min/max.  */
-  /* buffer allocation schemes */
-  /* glibc uses __errno_location() to get a ptr to errno */
-  /* We can just memorize it once - no multithreading in busybox :) */
+/* Some useful definitions */
+/* Macros for min/max.  */
+/* buffer allocation schemes */
+/* glibc uses __errno_location() to get a ptr to errno */
+/* We can just memorize it once - no multithreading in busybox :) */
 
-  #[no_mangle]
-  fn monotonic_ms() -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn endofname(name: *const libc::c_char) -> *const libc::c_char;
-  /* 0 if argv[0] is NULL: */
-  #[no_mangle]
-  fn string_array_len(argv: *mut *mut libc::c_char) -> libc::c_uint;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  /* Non-aborting kind of convertors: bb_strto[u][l]l */
-  /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
-   * errno = EINVAL if value was not '\0' terminated, but otherwise ok
-   *    Return value is still valid, caller should just check whether end[0]
-   *    is a valid terminating char for particular case. OTOH, if caller
-   *    requires '\0' terminated input, [s]he can just check errno == 0.
-   * errno = ERANGE if value had alphanumeric terminating char ("1234abcg").
-   * errno = ERANGE if value is out of range, missing, etc.
-   * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
-   *    return value is all-ones in this case.
-   */
-  #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
+/* 0 if argv[0] is NULL: */
+
+/* Non-aborting kind of convertors: bb_strto[u][l]l */
+/* On exit: errno = 0 only if there was non-empty, '\0' terminated value
+ * errno = EINVAL if value was not '\0' terminated, but otherwise ok
+ *    Return value is still valid, caller should just check whether end[0]
+ *    is a valid terminating char for particular case. OTOH, if caller
+ *    requires '\0' terminated input, [s]he can just check errno == 0.
+ * errno = ERANGE if value had alphanumeric terminating char ("1234abcg").
+ * errno = ERANGE if value is out of range, missing, etc.
+ * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
+ *    return value is all-ones in this case.
+ */
+
 }
 
 pub type __rlim64_t = libc::c_ulong;
@@ -121,19 +96,20 @@ pub const RLIMIT_DATA: __rlimit_resource = 2;
 pub const RLIMIT_FSIZE: __rlimit_resource = 1;
 pub const RLIMIT_CPU: __rlimit_resource = 0;
 pub type rlim_t = __rlim64_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct rlimit {
   pub rlim_cur: rlim_t,
   pub rlim_max: rlim_t,
 }
 pub type __rlimit_resource_t = __rlimit_resource;
 
-use libc::termios;
 /* "OPTIND=1" */
 /* Builtins */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct builtin_read_params {
   pub read_flags: libc::c_int,
   pub setvar: Option<unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> ()>,
@@ -149,8 +125,9 @@ pub type C2RustUnnamed = libc::c_uint;
 pub const BUILTIN_READ_RAW: C2RustUnnamed = 2;
 pub const BUILTIN_READ_SILENT: C2RustUnnamed = 1;
 /* ulimit builtin */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct limits {
   pub cmd: u8,
   pub factor_shift: u8,
@@ -166,7 +143,7 @@ unsafe extern "C" fn bb_strtoul(
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_ulong {
-  return bb_strtoull(arg, endp, base) as libc::c_ulong;
+  return crate::libbb::bb_strtonum::bb_strtoull(arg, endp, base) as libc::c_ulong;
 }
 
 /*
@@ -221,26 +198,8 @@ pub unsafe extern "C" fn shell_builtin_read(
   let mut pp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
   let mut buffer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut delim: libc::c_char = 0;
-  let mut tty: termios = termios {
-    c_iflag: 0,
-    c_oflag: 0,
-    c_cflag: 0,
-    c_lflag: 0,
-    c_line: 0,
-    c_cc: [0; 32],
-    c_ispeed: 0,
-    c_ospeed: 0,
-  };
-  let mut old_tty: termios = termios {
-    c_iflag: 0,
-    c_oflag: 0,
-    c_cflag: 0,
-    c_lflag: 0,
-    c_line: 0,
-    c_cc: [0; 32],
-    c_ispeed: 0,
-    c_ospeed: 0,
-  };
+  let mut tty: termios = std::mem::zeroed();
+  let mut old_tty: termios = std::mem::zeroed();
   let mut retval: *const libc::c_char = 0 as *const libc::c_char;
   let mut bufpos: libc::c_int = 0;
   let mut startword: libc::c_int = 0;
@@ -253,9 +212,9 @@ pub unsafe extern "C" fn shell_builtin_read(
   argv = (*params).argv;
   pp = argv;
   while !(*pp).is_null() {
-    if *endofname(*pp).offset(0) as libc::c_int != '\u{0}' as i32 {
+    if *crate::libbb::endofname::endofname(*pp).offset(0) as libc::c_int != '\u{0}' as i32 {
       /* Mimic bash message */
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"read: \'%s\': not a valid identifier\x00" as *const u8 as *const libc::c_char,
         *pp,
       ); /* if != 0, -n is in effect */
@@ -265,7 +224,9 @@ pub unsafe extern "C" fn shell_builtin_read(
   }
   nchars = 0i32;
   if !(*params).opt_n.is_null() {
-    nchars = bb_strtou((*params).opt_n, 0 as *mut *mut libc::c_char, 10i32) as libc::c_int;
+    nchars =
+      crate::libbb::bb_strtonum::bb_strtou((*params).opt_n, 0 as *mut *mut libc::c_char, 10i32)
+        as libc::c_int;
     if nchars < 0i32 || *bb_errno != 0 {
       return b"invalid count\x00" as *const u8 as *const libc::c_char;
     }
@@ -273,7 +234,8 @@ pub unsafe extern "C" fn shell_builtin_read(
   }
   end_ms = 0i32 as libc::c_uint;
   if !(*params).opt_t.is_null() && 1i32 == 0 {
-    end_ms = bb_strtou((*params).opt_t, 0 as *mut *mut libc::c_char, 10i32);
+    end_ms =
+      crate::libbb::bb_strtonum::bb_strtou((*params).opt_t, 0 as *mut *mut libc::c_char, 10i32);
     if *bb_errno != 0 {
       return b"invalid timeout\x00" as *const u8 as *const libc::c_char;
     }
@@ -296,7 +258,7 @@ pub unsafe extern "C" fn shell_builtin_read(
     let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /* Eat up to three fractional digits */
     let mut frac_digits: libc::c_int = 3i32 + 1i32;
-    end_ms = bb_strtou((*params).opt_t, &mut p, 10i32);
+    end_ms = crate::libbb::bb_strtonum::bb_strtou((*params).opt_t, &mut p, 10i32);
     if end_ms
       > (2147483647i32 as libc::c_uint)
         .wrapping_mul(2u32)
@@ -341,7 +303,9 @@ pub unsafe extern "C" fn shell_builtin_read(
   }
   pfd[0].fd = 0i32;
   if !(*params).opt_u.is_null() {
-    pfd[0].fd = bb_strtou((*params).opt_u, 0 as *mut *mut libc::c_char, 10i32) as libc::c_int;
+    pfd[0].fd =
+      crate::libbb::bb_strtonum::bb_strtou((*params).opt_u, 0 as *mut *mut libc::c_char, 10i32)
+        as libc::c_int;
     if pfd[0].fd < 0i32 || *bb_errno != 0 {
       return b"invalid file descriptor\x00" as *const u8 as *const libc::c_char;
     }
@@ -360,7 +324,7 @@ pub unsafe extern "C" fn shell_builtin_read(
   }
   if !(*params).opt_p.is_null() && isatty(pfd[0].fd) != 0 {
     fputs_unlocked((*params).opt_p, stderr);
-    fflush_all();
+    crate::libbb::xfuncs_printf::fflush_all();
   }
   ifs = (*params).ifs;
   if ifs.is_null() {
@@ -393,7 +357,7 @@ pub unsafe extern "C" fn shell_builtin_read(
   startword = 1i32;
   backslash = 0i32 as smallint;
   if !(*params).opt_t.is_null() {
-    end_ms = end_ms.wrapping_add(monotonic_ms() as libc::c_uint)
+    end_ms = end_ms.wrapping_add(crate::libbb::time::monotonic_ms() as libc::c_uint)
   }
   buffer = std::ptr::null_mut::<libc::c_char>();
   bufpos = 0i32;
@@ -406,12 +370,15 @@ pub unsafe extern "C" fn shell_builtin_read(
     let mut c: libc::c_char = 0;
     let mut timeout: libc::c_int = 0;
     if bufpos & 0xffi32 == 0i32 {
-      buffer =
-        xrealloc(buffer as *mut libc::c_void, (bufpos + 0x101i32) as size_t) as *mut libc::c_char
+      buffer = crate::libbb::xfuncs_printf::xrealloc(
+        buffer as *mut libc::c_void,
+        (bufpos + 0x101i32) as size_t,
+      ) as *mut libc::c_char
     }
     timeout = -1i32;
     if !(*params).opt_t.is_null() {
-      timeout = end_ms.wrapping_sub(monotonic_ms() as libc::c_uint) as libc::c_int;
+      timeout =
+        end_ms.wrapping_sub(crate::libbb::time::monotonic_ms() as libc::c_uint) as libc::c_int;
       /* ^^^^^^^^^^^^^ all values are unsigned,
        * wrapping math is used here, good even if
        * 32-bit unix time wrapped (year 2038+).
@@ -849,7 +816,7 @@ pub unsafe extern "C" fn shell_builtin_ulimit(mut argv: *mut *mut libc::c_char) 
   // is given: ulimit -m. ulimit -f -m prints verbose lines.
   // ulimit -f -f prints same verbose line twice.
   // ulimit -m 10000 -f prints verbose line for -f.
-  argc = string_array_len(argv);
+  argc = crate::libbb::appletlib::string_array_len(argv);
   /* First pass over options: detect -H/-S/-a status,
    * and "bare ulimit" and "only one option" cases
    * by counting other opts.
@@ -939,7 +906,7 @@ pub unsafe extern "C" fn shell_builtin_ulimit(mut argv: *mut *mut libc::c_char) 
       if opt_cnt > 1i32 as libc::c_uint {
         printf(
           b"%-32s(-%c) \x00" as *const u8 as *const libc::c_char,
-          nth_string(limits_help.as_ptr(), i as libc::c_int),
+          crate::libbb::compare_string_array::nth_string(limits_help.as_ptr(), i as libc::c_int),
           limit_chars[i as usize] as libc::c_int,
         );
       }
@@ -952,7 +919,7 @@ pub unsafe extern "C" fn shell_builtin_ulimit(mut argv: *mut *mut libc::c_char) 
                 if ::std::mem::size_of::<rlim_t>() as libc::c_ulong ==
                        ::std::mem::size_of::<libc::c_int>() as libc::c_ulong {
                     val =
-                        bb_strtou(val_str, 0 as *mut *mut libc::c_char, 10i32)
+                        crate::libbb::bb_strtonum::bb_strtou(val_str, 0 as *mut *mut libc::c_char, 10i32)
                             as rlim_t
                 } else if ::std::mem::size_of::<rlim_t>() as libc::c_ulong ==
                               ::std::mem::size_of::<libc::c_long>() as
@@ -962,11 +929,11 @@ pub unsafe extern "C" fn shell_builtin_ulimit(mut argv: *mut *mut libc::c_char) 
                                    10i32)
                 } else {
                     val =
-                        bb_strtoull(val_str, 0 as *mut *mut libc::c_char,
+                        crate::libbb::bb_strtonum::bb_strtoull(val_str, 0 as *mut *mut libc::c_char,
                                     10i32) as rlim_t
                 }
                 if *bb_errno != 0 {
-                    bb_error_msg(b"invalid number \'%s\'\x00" as *const u8 as
+                    crate::libbb::verror_msg::bb_error_msg(b"invalid number \'%s\'\x00" as *const u8 as
                                      *const libc::c_char, val_str);
                     return 1i32
                 }
@@ -985,7 +952,7 @@ pub unsafe extern "C" fn shell_builtin_ulimit(mut argv: *mut *mut libc::c_char) 
             //bb_error_msg("setrlimit(%d, %lld, %lld)", limits_tbl[i].cmd, (long long)limit.rlim_cur, (long long)limit.rlim_max);
             if setrlimit(limits_tbl[i as usize].cmd as __rlimit_resource_t,
                          &mut limit) < 0i32 {
-                bb_simple_perror_msg(b"error setting limit\x00" as *const u8
+                crate::libbb::perror_msg::bb_simple_perror_msg(b"error setting limit\x00" as *const u8
                                          as *const libc::c_char);
                 return 1i32
             }

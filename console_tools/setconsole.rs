@@ -1,17 +1,5 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-}
+
 
 /*
  * setconsole.c - redirect system console output
@@ -55,7 +43,9 @@ pub unsafe extern "C" fn setconsole_main(
   let mut device: *const libc::c_char = b"/dev/tty\x00" as *const u8 as *const libc::c_char;
   let mut reset: libc::c_int = 0;
   /* at most one non-option argument */
-  reset = getopt32(argv, b"^r\x00?1\x00" as *const u8 as *const libc::c_char) as libc::c_int;
+  reset =
+    crate::libbb::getopt32::getopt32(argv, b"^r\x00?1\x00" as *const u8 as *const libc::c_char)
+      as libc::c_int;
   argv = argv.offset((1i32 + reset) as isize);
   if !(*argv).is_null() {
     device = *argv
@@ -65,8 +55,8 @@ pub unsafe extern "C" fn setconsole_main(
   //TODO: fails if TIOCCONS redir is already active to some tty.
   //I think SUSE version first does TIOCCONS on /dev/console fd (iow: resets)
   //then TIOCCONS to new tty?
-  bb_xioctl(
-    xopen(device, 0o1i32),
+  crate::libbb::xfuncs_printf::bb_xioctl(
+    crate::libbb::xfuncs_printf::xopen(device, 0o1i32),
     0x541di32 as libc::c_uint,
     0 as *mut libc::c_void,
     b"TIOCCONS\x00" as *const u8 as *const libc::c_char,

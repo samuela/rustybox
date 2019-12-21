@@ -1,27 +1,5 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn get_console_fd_or_die() -> libc::c_int;
-  #[no_mangle]
-  fn xstrtoull_range(
-    str: *const libc::c_char,
-    b: libc::c_int,
-    l: libc::c_ulonglong,
-    u: libc::c_ulonglong,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn ioctl_or_perror_and_die(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    fmt: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
-}
+
 
 /*
  * setkeycodes
@@ -51,8 +29,9 @@ extern "C" {
 //usage:#define setkeycodes_example_usage
 //usage:       "$ setkeycodes e030 127\n"
 /* From <linux/kd.h> */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct kbkeycode {
   pub scancode: libc::c_uint,
   pub keycode: libc::c_uint,
@@ -66,7 +45,12 @@ unsafe extern "C" fn xstrtoul_range(
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
 ) -> libc::c_ulong {
-  return xstrtoull_range(str, b, l as libc::c_ulonglong, u as libc::c_ulonglong) as libc::c_ulong;
+  return crate::libbb::xatonum::xstrtoull_range(
+    str,
+    b,
+    l as libc::c_ulonglong,
+    u as libc::c_ulonglong,
+  ) as libc::c_ulong;
 }
 #[no_mangle]
 pub unsafe extern "C" fn setkeycodes_main(
@@ -75,9 +59,9 @@ pub unsafe extern "C" fn setkeycodes_main(
 ) -> libc::c_int {
   let mut fd: libc::c_int = 0;
   if argc & 1i32 == 0 || argc < 2i32 {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
-  fd = get_console_fd_or_die();
+  fd = crate::libbb::get_console::get_console_fd_or_die();
   while !(*argv.offset(1)).is_null() {
     let mut a: kbkeycode = kbkeycode {
       scancode: 0,
@@ -95,12 +79,12 @@ pub unsafe extern "C" fn setkeycodes_main(
       sc += 0x80i32
     }
     a.scancode = sc as libc::c_uint;
-    a.keycode = xatou_range(
+    a.keycode = crate::libbb::xatonum::xatou_range(
       *argv.offset(2),
       0i32 as libc::c_uint,
       255i32 as libc::c_uint,
     );
-    ioctl_or_perror_and_die(
+    crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
       fd,
       KDSETKEYCODE as libc::c_int as libc::c_uint,
       &mut a as *mut kbkeycode as *mut libc::c_void,
