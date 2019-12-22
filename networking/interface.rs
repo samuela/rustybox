@@ -422,7 +422,7 @@ pub unsafe extern "C" fn get_aftype(mut name: *const libc::c_char) -> *const aft
     }
     afp = afp.offset(1)
   }
-  return 0 as *const aftype;
+  return std::ptr::null();
 }
 /* Check our protocol family table for this family. */
 unsafe extern "C" fn get_afntype(mut af: libc::c_int) -> *const aftype {
@@ -434,7 +434,7 @@ unsafe extern "C" fn get_afntype(mut af: libc::c_int) -> *const aftype {
     }
     afp = afp.offset(1)
   }
-  return 0 as *const aftype;
+  return std::ptr::null();
 }
 unsafe extern "C" fn add_interface(
   mut ilist: *mut iface_list,
@@ -908,7 +908,7 @@ pub unsafe extern "C" fn get_hwtype(mut name: *const libc::c_char) -> *const hwt
     }
     hwp = hwp.offset(1)
   }
-  return 0 as *const hwtype;
+  return std::ptr::null();
 }
 /* Check our hardware type table for this type. */
 #[no_mangle]
@@ -921,7 +921,7 @@ pub unsafe extern "C" fn get_hwntype(mut type_0: libc::c_int) -> *const hwtype {
     }
     hwp = hwp.offset(1)
   }
-  return 0 as *const hwtype;
+  return std::ptr::null();
 }
 /* return 1 if address is all zeros */
 unsafe extern "C" fn hw_null_address(

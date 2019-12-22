@@ -268,7 +268,7 @@ unsafe extern "C" fn getNum(
           crate::libbb::verror_msg::bb_simple_error_msg(
             b"bad mark name\x00" as *const u8 as *const libc::c_char,
           );
-          return 0 as *const libc::c_char;
+          return std::ptr::null();
         }
         haveNum = 1i32 as smallint;
         num = (*ptr_to_globals).marks[(*cp as libc::c_int - 'a' as i32) as libc::c_uint as usize];
@@ -292,7 +292,7 @@ unsafe extern "C" fn getNum(
           (*ptr_to_globals).lastNum,
         );
         if num == 0 {
-          return 0 as *const libc::c_char;
+          return std::ptr::null();
         }
         haveNum = 1i32 as smallint
       }

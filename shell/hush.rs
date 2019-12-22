@@ -1943,7 +1943,7 @@ unsafe extern "C" fn get_local_var_value(mut name: *const libc::c_char) -> *cons
     );
     return (*ptr_to_globals).epoch_buf.as_mut_ptr();
   }
-  return 0 as *const libc::c_char;
+  return std::ptr::null();
 }
 unsafe extern "C" fn handle_changed_special_names(
   mut name: *const libc::c_char,
@@ -3473,7 +3473,7 @@ unsafe extern "C" fn match_reserved_word(mut word: *mut o_string) -> *const rese
     }
     r = r.offset(1)
   }
-  return 0 as *const reserved_combo;
+  return std::ptr::null();
 }
 /* Return NULL: not a keyword, else: keyword
  */
@@ -3489,7 +3489,7 @@ unsafe extern "C" fn reserved_word(mut ctx: *mut parse_context) -> *const reserv
   };
   let mut r: *const reserved_combo = std::ptr::null();
   if (*ctx).word.has_quoted_part != 0 {
-    return 0 as *const reserved_combo;
+    return std::ptr::null();
   }
   r = match_reserved_word(&mut (*ctx).word);
   if r.is_null() {
@@ -7060,7 +7060,7 @@ unsafe extern "C" fn first_special_char_in_vararg(
 ) -> *const libc::c_char {
   loop {
     if *cp == 0 {
-      return 0 as *const libc::c_char;
+      return std::ptr::null();
     }
     if *cp as libc::c_int == '$' as i32 {
       return cp;
@@ -9017,7 +9017,7 @@ unsafe extern "C" fn find_builtin_helper(
       return x;
     }
   }
-  return 0 as *const built_in_command;
+  return std::ptr::null();
 }
 unsafe extern "C" fn find_builtin1(mut name: *const libc::c_char) -> *const built_in_command {
   return find_builtin_helper(
