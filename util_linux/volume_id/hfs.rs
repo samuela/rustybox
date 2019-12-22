@@ -292,16 +292,16 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
   let mut alloc_first_block: libc::c_uint = 0;
   let mut embed_first_block: libc::c_uint = 0;
   let mut record_count: libc::c_uint = 0;
-  let mut hfsplus: *mut hfsplus_vol_header = 0 as *mut hfsplus_vol_header;
-  let mut descr: *mut hfsplus_bnode_descriptor = 0 as *mut hfsplus_bnode_descriptor;
-  let mut bnode: *mut hfsplus_bheader_record = 0 as *mut hfsplus_bheader_record;
-  let mut key: *mut hfsplus_catalog_key = 0 as *mut hfsplus_catalog_key;
+  let mut hfsplus: *mut hfsplus_vol_header = std::ptr::null_mut();
+  let mut descr: *mut hfsplus_bnode_descriptor = std::ptr::null_mut();
+  let mut bnode: *mut hfsplus_bheader_record = std::ptr::null_mut();
+  let mut key: *mut hfsplus_catalog_key = std::ptr::null_mut();
   let mut label_len: libc::c_uint = 0;
   let mut extents: [hfsplus_extent; 8] = [hfsplus_extent {
     start_block: 0,
     block_count: 0,
   }; 8];
-  let mut hfs: *mut hfs_mdb = 0 as *mut hfs_mdb;
+  let mut hfs: *mut hfs_mdb = std::ptr::null_mut();
   let mut buf: *const u8 = 0 as *const u8;
   buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,

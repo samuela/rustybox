@@ -58,7 +58,7 @@ unsafe extern "C" fn scale(mut g: *mut globals, mut d: libc::c_ulong) -> libc::c
 #[inline(never)]
 unsafe extern "C" fn parse_meminfo(mut g: *mut globals) -> libc::c_uint {
   let mut buf: [libc::c_char; 60] = [0; 60]; /* actual lines we expect are ~30 chars or less */
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut seen_cached_and_available_and_reclaimable: libc::c_int = 0;
   fp =
     crate::libbb::wfopen::xfopen_for_read(b"/proc/meminfo\x00" as *const u8 as *const libc::c_char);

@@ -881,14 +881,14 @@ unsafe extern "C" fn fill_envp(
   mut option: *const u8,
   mut option_end: *const u8,
 ) -> *mut *mut libc::c_char {
-  let mut envp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut curr: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut envp: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut curr: *mut *mut libc::c_char = std::ptr::null_mut();
   let ref mut fresh16 = (*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
     (COMMON_BUFSIZE as libc::c_int as libc::c_ulong)
       .wrapping_sub(::std::mem::size_of::<client6_data_t>() as libc::c_ulong) as isize,
   ) as *mut libc::c_char as *mut client6_data_t))
     .env_ptr;
-  *fresh16 = 0 as *mut *mut libc::c_char;
+  *fresh16 = std::ptr::null_mut();
   (*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
     (COMMON_BUFSIZE as libc::c_int as libc::c_ulong)
       .wrapping_sub(::std::mem::size_of::<client6_data_t>() as libc::c_ulong) as isize,
@@ -925,8 +925,8 @@ unsafe extern "C" fn d6_run_script(
   mut option_end: *const u8,
   mut name: *const libc::c_char,
 ) {
-  let mut envp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut curr: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut envp: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut curr: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut argv: [*mut libc::c_char; 3] = [0 as *mut libc::c_char; 3];
   envp = fill_envp(option, option_end);
   /* call script */
@@ -993,8 +993,8 @@ unsafe extern "C" fn init_d6_packet(
   mut type_0: libc::c_char,
   mut xid: u32,
 ) -> *mut u8 {
-  let mut ptr: *mut u8 = 0 as *mut u8;
-  let mut clientid: *mut d6_option = 0 as *mut d6_option;
+  let mut ptr: *mut u8 = std::ptr::null_mut();
+  let mut clientid: *mut d6_option = std::ptr::null_mut();
   let mut secs: libc::c_uint = 0;
   memset(
     packet as *mut libc::c_void,
@@ -1094,7 +1094,7 @@ unsafe extern "C" fn init_d6_packet(
   ) as *mut u8;
 }
 unsafe extern "C" fn add_d6_client_options(mut ptr: *mut u8) -> *mut u8 {
-  let mut curr: *mut option_set = 0 as *mut option_set;
+  let mut curr: *mut option_set = std::ptr::null_mut();
   let mut start: *mut u8 = ptr;
   let mut option: libc::c_uint = 0;
   let mut len: u16 = 0;
@@ -1216,7 +1216,7 @@ unsafe extern "C" fn d6_mcast_from_client_data_ifindex(
 #[inline(never)]
 unsafe extern "C" fn send_d6_info_request(mut xid: u32) -> libc::c_int {
   let mut packet: d6_packet = std::mem::zeroed();
-  let mut opt_ptr: *mut u8 = 0 as *mut u8;
+  let mut opt_ptr: *mut u8 = std::ptr::null_mut();
   /* Fill in: msg type, client id */
   opt_ptr = init_d6_packet(&mut packet, 11i32 as libc::c_char, xid);
   /* Add options:
@@ -1317,7 +1317,7 @@ unsafe extern "C" fn send_d6_discover(
   mut requested_ipv6: *mut in6_addr,
 ) -> libc::c_int {
   let mut packet: d6_packet = std::mem::zeroed();
-  let mut opt_ptr: *mut u8 = 0 as *mut u8;
+  let mut opt_ptr: *mut u8 = std::ptr::null_mut();
   let mut len: libc::c_uint = 0;
   /* Fill in: msg type, client id */
   opt_ptr = init_d6_packet(&mut packet, 1i32 as libc::c_char, xid);
@@ -1334,7 +1334,7 @@ unsafe extern "C" fn send_d6_discover(
       .wrapping_sub(::std::mem::size_of::<client6_data_t>() as libc::c_ulong) as isize,
   ) as *mut libc::c_char as *mut client6_data_t))
     .ia_na;
-  *fresh28 = 0 as *mut d6_option;
+  *fresh28 = std::ptr::null_mut();
   if option_mask32 & OPT_r as libc::c_int as libc::c_uint != 0 {
     len = if !requested_ipv6.is_null() {
       (2i32 + 2i32 + 4i32 + 4i32 + 4i32 + 2i32 + 2i32 + 16i32 + 4i32) + 4i32
@@ -1408,7 +1408,7 @@ unsafe extern "C" fn send_d6_discover(
       .wrapping_sub(::std::mem::size_of::<client6_data_t>() as libc::c_ulong) as isize,
   ) as *mut libc::c_char as *mut client6_data_t))
     .ia_pd;
-  *fresh30 = 0 as *mut d6_option;
+  *fresh30 = std::ptr::null_mut();
   if option_mask32 & OPT_d as libc::c_int as libc::c_uint != 0 {
     len = (2i32 + 2i32 + 4i32 + 4i32 + 4i32) as libc::c_uint;
     let ref mut fresh31 = (*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
@@ -1490,7 +1490,7 @@ unsafe extern "C" fn send_d6_discover(
 #[inline(never)]
 unsafe extern "C" fn send_d6_select(mut xid: u32) -> libc::c_int {
   let mut packet: d6_packet = std::mem::zeroed();
-  let mut opt_ptr: *mut u8 = 0 as *mut u8;
+  let mut opt_ptr: *mut u8 = std::ptr::null_mut();
   /* Fill in: msg type, client id */
   opt_ptr = init_d6_packet(&mut packet, 3i32 as libc::c_char, xid);
   /* server id */
@@ -1624,7 +1624,7 @@ unsafe extern "C" fn send_d6_renew(
   mut our_cur_ipv6: *mut in6_addr,
 ) -> libc::c_int {
   let mut packet: d6_packet = std::mem::zeroed();
-  let mut opt_ptr: *mut u8 = 0 as *mut u8;
+  let mut opt_ptr: *mut u8 = std::ptr::null_mut();
   /* Fill in: msg type, client id */
   opt_ptr = init_d6_packet(&mut packet, 3i32 as libc::c_char, xid);
   /* server id */
@@ -1727,7 +1727,7 @@ unsafe extern "C" fn send_d6_release(
   mut our_cur_ipv6: *mut in6_addr,
 ) -> libc::c_int {
   let mut packet: d6_packet = std::mem::zeroed();
-  let mut opt_ptr: *mut u8 = 0 as *mut u8;
+  let mut opt_ptr: *mut u8 = std::ptr::null_mut();
   /* Fill in: msg type, client id */
   opt_ptr = init_d6_packet(&mut packet, 8i32 as libc::c_char, random_xid());
   /* server id */
@@ -2305,20 +2305,20 @@ pub unsafe extern "C" fn udhcpc6_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut lease_seconds: u32 = 0; /* must be signed */
-  let mut option: *mut d6_option = 0 as *mut d6_option;
+  let mut option: *mut d6_option = std::ptr::null_mut();
   let mut address_timeout: libc::c_uint = 0;
   let mut prefix_timeout: libc::c_uint = 0;
   let mut current_block: u64;
   let mut str_r: *const libc::c_char = 0 as *const libc::c_char;
-  let mut clientid_mac_ptr: *mut libc::c_void = 0 as *mut libc::c_void;
-  let mut list_O: *mut llist_t = 0 as *mut llist_t;
-  let mut list_x: *mut llist_t = 0 as *mut llist_t;
+  let mut clientid_mac_ptr: *mut libc::c_void = std::ptr::null_mut();
+  let mut list_O: *mut llist_t = std::ptr::null_mut();
+  let mut list_x: *mut llist_t = std::ptr::null_mut();
   let mut tryagain_timeout: libc::c_int = 20i32;
   let mut discover_timeout: libc::c_int = 3i32;
   let mut discover_retries: libc::c_int = 3i32;
   let mut srv6_buf: in6_addr = std::mem::zeroed();
   let mut ipv6_buf: in6_addr = std::mem::zeroed();
-  let mut requested_ipv6: *mut in6_addr = 0 as *mut in6_addr;
+  let mut requested_ipv6: *mut in6_addr = std::ptr::null_mut();
   let mut xid: u32 = 0i32 as u32;
   let mut packet_num: libc::c_int = 0;
   let mut timeout: libc::c_int = 0;
@@ -2376,7 +2376,7 @@ pub unsafe extern "C" fn udhcpc6_main(
     &mut list_x as *mut *mut llist_t,
     &mut dhcp_verbose as *mut libc::c_uint,
   );
-  requested_ipv6 = 0 as *mut in6_addr;
+  requested_ipv6 = std::ptr::null_mut();
   option_mask32 |= OPT_r as libc::c_int as libc::c_uint;
   if opt & OPT_l as libc::c_int as libc::c_uint != 0 {
     /* for -l, do not require IPv6 assignment from server */
@@ -2480,7 +2480,7 @@ pub unsafe extern "C" fn udhcpc6_main(
     return 1i32;
   }
   /* Create client ID based on mac, set clientid_mac_ptr */
-  let mut clientid: *mut d6_option = 0 as *mut d6_option; /* DUID-LL */
+  let mut clientid: *mut d6_option = std::ptr::null_mut(); /* DUID-LL */
   clientid = crate::libbb::xfuncs_printf::xzalloc((2i32 + 2i32 + 2i32 + 2i32 + 6i32) as size_t)
     as *mut d6_option; /* ethernet */
   (*clientid).code = 1i32 as u8;
@@ -2538,7 +2538,7 @@ pub unsafe extern "C" fn udhcpc6_main(
     let mut tv: libc::c_int = 0;
     let mut pfds: [pollfd; 2] = [std::mem::zeroed(); 2]; /* for (;;) - main loop ends */
     let mut packet: d6_packet = std::mem::zeroed();
-    let mut packet_end: *mut u8 = 0 as *mut u8;
+    let mut packet_end: *mut u8 = std::ptr::null_mut();
     /* back to main loop */
     /* silence "uninitialized!" warning */
     let mut timestamp_before_wait: libc::c_uint = 0;
@@ -3209,7 +3209,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                   continue;
                 }
                 lease_seconds = 0;
-                option = 0 as *mut d6_option;
+                option = std::ptr::null_mut();
                 address_timeout = 0;
                 prefix_timeout = 0;
                 /* back to main loop */
@@ -3259,7 +3259,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                 .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
                 as *mut libc::c_char as *mut client_data_t))
                 .first_secs = 0i32 as libc::c_uint;
-              requested_ipv6 = 0 as *mut in6_addr;
+              requested_ipv6 = std::ptr::null_mut();
               timeout = 0i32;
               packet_num = 0i32;
               already_waited_sec = 0i32 as libc::c_uint;
@@ -3395,7 +3395,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                    * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
                    */
                   if option_mask32 & OPT_r as libc::c_int as libc::c_uint != 0 {
-                    let mut iaaddr: *mut d6_option = 0 as *mut d6_option;
+                    let mut iaaddr: *mut d6_option = std::ptr::null_mut();
                     free(
                       (*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
                         (COMMON_BUFSIZE as libc::c_int as libc::c_ulong)
@@ -3537,7 +3537,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                     }
                   }
                   if option_mask32 & OPT_d as libc::c_int as libc::c_uint != 0 {
-                    let mut iaprefix: *mut d6_option = 0 as *mut d6_option;
+                    let mut iaprefix: *mut d6_option = std::ptr::null_mut();
                     free(
                       (*(&mut *bb_common_bufsiz1.as_mut_ptr().offset(
                         (COMMON_BUFSIZE as libc::c_int as libc::c_ulong)

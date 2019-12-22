@@ -87,7 +87,7 @@ pub unsafe extern "C" fn tail_main(
   let mut nfiles: libc::c_uint = 0;
   let mut i: libc::c_int = 0;
   let mut opt: libc::c_int = 0;
-  let mut fds: *mut libc::c_int = 0 as *mut libc::c_int;
+  let mut fds: *mut libc::c_int = std::ptr::null_mut();
   let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
   let mut prev_fd: libc::c_int = 0;
   /* Allow legacy syntax of an initial numeric option without -n. */

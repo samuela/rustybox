@@ -32,7 +32,7 @@ pub unsafe extern "C" fn strings_main(
   let mut status: libc::c_int = 0i32;
   let mut count: libc::c_uint = 0;
   let mut offset: off_t = 0;
-  let mut file: *mut FILE = 0 as *mut FILE;
+  let mut file: *mut FILE = std::ptr::null_mut();
   let mut string: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fmt: *const libc::c_char = b"%s: \x00" as *const u8 as *const libc::c_char;
   let mut n_arg: *const libc::c_char = b"4\x00" as *const u8 as *const libc::c_char;

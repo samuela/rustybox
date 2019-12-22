@@ -402,7 +402,7 @@ unsafe extern "C" fn is_ip_address(mut string: *const libc::c_char) -> libc::c_i
 }
 unsafe extern "C" fn open_socket(mut lsa: *mut len_and_sockaddr) -> *mut FILE {
   let mut fd: libc::c_int = 0;
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   set_alarm();
   fd = crate::libbb::xconnect::xconnect_stream(lsa);
   (*ptr_to_globals).die_if_timed_out = 0i32 as smallint;
@@ -821,7 +821,7 @@ unsafe extern "C" fn prepare_ftp_session(
   mut lsa: *mut len_and_sockaddr,
 ) -> *mut FILE {
   let mut current_block: u64;
-  let mut sfp: *mut FILE = 0 as *mut FILE;
+  let mut sfp: *mut FILE = std::ptr::null_mut();
   let mut pass: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut port: libc::c_int = 0;
   sfp = open_socket(lsa);
@@ -1217,9 +1217,9 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
   let mut current_block: u64;
   let mut use_proxy: bool = false;
   let mut redir_limit: libc::c_int = 0;
-  let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  let mut sfp: *mut FILE = 0 as *mut FILE;
-  let mut dfp: *mut FILE = 0 as *mut FILE;
+  let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
+  let mut sfp: *mut FILE = std::ptr::null_mut();
+  let mut dfp: *mut FILE = std::ptr::null_mut();
   let mut fname_out_alloc: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut redirected_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut server: host_info = host_info {
@@ -1748,7 +1748,7 @@ pub unsafe extern "C" fn wget_main(
     -16, 110, 111, 45, 104, 111, 115, 116, 45, 100, 105, 114, 101, 99, 116, 111, 114, 105, 101,
     115, 0, 0, -16, 110, 111, 45, 112, 97, 114, 101, 110, 116, 0, 0, -16, 0,
   ];
-  let mut headers_llist: *mut llist_t = 0 as *mut llist_t;
+  let mut headers_llist: *mut llist_t = std::ptr::null_mut();
   let ref mut fresh6 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
   *fresh6 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)

@@ -138,7 +138,7 @@ pub unsafe extern "C" fn volume_id_probe_btrfs(mut id: *mut volume_id) -> libc::
   // minimum btrfs size is 256M
   // so we never step out the device if we analyze
   // the first and the second superblocks
-  let mut sb: *mut btrfs_super_block = 0 as *mut btrfs_super_block;
+  let mut sb: *mut btrfs_super_block = std::ptr::null_mut();
   let mut off: libc::c_uint = 64i32 as libc::c_uint;
   while off < (64i32 * 1024i32 * 1024i32) as libc::c_uint {
     off = off.wrapping_mul(1024i32 as libc::c_uint);

@@ -117,7 +117,7 @@ unsafe extern "C" fn cpio_pad4(mut size: off_t) -> off_t {
  * It's ok to exit instead of return. */
 #[inline(never)]
 unsafe extern "C" fn cpio_o() -> libc::c_int {
-  let mut links: *mut inodes_s = 0 as *mut inodes_s; /* output bytes count */
+  let mut links: *mut inodes_s = std::ptr::null_mut(); /* output bytes count */
   let mut bytes: off_t = 0i32 as off_t; /* line == NULL: EOF */
   let mut current_block_47: u64;
   loop {
@@ -184,8 +184,8 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
         if !(st.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint)
           && st.st_nlink > 1i32 as libc::c_ulong
         {
-          let mut n: *mut name_s = 0 as *mut name_s;
-          let mut l: *mut inodes_s = 0 as *mut inodes_s;
+          let mut n: *mut name_s = std::ptr::null_mut();
+          let mut l: *mut inodes_s = std::ptr::null_mut();
           /* Do we have this hardlink remembered? */
           l = links;
           loop {
@@ -318,7 +318,7 @@ pub unsafe extern "C" fn cpio_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut archive_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;
+  let mut archive_handle: *mut archive_handle_t = std::ptr::null_mut();
   let mut cpio_filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut cpio_owner: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut cpio_fmt: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;

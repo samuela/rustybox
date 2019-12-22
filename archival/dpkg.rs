@@ -453,7 +453,7 @@ unsafe extern "C" fn search_for_provides(
 ) -> libc::c_int {
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
-  let mut p: *mut common_node_t = 0 as *mut common_node_t;
+  let mut p: *mut common_node_t = std::ptr::null_mut();
   i = start_at + 1i32;
   while i < 10007i32 {
     p = (*ptr_to_globals).package_hashtable[i as usize];
@@ -510,8 +510,8 @@ unsafe extern "C" fn add_split_dependencies(
   let mut field: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut field2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut version: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut edge: *mut edge_t = 0 as *mut edge_t;
-  let mut or_edge: *mut edge_t = 0 as *mut edge_t;
+  let mut edge: *mut edge_t = std::ptr::null_mut();
+  let mut or_edge: *mut edge_t = std::ptr::null_mut();
   let mut offset_ch: libc::c_int = 0;
   field = strtok_r(
     line,
@@ -527,7 +527,7 @@ unsafe extern "C" fn add_split_dependencies(
       b"|\x00" as *const u8 as *const libc::c_char,
       &mut line_ptr2,
     );
-    or_edge = 0 as *mut edge_t;
+    or_edge = std::ptr::null_mut();
     if (edge_type == EDGE_DEPENDS as libc::c_int as libc::c_uint
       || edge_type == EDGE_PRE_DEPENDS as libc::c_int as libc::c_uint)
       && strcmp(field, field2) != 0i32
@@ -968,10 +968,10 @@ unsafe extern "C" fn describe_status(mut status_num: libc::c_int) -> *const libc
   return b"is not installed or flagged to be installed\x00" as *const u8 as *const libc::c_char;
 }
 unsafe extern "C" fn index_status_file(mut filename: *const libc::c_char) {
-  let mut status_file: *mut FILE = 0 as *mut FILE;
+  let mut status_file: *mut FILE = std::ptr::null_mut();
   let mut control_buffer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut status_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut status_node: *mut status_node_t = 0 as *mut status_node_t;
+  let mut status_node: *mut status_node_t = std::ptr::null_mut();
   let mut status_num: libc::c_uint = 0;
   status_file = crate::libbb::wfopen::xfopen_for_read(filename);
   loop {
@@ -1359,7 +1359,7 @@ unsafe extern "C" fn check_deps(
   mut deb_start: libc::c_int,
 ) -> libc::c_int
 /*, int dep_max_count - ?? */ {
-  let mut conflicts: *mut libc::c_int = 0 as *mut libc::c_int;
+  let mut conflicts: *mut libc::c_int = std::ptr::null_mut();
   let mut conflicts_num: libc::c_int = 0i32;
   let mut i: libc::c_int = deb_start;
   let mut j: libc::c_int = 0;
@@ -1652,8 +1652,8 @@ unsafe extern "C" fn check_deps(
   return 1i32;
 }
 unsafe extern "C" fn create_list(mut filename: *const libc::c_char) -> *mut *mut libc::c_char {
-  let mut list_stream: *mut FILE = 0 as *mut FILE;
-  let mut file_list: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut list_stream: *mut FILE = std::ptr::null_mut();
+  let mut file_list: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut count: libc::c_int = 0;
   /* don't use [xw]fopen here, handle error ourself */
@@ -1661,7 +1661,7 @@ unsafe extern "C" fn create_list(mut filename: *const libc::c_char) -> *mut *mut
   if list_stream.is_null() {
     return 0 as *mut *mut libc::c_char;
   }
-  file_list = 0 as *mut *mut libc::c_char;
+  file_list = std::ptr::null_mut();
   count = 0i32;
   loop {
     line = crate::libbb::get_line_from_file::xmalloc_fgetline(list_stream);
@@ -1810,7 +1810,7 @@ unsafe extern "C" fn all_control_list(
   mut package_name: *const libc::c_char,
 ) -> *mut *mut libc::c_char {
   let mut i: libc::c_uint = 0i32 as libc::c_uint;
-  let mut remove_files: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut remove_files: *mut *mut libc::c_char = std::ptr::null_mut();
   /* Create a list of all /var/lib/dpkg/info/<package> files */
   remove_files = crate::libbb::xfuncs_printf::xzalloc(
     (::std::mem::size_of::<[*const libc::c_char; 10]>() as libc::c_ulong)
@@ -1905,8 +1905,8 @@ unsafe extern "C" fn remove_package(package_num: libc::c_uint, mut noisy: libc::
     [(*(*ptr_to_globals).package_hashtable[package_num as usize]).version() as usize];
   let status_num: libc::c_uint = search_status_hashtable(package_name);
   let package_name_length: libc::c_int = strlen(package_name) as libc::c_int;
-  let mut remove_files: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut exclude_files: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut remove_files: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut exclude_files: *mut *mut libc::c_char = std::ptr::null_mut();
   let vla = (package_name_length + 25i32) as usize;
   let mut list_name: Vec<libc::c_char> = ::std::vec::from_elem(0, vla);
   let vla_0 = (package_name_length + 30i32) as usize;
@@ -1977,8 +1977,8 @@ unsafe extern "C" fn purge_package(package_num: libc::c_uint) {
   let mut package_version: *const libc::c_char = (*ptr_to_globals).name_hashtable
     [(*(*ptr_to_globals).package_hashtable[package_num as usize]).version() as usize];
   let status_num: libc::c_uint = search_status_hashtable(package_name);
-  let mut remove_files: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut exclude_files: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut remove_files: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut exclude_files: *mut *mut libc::c_char = std::ptr::null_mut();
   let vla = strlen(package_name).wrapping_add(25i32 as libc::c_ulong) as usize;
   let mut list_name: Vec<libc::c_char> = ::std::vec::from_elem(0, vla);
   printf(
@@ -2034,7 +2034,7 @@ unsafe extern "C" fn purge_package(package_num: libc::c_uint) {
 unsafe extern "C" fn init_archive_deb_ar(
   mut filename: *const libc::c_char,
 ) -> *mut archive_handle_t {
-  let mut ar_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;
+  let mut ar_handle: *mut archive_handle_t = std::ptr::null_mut();
   /* Setup an ar archive handle that refers to the gzip sub archive */
   ar_handle = crate::archival::libarchive::init_handle::init_handle();
   (*ar_handle).filter = Some(
@@ -2045,7 +2045,7 @@ unsafe extern "C" fn init_archive_deb_ar(
   return ar_handle;
 }
 unsafe extern "C" fn init_archive_deb_control(mut ar_handle: *mut archive_handle_t) {
-  let mut tar_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;
+  let mut tar_handle: *mut archive_handle_t = std::ptr::null_mut();
   /* Setup the tar archive handle */
   tar_handle = crate::archival::libarchive::init_handle::init_handle();
   (*tar_handle).src_fd = (*ar_handle).src_fd;
@@ -2074,7 +2074,7 @@ unsafe extern "C" fn init_archive_deb_control(mut ar_handle: *mut archive_handle
   (*ar_handle).dpkg__sub_archive = tar_handle;
 }
 unsafe extern "C" fn init_archive_deb_data(mut ar_handle: *mut archive_handle_t) {
-  let mut tar_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;
+  let mut tar_handle: *mut archive_handle_t = std::ptr::null_mut();
   /* Setup the tar archive handle */
   tar_handle = crate::archival::libarchive::init_handle::init_handle();
   (*tar_handle).src_fd = (*ar_handle).src_fd;
@@ -2137,7 +2137,7 @@ unsafe extern "C" fn append_control_file_to_llist(
   mut control_name: *const libc::c_char,
   mut ll: *mut *mut llist_t,
 ) {
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   filename = crate::libbb::xfuncs_printf::xasprintf(
@@ -2272,13 +2272,13 @@ unsafe extern "C" fn unpack_package(mut deb_file: *mut deb_file_t) {
     (*(*ptr_to_globals).status_hashtable[status_num as usize]).package();
   let mut info_prefix: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut list_filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut archive_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;
-  let mut out_stream: *mut FILE = 0 as *mut FILE;
-  let mut accept_list: *mut llist_t = 0 as *mut llist_t;
-  let mut conffile_list: *mut llist_t = 0 as *mut llist_t;
+  let mut archive_handle: *mut archive_handle_t = std::ptr::null_mut();
+  let mut out_stream: *mut FILE = std::ptr::null_mut();
+  let mut accept_list: *mut llist_t = std::ptr::null_mut();
+  let mut conffile_list: *mut llist_t = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   /* If existing version, remove it first */
-  conffile_list = 0 as *mut llist_t;
+  conffile_list = std::ptr::null_mut();
   if strcmp(
     (*ptr_to_globals).name_hashtable[get_status(status_num, 3i32) as usize],
     b"installed\x00" as *const u8 as *const libc::c_char,
@@ -2316,7 +2316,7 @@ unsafe extern "C" fn unpack_package(mut deb_file: *mut deb_file_t) {
   );
   archive_handle = init_archive_deb_ar((*deb_file).filename);
   init_archive_deb_control(archive_handle);
-  accept_list = 0 as *mut llist_t;
+  accept_list = std::ptr::null_mut();
   i = 0i32;
   while (i as libc::c_uint)
     < (::std::mem::size_of::<[*const libc::c_char; 10]>() as libc::c_ulong)
@@ -2439,8 +2439,8 @@ pub unsafe extern "C" fn dpkg_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut deb_file: *mut *mut deb_file_t = 0 as *mut *mut deb_file_t;
-  let mut status_node: *mut status_node_t = 0 as *mut status_node_t;
+  let mut deb_file: *mut *mut deb_file_t = std::ptr::null_mut();
+  let mut status_node: *mut status_node_t = std::ptr::null_mut();
   let mut str_f: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;
   let mut package_num: libc::c_int = 0;
@@ -2516,8 +2516,8 @@ pub unsafe extern "C" fn dpkg_main(
         as *mut deb_file_t;
     if opt & (OPT_install as libc::c_int | OPT_unpack as libc::c_int) != 0 {
       /* -i/-u: require filename */
-      let mut archive_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;
-      let mut control_list: *mut llist_t = 0 as *mut llist_t;
+      let mut archive_handle: *mut archive_handle_t = std::ptr::null_mut();
+      let mut control_list: *mut llist_t = std::ptr::null_mut();
       /* Extract the control file */
       crate::libbb::llist::llist_add_to(
         &mut control_list,
@@ -2663,7 +2663,7 @@ pub unsafe extern "C" fn dpkg_main(
     );
   }
   let ref mut fresh17 = *deb_file.offset(deb_count as isize);
-  *fresh17 = 0 as *mut deb_file_t;
+  *fresh17 = std::ptr::null_mut();
   /* Check that the deb file arguments are installable */
   if opt & OPT_force_ignore_depends as libc::c_int == 0 {
     if check_deps(deb_file, 0i32) == 0 {

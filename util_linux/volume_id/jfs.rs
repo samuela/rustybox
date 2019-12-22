@@ -124,7 +124,7 @@ pub struct jfs_super_block {
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_jfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
-  let mut js: *mut jfs_super_block = 0 as *mut jfs_super_block;
+  let mut js: *mut jfs_super_block = std::ptr::null_mut();
   js = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     (0i32 as u64).wrapping_add(0x8000i32 as libc::c_ulong),

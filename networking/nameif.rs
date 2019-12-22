@@ -173,7 +173,7 @@ unsafe extern "C" fn nameif_parse_selector(
   mut ch: *mut ethtable_t,
   mut selector: *mut libc::c_char,
 ) {
-  let mut lmac: *mut ether_addr = 0 as *mut ether_addr;
+  let mut lmac: *mut ether_addr = std::ptr::null_mut();
   let mut found_selector: libc::c_int = 0i32;
   while *selector != 0 {
     let mut next: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -253,7 +253,7 @@ unsafe extern "C" fn prepend_new_eth_table(
   mut ifname: *mut libc::c_char,
   mut selector: *mut libc::c_char,
 ) {
-  let mut ch: *mut ethtable_t = 0 as *mut ethtable_t;
+  let mut ch: *mut ethtable_t = std::ptr::null_mut();
   if strlen(ifname) >= 16i32 as libc::c_ulong {
     crate::libbb::verror_msg::bb_error_msg_and_die(
       b"interface name \'%s\' too long\x00" as *const u8 as *const libc::c_char,
@@ -275,11 +275,11 @@ pub unsafe extern "C" fn nameif_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut clist: *mut ethtable_t = 0 as *mut ethtable_t;
+  let mut clist: *mut ethtable_t = std::ptr::null_mut();
   let mut fname: *const libc::c_char = b"/etc/mactab\x00" as *const u8 as *const libc::c_char;
   let mut ctl_sk: libc::c_int = 0;
-  let mut ch: *mut ethtable_t = 0 as *mut ethtable_t;
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut ch: *mut ethtable_t = std::ptr::null_mut();
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   if 1i32 as libc::c_uint
     & crate::libbb::getopt32::getopt32(

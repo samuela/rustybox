@@ -9,7 +9,7 @@ use libc::uid_t;
  */
 #[no_mangle]
 pub unsafe extern "C" fn init_handle() -> *mut archive_handle_t {
-  let mut archive_handle: *mut archive_handle_t = 0 as *mut archive_handle_t;
+  let mut archive_handle: *mut archive_handle_t = std::ptr::null_mut();
   /* Initialize default values */
   archive_handle = crate::libbb::xfuncs_printf::xzalloc(
     ::std::mem::size_of::<archive_handle_t>() as libc::c_ulong

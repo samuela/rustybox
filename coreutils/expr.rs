@@ -104,7 +104,7 @@ pub const NMATCH: C2RustUnnamed_2 = 2;
 pub type C2RustUnnamed_2 = libc::c_uint;
 /* Return a VALUE for I.  */
 unsafe extern "C" fn int_value(mut i: arith_t) -> *mut VALUE {
-  let mut v: *mut VALUE = 0 as *mut VALUE;
+  let mut v: *mut VALUE = std::ptr::null_mut();
   v = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<VALUE>() as libc::c_ulong)
     as *mut VALUE;
   if INTEGER as libc::c_int != 0 {
@@ -116,7 +116,7 @@ unsafe extern "C" fn int_value(mut i: arith_t) -> *mut VALUE {
 }
 /* Return a VALUE for S.  */
 unsafe extern "C" fn str_value(mut s: *const libc::c_char) -> *mut VALUE {
-  let mut v: *mut VALUE = 0 as *mut VALUE;
+  let mut v: *mut VALUE = std::ptr::null_mut();
   v = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<VALUE>() as libc::c_ulong)
     as *mut VALUE;
   if STRING as libc::c_int != 0 {
@@ -260,7 +260,7 @@ unsafe extern "C" fn arithmetic_common(
 SV is the VALUE for the lhs (the string),
 PV is the VALUE for the rhs (the pattern).  */
 unsafe extern "C" fn docolon(mut sv: *mut VALUE, mut pv: *mut VALUE) -> *mut VALUE {
-  let mut v: *mut VALUE = 0 as *mut VALUE;
+  let mut v: *mut VALUE = std::ptr::null_mut();
   let mut re_buffer: regex_t = std::mem::zeroed();
   let mut re_regs: [regmatch_t; 2] = [regmatch_t { rm_so: 0, rm_eo: 0 }; 2];
   tostring(sv);
@@ -309,7 +309,7 @@ unsafe extern "C" fn docolon(mut sv: *mut VALUE, mut pv: *mut VALUE) -> *mut VAL
 /* Match failed -- return the right kind of null.  */
 /* Handle bare operands and ( expr ) syntax.  */
 unsafe extern "C" fn eval7() -> *mut VALUE {
-  let mut v: *mut VALUE = 0 as *mut VALUE;
+  let mut v: *mut VALUE = std::ptr::null_mut();
   if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args).is_null() {
     crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"syntax error\x00" as *const u8 as *const libc::c_char,
@@ -344,12 +344,12 @@ unsafe extern "C" fn eval6() -> *mut VALUE {
     113, 117, 111, 116, 101, 0, 108, 101, 110, 103, 116, 104, 0, 109, 97, 116, 99, 104, 0, 105,
     110, 100, 101, 120, 0, 115, 117, 98, 115, 116, 114, 0, 0,
   ]; /* silence gcc */
-  let mut r: *mut VALUE = 0 as *mut VALUE; /* silence gcc */
-  let mut i1: *mut VALUE = 0 as *mut VALUE;
-  let mut i2: *mut VALUE = 0 as *mut VALUE;
-  let mut l: *mut VALUE = 0 as *mut VALUE;
+  let mut r: *mut VALUE = std::ptr::null_mut(); /* silence gcc */
+  let mut i1: *mut VALUE = std::ptr::null_mut();
+  let mut i2: *mut VALUE = std::ptr::null_mut();
+  let mut l: *mut VALUE = std::ptr::null_mut();
   l = l;
-  let mut v: *mut VALUE = 0 as *mut VALUE;
+  let mut v: *mut VALUE = std::ptr::null_mut();
   v = v;
   let mut key: libc::c_int =
     if !(*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args).is_null() {
@@ -435,9 +435,9 @@ unsafe extern "C" fn eval6() -> *mut VALUE {
 /* Handle : operator (pattern matching).
 Calls docolon to do the real work.  */
 unsafe extern "C" fn eval5() -> *mut VALUE {
-  let mut l: *mut VALUE = 0 as *mut VALUE;
-  let mut r: *mut VALUE = 0 as *mut VALUE;
-  let mut v: *mut VALUE = 0 as *mut VALUE;
+  let mut l: *mut VALUE = std::ptr::null_mut();
+  let mut r: *mut VALUE = std::ptr::null_mut();
+  let mut v: *mut VALUE = std::ptr::null_mut();
   l = eval6();
   while nextarg(b":\x00" as *const u8 as *const libc::c_char) != 0 {
     let ref mut fresh7 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args;
@@ -452,8 +452,8 @@ unsafe extern "C" fn eval5() -> *mut VALUE {
 }
 /* Handle *, /, % operators.  */
 unsafe extern "C" fn eval4() -> *mut VALUE {
-  let mut l: *mut VALUE = 0 as *mut VALUE;
-  let mut r: *mut VALUE = 0 as *mut VALUE;
+  let mut l: *mut VALUE = std::ptr::null_mut();
+  let mut r: *mut VALUE = std::ptr::null_mut();
   let mut op: libc::c_int = 0;
   let mut val: arith_t = 0;
   l = eval5();
@@ -479,8 +479,8 @@ unsafe extern "C" fn eval4() -> *mut VALUE {
 }
 /* Handle +, - operators.  */
 unsafe extern "C" fn eval3() -> *mut VALUE {
-  let mut l: *mut VALUE = 0 as *mut VALUE;
-  let mut r: *mut VALUE = 0 as *mut VALUE;
+  let mut l: *mut VALUE = std::ptr::null_mut();
+  let mut r: *mut VALUE = std::ptr::null_mut();
   let mut op: libc::c_int = 0;
   let mut val: arith_t = 0;
   l = eval4();
@@ -503,8 +503,8 @@ unsafe extern "C" fn eval3() -> *mut VALUE {
 }
 /* Handle comparisons.  */
 unsafe extern "C" fn eval2() -> *mut VALUE {
-  let mut l: *mut VALUE = 0 as *mut VALUE;
-  let mut r: *mut VALUE = 0 as *mut VALUE;
+  let mut l: *mut VALUE = std::ptr::null_mut();
+  let mut r: *mut VALUE = std::ptr::null_mut();
   let mut op: libc::c_int = 0;
   let mut val: arith_t = 0;
   l = eval3();
@@ -544,8 +544,8 @@ unsafe extern "C" fn eval2() -> *mut VALUE {
 }
 /* Handle &.  */
 unsafe extern "C" fn eval1() -> *mut VALUE {
-  let mut l: *mut VALUE = 0 as *mut VALUE;
-  let mut r: *mut VALUE = 0 as *mut VALUE;
+  let mut l: *mut VALUE = std::ptr::null_mut();
+  let mut r: *mut VALUE = std::ptr::null_mut();
   l = eval2();
   while nextarg(b"&\x00" as *const u8 as *const libc::c_char) != 0 {
     let ref mut fresh11 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args;
@@ -565,8 +565,8 @@ unsafe extern "C" fn eval1() -> *mut VALUE {
 /* forward declarations */
 /* Handle |.  */
 unsafe extern "C" fn eval() -> *mut VALUE {
-  let mut l: *mut VALUE = 0 as *mut VALUE; /* coreutils compat */
-  let mut r: *mut VALUE = 0 as *mut VALUE;
+  let mut l: *mut VALUE = std::ptr::null_mut(); /* coreutils compat */
+  let mut r: *mut VALUE = std::ptr::null_mut();
   l = eval1();
   while nextarg(b"|\x00" as *const u8 as *const libc::c_char) != 0 {
     let ref mut fresh12 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args;
@@ -586,7 +586,7 @@ pub unsafe extern "C" fn expr_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut v: *mut VALUE = 0 as *mut VALUE;
+  let mut v: *mut VALUE = std::ptr::null_mut();
   xfunc_error_retval = 2i32 as u8;
   let ref mut fresh13 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args;
   *fresh13 = argv.offset(1);

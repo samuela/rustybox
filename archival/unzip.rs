@@ -285,8 +285,8 @@ pub type C2RustUnnamed_7 = libc::c_uint;
 /* NB: does not preserve file position! */
 unsafe extern "C" fn find_cdf_offset() -> u32 {
   let mut cde: cde_t = cde_t { raw: [0; 16] };
-  let mut buf: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
-  let mut p: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut buf: *mut libc::c_uchar = std::ptr::null_mut();
+  let mut p: *mut libc::c_uchar = std::ptr::null_mut();
   let mut end: off_t = 0;
   let mut found: u32 = 0;
   end = lseek(zip_fd as libc::c_int, 0i32 as off64_t, 2i32);
@@ -557,10 +557,10 @@ pub unsafe extern "C" fn unzip_main(
   let mut dst_fd: libc::c_int = -1i32;
   let mut src_fn: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut dst_fn: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut zaccept: *mut llist_t = 0 as *mut llist_t;
-  let mut zreject: *mut llist_t = 0 as *mut llist_t;
+  let mut zaccept: *mut llist_t = std::ptr::null_mut();
+  let mut zreject: *mut llist_t = std::ptr::null_mut();
   let mut base_dir: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut symlink_placeholders: *mut llist_t = 0 as *mut llist_t;
+  let mut symlink_placeholders: *mut llist_t = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut key_buf: [libc::c_char; 80] = [0; 80];
   /* -q, -l and -v: UnZip 5.52 of 28 February 2005, by Info-ZIP:

@@ -452,7 +452,7 @@ extern "C" {
 //kbuild:lib-y += get_shell_name.o
 #[no_mangle]
 pub unsafe extern "C" fn get_shell_name() -> *const libc::c_char {
-  let mut pw: *mut passwd = 0 as *mut passwd;
+  let mut pw: *mut passwd = std::ptr::null_mut();
   let mut shell: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   shell = getenv(b"SHELL\x00" as *const u8 as *const libc::c_char);
   if !shell.is_null() && *shell.offset(0) as libc::c_int != 0 {

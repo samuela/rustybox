@@ -39,7 +39,7 @@ unsafe extern "C" fn do_compress(
 ) -> libc::c_uint {
   let mut current_block: u64;
   let mut ip: *const u8 = 0 as *const u8;
-  let mut op: *mut u8 = 0 as *mut u8;
+  let mut op: *mut u8 = std::ptr::null_mut();
   let in_end: *const u8 = in_0.offset(in_len as isize);
   let ip_end: *const u8 = in_0.offset(in_len as isize).offset(-8).offset(-5);
   let mut ii: *const u8 = 0 as *const u8;

@@ -80,9 +80,9 @@ unsafe extern "C" fn pstm_mul_comba_gen(
   let mut c0: pstm_digit = 0;
   let mut c1: pstm_digit = 0;
   let mut c2: pstm_digit = 0;
-  let mut tmpx: *mut pstm_digit = 0 as *mut pstm_digit;
-  let mut tmpy: *mut pstm_digit = 0 as *mut pstm_digit;
-  let mut dst: *mut pstm_digit = 0 as *mut pstm_digit;
+  let mut tmpx: *mut pstm_digit = std::ptr::null_mut();
+  let mut tmpy: *mut pstm_digit = std::ptr::null_mut();
+  let mut dst: *mut pstm_digit = std::ptr::null_mut();
   c2 = 0i32 as pstm_digit;
   c1 = c2;
   c0 = c1;
@@ -166,7 +166,7 @@ unsafe extern "C" fn pstm_mul_comba_gen(
   iy = (*C).used;
   (*C).used = pa;
   (*C).sign = (*A).sign ^ (*B).sign;
-  let mut tmpc: *mut pstm_digit = 0 as *mut pstm_digit;
+  let mut tmpc: *mut pstm_digit = std::ptr::null_mut();
   tmpc = (*C).dp;
   ix = 0i32;
   while ix < pa {

@@ -458,7 +458,7 @@ unsafe extern "C" fn find_out_spec(mut name: *const libc::c_char) -> *const ps_o
   );
 }
 unsafe extern "C" fn parse_o(mut opt: *mut libc::c_char) {
-  let mut new: *mut ps_out_t = 0 as *mut ps_out_t;
+  let mut new: *mut ps_out_t = std::ptr::null_mut();
   // POSIX: "-o is blank- or comma-separated list" (FIXME)
   let mut comma: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut equal: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -539,7 +539,7 @@ unsafe extern "C" fn alloc_line_buffer() {
 }
 unsafe extern "C" fn format_header() {
   let mut i: libc::c_int = 0;
-  let mut op: *mut ps_out_t = 0 as *mut ps_out_t;
+  let mut op: *mut ps_out_t = std::ptr::null_mut();
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).print_header == 0 {
     return;
@@ -628,8 +628,8 @@ pub unsafe extern "C" fn ps_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut p: *mut procps_status_t = 0 as *mut procps_status_t;
-  let mut opt_o: *mut llist_t = 0 as *mut llist_t;
+  let mut p: *mut procps_status_t = std::ptr::null_mut();
+  let mut opt_o: *mut llist_t = std::ptr::null_mut();
   let mut default_o: [libc::c_char; 19] = [0; 19];
   let mut opt: libc::c_int = 0;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).seconds_since_boot = get_uptime();
@@ -689,7 +689,7 @@ pub unsafe extern "C" fn ps_main(
   }
   alloc_line_buffer();
   format_header();
-  p = 0 as *mut procps_status_t;
+  p = std::ptr::null_mut();
   loop {
     p = crate::libbb::procps::procps_scan(
       p,

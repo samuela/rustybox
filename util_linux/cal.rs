@@ -109,7 +109,7 @@ pub unsafe extern "C" fn cal_main(
   month = 0i32 as libc::c_uint;
   argv = argv.offset(optind as isize);
   if (*argv.offset(0)).is_null() {
-    let mut ptm: *mut tm = 0 as *mut tm;
+    let mut ptm: *mut tm = std::ptr::null_mut();
     time(&mut now);
     ptm = localtime(&mut now);
     year = ((*ptm).tm_year + 1900i32) as libc::c_uint;
@@ -216,7 +216,7 @@ pub unsafe extern "C" fn cal_main(
     let mut which_cal: libc::c_uint = 0;
     let mut week_len: libc::c_uint = 0;
     let mut days_0: [[libc::c_uint; 42]; 12] = [[0; 42]; 12];
-    let mut dp_0: *mut libc::c_uint = 0 as *mut libc::c_uint;
+    let mut dp_0: *mut libc::c_uint = std::ptr::null_mut();
     let mut lineout_0: [libc::c_char; 80] = [0; 80];
     sprintf(
       lineout_0.as_mut_ptr(),

@@ -185,8 +185,8 @@ unsafe extern "C" fn get_attr_volume_id(
 pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c_int
 /*,u64 fat_partition_off*/ {
   let mut current_block: u64;
-  let mut vs: *mut vfat_super_block = 0 as *mut vfat_super_block;
-  let mut dir: *mut vfat_dir_entry = 0 as *mut vfat_dir_entry;
+  let mut vs: *mut vfat_super_block = std::ptr::null_mut();
+  let mut dir: *mut vfat_dir_entry = std::ptr::null_mut();
   let mut sector_size_bytes: u16 = 0;
   let mut dir_entries: u16 = 0;
   let mut sect_count: u32 = 0;
@@ -197,9 +197,9 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
   let mut cluster_count: u32 = 0;
   let mut root_start_off: u64 = 0;
   let mut start_data_sct: u32 = 0;
-  let mut buf: *mut u8 = 0 as *mut u8;
+  let mut buf: *mut u8 = std::ptr::null_mut();
   let mut buf_size: u32 = 0;
-  let mut label: *mut u8 = 0 as *mut u8;
+  let mut label: *mut u8 = std::ptr::null_mut();
   let mut next_cluster: u32 = 0;
   let mut maxloop: libc::c_int = 0;
   vs = crate::util_linux::volume_id::util::volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t)

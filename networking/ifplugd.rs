@@ -969,7 +969,7 @@ unsafe extern "C" fn check_existence_through_netlink() -> libc::c_int {
     xmalloc(BUF_SIZE as libc::c_int as size_t) as *mut libc::c_char;
   iface_len = strlen((*ptr_to_globals).iface) as libc::c_int;
   loop {
-    let mut mhdr: *mut nlmsghdr = 0 as *mut nlmsghdr;
+    let mut mhdr: *mut nlmsghdr = std::ptr::null_mut();
     let mut bytes: ssize_t = 0;
     bytes = recv(
       netlink_fd as libc::c_int,
@@ -1004,7 +1004,7 @@ unsafe extern "C" fn check_existence_through_netlink() -> libc::c_int {
         if (*mhdr).nlmsg_type as libc::c_int == RTM_NEWLINK as libc::c_int
           || (*mhdr).nlmsg_type as libc::c_int == RTM_DELLINK as libc::c_int
         {
-          let mut attr: *mut rtattr = 0 as *mut rtattr;
+          let mut attr: *mut rtattr = std::ptr::null_mut();
           let mut attr_len: libc::c_int = 0;
           if ((*mhdr).nlmsg_len as libc::c_ulong)
             < (::std::mem::size_of::<ifinfomsg>() as libc::c_ulong).wrapping_add(

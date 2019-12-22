@@ -120,7 +120,7 @@ static mut LUKS_MAGIC: [u8; 6] = [
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_luks(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
-  let mut header: *mut luks_phdr = 0 as *mut luks_phdr;
+  let mut header: *mut luks_phdr = std::ptr::null_mut();
   header = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     0i32 as u64,

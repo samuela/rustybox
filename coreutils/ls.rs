@@ -577,7 +577,7 @@ unsafe extern "C" fn my_stat(
   mut force_follow: libc::c_int,
 ) -> *mut dnode {
   let mut statbuf: stat = std::mem::zeroed();
-  let mut cur: *mut dnode = 0 as *mut dnode;
+  let mut cur: *mut dnode = std::ptr::null_mut();
   cur = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<dnode>() as libc::c_ulong)
     as *mut dnode;
   (*cur).fullname = fullname;
@@ -680,7 +680,7 @@ unsafe extern "C" fn splitdnarray(
 ) -> *mut *mut dnode {
   let mut dncnt: libc::c_uint = 0;
   let mut d: libc::c_uint = 0;
-  let mut dnp: *mut *mut dnode = 0 as *mut *mut dnode;
+  let mut dnp: *mut *mut dnode = std::ptr::null_mut();
   if dn.is_null() {
     return 0 as *mut *mut dnode;
   }
@@ -799,11 +799,11 @@ unsafe extern "C" fn scan_one_dir(
   mut path: *const libc::c_char,
   mut nfiles_p: *mut libc::c_uint,
 ) -> *mut *mut dnode {
-  let mut dn: *mut dnode = 0 as *mut dnode;
-  let mut cur: *mut dnode = 0 as *mut dnode;
-  let mut dnp: *mut *mut dnode = 0 as *mut *mut dnode;
-  let mut entry: *mut dirent = 0 as *mut dirent;
-  let mut dir: *mut DIR = 0 as *mut DIR;
+  let mut dn: *mut dnode = std::ptr::null_mut();
+  let mut cur: *mut dnode = std::ptr::null_mut();
+  let mut dnp: *mut *mut dnode = std::ptr::null_mut();
+  let mut entry: *mut dirent = std::ptr::null_mut();
+  let mut dir: *mut DIR = std::ptr::null_mut();
   let mut i: libc::c_uint = 0;
   let mut nfiles: libc::c_uint = 0;
   *nfiles_p = 0i32 as libc::c_uint;
@@ -813,7 +813,7 @@ unsafe extern "C" fn scan_one_dir(
     return 0 as *mut *mut dnode;
     /* could not open the dir */
   }
-  dn = 0 as *mut dnode;
+  dn = std::ptr::null_mut();
   nfiles = 0i32 as libc::c_uint;
   loop {
     entry = readdir(dir);
@@ -897,7 +897,7 @@ unsafe extern "C" fn calculate_blocks(mut dn: *mut *mut dnode) -> off_t {
 }
 unsafe extern "C" fn scan_and_display_dirs_recur(mut dn: *mut *mut dnode, mut first: libc::c_int) {
   let mut nfiles: libc::c_uint = 0;
-  let mut subdnp: *mut *mut dnode = 0 as *mut *mut dnode;
+  let mut subdnp: *mut *mut dnode = std::ptr::null_mut();
   while !(*dn).is_null() {
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).show_dirname as libc::c_int != 0
       || option_mask32 & OPT_R as libc::c_int as libc::c_uint != 0
@@ -933,7 +933,7 @@ unsafe extern "C" fn scan_and_display_dirs_recur(mut dn: *mut *mut dnode, mut fi
       /* list all files at this level */
       sort_and_display_files(subdnp, nfiles);
       if 1i32 != 0 && option_mask32 & OPT_R as libc::c_int as libc::c_uint != 0 {
-        let mut dnd: *mut *mut dnode = 0 as *mut *mut dnode;
+        let mut dnd: *mut *mut dnode = std::ptr::null_mut();
         let mut dndirs: libc::c_uint = 0;
         /* recursive - list the sub-dirs */
         dnd = splitdnarray(subdnp, SPLIT_SUBDIR as libc::c_int);
@@ -1345,11 +1345,11 @@ pub unsafe extern "C" fn ls_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /*      ^^^^^^^^^^^^^^^^^ note: if FTPD, argc can be wrong, see ftpd.c */
-  let mut dnd: *mut *mut dnode = 0 as *mut *mut dnode;
-  let mut dnf: *mut *mut dnode = 0 as *mut *mut dnode;
-  let mut dnp: *mut *mut dnode = 0 as *mut *mut dnode;
-  let mut dn: *mut dnode = 0 as *mut dnode;
-  let mut cur: *mut dnode = 0 as *mut dnode;
+  let mut dnd: *mut *mut dnode = std::ptr::null_mut();
+  let mut dnf: *mut *mut dnode = std::ptr::null_mut();
+  let mut dnp: *mut *mut dnode = std::ptr::null_mut();
+  let mut dn: *mut dnode = std::ptr::null_mut();
+  let mut cur: *mut dnode = std::ptr::null_mut();
   let mut opt: libc::c_uint = 0;
   let mut nfiles: libc::c_uint = 0;
   let mut dnfiles: libc::c_uint = 0;
@@ -1481,7 +1481,7 @@ pub unsafe extern "C" fn ls_main(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).show_dirname = 1i32 as smallint
   }
   /* stuff the command line file names into a dnode array */
-  dn = 0 as *mut dnode;
+  dn = std::ptr::null_mut();
   nfiles = 0i32 as libc::c_uint;
   loop {
     cur = my_stat(

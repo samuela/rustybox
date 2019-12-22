@@ -240,7 +240,7 @@ unsafe extern "C" fn arith_lookup_val(
     let mut p: *const libc::c_char =
       (*math_state).lookupvar.expect("non-null function pointer")((*t).var);
     if !p.is_null() {
-      let mut cur: *mut remembered_name = 0 as *mut remembered_name;
+      let mut cur: *mut remembered_name = std::ptr::null_mut();
       let mut cur_save: remembered_name = remembered_name {
         next: 0 as *mut remembered_name,
         var: 0 as *const libc::c_char,
@@ -284,7 +284,7 @@ unsafe extern "C" fn arith_apply(
   mut numstackptr: *mut *mut var_or_num_t,
 ) -> *const libc::c_char {
   let mut current_block: u64;
-  let mut top_of_stack: *mut var_or_num_t = 0 as *mut var_or_num_t;
+  let mut top_of_stack: *mut var_or_num_t = std::ptr::null_mut();
   let mut rez: arith_t = 0;
   let mut err: *const libc::c_char = 0 as *const libc::c_char;
   /* There is no operator that can work without arguments */
@@ -983,7 +983,7 @@ pub unsafe extern "C" fn arith(
   mut expr: *const libc::c_char,
 ) -> arith_t {
   (*math_state).errmsg = 0 as *const libc::c_char;
-  (*math_state).list_of_recursed_names = 0 as *mut libc::c_void;
+  (*math_state).list_of_recursed_names = std::ptr::null_mut();
   return evaluate_string(math_state, expr);
 }
 /*

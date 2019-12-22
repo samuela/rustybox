@@ -123,7 +123,7 @@ pub struct swap_header_v1_2 {
 pub unsafe extern "C" fn volume_id_probe_linux_swap(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut current_block: u64;
-  let mut sw: *mut swap_header_v1_2 = 0 as *mut swap_header_v1_2;
+  let mut sw: *mut swap_header_v1_2 = std::ptr::null_mut();
   let mut buf: *const u8 = 0 as *const u8;
   let mut page: libc::c_uint = 0;
   /* the swap signature is at the end of the PAGE_SIZE */

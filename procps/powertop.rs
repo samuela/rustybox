@@ -153,7 +153,7 @@ unsafe extern "C" fn clear_lines() {
     }
     free((*ptr_to_globals).lines as *mut libc::c_void);
     (*ptr_to_globals).lines_cnt = 0i32;
-    (*ptr_to_globals).lines = 0 as *mut line
+    (*ptr_to_globals).lines = std::ptr::null_mut()
   };
 }
 unsafe extern "C" fn update_lines_cumulative_count() {
@@ -185,8 +185,8 @@ unsafe extern "C" fn sort_lines() {
 }
 /* Save C-state usage and duration. Also update maxcstate. */
 unsafe extern "C" fn read_cstate_counts(mut usage: *mut ullong, mut duration: *mut ullong) {
-  let mut dir: *mut DIR = 0 as *mut DIR; /* "CPUnn" */
-  let mut d: *mut dirent = 0 as *mut dirent;
+  let mut dir: *mut DIR = std::ptr::null_mut(); /* "CPUnn" */
+  let mut d: *mut dirent = std::ptr::null_mut();
   dir = opendir(b"/proc/acpi/processor\x00" as *const u8 as *const libc::c_char);
   if dir.is_null() {
     return;
@@ -196,7 +196,7 @@ unsafe extern "C" fn read_cstate_counts(mut usage: *mut ullong, mut duration: *m
     if d.is_null() {
       break;
     }
-    let mut fp: *mut FILE = 0 as *mut FILE;
+    let mut fp: *mut FILE = std::ptr::null_mut();
     let mut buf: [libc::c_char; 192] = [0; 192];
     let mut level: libc::c_int = 0;
     let mut len: libc::c_int = 0;
@@ -341,7 +341,7 @@ unsafe extern "C" fn save_irq_count(mut irq: libc::c_int, mut count: ullong) -> 
 }
 /* Read /proc/interrupts, save IRQ counts and IRQ description */
 unsafe extern "C" fn process_irq_counts() {
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 128] = [0; 128];
   /* Reset values */
   (*ptr_to_globals).interrupt_0 = 0i32;
@@ -453,10 +453,10 @@ unsafe extern "C" fn process_timer_stats() -> libc::c_int {
   let mut buf: [libc::c_char; 128] = [0; 128];
   let mut line: [libc::c_char; 146] = [0; 146];
   let mut n: libc::c_int = 0;
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   buf[0] = '\u{0}' as i32 as libc::c_char;
   n = 0i32;
-  fp = 0 as *mut FILE;
+  fp = std::ptr::null_mut();
   if (*ptr_to_globals).cant_enable_timer_stats == 0 {
     fp = crate::libbb::wfopen::fopen_for_read(
       b"/proc/timer_stats\x00" as *const u8 as *const libc::c_char,

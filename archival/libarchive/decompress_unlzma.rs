@@ -97,7 +97,7 @@ unsafe extern "C" fn rc_normalize(mut rc: *mut rc_t) {
 unsafe extern "C" fn rc_init(mut fd: libc::c_int) -> *mut rc_t
 /*, int buffer_size) */ {
   let mut i: libc::c_int = 0;
-  let mut rc: *mut rc_t = 0 as *mut rc_t;
+  let mut rc: *mut rc_t = std::ptr::null_mut();
   rc = crate::libbb::xfuncs_printf::xzalloc(
     (::std::mem::size_of::<rc_t>() as libc::c_ulong).wrapping_add(0x10000i32 as libc::c_ulong),
   ) as *mut rc_t;
@@ -177,7 +177,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
 ) -> libc::c_longlong {
   let mut num_bits: libc::c_int = 0;
   let mut offset: libc::c_int = 0;
-  let mut prob2: *mut u16 = 0 as *mut u16;
+  let mut prob2: *mut u16 = std::ptr::null_mut();
   let mut pos_0: u32 = 0;
   let mut current_block: u64;
   let mut total_written: libc::c_longlong = 0i32 as libc::c_longlong;
@@ -191,10 +191,10 @@ pub unsafe extern "C" fn unpack_lzma_stream(
   let mut lp: libc::c_int = 0;
   let mut pos_state_mask: u32 = 0;
   let mut literal_pos_mask: u32 = 0;
-  let mut p: *mut u16 = 0 as *mut u16;
-  let mut rc: *mut rc_t = 0 as *mut rc_t;
+  let mut p: *mut u16 = std::ptr::null_mut();
+  let mut rc: *mut rc_t = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
-  let mut buffer: *mut u8 = 0 as *mut u8;
+  let mut buffer: *mut u8 = std::ptr::null_mut();
   let mut buffer_size: u32 = 0;
   let mut previous_byte: u8 = 0i32 as u8;
   let mut buffer_pos: size_t = 0i32 as size_t;
@@ -321,7 +321,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
     } else {
       num_bits = 0;
       offset = 0;
-      prob2 = 0 as *mut u16;
+      prob2 = std::ptr::null_mut();
       prob2 = p
         .offset(LZMA_IS_REP as libc::c_int as isize)
         .offset(state as isize);
@@ -421,7 +421,7 @@ pub unsafe extern "C" fn unpack_lzma_stream(
           len += offset;
           if state < 4i32 {
             let mut pos_slot: libc::c_int = 0;
-            let mut prob3: *mut u16 = 0 as *mut u16;
+            let mut prob3: *mut u16 = std::ptr::null_mut();
             state += LZMA_NUM_LIT_STATES as libc::c_int;
             prob3 = p.offset(LZMA_POS_SLOT as libc::c_int as isize).offset(
               ((if len < LZMA_NUM_LEN_TO_POS_STATES as libc::c_int {

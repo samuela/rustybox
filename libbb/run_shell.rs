@@ -475,7 +475,7 @@ pub unsafe extern "C" fn run_shell(
   mut loginshell: libc::c_int,
   mut additional_args: *mut *const libc::c_char,
 ) -> ! {
-  let mut args: *mut *const libc::c_char = 0 as *mut *const libc::c_char;
+  let mut args: *mut *const libc::c_char = std::ptr::null_mut();
   args = additional_args;
   while !args.is_null() && !(*args).is_null() {
     args = args.offset(1)

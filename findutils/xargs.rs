@@ -554,7 +554,7 @@ unsafe extern "C" fn process_stdin_with_replace(
  * otherwise, return false. Uses "/dev/tty", not stdin.
  */
 unsafe extern "C" fn xargs_ask_confirmation() -> libc::c_int {
-  let mut tty_stream: *mut FILE = 0 as *mut FILE; /* let's not go crazy high */
+  let mut tty_stream: *mut FILE = std::ptr::null_mut(); /* let's not go crazy high */
   let mut r: libc::c_int = 0;
   tty_stream =
     crate::libbb::wfopen::xfopen_for_read(b"/dev/tty\x00" as *const u8 as *const libc::c_char);
@@ -707,7 +707,7 @@ pub unsafe extern "C" fn xargs_main(
      * with input line. Setting this up:
      */
     let ref mut fresh12 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args;
-    *fresh12 = 0 as *mut *mut libc::c_char;
+    *fresh12 = std::ptr::null_mut();
     let ref mut fresh13 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).argv;
     *fresh13 = argv;
     read_args = Some(

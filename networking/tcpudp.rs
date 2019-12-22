@@ -293,7 +293,7 @@ pub unsafe extern "C" fn tcpudpsvd_main(
   let mut str_C: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut str_t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut hccp: *mut hcc = 0 as *mut hcc;
+  let mut hccp: *mut hcc = std::ptr::null_mut();
   let mut instructs: *const libc::c_char = 0 as *const libc::c_char;
   let mut msg_per_host: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len_per_host: libc::c_uint = 0;
@@ -306,7 +306,7 @@ pub unsafe extern "C" fn tcpudpsvd_main(
   remote_hostname = remote_hostname;
   let mut remote_addr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   remote_addr = remote_addr;
-  let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
   let mut local: len_and_sockaddr = std::mem::zeroed();
   let mut remote: len_and_sockaddr = std::mem::zeroed();
   let mut sa_len: socklen_t = 0;
@@ -445,7 +445,7 @@ pub unsafe extern "C" fn tcpudpsvd_main(
   loop
   /* Main accept() loop */
   {
-    hccp = 0 as *mut hcc;
+    hccp = std::ptr::null_mut();
     loop {
       close(0i32);
       /* It's important to close(0) _before_ wait loop:

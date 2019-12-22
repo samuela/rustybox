@@ -293,8 +293,8 @@ static mut tcp_state: [*const libc::c_char; 12] = [
 /* Deliberately truncating long to unsigned *int* */
 unsafe extern "C" fn prg_cache_add(mut inode: libc::c_long, mut name: *mut libc::c_char) {
   let mut hi: libc::c_uint = (inode as libc::c_uint).wrapping_rem(211i32 as libc::c_uint);
-  let mut pnp: *mut *mut prg_node = 0 as *mut *mut prg_node;
-  let mut pn: *mut prg_node = 0 as *mut prg_node;
+  let mut pnp: *mut *mut prg_node = std::ptr::null_mut();
+  let mut pn: *mut prg_node = std::ptr::null_mut();
   (*ptr_to_globals).prg_cache_loaded = 2i32 as smallint;
   pnp = (*ptr_to_globals).prg_hash.as_mut_ptr().offset(hi as isize);
   loop {
@@ -317,7 +317,7 @@ unsafe extern "C" fn prg_cache_add(mut inode: libc::c_long, mut name: *mut libc:
 }
 unsafe extern "C" fn prg_cache_get(mut inode: libc::c_long) -> *const libc::c_char {
   let mut hi: libc::c_uint = (inode as libc::c_uint).wrapping_rem(211i32 as libc::c_uint);
-  let mut pn: *mut prg_node = 0 as *mut prg_node;
+  let mut pn: *mut prg_node = std::ptr::null_mut();
   pn = (*ptr_to_globals).prg_hash[hi as usize];
   while !pn.is_null() {
     if (*pn).inode == inode {
@@ -927,7 +927,7 @@ unsafe extern "C" fn do_info(
   mut proc_0: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
 ) {
   let mut lnr: libc::c_int = 0;
-  let mut procinfo: *mut FILE = 0 as *mut FILE;
+  let mut procinfo: *mut FILE = std::ptr::null_mut();
   let mut buffer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* _stdin is just to save "r" param */
   procinfo = crate::libbb::wfopen_input::fopen_or_warn_stdin(file);

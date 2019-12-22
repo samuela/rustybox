@@ -106,13 +106,13 @@ unsafe extern "C" fn dlist_add(
   mut list: *mut *mut double_list,
   mut data: *mut libc::c_char,
 ) -> *mut double_list {
-  let mut llist: *mut double_list = 0 as *mut double_list;
+  let mut llist: *mut double_list = std::ptr::null_mut();
   let mut line: *mut double_list =
     xmalloc(::std::mem::size_of::<double_list>() as libc::c_ulong) as *mut double_list;
   (*line).data = data;
   llist = *list;
   if !llist.is_null() {
-    let mut p: *mut double_list = 0 as *mut double_list;
+    let mut p: *mut double_list = std::ptr::null_mut();
     (*line).next = llist;
     (*line).prev = (*llist).prev;
     p = (*line).prev;
@@ -190,12 +190,12 @@ unsafe extern "C" fn fail_hunk() {
   // If we got to this point, we've seeked to the end.  Discard changes to
   // this file and advance to next file.
   (*ptr_to_globals).state = 2i32;
-  (*(*(*ptr_to_globals).current_hunk).prev).next = 0 as *mut double_list;
+  (*(*(*ptr_to_globals).current_hunk).prev).next = std::ptr::null_mut();
   dlist_free(
     (*ptr_to_globals).current_hunk,
     Some(do_line as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
   );
-  (*ptr_to_globals).current_hunk = 0 as *mut double_list;
+  (*ptr_to_globals).current_hunk = std::ptr::null_mut();
   // Abort the copy and delete the temporary file.
   close((*ptr_to_globals).filein);
   close((*ptr_to_globals).fileout);
@@ -215,9 +215,9 @@ unsafe extern "C" fn fail_hunk() {
 // multiple hunks must occur in order in the file.
 unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
   let mut current_block: u64;
-  let mut plist: *mut double_list = 0 as *mut double_list;
-  let mut buf: *mut double_list = 0 as *mut double_list;
-  let mut check: *mut double_list = 0 as *mut double_list;
+  let mut plist: *mut double_list = std::ptr::null_mut();
+  let mut buf: *mut double_list = std::ptr::null_mut();
+  let mut check: *mut double_list = std::ptr::null_mut();
   let mut matcheof: libc::c_int = 0i32;
   let mut reverse: libc::c_int = (option_mask32 & (1i32 << 0i32) as libc::c_uint) as libc::c_int;
   let mut backwarn: libc::c_int = 0i32;
@@ -226,7 +226,7 @@ unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
    */
   let mut dummy_revert: libc::c_int = 0i32;
   // Break doubly linked list so we can use singly linked traversal function.
-  (*(*(*ptr_to_globals).current_hunk).prev).next = 0 as *mut double_list;
+  (*(*(*ptr_to_globals).current_hunk).prev).next = std::ptr::null_mut();
   // Match EOF if there aren't as many ending context lines as beginning
   plist = (*ptr_to_globals).current_hunk;
   while !plist.is_null() {
@@ -242,7 +242,7 @@ unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
   // lines and all lines to be removed until we've found the end of a
   // complete hunk.
   plist = (*ptr_to_globals).current_hunk;
-  buf = 0 as *mut double_list;
+  buf = std::ptr::null_mut();
   if if reverse != 0 {
     (*ptr_to_globals).oldlen
   } else {
@@ -264,7 +264,7 @@ unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
           (*ptr_to_globals).current_hunk,
           Some(do_line as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
         );
-        (*ptr_to_globals).current_hunk = 0 as *mut double_list;
+        (*ptr_to_globals).current_hunk = std::ptr::null_mut();
         (*ptr_to_globals).state = 1i32;
         break;
       }
@@ -351,7 +351,7 @@ unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
               // If we've reached the end of the buffer without confirming a
               // match, read more lines.
               if check == buf {
-                buf = 0 as *mut double_list;
+                buf = std::ptr::null_mut();
                 current_block = 1054647088692577877;
                 break;
               } else {
@@ -376,7 +376,7 @@ unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
     }
   }
   if !buf.is_null() {
-    (*(*buf).prev).next = 0 as *mut double_list;
+    (*(*buf).prev).next = std::ptr::null_mut();
     dlist_free(
       buf,
       Some(do_line as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),

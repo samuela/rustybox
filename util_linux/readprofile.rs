@@ -90,14 +90,14 @@ pub unsafe extern "C" fn readprofile_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut map: *mut FILE = 0 as *mut FILE; /* current and next address */
+  let mut map: *mut FILE = std::ptr::null_mut(); /* current and next address */
   let mut mapFile: *const libc::c_char = 0 as *const libc::c_char; /* current and next name */
   let mut proFile: *const libc::c_char = 0 as *const libc::c_char;
   let mut indx: libc::c_ulong = 0;
   let mut len: size_t = 0;
   let mut add0: u64 = 0;
   let mut step: libc::c_uint = 0;
-  let mut buf: *mut libc::c_uint = 0 as *mut libc::c_uint;
+  let mut buf: *mut libc::c_uint = std::ptr::null_mut();
   let mut total: libc::c_uint = 0;
   let mut fn_len: libc::c_uint = 0;
   let mut fn_add: libc::c_ulonglong = 0;
@@ -160,7 +160,7 @@ pub unsafe extern "C" fn readprofile_main(
   if opt & OPT_n as libc::c_int as libc::c_uint == 0 {
     let mut big: libc::c_int = 0i32;
     let mut small: libc::c_int = 0i32;
-    let mut p: *mut libc::c_uint = 0 as *mut libc::c_uint;
+    let mut p: *mut libc::c_uint = std::ptr::null_mut();
     p = buf.offset(1);
     while p < buf.offset(len as isize) {
       if *p

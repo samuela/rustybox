@@ -257,8 +257,8 @@ pub const OPT_a: C2RustUnnamed = 1;
 #[inline(never)]
 unsafe extern "C" fn edir(mut directory_name: *const libc::c_char) {
   let mut wdir: libc::c_int = 0;
-  let mut dir: *mut DIR = 0 as *mut DIR;
-  let mut d: *mut dirent = 0 as *mut dirent;
+  let mut dir: *mut DIR = std::ptr::null_mut();
+  let mut d: *mut dirent = std::ptr::null_mut();
   let mut fd: libc::c_int = 0;
   wdir = crate::libbb::xfuncs_printf::xopen(
     b".\x00" as *const u8 as *const libc::c_char,

@@ -125,7 +125,7 @@ pub unsafe extern "C" fn nandwrite_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /* Buffer for OOB data */
-  let mut oobbuf: *mut libc::c_uchar = 0 as *mut libc::c_uchar; /* nandwrite */
+  let mut oobbuf: *mut libc::c_uchar = std::ptr::null_mut(); /* nandwrite */
   let mut opts: libc::c_uint = 0;
   let mut bb_method: libc::c_uint = (1i32 << 1i32) as libc::c_uint;
   let mut fd: libc::c_int = 0;
@@ -149,7 +149,7 @@ pub unsafe extern "C" fn nandwrite_main(
     length: 0,
     ptr: 0 as *mut libc::c_uchar,
   };
-  let mut filebuf: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut filebuf: *mut libc::c_uchar = std::ptr::null_mut();
   let mut opt_s: *const libc::c_char = b"0\x00" as *const u8 as *const libc::c_char;
   let mut opt_f: *const libc::c_char = b"-\x00" as *const u8 as *const libc::c_char;
   let mut opt_l: *const libc::c_char = 0 as *const libc::c_char;

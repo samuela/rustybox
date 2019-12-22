@@ -166,7 +166,7 @@ unsafe extern "C" fn do_loadfont(
   mut charsize: libc::c_int,
   mut fontsize: libc::c_int,
 ) {
-  let mut buf: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut buf: *mut libc::c_uchar = std::ptr::null_mut();
   let mut charwidth: libc::c_int = 32i32 * ((width + 7i32) / 8i32);
   let mut i: libc::c_int = 0;
   if height < 1i32 || height > 32i32 || width < 1i32 || width > 32i32 {
@@ -251,7 +251,7 @@ unsafe extern "C" fn do_loadtable(
     entry_ct: 0,
     entries: 0 as *mut unipair,
   }; /* PSF2 */
-  let mut up: *mut unipair = 0 as *mut unipair;
+  let mut up: *mut unipair = std::ptr::null_mut();
   let mut ct: libc::c_int = 0i32;
   let mut maxct: libc::c_int = 0;
   let mut glyph: libc::c_int = 0;
@@ -361,7 +361,7 @@ unsafe extern "C" fn do_load(mut fd: libc::c_int, mut buffer: *mut libc::c_uchar
   let mut fontsize: libc::c_int = 256i32;
   let mut has_table: libc::c_int = 0i32;
   let mut font: *mut libc::c_uchar = buffer;
-  let mut table: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut table: *mut libc::c_uchar = std::ptr::null_mut();
   if len >= ::std::mem::size_of::<psf1_header>() as libc::c_ulong
     && ((*(buffer as *mut psf1_header)).magic[0] as libc::c_int == PSF1_MAGIC0 as libc::c_int
       && (*(buffer as *mut psf1_header)).magic[1] as libc::c_int == PSF1_MAGIC1 as libc::c_int)
@@ -447,7 +447,7 @@ pub unsafe extern "C" fn loadfont_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut len: size_t = 0;
-  let mut buffer: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut buffer: *mut libc::c_uchar = std::ptr::null_mut();
   // no arguments allowed!
   crate::libbb::getopt32::getopt32(argv, b"^\x00=0\x00" as *const u8 as *const libc::c_char);
   /*
@@ -537,7 +537,7 @@ pub unsafe extern "C" fn setfont_main(
   let mut len: size_t = 0;
   let mut opts: libc::c_uint = 0;
   let mut fd: libc::c_int = 0;
-  let mut buffer: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut buffer: *mut libc::c_uchar = std::ptr::null_mut();
   let mut mapfilename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tty_name: *const libc::c_char = b"/dev/tty\x00" as *const u8 as *const libc::c_char;
   opts = crate::libbb::getopt32::getopt32(
@@ -568,7 +568,7 @@ pub unsafe extern "C" fn setfont_main(
   if opts & 1i32 as libc::c_uint != 0 {
     // -m
     let mut mode: libc::c_uint = 0x4b41i32 as libc::c_uint;
-    let mut map: *mut libc::c_void = 0 as *mut libc::c_void;
+    let mut map: *mut libc::c_void = std::ptr::null_mut();
     if ::std::mem::size_of::<[libc::c_char; 1]>() as libc::c_ulong > 1i32 as libc::c_ulong {
       // if not ""
       if *mapfilename.offset(0) as libc::c_int != '/' as i32 {
@@ -597,7 +597,7 @@ pub unsafe extern "C" fn setfont_main(
       // 0x03 U+0003  #  END OF TEXT (ETX)
       let mut i: libc::c_int = 0;
       let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
-      let mut parser: *mut parser_t = 0 as *mut parser_t;
+      let mut parser: *mut parser_t = std::ptr::null_mut();
       map = xmalloc(
         (256i32 as libc::c_ulong)
           .wrapping_mul(::std::mem::size_of::<libc::c_ushort>() as libc::c_ulong),

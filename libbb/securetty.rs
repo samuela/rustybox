@@ -501,5 +501,5 @@ pub unsafe extern "C" fn is_tty_secure(mut short_tty: *const libc::c_char) -> li
    * or line was found which equals short_tty.
    * In all these cases, we report "this tty is secure".
    */
-  return (buf != 0 as *mut libc::c_void as *mut libc::c_char) as libc::c_int;
+  return (buf != std::ptr::null_mut()) as libc::c_int;
 }

@@ -255,7 +255,7 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
     }
     let mut pattern_ptr: *mut llist_t =
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pattern_head;
-    let mut gl: *mut grep_list_data_t = 0 as *mut grep_list_data_t;
+    let mut gl: *mut grep_list_data_t = std::ptr::null_mut();
     gl = gl;
     linenum += 1;
     found = 0i32 as smalluint;
@@ -606,7 +606,7 @@ unsafe extern "C" fn add_grep_list_data(mut pattern: *mut libc::c_char) -> *mut 
 unsafe extern "C" fn load_regexes_from_file(mut fopt: *mut llist_t) {
   while !fopt.is_null() {
     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut fp: *mut FILE = 0 as *mut FILE;
+    let mut fp: *mut FILE = std::ptr::null_mut();
     let mut cur: *mut llist_t = fopt;
     let mut ffile: *mut libc::c_char = (*cur).data;
     fopt = (*cur).link;
@@ -631,7 +631,7 @@ unsafe extern "C" fn file_action_grep(
   mut matched: *mut libc::c_void,
   mut _depth: libc::c_int,
 ) -> libc::c_int {
-  let mut file: *mut FILE = 0 as *mut FILE;
+  let mut file: *mut FILE = std::ptr::null_mut();
   /* If we are given a link to a directory, we should bail out now, rather
    * than trying to open the "file" and hoping getline gives us nothing,
    * since that is not portable across operating systems (FreeBSD for
@@ -689,9 +689,9 @@ pub unsafe extern "C" fn grep_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut file: *mut FILE = 0 as *mut FILE;
+  let mut file: *mut FILE = std::ptr::null_mut();
   let mut matched: libc::c_int = 0;
-  let mut fopt: *mut llist_t = 0 as *mut llist_t;
+  let mut fopt: *mut llist_t = std::ptr::null_mut();
   let mut Copt: libc::c_int = 0;
   let mut opts: libc::c_int = 0;
   /* For grep, exitcode of 1 is "not found". Other errors are 2: */
@@ -751,7 +751,7 @@ pub unsafe extern "C" fn grep_main(
     (option_mask32 & OPT_v as libc::c_int as libc::c_uint != 0i32 as libc::c_uint) as libc::c_int
       as smalluint;
   /* convert char **argv to grep_list_data_t */
-  let mut cur: *mut llist_t = 0 as *mut llist_t;
+  let mut cur: *mut llist_t = std::ptr::null_mut();
   cur = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pattern_head;
   while !cur.is_null() {
     (*cur).data = add_grep_list_data((*cur).data);

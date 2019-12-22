@@ -161,7 +161,7 @@ unsafe extern "C" fn bb_ascii_isxdigit(mut a: libc::c_uchar) -> libc::c_int {
 /* This is a NOEXEC applet. Be very careful! */
 unsafe extern "C" fn bb_dump_addfile(mut dumper: *mut dumper_t, mut name: *mut libc::c_char) {
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   fp = crate::libbb::wfopen::xfopen_for_read(name);
   loop {
@@ -198,7 +198,7 @@ pub unsafe extern "C" fn hexdump_main(
   let mut dumper: *mut dumper_t = crate::libbb::dump::alloc_dumper();
   let mut p: *const libc::c_char = 0 as *const libc::c_char;
   let mut ch: libc::c_int = 0;
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut rdump: smallint = 0i32 as smallint;
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(2) == 0) {
     /* we are "hd" */

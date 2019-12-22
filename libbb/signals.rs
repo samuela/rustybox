@@ -150,7 +150,7 @@ pub unsafe extern "C" fn sigprocmask2(mut how: libc::c_int, mut set: *mut sigset
   // Grr... gcc 8.1.1:
   // "passing argument 3 to restrict-qualified parameter aliases with argument 2"
   // dance around that...
-  let mut oset: *mut sigset_t = 0 as *mut sigset_t;
+  let mut oset: *mut sigset_t = std::ptr::null_mut();
   oset = set;
   return sigprocmask(how, set, oset);
 }

@@ -198,7 +198,7 @@ pub unsafe extern "C" fn get_header_cpio(
   free((*file_header).name as *mut libc::c_void);
   while !(*archive_handle).cpio__hardlinks_to_create.is_null() {
     let mut current_block_86: u64;
-    let mut cur: *mut hardlinks_t = 0 as *mut hardlinks_t;
+    let mut cur: *mut hardlinks_t = std::ptr::null_mut();
     let mut make_me: *mut hardlinks_t = (*archive_handle).cpio__hardlinks_to_create;
     (*archive_handle).cpio__hardlinks_to_create = (*make_me).next;
     memset(

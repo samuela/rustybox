@@ -211,8 +211,8 @@ pub unsafe extern "C" fn recursive_action(
   let mut statbuf: stat = std::mem::zeroed();
   let mut follow: libc::c_uint = 0;
   let mut status: libc::c_int = 0;
-  let mut dir: *mut DIR = 0 as *mut DIR;
-  let mut next: *mut dirent = 0 as *mut dirent;
+  let mut dir: *mut DIR = std::ptr::null_mut();
+  let mut next: *mut dirent = std::ptr::null_mut();
   if fileAction.is_none() {
     fileAction = Some(
       true_action

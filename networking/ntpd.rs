@@ -832,7 +832,7 @@ unsafe extern "C" fn filter_datapoints(mut p: *mut peer_t) {
   let mut idx: libc::c_int = 0;
   let mut sum: libc::c_double = 0.;
   let mut wavg: libc::c_double = 0.;
-  let mut fdp: *mut datapoint_t = 0 as *mut datapoint_t;
+  let mut fdp: *mut datapoint_t = std::ptr::null_mut();
   fdp = (*p).filter_datapoint.as_mut_ptr();
   idx = (*p).datapoint_idx;
   /* filter_offset: simply use the most recent value */
@@ -954,8 +954,8 @@ unsafe extern "C" fn resolve_peer_hostname(mut p: *mut peer_t) -> *mut len_and_s
   return lsa;
 }
 unsafe extern "C" fn add_peers(mut s: *const libc::c_char, mut key_entry: *mut key_entry_t) {
-  let mut item: *mut llist_t = 0 as *mut llist_t;
-  let mut p: *mut peer_t = 0 as *mut peer_t;
+  let mut item: *mut llist_t = std::ptr::null_mut();
+  let mut p: *mut peer_t = std::ptr::null_mut();
   p = crate::libbb::xfuncs_printf::xzalloc(
     (::std::mem::size_of::<peer_t>() as libc::c_ulong).wrapping_add(strlen(s)),
   ) as *mut peer_t;
@@ -1138,7 +1138,7 @@ unsafe extern "C" fn send_query_to_peer(mut p: *mut peer_t) {
   if (*p).p_fd == -1i32 {
     let mut fd: libc::c_int = 0;
     let mut family: libc::c_int = 0;
-    let mut local_lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+    let mut local_lsa: *mut len_and_sockaddr = std::ptr::null_mut();
     family = (*(*p).p_lsa).u.sa.sa_family as libc::c_int;
     fd = crate::libbb::xconnect::xsocket_type(&mut local_lsa, family, SOCK_DGRAM as libc::c_int);
     (*p).p_fd = fd;
@@ -1285,7 +1285,7 @@ unsafe extern "C" fn run_script(mut action: *const libc::c_char, mut offset: lib
 }
 #[inline(never)]
 unsafe extern "C" fn step_time(mut offset: libc::c_double) {
-  let mut item: *mut llist_t = 0 as *mut llist_t;
+  let mut item: *mut llist_t = std::ptr::null_mut();
   let mut dtime: libc::c_double = 0.;
   let mut tvc: timeval = timeval {
     tv_sec: 0,
@@ -1425,8 +1425,8 @@ unsafe extern "C" fn fit(mut p: *mut peer_t, mut rd: libc::c_double) -> libc::c_
 }
 unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
   let mut current_block: u64;
-  let mut p: *mut peer_t = 0 as *mut peer_t;
-  let mut item: *mut llist_t = 0 as *mut llist_t;
+  let mut p: *mut peer_t = std::ptr::null_mut();
+  let mut item: *mut llist_t = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   let mut size: libc::c_int =
@@ -2186,7 +2186,7 @@ unsafe extern "C" fn adjust_poll(mut count: libc::c_int) {
   {
     (*ptr_to_globals).polladj_count = 0i32;
     if (*ptr_to_globals).poll_exp as libc::c_int > 5i32 {
-      let mut item: *mut llist_t = 0 as *mut llist_t;
+      let mut item: *mut llist_t = std::ptr::null_mut();
       (*ptr_to_globals).poll_exp = (*ptr_to_globals).poll_exp.wrapping_sub(1);
       /* Correct p->next_action_time in each peer
        * which waits for sending, so that they send earlier.
@@ -2264,8 +2264,8 @@ unsafe extern "C" fn recv_and_process_peer_pkt(mut p: *mut peer_t) {
   let mut prev_delay: libc::c_double = 0.;
   let mut delay: libc::c_double = 0.;
   let mut interval: libc::c_uint = 0;
-  let mut datapoint: *mut datapoint_t = 0 as *mut datapoint_t;
-  let mut q: *mut peer_t = 0 as *mut peer_t;
+  let mut datapoint: *mut datapoint_t = std::ptr::null_mut();
+  let mut q: *mut peer_t = std::ptr::null_mut();
   offset = 0i32 as libc::c_double;
   /* We can recvfrom here and check from.IP, but some multihomed
    * ntp servers reply from their *other IP*.
@@ -2545,8 +2545,8 @@ unsafe extern "C" fn recv_and_process_client_pkt()
 {
   let mut size: ssize_t = 0;
   //u8          version;
-  let mut to: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  let mut from: *mut sockaddr = 0 as *mut sockaddr;
+  let mut to: *mut len_and_sockaddr = std::ptr::null_mut();
+  let mut from: *mut sockaddr = std::ptr::null_mut();
   // TODO use std::mem::zeroed()
   let mut msg: msg_t = msg_t {
     m_status: 0,
@@ -2785,8 +2785,8 @@ unsafe extern "C" fn find_key_entry(
 unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
   let mut current_block: u64;
   let mut opts: libc::c_uint = 0;
-  let mut peers: *mut llist_t = 0 as *mut llist_t;
-  let mut key_entries: *mut llist_t = 0 as *mut llist_t;
+  let mut peers: *mut llist_t = std::ptr::null_mut();
+  let mut key_entries: *mut llist_t = std::ptr::null_mut();
   let mut key_file_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   srand(getpid() as libc::c_uint);
   if getuid() != 0 {
@@ -2803,8 +2803,8 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
   (*ptr_to_globals).last_script_run = (*ptr_to_globals).reftime;
   (*ptr_to_globals).FREQHOLD_cnt = -1i32;
   /* Parse options */
-  peers = 0 as *mut llist_t;
-  key_entries = 0 as *mut llist_t;
+  peers = std::ptr::null_mut();
+  key_entries = std::ptr::null_mut();
   opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^nqNxk:wp:*S:lI:d46aAbgL\x00=0:dd:wn:Il\x00" as *const u8 as *const libc::c_char,
@@ -2847,7 +2847,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
   }
   if opts & OPT_k as libc::c_int as libc::c_uint != 0 {
     let mut tokens: [*mut libc::c_char; 4] = [0 as *mut libc::c_char; 4];
-    let mut parser: *mut parser_t = 0 as *mut parser_t;
+    let mut parser: *mut parser_t = std::ptr::null_mut();
     parser = crate::libbb::parse_config::config_open(key_file_path);
     while crate::libbb::parse_config::config_read(
       parser,
@@ -2859,7 +2859,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
       b"# \t\x00" as *const u8 as *const libc::c_char,
     ) == 3i32
     {
-      let mut key_entry: *mut key_entry_t = 0 as *mut key_entry_t;
+      let mut key_entry: *mut key_entry_t = std::ptr::null_mut();
       let mut buffer: [libc::c_char; 40] = [0; 40];
       let mut hash_type: smalluint = 0;
       let mut msg_size: smalluint = 0;
@@ -2956,7 +2956,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
     while !peers.is_null() {
       let mut peer: *mut libc::c_char =
         crate::libbb::llist::llist_pop(&mut peers) as *mut libc::c_char;
-      let mut key_entry_0: *mut key_entry_t = 0 as *mut key_entry_t;
+      let mut key_entry_0: *mut key_entry_t = std::ptr::null_mut();
       if strncmp(
         peer,
         b"keyno:\x00" as *const u8 as *const libc::c_char,
@@ -2981,7 +2981,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
       add_peers(peer, key_entry_0);
     }
   } else {
-    let mut parser_0: *mut parser_t = 0 as *mut parser_t;
+    let mut parser_0: *mut parser_t = std::ptr::null_mut();
     let mut token: [*mut libc::c_char; 5] = [0 as *mut libc::c_char; 5];
     parser_0 = crate::libbb::parse_config::config_open(
       b"/etc/ntp.conf\x00" as *const u8 as *const libc::c_char,
@@ -2997,7 +2997,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
       if strcmp(token[0], b"server\x00" as *const u8 as *const libc::c_char) == 0i32
         && !token[1].is_null()
       {
-        let mut key_entry_1: *mut key_entry_t = 0 as *mut key_entry_t;
+        let mut key_entry_1: *mut key_entry_t = std::ptr::null_mut();
         if !token[2].is_null()
           && !token[3].is_null()
           && strcmp(token[2], b"key\x00" as *const u8 as *const libc::c_char) == 0i32
@@ -3089,8 +3089,8 @@ pub unsafe extern "C" fn ntpd_main(
     discipline_jitter: 0.,
     offset_to_jitter_ratio: 0,
   };
-  let mut pfd: *mut pollfd = 0 as *mut pollfd;
-  let mut idx2peer: *mut *mut peer_t = 0 as *mut *mut peer_t;
+  let mut pfd: *mut pollfd = std::ptr::null_mut();
+  let mut idx2peer: *mut *mut peer_t = std::ptr::null_mut();
   let mut cnt: libc::c_uint = 0;
   memset(
     &mut G as *mut globals as *mut libc::c_void,
@@ -3120,7 +3120,7 @@ pub unsafe extern "C" fn ntpd_main(
    */
   cnt = G.peer_cnt.wrapping_mul((4i32 + 1i32) as libc::c_uint); /* while (!bb_got_signal) */
   while bb_got_signal == 0 {
-    let mut item: *mut llist_t = 0 as *mut llist_t;
+    let mut item: *mut llist_t = std::ptr::null_mut();
     let mut i: libc::c_uint = 0;
     let mut j: libc::c_uint = 0;
     let mut nfds: libc::c_int = 0;

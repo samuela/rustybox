@@ -42,7 +42,7 @@ pub unsafe extern "C" fn llist_add_to_end(
 /* Remove first element from the list and return it */
 #[no_mangle]
 pub unsafe extern "C" fn llist_pop(mut head: *mut *mut llist_t) -> *mut libc::c_void {
-  let mut data: *mut libc::c_void = 0 as *mut libc::c_void;
+  let mut data: *mut libc::c_void = std::ptr::null_mut();
   let mut temp: *mut llist_t = *head;
   if !temp.is_null() {
     data = (*temp).data as *mut libc::c_void;
@@ -86,7 +86,7 @@ pub unsafe extern "C" fn llist_free(
 /* Reverse list order. */
 #[no_mangle]
 pub unsafe extern "C" fn llist_rev(mut list: *mut llist_t) -> *mut llist_t {
-  let mut rev: *mut llist_t = 0 as *mut llist_t;
+  let mut rev: *mut llist_t = std::ptr::null_mut();
   while !list.is_null() {
     let mut next: *mut llist_t = (*list).link;
     (*list).link = rev;

@@ -327,7 +327,7 @@ pub unsafe extern "C" fn popmaildir_main(
     let mut filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut target: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut answer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut fp: *mut FILE = 0 as *mut FILE;
+    let mut fp: *mut FILE = std::ptr::null_mut();
     let mut rc: libc::c_int = 0;
     // generate unique filename
     filename = crate::libbb::xfuncs_printf::xasprintf(

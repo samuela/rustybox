@@ -735,7 +735,7 @@ unsafe extern "C" fn parse_cmd_args(
 }
 /* Parse address+command sets, skipping comment lines. */
 unsafe extern "C" fn add_cmd(mut cmdstr: *const libc::c_char) {
-  let mut sed_cmd: *mut sed_cmd_t = 0 as *mut sed_cmd_t;
+  let mut sed_cmd: *mut sed_cmd_t = std::ptr::null_mut();
   let mut len: libc::c_uint = 0;
   let mut n: libc::c_uint = 0;
   /* Append this line to any unfinished line from last time. */
@@ -972,7 +972,7 @@ unsafe extern "C" fn do_subst_command(
   let mut altered: bool = 0i32 != 0;
   let mut prev_match_empty: bool = 1i32 != 0;
   let mut tried_at_eol: bool = 0i32 != 0;
-  let mut current_regex: *mut regex_t = 0 as *mut regex_t;
+  let mut current_regex: *mut regex_t = std::ptr::null_mut();
   current_regex = (*sed_cmd).sub_match;
   /* Handle empty regex. */
   if current_regex.is_null() {
@@ -1114,7 +1114,7 @@ unsafe extern "C" fn do_subst_command(
 }
 /* Set command pointer to point to this label.  (Does not handle null label.) */
 unsafe extern "C" fn branch_to(mut label: *mut libc::c_char) -> *mut sed_cmd_t {
-  let mut sed_cmd: *mut sed_cmd_t = 0 as *mut sed_cmd_t;
+  let mut sed_cmd: *mut sed_cmd_t = std::ptr::null_mut();
   sed_cmd = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).sed_cmd_head;
   while !sed_cmd.is_null() {
     if (*sed_cmd).cmd as libc::c_int == ':' as i32
@@ -1282,7 +1282,7 @@ unsafe extern "C" fn get_next_line(
           /* Close this file and advance to next one */
           crate::libbb::fclose_nonstdin::fclose_if_not_stdin(fp);
           let ref mut fresh22 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_fp;
-          *fresh22 = 0 as *mut FILE
+          *fresh22 = std::ptr::null_mut()
         }
       }
       _ => {}
@@ -1320,7 +1320,7 @@ unsafe extern "C" fn process_files() {
   let mut last_puts_char: libc::c_char = '\n' as i32 as libc::c_char;
   let mut last_gets_char: libc::c_char = 0;
   let mut next_gets_char: libc::c_char = 0;
-  let mut sed_cmd: *mut sed_cmd_t = 0 as *mut sed_cmd_t;
+  let mut sed_cmd: *mut sed_cmd_t = std::ptr::null_mut();
   let mut substituted: libc::c_int = 0;
   /* Prime the pump */
   next_line = get_next_line(&mut next_gets_char, &mut last_puts_char);
@@ -1649,7 +1649,7 @@ unsafe extern "C" fn process_files() {
                 726525485109251713 =>
                 /* Read file, append contents to output */
                 {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -2026,7 +2026,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -2366,7 +2366,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -2706,7 +2706,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -3050,7 +3050,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -3390,7 +3390,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -3730,7 +3730,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -4070,7 +4070,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -4410,7 +4410,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -4750,7 +4750,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -5090,7 +5090,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -5430,7 +5430,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -5770,7 +5770,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -6110,7 +6110,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -6450,7 +6450,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -6790,7 +6790,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -7130,7 +7130,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -7470,7 +7470,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -7810,7 +7810,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -8150,7 +8150,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -8490,7 +8490,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -8830,7 +8830,7 @@ unsafe extern "C" fn process_files() {
                   current_block = 17965632435239708295;
                 }
                 726525485109251713 => {
-                  let mut rfile: *mut FILE = 0 as *mut FILE;
+                  let mut rfile: *mut FILE = std::ptr::null_mut();
                   rfile = crate::libbb::wfopen::fopen_for_read((*sed_cmd).string);
                   if !rfile.is_null() {
                     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -9056,8 +9056,8 @@ pub unsafe extern "C" fn sed_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
-  let mut opt_e: *mut llist_t = 0 as *mut llist_t;
-  let mut opt_f: *mut llist_t = 0 as *mut llist_t;
+  let mut opt_e: *mut llist_t = std::ptr::null_mut();
+  let mut opt_f: *mut llist_t = std::ptr::null_mut();
   let mut opt_i: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   static mut sed_longopts: [libc::c_char; 67] = [
     105, 110, 45, 112, 108, 97, 99, 101, 0, 2, 105, 114, 101, 103, 101, 120, 112, 45, 101, 120,
@@ -9079,7 +9079,7 @@ pub unsafe extern "C" fn sed_main(
     return 0i32;
   }
   /* do normal option parsing */
-  opt_f = 0 as *mut llist_t;
+  opt_f = std::ptr::null_mut();
   opt_e = opt_f;
   opt_i = std::ptr::null_mut::<libc::c_char>();
   /* -i must be first, to match OPT_in_place definition */
@@ -9114,7 +9114,7 @@ pub unsafe extern "C" fn sed_main(
   while !opt_f.is_null() {
     // -f
     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut cmdfile: *mut FILE = 0 as *mut FILE;
+    let mut cmdfile: *mut FILE = std::ptr::null_mut();
     cmdfile = crate::libbb::wfopen_input::xfopen_stdin(
       crate::libbb::llist::llist_pop(&mut opt_f) as *const libc::c_char
     );
@@ -9160,7 +9160,7 @@ pub unsafe extern "C" fn sed_main(
   } else {
     let mut statbuf: stat = std::mem::zeroed();
     let mut nonstdoutfd: libc::c_int = 0;
-    let mut sed_cmd: *mut sed_cmd_t = 0 as *mut sed_cmd_t;
+    let mut sed_cmd: *mut sed_cmd_t = std::ptr::null_mut();
     loop {
       if opt & OPT_in_place as libc::c_int as libc::c_uint == 0 {
         if *(*argv).offset(0) as libc::c_int == '-' as i32 && *(*argv).offset(1) == 0 {
@@ -9225,7 +9225,7 @@ pub unsafe extern "C" fn sed_main(
       }
       statbuf = std::mem::zeroed();
       nonstdoutfd = 0;
-      sed_cmd = 0 as *mut sed_cmd_t;
+      sed_cmd = std::ptr::null_mut();
       let ref mut fresh34 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).last_input_file;
       *fresh34 += 1
       /* Here, to handle "sed 'cmds' nonexistent_file" case we did:

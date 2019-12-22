@@ -594,7 +594,7 @@ pub unsafe extern "C" fn udhcp_get_option(
   mut packet: *mut dhcp_packet,
   mut code: libc::c_int,
 ) -> *mut u8 {
-  let mut optionptr: *mut u8 = 0 as *mut u8;
+  let mut optionptr: *mut u8 = std::ptr::null_mut();
   let mut len: libc::c_int = 0;
   let mut rem: libc::c_int = 0;
   let mut overload: libc::c_int = 0i32;
@@ -672,7 +672,7 @@ pub unsafe extern "C" fn udhcp_get_option32(
   let mut r: *mut u8 = udhcp_get_option(packet, code);
   if !r.is_null() {
     if *r.offset((-2i32 + 1i32) as isize) as libc::c_int != 4i32 {
-      r = 0 as *mut u8
+      r = std::ptr::null_mut()
     }
   }
   return r;
@@ -770,7 +770,7 @@ pub unsafe extern "C" fn udhcp_str2nip(
   mut str: *const libc::c_char,
   mut arg: *mut libc::c_void,
 ) -> libc::c_int {
-  let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
   lsa = crate::libbb::xconnect::host_and_af2sockaddr(str, 0i32, 2i32 as sa_family_t);
   if lsa.is_null() {
     return 0i32;
@@ -794,7 +794,7 @@ unsafe extern "C" fn attach_option(
   mut length: libc::c_int,
   mut dhcpv6: bool,
 ) {
-  let mut existing: *mut option_set = 0 as *mut option_set; /* more than enough */
+  let mut existing: *mut option_set = std::ptr::null_mut(); /* more than enough */
   let mut allocated: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if (*optflag).flags as libc::c_int & OPTION_TYPE_MASK as libc::c_int == OPTION_BIN as libc::c_int
   {
@@ -821,8 +821,8 @@ unsafe extern "C" fn attach_option(
   }
   existing = udhcp_find_option(*opt_list, (*optflag).code);
   if existing.is_null() {
-    let mut new: *mut option_set = 0 as *mut option_set;
-    let mut curr: *mut *mut option_set = 0 as *mut *mut option_set;
+    let mut new: *mut option_set = std::ptr::null_mut();
+    let mut curr: *mut *mut option_set = std::ptr::null_mut();
     /* make a new option */
     if dhcp_verbose >= 2i32 as libc::c_uint {
       crate::libbb::verror_msg::bb_info_msg(

@@ -44,7 +44,7 @@ unsafe extern "C" fn pkcs1Pad(
   mut outlen: uint32,
   mut cryptType: int32,
 ) -> int32 {
-  let mut c: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut c: *mut libc::c_uchar = std::ptr::null_mut();
   let mut randomLen: int32 = 0;
   randomLen = outlen
     .wrapping_sub(3i32 as libc::c_uint)
@@ -135,7 +135,7 @@ unsafe extern "C" fn psRsaCrypt(
   //		psTraceCrypto("NULL parameter error in psRsaCrypt\n");
   //		return PS_ARG_FAIL;
   //	}
-  tmpb.dp = 0 as *mut pstm_digit;
+  tmpb.dp = std::ptr::null_mut();
   tmpa.dp = tmpb.dp;
   tmp.dp = tmpa.dp;
   /* Init and copy into tmp */

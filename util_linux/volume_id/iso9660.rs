@@ -104,9 +104,9 @@ pub struct iso_volume_descriptor {
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
-  let mut buf: *mut u8 = 0 as *mut u8;
-  let mut is: *mut iso_volume_descriptor = 0 as *mut iso_volume_descriptor;
-  let mut hs: *mut high_sierra_volume_descriptor = 0 as *mut high_sierra_volume_descriptor;
+  let mut buf: *mut u8 = std::ptr::null_mut();
+  let mut is: *mut iso_volume_descriptor = std::ptr::null_mut();
+  let mut hs: *mut high_sierra_volume_descriptor = std::ptr::null_mut();
   buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     (0i32 as u64).wrapping_add(0x8000i32 as libc::c_ulong),

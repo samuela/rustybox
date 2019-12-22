@@ -118,7 +118,7 @@ pub unsafe extern "C" fn volume_id_probe_linux_raid(
 ) -> libc::c_int {
   let mut sboff: u64 = 0;
   let mut uuid: [u8; 16] = [0; 16];
-  let mut mdp: *mut mdp_super_block = 0 as *mut mdp_super_block;
+  let mut mdp: *mut mdp_super_block = std::ptr::null_mut();
   if size < 0x10000i32 as libc::c_ulong {
     return -1i32;
   }

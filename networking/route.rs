@@ -943,7 +943,7 @@ pub unsafe extern "C" fn route_main(
   let mut opt: libc::c_uint = 0;
   let mut what: libc::c_int = 0;
   let mut family: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut p: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut p: *mut *mut libc::c_char = std::ptr::null_mut();
   /* First, remap '-net' and '-host' to avoid getopt problems. */
   p = argv;
   loop {

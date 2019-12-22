@@ -178,7 +178,7 @@ unsafe extern "C" fn dump_procs(
   mut fp: *mut FILE,
   mut look_for_login_process: libc::c_int,
 ) -> libc::c_int {
-  let mut entry: *mut dirent = 0 as *mut dirent;
+  let mut entry: *mut dirent = std::ptr::null_mut();
   let mut dir: *mut DIR = opendir(b"/proc\x00" as *const u8 as *const libc::c_char);
   let mut found_login_process: libc::c_int = 0i32;
   fputs_unlocked(

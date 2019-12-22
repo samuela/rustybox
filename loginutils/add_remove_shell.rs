@@ -24,7 +24,7 @@ pub unsafe extern "C" fn add_remove_shell_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut orig_fp: *mut FILE = 0 as *mut FILE;
+  let mut orig_fp: *mut FILE = std::ptr::null_mut();
   let mut orig_fn: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut new_fn: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sb: stat = std::mem::zeroed();

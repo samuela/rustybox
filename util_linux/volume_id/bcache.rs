@@ -158,7 +158,7 @@ static mut bcache_magic: [libc::c_char; 16] = [
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_bcache(mut id: *mut volume_id) -> libc::c_int
 /*,uint64_t off*/ {
-  let mut sb: *mut bcache_super_block = 0 as *mut bcache_super_block;
+  let mut sb: *mut bcache_super_block = std::ptr::null_mut();
   sb = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     0x1000i32 as u64,

@@ -340,8 +340,8 @@ unsafe extern "C" fn sysctl_act_recursive(mut path: *const libc::c_char) -> libc
     && stat(path, &mut buf) == 0i32
     && buf.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint
   {
-    let mut entry: *mut dirent = 0 as *mut dirent;
-    let mut dirp: *mut DIR = 0 as *mut DIR;
+    let mut entry: *mut dirent = std::ptr::null_mut();
+    let mut dirp: *mut DIR = std::ptr::null_mut();
     dirp = opendir(path);
     if dirp.is_null() {
       return -1i32;
@@ -382,7 +382,7 @@ unsafe extern "C" fn sysctl_act_recursive(mut path: *const libc::c_char) -> libc
  */
 unsafe extern "C" fn sysctl_handle_preload_file(mut filename: *const libc::c_char) -> libc::c_int {
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut parse_flags: libc::c_int = 0;
   parser = crate::libbb::parse_config::config_open(filename);
   /* Must do it _after_ config_open(): */

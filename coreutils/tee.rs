@@ -79,10 +79,10 @@ pub unsafe extern "C" fn tee_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut mode: *const libc::c_char = b"w\x00a\x00" as *const u8 as *const libc::c_char;
-  let mut files: *mut *mut FILE = 0 as *mut *mut FILE;
-  let mut fp: *mut *mut FILE = 0 as *mut *mut FILE;
-  let mut names: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
-  let mut np: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut files: *mut *mut FILE = std::ptr::null_mut();
+  let mut fp: *mut *mut FILE = std::ptr::null_mut();
+  let mut names: *mut *mut libc::c_char = std::ptr::null_mut();
+  let mut np: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut retval: libc::c_char = 0;
   //TODO: make unconditional
   let mut c: ssize_t = 0; /* 'a' must be 2nd */

@@ -354,7 +354,7 @@ unsafe extern "C" fn make_default_cur_rule() {
     .mode = 0o660i32 as mode_t;
 }
 unsafe extern "C" fn clean_up_cur_rule() {
-  let mut e: *mut envmatch = 0 as *mut envmatch;
+  let mut e: *mut envmatch = std::ptr::null_mut();
   free(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .cur_rule
@@ -395,7 +395,7 @@ unsafe extern "C" fn parse_envmatch_pfx(mut val: *mut libc::c_char) -> *mut libc
     .cur_rule
     .envmatch;
   loop {
-    let mut e: *mut envmatch = 0 as *mut envmatch;
+    let mut e: *mut envmatch = std::ptr::null_mut();
     let mut semicolon: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut eq: *mut libc::c_char = strchr(val, '=' as i32);
     if eq.is_null() {
@@ -616,14 +616,14 @@ unsafe extern "C" fn parse_next_rule() {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser,
   );
   let ref mut fresh3 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser;
-  *fresh3 = 0 as *mut parser_t;
+  *fresh3 = std::ptr::null_mut();
 }
 /* If mdev -s, we remember rules in G.rule_vec[].
  * Otherwise, there is no point in doing it, and we just
  * save only one parsed rule in G.cur_rule.
  */
 unsafe extern "C" fn next_rule() -> *const rule {
-  let mut rule: *mut rule = 0 as *mut rule;
+  let mut rule: *mut rule = std::ptr::null_mut();
   /* Open conf file if we didn't do it yet */
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .parser
@@ -1454,7 +1454,7 @@ unsafe extern "C" fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c
   return seq_fd;
 }
 unsafe extern "C" fn signal_mdevs(mut my_pid: libc::c_uint) {
-  let mut p: *mut procps_status_t = 0 as *mut procps_status_t;
+  let mut p: *mut procps_status_t = std::ptr::null_mut();
   loop {
     p = crate::libbb::procps::procps_scan(p, PSSCAN_ARGV0 as libc::c_int);
     if p.is_null() {

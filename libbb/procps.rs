@@ -112,7 +112,7 @@ static mut groupname: cache_t = cache_t {
 };
 unsafe extern "C" fn clear_cache(mut cp: *mut cache_t) {
   free((*cp).cache as *mut libc::c_void);
-  (*cp).cache = 0 as *mut id_to_name_map_t;
+  (*cp).cache = std::ptr::null_mut();
   (*cp).size = 0i32;
 }
 #[no_mangle]
@@ -288,7 +288,7 @@ pub unsafe extern "C" fn procps_read_smaps(
   mut cb: Option<unsafe extern "C" fn(_: *mut smaprec, _: *mut libc::c_void) -> ()>,
   mut data: *mut libc::c_void,
 ) -> libc::c_int {
-  let mut file: *mut FILE = 0 as *mut FILE;
+  let mut file: *mut FILE = std::ptr::null_mut();
   let mut currec: smaprec = smaprec {
     mapped_rw: 0,
     mapped_ro: 0,
@@ -474,7 +474,7 @@ pub unsafe extern "C" fn procps_scan(
   }
   let mut current_block_79: u64;
   loop {
-    let mut entry: *mut dirent = 0 as *mut dirent;
+    let mut entry: *mut dirent = std::ptr::null_mut();
     let mut buf: [libc::c_char; 1024] = [0; 1024];
     let mut tasknice: libc::c_long = 0;
     let mut pid: libc::c_uint = 0;
@@ -487,7 +487,7 @@ pub unsafe extern "C" fn procps_scan(
         current_block_79 = 13839692391726842101;
       } else {
         closedir((*sp).task_dir);
-        (*sp).task_dir = 0 as *mut DIR;
+        (*sp).task_dir = std::ptr::null_mut();
         current_block_79 = 1841672684692190573;
       }
     } else {
@@ -655,7 +655,7 @@ pub unsafe extern "C" fn procps_scan(
       }
       /* TOPMEM */
       if flags & PSSCAN_RUIDGID as libc::c_int != 0 {
-        let mut file: *mut FILE = 0 as *mut FILE;
+        let mut file: *mut FILE = std::ptr::null_mut();
         strcpy(
           filename_tail,
           b"status\x00" as *const u8 as *const libc::c_char,

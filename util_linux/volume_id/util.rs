@@ -259,7 +259,7 @@ pub unsafe extern "C" fn volume_id_get_buffer(
   mut len: size_t,
 ) -> *mut libc::c_void {
   let mut current_block: u64;
-  let mut dst: *mut u8 = 0 as *mut u8;
+  let mut dst: *mut u8 = std::ptr::null_mut();
   let mut small_off: libc::c_uint = 0;
   let mut read_len: ssize_t = 0;
   /* check if requested area fits in superblock buffer */
@@ -383,10 +383,10 @@ pub unsafe extern "C" fn volume_id_get_buffer(
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_free_buffer(mut id: *mut volume_id) {
   free((*id).sbbuf as *mut libc::c_void);
-  (*id).sbbuf = 0 as *mut u8;
+  (*id).sbbuf = std::ptr::null_mut();
   (*id).sbbuf_len = 0i32 as size_t;
   free((*id).seekbuf as *mut libc::c_void);
-  (*id).seekbuf = 0 as *mut u8;
+  (*id).seekbuf = std::ptr::null_mut();
   (*id).seekbuf_len = 0i32 as size_t;
   (*id).seekbuf_off = 0i32 as u64;
   /* paranoia */

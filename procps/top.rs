@@ -408,7 +408,7 @@ unsafe extern "C" fn get_jiffy_counts() {
     /* Otherwise the first per cpu display shows all 100% idles */
     usleep(50000i32 as useconds_t);
   } else {
-    let mut tmp: *mut jiffy_counts_t = 0 as *mut jiffy_counts_t;
+    let mut tmp: *mut jiffy_counts_t = std::ptr::null_mut();
     let mut i: libc::c_int = 0;
     /* First switch the sample pointers: no need to copy */
     tmp = (*ptr_to_globals).cpu_prev_jif;
@@ -424,12 +424,12 @@ unsafe extern "C" fn get_jiffy_counts() {
   fclose(fp);
 }
 unsafe extern "C" fn do_stats() {
-  let mut cur: *mut top_status_t = 0 as *mut top_status_t;
+  let mut cur: *mut top_status_t = std::ptr::null_mut();
   let mut pid: pid_t = 0;
   let mut n: libc::c_int = 0;
   let mut i: libc::c_uint = 0;
   let mut last_i: libc::c_uint = 0;
-  let mut new_hist: *mut save_hist = 0 as *mut save_hist;
+  let mut new_hist: *mut save_hist = std::ptr::null_mut();
   get_jiffy_counts();
   (*ptr_to_globals).total_pcpu = 0i32 as libc::c_uint;
   /* total_vsz = 0; */
@@ -531,8 +531,8 @@ unsafe extern "C" fn display_cpus(
    * xxx% = (cur_jif.xxx - prev_jif.xxx) / (cur_jif.total - prev_jif.total) * 100%
    */
   let mut total_diff: libc::c_uint = 0;
-  let mut p_jif: *mut jiffy_counts_t = 0 as *mut jiffy_counts_t;
-  let mut p_prev_jif: *mut jiffy_counts_t = 0 as *mut jiffy_counts_t;
+  let mut p_jif: *mut jiffy_counts_t = std::ptr::null_mut();
+  let mut p_prev_jif: *mut jiffy_counts_t = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut n_cpu_lines: libc::c_int = 0;
   /* using (unsigned) casts to make operations cheaper */
@@ -621,7 +621,7 @@ unsafe extern "C" fn parse_meminfo(mut meminfo: *mut libc::c_ulong) {
     110, 111, 110, 80, 97, 103, 101, 115, 0, 77, 97, 112, 112, 101, 100, 0, 83, 108, 97, 98, 0, 0,
   ];
   let mut buf: [libc::c_char; 60] = [0; 60];
-  let mut f: *mut FILE = 0 as *mut FILE;
+  let mut f: *mut FILE = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   memset(
     meminfo as *mut libc::c_void,
@@ -707,7 +707,7 @@ unsafe extern "C" fn display_header(
 }
 #[inline(never)]
 unsafe extern "C" fn display_process_list(mut lines_rem: libc::c_int, mut scr_width: libc::c_int) {
-  let mut s: *mut top_status_t = 0 as *mut top_status_t;
+  let mut s: *mut top_status_t = std::ptr::null_mut();
   let mut total_memory: libc::c_ulong = display_header(scr_width, &mut lines_rem);
   /* xxx_shift and xxx_scale variables allow us to replace
    * expensive divides with multiply and shift */
@@ -861,7 +861,7 @@ unsafe extern "C" fn display_process_list(mut lines_rem: libc::c_int, mut scr_wi
 unsafe extern "C" fn clearmems() {
   crate::libbb::procps::clear_username_cache();
   free((*ptr_to_globals).top as *mut libc::c_void);
-  (*ptr_to_globals).top = 0 as *mut top_status_t;
+  (*ptr_to_globals).top = std::ptr::null_mut();
 }
 unsafe extern "C" fn reset_term() {
   if option_mask32 & OPT_b as libc::c_int as libc::c_uint == 0 {
@@ -1179,7 +1179,7 @@ unsafe extern "C" fn handle_input(
         } else if c == 'h' as i32 && scan_mask != TOPMEM_MASK as libc::c_int as libc::c_uint {
           scan_mask ^= PSSCAN_TASKS as libc::c_int as libc::c_uint;
           free((*ptr_to_globals).prev_hist as *mut libc::c_void);
-          (*ptr_to_globals).prev_hist = 0 as *mut save_hist;
+          (*ptr_to_globals).prev_hist = std::ptr::null_mut();
           (*ptr_to_globals).prev_hist_count = 0i32 as libc::c_uint;
           continue;
         } else if c == 'p' as i32 {
@@ -1217,7 +1217,7 @@ unsafe extern "C" fn handle_input(
           (*ptr_to_globals).sort_field = (((*ptr_to_globals).sort_field as libc::c_int + 1i32)
             % NUM_SORT_FIELD as libc::c_int) as smallint;
           free((*ptr_to_globals).prev_hist as *mut libc::c_void);
-          (*ptr_to_globals).prev_hist = 0 as *mut save_hist;
+          (*ptr_to_globals).prev_hist = std::ptr::null_mut();
           (*ptr_to_globals).prev_hist_count = 0i32 as libc::c_uint;
           continue;
         } else if c == 'r' as i32 {
@@ -1237,7 +1237,7 @@ unsafe extern "C" fn handle_input(
             (*ptr_to_globals).cpu_prev_jif = &mut (*ptr_to_globals).prev_jif
           } else {
             /* Prepare for xrealloc() */
-            (*ptr_to_globals).cpu_prev_jif = 0 as *mut jiffy_counts_t;
+            (*ptr_to_globals).cpu_prev_jif = std::ptr::null_mut();
             (*ptr_to_globals).cpu_jif = (*ptr_to_globals).cpu_prev_jif
           }
           (*ptr_to_globals).num_cpus = 0i32 as libc::c_uint;
@@ -1397,7 +1397,7 @@ pub unsafe extern "C" fn top_main(
   scan_mask = handle_input(scan_mask, 0i32 as duration_t); /* end of "while (not Q)" */
   's_204: while scan_mask != EXIT_MASK as libc::c_int as libc::c_uint {
     let mut new_mask: libc::c_uint = 0;
-    let mut p: *mut procps_status_t = 0 as *mut procps_status_t;
+    let mut p: *mut procps_status_t = std::ptr::null_mut();
     if option_mask32 & OPT_b as libc::c_int as libc::c_uint != 0 {
       (*ptr_to_globals).lines = 2147483647i32 as libc::c_uint;
       col = (LINE_BUF_SIZE as libc::c_int - 2i32) as libc::c_uint

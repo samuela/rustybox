@@ -514,7 +514,7 @@ unsafe extern "C" fn add_static_lease(
   mut nip: u32,
   mut opts: *const libc::c_char,
 ) {
-  let mut st_lease: *mut static_lease = 0 as *mut static_lease;
+  let mut st_lease: *mut static_lease = std::ptr::null_mut();
   let mut optlen: libc::c_uint = 0;
   optlen = if !opts.is_null() {
     ((1i32 + 1i32) as libc::c_ulong).wrapping_add(strnlen(opts, 120i32 as size_t))
@@ -597,7 +597,7 @@ unsafe extern "C" fn is_nip_reserved_as_static(mut nip: u32) -> libc::c_int {
 }
 /* Find the oldest expired lease, NULL if there are no expired leases */
 unsafe extern "C" fn oldest_expired_lease() -> *mut dyn_lease {
-  let mut oldest_lease: *mut dyn_lease = 0 as *mut dyn_lease;
+  let mut oldest_lease: *mut dyn_lease = std::ptr::null_mut();
   let mut oldest_time: leasetime_t = time(0 as *mut time_t) as leasetime_t;
   let mut i: libc::c_uint = 0;
   /* Unexpired leases have g_leases[i].expires >= current time
@@ -651,7 +651,7 @@ unsafe extern "C" fn add_lease(
   mut hostname: *const libc::c_char,
   mut hostname_len: libc::c_int,
 ) -> *mut dyn_lease {
-  let mut oldest: *mut dyn_lease = 0 as *mut dyn_lease;
+  let mut oldest: *mut dyn_lease = std::ptr::null_mut();
   /* clean out any old ones */
   clear_leases(chaddr, yiaddr); /* include NUL */
   oldest = oldest_expired_lease();
@@ -779,11 +779,11 @@ unsafe extern "C" fn find_free_or_expired_nip(
   mut arpping_ms: libc::c_uint,
 ) -> u32 {
   let mut addr: u32 = 0;
-  let mut oldest_lease: *mut dyn_lease = 0 as *mut dyn_lease;
+  let mut oldest_lease: *mut dyn_lease = std::ptr::null_mut();
   addr = (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).start_ip;
   loop {
     let mut nip: u32 = 0;
-    let mut lease: *mut dyn_lease = 0 as *mut dyn_lease;
+    let mut lease: *mut dyn_lease = std::ptr::null_mut();
     /* ie, 192.168.55.0 */
     if !(addr & 0xffi32 as libc::c_uint == 0i32 as libc::c_uint) {
       /* ie, 192.168.55.255 */
@@ -1141,7 +1141,7 @@ static mut keywords: [config_keyword; 18] = [
 
 #[inline(never)]
 unsafe extern "C" fn read_config(mut file: *const libc::c_char) {
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut k: *const config_keyword = 0 as *const config_keyword;
   let mut i: libc::c_uint = 0;
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
@@ -1606,9 +1606,9 @@ unsafe extern "C" fn init_packet(
  * TODO: teach this code to use overload option.
  */
 unsafe extern "C" fn add_server_options(mut packet: *mut dhcp_packet) {
-  let mut config_opts: *mut option_set = 0 as *mut option_set;
-  let mut client_hostname_opt: *mut u8 = 0 as *mut u8;
-  client_hostname_opt = 0 as *mut u8;
+  let mut config_opts: *mut option_set = std::ptr::null_mut();
+  let mut client_hostname_opt: *mut u8 = std::ptr::null_mut();
+  client_hostname_opt = std::ptr::null_mut();
   if (*packet).yiaddr != 0 {
     /* if we aren't from send_inform()... */
     let mut st_lease: *mut static_lease =
@@ -1993,11 +1993,11 @@ pub unsafe extern "C" fn udhcpd_main(
   let mut current_block: u64;
   let mut server_socket: libc::c_int = -1i32;
   let mut retval: libc::c_int = 0;
-  let mut state: *mut u8 = 0 as *mut u8;
+  let mut state: *mut u8 = std::ptr::null_mut();
   let mut timeout_end: libc::c_uint = 0;
   let mut num_ips: libc::c_uint = 0;
   let mut opt: libc::c_uint = 0;
-  let mut option: *mut option_set = 0 as *mut option_set;
+  let mut option: *mut option_set = std::ptr::null_mut();
   let mut str_I: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   str_I = str_I;
   let mut str_a: *const libc::c_char = b"2000\x00" as *const u8 as *const libc::c_char;
@@ -2156,11 +2156,11 @@ pub unsafe extern "C" fn udhcpd_main(
         };
         let mut bytes: libc::c_int = 0;
         let mut tv: libc::c_int = 0;
-        let mut server_id_opt: *mut u8 = 0 as *mut u8;
-        let mut requested_ip_opt: *mut u8 = 0 as *mut u8;
+        let mut server_id_opt: *mut u8 = std::ptr::null_mut();
+        let mut requested_ip_opt: *mut u8 = std::ptr::null_mut();
         let mut requested_nip: u32 = 0;
         let mut static_lease_nip: u32 = 0;
-        let mut lease: *mut dyn_lease = 0 as *mut dyn_lease;
+        let mut lease: *mut dyn_lease = std::ptr::null_mut();
         let mut fake_lease: dyn_lease = dyn_lease {
           expires: 0,
           lease_nip: 0,

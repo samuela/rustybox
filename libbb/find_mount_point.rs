@@ -427,8 +427,8 @@ pub unsafe extern "C" fn find_mount_point(
   mut subdir_too: libc::c_int,
 ) -> *mut mntent {
   let mut s: stat = std::mem::zeroed();
-  let mut mtab_fp: *mut FILE = 0 as *mut FILE;
-  let mut mountEntry: *mut mntent = 0 as *mut mntent;
+  let mut mtab_fp: *mut FILE = std::ptr::null_mut();
+  let mut mountEntry: *mut mntent = std::ptr::null_mut();
   let mut devno_of_name: libc::dev_t = 0;
   let mut block_dev: bool = false;
   if stat(name, &mut s) != 0i32 {

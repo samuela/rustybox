@@ -175,8 +175,8 @@ pub unsafe extern "C" fn remove_file(
     return 0i32;
   }
   if path_stat.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
-    let mut dp: *mut DIR = 0 as *mut DIR;
-    let mut d: *mut dirent = 0 as *mut dirent;
+    let mut dp: *mut DIR = std::ptr::null_mut();
+    let mut d: *mut dirent = std::ptr::null_mut();
     let mut status: libc::c_int = 0i32;
     if flags & FILEUTILS_RECUR as libc::c_int == 0 {
       crate::libbb::verror_msg::bb_error_msg(

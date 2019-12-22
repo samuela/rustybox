@@ -82,7 +82,7 @@ pub unsafe extern "C" fn rev_main(
   buf = xmalloc(bufsize) as *mut libc::c_char;
   loop {
     let mut pos: size_t = 0;
-    let mut fp: *mut FILE = 0 as *mut FILE;
+    let mut fp: *mut FILE = std::ptr::null_mut();
     let fresh0 = argv;
     argv = argv.offset(1);
     fp = crate::libbb::wfopen_input::fopen_or_warn_stdin(*fresh0);

@@ -175,7 +175,7 @@ pub struct ext2_super_block {
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_ext(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
-  let mut es: *mut ext2_super_block = 0 as *mut ext2_super_block;
+  let mut es: *mut ext2_super_block = std::ptr::null_mut();
   es = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     (0i32 as u64).wrapping_add(0x400i32 as libc::c_ulong),

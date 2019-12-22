@@ -131,7 +131,7 @@ pub unsafe extern "C" fn alloc_dumper() -> *mut dumper_t {
 }
 #[inline(never)]
 unsafe extern "C" fn bb_dump_size(mut fs: *mut FS) -> libc::c_int {
-  let mut fu: *mut FU = 0 as *mut FU;
+  let mut fu: *mut FU = std::ptr::null_mut();
   let mut bcnt: libc::c_int = 0;
   let mut cur_size: libc::c_int = 0;
   let mut fmt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -207,10 +207,10 @@ unsafe extern "C" fn bb_dump_size(mut fs: *mut FS) -> libc::c_int {
 unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
   let mut e: *const libc::c_char = 0 as *const libc::c_char;
   let mut current_block: u64;
-  let mut fu: *mut FU = 0 as *mut FU;
+  let mut fu: *mut FU = std::ptr::null_mut();
   fu = (*fs).nextfu;
   while !fu.is_null() {
-    let mut pr: *mut PR = 0 as *mut PR;
+    let mut pr: *mut PR = std::ptr::null_mut();
     let mut p1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut p2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut p3: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -680,7 +680,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
       (*fu).reps += ((*dumper).blocksize - (*fs).bcnt) / (*fu).bcnt
     }
     if (*fu).reps > 1i32 && !(*fu).nextpr.is_null() {
-      let mut pr_0: *mut PR = 0 as *mut PR;
+      let mut pr_0: *mut PR = std::ptr::null_mut();
       let mut p1_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut p2_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       pr_0 = (*fu).nextpr;
@@ -986,12 +986,12 @@ unsafe extern "C" fn conv_u(mut pr: *mut PR, mut p: *mut libc::c_uchar) {
   };
 }
 unsafe extern "C" fn display(mut dumper: *mut priv_dumper_t) {
-  let mut fs: *mut FS = 0 as *mut FS;
-  let mut fu: *mut FU = 0 as *mut FU;
-  let mut pr: *mut PR = 0 as *mut PR;
+  let mut fs: *mut FS = std::ptr::null_mut();
+  let mut fu: *mut FU = std::ptr::null_mut();
+  let mut pr: *mut PR = std::ptr::null_mut();
   let mut cnt: libc::c_int = 0;
-  let mut bp: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
-  let mut savebp: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut bp: *mut libc::c_uchar = std::ptr::null_mut();
+  let mut savebp: *mut libc::c_uchar = std::ptr::null_mut();
   let mut saveaddress: off_t = 0;
   let mut savech: libc::c_uchar = '\u{0}' as i32 as libc::c_uchar;
   loop {
@@ -1181,7 +1181,7 @@ pub unsafe extern "C" fn bb_dump_dump(
   mut pub_dumper: *mut dumper_t,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut tfs: *mut FS = 0 as *mut FS;
+  let mut tfs: *mut FS = std::ptr::null_mut();
   let mut blocksize: libc::c_int = 0;
   /* figure out the data block size */
   blocksize = 0i32;
@@ -1208,9 +1208,9 @@ pub unsafe extern "C" fn bb_dump_dump(
 #[no_mangle]
 pub unsafe extern "C" fn bb_dump_add(mut pub_dumper: *mut dumper_t, mut fmt: *const libc::c_char) {
   let mut p: *const libc::c_char = 0 as *const libc::c_char;
-  let mut tfs: *mut FS = 0 as *mut FS;
-  let mut tfu: *mut FU = 0 as *mut FU;
-  let mut nextfupp: *mut *mut FU = 0 as *mut *mut FU;
+  let mut tfs: *mut FS = std::ptr::null_mut();
+  let mut tfu: *mut FU = std::ptr::null_mut();
+  let mut nextfupp: *mut *mut FU = std::ptr::null_mut();
   let mut savep: *const libc::c_char = 0 as *const libc::c_char;
   /* start new linked list of format units */
   tfs =

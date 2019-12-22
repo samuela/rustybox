@@ -642,7 +642,7 @@ unsafe extern "C" fn maybe_close(mut fd: libc::c_int) {
 }
 // TODO: move to libbb?
 unsafe extern "C" fn xzalloc_lsa(mut family: libc::c_int) -> *mut len_and_sockaddr {
-  let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
   let mut sz: libc::c_int = 0;
   sz = ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong as libc::c_int;
   if family == 1i32 {
@@ -798,7 +798,7 @@ unsafe extern "C" fn prepare_socket_fd(mut sep: *mut servtab_t) {
   }
   crate::libbb::xconnect::setsockopt_reuseaddr(fd);
   if (*sep).se_family as libc::c_int == 1i32 {
-    let mut sun: *mut sockaddr_un = 0 as *mut sockaddr_un;
+    let mut sun: *mut sockaddr_un = std::ptr::null_mut();
     sun = &mut (*(*sep).se_lsa).u.sa as *mut sockaddr as *mut sockaddr_un;
     unlink((*sun).sun_path.as_mut_ptr());
   }
@@ -847,7 +847,7 @@ unsafe extern "C" fn reopen_config_file() -> libc::c_int {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).config_filename,
   );
   return ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser
-    != 0 as *mut libc::c_void as *mut parser_t) as libc::c_int;
+    != std::ptr::null_mut()) as libc::c_int;
 }
 unsafe extern "C" fn close_config_file() {
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -858,7 +858,7 @@ unsafe extern "C" fn close_config_file() {
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser,
     );
     let ref mut fresh5 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser;
-    *fresh5 = 0 as *mut parser_t
+    *fresh5 = std::ptr::null_mut()
   };
 }
 unsafe extern "C" fn free_servtab_strings(mut cp: *mut servtab_t) {
@@ -884,7 +884,7 @@ unsafe extern "C" fn new_servtab() -> *mut servtab_t {
   return newtab;
 }
 unsafe extern "C" fn dup_servtab(mut sep: *mut servtab_t) -> *mut servtab_t {
-  let mut newtab: *mut servtab_t = 0 as *mut servtab_t;
+  let mut newtab: *mut servtab_t = std::ptr::null_mut();
   let mut argc: libc::c_int = 0;
   newtab = new_servtab();
   *newtab = *sep;
@@ -914,8 +914,8 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut hostdelim: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut sep: *mut servtab_t = 0 as *mut servtab_t;
-  let mut nsep: *mut servtab_t = 0 as *mut servtab_t;
+  let mut sep: *mut servtab_t = std::ptr::null_mut();
+  let mut nsep: *mut servtab_t = std::ptr::null_mut();
   loop {
     sep = new_servtab();
     loop
@@ -1206,7 +1206,7 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
   return sep; /* struct copy */
 }
 unsafe extern "C" fn insert_in_servlist(mut cp: *mut servtab_t) -> *mut servtab_t {
-  let mut sep: *mut servtab_t = 0 as *mut servtab_t;
+  let mut sep: *mut servtab_t = std::ptr::null_mut();
   let mut omask: sigset_t = std::mem::zeroed();
   sep = new_servtab();
   *sep = *cp;
@@ -1234,12 +1234,12 @@ unsafe extern "C" fn same_serv_addr_proto(
   return 1i32;
 }
 unsafe extern "C" fn reread_config_file(mut _sig: libc::c_int) {
-  let mut sun: *mut sockaddr_un = 0 as *mut sockaddr_un;
+  let mut sun: *mut sockaddr_un = std::ptr::null_mut();
   let mut current_block: u64;
-  let mut sep: *mut servtab_t = 0 as *mut servtab_t;
-  let mut cp: *mut servtab_t = 0 as *mut servtab_t;
-  let mut sepp: *mut *mut servtab_t = 0 as *mut *mut servtab_t;
-  let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut sep: *mut servtab_t = std::ptr::null_mut();
+  let mut cp: *mut servtab_t = std::ptr::null_mut();
+  let mut sepp: *mut *mut servtab_t = std::ptr::null_mut();
+  let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
   let mut omask: sigset_t = std::mem::zeroed();
   let mut n: libc::c_uint = 0;
   let mut port: u16 = 0;
@@ -1349,7 +1349,7 @@ unsafe extern "C" fn reread_config_file(mut _sig: libc::c_int) {
             if *bb_errno != 0 || n > 0xffffi32 as libc::c_uint {
               /* se_service is not numeric */
               let mut protoname: [libc::c_char; 4] = [0; 4];
-              let mut sp: *mut servent = 0 as *mut servent;
+              let mut sp: *mut servent = std::ptr::null_mut();
               /* can result only in "tcp" or "udp": */
               crate::libbb::safe_strncpy::safe_strncpy(
                 protoname.as_mut_ptr(),
@@ -1481,7 +1481,7 @@ unsafe extern "C" fn reread_config_file(mut _sig: libc::c_int) {
 unsafe extern "C" fn reap_child(mut _sig: libc::c_int) {
   let mut pid: pid_t = 0;
   let mut status: libc::c_int = 0;
-  let mut sep: *mut servtab_t = 0 as *mut servtab_t;
+  let mut sep: *mut servtab_t = std::ptr::null_mut();
   let mut save_errno: libc::c_int = *bb_errno;
   loop {
     pid = crate::libbb::xfuncs::wait_any_nohang(&mut status);
@@ -1517,7 +1517,7 @@ unsafe extern "C" fn reap_child(mut _sig: libc::c_int) {
 }
 unsafe extern "C" fn retry_network_setup(mut _sig: libc::c_int) {
   let mut save_errno: libc::c_int = *bb_errno;
-  let mut sep: *mut servtab_t = 0 as *mut servtab_t;
+  let mut sep: *mut servtab_t = std::ptr::null_mut();
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).alarm_armed = 0i32 as smallint;
   sep = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).serv_list;
   while !sep.is_null() {
@@ -1529,7 +1529,7 @@ unsafe extern "C" fn retry_network_setup(mut _sig: libc::c_int) {
   *bb_errno = save_errno;
 }
 unsafe extern "C" fn clean_up_and_exit(mut _sig: libc::c_int) {
-  let mut sep: *mut servtab_t = 0 as *mut servtab_t;
+  let mut sep: *mut servtab_t = std::ptr::null_mut();
   /* XXX signal race walking sep list */
   sep = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).serv_list; /* for compiler */
   while !sep.is_null() {
@@ -1556,10 +1556,10 @@ pub unsafe extern "C" fn inetd_main(
   let mut current_block: u64;
   let mut sa: sigaction = std::mem::zeroed();
   let mut saved_pipe_handler: sigaction = std::mem::zeroed();
-  let mut sep: *mut servtab_t = 0 as *mut servtab_t;
-  let mut sep2: *mut servtab_t = 0 as *mut servtab_t;
-  let mut pwd: *mut passwd = 0 as *mut passwd;
-  let mut grp: *mut group = 0 as *mut group;
+  let mut sep: *mut servtab_t = std::ptr::null_mut();
+  let mut sep2: *mut servtab_t = std::ptr::null_mut();
+  let mut pwd: *mut passwd = std::ptr::null_mut();
+  let mut grp: *mut group = std::ptr::null_mut();
   grp = grp;
   let mut opt: libc::c_int = 0;
   let mut pid: pid_t = 0;
@@ -1930,7 +1930,7 @@ pub unsafe extern "C" fn inetd_main(
                     setsid();
                     /* "nowait" udp */
                     if new_udp_fd >= 0i32 {
-                      let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+                      let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
                       let mut r: libc::c_int = 0;
                       close(new_udp_fd);
                       lsa = xzalloc_lsa((*sep).se_family as libc::c_int);

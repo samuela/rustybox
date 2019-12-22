@@ -130,9 +130,9 @@ unsafe fn parse_config_file() {
   /* Don't depend on the tools to combine strings. */
   let config_file = "/etc/rustybox.conf";
 
-  let mut sct_head: *mut suid_config_t = 0 as *mut suid_config_t;
+  let mut sct_head: *mut suid_config_t = std::ptr::null_mut();
   let mut applet_no: libc::c_int = 0;
-  let mut f: *mut libc::FILE = 0 as *mut libc::FILE;
+  let mut f: *mut libc::FILE = std::ptr::null_mut();
   let mut errmsg: *const libc::c_char = 0 as *const libc::c_char;
   let mut lc: libc::c_uint = 0;
   let mut section: smallint = 0;
@@ -158,7 +158,7 @@ unsafe fn parse_config_file() {
   }
 
   suid_cfg_readable = true;
-  sct_head = 0 as *mut suid_config_t;
+  sct_head = std::ptr::null_mut();
   lc = 0;
   section = 0;
 
@@ -256,7 +256,7 @@ unsafe fn parse_config_file() {
           };
 
           let mut i: libc::c_uint = 0;
-          let mut sct: *mut suid_config_t = 0 as *mut suid_config_t;
+          let mut sct: *mut suid_config_t = std::ptr::null_mut();
           /* Note: We currently don't check for duplicates!
            * The last config line for each applet will be the
            * one used since we insert at the head of the list.
@@ -364,7 +364,7 @@ unsafe fn parse_config_file() {
 unsafe fn ingroup(mut u: uid_t, mut g: gid_t) -> bool {
   let mut grp: *mut group = bb_internal_getgrgid(g); /* real gid */
   if !grp.is_null() {
-    let mut mem: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char; /* run by root - no need to check more */
+    let mut mem: *mut *mut libc::c_char = std::ptr::null_mut(); /* run by root - no need to check more */
     mem = (*grp).gr_mem;
     while !(*mem).is_null() {
       let mut pwd: *mut passwd = bb_internal_getpwnam(*mem);
@@ -391,7 +391,7 @@ unsafe fn check_suid(applet_no: usize) {
 
   if suid_cfg_readable {
     let mut uid: uid_t = 0;
-    let mut sct: *mut suid_config_t = 0 as *mut suid_config_t;
+    let mut sct: *mut suid_config_t = std::ptr::null_mut();
     let mut m: mode_t = 0;
     sct = suid_config;
     loop {

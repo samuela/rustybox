@@ -510,7 +510,7 @@ pub unsafe extern "C" fn ifconfig_main(
               /* + is special, meaning broadcast is derived. */
               sai.sin_addr.s_addr = !sai_netmask | sai_hostname & sai_netmask
             } else {
-              let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+              let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
               let mut prefix: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
               let mut prefix_len: libc::c_int = 0;
               prefix = strchr(host, '/' as i32);

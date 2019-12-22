@@ -98,7 +98,7 @@ pub unsafe extern "C" fn executable_exists(mut filename: *const libc::c_char) ->
   let mut path: *mut libc::c_char = getenv(b"PATH\x00" as *const u8 as *const libc::c_char);
   let mut ret: *mut libc::c_char = find_executable(filename, &mut path);
   free(ret as *mut libc::c_void);
-  return (ret != 0 as *mut libc::c_void as *mut libc::c_char) as libc::c_int;
+  return (ret != std::ptr::null_mut()) as libc::c_int;
 }
 #[no_mangle]
 pub unsafe extern "C" fn BB_EXECVP_or_die(mut argv: *mut *mut libc::c_char) -> ! {

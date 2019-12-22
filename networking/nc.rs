@@ -788,8 +788,8 @@ unsafe extern "C" fn oprint(
 ) {
   let mut obc: libc::c_uint = 0; /* current "global" offset */
   let mut x: libc::c_uint = 0; /* out hexdump ptr */
-  let mut op: *mut libc::c_uchar = 0 as *mut libc::c_uchar; /* out asc-dump ptr */
-  let mut ap: *mut libc::c_uchar = 0 as *mut libc::c_uchar; /* use the globals! */
+  let mut op: *mut libc::c_uchar = std::ptr::null_mut(); /* out asc-dump ptr */
+  let mut ap: *mut libc::c_uchar = std::ptr::null_mut(); /* use the globals! */
   let mut stage: [libc::c_uchar; 100] = [0; 100]; /* preload separator */
   if bc == 0i32 as libc::c_uint {
     return;
@@ -1084,7 +1084,7 @@ pub unsafe extern "C" fn nc_main(
   let mut str_o: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut themdotted: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   themdotted = themdotted;
-  let mut proggie: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut proggie: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut x: libc::c_int = 0;
   let mut cnt_l: libc::c_uint = 0i32 as libc::c_uint;
   let mut o_lport: libc::c_uint = 0i32 as libc::c_uint;
@@ -1137,7 +1137,7 @@ pub unsafe extern "C" fn nc_main(
     }
   }
   match current_block {
-    7172762164747879670 => proggie = 0 as *mut *mut libc::c_char,
+    7172762164747879670 => proggie = std::ptr::null_mut(),
     _ => {}
   }
   // -g -G -t -r deleted, unimplemented -a deleted too

@@ -1434,15 +1434,15 @@ unsafe extern "C" fn list_i2c_busses_and_exit() -> ! {
     b"/sys/class/i2c-dev\x00" as *const u8 as *const libc::c_char;
   let mut path: [libc::c_char; 255] = [0; 255];
   let mut name: [libc::c_char; 128] = [0; 128];
-  let mut de: *mut dirent = 0 as *mut dirent;
-  let mut subde: *mut dirent = 0 as *mut dirent;
+  let mut de: *mut dirent = std::ptr::null_mut();
+  let mut subde: *mut dirent = std::ptr::null_mut();
   let mut adt: adapter_type = ADT_DUMMY;
-  let mut dir: *mut DIR = 0 as *mut DIR;
-  let mut subdir: *mut DIR = 0 as *mut DIR;
+  let mut dir: *mut DIR = std::ptr::null_mut();
+  let mut subdir: *mut DIR = std::ptr::null_mut();
   let mut rv: libc::c_int = 0;
   let mut bus: libc::c_int = 0;
   let mut pos: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   /*
    * XXX Upstream i2cdetect also looks for i2c bus info in /proc/bus/i2c,
    * but we won't bother since it's only useful on older kernels (before

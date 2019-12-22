@@ -241,8 +241,8 @@ unsafe extern "C" fn show_bridge(
    */
   let mut pathbuf: [libc::c_char; 42] = [0; 42]; /* this iface is not a bridge */
   let mut tabs: libc::c_int = 0;
-  let mut ifaces: *mut DIR = 0 as *mut DIR;
-  let mut ent: *mut dirent = 0 as *mut dirent;
+  let mut ifaces: *mut DIR = std::ptr::null_mut();
+  let mut ent: *mut dirent = std::ptr::null_mut();
   let mut sfx: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   sfx = pathbuf.as_mut_ptr().offset(sprintf(
     pathbuf.as_mut_ptr(),
@@ -362,7 +362,7 @@ unsafe extern "C" fn read_bridge_forward_db(
   mut _fdb: *mut *mut fdb_entry,
 ) -> size_t {
   let mut pathbuf: [libc::c_char; 35] = [0; 35];
-  let mut fdb: *mut fdb_entry = 0 as *mut fdb_entry;
+  let mut fdb: *mut fdb_entry = std::ptr::null_mut();
   let mut nentries: size_t = 0;
   let mut fd: libc::c_int = 0;
   let mut cc: ssize_t = 0;
@@ -378,7 +378,7 @@ unsafe extern "C" fn read_bridge_forward_db(
       name,
     );
   }
-  fdb = 0 as *mut fdb_entry;
+  fdb = std::ptr::null_mut();
   nentries = 0i32 as size_t;
   loop {
     fdb = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
@@ -416,7 +416,7 @@ unsafe extern "C" fn read_bridge_forward_db(
   return nentries;
 }
 unsafe extern "C" fn show_bridge_macs(mut name: *const libc::c_char) {
-  let mut fdb: *mut fdb_entry = 0 as *mut fdb_entry;
+  let mut fdb: *mut fdb_entry = std::ptr::null_mut();
   let mut nentries: size_t = 0;
   let mut i: size_t = 0;
   nentries = read_bridge_forward_db(name, &mut fdb);
@@ -678,13 +678,13 @@ unsafe extern "C" fn show_bridge_stp(mut name: *const libc::c_char) {
   }
   printf(b"\n\n\n\x00" as *const u8 as *const libc::c_char);
   /* Show bridge ports */
-  let mut ifaces: *mut DIR = 0 as *mut DIR;
+  let mut ifaces: *mut DIR = std::ptr::null_mut();
   /* sfx points past "BR/bridge/", turn it into "BR/brif": */
   *sfx.offset(-4i32 as isize) = 'f' as i32 as libc::c_char; /* . or .. */
   *sfx.offset(-3i32 as isize) = '\u{0}' as i32 as libc::c_char;
   ifaces = opendir(pathbuf.as_mut_ptr());
   if !ifaces.is_null() {
-    let mut ent: *mut dirent = 0 as *mut dirent;
+    let mut ent: *mut dirent = std::ptr::null_mut();
     loop {
       ent = readdir(ifaces);
       if ent.is_null() {
@@ -734,8 +734,8 @@ pub unsafe extern "C" fn brctl_main(
   argv = argv.offset(1);
   if key == ARG_show as libc::c_int {
     /* show [BR]... */
-    let mut net: *mut DIR = 0 as *mut DIR;
-    let mut ent: *mut dirent = 0 as *mut dirent;
+    let mut net: *mut DIR = std::ptr::null_mut();
+    let mut ent: *mut dirent = std::ptr::null_mut();
     let mut need_hdr: libc::c_int = 1i32;
     let mut exitcode: libc::c_int = 0i32;
     if !(*argv).is_null() {

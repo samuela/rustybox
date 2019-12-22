@@ -209,7 +209,7 @@ unsafe extern "C" fn pid_is_user(mut pid: libc::c_int) -> libc::c_int {
     as libc::c_int;
 }
 unsafe extern "C" fn check(mut pid: libc::c_int) {
-  let mut p: *mut pid_list = 0 as *mut pid_list;
+  let mut p: *mut pid_list = std::ptr::null_mut();
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .execname
     .is_null()
@@ -238,7 +238,7 @@ unsafe extern "C" fn check(mut pid: libc::c_int) {
   *fresh0 = p;
 }
 unsafe extern "C" fn do_pidfile() {
-  let mut f: *mut FILE = 0 as *mut FILE;
+  let mut f: *mut FILE = std::ptr::null_mut();
   let mut pid: libc::c_uint = 0;
   f = crate::libbb::wfopen::fopen_for_read(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pidfile,
@@ -261,8 +261,8 @@ unsafe extern "C" fn do_pidfile() {
   };
 }
 unsafe extern "C" fn do_procinit() {
-  let mut procdir: *mut DIR = 0 as *mut DIR;
-  let mut entry: *mut dirent = 0 as *mut dirent;
+  let mut procdir: *mut DIR = std::ptr::null_mut();
+  let mut entry: *mut dirent = std::ptr::null_mut();
   let mut pid: libc::c_int = 0;
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .pidfile
@@ -305,7 +305,7 @@ unsafe extern "C" fn do_procinit() {
 unsafe extern "C" fn do_stop() -> libc::c_int {
   let mut current_block: u64;
   let mut what: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut p: *mut pid_list = 0 as *mut pid_list;
+  let mut p: *mut pid_list = std::ptr::null_mut();
   let mut killed: libc::c_int = 0i32;
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .cmdname

@@ -398,8 +398,8 @@ unsafe extern "C" fn print_stat(
   mut data: *const libc::c_void,
 ) {
   let mut statbuf: *mut stat = data as *mut stat;
-  let mut pw_ent: *mut passwd = 0 as *mut passwd;
-  let mut gw_ent: *mut group = 0 as *mut group;
+  let mut pw_ent: *mut passwd = std::ptr::null_mut();
+  let mut gw_ent: *mut group = std::ptr::null_mut();
   if m as libc::c_int == 'n' as i32 {
     printfs(pformat, filename);
   } else if m as libc::c_int == 'N' as i32 {

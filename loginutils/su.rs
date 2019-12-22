@@ -94,7 +94,7 @@ pub unsafe extern "C" fn su_main(
   let mut opt_shell: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt_command: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt_username: *const libc::c_char = b"root\x00" as *const u8 as *const libc::c_char;
-  let mut pw: *mut passwd = 0 as *mut passwd;
+  let mut pw: *mut passwd = std::ptr::null_mut();
   let mut cur_uid: uid_t = getuid();
   let mut tty: *const libc::c_char = 0 as *const libc::c_char;
   let mut user_buf: [libc::c_char; 64] = [0; 64];

@@ -347,7 +347,7 @@ unsafe extern "C" fn convert_to_struct(
       *(member as *mut libc::c_long) = n
     }
     if *def as libc::c_int == 'm' as i32 {
-      let mut members: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+      let mut members: *mut *mut libc::c_char = std::ptr::null_mut();
       let mut i: libc::c_int = tokenize(buffer, ',' as i32);
       /* Store members[] after buffer's end.
        * This is safe ONLY because there is a hack
@@ -383,7 +383,7 @@ unsafe extern "C" fn convert_to_struct(
     buffer = buffer.offset(strlen(buffer).wrapping_add(1i32 as libc::c_ulong) as isize)
   }
   if *bb_errno != 0 {
-    result = 0 as *mut libc::c_void
+    result = std::ptr::null_mut()
   }
   return result;
 }
@@ -395,7 +395,7 @@ unsafe extern "C" fn massage_data_for_r_func(
   mut buf: *mut libc::c_char,
 ) -> libc::c_int {
   let mut result_buf: *mut libc::c_void = *result;
-  *result = 0 as *mut libc::c_void;
+  *result = std::ptr::null_mut();
   if !buf.is_null() {
     if (*ptr_to_statics).string_size as libc::c_ulong > buflen {
       *bb_errno = 34i32
@@ -601,7 +601,7 @@ pub unsafe extern "C" fn bb_internal_getgrgid(mut id: gid_t) -> *mut group {
 pub unsafe extern "C" fn bb_internal_endpwent() {
   if !ptr_to_statics.is_null() && !(*ptr_to_statics).db[0].fp.is_null() {
     fclose((*ptr_to_statics).db[0].fp);
-    (*ptr_to_statics).db[0].fp = 0 as *mut FILE
+    (*ptr_to_statics).db[0].fp = std::ptr::null_mut()
   };
 }
 
@@ -642,7 +642,7 @@ pub unsafe extern "C" fn bb_internal_setpwent() {
 pub unsafe extern "C" fn bb_internal_endgrent() {
   if !ptr_to_statics.is_null() && !(*ptr_to_statics).db[1].fp.is_null() {
     fclose((*ptr_to_statics).db[1].fp);
-    (*ptr_to_statics).db[1].fp = 0 as *mut FILE
+    (*ptr_to_statics).db[1].fp = std::ptr::null_mut()
   };
 }
 /* ***** initgroups and getgrouplist */
@@ -651,8 +651,8 @@ unsafe extern "C" fn getgrouplist_internal(
   mut user: *const libc::c_char,
   mut gid: gid_t,
 ) -> *mut gid_t {
-  let mut fp: *mut FILE = 0 as *mut FILE;
-  let mut group_list: *mut gid_t = 0 as *mut gid_t;
+  let mut fp: *mut FILE = std::ptr::null_mut();
+  let mut group_list: *mut gid_t = std::ptr::null_mut();
   let mut ngroups: libc::c_int = 0;
   /* We alloc space for 8 gids at a time. */
   group_list = crate::libbb::xfuncs_printf::xzalloc(
@@ -672,7 +672,7 @@ unsafe extern "C" fn getgrouplist_internal(
       if buf.is_null() {
         break;
       }
-      let mut m: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+      let mut m: *mut *mut libc::c_char = std::ptr::null_mut();
       let mut group: group = group {
         gr_name: std::ptr::null_mut::<libc::c_char>(),
         gr_passwd: std::ptr::null_mut::<libc::c_char>(),

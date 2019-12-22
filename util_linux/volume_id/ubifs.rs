@@ -183,7 +183,7 @@ pub struct ubifs_ch {
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_probe_ubifs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
-  let mut sb: *mut ubifs_sb_node = 0 as *mut ubifs_sb_node;
+  let mut sb: *mut ubifs_sb_node = std::ptr::null_mut();
   sb = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     0i32 as u64,

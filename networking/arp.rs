@@ -583,7 +583,7 @@ unsafe extern "C" fn arp_disp(
 unsafe extern "C" fn arp_show(mut name: *mut libc::c_char) -> libc::c_int {
   let mut host: *const libc::c_char = 0 as *const libc::c_char;
   let mut hostname: *const libc::c_char = 0 as *const libc::c_char;
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut sa: sockaddr = sockaddr {
     sa_family: 0,
     sa_data: [0; 14],

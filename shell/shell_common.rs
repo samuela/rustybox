@@ -195,7 +195,7 @@ pub unsafe extern "C" fn shell_builtin_read(
   let mut err: libc::c_uint = 0; /* -t TIMEOUT */
   let mut end_ms: libc::c_uint = 0; /* -n NUM */
   let mut nchars: libc::c_int = 0; /* need to be able to hold -1 */
-  let mut pp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut pp: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut buffer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut delim: libc::c_char = 0;
   let mut tty: termios = std::mem::zeroed();
@@ -204,7 +204,7 @@ pub unsafe extern "C" fn shell_builtin_read(
   let mut bufpos: libc::c_int = 0;
   let mut startword: libc::c_int = 0;
   let mut backslash: smallint = 0;
-  let mut argv: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut argv: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut ifs: *const libc::c_char = 0 as *const libc::c_char;
   let mut read_flags: libc::c_int = 0;
   err = 0i32 as libc::c_uint;

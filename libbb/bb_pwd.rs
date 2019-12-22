@@ -147,13 +147,13 @@ pub unsafe extern "C" fn gid2group_utoa(mut gid: gid_t) -> *mut libc::c_char {
 }
 #[no_mangle]
 pub unsafe extern "C" fn xuname2uid(mut name: *const libc::c_char) -> libc::c_long {
-  let mut myuser: *mut passwd = 0 as *mut passwd;
+  let mut myuser: *mut passwd = std::ptr::null_mut();
   myuser = xgetpwnam(name);
   return (*myuser).pw_uid as libc::c_long;
 }
 #[no_mangle]
 pub unsafe extern "C" fn xgroup2gid(mut name: *const libc::c_char) -> libc::c_long {
-  let mut mygroup: *mut group = 0 as *mut group;
+  let mut mygroup: *mut group = std::ptr::null_mut();
   mygroup = xgetgrnam(name);
   return (*mygroup).gr_gid as libc::c_long;
 }

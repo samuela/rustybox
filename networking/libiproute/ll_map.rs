@@ -176,7 +176,7 @@ pub struct idxmap {
 static mut idxmap: *mut *mut idxmap = 0 as *const *mut idxmap as *mut *mut idxmap;
 /* treat as *idxmap[16] */
 unsafe extern "C" fn find_by_index(mut idx: libc::c_int) -> *mut idxmap {
-  let mut im: *mut idxmap = 0 as *mut idxmap;
+  let mut im: *mut idxmap = std::ptr::null_mut();
   if !idxmap.is_null() {
     im = *idxmap.offset((idx & 0xfi32) as isize);
     while !im.is_null() {
@@ -204,8 +204,8 @@ pub unsafe extern "C" fn ll_remember_index(
         .wrapping_sub(1i32 as libc::c_ulong)
         & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong) as libc::c_int) as isize,
   ) as *mut libc::c_void as *mut ifinfomsg;
-  let mut im: *mut idxmap = 0 as *mut idxmap;
-  let mut imp: *mut *mut idxmap = 0 as *mut *mut idxmap;
+  let mut im: *mut idxmap = std::ptr::null_mut();
+  let mut imp: *mut *mut idxmap = std::ptr::null_mut();
   let mut tb: [*mut rtattr; 50] = [0 as *mut rtattr; 50];
   if (*n).nlmsg_type as libc::c_int != RTM_NEWLINK as libc::c_int {
     return 0i32;
@@ -325,7 +325,7 @@ pub unsafe extern "C" fn ll_remember_index(
 }
 unsafe extern "C" fn ll_idx_n2a(mut idx: libc::c_int) -> *const libc::c_char
 /*, char *buf*/ {
-  let mut im: *mut idxmap = 0 as *mut idxmap;
+  let mut im: *mut idxmap = std::ptr::null_mut();
   if idx == 0i32 {
     return b"*\x00" as *const u8 as *const libc::c_char;
   }
@@ -349,7 +349,7 @@ pub unsafe extern "C" fn ll_index_to_name(mut idx: libc::c_int) -> *const libc::
 /* int ll_index_to_type(int idx); */
 #[no_mangle]
 pub unsafe extern "C" fn ll_index_to_flags(mut idx: libc::c_int) -> libc::c_uint {
-  let mut im: *mut idxmap = 0 as *mut idxmap;
+  let mut im: *mut idxmap = std::ptr::null_mut();
   if idx == 0i32 {
     return 0i32 as libc::c_uint;
   }

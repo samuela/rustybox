@@ -67,7 +67,7 @@ pub struct inet_prefix {
 #[no_mangle]
 pub unsafe extern "C" fn get_hz() -> libc::c_uint {
   static mut hz_internal: libc::c_uint = 0;
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   if hz_internal != 0 {
     return hz_internal;
   }

@@ -228,7 +228,7 @@ unsafe extern "C" fn setup_transformer_on_fd(
   mut fail_if_not_compressed: libc::c_int,
 ) -> *mut transformer_state_t {
   let mut current_block: u64;
-  let mut xstate: *mut transformer_state_t = 0 as *mut transformer_state_t;
+  let mut xstate: *mut transformer_state_t = std::ptr::null_mut();
   xstate = crate::libbb::xfuncs_printf::xzalloc(
     ::std::mem::size_of::<transformer_state_t>() as libc::c_ulong
   ) as *mut transformer_state_t;
@@ -334,7 +334,7 @@ unsafe extern "C" fn open_transformer(
   mut fname: *const libc::c_char,
   mut fail_if_not_compressed: libc::c_int,
 ) -> *mut transformer_state_t {
-  let mut xstate: *mut transformer_state_t = 0 as *mut transformer_state_t;
+  let mut xstate: *mut transformer_state_t = std::ptr::null_mut();
   let mut fd: libc::c_int = 0;
   fd = open(fname, 0i32);
   if fd < 0i32 {
@@ -366,7 +366,7 @@ pub unsafe extern "C" fn open_zipped(
   mut fail_if_not_compressed: libc::c_int,
 ) -> libc::c_int {
   let mut fd: libc::c_int = 0;
-  let mut xstate: *mut transformer_state_t = 0 as *mut transformer_state_t;
+  let mut xstate: *mut transformer_state_t = std::ptr::null_mut();
   xstate = open_transformer(fname, fail_if_not_compressed);
   if xstate.is_null() {
     return -1i32;
@@ -632,7 +632,7 @@ pub unsafe extern "C" fn xmalloc_open_zipped_read_close(
   mut fname: *const libc::c_char,
   mut maxsz_p: *mut size_t,
 ) -> *mut libc::c_void {
-  let mut xstate: *mut transformer_state_t = 0 as *mut transformer_state_t;
+  let mut xstate: *mut transformer_state_t = std::ptr::null_mut();
   let mut image: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   xstate = open_transformer(fname, 0i32);
   if xstate.is_null() {

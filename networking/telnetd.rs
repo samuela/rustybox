@@ -185,8 +185,8 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
   let mut current_block: u64;
   let mut wr: libc::c_uint = 0;
   let mut rc: ssize_t = 0;
-  let mut buf: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
-  let mut found: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut buf: *mut libc::c_uchar = std::ptr::null_mut();
+  let mut found: *mut libc::c_uchar = std::ptr::null_mut();
   buf = (ts.offset(1) as *mut libc::c_uchar).offset((*ts).wridx1 as isize);
   wr = if BUFSIZE as libc::c_int - (*ts).wridx1 < (*ts).size1 {
     (BUFSIZE as libc::c_int) - (*ts).wridx1
@@ -618,7 +618,7 @@ unsafe extern "C" fn make_new_session(mut sock: libc::c_int) -> *mut tsession {
   /*bb_perror_msg_and_die("execv %s", G.loginpath);*/
 }
 unsafe extern "C" fn free_session(mut ts: *mut tsession) {
-  let mut t: *mut tsession = 0 as *mut tsession;
+  let mut t: *mut tsession = std::ptr::null_mut();
   if option_mask32 & OPT_INETD as libc::c_int as libc::c_uint != 0 {
     exit(0i32);
   }
@@ -655,7 +655,7 @@ unsafe extern "C" fn free_session(mut ts: *mut tsession) {
 /* !FEATURE_TELNETD_STANDALONE */
 unsafe extern "C" fn handle_sigchld(mut _sig: libc::c_int) {
   let mut pid: pid_t = 0;
-  let mut ts: *mut tsession = 0 as *mut tsession;
+  let mut ts: *mut tsession = std::ptr::null_mut();
   let mut save_errno: libc::c_int = *bb_errno;
   loop
   /* Looping: more than one child may have exited */
@@ -687,7 +687,7 @@ pub unsafe extern "C" fn telnetd_main(
   let mut wrfdset: fd_set = fd_set { fds_bits: [0; 16] };
   let mut opt: libc::c_uint = 0;
   let mut count: libc::c_int = 0;
-  let mut ts: *mut tsession = 0 as *mut tsession;
+  let mut ts: *mut tsession = std::ptr::null_mut();
   let mut master_fd: libc::c_int = 0;
   master_fd = master_fd;
   let mut sec_linger: libc::c_int = 0;
@@ -883,7 +883,7 @@ pub unsafe extern "C" fn telnetd_main(
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).maxfd = master_fd
       }
     }
-    let mut tv_ptr: *mut timeval = 0 as *mut timeval;
+    let mut tv_ptr: *mut timeval = std::ptr::null_mut();
     let mut tv: timeval = timeval {
       tv_sec: 0,
       tv_usec: 0,
@@ -923,7 +923,7 @@ pub unsafe extern "C" fn telnetd_main(
         != 0
     {
       let mut fd: libc::c_int = 0;
-      let mut new_ts: *mut tsession = 0 as *mut tsession;
+      let mut new_ts: *mut tsession = std::ptr::null_mut();
       fd = accept(
         master_fd,
         __SOCKADDR_ARG {

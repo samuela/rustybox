@@ -122,7 +122,7 @@ pub unsafe extern "C" fn renice_main(
     }
     /* Process an ID arg. */
     if which == PRIO_USER as libc::c_int {
-      let mut p_0: *mut passwd = 0 as *mut passwd;
+      let mut p_0: *mut passwd = std::ptr::null_mut();
       /* NB: use of getpwnam makes it risky to be NOFORK, switch to getpwnam_r? */
       p_0 = bb_internal_getpwnam(arg);
       if p_0.is_null() {

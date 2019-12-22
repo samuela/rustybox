@@ -121,7 +121,7 @@ pub unsafe extern "C" fn chmod_main(
 ) -> libc::c_int {
   let mut retval: libc::c_int = 0;
   let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut argp: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut argp: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut smode: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* statbuf holds lstat result, but we need stat (follow link) */
   /* Convert first encountered -r into ar, -w into aw etc

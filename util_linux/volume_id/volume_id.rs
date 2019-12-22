@@ -275,7 +275,7 @@ pub unsafe extern "C" fn volume_id_probe_all(mut id: *mut volume_id, mut size: u
 /* open volume by device node */
 #[no_mangle]
 pub unsafe extern "C" fn volume_id_open_node(mut fd: libc::c_int) -> *mut volume_id {
-  let mut id: *mut volume_id = 0 as *mut volume_id;
+  let mut id: *mut volume_id = std::ptr::null_mut();
   id = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<volume_id>() as libc::c_ulong)
     as *mut volume_id;
   (*id).fd = fd;

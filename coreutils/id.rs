@@ -214,7 +214,7 @@ pub unsafe extern "C" fn id_main(
   /* id says: print the real ID instead of the effective ID, with -ugG */
   /* in fact in this case egid is always printed if egid != rgid */
   if opt == 0 || opt & JUST_ALL_GROUPS as libc::c_int as libc::c_uint != 0 {
-    let mut groups: *mut gid_t = 0 as *mut gid_t;
+    let mut groups: *mut gid_t = std::ptr::null_mut();
     let mut n: libc::c_int = 0;
     if opt == 0 {
       /* Default Mode */

@@ -37,7 +37,7 @@ pub unsafe extern "C" fn lzo1x_decompress_safe(
 ) -> libc::c_int
 /*, void* wrkmem */ {
   let mut current_block: u64; /* possibly not needed */
-  let mut op: *mut u8 = 0 as *mut u8;
+  let mut op: *mut u8 = std::ptr::null_mut();
   let mut ip: *const u8 = 0 as *const u8;
   let mut t: libc::c_uint = 0;
   let mut m_pos: *const u8 = 0 as *const u8;

@@ -130,8 +130,8 @@ unsafe extern "C" fn format_line(
 ) -> libc::c_int {
   let mut ofs_pos: libc::c_int = 0;
   let mut text: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut end: *mut u8 = 0 as *mut u8;
-  let mut end1: *mut u8 = 0 as *mut u8;
+  let mut end: *mut u8 = std::ptr::null_mut();
+  let mut end1: *mut u8 = std::ptr::null_mut();
   /* Can be more than 4Gb, thus >8 chars, thus use a variable - don't assume 8! */
   ofs_pos = sprintf(
     hex,
@@ -192,7 +192,7 @@ unsafe extern "C" fn format_line(
   return ofs_pos;
 }
 unsafe extern "C" fn redraw(mut cursor: libc::c_uint) {
-  let mut data: *mut u8 = 0 as *mut u8;
+  let mut data: *mut u8 = std::ptr::null_mut();
   let mut offset: off_t = 0;
   let mut i: libc::c_uint = 0;
   let mut pos: libc::c_uint = 0;
@@ -235,7 +235,7 @@ unsafe extern "C" fn redraw(mut cursor: libc::c_uint) {
 }
 unsafe extern "C" fn redraw_cur_line() {
   let mut buf: [libc::c_char; 88] = [0; 88];
-  let mut data: *mut u8 = 0 as *mut u8;
+  let mut data: *mut u8 = std::ptr::null_mut();
   let mut offset: off_t = 0;
   let mut column: libc::c_int = 0;
   column = (0xfi32 as libc::c_ulong & (*ptr_to_globals).current_byte as uintptr_t) as libc::c_int;

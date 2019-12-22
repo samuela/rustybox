@@ -209,7 +209,7 @@ pub unsafe extern "C" fn rtnl_send_check(
   mut buf: *const libc::c_void,
   mut len: libc::c_int,
 ) -> libc::c_int {
-  let mut h: *mut nlmsghdr = 0 as *mut nlmsghdr;
+  let mut h: *mut nlmsghdr = std::ptr::null_mut();
   let mut status: libc::c_int = 0;
   let mut resp: [libc::c_char; 1024] = [0; 1024];
   status = write((*rth).fd, buf, len as size_t) as libc::c_int;
@@ -356,7 +356,7 @@ unsafe extern "C" fn rtnl_dump_filter(
   };
   's_17: loop {
     let mut status: libc::c_int = 0;
-    let mut h: *mut nlmsghdr = 0 as *mut nlmsghdr;
+    let mut h: *mut nlmsghdr = std::ptr::null_mut();
     /* Use designated initializers, struct layout is non-portable */
     let mut msg: msghdr = {
       let mut init = msghdr {
@@ -515,7 +515,7 @@ pub unsafe extern "C" fn rtnl_talk(
   let mut retval: libc::c_int = -1i32; /* avoid big stack buffer */
   let mut status: libc::c_int = 0;
   let mut seq: libc::c_uint = 0;
-  let mut h: *mut nlmsghdr = 0 as *mut nlmsghdr;
+  let mut h: *mut nlmsghdr = std::ptr::null_mut();
   let mut nladdr: sockaddr_nl = std::mem::zeroed();
   let mut iov: iovec = {
     let mut init = iovec {
@@ -711,7 +711,7 @@ pub unsafe extern "C" fn addattr32(
     .wrapping_sub(1i32 as libc::c_ulong)
     & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
     .wrapping_add(4i32 as libc::c_ulong) as libc::c_int;
-  let mut rta: *mut rtattr = 0 as *mut rtattr;
+  let mut rta: *mut rtattr = std::ptr::null_mut();
   if ((*n)
     .nlmsg_len
     .wrapping_add(len as libc::c_uint)
@@ -759,7 +759,7 @@ pub unsafe extern "C" fn addattr_l(
     .wrapping_sub(1i32 as libc::c_ulong)
     & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
     .wrapping_add(alen as libc::c_ulong) as libc::c_int;
-  let mut rta: *mut rtattr = 0 as *mut rtattr;
+  let mut rta: *mut rtattr = std::ptr::null_mut();
   if ((*n)
     .nlmsg_len
     .wrapping_add(len as libc::c_uint)
@@ -810,7 +810,7 @@ pub unsafe extern "C" fn rta_addattr32(
     .wrapping_sub(1i32 as libc::c_ulong)
     & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
     .wrapping_add(4i32 as libc::c_ulong) as libc::c_int;
-  let mut subrta: *mut rtattr = 0 as *mut rtattr;
+  let mut subrta: *mut rtattr = std::ptr::null_mut();
   if (((*rta).rta_len as libc::c_int + len) as libc::c_uint)
     .wrapping_add(4u32)
     .wrapping_sub(1i32 as libc::c_uint)
@@ -848,7 +848,7 @@ pub unsafe extern "C" fn rta_addattr_l(
   mut data: *mut libc::c_void,
   mut alen: libc::c_int,
 ) -> libc::c_int {
-  let mut subrta: *mut rtattr = 0 as *mut rtattr;
+  let mut subrta: *mut rtattr = std::ptr::null_mut();
   let mut len: libc::c_int = ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
     .wrapping_add(4u32 as libc::c_ulong)
     .wrapping_sub(1i32 as libc::c_ulong)

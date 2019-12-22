@@ -510,7 +510,7 @@ pub unsafe extern "C" fn printf_main(
 ) -> libc::c_int {
   let mut conv_err: libc::c_int = 0;
   let mut format: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut argv2: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut argv2: *mut *mut libc::c_char = std::ptr::null_mut();
   /* We must check that stdout is not closed.
    * The reason for this is highly non-obvious.
    * printf_main is used from shell.

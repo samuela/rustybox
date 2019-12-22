@@ -66,7 +66,7 @@ pub unsafe extern "C" fn fdformat_main(
   let mut cyl: libc::c_int = 0;
   let mut read_bytes: libc::c_int = 0;
   let mut verify: libc::c_int = 0;
-  let mut data: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut data: *mut libc::c_uchar = std::ptr::null_mut();
   let mut st: stat = std::mem::zeroed();
   let mut param: floppy_struct = floppy_struct {
     size: 0,

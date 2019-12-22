@@ -127,7 +127,7 @@ pub unsafe extern "C" fn run_parts_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut umask_p: *const libc::c_char = b"22\x00" as *const u8 as *const libc::c_char;
-  let mut arg_list: *mut llist_t = 0 as *mut llist_t;
+  let mut arg_list: *mut llist_t = std::ptr::null_mut();
   let mut n: libc::c_uint = 0;
   let mut ret: libc::c_int = 0;
   /* We require exactly one argument: the directory name */

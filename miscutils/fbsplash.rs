@@ -201,7 +201,7 @@ unsafe extern "C" fn fb_setpal(mut fd: libc::c_int) {
   cmap.red = red.as_mut_ptr();
   cmap.green = green.as_mut_ptr();
   cmap.blue = blue.as_mut_ptr();
-  cmap.transp = 0 as *mut __u16;
+  cmap.transp = std::ptr::null_mut();
   crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     0x4605i32 as libc::c_uint,
@@ -340,8 +340,8 @@ unsafe extern "C" fn fb_write_pixel(mut addr: *mut libc::c_uchar, mut pixel: lib
 unsafe extern "C" fn fb_drawrectangle() {
   let mut cnt: libc::c_int = 0;
   let mut thispix: libc::c_uint = 0;
-  let mut ptr1: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
-  let mut ptr2: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut ptr1: *mut libc::c_uchar = std::ptr::null_mut();
+  let mut ptr2: *mut libc::c_uchar = std::ptr::null_mut();
   let mut nred: libc::c_uchar =
     (*ptr_to_globals).ns[4].wrapping_div(2i32 as libc::c_uint) as libc::c_uchar;
   let mut ngreen: libc::c_uchar =
@@ -423,7 +423,7 @@ unsafe extern "C" fn fb_drawfullrectangle(
   let mut cnt2: libc::c_int = 0;
   let mut nypos: libc::c_int = 0;
   let mut thispix: libc::c_uint = 0;
-  let mut ptr: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut ptr: *mut libc::c_uchar = std::ptr::null_mut();
   thispix = fb_pixel_value(
     nred as libc::c_uint,
     ngreen as libc::c_uint,
@@ -530,9 +530,9 @@ unsafe extern "C" fn fb_drawprogressbar(mut percent: libc::c_uint) {
  * Draw image from PPM file
  */
 unsafe extern "C" fn fb_drawimage() {
-  let mut theme_file: *mut FILE = 0 as *mut FILE;
+  let mut theme_file: *mut FILE = std::ptr::null_mut();
   let mut read_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut pixline: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+  let mut pixline: *mut libc::c_uchar = std::ptr::null_mut();
   let mut i: libc::c_uint = 0;
   let mut j: libc::c_uint = 0;
   let mut width: libc::c_uint = 0;
@@ -613,8 +613,8 @@ unsafe extern "C" fn fb_drawimage() {
   }
   j = 0i32 as libc::c_uint;
   while j < height {
-    let mut pixel: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
-    let mut src: *mut libc::c_uchar = 0 as *mut libc::c_uchar;
+    let mut pixel: *mut libc::c_uchar = std::ptr::null_mut();
+    let mut src: *mut libc::c_uchar = std::ptr::null_mut();
     if fread(
       pixline as *mut libc::c_void,
       1i32 as size_t,
@@ -705,7 +705,7 @@ pub unsafe extern "C" fn fbsplash_main(
   let mut fb_device: *const libc::c_char = 0 as *const libc::c_char;
   let mut cfg_filename: *const libc::c_char = 0 as *const libc::c_char;
   let mut fifo_filename: *const libc::c_char = 0 as *const libc::c_char;
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   fp = fp;
   let mut num_buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut num: libc::c_uint = 0;

@@ -70,7 +70,7 @@ pub unsafe extern "C" fn print_login_issue(
   mut issue_file: *const libc::c_char,
   mut tty: *const libc::c_char,
 ) {
-  let mut fp: *mut FILE = 0 as *mut FILE; /* start a new line */
+  let mut fp: *mut FILE = std::ptr::null_mut(); /* start a new line */
   let mut c: libc::c_int = 0;
   let mut buf: [libc::c_char; 257] = [0; 257];
   let mut outbuf: *const libc::c_char = 0 as *const libc::c_char;

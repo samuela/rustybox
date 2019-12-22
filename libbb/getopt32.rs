@@ -389,7 +389,7 @@ unsafe extern "C" fn vgetopt32(
   let mut c: libc::c_int = 0;
   let mut s: *const libc::c_uchar = 0 as *const libc::c_uchar;
   let mut opt_complementary: *const libc::c_char = 0 as *const libc::c_char;
-  let mut on_off: *mut t_complementary = 0 as *mut t_complementary;
+  let mut on_off: *mut t_complementary = std::ptr::null_mut();
   let mut l_o: *const option = 0 as *const option;
   let mut long_options: *mut option = &bb_null_long_options as *const [option; 1] as *mut option;
   let mut trigger: libc::c_uint = 0;
@@ -539,8 +539,8 @@ unsafe extern "C" fn vgetopt32(
   if !s.is_null() {
     let mut current_block_101: u64;
     while *s != 0 {
-      let mut pair: *mut t_complementary = 0 as *mut t_complementary;
-      let mut pair_switch: *mut libc::c_uint = 0 as *mut libc::c_uint;
+      let mut pair: *mut t_complementary = std::ptr::null_mut();
+      let mut pair_switch: *mut libc::c_uint = std::ptr::null_mut();
       if !(*s as libc::c_int == ':' as i32) {
         c = *s.offset(1) as libc::c_int;
         if *s as libc::c_int == '?' as i32 {

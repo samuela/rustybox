@@ -345,9 +345,9 @@ pub unsafe extern "C" fn copy_file(
       dest_exists = 1i32 as smallint
     }
     if source_stat.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
-      let mut dp: *mut DIR = 0 as *mut DIR;
+      let mut dp: *mut DIR = std::ptr::null_mut();
       let mut tp: *const libc::c_char = 0 as *const libc::c_char;
-      let mut d: *mut dirent = 0 as *mut dirent;
+      let mut d: *mut dirent = std::ptr::null_mut();
       let mut saved_umask: mode_t = 0i32 as mode_t;
       if flags & FILEUTILS_RECUR as libc::c_int == 0 {
         crate::libbb::verror_msg::bb_error_msg(

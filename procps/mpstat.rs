@@ -213,8 +213,8 @@ unsafe extern "C" fn write_irqcpu_stats(
   let mut j: libc::c_int = 0;
   let mut offset: libc::c_int = 0;
   let mut cpu: libc::c_int = 0;
-  let mut p0: *mut stats_irqcpu = 0 as *mut stats_irqcpu;
-  let mut q0: *mut stats_irqcpu = 0 as *mut stats_irqcpu;
+  let mut p0: *mut stats_irqcpu = std::ptr::null_mut();
+  let mut q0: *mut stats_irqcpu = std::ptr::null_mut();
   /* Check if number of IRQs has changed */
   if (*ptr_to_globals).interval != 0i32 {
     j = 0i32;
@@ -304,8 +304,8 @@ unsafe extern "C" fn write_irqcpu_stats(
           if strcmp((*p0).irq_name.as_mut_ptr(), (*q0).irq_name.as_mut_ptr()) == 0i32
             || (*ptr_to_globals).interval == 0i32
           {
-            let mut p: *mut stats_irqcpu = 0 as *mut stats_irqcpu;
-            let mut q: *mut stats_irqcpu = 0 as *mut stats_irqcpu;
+            let mut p: *mut stats_irqcpu = std::ptr::null_mut();
+            let mut q: *mut stats_irqcpu = std::ptr::null_mut();
             p = &mut *(*per_cpu_stats.offset(current as isize))
               .offset(((cpu - 1i32) * total_irqs + j) as isize)
               as *mut stats_irqcpu;
@@ -383,8 +383,8 @@ unsafe extern "C" fn write_stats_core(
   mut prev_str: *const libc::c_char,
   mut current_str: *const libc::c_char,
 ) {
-  let mut scc: *mut stats_cpu = 0 as *mut stats_cpu;
-  let mut scp: *mut stats_cpu = 0 as *mut stats_cpu;
+  let mut scc: *mut stats_cpu = std::ptr::null_mut();
+  let mut scp: *mut stats_cpu = std::ptr::null_mut();
   let mut itv: data_t = 0;
   let mut global_itv: data_t = 0;
   let mut cpu: libc::c_int = 0;
@@ -637,7 +637,7 @@ unsafe extern "C" fn get_cpu_statistics(
   mut up: *mut data_t,
   mut up0: *mut data_t,
 ) {
-  let mut fp: *mut FILE = 0 as *mut FILE; /* not "cpu" */
+  let mut fp: *mut FILE = std::ptr::null_mut(); /* not "cpu" */
   let mut buf: [libc::c_char; 1024] = [0; 1024]; /* for "cpu " case */
   fp = crate::libbb::wfopen::xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);
   while !fgets_unlocked(
@@ -649,7 +649,7 @@ unsafe extern "C" fn get_cpu_statistics(
   {
     let mut sum: data_t = 0;
     let mut cpu_number: libc::c_uint = 0;
-    let mut cp: *mut stats_cpu = 0 as *mut stats_cpu;
+    let mut cp: *mut stats_cpu = std::ptr::null_mut();
     if crate::libbb::get_cpu_count::starts_with_cpu(buf.as_mut_ptr()) == 0 {
       continue;
     }
@@ -718,7 +718,7 @@ unsafe extern "C" fn get_cpu_statistics(
  * Read IRQs from /proc/stat
  */
 unsafe extern "C" fn get_irqs_from_stat(mut irq: *mut stats_irq) {
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 1024] = [0; 1024];
   fp = crate::libbb::wfopen::xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);
   while !fgets_unlocked(
@@ -754,9 +754,9 @@ unsafe extern "C" fn get_irqs_from_interrupts(
   mut irqs_per_cpu: libc::c_int,
   mut current: libc::c_int,
 ) {
-  let mut fp: *mut FILE = 0 as *mut FILE;
-  let mut irq_i: *mut stats_irq = 0 as *mut stats_irq;
-  let mut ic: *mut stats_irqcpu = 0 as *mut stats_irqcpu;
+  let mut fp: *mut FILE = std::ptr::null_mut();
+  let mut irq_i: *mut stats_irq = std::ptr::null_mut();
+  let mut ic: *mut stats_irqcpu = std::ptr::null_mut();
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut buflen: libc::c_uint = 0;
   let mut cpu: libc::c_uint = 0;
@@ -866,7 +866,7 @@ unsafe extern "C" fn get_irqs_from_interrupts(
   }
 }
 unsafe extern "C" fn get_uptime(mut uptime: *mut data_t) {
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 52] = [0; 52];
   let mut uptime_sec: libc::c_ulong = 0;
   let mut decimal: libc::c_ulong = 0;
@@ -1149,7 +1149,7 @@ unsafe extern "C" fn get_irqcpu_nr(
   mut f: *const libc::c_char,
   mut max_irqs: libc::c_int,
 ) -> libc::c_int {
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut linelen: libc::c_uint = 0;
   let mut irq: libc::c_uint = 0;

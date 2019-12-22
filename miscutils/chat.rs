@@ -144,7 +144,7 @@ pub unsafe extern "C" fn chat_main(
   let mut record_fd: libc::c_int = -1i32;
   let mut echo: bool = 0i32 != 0;
   // collection of device replies which cause unconditional termination
-  let mut aborts: *mut llist_t = 0 as *mut llist_t;
+  let mut aborts: *mut llist_t = std::ptr::null_mut();
   // inactivity period
   let mut timeout: libc::c_int = 45i32 * 1000i32;
   // maximum length of abort string
@@ -198,7 +198,7 @@ pub unsafe extern "C" fn chat_main(
         }
         crate::libbb::llist::llist_add_to_end(&mut aborts, arg as *mut libc::c_void);
       } else if DIR_CLR_ABORT as libc::c_int == key {
-        let mut l: *mut llist_t = 0 as *mut llist_t;
+        let mut l: *mut llist_t = std::ptr::null_mut();
         // remove the string from abort conditions
         // N.B. gotta refresh maximum length too...
         max_abort_len = 0i32 as size_t;
@@ -294,7 +294,7 @@ pub unsafe extern "C" fn chat_main(
                 current_block = 11869735117417356968;
                 break;
               }
-              let mut l_0: *mut llist_t = 0 as *mut llist_t;
+              let mut l_0: *mut llist_t = std::ptr::null_mut();
               let mut delta: ssize_t = 0;
               // read next char from device
               if crate::libbb::read::safe_read(

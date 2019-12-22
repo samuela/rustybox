@@ -48,7 +48,7 @@ pub unsafe extern "C" fn shuf_main(
   let mut opt_n_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt_o_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_uint = 0;
-  let mut lines: *mut *mut libc::c_char = 0 as *mut *mut libc::c_char;
+  let mut lines: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut numlines: libc::c_uint = 0;
   let mut eol: libc::c_char = 0;
   opts = crate::libbb::getopt32::getopt32(
@@ -101,7 +101,7 @@ pub unsafe extern "C" fn shuf_main(
     }
   } else {
     /* default - read lines from stdin or the input file */
-    let mut fp: *mut FILE = 0 as *mut FILE;
+    let mut fp: *mut FILE = std::ptr::null_mut();
     if argc > 1i32 {
       crate::libbb::appletlib::bb_show_usage();
     }
@@ -110,7 +110,7 @@ pub unsafe extern "C" fn shuf_main(
     } else {
       b"-\x00" as *const u8 as *const libc::c_char
     });
-    lines = 0 as *mut *mut libc::c_char;
+    lines = std::ptr::null_mut();
     numlines = 0i32 as libc::c_uint;
     loop {
       let mut line: *mut libc::c_char = crate::libbb::get_line_from_file::xmalloc_fgetline(fp);

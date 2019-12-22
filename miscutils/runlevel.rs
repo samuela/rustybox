@@ -64,7 +64,7 @@ pub unsafe extern "C" fn runlevel_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut ut: *mut utmpx = 0 as *mut utmpx;
+  let mut ut: *mut utmpx = std::ptr::null_mut();
   let mut prev: libc::c_char = 0;
   if !(*argv.offset(1)).is_null() {
     utmpxname(*argv.offset(1));

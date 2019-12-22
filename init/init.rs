@@ -639,7 +639,7 @@ unsafe extern "C" fn run(mut a: *const init_action) -> pid_t {
   _exit(-1i32);
 }
 unsafe extern "C" fn mark_terminated(mut pid: pid_t) -> *mut init_action {
-  let mut a: *mut init_action = 0 as *mut init_action;
+  let mut a: *mut init_action = std::ptr::null_mut();
   if pid > 0i32 {
     crate::libbb::utmp::update_utmp_DEAD_PROCESS(pid);
     a = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).init_action_list;
@@ -674,7 +674,7 @@ unsafe extern "C" fn waitfor(mut pid: pid_t) {
 }
 /* Run all commands of a particular type */
 unsafe extern "C" fn run_actions(mut action_type: libc::c_int) {
-  let mut a: *mut init_action = 0 as *mut init_action;
+  let mut a: *mut init_action = std::ptr::null_mut();
   a = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).init_action_list;
   while !a.is_null() {
     if !((*a).action_type as libc::c_int & action_type == 0) {
@@ -702,8 +702,8 @@ unsafe extern "C" fn new_init_action(
   mut cons: *const libc::c_char,
 ) {
   let mut current_block: u64;
-  let mut a: *mut init_action = 0 as *mut init_action;
-  let mut nextp: *mut *mut init_action = 0 as *mut *mut init_action;
+  let mut a: *mut init_action = std::ptr::null_mut();
+  let mut nextp: *mut *mut init_action = std::ptr::null_mut();
   /* Scenario:
    * old inittab:
    * ::shutdown:umount -a -r
@@ -734,7 +734,7 @@ unsafe extern "C" fn new_init_action(
       while !(*nextp).is_null() {
         nextp = &mut (**nextp).next
       }
-      (*a).next = 0 as *mut init_action;
+      (*a).next = std::ptr::null_mut();
       current_block = 2443472067725968818;
       break;
     } else {
@@ -993,7 +993,7 @@ unsafe extern "C" fn halt_reboot_pwoff(mut sig: libc::c_int) -> ! {
 /* Handler for QUIT - exec "restart" action,
  * else (no such action defined) do nothing */
 unsafe extern "C" fn exec_restart_action() {
-  let mut a: *mut init_action = 0 as *mut init_action;
+  let mut a: *mut init_action = std::ptr::null_mut();
   a = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).init_action_list;
   while !a.is_null() {
     if (*a).action_type as libc::c_int & 0x80i32 == 0 {
@@ -1057,8 +1057,8 @@ unsafe extern "C" fn stop_handler(mut _sig: libc::c_int) {
   bb_got_signal = saved_bb_got_signal;
 }
 unsafe extern "C" fn reload_inittab() {
-  let mut a: *mut init_action = 0 as *mut init_action;
-  let mut nextp: *mut *mut init_action = 0 as *mut *mut init_action;
+  let mut a: *mut init_action = std::ptr::null_mut();
+  let mut nextp: *mut *mut init_action = std::ptr::null_mut();
   message(
     L_LOG as libc::c_int,
     b"reloading /etc/inittab\x00" as *const u8 as *const libc::c_char,
@@ -1300,7 +1300,7 @@ pub unsafe extern "C" fn init_main(
     }
     loop {
       let mut wpid: pid_t = 0;
-      let mut a: *mut init_action = 0 as *mut init_action;
+      let mut a: *mut init_action = std::ptr::null_mut();
       /* If signals happen _in_ the wait, they interrupt it,
        * bb_signals_recursive_norestart set them up that way
        */

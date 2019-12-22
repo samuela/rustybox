@@ -60,7 +60,7 @@ unsafe extern "C" fn helper_get_module(
   mut create: libc::c_int,
 ) -> *mut module_entry {
   let mut modname: [libc::c_char; 256] = [0; 256];
-  let mut e: *mut module_entry = 0 as *mut module_entry;
+  let mut e: *mut module_entry = std::ptr::null_mut();
   let mut i: libc::c_uint = 0;
   let mut hash: libc::c_uint = 0;
   filename2modname(module, modname.as_mut_ptr());
@@ -108,8 +108,8 @@ pub unsafe extern "C" fn moddb_get_or_create(
 }
 #[no_mangle]
 pub unsafe extern "C" fn moddb_free(mut db: *mut module_db) {
-  let mut e: *mut module_entry = 0 as *mut module_entry;
-  let mut n: *mut module_entry = 0 as *mut module_entry;
+  let mut e: *mut module_entry = std::ptr::null_mut();
+  let mut n: *mut module_entry = std::ptr::null_mut();
   let mut i: libc::c_uint = 0;
   i = 0i32 as libc::c_uint;
   while i < 256i32 as libc::c_uint {

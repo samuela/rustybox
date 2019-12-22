@@ -18,9 +18,9 @@ pub unsafe extern "C" fn dpkg_deb_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut ar_archive: *mut archive_handle_t = 0 as *mut archive_handle_t;
-  let mut tar_archive: *mut archive_handle_t = 0 as *mut archive_handle_t;
-  let mut control_tar_llist: *mut llist_t = 0 as *mut llist_t;
+  let mut ar_archive: *mut archive_handle_t = std::ptr::null_mut();
+  let mut tar_archive: *mut archive_handle_t = std::ptr::null_mut();
+  let mut control_tar_llist: *mut llist_t = std::ptr::null_mut();
   let mut opt: libc::c_uint = 0;
   let mut extract_dir: *const libc::c_char = 0 as *const libc::c_char;
   /* Setup the tar archive handle */

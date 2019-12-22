@@ -172,7 +172,7 @@ pub const rpm_query_info: rpm_functions_e = 4;
 pub const rpm_install: rpm_functions_e = 2;
 pub const rpm_query: rpm_functions_e = 1;
 unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_int {
-  let mut tags: *mut rpm_index = 0 as *mut rpm_index;
+  let mut tags: *mut rpm_index = std::ptr::null_mut();
   let mut fd: libc::c_int = 0;
   let mut pass: libc::c_uint = 0;
   let mut idx: libc::c_uint = 0;
@@ -186,7 +186,7 @@ unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_i
   }
   storepos = crate::libbb::xfuncs_printf::xlseek(fd, 96i32 as off_t, 1i32) as libc::c_uint;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tagcount = 0i32;
-  tags = 0 as *mut rpm_index;
+  tags = std::ptr::null_mut();
   idx = 0i32 as libc::c_uint;
   /* 1st pass is the signature headers, 2nd is the main stuff */
   pass = 0i32 as libc::c_uint;
@@ -413,7 +413,7 @@ unsafe extern "C" fn rpm_getstr(
   mut tag: libc::c_int,
   mut itemindex: libc::c_int,
 ) -> *mut libc::c_char {
-  let mut found: *mut rpm_index = 0 as *mut rpm_index;
+  let mut found: *mut rpm_index = std::ptr::null_mut();
   found = bsearch(
     &mut tag as *mut libc::c_int as *const libc::c_void,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).mytags as *const libc::c_void,
@@ -448,7 +448,7 @@ unsafe extern "C" fn rpm_getstr0(mut tag: libc::c_int) -> *mut libc::c_char {
   return rpm_getstr(tag, 0i32);
 }
 unsafe extern "C" fn rpm_getint(mut tag: libc::c_int, mut itemindex: libc::c_int) -> libc::c_int {
-  let mut found: *mut rpm_index = 0 as *mut rpm_index;
+  let mut found: *mut rpm_index = std::ptr::null_mut();
   let mut tmpint: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* gcc throws warnings here when sizeof(void*)!=sizeof(int) ...
    * it's ok to ignore it because tag won't be used as a pointer */
@@ -514,7 +514,7 @@ unsafe extern "C" fn rpm_getint(mut tag: libc::c_int, mut itemindex: libc::c_int
   return -1i32;
 }
 unsafe extern "C" fn rpm_getcount(mut tag: libc::c_int) -> libc::c_int {
-  let mut found: *mut rpm_index = 0 as *mut rpm_index;
+  let mut found: *mut rpm_index = std::ptr::null_mut();
   found = bsearch(
     &mut tag as *mut libc::c_int as *const libc::c_void,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).mytags as *const libc::c_void,
@@ -600,7 +600,7 @@ unsafe extern "C" fn loop_through_files(
 }
 //DEBUG
 unsafe extern "C" fn extract_cpio(mut fd: libc::c_int, mut source_rpm: *const libc::c_char) {
-  let mut archive_handle: *mut archive_handle_t = 0 as *mut archive_handle_t; /* else: SRPM, install to current dir */
+  let mut archive_handle: *mut archive_handle_t = std::ptr::null_mut(); /* else: SRPM, install to current dir */
   if !source_rpm.is_null() {
     /* Binary rpm (it was built from some SRPM), install to root */
     crate::libbb::xfuncs_printf::xchdir(b"/\x00" as *const u8 as *const libc::c_char);
@@ -754,7 +754,7 @@ pub unsafe extern "C" fn rpm_main(
       if func & rpm_query_info as libc::c_int != 0 {
         /* Do the nice printout */
         let mut bdate_time: time_t = 0;
-        let mut bdate_ptm: *mut tm = 0 as *mut tm;
+        let mut bdate_ptm: *mut tm = std::ptr::null_mut();
         let mut bdatestring: [libc::c_char; 50] = [0; 50];
         let mut p: *const libc::c_char = 0 as *const libc::c_char;
         printf(

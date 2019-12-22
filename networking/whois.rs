@@ -60,7 +60,7 @@ unsafe extern "C" fn query(
   mut domain: *const libc::c_char,
 ) -> *mut libc::c_char {
   let mut fd: libc::c_int = 0;
-  let mut fp: *mut FILE = 0 as *mut FILE;
+  let mut fp: *mut FILE = std::ptr::null_mut();
   let mut success: bool = false;
   let mut redir: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pfx: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;

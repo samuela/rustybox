@@ -153,8 +153,8 @@ unsafe extern "C" fn writeheader(
   );
 }
 unsafe extern "C" fn archivefile(mut path: *const libc::c_char) {
-  let mut start: *mut fileblock = 0 as *mut fileblock;
-  let mut cur: *mut fileblock = 0 as *mut fileblock;
+  let mut start: *mut fileblock = std::ptr::null_mut();
+  let mut cur: *mut fileblock = std::ptr::null_mut();
   let mut prev: *mut *mut fileblock = &mut start;
   let mut fd: libc::c_int = 0;
   let mut r: libc::c_int = 0;
@@ -220,8 +220,8 @@ pub unsafe extern "C" fn smemcap_main(
   mut _argc: libc::c_int,
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut d: *mut DIR = 0 as *mut DIR;
-  let mut de: *mut dirent = 0 as *mut dirent;
+  let mut d: *mut DIR = std::ptr::null_mut();
+  let mut de: *mut dirent = std::ptr::null_mut();
   crate::libbb::xfuncs_printf::xchdir(b"/proc\x00" as *const u8 as *const libc::c_char);
   d = crate::libbb::xfuncs_printf::xopendir(b".\x00" as *const u8 as *const libc::c_char);
   archivefile(b"meminfo\x00" as *const u8 as *const libc::c_char);

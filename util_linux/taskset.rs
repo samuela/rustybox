@@ -131,7 +131,7 @@ unsafe extern "C" fn get_aff(
   mut sz: *mut libc::c_uint,
 ) -> *mut libc::c_ulong {
   let mut r: libc::c_int = 0;
-  let mut mask: *mut libc::c_ulong = 0 as *mut libc::c_ulong;
+  let mut mask: *mut libc::c_ulong = std::ptr::null_mut();
   let mut sz_in_bytes: libc::c_uint = *sz;
   loop {
     mask = crate::libbb::xfuncs_printf::xrealloc(mask as *mut libc::c_void, sz_in_bytes as size_t)
@@ -163,7 +163,7 @@ pub unsafe extern "C" fn taskset_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut mask: *mut ul = 0 as *mut ul;
+  let mut mask: *mut ul = std::ptr::null_mut();
   let mut mask_size_in_bytes: libc::c_uint = 0;
   let mut pid: pid_t = 0i32;
   let mut opt_p: libc::c_uint = 0;

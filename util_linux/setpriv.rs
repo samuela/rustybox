@@ -232,7 +232,7 @@ unsafe extern "C" fn dump() -> libc::c_int {
   let mut rgid: gid_t = 0;
   let mut egid: gid_t = 0;
   let mut sgid: gid_t = 0;
-  let mut gids: *mut gid_t = 0 as *mut gid_t;
+  let mut gids: *mut gid_t = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut ngids: libc::c_int = 0;
   let mut nnp: libc::c_int = 0;

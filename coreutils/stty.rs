@@ -1469,7 +1469,7 @@ unsafe extern "C" fn display_speed(mut mode: *const termios, mut fancy: libc::c_
 }
 unsafe extern "C" fn do_display(mut mode: *const termios, mut all: libc::c_int) {
   let mut i: libc::c_int = 0;
-  let mut bitsp: *mut tcflag_t = 0 as *mut tcflag_t;
+  let mut bitsp: *mut tcflag_t = std::ptr::null_mut();
   let mut mask: libc::c_ulong = 0;
   let mut prev_type: libc::c_int = control as libc::c_int;
   display_speed(mode, 1i32);
@@ -1569,7 +1569,7 @@ unsafe extern "C" fn set_mode(
   mut reversed: libc::c_int,
   mut mode: *mut termios,
 ) {
-  let mut bitsp: *mut tcflag_t = 0 as *mut tcflag_t;
+  let mut bitsp: *mut tcflag_t = std::ptr::null_mut();
   bitsp = get_ptr_to_tcflag((*info).type_0 as libc::c_uint, mode);
   if !bitsp.is_null() {
     let mut val: tcflag_t = *bitsp & !((*info).mask as libc::c_int) as libc::c_uint;

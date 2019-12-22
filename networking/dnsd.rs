@@ -198,11 +198,11 @@ unsafe extern "C" fn undot(mut rip: *mut libc::c_char) {
  */
 unsafe extern "C" fn parse_conf_file(mut fileconf: *const libc::c_char) -> *mut dns_entry {
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
-  let mut parser: *mut parser_t = 0 as *mut parser_t;
-  let mut m: *mut dns_entry = 0 as *mut dns_entry;
-  let mut conf_data: *mut dns_entry = 0 as *mut dns_entry;
-  let mut nextp: *mut *mut dns_entry = 0 as *mut *mut dns_entry;
-  conf_data = 0 as *mut dns_entry;
+  let mut parser: *mut parser_t = std::ptr::null_mut();
+  let mut m: *mut dns_entry = std::ptr::null_mut();
+  let mut conf_data: *mut dns_entry = std::ptr::null_mut();
+  let mut nextp: *mut *mut dns_entry = std::ptr::null_mut();
+  conf_data = std::ptr::null_mut();
   nextp = &mut conf_data;
   parser = crate::libbb::parse_config::config_open(fileconf);
   while crate::libbb::parse_config::config_read(
@@ -505,12 +505,12 @@ unsafe extern "C" fn process_packet(
   mut conf_ttl: u32,
   mut buf: *mut u8,
 ) -> libc::c_int {
-  let mut head: *mut dns_head = 0 as *mut dns_head;
-  let mut unaligned_type_class: *mut type_and_class = 0 as *mut type_and_class;
+  let mut head: *mut dns_head = std::ptr::null_mut();
+  let mut unaligned_type_class: *mut type_and_class = std::ptr::null_mut();
   let mut err_msg: *const libc::c_char = 0 as *const libc::c_char;
   let mut query_string: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut answstr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut answb: *mut u8 = 0 as *mut u8;
+  let mut answb: *mut u8 = std::ptr::null_mut();
   let mut outr_rlen: u16 = 0;
   let mut outr_flags: u16 = 0;
   let mut type_0: u16 = 0;
@@ -880,13 +880,13 @@ pub unsafe extern "C" fn dnsd_main(
   let mut listen_interface: *const libc::c_char =
     b"0.0.0.0\x00" as *const u8 as *const libc::c_char;
   let mut fileconf: *const libc::c_char = b"/etc/dnsd.conf\x00" as *const u8 as *const libc::c_char;
-  let mut conf_data: *mut dns_entry = 0 as *mut dns_entry;
+  let mut conf_data: *mut dns_entry = std::ptr::null_mut();
   let mut conf_ttl: u32 = DEFAULT_TTL as libc::c_int as u32;
   let mut sttl: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sport: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut lsa: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  let mut from: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
-  let mut to: *mut len_and_sockaddr = 0 as *mut len_and_sockaddr;
+  let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
+  let mut from: *mut len_and_sockaddr = std::ptr::null_mut();
+  let mut to: *mut len_and_sockaddr = std::ptr::null_mut();
   let mut lsa_size: libc::c_uint = 0;
   let mut udps: libc::c_int = 0;
   let mut opts: libc::c_int = 0;

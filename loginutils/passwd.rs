@@ -192,7 +192,7 @@ pub unsafe extern "C" fn passwd_main(
   let mut myname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut newp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut pw: *mut passwd = 0 as *mut passwd;
+  let mut pw: *mut passwd = std::ptr::null_mut();
   let mut myuid: uid_t = 0;
   let mut rlimit_fsize: rlimit = rlimit {
     rlim_cur: 0,
@@ -246,7 +246,7 @@ pub unsafe extern "C" fn passwd_main(
   }
   /* getspnam_r may return 0 yet set result to NULL.
    * At least glibc 2.4 does this. Be extra paranoid here. */
-  let mut result: *mut spwd = 0 as *mut spwd;
+  let mut result: *mut spwd = std::ptr::null_mut();
   *bb_errno = 0i32;
   if crate::libpwdgrp::pwd_grp::bb_internal_getspnam_r(
     (*pw).pw_name,
