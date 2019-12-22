@@ -125,8 +125,6 @@ pub union __SOCKADDR_ARG {
   pub __sockaddr_x25__: *mut sockaddr_x25,
 }
 
-
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {

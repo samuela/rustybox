@@ -1,11 +1,10 @@
-use crate::librb::socklen_t;
-use libc::sockaddr;
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::len_and_sockaddr;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
@@ -16,6 +15,7 @@ use libc::ioctl;
 use libc::openlog;
 use libc::pid_t;
 use libc::setsid;
+use libc::sockaddr;
 use libc::sockaddr_in;
 use libc::sockaddr_in6;
 use libc::ssize_t;
@@ -93,7 +93,6 @@ pub type __fd_mask = libc::c_long;
 pub struct fd_set {
   pub fds_bits: [__fd_mask; 16],
 }
-
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -256,7 +255,7 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
        */
       //bb_error_msg("dangling IAC!");
 
-
+      
       (*ts).buffered_IAC_for_pty = 1i32 as smallint;
       rc = 1i32 as ssize_t;
       current_block = 13835600803501426168;

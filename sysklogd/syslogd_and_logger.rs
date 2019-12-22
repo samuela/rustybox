@@ -1,8 +1,7 @@
-use libc::sockaddr_in6;
-use libc::sockaddr_in;
 use crate::libbb::llist::llist_t;
 use crate::libbb::parse_config::parser_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::len_and_sockaddr;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -22,6 +21,8 @@ use libc::pid_t;
 use libc::rename;
 use libc::sa_family_t;
 use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::sprintf;
 use libc::ssize_t;
 use libc::stat;
@@ -216,7 +217,6 @@ pub struct sockaddr_un {
   pub sun_path: [libc::c_char; 108],
 }
 
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
@@ -225,7 +225,6 @@ pub union C2RustUnnamed_0 {
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-
 
 pub type in_addr_t = u32;
 
@@ -246,8 +245,6 @@ pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr_un__: *const sockaddr_un,
   pub __sockaddr_x25__: *const sockaddr_x25,
 }
-
-use crate::librb::len_and_sockaddr;
 
 #[repr(C)]
 #[derive(Copy, Clone)]

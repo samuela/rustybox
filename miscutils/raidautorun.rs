@@ -1,6 +1,5 @@
 use libc;
 
-
 /*
  * raidautorun implementation for busybox
  *

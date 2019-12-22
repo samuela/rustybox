@@ -1,7 +1,6 @@
 use libc;
 use libc::close;
 
-
 /*
  * Busybox main internal header file
  *

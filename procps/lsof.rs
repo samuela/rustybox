@@ -1,15 +1,15 @@
+use crate::librb::procps_status_t;
+use crate::librb::size_t;
 use libc;
 use libc::closedir;
+use libc::dirent;
 use libc::free;
 use libc::getpid;
 use libc::opendir;
 use libc::printf;
 use libc::readdir;
 use libc::sprintf;
-use crate::librb::size_t;
-use libc::dirent;
 use libc::DIR;
-use crate::librb::procps_status_t;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const PSSCAN_TASKS: C2RustUnnamed = 4194304;

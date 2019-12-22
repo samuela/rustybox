@@ -3,7 +3,6 @@ use crate::librb::size_t;
 use libc;
 use libc::ioctl;
 
-
 /* From <linux/kd.h> */
 
 #[repr(C)]

@@ -1,6 +1,5 @@
 use libc;
 
-
 /*
  * skip_whitespace implementation for busybox
  *

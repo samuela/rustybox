@@ -6,8 +6,6 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 }
 
-
-
 // The superblock is stored in the first metadata pair, i.e the first two blocks.
 
 #[repr(C, packed)]

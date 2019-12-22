@@ -1,13 +1,15 @@
-use libc::sa_family_t;
-use libc::sockaddr;use crate::librb::size_t;
-use crate::librb::socklen_t;use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::len_and_sockaddr;
+use crate::librb::size_t;
+use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::free;
 use libc::getpid;
+use libc::sa_family_t;
+use libc::sockaddr;
 use libc::strchr;
 use libc::strrchr;
 extern "C" {
@@ -298,7 +300,6 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-
 
 #[repr(C)]
 #[derive(Copy, Clone)]

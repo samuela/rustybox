@@ -1,6 +1,5 @@
 use libc;
 
-
 /*
  * setconsole.c - redirect system console output
  *

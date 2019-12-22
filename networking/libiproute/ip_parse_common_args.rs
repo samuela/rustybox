@@ -1,5 +1,5 @@
+use crate::librb::smallint;
 use libc;
-
 
 /* NB: unaligned parameter should be a pointer, aligned one -
  * a lvalue. This makes it more likely to not swap them by mistake
@@ -11,7 +11,6 @@ use libc;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::smallint;
 pub type family_t = i8;
 pub const ARG_IPv4: C2RustUnnamed = 2;
 pub const ARG_family: C2RustUnnamed = 1;

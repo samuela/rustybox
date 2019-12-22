@@ -1,4 +1,5 @@
-use crate::libbb::unicode::bb_mbstate_t;use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::unicode::bb_mbstate_t;
 use crate::libbb::xfuncs_printf::xmalloc;
 use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use crate::librb::signal::sigaction;
@@ -47,7 +48,6 @@ extern "C" {
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
 
   #[no_mangle]
   static mut stdin: *mut FILE;

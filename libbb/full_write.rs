@@ -2,7 +2,6 @@ use crate::librb::size_t;
 use libc;
 use libc::ssize_t;
 
-
 // NB: will return short write on error, not -1,
 // if some data was written before error occurred
 

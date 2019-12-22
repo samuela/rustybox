@@ -1,4 +1,4 @@
-use libc::sockaddr_in6;use crate::libbb::appletlib::applet_name;
+use crate::libbb::appletlib::applet_name;
 use crate::libbb::parse_config::parser_t;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::xfuncs_printf::xmalloc;
@@ -33,6 +33,7 @@ use libc::sigval;
 use libc::sleep;
 use libc::sockaddr;
 use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::sprintf;
 use libc::ssize_t;
 use libc::strchr;
@@ -287,8 +288,6 @@ pub struct sockaddr_un {
   pub sun_path: [libc::c_char; 108],
 }
 
-
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
@@ -445,8 +444,6 @@ pub union C2RustUnnamed_12 {
   pub sa_sigaction:
     Option<unsafe extern "C" fn(_: libc::c_int, _: *mut siginfo_t, _: *mut libc::c_void) -> ()>,
 }
-
-
 
 #[repr(C)]
 #[derive(Copy, Clone)]

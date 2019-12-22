@@ -1,7 +1,7 @@
 use crate::libbb::llist::llist_t;
-use crate::librb::size_t;
-use crate::librb::procps_status_t;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::procps_status_t;
+use crate::librb::size_t;
 use libc;
 use libc::isatty;
 use libc::printf;

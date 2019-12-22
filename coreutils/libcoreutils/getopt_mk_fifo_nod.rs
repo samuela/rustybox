@@ -1,8 +1,6 @@
 use libc;
-use libc::umask;
-
-
 use libc::mode_t;
+use libc::umask;
 /*
  * coreutils utility routine
  *

@@ -1,5 +1,5 @@
-use crate::librb::procps_status_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::procps_status_t;
 use crate::librb::size_t;
 use libc;
 use libc::free;

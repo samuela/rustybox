@@ -19,6 +19,8 @@ use libc::free;
 use libc::getpid;
 use libc::getuid;
 use libc::putenv;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::ssize_t;
 use libc::strchr;
 use libc::strcmp;
@@ -232,10 +234,6 @@ pub const MSG_DONTROUTE: C2RustUnnamed = 4;
 pub const MSG_PEEK: C2RustUnnamed = 2;
 pub const MSG_OOB: C2RustUnnamed = 1;
 
-use libc::sockaddr_in6;
-
-
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
@@ -244,9 +242,6 @@ pub union C2RustUnnamed_0 {
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-
-use libc::sockaddr_in;
-
 
 pub type in_addr_t = u32;
 
@@ -352,8 +347,6 @@ pub struct timex {
 }
 
 use crate::librb::len_and_sockaddr;
-
-
 
 pub type C2RustUnnamed_3 = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed_3 = 8;

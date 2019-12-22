@@ -1,5 +1,9 @@
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::rtattr;
+use crate::networking::libiproute::libnetlink::rtnl_handle;
 use libc;
+use libc::nlmsghdr;
+use libc::sockaddr_nl;
 use libc::strcpy;
 extern "C" {
   #[no_mangle]
@@ -25,14 +29,10 @@ extern "C" {
 
 }
 
-
 pub type __u16 = libc::c_ushort;
 pub type u32 = libc::c_uint;
 pub type __kernel_sa_family_t = libc::c_ushort;
 
-use libc::sockaddr_nl;
-
-use libc::nlmsghdr;
 pub type C2RustUnnamed = libc::c_uint;
 pub const __IFLA_MAX: C2RustUnnamed = 50;
 pub const IFLA_NEW_IFINDEX: C2RustUnnamed = 49;
@@ -141,8 +141,6 @@ pub const RTM_DELLINK: C2RustUnnamed_0 = 17;
 pub const RTM_NEWLINK: C2RustUnnamed_0 = 16;
 pub const RTM_BASE: C2RustUnnamed_0 = 16;
 
-use crate::librb::rtattr;
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct ifinfomsg {
@@ -153,8 +151,6 @@ pub struct ifinfomsg {
   pub ifi_flags: libc::c_uint,
   pub ifi_change: libc::c_uint,
 }
-
-use crate::networking::libiproute::libnetlink::rtnl_handle;
 
 /*
  * This program is free software; you can redistribute it and/or

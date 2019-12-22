@@ -1,25 +1,25 @@
-use crate::librb::smallint;
-use libc::pollfd;
-use crate::librb::len_and_sockaddr;
-use libc::sa_family_t;
-use libc::sockaddr;
-use libc::sockaddr_in6;
-use libc::sockaddr_in;
-use libc::in_addr;
-use crate::librb::size_t;
-use libc::time_t;
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::parse_config::parser_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::len_and_sockaddr;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use crate::networking::udhcp::common::BUG_bb_strtou32_unimplemented;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::close;
 use libc::free;
+use libc::in_addr;
 use libc::openlog;
+use libc::pollfd;
+use libc::sa_family_t;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::strcasecmp;
 use libc::time;
+use libc::time_t;
 use libc::unlink;
 extern "C" {
   //extern const int const_int_1;
@@ -246,7 +246,6 @@ pub type bb__aliased_u32 = u32;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-
 
 pub type nfds_t = libc::c_ulong;
 #[repr(C)]

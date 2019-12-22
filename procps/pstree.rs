@@ -1,12 +1,13 @@
+use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::procps_status_t;
 use crate::librb::smallint;
-use libc::pid_t;
-use libc::uid_t;
-use crate::librb::procps_status_t;use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
+use libc::pid_t;
 use libc::putchar_unlocked;
 use libc::sprintf;
 use libc::strcmp;
 use libc::strcpy;
+use libc::uid_t;
 extern "C" {
 
   #[no_mangle]
@@ -18,7 +19,6 @@ extern "C" {
   static mut option_mask32: u32;
 
 }
-
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const PSSCAN_TASKS: C2RustUnnamed = 4194304;

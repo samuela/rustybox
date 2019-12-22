@@ -5,7 +5,6 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 }
 
-
 pub type uuid_format = libc::c_uint;
 pub const UUID_DCE_STRING: uuid_format = 3;
 // pub const UUID_DCE: uuid_format = 2;

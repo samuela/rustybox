@@ -5,7 +5,6 @@ use libc::ioctl;
 use libc::open;
 use libc::ptrdiff_t;
 
-
 pub const KDGKBTYPE: C2RustUnnamed = 19251;
 /* make vt active */
 pub const VT_WAITACTIVE: C2RustUnnamed_0 = 22023;

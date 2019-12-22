@@ -1,18 +1,20 @@
-use libc::sockaddr_in6;
-use libc::sa_family_t;
-use libc::sockaddr;
-use libc::suseconds_t;
-use libc::time_t;
-use crate::librb::size_t;
-use libc::ssize_t;
-use crate::librb::socklen_t;
-use libc::timeval;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
+use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::free;
+use libc::in_addr;
+use libc::sa_family_t;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
+use libc::ssize_t;
+use libc::suseconds_t;
+use libc::time_t;
+use libc::timeval;
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -64,7 +66,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-
 pub type __socklen_t = libc::c_uint;
 pub type __fd_mask = libc::c_long;
 
@@ -92,8 +93,6 @@ pub union __SOCKADDR_ARG {
   pub __sockaddr_x25__: *mut sockaddr_x25,
 }
 
-
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union C2RustUnnamed {
@@ -102,10 +101,6 @@ pub union C2RustUnnamed {
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-
-use libc::sockaddr_in;
-
-use libc::in_addr;
 pub type in_addr_t = u32;
 
 #[repr(C)]

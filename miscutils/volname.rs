@@ -1,9 +1,7 @@
-use libc;
-use libc::printf;
-
-
 use crate::librb::size_t;
+use libc;
 use libc::off_t;
+use libc::printf;
 /*
  * Reads and displays CD-ROM volume name
  *

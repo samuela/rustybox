@@ -1,21 +1,21 @@
-use libc::useconds_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::pid_t;
-use libc::FILE;
-use crate::librb::__compar_fn_t;
-use libc::termios;
-use crate::librb::procps_status_t;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::__compar_fn_t;
+use crate::librb::procps_status_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
 use libc::fclose;
 use libc::free;
+use libc::pid_t;
 use libc::printf;
 use libc::puts;
 use libc::sscanf;
 use libc::strchr;
 use libc::strcpy;
+use libc::termios;
+use libc::useconds_t;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -102,7 +102,6 @@ pub const KEYCODE_LEFT: C2RustUnnamed_0 = -5;
 pub const KEYCODE_RIGHT: C2RustUnnamed_0 = -4;
 pub const KEYCODE_DOWN: C2RustUnnamed_0 = -3;
 pub const KEYCODE_UP: C2RustUnnamed_0 = -2;
-
 
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const PSSCAN_TASKS: C2RustUnnamed_1 = 4194304;

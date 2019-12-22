@@ -1,6 +1,5 @@
 use libc;
 
-
 /*
  * setkeycodes
  *

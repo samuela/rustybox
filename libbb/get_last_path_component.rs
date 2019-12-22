@@ -1,7 +1,6 @@
 use libc;
 use libc::strrchr;
 
-
 /*
  * bb_get_last_path_component implementation for busybox
  *

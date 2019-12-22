@@ -1,3 +1,4 @@
+use crate::networking::tls_pstm::pstm_int;
 use libc;
 use libc::free;
 extern "C" {
@@ -7,7 +8,6 @@ extern "C" {
 
 }
 
-
 /* Failure to allocate requested memory */
 /* Failure on sanity/limit tests */
 pub type uint64 = u64;
@@ -16,7 +16,6 @@ pub type int32 = i32;
 pub type pstm_digit = uint32;
 pub type pstm_word = uint64;
 
-use crate::networking::tls_pstm::pstm_int;
 /*
  * Copyright (C) 2017 Denys Vlasenko
  *

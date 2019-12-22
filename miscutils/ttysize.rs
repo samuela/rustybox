@@ -3,7 +3,6 @@ use libc::ioctl;
 use libc::printf;
 use libc::winsize;
 
-
 /*
  * Replacement for "stty size", which is awkward for shell script use.
  * - Allows to request width, height, or both, in any order.

@@ -1,6 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
-
 use libc;
 use libc::chdir;
 use libc::dirent;
@@ -9,7 +8,6 @@ use libc::readdir;
 use libc::ssize_t;
 use libc::strchr;
 use libc::DIR;
-
 
 /*
  * lsscsi implementation for busybox

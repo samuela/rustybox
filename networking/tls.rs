@@ -469,7 +469,6 @@ pub struct hmac_precomputed {
 
 pub const SHA_INSIZE: C2RustUnnamed = 64;
 
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct handshake_hdr {

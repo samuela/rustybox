@@ -1,11 +1,12 @@
-use crate::librb::size_t;
-use libc::pid_t;
-use crate::librb::procps_status_t;
 use crate::libbb::appletlib::applet_name;
+use crate::librb::procps_status_t;
+use crate::librb::re_pattern_buffer;
+use crate::librb::size_t;
 use libc;
 use libc::free;
 use libc::getpid;
 use libc::kill;
+use libc::pid_t;
 use libc::printf;
 extern "C" {
 
@@ -57,8 +58,6 @@ pub const PSSCAN_PGID: C2RustUnnamed = 4;
 pub const PSSCAN_PPID: C2RustUnnamed = 2;
 pub const PSSCAN_PID: C2RustUnnamed = 1;
 
-
-use crate::librb::re_pattern_buffer;
 pub type regex_t = re_pattern_buffer;
 pub type regoff_t = libc::c_int;
 

@@ -4,8 +4,6 @@ extern "C" {
   pub type tls_handshake_data;
 }
 
-
-
 pub type tls_state_t = tls_state;
 #[inline]
 unsafe extern "C" fn new_tls_state() -> *mut tls_state_t {

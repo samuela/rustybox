@@ -1,6 +1,5 @@
 use libc;
 
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct C2RustUnnamed {
