@@ -274,7 +274,7 @@ pub unsafe extern "C" fn d6_recv_kernel_packet(
   let mut bytes: libc::c_int = 0;
   memset(
     packet as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<d6_packet>() as libc::c_ulong,
   );
   bytes = crate::libbb::read::safe_read(
@@ -282,7 +282,7 @@ pub unsafe extern "C" fn d6_recv_kernel_packet(
     packet as *mut libc::c_void,
     ::std::mem::size_of::<d6_packet>() as libc::c_ulong,
   ) as libc::c_int;
-  if bytes < 0i32 {
+  if bytes < 0 {
     if dhcp_verbose >= 1i32 as libc::c_uint {
       crate::libbb::verror_msg::bb_simple_info_msg(
         b"packet read error, ignoring\x00" as *const u8 as *const libc::c_char,
@@ -344,18 +344,18 @@ pub unsafe extern "C" fn d6_send_raw_packet(
       __v
     }) as libc::c_int,
   );
-  if fd < 0i32 {
+  if fd < 0 {
     msg = b"socket(%s)\x00" as *const u8 as *const libc::c_char;
     current_block = 6439760897239081377;
   } else {
     memset(
       &mut dest_sll as *mut sockaddr_ll as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<sockaddr_ll>() as libc::c_ulong,
     );
     memset(
       &mut packet as *mut ip6_udp_d6_packet as *mut libc::c_void,
-      0i32,
+      0,
       48u64,
     );
     packet.data = *d6_pkt;
@@ -391,7 +391,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
         __sockaddr__: &mut dest_sll as *mut sockaddr_ll as *mut sockaddr,
       },
       ::std::mem::size_of::<sockaddr_ll>() as libc::c_ulong as socklen_t,
-    ) < 0i32
+    ) < 0
     {
       msg = b"bind(%s)\x00" as *const u8 as *const libc::c_char
     } else {
@@ -474,7 +474,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
         fd,
         &mut packet as *mut ip6_udp_d6_packet as *const libc::c_void,
         48u64.wrapping_add(d6_pkt_size as libc::c_ulong),
-        0i32,
+        0,
         __CONST_SOCKADDR_ARG {
           __sockaddr__: &mut dest_sll as *mut sockaddr_ll as *mut sockaddr,
         },
@@ -483,7 +483,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
       msg = b"sendto\x00" as *const u8 as *const libc::c_char
     }
     close(fd);
-    if result < 0i32 {
+    if result < 0 {
       current_block = 6439760897239081377;
     } else {
       current_block = 17281240262373992796;
@@ -517,14 +517,14 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
   let mut result: libc::c_int = -1i32;
   let mut msg: *const libc::c_char = std::ptr::null();
   fd = socket(10i32, SOCK_DGRAM as libc::c_int, IPPROTO_UDP as libc::c_int);
-  if fd < 0i32 {
+  if fd < 0 {
     msg = b"socket(%s)\x00" as *const u8 as *const libc::c_char;
     current_block = 9009192957559530970;
   } else {
     crate::libbb::xconnect::setsockopt_reuseaddr(fd);
     memset(
       &mut sa as *mut sockaddr_in6 as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong,
     );
     sa.sin6_family = 10i32 as sa_family_t;
@@ -559,7 +559,7 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
     } else {
       memset(
         &mut sa as *mut sockaddr_in6 as *mut libc::c_void,
-        0i32,
+        0,
         ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong,
       );
       sa.sin6_family = 10i32 as sa_family_t;
@@ -603,7 +603,7 @@ pub unsafe extern "C" fn d6_send_kernel_packet(
       }
     }
     close(fd);
-    if result < 0i32 {
+    if result < 0 {
       current_block = 9009192957559530970;
     } else {
       current_block = 9828876828309294594;

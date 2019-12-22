@@ -79,10 +79,10 @@ pub unsafe extern "C" fn dumpkmap_main(
     bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,
     (7i32 + 256i32) as size_t,
   );
-  i = 0i32;
+  i = 0;
   while i < 13i32 {
     if *bb_common_bufsiz1.as_mut_ptr().offset(7).offset(i as isize) != 0 {
-      j = 0i32;
+      j = 0;
       while j < 128i32 {
         ke.kb_index = j as libc::c_uchar;
         ke.kb_table = i as libc::c_uchar;
@@ -106,5 +106,5 @@ pub unsafe extern "C" fn dumpkmap_main(
     }
     i += 1
   }
-  return 0i32;
+  return 0;
 }

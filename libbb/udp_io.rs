@@ -216,12 +216,12 @@ pub unsafe extern "C" fn send_to_from(
   iov[0].iov_len = len;
   memset(
     &mut u as *mut C2RustUnnamed_1 as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong,
   );
   memset(
     &mut msg as *mut msghdr as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<msghdr>() as libc::c_ulong,
   );
   msg.msg_name = to as *mut sockaddr as *mut libc::c_void;
@@ -524,7 +524,7 @@ pub unsafe extern "C" fn recv_from_to(
   iov[0].iov_len = len;
   memset(
     &mut msg as *mut msghdr as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<msghdr>() as libc::c_ulong,
   );
   msg.msg_name = from as *mut libc::c_void;

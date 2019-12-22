@@ -34,7 +34,7 @@ pub unsafe extern "C" fn printenv_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut exit_code: libc::c_int = 0i32;
+  let mut exit_code: libc::c_int = 0;
   /* no variables specified, show whole env */
   if (*argv.offset(1)).is_null() {
     let mut e: *mut *mut libc::c_char = environ;

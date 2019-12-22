@@ -64,9 +64,9 @@ pub unsafe extern "C" fn renice_main(
   let mut current_block: u64; /* Default 'which' value. */
   static mut Xetpriority_msg: [libc::c_char; 13] =
     [37, 99, 101, 116, 112, 114, 105, 111, 114, 105, 116, 121, 0];
-  let mut retval: libc::c_int = 0i32;
+  let mut retval: libc::c_int = 0;
   let mut which: libc::c_int = PRIO_PROCESS as libc::c_int;
-  let mut use_relative: libc::c_int = 0i32;
+  let mut use_relative: libc::c_int = 0;
   let mut adjustment: libc::c_int = 0;
   let mut new_priority: libc::c_int = 0;
   let mut who: libc::c_uint = 0;
@@ -106,7 +106,7 @@ pub unsafe extern "C" fn renice_main(
         'p' as i32 as libc::c_char,
         'g' as i32 as libc::c_char,
         'u' as i32 as libc::c_char,
-        0i32 as libc::c_char,
+        0 as libc::c_char,
         PRIO_PROCESS as libc::c_int as libc::c_char,
         PRIO_PGRP as libc::c_int as libc::c_char,
         PRIO_USER as libc::c_int as libc::c_char,
@@ -153,7 +153,7 @@ pub unsafe extern "C" fn renice_main(
       {
         if use_relative != 0 {
           let mut old_priority: libc::c_int = 0; /* Needed for getpriority error detection. */
-          *bb_errno = 0i32;
+          *bb_errno = 0;
           old_priority = getpriority(which as __priority_which_t, who);
           if *bb_errno != 0 {
             crate::libbb::perror_msg::bb_perror_msg(Xetpriority_msg.as_ptr(), 'g' as i32);
@@ -169,7 +169,7 @@ pub unsafe extern "C" fn renice_main(
         match current_block {
           46536466264865791 => {}
           _ => {
-            if setpriority(which as __priority_which_t, who, new_priority) == 0i32 {
+            if setpriority(which as __priority_which_t, who, new_priority) == 0 {
               continue;
             }
             crate::libbb::perror_msg::bb_perror_msg(Xetpriority_msg.as_ptr(), 's' as i32);

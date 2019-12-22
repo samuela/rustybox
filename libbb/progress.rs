@@ -73,7 +73,7 @@ pub unsafe extern "C" fn bb_progress_init(
   (*p).start_sec = crate::libbb::time::monotonic_sec();
   (*p).last_update_sec = (*p).start_sec;
   (*p).last_change_sec = (*p).start_sec;
-  (*p).last_size = 0i32 as libc::c_uint;
+  (*p).last_size = 0 as libc::c_uint;
 }
 
 /*
@@ -649,11 +649,11 @@ pub unsafe extern "C" fn bb_progress_update(
   elapsed = crate::libbb::time::monotonic_sec();
   since_last_update = elapsed.wrapping_sub((*p).last_update_sec);
   (*p).last_update_sec = elapsed;
-  if totalsize != 0i32 as libc::c_ulong && transferred >= totalsize.wrapping_sub(beg_size) {
+  if totalsize != 0 as libc::c_ulong && transferred >= totalsize.wrapping_sub(beg_size) {
     /* Last call. Do not skip this update */
     transferred = totalsize.wrapping_sub(beg_size)
   /* sanitize just in case */
-  } else if since_last_update == 0i32 as libc::c_uint {
+  } else if since_last_update == 0 as libc::c_uint {
     /*
      * Do not update on every call
      * (we can be called on every network read!)
@@ -687,7 +687,7 @@ pub unsafe extern "C" fn bb_progress_update(
     (b"\r%s \x00" as *const u8 as *const libc::c_char).offset(notty as isize),
     (*p).curfile,
   );
-  if totalsize != 0i32 as libc::c_ulong {
+  if totalsize != 0 as libc::c_ulong {
     let mut barlength: libc::c_int = 0;
     let mut beg_and_transferred: libc::c_uint = 0;
     let mut ratio: libc::c_uint = 0;
@@ -745,7 +745,7 @@ pub unsafe extern "C" fn bb_progress_update(
        * by adjusting start time */
       (*p).start_sec = (*p).start_sec.wrapping_add(since_last_update)
     } /* now it's "elapsed since start" */
-    since_last_update = 0i32 as libc::c_uint
+    since_last_update = 0 as libc::c_uint
   }
   elapsed = elapsed.wrapping_sub((*p).start_sec);
   if since_last_update >= STALLTIME as libc::c_int as libc::c_uint {
@@ -753,7 +753,7 @@ pub unsafe extern "C" fn bb_progress_update(
       stderr,
       b"  - stalled -\x00" as *const u8 as *const libc::c_char,
     );
-  } else if totalsize == 0 || transferred == 0 || (elapsed as libc::c_int) < 0i32 {
+  } else if totalsize == 0 || transferred == 0 || (elapsed as libc::c_int) < 0 {
     fprintf(
       stderr,
       b" --:--:-- ETA\x00" as *const u8 as *const libc::c_char,

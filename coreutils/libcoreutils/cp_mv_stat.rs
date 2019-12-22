@@ -32,7 +32,7 @@ pub unsafe extern "C" fn cp_mv_stat2(
   mut fn_stat: *mut stat,
   mut sf: stat_func,
 ) -> libc::c_int {
-  if sf.expect("non-null function pointer")(fn_0, fn_stat) < 0i32 {
+  if sf.expect("non-null function pointer")(fn_0, fn_stat) < 0 {
     if *bb_errno != 2i32 {
       crate::libbb::perror_msg::bb_perror_msg(
         b"can\'t stat \'%s\'\x00" as *const u8 as *const libc::c_char,
@@ -40,7 +40,7 @@ pub unsafe extern "C" fn cp_mv_stat2(
       );
       return -1i32;
     }
-    return 0i32;
+    return 0;
   }
   if (*fn_stat).st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
     return 3i32;

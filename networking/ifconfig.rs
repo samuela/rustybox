@@ -380,9 +380,9 @@ pub unsafe extern "C" fn ifconfig_main(
   /*char host[128];*/
   let mut host: *const libc::c_char = std::ptr::null(); /* make gcc happy */
   let mut show_all_param: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  did_flags = 0i32 as libc::c_uint;
-  sai_hostname = 0i32 as libc::c_uint;
-  sai_netmask = 0i32 as libc::c_uint;
+  did_flags = 0 as libc::c_uint;
+  sai_hostname = 0 as libc::c_uint;
+  sai_netmask = 0 as libc::c_uint;
   /* skip argv[0] */
   argv = argv.offset(1);
   show_all_param = std::ptr::null_mut::<libc::c_char>();
@@ -403,7 +403,7 @@ pub unsafe extern "C" fn ifconfig_main(
     });
   }
   /* Create a channel to the NET kernel. */
-  sockfd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+  sockfd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
   /* get interface name */
   crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), *argv);
   let mut current_block_97: u64;
@@ -429,7 +429,7 @@ pub unsafe extern "C" fn ifconfig_main(
         break;
       }
       /* Find table entry. */
-      if strcmp(p, (*op).name) == 0i32 {
+      if strcmp(p, (*op).name) == 0 {
         /* If name matches... */
         mask &= (*op).flags();
         if mask != 0 {
@@ -602,7 +602,7 @@ pub unsafe extern "C" fn ifconfig_main(
           );
         } else {
           /* FIXME: error check?? */
-          let mut i: libc::c_ulong = strtoul(*argv, 0 as *mut *mut libc::c_char, 0i32);
+          let mut i: libc::c_ulong = strtoul(*argv, 0 as *mut *mut libc::c_char, 0);
           p = (&mut ifr as *mut ifreq as *mut libc::c_char)
             .offset((*a1op).ifr_offset as libc::c_int as isize);
           if mask & 0xci32 as libc::c_uint != 0 {
@@ -643,7 +643,7 @@ pub unsafe extern "C" fn ifconfig_main(
            * it'll go with the cross-platform support etc.
            */
           let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-          let mut found_colon: libc::c_short = 0i32 as libc::c_short;
+          let mut found_colon: libc::c_short = 0 as libc::c_short;
           ptr = ifr.ifr_ifrn.ifrn_name.as_mut_ptr();
           while *ptr != 0 {
             if *ptr as libc::c_int == ':' as i32 {
@@ -692,7 +692,7 @@ pub unsafe extern "C" fn ifconfig_main(
       b"SIOCSIFFLAGS\x00" as *const u8 as *const libc::c_char,
     );
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn run_static_initializers() {
   OptArray = [
@@ -700,7 +700,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"metric\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags(0x10i32 as libc::c_uint);
@@ -710,7 +710,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"mtu\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags(0x10i32 as libc::c_uint);
@@ -720,7 +720,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"txqueuelen\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags(0x10i32 as libc::c_uint);
@@ -730,7 +730,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"dstaddr\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x10i32 | (0x2i32 | 0x1i32)) as libc::c_uint);
@@ -740,7 +740,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"netmask\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x10i32 | (0x2i32 | 0x1i32) | 0x20i32) as libc::c_uint);
@@ -760,7 +760,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"hw\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x10i32 | 0x2i32) as libc::c_uint);
@@ -780,7 +780,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"keepalive\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x10i32 | 0x1i32) as libc::c_uint);
@@ -790,7 +790,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"outfill\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x10i32 | 0x1i32) as libc::c_uint);
@@ -800,7 +800,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"mem_start\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x10i32 | 0x4i32) as libc::c_uint);
@@ -810,7 +810,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"io_addr\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x10i32 | 0x4i32) as libc::c_uint);
@@ -820,7 +820,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"irq\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x10i32 | 0xci32) as libc::c_uint);
@@ -830,7 +830,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"add\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x2i32 | 0x1i32 | 0x40i32) as libc::c_uint);
@@ -840,7 +840,7 @@ unsafe extern "C" fn run_static_initializers() {
       let mut init = options {
         flags_arg_flags: [0; 2],
         name: b"del\x00" as *const u8 as *const libc::c_char,
-        selector: 0i32 as libc::c_ushort,
+        selector: 0 as libc::c_ushort,
       };
       init.set_flags(0x10i32 as libc::c_uint);
       init.set_arg_flags((0x2i32 | 0x1i32 | 0x40i32) as libc::c_uint);

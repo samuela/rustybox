@@ -75,7 +75,7 @@ pub unsafe extern "C" fn uniq_main(
   let mut opt: libc::c_uint = 0;
   let mut cur_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut cur_compare: *const libc::c_char = std::ptr::null();
-  skip_chars = 0i32 as libc::c_uint;
+  skip_chars = 0 as libc::c_uint;
   skip_fields = skip_chars;
   max_chars = 2147483647i32 as libc::c_uint;
   opt = crate::libbb::getopt32::getopt32(
@@ -93,7 +93,7 @@ pub unsafe extern "C" fn uniq_main(
       || *input_filename.offset(1) as libc::c_int != 0
     {
       close(0i32);
-      crate::libbb::xfuncs_printf::xopen(input_filename, 0i32);
+      crate::libbb::xfuncs_printf::xopen(input_filename, 0);
       /* fd will be 0 */
     }
     output = *argv.offset(1);
@@ -121,7 +121,7 @@ pub unsafe extern "C" fn uniq_main(
     let mut old_compare: *const libc::c_char = std::ptr::null();
     old_line = cur_line;
     old_compare = cur_compare;
-    dups = 0i32 as libc::c_ulong;
+    dups = 0 as libc::c_ulong;
     loop
     /* gnu uniq ignores newlines */
     {

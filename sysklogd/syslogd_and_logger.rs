@@ -556,7 +556,7 @@ pub static mut prioritynames: [CODE; 13] = [
   {
     let mut init = _code {
       c_name: b"emerg\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-      c_val: 0i32,
+      c_val: 0,
     };
     init
   },
@@ -598,7 +598,7 @@ pub static mut prioritynames: [CODE; 13] = [
   {
     let mut init = _code {
       c_name: b"panic\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-      c_val: 0i32,
+      c_val: 0,
     };
     init
   },
@@ -664,7 +664,7 @@ pub static mut facilitynames: [CODE; 23] = [
   {
     let mut init = _code {
       c_name: b"kern\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-      c_val: 0i32 << 3i32,
+      c_val: 0 << 3i32,
     };
     init
   },
@@ -685,7 +685,7 @@ pub static mut facilitynames: [CODE; 23] = [
   {
     let mut init = _code {
       c_name: b"mark\x00" as *const u8 as *const libc::c_char as *mut libc::c_char,
-      c_val: 24i32 << 3i32 | 0i32,
+      c_val: 24i32 << 3i32 | 0,
     };
     init
   },
@@ -811,7 +811,7 @@ unsafe extern "C" fn find_by_name(
   mut c_set: *const CODE,
 ) -> *const CODE {
   while !(*c_set).c_name.is_null() {
-    if strcmp(name, (*c_set).c_name) == 0i32 {
+    if strcmp(name, (*c_set).c_name) == 0 {
       return c_set;
     }
     c_set = c_set.offset(1)
@@ -913,8 +913,8 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
       let fresh1 = t;
       t = t.offset(1);
       *fresh1 = '\u{0}' as i32 as libc::c_char;
-      negated_prio = 0i32 as u8;
-      single_prio = 0i32 as u8;
+      negated_prio = 0 as u8;
+      single_prio = 0 as u8;
       if *t as libc::c_int == '!' as i32 {
         negated_prio = 1i32 as u8;
         t = t.offset(1)
@@ -933,7 +933,7 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
           current_block = 12846980873243673022;
           break 's_30;
         }
-        primap = 0i32 as u8;
+        primap = 0 as u8;
         priority = (*code).c_val as u8;
         if priority as libc::c_int == 0x10i32 {
           /* ensure we take "enabled_facility_priomap[fac] &= 0" branch below */
@@ -960,7 +960,7 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
         facmap = ((1i32 << 24i32) - 1i32) as u32
       } else {
         let mut next_facility: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-        facmap = 0i32 as u32;
+        facmap = 0 as u32;
         t = cur_selector;
         loop
         /* iterate through facilities: "kern,daemon.<priospec>" */
@@ -977,7 +977,7 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
             break 's_30;
           }
           /* "mark" is not a real facility, skip it */
-          if (*code).c_val != 24i32 << 3i32 | 0i32 {
+          if (*code).c_val != 24i32 << 3i32 | 0 {
             facmap |= (1i32 << (((*code).c_val & 0x3f8i32) >> 3i32)) as libc::c_uint
           }
           t = next_facility;
@@ -987,7 +987,7 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
         }
       }
       /* merge result with previous selectors */
-      i = 0i32 as libc::c_uint;
+      i = 0 as libc::c_uint;
       while i < 24i32 as libc::c_uint {
         if !(facmap & (1i32 << i) as libc::c_uint == 0) {
           if negated_prio != 0 {
@@ -1010,7 +1010,7 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
     /* check whether current file name was mentioned in previous rules or
      * as global logfile (G.logFile).
      */
-    if strcmp((*ptr_to_globals).logFile.path, tok[1]) == 0i32 {
+    if strcmp((*ptr_to_globals).logFile.path, tok[1]) == 0 {
       (*cur_rule).file = &mut (*ptr_to_globals).logFile
     } else {
       /* temporarily use cur_rule as iterator, but *pp_rule still points
@@ -1023,7 +1023,7 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
           current_block = 1352918242886884122;
           break;
         }
-        if strcmp((*(*cur_rule).file).path, tok[1]) == 0i32 {
+        if strcmp((*(*cur_rule).file).path, tok[1]) == 0 {
           /* found - reuse the same file structure */
           (**pp_rule).file = (*cur_rule).file;
           cur_rule = *pp_rule;
@@ -1093,8 +1093,8 @@ static mut init_data: init_globals = {
     SMwdn: [
       {
         let mut init = sembuf {
-          sem_num: 0i32 as libc::c_ushort,
-          sem_op: 0i32 as libc::c_short,
+          sem_num: 0 as libc::c_ushort,
+          sem_op: 0 as libc::c_short,
           sem_flg: 0,
         };
         init
@@ -1102,7 +1102,7 @@ static mut init_data: init_globals = {
       {
         let mut init = sembuf {
           sem_num: 1i32 as libc::c_ushort,
-          sem_op: 0i32 as libc::c_short,
+          sem_op: 0 as libc::c_short,
           sem_flg: 0,
         };
         init
@@ -1128,10 +1128,10 @@ unsafe extern "C" fn ipcsyslog_cleanup() {
     shmdt((*ptr_to_globals).shbuf as *const libc::c_void);
   }
   if (*ptr_to_globals).shmid != -1i32 {
-    shmctl((*ptr_to_globals).shmid, 0i32, 0 as *mut shmid_ds);
+    shmctl((*ptr_to_globals).shmid, 0, 0 as *mut shmid_ds);
   }
   if (*ptr_to_globals).s_semid != -1i32 {
-    semctl((*ptr_to_globals).s_semid, 0i32, 0i32, 0i32);
+    semctl((*ptr_to_globals).s_semid, 0, 0, 0);
   };
 }
 unsafe extern "C" fn ipcsyslog_init() {
@@ -1146,7 +1146,7 @@ unsafe extern "C" fn ipcsyslog_init() {
     );
   }
   (*ptr_to_globals).shbuf =
-    shmat((*ptr_to_globals).shmid, 0 as *const libc::c_void, 0i32) as *mut shbuf_ds;
+    shmat((*ptr_to_globals).shmid, 0 as *const libc::c_void, 0) as *mut shbuf_ds;
   if (*ptr_to_globals).shbuf == -1i64 as *mut libc::c_void as *mut shbuf_ds {
     /* shmat has bizarre error return */
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
@@ -1155,7 +1155,7 @@ unsafe extern "C" fn ipcsyslog_init() {
   }
   memset(
     (*ptr_to_globals).shbuf as *mut libc::c_void,
-    0i32,
+    0,
     (*ptr_to_globals).shm_size as libc::c_ulong,
   );
   (*(*ptr_to_globals).shbuf).size = ((*ptr_to_globals).shm_size as libc::c_ulong)
@@ -1166,7 +1166,7 @@ unsafe extern "C" fn ipcsyslog_init() {
   (*ptr_to_globals).s_semid = semget(KEY_ID as libc::c_int, 2i32, 0o1000i32 | 0o2000i32 | 1023i32);
   if (*ptr_to_globals).s_semid == -1i32 {
     if *bb_errno == 17i32 {
-      (*ptr_to_globals).s_semid = semget(KEY_ID as libc::c_int, 2i32, 0i32);
+      (*ptr_to_globals).s_semid = semget(KEY_ID as libc::c_int, 2i32, 0);
       if (*ptr_to_globals).s_semid != -1i32 {
         return;
       }
@@ -1217,7 +1217,7 @@ unsafe extern "C" fn log_to_shmem(mut msg: *const libc::c_char) {
     );
     msg = msg.offset(k as isize);
     len -= k;
-    (*(*ptr_to_globals).shbuf).tail = 0i32
+    (*(*ptr_to_globals).shbuf).tail = 0
   }
   /* store message, set new tail */
   memcpy(
@@ -1251,7 +1251,7 @@ unsafe extern "C" fn kmsg_init() {
    * from 3.5 onwards the full syslog facility/priority format is supported
    */
   if crate::libbb::kernel_version::get_linux_version_code()
-    < (3i32 << 16i32) + (5i32 << 8i32) + 0i32
+    < (3i32 << 16i32) + (5i32 << 8i32) + 0
   {
     (*ptr_to_globals).primask = 0x7i32
   } else {
@@ -1324,13 +1324,13 @@ unsafe extern "C" fn log_locally(
           0o1i32 | 0o100i32 | 0o400i32 | 0o2000i32 | 0o4000i32,
           0o666i32,
         );
-        if (*log_file).fd < 0i32 {
+        if (*log_file).fd < 0 {
           /* cannot open logfile? - print to /dev/console then */
           let mut fd: libc::c_int = crate::libbb::device_open::device_open(
             b"/dev/console\x00" as *const u8 as *const libc::c_char,
             0o1i32 | 0o400i32 | 0o4000i32,
           ); /* then stderr, dammit */
-          if fd < 0i32 {
+          if fd < 0 {
             fd = 2i32
           }
           crate::libbb::full_write::full_write(fd, msg as *const libc::c_void, len as size_t);
@@ -1340,7 +1340,7 @@ unsafe extern "C" fn log_locally(
           return;
         }
         let mut statf: stat = std::mem::zeroed();
-        (*log_file).isRegular = (fstat((*log_file).fd, &mut statf) == 0i32
+        (*log_file).isRegular = (fstat((*log_file).fd, &mut statf) == 0
           && statf.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
           as libc::c_int as u8;
         /* bug (mostly harmless): can wrap around if file > 4gb */
@@ -1377,7 +1377,7 @@ unsafe extern "C" fn log_locally(
               (*log_file).path,
               i,
             );
-            if i == 0i32 {
+            if i == 0 {
               break;
             }
             i -= 1;
@@ -1412,7 +1412,7 @@ unsafe extern "C" fn log_locally(
   len =
     crate::libbb::full_write::full_write((*log_file).fd, msg as *const libc::c_void, len as size_t)
       as libc::c_int;
-  if len > 0i32 {
+  if len > 0 {
     (*log_file).size = (*log_file).size.wrapping_add(len as libc::c_uint)
   };
 }
@@ -1462,7 +1462,7 @@ unsafe extern "C" fn timestamp_and_log(
     if option_mask32 & OPT_timestamp as libc::c_int as libc::c_uint == 0 {
       /* use message timestamp */
       timestamp = msg;
-      now = 0i32 as time_t
+      now = 0 as time_t
     }
     msg = msg.offset(16)
   }
@@ -1496,7 +1496,7 @@ unsafe extern "C" fn timestamp_and_log(
     );
   }
   /* Log message locally (to file or shared mem) */
-  let mut match_0: bool = 0i32 != 0;
+  let mut match_0: bool = 0 != 0;
   let mut rule: *mut logRule_t = std::ptr::null_mut();
   let mut facility: u8 = ((pri & 0x3f8i32) >> 3i32) as u8;
   let mut prio_bit: u8 = (1i32 << (pri & 0x7i32)) as u8;
@@ -1532,7 +1532,7 @@ unsafe extern "C" fn timestamp_and_log_internal(mut msg: *const libc::c_char) {
   if 1i32 != 0 && option_mask32 & OPT_locallog as libc::c_int as libc::c_uint == 0 {
     return;
   }
-  timestamp_and_log(5i32 << 3i32 | 6i32, msg as *mut libc::c_char, 0i32);
+  timestamp_and_log(5i32 << 3i32 | 6i32, msg as *mut libc::c_char, 0);
 }
 /* tmpbuf[len] is a NUL byte (set by caller), but there can be other,
  * embedded NULs. Split messages on each of these NULs, parse prio,
@@ -1597,7 +1597,7 @@ unsafe extern "C" fn create_socket() -> libc::c_int {
   let mut dev_log_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   memset(
     &mut sunx as *mut sockaddr_un as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<sockaddr_un>() as libc::c_ulong,
   );
   sunx.sun_family = 1i32 as sa_family_t;
@@ -1619,7 +1619,7 @@ unsafe extern "C" fn create_socket() -> libc::c_int {
     free(dev_log_name as *mut libc::c_void);
   }
   unlink(sunx.sun_path.as_mut_ptr());
-  sock_fd = crate::libbb::xfuncs_printf::xsocket(1i32, SOCK_DGRAM as libc::c_int, 0i32);
+  sock_fd = crate::libbb::xfuncs_printf::xsocket(1i32, SOCK_DGRAM as libc::c_int, 0);
   crate::libbb::xfuncs_printf::xbind(
     sock_fd,
     &mut sunx as *mut sockaddr_un as *mut sockaddr,
@@ -1647,7 +1647,7 @@ unsafe extern "C" fn try_to_resolve_remote(mut rh: *mut remoteHost_t) -> libc::c
   return crate::libbb::xfuncs_printf::xsocket(
     (*(*rh).remoteAddr).u.sa.sa_family as libc::c_int,
     SOCK_DGRAM as libc::c_int,
-    0i32,
+    0,
   );
 }
 unsafe extern "C" fn do_syslogd() -> ! {
@@ -1669,7 +1669,7 @@ unsafe extern "C" fn do_syslogd() -> ! {
     1i32,
     ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
   ); /* while (!bb_got_signal) */
-  crate::libbb::xfuncs_printf::xmove_fd(create_socket(), 0i32);
+  crate::libbb::xfuncs_printf::xmove_fd(create_socket(), 0);
   if option_mask32 & OPT_circularlog as libc::c_int as libc::c_uint != 0 {
     ipcsyslog_init();
   }
@@ -1693,7 +1693,7 @@ unsafe extern "C" fn do_syslogd() -> ! {
     }
     'c_12157: loop {
       sz = read(
-        0i32,
+        0,
         recvbuf as *mut libc::c_void,
         (MAX_READ as libc::c_int - 1i32) as size_t,
       );
@@ -1741,7 +1741,7 @@ unsafe extern "C" fn do_syslogd() -> ! {
           last_buf as *const libc::c_void,
           recvbuf as *const libc::c_void,
           sz as libc::c_ulong,
-        ) == 0i32
+        ) == 0
         {
           continue;
         }
@@ -1875,7 +1875,7 @@ pub unsafe extern "C" fn syslogd_main(
     // -s
     (*ptr_to_globals).logFileSize = crate::libbb::xatonum::xatou_range(
       opt_s,
-      0i32 as libc::c_uint,
+      0 as libc::c_uint,
       (2147483647i32 / 1024i32) as libc::c_uint,
     )
     .wrapping_mul(1024i32 as libc::c_uint)
@@ -1883,7 +1883,7 @@ pub unsafe extern "C" fn syslogd_main(
   if opts & OPT_rotatecnt as libc::c_int != 0 {
     // -b
     (*ptr_to_globals).logFileRotate =
-      crate::libbb::xatonum::xatou_range(opt_b, 0i32 as libc::c_uint, 99i32 as libc::c_uint)
+      crate::libbb::xatonum::xatou_range(opt_b, 0 as libc::c_uint, 99i32 as libc::c_uint)
   }
   if !opt_C.is_null() {
     // -Cn
@@ -1988,7 +1988,7 @@ unsafe extern "C" fn pencode(mut s: *mut libc::c_char) -> libc::c_int {
   if *s != 0 {
     *s = '\u{0}' as i32 as libc::c_char;
     fac = decode(save, bb_facilitynames);
-    if fac < 0i32 {
+    if fac < 0 {
       crate::libbb::verror_msg::bb_error_msg_and_die(
         b"unknown %s name: %s\x00" as *const u8 as *const libc::c_char,
         b"facility\x00" as *const u8 as *const libc::c_char,
@@ -2002,7 +2002,7 @@ unsafe extern "C" fn pencode(mut s: *mut libc::c_char) -> libc::c_int {
     s = save
   }
   lev = decode(s, bb_prioritynames);
-  if lev < 0i32 {
+  if lev < 0 {
     crate::libbb::verror_msg::bb_error_msg_and_die(
       b"unknown %s name: %s\x00" as *const u8 as *const libc::c_char,
       b"priority\x00" as *const u8 as *const libc::c_char,
@@ -2019,7 +2019,7 @@ pub unsafe extern "C" fn logger_main(
   let mut str_p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut str_t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;
-  let mut i: libc::c_int = 0i32;
+  let mut i: libc::c_int = 0;
   /* Fill out the name string early (may be overwritten later) */
   str_t = crate::libbb::bb_pwd::uid2uname_utoa(geteuid());
   /* Parse any options */
@@ -2034,7 +2034,7 @@ pub unsafe extern "C" fn logger_main(
     i |= 0x20i32
   }
   //if (opt & 0x4) /* -t */
-  openlog(str_t, i, 0i32);
+  openlog(str_t, i, 0);
   i = 1i32 << 3i32 | 5i32;
   if opt & 0x1i32 != 0 {
     /* -p */
@@ -2063,8 +2063,8 @@ pub unsafe extern "C" fn logger_main(
     }
   } else {
     let mut message: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut len: libc::c_int = 0i32;
-    let mut pos: libc::c_int = 0i32;
+    let mut len: libc::c_int = 0;
+    let mut pos: libc::c_int = 0;
     loop {
       len = (len as libc::c_ulong).wrapping_add(strlen(*argv).wrapping_add(1i32 as libc::c_ulong))
         as libc::c_int as libc::c_int;
@@ -2090,5 +2090,5 @@ pub unsafe extern "C" fn logger_main(
     /* skip leading " " */
   }
   closelog();
-  return 0i32;
+  return 0;
 }

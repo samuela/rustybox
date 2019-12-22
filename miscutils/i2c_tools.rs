@@ -170,8 +170,8 @@ unsafe extern "C" fn i2c_smbus_access(
 unsafe extern "C" fn i2c_smbus_read_byte(mut fd: libc::c_int) -> i32 {
   let mut data: i2c_smbus_data = i2c_smbus_data { byte: 0 };
   let mut err: libc::c_int = 0;
-  err = i2c_smbus_access(fd, 1i32 as libc::c_char, 0i32 as u8, 1i32, &mut data);
-  if err < 0i32 {
+  err = i2c_smbus_access(fd, 1i32 as libc::c_char, 0 as u8, 1i32, &mut data);
+  if err < 0 {
     return err;
   }
   return data.byte as i32;
@@ -179,7 +179,7 @@ unsafe extern "C" fn i2c_smbus_read_byte(mut fd: libc::c_int) -> i32 {
 unsafe extern "C" fn i2c_smbus_write_byte(mut fd: libc::c_int, mut val: u8) -> i32 {
   return i2c_smbus_access(
     fd,
-    0i32 as libc::c_char,
+    0 as libc::c_char,
     val,
     1i32,
     0 as *mut i2c_smbus_data,
@@ -189,7 +189,7 @@ unsafe extern "C" fn i2c_smbus_read_byte_data(mut fd: libc::c_int, mut cmd: u8) 
   let mut data: i2c_smbus_data = i2c_smbus_data { byte: 0 };
   let mut err: libc::c_int = 0;
   err = i2c_smbus_access(fd, 1i32 as libc::c_char, cmd, 2i32, &mut data);
-  if err < 0i32 {
+  if err < 0 {
     return err;
   }
   return data.byte as i32;
@@ -198,7 +198,7 @@ unsafe extern "C" fn i2c_smbus_read_word_data(mut fd: libc::c_int, mut cmd: u8) 
   let mut data: i2c_smbus_data = i2c_smbus_data { byte: 0 };
   let mut err: libc::c_int = 0;
   err = i2c_smbus_access(fd, 1i32 as libc::c_char, cmd, 3i32, &mut data);
-  if err < 0i32 {
+  if err < 0 {
     return err;
   }
   return data.word as i32;
@@ -211,7 +211,7 @@ unsafe extern "C" fn i2c_smbus_write_byte_data(
 ) -> i32 {
   let mut data: i2c_smbus_data = i2c_smbus_data { byte: 0 };
   data.byte = value;
-  return i2c_smbus_access(file, 0i32 as libc::c_char, cmd, 2i32, &mut data);
+  return i2c_smbus_access(file, 0 as libc::c_char, cmd, 2i32, &mut data);
 }
 unsafe extern "C" fn i2c_smbus_write_word_data(
   mut file: libc::c_int,
@@ -220,7 +220,7 @@ unsafe extern "C" fn i2c_smbus_write_word_data(
 ) -> i32 {
   let mut data: i2c_smbus_data = i2c_smbus_data { byte: 0 };
   data.word = value;
-  return i2c_smbus_access(file, 0i32 as libc::c_char, cmd, 3i32, &mut data);
+  return i2c_smbus_access(file, 0 as libc::c_char, cmd, 3i32, &mut data);
 }
 unsafe extern "C" fn i2c_smbus_write_block_data(
   mut file: libc::c_int,
@@ -238,7 +238,7 @@ unsafe extern "C" fn i2c_smbus_write_block_data(
     length as libc::c_ulong,
   );
   data.block[0] = length;
-  return i2c_smbus_access(file, 0i32 as libc::c_char, cmd, 5i32, &mut data);
+  return i2c_smbus_access(file, 0 as libc::c_char, cmd, 5i32, &mut data);
 }
 unsafe extern "C" fn i2c_smbus_write_i2c_block_data(
   mut file: libc::c_int,
@@ -256,7 +256,7 @@ unsafe extern "C" fn i2c_smbus_write_i2c_block_data(
     length as libc::c_ulong,
   );
   data.block[0] = length;
-  return i2c_smbus_access(file, 0i32 as libc::c_char, cmd, 6i32, &mut data);
+  return i2c_smbus_access(file, 0 as libc::c_char, cmd, 6i32, &mut data);
 }
 /* ENABLE_I2CSET */
 /*
@@ -272,7 +272,7 @@ unsafe extern "C" fn i2c_smbus_read_block_data(
   let mut i: libc::c_int = 0;
   let mut err: libc::c_int = 0;
   err = i2c_smbus_access(fd, 1i32 as libc::c_char, cmd, 5i32, &mut data);
-  if err < 0i32 {
+  if err < 0 {
     return err;
   }
   i = 1i32;
@@ -308,7 +308,7 @@ unsafe extern "C" fn i2c_smbus_read_i2c_block_data(
     },
     &mut data,
   );
-  if err < 0i32 {
+  if err < 0 {
     return err;
   }
   i = 1i32;
@@ -325,8 +325,8 @@ unsafe extern "C" fn i2c_smbus_write_quick(mut fd: libc::c_int, mut val: u8) -> 
   return i2c_smbus_access(
     fd,
     val as libc::c_char,
-    0i32 as u8,
-    0i32,
+    0 as u8,
+    0,
     0 as *mut i2c_smbus_data,
   );
 }
@@ -335,7 +335,7 @@ unsafe extern "C" fn i2c_bus_lookup(mut bus_str: *const libc::c_char) -> libc::c
   return crate::libbb::xatonum::xstrtou_range(
     bus_str,
     10i32,
-    0i32 as libc::c_uint,
+    0 as libc::c_uint,
     0xfffffi32 as libc::c_uint,
   ) as libc::c_int;
 }
@@ -352,7 +352,7 @@ unsafe extern "C" fn i2c_set_pec(mut fd: libc::c_int, mut pec: libc::c_int) {
   crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
     fd,
     0x708i32 as libc::c_uint,
-    itoptr(if pec != 0 { 1i32 } else { 0i32 }),
+    itoptr(if pec != 0 { 1i32 } else { 0 }),
     b"can\'t set PEC\x00" as *const u8 as *const libc::c_char,
   );
 }
@@ -375,7 +375,7 @@ unsafe extern "C" fn i2c_parse_data_addr(mut data_addr: *const libc::c_char) -> 
   return crate::libbb::xatonum::xstrtou_range(
     data_addr,
     16i32,
-    0i32 as libc::c_uint,
+    0 as libc::c_uint,
     0xffi32 as libc::c_uint,
   ) as libc::c_int;
 }
@@ -395,7 +395,7 @@ unsafe extern "C" fn i2c_dev_open(mut i2cbus: libc::c_int) -> libc::c_int {
     i2cbus,
   );
   fd = open(filename.as_mut_ptr(), 0o2i32);
-  if fd < 0i32 {
+  if fd < 0 {
     if *bb_errno == 2i32 {
       filename[8] = '/' as i32 as libc::c_char;
       fd = crate::libbb::xfuncs_printf::xopen(filename.as_mut_ptr(), 0o2i32)
@@ -452,7 +452,7 @@ unsafe extern "C" fn check_read_funcs(
     1 => {
       if funcs & 0x20000i32 as libc::c_ulong == 0 {
         err = b"SMBus receive byte\x00" as *const u8 as *const libc::c_char
-      } else if data_addr >= 0i32 && funcs & 0x40000i32 as libc::c_ulong == 0 {
+      } else if data_addr >= 0 && funcs & 0x40000i32 as libc::c_ulong == 0 {
         err = b"SMBus send byte\x00" as *const u8 as *const libc::c_char
       }
     }
@@ -558,7 +558,7 @@ unsafe extern "C" fn confirm_action(
         as *const u8 as *const libc::c_char,
     );
   }
-  if mode == 1i32 && data_addr >= 0i32 && pec != 0 {
+  if mode == 1i32 && data_addr >= 0 && pec != 0 {
     crate::libbb::verror_msg::bb_simple_error_msg(
       b"WARNING! May interpret a write byte command with PEC as a write byte data command\x00"
         as *const u8 as *const libc::c_char,
@@ -591,14 +591,14 @@ pub unsafe extern "C" fn i2cget_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let opt_f_0: libc::c_uint = (1i32 << 0i32) as libc::c_uint;
+  let opt_f_0: libc::c_uint = (1i32 << 0) as libc::c_uint;
   let opt_y_0: libc::c_uint = (1i32 << 1i32) as libc::c_uint;
   let mut bus_num: libc::c_int = 0;
   let mut bus_addr: libc::c_int = 0;
   let mut data_addr: libc::c_int = -1i32;
   let mut status: libc::c_int = 0;
   let mut mode: libc::c_int = 1i32;
-  let mut pec: libc::c_int = 0i32;
+  let mut pec: libc::c_int = 0;
   let mut fd: libc::c_int = 0;
   let mut opts: libc::c_uint = 0;
   opts = crate::libbb::getopt32::getopt32(
@@ -637,9 +637,9 @@ pub unsafe extern "C" fn i2cget_main(
   }
   match mode {
     1 => {
-      if data_addr >= 0i32 {
+      if data_addr >= 0 {
         status = i2c_smbus_write_byte(fd, data_addr as u8);
-        if status < 0i32 {
+        if status < 0 {
           crate::libbb::verror_msg::bb_simple_error_msg(
             b"warning - write failed\x00" as *const u8 as *const libc::c_char,
           );
@@ -654,7 +654,7 @@ pub unsafe extern "C" fn i2cget_main(
     }
   }
   close(fd);
-  if status < 0i32 {
+  if status < 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
       b"read failed\x00" as *const u8 as *const libc::c_char,
     );
@@ -664,7 +664,7 @@ pub unsafe extern "C" fn i2cget_main(
     if mode == 3i32 { 4i32 } else { 2i32 },
     status,
   );
-  return 0i32;
+  return 0;
 }
 /* ENABLE_I2CGET */
 //usage:#define i2cset_trivial_usage
@@ -691,7 +691,7 @@ pub unsafe extern "C" fn i2cset_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let opt_f_0: libc::c_uint = (1i32 << 0i32) as libc::c_uint; /* now argv[argc] is last arg */
+  let opt_f_0: libc::c_uint = (1i32 << 0) as libc::c_uint; /* now argv[argc] is last arg */
   let opt_y_0: libc::c_uint = (1i32 << 1i32) as libc::c_uint;
   let opt_m: libc::c_uint = (1i32 << 2i32) as libc::c_uint;
   let opt_r: libc::c_uint = (1i32 << 3i32) as libc::c_uint;
@@ -699,7 +699,7 @@ pub unsafe extern "C" fn i2cset_main(
   let mut bus_addr: libc::c_int = 0;
   let mut data_addr: libc::c_int = 0;
   let mut mode: libc::c_int = 1i32;
-  let mut pec: libc::c_int = 0i32;
+  let mut pec: libc::c_int = 0;
   let mut val: libc::c_int = 0;
   let mut blen: libc::c_int = 0;
   let mut mask: libc::c_int = 0;
@@ -753,22 +753,22 @@ pub unsafe extern "C" fn i2cset_main(
     }
   }
   /* Prepare the value(s) to be written according to current mode. */
-  mask = 0i32;
-  blen = 0i32;
+  mask = 0;
+  blen = 0;
   match mode {
     2 => {
       val = crate::libbb::xatonum::xstrtou_range(
         *argv.offset(3),
-        0i32,
-        0i32 as libc::c_uint,
+        0,
+        0 as libc::c_uint,
         0xffi32 as libc::c_uint,
       ) as libc::c_int
     }
     3 => {
       val = crate::libbb::xatonum::xstrtou_range(
         *argv.offset(3),
-        0i32,
-        0i32 as libc::c_uint,
+        0,
+        0 as libc::c_uint,
         0xffffi32 as libc::c_uint,
       ) as libc::c_int
     }
@@ -777,8 +777,8 @@ pub unsafe extern "C" fn i2cset_main(
       while blen < argc {
         block[(blen - 3i32) as usize] = crate::libbb::xatonum::xstrtou_range(
           *argv.offset(blen as isize),
-          0i32,
-          0i32 as libc::c_uint,
+          0,
+          0 as libc::c_uint,
           0xffi32 as libc::c_uint,
         ) as libc::c_uchar;
         blen += 1
@@ -791,8 +791,8 @@ pub unsafe extern "C" fn i2cset_main(
   if opts & opt_m != 0 {
     mask = crate::libbb::xatonum::xstrtou_range(
       opt_m_arg,
-      0i32,
-      0i32 as libc::c_uint,
+      0,
+      0 as libc::c_uint,
       if mode == 1i32 || mode == 2i32 {
         0xffi32
       } else {
@@ -817,7 +817,7 @@ pub unsafe extern "C" fn i2cset_main(
       3 => tmpval = i2c_smbus_read_word_data(fd, data_addr as u8),
       _ => tmpval = i2c_smbus_read_byte_data(fd, data_addr as u8),
     }
-    if tmpval < 0i32 {
+    if tmpval < 0 {
       crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
         b"can\'t read old value\x00" as *const u8 as *const libc::c_char,
       );
@@ -853,17 +853,17 @@ pub unsafe extern "C" fn i2cset_main(
       status = i2c_smbus_write_byte_data(fd, data_addr as u8, val as u8)
     }
   } /* Clear PEC. */
-  if status < 0i32 {
+  if status < 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
       b"write failed\x00" as *const u8 as *const libc::c_char,
     );
   }
   if pec != 0 {
-    i2c_set_pec(fd, 0i32);
+    i2c_set_pec(fd, 0);
   }
   /* No readback required - we're done. */
   if opts & opt_r == 0 {
-    return 0i32;
+    return 0;
   }
   match mode {
     1 => {
@@ -876,7 +876,7 @@ pub unsafe extern "C" fn i2cset_main(
       status = i2c_smbus_read_byte_data(fd, data_addr as u8)
     }
   }
-  if status < 0i32 {
+  if status < 0 {
     puts(b"Warning - readback failed\x00" as *const u8 as *const libc::c_char);
   } else if status != val {
     printf(
@@ -894,7 +894,7 @@ pub unsafe extern "C" fn i2cset_main(
       val,
     );
   }
-  return 0i32;
+  return 0;
 }
 /* ENABLE_I2CSET */
 unsafe extern "C" fn read_block_data(
@@ -905,18 +905,18 @@ unsafe extern "C" fn read_block_data(
   let mut current_block: u64;
   let mut cblock: [u8; 288] = [0; 288];
   let mut res: libc::c_int = 0;
-  let mut blen: libc::c_int = 0i32;
+  let mut blen: libc::c_int = 0;
   let mut tmp: libc::c_int = 0;
   let mut i: libc::c_int = 0;
   if mode == 5i32 {
-    blen = i2c_smbus_read_block_data(buf_fd, 0i32 as u8, cblock.as_mut_ptr());
-    if blen <= 0i32 {
+    blen = i2c_smbus_read_block_data(buf_fd, 0 as u8, cblock.as_mut_ptr());
+    if blen <= 0 {
       current_block = 11502256174207680615;
     } else {
       current_block = 26972500619410423;
     }
   } else {
-    res = 0i32;
+    res = 0;
     loop {
       if !(res < 256i32) {
         current_block = 11650488183268122163;
@@ -928,7 +928,7 @@ unsafe extern "C" fn read_block_data(
         32i32 as u8,
         cblock.as_mut_ptr().offset(res as isize),
       );
-      if tmp <= 0i32 {
+      if tmp <= 0 {
         blen = tmp;
         current_block = 11502256174207680615;
         break;
@@ -942,7 +942,7 @@ unsafe extern "C" fn read_block_data(
         if res >= 256i32 {
           res = 256i32
         }
-        i = 0i32;
+        i = 0;
         while i < res {
           *block.offset(i as isize) = cblock[i as usize] as libc::c_int;
           i += 1
@@ -984,7 +984,7 @@ unsafe extern "C" fn dump_data(
     b"     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef\x00" as *const u8
       as *const libc::c_char,
   );
-  i = 0i32;
+  i = 0;
   while i < 256i32 {
     if mode == 5i32 && i >= blen {
       break;
@@ -994,7 +994,7 @@ unsafe extern "C" fn dump_data(
         break;
       }
       printf(b"%02x: \x00" as *const u8 as *const libc::c_char, i);
-      j = 0i32;
+      j = 0;
       while j < 16i32 {
         crate::libbb::xfuncs_printf::fflush_all();
         /* Skip unwanted registers */
@@ -1012,7 +1012,7 @@ unsafe extern "C" fn dump_data(
             }
             3 => {
               res = i2c_smbus_read_word_data(bus_fd, (i + j) as u8);
-              if res < 0i32 {
+              if res < 0 {
                 *block.offset((i + j) as isize) = res;
                 *block.offset((i + j + 1i32) as isize) = res
               } else {
@@ -1028,7 +1028,7 @@ unsafe extern "C" fn dump_data(
           }
           if mode == 5i32 && i + j >= blen {
             printf(b"   \x00" as *const u8 as *const libc::c_char);
-          } else if res < 0i32 {
+          } else if res < 0 {
             printf(b"XX \x00" as *const u8 as *const libc::c_char);
             if mode == 3i32 {
               printf(b"XX \x00" as *const u8 as *const libc::c_char);
@@ -1052,7 +1052,7 @@ unsafe extern "C" fn dump_data(
         j += 1
       }
       printf(b"   \x00" as *const u8 as *const libc::c_char);
-      j = 0i32;
+      j = 0;
       while j < 16i32 {
         if mode == 5i32 && i + j >= blen {
           break;
@@ -1062,9 +1062,9 @@ unsafe extern "C" fn dump_data(
           crate::libbb::xfuncs_printf::bb_putchar(' ' as i32);
         } else {
           res = *block.offset((i + j) as isize);
-          if res < 0i32 {
+          if res < 0 {
             crate::libbb::xfuncs_printf::bb_putchar('X' as i32);
-          } else if res == 0i32 || res == 0xffi32 {
+          } else if res == 0 || res == 0xffi32 {
             crate::libbb::xfuncs_printf::bb_putchar('.' as i32);
           } else if res < 32i32 || res >= 127i32 {
             crate::libbb::xfuncs_printf::bb_putchar('?' as i32);
@@ -1089,21 +1089,21 @@ unsafe extern "C" fn dump_word_data(
   let mut rv: libc::c_int = 0;
   /* Word data. */
   puts(b"     0,8  1,9  2,a  3,b  4,c  5,d  6,e  7,f\x00" as *const u8 as *const libc::c_char);
-  i = 0i32;
+  i = 0;
   while i < 256i32 {
     if !(((i / 8i32) as libc::c_uint) < first.wrapping_div(8i32 as libc::c_uint)) {
       if (i / 8i32) as libc::c_uint > last.wrapping_div(8i32 as libc::c_uint) {
         break;
       }
       printf(b"%02x: \x00" as *const u8 as *const libc::c_char, i);
-      j = 0i32;
+      j = 0;
       while j < 8i32 {
         /* Skip unwanted registers. */
         if ((i + j) as libc::c_uint) < first || (i + j) as libc::c_uint > last {
           printf(b"     \x00" as *const u8 as *const libc::c_char);
         } else {
           rv = i2c_smbus_read_word_data(bus_fd, (i + j) as u8);
-          if rv < 0i32 {
+          if rv < 0 {
             printf(b"XXXX \x00" as *const u8 as *const libc::c_char);
           } else {
             printf(
@@ -1143,15 +1143,15 @@ pub unsafe extern "C" fn i2cdump_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let opt_f_0: libc::c_uint = (1i32 << 0i32) as libc::c_uint;
+  let opt_f_0: libc::c_uint = (1i32 << 0) as libc::c_uint;
   let opt_y_0: libc::c_uint = (1i32 << 1i32) as libc::c_uint;
   let opt_r: libc::c_uint = (1i32 << 2i32) as libc::c_uint;
   let mut bus_num: libc::c_int = 0;
   let mut bus_addr: libc::c_int = 0;
   let mut mode: libc::c_int = 2i32;
-  let mut even: libc::c_int = 0i32;
-  let mut pec: libc::c_int = 0i32;
-  let mut first: libc::c_uint = 0i32 as libc::c_uint;
+  let mut even: libc::c_int = 0;
+  let mut pec: libc::c_int = 0;
+  let mut first: libc::c_uint = 0 as libc::c_uint;
   let mut last: libc::c_uint = 0xffi32 as libc::c_uint;
   let mut opts: libc::c_uint = 0;
   let mut block: [libc::c_int; 256] = [0; 256];
@@ -1197,14 +1197,14 @@ pub unsafe extern "C" fn i2cdump_main(
     }
   }
   if opts & opt_r != 0 {
-    first = strtol(opt_r_str, &mut dash, 0i32) as libc::c_uint;
+    first = strtol(opt_r_str, &mut dash, 0) as libc::c_uint;
     if dash == opt_r_str || *dash as libc::c_int != '-' as i32 || first > 0xffi32 as libc::c_uint {
       crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"invalid range\x00" as *const u8 as *const libc::c_char,
       );
     }
     dash = dash.offset(1);
-    last = crate::libbb::xatonum::xstrtou_range(dash, 0i32, first, 0xffi32 as libc::c_uint);
+    last = crate::libbb::xatonum::xstrtou_range(dash, 0, first, 0xffi32 as libc::c_uint);
     let mut current_block_25: u64;
     /* Range is not available for every mode. */
     match mode {
@@ -1247,13 +1247,13 @@ pub unsafe extern "C" fn i2cdump_main(
   }
   /* All but word data. */
   if mode != 3i32 || even != 0 {
-    let mut blen: libc::c_int = 0i32;
+    let mut blen: libc::c_int = 0;
     if mode == 5i32 || mode == 8i32 {
       blen = read_block_data(fd, mode, block.as_mut_ptr())
     }
     if mode == 1i32 {
       res = i2c_smbus_write_byte(fd, first as u8);
-      if res < 0i32 {
+      if res < 0 {
         crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
           b"write start address\x00" as *const u8 as *const libc::c_char,
         );
@@ -1263,7 +1263,7 @@ pub unsafe extern "C" fn i2cdump_main(
   } else {
     dump_word_data(fd, first, last);
   }
-  return 0i32;
+  return 0;
 }
 static mut adap_descs: [adap_desc; 4] = [
   {
@@ -1403,7 +1403,7 @@ static mut i2c_funcs_tab: [i2c_func; 16] = [
   },
   {
     let mut init = i2c_func {
-      value: 0i32 as libc::c_long,
+      value: 0 as libc::c_long,
       name: 0 as *const libc::c_char,
     };
     init
@@ -1535,7 +1535,7 @@ unsafe extern "C" fn list_i2c_busses_and_exit() -> ! {
      */
     memset(
       name.as_mut_ptr() as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong,
     );
     pos = fgets_unlocked(
@@ -1609,7 +1609,7 @@ pub unsafe extern "C" fn i2cdetect_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let opt_y_0: libc::c_uint = (1i32 << 0i32) as libc::c_uint;
+  let opt_y_0: libc::c_uint = (1i32 << 0) as libc::c_uint;
   let opt_a_0: libc::c_uint = (1i32 << 1i32) as libc::c_uint;
   let opt_q: libc::c_uint = (1i32 << 2i32) as libc::c_uint;
   let opt_r: libc::c_uint = (1i32 << 3i32) as libc::c_uint;
@@ -1619,7 +1619,7 @@ pub unsafe extern "C" fn i2cdetect_main(
   let mut bus_num: libc::c_int = 0;
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
-  let mut mode: libc::c_int = 0i32;
+  let mut mode: libc::c_int = 0;
   let mut status: libc::c_int = 0;
   let mut cmd: libc::c_int = 0;
   let mut first: libc::c_uint = 0x3i32 as libc::c_uint;
@@ -1646,7 +1646,7 @@ pub unsafe extern "C" fn i2cdetect_main(
       b"Functionalities implemented by bus #%d\n\x00" as *const u8 as *const libc::c_char,
       bus_num,
     );
-    i = 0i32;
+    i = 0;
     while i2c_funcs_tab[i as usize].value != 0 {
       printf(
         b"%-32s %s\n\x00" as *const u8 as *const libc::c_char,
@@ -1659,7 +1659,7 @@ pub unsafe extern "C" fn i2cdetect_main(
       );
       i += 1
     }
-    return 0i32;
+    return 0;
   }
   if opts & opt_r != 0 {
     mode = 2i32
@@ -1667,7 +1667,7 @@ pub unsafe extern "C" fn i2cdetect_main(
     mode = 1i32
   }
   if opts & opt_a_0 != 0 {
-    first = 0i32 as libc::c_uint;
+    first = 0 as libc::c_uint;
     last = 0x7fi32 as libc::c_uint
   }
   /* Read address range. */
@@ -1688,7 +1688,7 @@ pub unsafe extern "C" fn i2cdetect_main(
       }
     }
   }
-  if mode == 0i32 {
+  if mode == 0 {
     if funcs & 0x10000i32 as libc::c_ulong == 0 {
       will_skip(b"SMBus quick write\x00" as *const u8 as *const libc::c_char);
     }
@@ -1697,19 +1697,19 @@ pub unsafe extern "C" fn i2cdetect_main(
     }
   }
   if opts & opt_y_0 == 0 {
-    confirm_action(-1i32, -1i32, -1i32, 0i32);
+    confirm_action(-1i32, -1i32, -1i32, 0);
   }
   puts(
     b"     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f\x00" as *const u8 as *const libc::c_char,
   );
-  i = 0i32;
+  i = 0;
   while i < 128i32 {
     printf(b"%02x: \x00" as *const u8 as *const libc::c_char, i);
-    j = 0i32;
+    j = 0;
     while j < 16i32 {
       crate::libbb::xfuncs_printf::fflush_all();
       cmd = mode;
-      if mode == 0i32 {
+      if mode == 0 {
         if i + j >= 0x30i32 && i + j <= 0x37i32 || i + j >= 0x50i32 && i + j <= 0x5fi32 {
           cmd = 2i32
         } else {
@@ -1725,7 +1725,7 @@ pub unsafe extern "C" fn i2cdetect_main(
         printf(b"   \x00" as *const u8 as *const libc::c_char);
       } else {
         status = ioctl(fd, 0x703i32 as libc::c_ulong, itoptr(i + j));
-        if status < 0i32 {
+        if status < 0 {
           if *bb_errno == 16i32 {
             printf(b"UU \x00" as *const u8 as *const libc::c_char);
           } else {
@@ -1749,10 +1749,10 @@ pub unsafe extern "C" fn i2cdetect_main(
                * This is known to corrupt the Atmel
                * AT24RF08 EEPROM.
                */
-              status = i2c_smbus_write_quick(fd, 0i32 as u8)
+              status = i2c_smbus_write_quick(fd, 0 as u8)
             }
           }
-          if status < 0i32 {
+          if status < 0 {
             printf(b"-- \x00" as *const u8 as *const libc::c_char);
           } else {
             printf(b"%02x \x00" as *const u8 as *const libc::c_char, i + j);
@@ -1764,7 +1764,7 @@ pub unsafe extern "C" fn i2cdetect_main(
     crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     i += 16i32
   }
-  return 0i32;
+  return 0;
 }
 /* ENABLE_I2CDETECT */
 unsafe extern "C" fn check_i2c_func(mut fd: libc::c_int) {
@@ -1810,7 +1810,7 @@ pub unsafe extern "C" fn i2ctransfer_main(
   };
   memset(
     msgs.as_mut_ptr() as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<[i2c_msg; 42]>() as libc::c_ulong,
   );
   opts =
@@ -1818,7 +1818,7 @@ pub unsafe extern "C" fn i2ctransfer_main(
   first = 0x3i32 as libc::c_uint;
   last = 0x77i32 as libc::c_uint;
   if opts & opt_a as libc::c_int as libc::c_uint != 0 {
-    first = 0i32 as libc::c_uint;
+    first = 0 as libc::c_uint;
     last = 0x7fi32 as libc::c_uint
   }
   argv = argv.offset(optind as isize);
@@ -1826,7 +1826,7 @@ pub unsafe extern "C" fn i2ctransfer_main(
   fd = i2c_dev_open(bus_num);
   check_i2c_func(fd);
   bus_addr = -1i32;
-  nmsgs = 0i32;
+  nmsgs = 0;
   loop {
     argv = argv.offset(1);
     if (*argv).is_null() {
@@ -1841,7 +1841,7 @@ pub unsafe extern "C" fn i2ctransfer_main(
         b"too many messages, max: 42\x00" as *const u8 as *const libc::c_char,
       );
     }
-    flags = 0i32 as u16;
+    flags = 0 as u16;
     arg_ptr = *argv;
     let fresh2 = arg_ptr;
     arg_ptr = arg_ptr.offset(1);
@@ -1858,19 +1858,19 @@ pub unsafe extern "C" fn i2ctransfer_main(
     }
     len = crate::libbb::xatonum::xstrtou_range(
       arg_ptr,
-      0i32,
-      0i32 as libc::c_uint,
+      0,
+      0 as libc::c_uint,
       0xffffi32 as libc::c_uint,
     );
     if !end.is_null() {
       bus_addr =
-        crate::libbb::xatonum::xstrtou_range(end.offset(1), 0i32, first, last) as libc::c_int;
+        crate::libbb::xatonum::xstrtou_range(end.offset(1), 0, first, last) as libc::c_int;
       i2c_set_slave_addr(
         fd,
         bus_addr,
         (opts & opt_f as libc::c_int as libc::c_uint) as libc::c_int,
       );
-    } else if bus_addr < 0i32 {
+    } else if bus_addr < 0 {
       crate::libbb::verror_msg::bb_error_msg_and_die(
         b"no address given in \'%s\'\x00" as *const u8 as *const libc::c_char,
         *argv,
@@ -1885,7 +1885,7 @@ pub unsafe extern "C" fn i2ctransfer_main(
     if flags as libc::c_int & 0x1i32 == 0 {
       /* Reuse last address if possible */
       /* Consume DATA arg(s) */
-      let mut buf_idx: libc::c_uint = 0i32 as libc::c_uint;
+      let mut buf_idx: libc::c_uint = 0 as libc::c_uint;
       while buf_idx < len {
         let mut data8: u8 = 0;
         let mut data: libc::c_ulong = 0;
@@ -1894,7 +1894,7 @@ pub unsafe extern "C" fn i2ctransfer_main(
         if arg_ptr.is_null() {
           crate::libbb::appletlib::bb_show_usage();
         }
-        data = strtoul(arg_ptr, &mut end, 0i32);
+        data = strtoul(arg_ptr, &mut end, 0);
         if data > 0xffi32 as libc::c_ulong || arg_ptr == end {
           crate::libbb::verror_msg::bb_error_msg_and_die(
             b"invalid data byte \'%s\'\x00" as *const u8 as *const libc::c_char,
@@ -1931,7 +1931,7 @@ pub unsafe extern "C" fn i2ctransfer_main(
     nmsgs += 1
   }
   if opts & opt_y as libc::c_int as libc::c_uint == 0 {
-    confirm_action(bus_addr, 0i32, 0i32, 0i32);
+    confirm_action(bus_addr, 0, 0, 0);
   }
   rdwr.msgs = msgs.as_mut_ptr();
   rdwr.nmsgs = nmsgs as u32;
@@ -1948,13 +1948,13 @@ pub unsafe extern "C" fn i2ctransfer_main(
       nmsgs,
     );
   }
-  i = 0i32;
+  i = 0;
   while i < nmsgs_sent {
-    if msgs[i as usize].len as libc::c_int != 0i32
+    if msgs[i as usize].len as libc::c_int != 0
       && msgs[i as usize].flags as libc::c_int & 0x1i32 != 0
     {
       let mut j: libc::c_int = 0;
-      j = 0i32;
+      j = 0;
       while j < msgs[i as usize].len as libc::c_int - 1i32 {
         printf(
           b"0x%02x \x00" as *const u8 as *const libc::c_char,
@@ -1970,6 +1970,6 @@ pub unsafe extern "C" fn i2ctransfer_main(
     }
     i += 1
   }
-  return 0i32;
+  return 0;
 }
 /* ENABLE_I2CTRANSFER */

@@ -101,7 +101,7 @@ unsafe extern "C" fn read_stduu(
     str_len = line_len as libc::c_int;
     loop {
       str_len -= 1;
-      if !(str_len >= 0i32
+      if !(str_len >= 0
         && (*line.offset(str_len as isize) as libc::c_int == '\n' as i32
           || *line.offset(str_len as isize) as libc::c_int == '\r' as i32))
       {
@@ -109,7 +109,7 @@ unsafe extern "C" fn read_stduu(
       }
       *line.offset(str_len as isize) = '\u{0}' as i32 as libc::c_char
     }
-    if strcmp(line, b"end\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    if strcmp(line, b"end\x00" as *const u8 as *const libc::c_char) == 0 {
       return;
       /* the only non-error exit */
     }
@@ -126,7 +126,7 @@ unsafe extern "C" fn read_stduu(
     if str_len <= encoded_len {
       break;
     }
-    if encoded_len <= 0i32 {
+    if encoded_len <= 0 {
       /* Ignore the "`\n" line, why is it even in the encode file ? */
       free(line as *mut libc::c_void);
     } else {
@@ -144,7 +144,7 @@ unsafe extern "C" fn read_stduu(
         *fresh0 = ((*line_ptr.offset(0) as libc::c_int) << 2i32
           | *line_ptr.offset(1) as libc::c_int >> 4i32) as libc::c_char;
         encoded_len -= 1;
-        if encoded_len == 0i32 {
+        if encoded_len == 0 {
           break;
         }
         let fresh1 = dst;
@@ -152,7 +152,7 @@ unsafe extern "C" fn read_stduu(
         *fresh1 = ((*line_ptr.offset(1) as libc::c_int) << 4i32
           | *line_ptr.offset(2) as libc::c_int >> 2i32) as libc::c_char;
         encoded_len -= 1;
-        if encoded_len == 0i32 {
+        if encoded_len == 0 {
           break;
         }
         let fresh2 = dst;
@@ -161,7 +161,7 @@ unsafe extern "C" fn read_stduu(
           | *line_ptr.offset(3) as libc::c_int) as libc::c_char;
         line_ptr = line_ptr.offset(4);
         encoded_len -= 2i32;
-        if !(encoded_len > 0i32) {
+        if !(encoded_len > 0) {
           break;
         }
       }
@@ -268,7 +268,7 @@ pub unsafe extern "C" fn uudecode_main(
       BASE64_FLAG_UU_STOP as libc::c_int + BASE64_FLAG_NO_STOP_CHAR as libc::c_int,
     );
     /* fclose_if_not_stdin(src_stream); - redundant */
-    return 0i32;
+    return 0;
   }
   crate::libbb::verror_msg::bb_simple_error_msg_and_die(
     b"no \'begin\' line\x00" as *const u8 as *const libc::c_char,

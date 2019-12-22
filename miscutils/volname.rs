@@ -56,8 +56,8 @@ pub unsafe extern "C" fn volname_main(
       crate::libbb::appletlib::bb_show_usage();
     }
   }
-  fd = crate::libbb::xfuncs_printf::xopen(device, 0i32);
-  crate::libbb::xfuncs_printf::xlseek(fd, 32808i32 as off_t, 0i32);
+  fd = crate::libbb::xfuncs_printf::xopen(device, 0);
+  crate::libbb::xfuncs_printf::xlseek(fd, 32808i32 as off_t, 0);
   crate::libbb::read_printf::xread(
     fd,
     buffer.as_mut_ptr() as *mut libc::c_void,
@@ -67,5 +67,5 @@ pub unsafe extern "C" fn volname_main(
     b"%32.32s\n\x00" as *const u8 as *const libc::c_char,
     buffer.as_mut_ptr(),
   );
-  return 0i32;
+  return 0;
 }

@@ -64,8 +64,8 @@ unsafe extern "C" fn helper_get_module(
   let mut i: libc::c_uint = 0;
   let mut hash: libc::c_uint = 0;
   filename2modname(module, modname.as_mut_ptr());
-  hash = 0i32 as libc::c_uint;
-  i = 0i32 as libc::c_uint;
+  hash = 0 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while modname[i as usize] != 0 {
     hash = (hash << 5i32)
       .wrapping_add(hash)
@@ -75,7 +75,7 @@ unsafe extern "C" fn helper_get_module(
   hash = hash.wrapping_rem(256i32 as libc::c_uint);
   e = (*db).buckets[hash as usize];
   while !e.is_null() {
-    if strcmp((*e).modname, modname.as_mut_ptr()) == 0i32 {
+    if strcmp((*e).modname, modname.as_mut_ptr()) == 0 {
       return e;
     }
     e = (*e).next
@@ -97,7 +97,7 @@ pub unsafe extern "C" fn moddb_get(
   mut db: *mut module_db,
   mut module: *const libc::c_char,
 ) -> *mut module_entry {
-  return helper_get_module(db, module, 0i32);
+  return helper_get_module(db, module, 0);
 }
 #[no_mangle]
 pub unsafe extern "C" fn moddb_get_or_create(
@@ -111,7 +111,7 @@ pub unsafe extern "C" fn moddb_free(mut db: *mut module_db) {
   let mut e: *mut module_entry = std::ptr::null_mut();
   let mut n: *mut module_entry = std::ptr::null_mut();
   let mut i: libc::c_uint = 0;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < 256i32 as libc::c_uint {
     e = (*db).buckets[i as usize];
     while !e.is_null() {
@@ -144,7 +144,7 @@ pub unsafe extern "C" fn string_to_llist(
   mut delim: *const libc::c_char,
 ) -> libc::c_int {
   let mut tok: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut len: libc::c_int = 0i32;
+  let mut len: libc::c_int = 0;
   loop {
     tok = strsep(&mut string, delim);
     if tok.is_null() {
@@ -180,7 +180,7 @@ pub unsafe extern "C" fn filename2modname(
   // 'basenamization' was here in the first place.
   //from = bb_get_last_path_component_nostrip(filename);
   from = filename;
-  i = 0i32;
+  i = 0;
   while i < 256i32 - 1i32
     && *from.offset(i as isize) as libc::c_int != '\u{0}' as i32
     && *from.offset(i as isize) as libc::c_int != '.' as i32
@@ -206,7 +206,7 @@ pub unsafe extern "C" fn parse_cmdline_module_options(
   let mut options: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut optlen: libc::c_int = 0;
   options = crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t) as *mut libc::c_char;
-  optlen = 0i32;
+  optlen = 0;
   loop {
     argv = argv.offset(1);
     if (*argv).is_null() {
@@ -275,16 +275,16 @@ pub unsafe extern "C" fn bb_init_module(
    * only rootfs) which needs the finit_module call.  If it fails, we fall
    * back to normal module loading to support compressed modules.
    */
-  let mut fd: libc::c_int = open(filename, 0i32 | 0o2000000i32); /* may be changed by e.g. open errors below */
-  if fd >= 0i32 {
-    rc = (syscall(313i32 as libc::c_long, fd, options, 0i32) != 0) as libc::c_int;
+  let mut fd: libc::c_int = open(filename, 0 | 0o2000000i32); /* may be changed by e.g. open errors below */
+  if fd >= 0 {
+    rc = (syscall(313i32 as libc::c_long, fd, options, 0) != 0) as libc::c_int;
     close(fd);
-    if rc == 0i32 {
+    if rc == 0 {
       return rc;
     }
   }
   image_size = (2147483647i32 - 4095i32) as size_t;
-  mmaped = 0i32 != 0;
+  mmaped = 0 != 0;
   image = std::ptr::null_mut::<libc::c_char>();
   if !image.is_null() {
     mmaped = 1i32 != 0
@@ -298,7 +298,7 @@ pub unsafe extern "C" fn bb_init_module(
       return -*bb_errno;
     }
   }
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   syscall(175i32 as libc::c_long, image, image_size, options);
   rc = *bb_errno;
   if mmaped {
@@ -313,7 +313,7 @@ pub unsafe extern "C" fn bb_delete_module(
   mut module: *const libc::c_char,
   mut flags: libc::c_uint,
 ) -> libc::c_int {
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   syscall(176i32 as libc::c_long, module, flags);
   return *bb_errno;
 }
@@ -364,7 +364,7 @@ pub unsafe extern "C" fn moderror(mut err: libc::c_int) -> *const libc::c_char {
     }
     _ => {}
   }
-  if err < 0i32 {
+  if err < 0 {
     /* should always be */
     err = -err
   }

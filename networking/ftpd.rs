@@ -433,7 +433,7 @@ unsafe extern "C" fn cmdio_write_error(mut status: libc::c_uint) {
     (::std::mem::size_of::<[libc::c_char; 12]>() as libc::c_ulong)
       .wrapping_sub(1i32 as libc::c_ulong),
   );
-  if (*ptr_to_globals).verbose > 0i32 as libc::c_uint {
+  if (*ptr_to_globals).verbose > 0 as libc::c_uint {
     verbose_log((*ptr_to_globals).msg_err.as_mut_ptr());
   };
 }
@@ -447,11 +447,11 @@ unsafe extern "C" fn timeout_handler(mut _sig: libc::c_int) {
   let mut pos: off_t = 0;
   let mut sv_errno: libc::c_int = *bb_errno;
   if !(crate::libbb::time::monotonic_sec().wrapping_sub((*ptr_to_globals).end_time) as libc::c_int
-    >= 0i32)
+    >= 0)
   {
     if !((*ptr_to_globals).local_file_fd == 0) {
       pos =
-        crate::libbb::xfuncs_printf::xlseek((*ptr_to_globals).local_file_fd, 0i32 as off_t, 1i32);
+        crate::libbb::xfuncs_printf::xlseek((*ptr_to_globals).local_file_fd, 0 as off_t, 1i32);
       if !(pos == (*ptr_to_globals).local_file_pos) {
         (*ptr_to_globals).local_file_pos = pos;
         alarm((*ptr_to_globals).timeout);
@@ -490,7 +490,7 @@ unsafe extern "C" fn handle_pwd() {
   free(response as *mut libc::c_void);
 }
 unsafe extern "C" fn handle_cwd() {
-  if (*ptr_to_globals).ftp_arg.is_null() || chdir((*ptr_to_globals).ftp_arg) != 0i32 {
+  if (*ptr_to_globals).ftp_arg.is_null() || chdir((*ptr_to_globals).ftp_arg) != 0 {
     cmdio_write_error(
       (0i32
         | (' ' as i32) << SHIFTsp as libc::c_int
@@ -578,7 +578,7 @@ unsafe extern "C" fn ftpdataio_get_pasv_fd() -> libc::c_int {
     },
     0 as *mut socklen_t,
   );
-  if remote_fd < 0i32 {
+  if remote_fd < 0 {
     cmdio_write_error(
       (0i32
         | (' ' as i32) << SHIFTsp as libc::c_int
@@ -607,7 +607,7 @@ unsafe extern "C" fn get_remote_transfer_fd(mut p_status_msg: *const libc::c_cha
     remote_fd = crate::libbb::xconnect::xconnect_stream((*ptr_to_globals).port_addr)
   }
   port_pasv_cleanup();
-  if remote_fd < 0i32 {
+  if remote_fd < 0 {
     return remote_fd;
   }
   cmdio_write(
@@ -623,7 +623,7 @@ unsafe extern "C" fn get_remote_transfer_fd(mut p_status_msg: *const libc::c_cha
 unsafe extern "C" fn port_or_pasv_was_seen() -> libc::c_int {
   if pasv_active() == 0 && port_active() == 0 {
     cmdio_write_raw(b"425 Use PORT/PASV first\r\n\x00" as *const u8 as *const libc::c_char);
-    return 0i32;
+    return 0;
   }
   return 1i32;
 }
@@ -635,13 +635,13 @@ unsafe extern "C" fn bind_for_passive_mode() -> libc::c_uint {
   fd = crate::libbb::xfuncs_printf::xsocket(
     (*(*ptr_to_globals).local_addr).u.sa.sa_family as libc::c_int,
     SOCK_STREAM as libc::c_int,
-    0i32,
+    0,
   );
   (*ptr_to_globals).pasv_listen_fd = fd;
   crate::libbb::xconnect::setsockopt_reuseaddr(fd);
   crate::libbb::xconnect::set_nport(
     &mut (*(*ptr_to_globals).local_addr).u.sa,
-    0i32 as libc::c_uint,
+    0 as libc::c_uint,
   );
   crate::libbb::xfuncs_printf::xbind(
     fd,
@@ -789,11 +789,11 @@ unsafe extern "C" fn handle_rest() {
   (*ptr_to_globals).restart_pos = if !(*ptr_to_globals).ftp_arg.is_null() {
     xatoul_range(
       (*ptr_to_globals).ftp_arg,
-      0i32 as libc::c_ulong,
+      0 as libc::c_ulong,
       9223372036854775807i64 as libc::c_ulong,
     )
   } else {
-    0i32 as libc::c_ulong
+    0 as libc::c_ulong
   } as off_t; /* port_or_pasv_was_seen emitted error response */
   cmdio_write_ok(
     (0i32
@@ -810,17 +810,17 @@ unsafe extern "C" fn handle_retr() {
   let mut local_file_fd: libc::c_int = 0;
   let mut offset: off_t = (*ptr_to_globals).restart_pos;
   let mut response: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  (*ptr_to_globals).restart_pos = 0i32 as off_t;
+  (*ptr_to_globals).restart_pos = 0 as off_t;
   if port_or_pasv_was_seen() == 0 {
     return;
   }
   /* O_NONBLOCK is useful if file happens to be a device node */
   local_file_fd = if !(*ptr_to_globals).ftp_arg.is_null() {
-    open((*ptr_to_globals).ftp_arg, 0i32 | 0o4000i32)
+    open((*ptr_to_globals).ftp_arg, 0 | 0o4000i32)
   } else {
     -1i32
   };
-  if local_file_fd < 0i32 {
+  if local_file_fd < 0 {
     cmdio_write_error(
       (0i32
         | (' ' as i32) << SHIFTsp as libc::c_int
@@ -830,7 +830,7 @@ unsafe extern "C" fn handle_retr() {
     );
     return;
   }
-  if fstat(local_file_fd, &mut statbuf) != 0i32
+  if fstat(local_file_fd, &mut statbuf) != 0
     || !(statbuf.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
   {
     /* Note - pretend open failed */
@@ -849,7 +849,7 @@ unsafe extern "C" fn handle_retr() {
     crate::libbb::xfuncs::ndelay_off(local_file_fd);
     /* Set the download offset (from REST) if any */
     if offset != 0 {
-      crate::libbb::xfuncs_printf::xlseek(local_file_fd, offset, 0i32);
+      crate::libbb::xfuncs_printf::xlseek(local_file_fd, offset, 0);
     }
     response = crate::libbb::xfuncs_printf::xasprintf(
       b" Opening BINARY connection for %s (%lu bytes)\x00" as *const u8 as *const libc::c_char,
@@ -858,7 +858,7 @@ unsafe extern "C" fn handle_retr() {
     );
     remote_fd = get_remote_transfer_fd(response);
     free(response as *mut libc::c_void);
-    if !(remote_fd < 0i32) {
+    if !(remote_fd < 0) {
       bytes_transferred = crate::libbb::copyfd::bb_copyfd_eof(local_file_fd, remote_fd);
       close(remote_fd);
       if bytes_transferred < 0 {
@@ -881,7 +881,7 @@ unsafe extern "C" fn handle_retr() {
     }
   }
   close(local_file_fd);
-  (*ptr_to_globals).local_file_fd = 0i32;
+  (*ptr_to_globals).local_file_fd = 0;
 }
 /* List commands */
 unsafe extern "C" fn popen_ls(mut opt: *const libc::c_char) -> libc::c_int {
@@ -914,7 +914,7 @@ unsafe extern "C" fn popen_ls(mut opt: *const libc::c_char) -> libc::c_int {
   } else {
     ({
       let mut bb__xvfork_pid: pid_t = vfork();
-      if bb__xvfork_pid < 0i32 {
+      if bb__xvfork_pid < 0 {
         crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
           b"vfork\x00" as *const u8 as *const libc::c_char,
         );
@@ -922,7 +922,7 @@ unsafe extern "C" fn popen_ls(mut opt: *const libc::c_char) -> libc::c_int {
       bb__xvfork_pid
     })
   };
-  if pid == 0i32 {
+  if pid == 0 {
     /* child */
     /* NB: close _first_, then move fd! */
     close(outfd.rd);
@@ -935,7 +935,7 @@ unsafe extern "C" fn popen_ls(mut opt: *const libc::c_char) -> libc::c_int {
     dup(1i32);
     /* memset(&G, 0, sizeof(G)); - ls_main does it */
     exit(crate::coreutils::ls::ls_main(
-      0i32,
+      0,
       argv.as_mut_ptr() as *mut *mut libc::c_char,
     ));
   }
@@ -982,7 +982,7 @@ unsafe extern "C" fn handle_dir_common(mut opts: libc::c_int) {
     /* LIST/NLST [<filename>] */
     let mut remote_fd: libc::c_int =
       get_remote_transfer_fd(b" Directory listing\x00" as *const u8 as *const libc::c_char);
-    if remote_fd >= 0i32 {
+    if remote_fd >= 0 {
       loop {
         let mut len: libc::c_uint = 0;
         line = crate::libbb::get_line_from_file::xmalloc_fgets(ls_fp);
@@ -994,7 +994,7 @@ unsafe extern "C" fn handle_dir_common(mut opts: libc::c_int) {
          * Replace trailing "\n\0" with "\r\n".
          */
         len = strlen(line) as libc::c_uint;
-        if len != 0i32 as libc::c_uint {
+        if len != 0 as libc::c_uint {
           /* paranoia check */
           *line.offset(len.wrapping_sub(1i32 as libc::c_uint) as isize) =
             '\r' as i32 as libc::c_char
@@ -1070,7 +1070,7 @@ unsafe extern "C" fn handle_size_or_mdtm(mut need_size: libc::c_int) {
   let mut broken_out: tm = std::mem::zeroed();
   let mut buf: [libc::c_char; 55] = [0; 55];
   if (*ptr_to_globals).ftp_arg.is_null()
-    || stat((*ptr_to_globals).ftp_arg, &mut statbuf) != 0i32
+    || stat((*ptr_to_globals).ftp_arg, &mut statbuf) != 0
     || !(statbuf.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
   {
     cmdio_write_error(
@@ -1106,7 +1106,7 @@ unsafe extern "C" fn handle_size_or_mdtm(mut need_size: libc::c_int) {
 /* Upload commands */
 unsafe extern "C" fn handle_mkd() {
   if (*ptr_to_globals).ftp_arg.is_null()
-    || mkdir((*ptr_to_globals).ftp_arg, 0o777i32 as mode_t) != 0i32
+    || mkdir((*ptr_to_globals).ftp_arg, 0o777i32 as mode_t) != 0
   {
     cmdio_write_error(
       (0i32
@@ -1126,7 +1126,7 @@ unsafe extern "C" fn handle_mkd() {
   );
 }
 unsafe extern "C" fn handle_rmd() {
-  if (*ptr_to_globals).ftp_arg.is_null() || rmdir((*ptr_to_globals).ftp_arg) != 0i32 {
+  if (*ptr_to_globals).ftp_arg.is_null() || rmdir((*ptr_to_globals).ftp_arg) != 0 {
     cmdio_write_error(
       (0i32
         | (' ' as i32) << SHIFTsp as libc::c_int
@@ -1145,7 +1145,7 @@ unsafe extern "C" fn handle_rmd() {
   );
 }
 unsafe extern "C" fn handle_dele() {
-  if (*ptr_to_globals).ftp_arg.is_null() || unlink((*ptr_to_globals).ftp_arg) != 0i32 {
+  if (*ptr_to_globals).ftp_arg.is_null() || unlink((*ptr_to_globals).ftp_arg) != 0 {
     cmdio_write_error(
       (0i32
         | (' ' as i32) << SHIFTsp as libc::c_int
@@ -1210,7 +1210,7 @@ unsafe extern "C" fn handle_upload_common(mut is_append: libc::c_int, mut is_uni
   let mut local_file_fd: libc::c_int = 0;
   let mut remote_fd: libc::c_int = 0;
   offset = (*ptr_to_globals).restart_pos;
-  (*ptr_to_globals).restart_pos = 0i32 as off_t;
+  (*ptr_to_globals).restart_pos = 0 as off_t;
   if port_or_pasv_was_seen() == 0 {
     return;
   }
@@ -1231,8 +1231,8 @@ unsafe extern "C" fn handle_upload_common(mut is_append: libc::c_int, mut is_uni
     }
     local_file_fd = open((*ptr_to_globals).ftp_arg, flags, 0o666i32)
   }
-  if local_file_fd < 0i32
-    || fstat(local_file_fd, &mut statbuf) != 0i32
+  if local_file_fd < 0
+    || fstat(local_file_fd, &mut statbuf) != 0
     || !(statbuf.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
   {
     free(tempname as *mut libc::c_void);
@@ -1243,13 +1243,13 @@ unsafe extern "C" fn handle_upload_common(mut is_append: libc::c_int, mut is_uni
         | '0' as i32 + 553i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
         | '0' as i32 + 553i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
     );
-    if !(local_file_fd >= 0i32) {
+    if !(local_file_fd >= 0) {
       return;
     }
   } else {
     (*ptr_to_globals).local_file_fd = local_file_fd;
     if offset != 0 {
-      crate::libbb::xfuncs_printf::xlseek(local_file_fd, offset, 0i32);
+      crate::libbb::xfuncs_printf::xlseek(local_file_fd, offset, 0);
     }
     remote_fd = get_remote_transfer_fd(if !tempname.is_null() {
       tempname
@@ -1257,7 +1257,7 @@ unsafe extern "C" fn handle_upload_common(mut is_append: libc::c_int, mut is_uni
       b" Ok to send data\x00" as *const u8 as *const libc::c_char
     });
     free(tempname as *mut libc::c_void);
-    if !(remote_fd < 0i32) {
+    if !(remote_fd < 0) {
       bytes_transferred = crate::libbb::copyfd::bb_copyfd_eof(remote_fd, local_file_fd);
       close(remote_fd);
       if bytes_transferred < 0 {
@@ -1280,17 +1280,17 @@ unsafe extern "C" fn handle_upload_common(mut is_append: libc::c_int, mut is_uni
     }
   }
   close(local_file_fd);
-  (*ptr_to_globals).local_file_fd = 0i32;
+  (*ptr_to_globals).local_file_fd = 0;
 }
 unsafe extern "C" fn handle_stor() {
-  handle_upload_common(0i32, 0i32);
+  handle_upload_common(0i32, 0);
 }
 unsafe extern "C" fn handle_appe() {
-  (*ptr_to_globals).restart_pos = 0i32 as off_t;
-  handle_upload_common(1i32, 0i32);
+  (*ptr_to_globals).restart_pos = 0 as off_t;
+  handle_upload_common(1i32, 0);
 }
 unsafe extern "C" fn handle_stou() {
-  (*ptr_to_globals).restart_pos = 0i32 as off_t;
+  (*ptr_to_globals).restart_pos = 0 as off_t;
   handle_upload_common(0i32, 1i32);
 }
 /* ENABLE_FEATURE_FTPD_WRITE */
@@ -1335,9 +1335,9 @@ unsafe extern "C" fn cmdio_get_cmd_and_arg() -> u32 {
   let mut dst: libc::c_int = 0;
   let mut src: libc::c_int = 0;
   /* Strip "\r\n" if it is there */
-  if len != 0i32 && *cmd.offset((len - 1i32) as isize) as libc::c_int == '\n' as i32 {
+  if len != 0 && *cmd.offset((len - 1i32) as isize) as libc::c_int == '\n' as i32 {
     len -= 1;
-    if len != 0i32 && *cmd.offset((len - 1i32) as isize) as libc::c_int == '\r' as i32 {
+    if len != 0 && *cmd.offset((len - 1i32) as isize) as libc::c_int == '\r' as i32 {
       len -= 1
     }
     *cmd.offset(len as isize) = '\u{0}' as i32 as libc::c_char
@@ -1392,7 +1392,7 @@ unsafe extern "C" fn cmdio_get_cmd_and_arg() -> u32 {
     *fresh9 = '\u{0}' as i32 as libc::c_char
   }
   /* Uppercase and pack into u32 first word of the command */
-  cmdval = 0i32 as u32;
+  cmdval = 0 as u32;
   while *cmd != 0 {
     let fresh10 = cmd;
     cmd = cmd.offset(1);
@@ -1420,7 +1420,7 @@ pub unsafe extern "C" fn ftpd_main(
     as *mut globals;
   asm!("" : : : "memory" : "volatile");
   abs_timeout = (1i32 * 60i32 * 60i32) as libc::c_uint;
-  verbose_S = 0i32 as libc::c_uint;
+  verbose_S = 0 as libc::c_uint;
   (*ptr_to_globals).timeout = (2i32 * 60i32) as libc::c_uint;
   opts = crate::libbb::getopt32::getopt32(
     argv,
@@ -1435,7 +1435,7 @@ pub unsafe extern "C" fn ftpd_main(
     (*ptr_to_globals).verbose = verbose_S
   }
   if abs_timeout | (*ptr_to_globals).timeout != 0 {
-    if abs_timeout == 0i32 as libc::c_uint {
+    if abs_timeout == 0 as libc::c_uint {
       abs_timeout = 2147483647i32 as libc::c_uint
     }
     (*ptr_to_globals).end_time = crate::libbb::time::monotonic_sec().wrapping_add(abs_timeout);
@@ -1479,7 +1479,7 @@ pub unsafe extern "C" fn ftpd_main(
   //umask(077); - admin can set umask before starting us
   /* Signals */
   crate::libbb::signals::bb_signals(
-    0i32 + (1i32 << 13i32) + (1i32 << 17i32),
+    0 + (1i32 << 13i32) + (1i32 << 17i32),
     ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
   );
   /* Set up options on the command socket (do we need these all? why?) */
@@ -1507,7 +1507,7 @@ pub unsafe extern "C" fn ftpd_main(
           && strcmp(
             (*ptr_to_globals).ftp_arg,
             b"anonymous\x00" as *const u8 as *const libc::c_char,
-          ) == 0i32
+          ) == 0
         {
           pw = bb_internal_getpwnam(anon_opt);
           if !pw.is_null() {
@@ -1518,7 +1518,7 @@ pub unsafe extern "C" fn ftpd_main(
         pw = bb_internal_getpwnam((*ptr_to_globals).ftp_arg);
         cmdio_write_raw(b"331 Specify password\r\n\x00" as *const u8 as *const libc::c_char);
       } else if cmdval == const_PASS as libc::c_int as libc::c_uint {
-        if crate::libbb::correct_password::check_password(pw, (*ptr_to_globals).ftp_arg) > 0i32 {
+        if crate::libbb::correct_password::check_password(pw, (*ptr_to_globals).ftp_arg) > 0 {
           break;
         }
         cmdio_write_raw(b"530 Login failed\r\n\x00" as *const u8 as *const libc::c_char);
@@ -1531,7 +1531,7 @@ pub unsafe extern "C" fn ftpd_main(
             | '0' as i32 + 221i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
             | '0' as i32 + 221i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
         );
-        return 0i32;
+        return 0;
       } else {
         cmdio_write_raw(b"530 Login with USER+PASS\r\n\x00" as *const u8 as *const libc::c_char);
       }
@@ -1548,7 +1548,7 @@ pub unsafe extern "C" fn ftpd_main(
   argv = argv.offset(optind as isize);
   if !(*argv.offset(0)).is_null() {
     let mut basedir: *const libc::c_char = *argv.offset(0);
-    if chroot(basedir) == 0i32 {
+    if chroot(basedir) == 0 {
       basedir = b"/\x00" as *const u8 as *const libc::c_char
     }
     /*
@@ -1611,7 +1611,7 @@ pub unsafe extern "C" fn ftpd_main(
           | '0' as i32 + 221i32 / 10i32 % 10i32 << SHIFT1 as libc::c_int
           | '0' as i32 + 221i32 / 100i32 % 10i32 << SHIFT2 as libc::c_int) as u32,
       );
-      return 0i32;
+      return 0;
     } else {
       if cmdval_0 == const_USER as libc::c_int as libc::c_uint {
         /* This would mean "ok, now give me PASS". */

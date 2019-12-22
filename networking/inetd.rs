@@ -610,7 +610,7 @@ static mut builtins: [builtin; 5] = [
   {
     let mut init = builtin {
       bi_service7: [116, 105, 109, 101, 0, 0, 0],
-      bi_fork: 0i32 as u8,
+      bi_fork: 0 as u8,
       bi_stream_fn: Some(
         machtime_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
       ),
@@ -623,7 +623,7 @@ static mut builtins: [builtin; 5] = [
   {
     let mut init = builtin {
       bi_service7: [100, 97, 121, 116, 105, 109, 101],
-      bi_fork: 0i32 as u8,
+      bi_fork: 0 as u8,
       bi_stream_fn: Some(
         daytime_stream as unsafe extern "C" fn(_: libc::c_int, _: *mut servtab_t) -> (),
       ),
@@ -636,7 +636,7 @@ static mut builtins: [builtin; 5] = [
 ];
 
 unsafe extern "C" fn maybe_close(mut fd: libc::c_int) {
-  if fd >= 0i32 {
+  if fd >= 0 {
     close(fd);
   };
 }
@@ -709,7 +709,7 @@ unsafe extern "C" fn bump_nofile() {
     );
     return;
   }
-  if setrlimit(RLIMIT_NOFILE, &mut rl) < 0i32 {
+  if setrlimit(RLIMIT_NOFILE, &mut rl) < 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg(
       b"setrlimit\x00" as *const u8 as *const libc::c_char,
     );
@@ -718,7 +718,7 @@ unsafe extern "C" fn bump_nofile() {
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).rlim_ofile_cur = rl.rlim_cur;
 }
 unsafe extern "C" fn remove_fd_from_set(mut fd: libc::c_int) {
-  if fd >= 0i32 {
+  if fd >= 0 {
     let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .allsock
       .fds_bits
@@ -730,7 +730,7 @@ unsafe extern "C" fn remove_fd_from_set(mut fd: libc::c_int) {
   };
 }
 unsafe extern "C" fn add_fd_to_set(mut fd: libc::c_int) {
-  if fd >= 0i32 {
+  if fd >= 0 {
     let ref mut fresh1 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .allsock
       .fds_bits
@@ -738,7 +738,7 @@ unsafe extern "C" fn add_fd_to_set(mut fd: libc::c_int) {
     *fresh1 |= (1u64
       << fd % (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
       as __fd_mask;
-    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).maxsock >= 0i32
+    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).maxsock >= 0
       && fd > (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).maxsock
     {
       let ref mut fresh2 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).maxsock;
@@ -755,10 +755,10 @@ unsafe extern "C" fn add_fd_to_set(mut fd: libc::c_int) {
   };
 }
 unsafe extern "C" fn recalculate_maxsock() {
-  let mut fd: libc::c_int = 0i32;
+  let mut fd: libc::c_int = 0;
   /* We may have no services, in this case maxsock should still be >= 0
    * (code elsewhere is not happy with maxsock == -1) */
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).maxsock = 0i32; /* not a string in fact */
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).maxsock = 0; /* not a string in fact */
   while fd <= (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).prev_maxsock {
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .allsock
@@ -788,9 +788,9 @@ unsafe extern "C" fn prepare_socket_fd(mut sep: *mut servtab_t) {
   fd = socket(
     (*sep).se_family as libc::c_int,
     (*sep).se_socktype as libc::c_int,
-    0i32,
+    0,
   );
-  if fd < 0i32 {
+  if fd < 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg(
       b"socket\x00" as *const u8 as *const libc::c_char,
     );
@@ -809,7 +809,7 @@ unsafe extern "C" fn prepare_socket_fd(mut sep: *mut servtab_t) {
     },
     (*(*sep).se_lsa).len,
   );
-  if r < 0i32 {
+  if r < 0 {
     crate::libbb::perror_msg::bb_perror_msg(
       b"%s/%s: bind\x00" as *const u8 as *const libc::c_char,
       (*sep).se_service,
@@ -870,7 +870,7 @@ unsafe extern "C" fn free_servtab_strings(mut cp: *mut servtab_t) {
   free((*cp).se_group as *mut libc::c_void);
   free((*cp).se_lsa as *mut libc::c_void);
   free((*cp).se_program as *mut libc::c_void);
-  i = 0i32;
+  i = 0;
   while i < 20i32 {
     free((*cp).se_argv[i as usize] as *mut libc::c_void);
     i += 1
@@ -894,7 +894,7 @@ unsafe extern "C" fn dup_servtab(mut sep: *mut servtab_t) -> *mut servtab_t {
   (*newtab).se_user = crate::libbb::xfuncs_printf::xstrdup((*newtab).se_user);
   (*newtab).se_group = crate::libbb::xfuncs_printf::xstrdup((*newtab).se_group);
   (*newtab).se_program = crate::libbb::xfuncs_printf::xstrdup((*newtab).se_program);
-  argc = 0i32;
+  argc = 0;
   while argc <= 20i32 {
     (*newtab).se_argv[argc as usize] =
       crate::libbb::xfuncs_printf::xstrdup((*newtab).se_argv[argc as usize]);
@@ -980,7 +980,7 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
       /* {unix,[rpc/]{tcp,udp}[6]} wait user[:group] prog [args] */
       arg = crate::libbb::xfuncs_printf::xstrdup(token[2]);
       (*sep).se_proto = arg;
-      if strcmp(arg, b"unix\x00" as *const u8 as *const libc::c_char) == 0i32 {
+      if strcmp(arg, b"unix\x00" as *const u8 as *const libc::c_char) == 0 {
         (*sep).se_family = 1i32 as family_t;
         current_block = 11626999923138678822;
       } else {
@@ -1003,10 +1003,10 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
           current_block = 16152178309243456251;
         } else {
           /* we don't really need getprotobyname()! */
-          if strcmp(arg, b"tcp\x00" as *const u8 as *const libc::c_char) == 0i32 {
+          if strcmp(arg, b"tcp\x00" as *const u8 as *const libc::c_char) == 0 {
             (*sep).se_proto_no = IPPROTO_TCP as libc::c_int as smallint
           } /* = 6 */
-          if strcmp(arg, b"udp\x00" as *const u8 as *const libc::c_char) == 0i32 {
+          if strcmp(arg, b"udp\x00" as *const u8 as *const libc::c_char) == 0 {
             (*sep).se_proto_no = IPPROTO_UDP as libc::c_int as smallint
           } /* = 17 */
           if !six.is_null() {
@@ -1050,7 +1050,7 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
                 /* "no" seen */
                 arg = arg.offset(2)
               }
-              if !(strcmp(arg, b"wait\x00" as *const u8 as *const libc::c_char) != 0i32) {
+              if !(strcmp(arg, b"wait\x00" as *const u8 as *const libc::c_char) != 0) {
                 /* user[:group] prog [args] */
                 (*sep).se_user = crate::libbb::xfuncs_printf::xstrdup(token[4]);
                 arg = strchr((*sep).se_user, '.' as i32);
@@ -1068,13 +1068,13 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
                 if strcmp(
                   (*sep).se_program,
                   b"internal\x00" as *const u8 as *const libc::c_char,
-                ) == 0i32
+                ) == 0
                   && strlen((*sep).se_service) <= 7i32 as libc::c_ulong
                   && ((*sep).se_socktype as libc::c_int == SOCK_STREAM as libc::c_int
                     || (*sep).se_socktype as libc::c_int == SOCK_DGRAM as libc::c_int)
                 {
                   let mut i: libc::c_uint = 0;
-                  i = 0i32 as libc::c_uint;
+                  i = 0 as libc::c_uint;
                   loop {
                     if !(i
                       < (::std::mem::size_of::<[builtin; 5]>() as libc::c_ulong)
@@ -1088,7 +1088,7 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
                       builtins[i as usize].bi_service7.as_ptr(),
                       (*sep).se_service,
                       7i32 as libc::c_ulong,
-                    ) == 0i32
+                    ) == 0
                     {
                       current_block = 3513661652909667213;
                       break;
@@ -1122,7 +1122,7 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
                 match current_block {
                   16152178309243456251 => {}
                   _ => {
-                    argc = 0i32;
+                    argc = 0;
                     while argc < 20i32 && {
                       arg = token[(6i32 + argc) as usize];
                       !arg.is_null()
@@ -1135,7 +1135,7 @@ unsafe extern "C" fn parse_one_line() -> *mut servtab_t {
                      * Fix them up.
                      * (Technically, programs can be execed with argv[0] = NULL,
                      * but many programs do not like that at all) */
-                    if argc == 0i32 {
+                    if argc == 0 {
                       (*sep).se_argv[0] = crate::libbb::xfuncs_printf::xstrdup((*sep).se_program)
                     }
                     /* catch mixups. "<service> stream udp ..." == wtf */
@@ -1222,14 +1222,14 @@ unsafe extern "C" fn same_serv_addr_proto(
   mut old: *mut servtab_t,
   mut new: *mut servtab_t,
 ) -> libc::c_int {
-  if strcmp((*old).se_local_hostname, (*new).se_local_hostname) != 0i32 {
-    return 0i32;
+  if strcmp((*old).se_local_hostname, (*new).se_local_hostname) != 0 {
+    return 0;
   }
-  if strcmp((*old).se_service, (*new).se_service) != 0i32 {
-    return 0i32;
+  if strcmp((*old).se_service, (*new).se_service) != 0 {
+    return 0;
   }
-  if strcmp((*old).se_proto, (*new).se_proto) != 0i32 {
-    return 0i32;
+  if strcmp((*old).se_proto, (*new).se_proto) != 0 {
+    return 0;
   }
   return 1i32;
 }
@@ -1247,7 +1247,7 @@ unsafe extern "C" fn reread_config_file(mut _sig: libc::c_int) {
   if !(reopen_config_file() == 0) {
     sep = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).serv_list;
     while !sep.is_null() {
-      (*sep).se_checked = 0i32 as smallint;
+      (*sep).se_checked = 0 as smallint;
       sep = (*sep).se_next
     }
     loop {
@@ -1272,7 +1272,7 @@ unsafe extern "C" fn reread_config_file(mut _sig: libc::c_int) {
           4429232765501753682 => {
             let mut i: libc::c_int = 0;
             block_CHLD_HUP_ALRM(&mut omask);
-            if (*cp).se_wait == 0i32 {
+            if (*cp).se_wait == 0 {
               /* New config says "nowait". If old one
                * was "wait", we currently may be waiting
                * for a child (and not accepting connects).
@@ -1292,7 +1292,7 @@ unsafe extern "C" fn reread_config_file(mut _sig: libc::c_int) {
             let mut c_1: *mut libc::c_char = (*sep).se_program;
             (*sep).se_program = (*cp).se_program;
             (*cp).se_program = c_1;
-            i = 0i32;
+            i = 0;
             while i < 20i32 {
               let mut c_2: *mut libc::c_char = (*sep).se_argv[i as usize];
               (*sep).se_argv[i as usize] = (*cp).se_argv[i as usize];
@@ -1427,7 +1427,7 @@ unsafe extern "C" fn reread_config_file(mut _sig: libc::c_int) {
                 &mut (*lsa).u.sa as *mut sockaddr as *const libc::c_void,
                 &mut (*(*sep).se_lsa).u.sa as *mut sockaddr as *const libc::c_void,
                 (*lsa).len as libc::c_ulong,
-              ) != 0i32
+              ) != 0
             {
               remove_fd_from_set((*sep).se_fd); /* end of "while (1) parse lines" */
               maybe_close((*sep).se_fd);
@@ -1485,7 +1485,7 @@ unsafe extern "C" fn reap_child(mut _sig: libc::c_int) {
   let mut save_errno: libc::c_int = *bb_errno;
   loop {
     pid = crate::libbb::xfuncs::wait_any_nohang(&mut status);
-    if pid <= 0i32 {
+    if pid <= 0 {
       break;
     }
     sep = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).serv_list;
@@ -1494,13 +1494,13 @@ unsafe extern "C" fn reap_child(mut _sig: libc::c_int) {
         sep = (*sep).se_next
       } else {
         /* One of our "wait" services */
-        if status & 0x7fi32 == 0i32 && (status & 0xff00i32) >> 8i32 != 0 {
+        if status & 0x7fi32 == 0 && (status & 0xff00i32) >> 8i32 != 0 {
           crate::libbb::verror_msg::bb_error_msg(
             b"%s: exit status %u\x00" as *const u8 as *const libc::c_char,
             (*sep).se_program,
             (status & 0xff00i32) >> 8i32,
           );
-        } else if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0i32 {
+        } else if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0 {
           crate::libbb::verror_msg::bb_error_msg(
             b"%s: exit signal %u\x00" as *const u8 as *const libc::c_char,
             (*sep).se_program,
@@ -1518,7 +1518,7 @@ unsafe extern "C" fn reap_child(mut _sig: libc::c_int) {
 unsafe extern "C" fn retry_network_setup(mut _sig: libc::c_int) {
   let mut save_errno: libc::c_int = *bb_errno;
   let mut sep: *mut servtab_t = std::ptr::null_mut();
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).alarm_armed = 0i32 as smallint;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).alarm_armed = 0 as smallint;
   sep = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).serv_list;
   while !sep.is_null() {
     if (*sep).se_fd == -1i32 {
@@ -1569,7 +1569,7 @@ pub unsafe extern "C" fn inetd_main(
   let ref mut fresh18 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).config_filename;
   *fresh18 = b"/etc/inetd.conf\x00" as *const u8 as *const libc::c_char;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).real_uid = getuid();
-  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).real_uid != 0i32 as libc::c_uint {
+  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).real_uid != 0 as libc::c_uint {
     /* run by non-root user */
     let ref mut fresh19 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).config_filename;
     *fresh19 = std::ptr::null()
@@ -1609,7 +1609,7 @@ pub unsafe extern "C" fn inetd_main(
     openlog(applet_name, 0x1i32 | 0x8i32, 3i32 << 3i32);
     logmode = LOGMODE_SYSLOG as libc::c_int as smallint
   }
-  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).real_uid == 0i32 as libc::c_uint {
+  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).real_uid == 0 as libc::c_uint {
     /* run by root, ensure groups vector gets trashed */
     let mut gid: gid_t = getgid();
     setgroups(1i32 as size_t, &mut gid);
@@ -1634,7 +1634,7 @@ pub unsafe extern "C" fn inetd_main(
   }
   memset(
     &mut sa as *mut sigaction as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<sigaction>() as libc::c_ulong,
   );
   /*sigemptyset(&sa.sa_mask); - memset did it */
@@ -1671,7 +1671,7 @@ pub unsafe extern "C" fn inetd_main(
     let mut accepted_fd: libc::c_int = 0;
     let mut new_udp_fd: libc::c_int = 0;
     let mut readable: fd_set = fd_set { fds_bits: [0; 16] };
-    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).maxsock < 0i32 {
+    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).maxsock < 0 {
       recalculate_maxsock();
     }
     /* for (sep = servtab...) */
@@ -1686,7 +1686,7 @@ pub unsafe extern "C" fn inetd_main(
       0 as *mut fd_set,
       0 as *mut timeval,
     );
-    if ready_fd_cnt < 0i32 {
+    if ready_fd_cnt < 0 {
       if *bb_errno != 4i32 {
         crate::libbb::perror_msg::bb_simple_perror_msg(
           b"select\x00" as *const u8 as *const libc::c_char,
@@ -1720,7 +1720,7 @@ pub unsafe extern "C" fn inetd_main(
                 0 as *mut socklen_t,
               );
               ctrl = accepted_fd;
-              if ctrl < 0i32 {
+              if ctrl < 0 {
                 if *bb_errno != 4i32 {
                   crate::libbb::perror_msg::bb_perror_msg(
                     b"accept (for %s)\x00" as *const u8 as *const libc::c_char,
@@ -1754,9 +1754,9 @@ pub unsafe extern "C" fn inetd_main(
                   new_udp_fd = socket(
                     (*sep).se_family as libc::c_int,
                     SOCK_DGRAM as libc::c_int,
-                    0i32,
+                    0,
                   );
-                  if new_udp_fd < 0i32 {
+                  if new_udp_fd < 0 {
                     current_block = 3055274896829046098;
                   } else {
                     crate::libbb::xconnect::setsockopt_reuseaddr(new_udp_fd);
@@ -1769,7 +1769,7 @@ pub unsafe extern "C" fn inetd_main(
                         __sockaddr__: &mut (*(*sep).se_lsa).u.sa,
                       },
                       (*(*sep).se_lsa).len,
-                    ) < 0i32
+                    ) < 0
                     {
                       close(new_udp_fd);
                       current_block = 3055274896829046098;
@@ -1805,13 +1805,13 @@ pub unsafe extern "C" fn inetd_main(
             168769493162332264 => {}
             _ => {
               block_CHLD_HUP_ALRM(&mut omask);
-              pid = 0i32;
+              pid = 0;
               /* do we need to fork? */
               if (*sep).se_builtin.is_null()
                 || (*sep).se_socktype as libc::c_int == SOCK_STREAM as libc::c_int
                   && (*(*sep).se_builtin).bi_fork as libc::c_int != 0
               {
-                if (*sep).se_max != 0i32 as libc::c_uint {
+                if (*sep).se_max != 0 as libc::c_uint {
                   (*sep).se_count = (*sep).se_count.wrapping_add(1);
                   if (*sep).se_count == 1i32 as libc::c_uint {
                     (*sep).se_time = crate::libbb::time::monotonic_sec();
@@ -1829,7 +1829,7 @@ pub unsafe extern "C" fn inetd_main(
                       remove_fd_from_set((*sep).se_fd);
                       close((*sep).se_fd);
                       (*sep).se_fd = -1i32;
-                      (*sep).se_count = 0i32 as libc::c_uint;
+                      (*sep).se_count = 0 as libc::c_uint;
                       /* -> check next fd in fd set */
                       rearm_alarm(); /* will revive it in RETRYTIME sec */
                       restore_sigmask(&mut omask);
@@ -1837,7 +1837,7 @@ pub unsafe extern "C" fn inetd_main(
                       maybe_close(accepted_fd);
                       current_block = 168769493162332264;
                     } else {
-                      (*sep).se_count = 0i32 as libc::c_uint;
+                      (*sep).se_count = 0 as libc::c_uint;
                       current_block = 5706507068631705000;
                     }
                   } else {
@@ -1858,7 +1858,7 @@ pub unsafe extern "C" fn inetd_main(
                     } else {
                       pid = vfork()
                     }
-                    if pid < 0i32 {
+                    if pid < 0 {
                       /* fork error */
                       crate::libbb::perror_msg::bb_simple_perror_msg(
                         (b"vfork\x00" as *const u8 as *const libc::c_char).offset(1),
@@ -1870,7 +1870,7 @@ pub unsafe extern "C" fn inetd_main(
                       current_block = 168769493162332264;
                     /* -> check next fd in fd set */
                     } else {
-                      if pid == 0i32 {
+                      if pid == 0 {
                         pid -= 1
                       }
                       current_block = 16972322153429435017;
@@ -1885,7 +1885,7 @@ pub unsafe extern "C" fn inetd_main(
                 _ =>
                 /* if pid == 0 here, we didn't fork */
                 {
-                  if pid > 0i32 {
+                  if pid > 0 {
                     /* parent */
                     if (*sep).se_wait != 0 {
                       /* wait: we passed socket to child,
@@ -1893,7 +1893,7 @@ pub unsafe extern "C" fn inetd_main(
                       (*sep).se_wait = pid;
                       remove_fd_from_set((*sep).se_fd);
                     }
-                    if new_udp_fd >= 0i32 {
+                    if new_udp_fd >= 0 {
                       /* -> check next fd in fd set */
                       /* udp nowait: child connected the socket,
                        * we created and will use new, unconnected one */
@@ -1929,7 +1929,7 @@ pub unsafe extern "C" fn inetd_main(
                     /* child */
                     setsid();
                     /* "nowait" udp */
-                    if new_udp_fd >= 0i32 {
+                    if new_udp_fd >= 0 {
                       let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
                       let mut r: libc::c_int = 0;
                       close(new_udp_fd);
@@ -1938,14 +1938,14 @@ pub unsafe extern "C" fn inetd_main(
                       r = recvfrom(
                         ctrl,
                         0 as *mut libc::c_void,
-                        0i32 as size_t,
+                        0 as size_t,
                         MSG_PEEK as libc::c_int | MSG_DONTWAIT as libc::c_int,
                         __SOCKADDR_ARG {
                           __sockaddr__: &mut (*lsa).u.sa as *mut sockaddr,
                         },
                         &mut (*lsa).len,
                       ) as libc::c_int;
-                      if r < 0i32 {
+                      if r < 0 {
                         current_block = 8654587244565057016;
                       } else {
                         /* make this socket "connected" to peer addr:
@@ -1984,7 +1984,7 @@ pub unsafe extern "C" fn inetd_main(
                             b"group\x00" as *const u8 as *const libc::c_char,
                           );
                         } else if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).real_uid
-                          != 0i32 as libc::c_uint
+                          != 0 as libc::c_uint
                           && (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).real_uid
                             != (*pwd).pw_uid
                         {
@@ -2014,7 +2014,7 @@ pub unsafe extern "C" fn inetd_main(
                             if setrlimit(
                               RLIMIT_NOFILE,
                               &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).rlim_ofile,
-                            ) < 0i32
+                            ) < 0
                             {
                               crate::libbb::perror_msg::bb_simple_perror_msg(
                                 b"setrlimit\x00" as *const u8 as *const libc::c_char,
@@ -2025,7 +2025,7 @@ pub unsafe extern "C" fn inetd_main(
                            * this may confuse syslog() internal state.
                            * Let's hope libc sets syslog fd to CLOEXEC...
                            */
-                          crate::libbb::xfuncs_printf::xmove_fd(ctrl, 0i32);
+                          crate::libbb::xfuncs_printf::xmove_fd(ctrl, 0);
                           crate::libbb::xfuncs_printf::xdup2(0i32, 1i32);
                           /* manpages of inetd I managed to find either say
                            * that stderr is also redirected to the network,
@@ -2060,7 +2060,7 @@ pub unsafe extern "C" fn inetd_main(
                     /* eat packet in udp case */
                     if (*sep).se_socktype as libc::c_int != SOCK_STREAM as libc::c_int {
                       recv(
-                        0i32,
+                        0,
                         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                           .line
                           .as_mut_ptr() as *mut libc::c_void,
@@ -2128,12 +2128,12 @@ unsafe extern "C" fn echo_dg(mut s: libc::c_int, mut sep: *mut servtab_t) {
     },
     &mut (*lsa).len,
   ) as libc::c_int;
-  if sz > 0i32 {
+  if sz > 0 {
     sendto(
       s,
       buf as *const libc::c_void,
       sz as size_t,
-      0i32,
+      0,
       __CONST_SOCKADDR_ARG {
         __sockaddr__: &mut (*lsa).u.sa,
       },
@@ -2313,7 +2313,7 @@ unsafe extern "C" fn chargen_dg(mut s: libc::c_int, mut sep: *mut servtab_t) {
     s,
     text.as_mut_ptr() as *const libc::c_void,
     ::std::mem::size_of::<[libc::c_char; 74]>() as libc::c_ulong,
-    0i32,
+    0,
     __CONST_SOCKADDR_ARG {
       __sockaddr__: &mut (*lsa).u.sa,
     },
@@ -2392,7 +2392,7 @@ unsafe extern "C" fn machtime_dg(mut s: libc::c_int, mut sep: *mut servtab_t) {
     s,
     &mut result as *mut u32 as *const libc::c_void,
     ::std::mem::size_of::<u32>() as libc::c_ulong,
-    0i32,
+    0,
     __CONST_SOCKADDR_ARG {
       __sockaddr__: &mut (*lsa).u.sa,
     },
@@ -2453,7 +2453,7 @@ unsafe extern "C" fn daytime_dg(mut s: libc::c_int, mut sep: *mut servtab_t) {
         .line
         .as_mut_ptr(),
     ),
-    0i32,
+    0,
     __CONST_SOCKADDR_ARG {
       __sockaddr__: &mut (*lsa).u.sa,
     },

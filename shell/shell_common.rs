@@ -207,7 +207,7 @@ pub unsafe extern "C" fn shell_builtin_read(
   let mut argv: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut ifs: *const libc::c_char = std::ptr::null();
   let mut read_flags: libc::c_int = 0;
-  err = 0i32 as libc::c_uint;
+  err = 0 as libc::c_uint;
   *bb_errno = err as libc::c_int;
   argv = (*params).argv;
   pp = argv;
@@ -222,17 +222,17 @@ pub unsafe extern "C" fn shell_builtin_read(
     }
     pp = pp.offset(1)
   }
-  nchars = 0i32;
+  nchars = 0;
   if !(*params).opt_n.is_null() {
     nchars =
       crate::libbb::bb_strtonum::bb_strtou((*params).opt_n, 0 as *mut *mut libc::c_char, 10i32)
         as libc::c_int;
-    if nchars < 0i32 || *bb_errno != 0 {
+    if nchars < 0 || *bb_errno != 0 {
       return b"invalid count\x00" as *const u8 as *const libc::c_char;
     }
     /* note: "-n 0": off (bash 3.2 does this too) */
   }
-  end_ms = 0i32 as libc::c_uint;
+  end_ms = 0 as libc::c_uint;
   if !(*params).opt_t.is_null() && 1i32 == 0 {
     end_ms =
       crate::libbb::bb_strtonum::bb_strtou((*params).opt_t, 0 as *mut *mut libc::c_char, 10i32);
@@ -295,22 +295,22 @@ pub unsafe extern "C" fn shell_builtin_read(
     }
     loop {
       frac_digits -= 1;
-      if !(frac_digits > 0i32) {
+      if !(frac_digits > 0) {
         break;
       }
       end_ms = end_ms.wrapping_mul(10i32 as libc::c_uint)
     }
   }
-  pfd[0].fd = 0i32;
+  pfd[0].fd = 0;
   if !(*params).opt_u.is_null() {
     pfd[0].fd =
       crate::libbb::bb_strtonum::bb_strtou((*params).opt_u, 0 as *mut *mut libc::c_char, 10i32)
         as libc::c_int;
-    if pfd[0].fd < 0i32 || *bb_errno != 0 {
+    if pfd[0].fd < 0 || *bb_errno != 0 {
       return b"invalid file descriptor\x00" as *const u8 as *const libc::c_char;
     }
   }
-  if !(*params).opt_t.is_null() && end_ms == 0i32 as libc::c_uint {
+  if !(*params).opt_t.is_null() && end_ms == 0 as libc::c_uint {
     /* "If timeout is 0, read returns immediately, without trying
      * to read any data. The exit status is 0 if input is available
      * on the specified file descriptor, non-zero otherwise."
@@ -318,9 +318,9 @@ pub unsafe extern "C" fn shell_builtin_read(
      */
     let mut r: libc::c_int = 0;
     pfd[0].events = 0x1i32 as libc::c_short;
-    r = poll(pfd.as_mut_ptr(), 1i32 as nfds_t, 0i32);
+    r = poll(pfd.as_mut_ptr(), 1i32 as nfds_t, 0);
     /* Return 0 only if poll returns 1 ("one fd ready"), else return 1: */
-    return (r <= 0i32) as libc::c_int as uintptr_t as *const libc::c_char;
+    return (r <= 0) as libc::c_int as uintptr_t as *const libc::c_char;
   }
   if !(*params).opt_p.is_null() && isatty(pfd[0].fd) != 0 {
     fputs_unlocked((*params).opt_p, stderr);
@@ -342,7 +342,7 @@ pub unsafe extern "C" fn shell_builtin_read(
       /* reads will block only if < 1 char is available */
       tty.c_cc[6] = 1i32 as cc_t;
       /* no timeout (reads block forever) */
-      tty.c_cc[5] = 0i32 as cc_t
+      tty.c_cc[5] = 0 as cc_t
     }
     if read_flags & BUILTIN_READ_SILENT as libc::c_int != 0 {
       tty.c_lflag &= !(0o10i32 | 0o40i32 | 0o100i32) as libc::c_uint
@@ -351,16 +351,16 @@ pub unsafe extern "C" fn shell_builtin_read(
     read_flags |= BUILTIN_READ_SILENT as libc::c_int;
     /* if tcgetattr failed, tcsetattr will fail too.
      * Ignoring, it's harmless. */
-    tcsetattr(pfd[0].fd, 0i32, &mut tty);
+    tcsetattr(pfd[0].fd, 0, &mut tty);
   }
   retval = std::ptr::null();
   startword = 1i32;
-  backslash = 0i32 as smallint;
+  backslash = 0 as smallint;
   if !(*params).opt_t.is_null() {
     end_ms = end_ms.wrapping_add(crate::libbb::time::monotonic_ms() as libc::c_uint)
   }
   buffer = std::ptr::null_mut::<libc::c_char>();
-  bufpos = 0i32;
+  bufpos = 0;
   delim = if !(*params).opt_d.is_null() {
     *(*params).opt_d.offset(0) as libc::c_int
   } else {
@@ -369,7 +369,7 @@ pub unsafe extern "C" fn shell_builtin_read(
   loop {
     let mut c: libc::c_char = 0;
     let mut timeout: libc::c_int = 0;
-    if bufpos & 0xffi32 == 0i32 {
+    if bufpos & 0xffi32 == 0 {
       buffer = crate::libbb::xfuncs_printf::xrealloc(
         buffer as *mut libc::c_void,
         (bufpos + 0x101i32) as size_t,
@@ -383,7 +383,7 @@ pub unsafe extern "C" fn shell_builtin_read(
        * wrapping math is used here, good even if
        * 32-bit unix time wrapped (year 2038+).
        */
-      if timeout <= 0i32 {
+      if timeout <= 0 {
         /* already late? */
         retval = 1i32 as uintptr_t as *const libc::c_char;
         current_block = 2968968806559280500;
@@ -394,9 +394,9 @@ pub unsafe extern "C" fn shell_builtin_read(
      * we want to be interrupted if signal arrives,
      * regardless of SA_RESTART-ness of that signal!
      */
-    *bb_errno = 0i32;
+    *bb_errno = 0;
     pfd[0].events = 0x1i32 as libc::c_short;
-    if poll(pfd.as_mut_ptr(), 1i32 as nfds_t, timeout) <= 0i32 {
+    if poll(pfd.as_mut_ptr(), 1i32 as nfds_t, timeout) <= 0 {
       /* timed out, or EINTR */
       err = *bb_errno as libc::c_uint;
       retval = 1i32 as uintptr_t as *const libc::c_char;
@@ -417,7 +417,7 @@ pub unsafe extern "C" fn shell_builtin_read(
       if !(c as libc::c_int == '\u{0}' as i32) {
         if read_flags & BUILTIN_READ_RAW as libc::c_int == 0 {
           if backslash != 0 {
-            backslash = 0i32 as smallint;
+            backslash = 0 as smallint;
             if c as libc::c_int != '\n' as i32 {
               current_block = 17751066025094275769;
             } else {
@@ -474,10 +474,10 @@ pub unsafe extern "C" fn shell_builtin_read(
                   match current_block {
                     12027283704867122503 => {}
                     _ => {
-                      startword = 0i32;
+                      startword = 0;
                       if !(*argv.offset(1)).is_null() && !is_ifs.is_null() {
                         *buffer.offset(bufpos as isize) = '\u{0}' as i32 as libc::c_char;
-                        bufpos = 0i32;
+                        bufpos = 0;
                         (*params).setvar.expect("non-null function pointer")(*argv, buffer);
                         argv = argv.offset(1);
                         /* can we skip one non-space ifs char? (2: yes) */
@@ -529,7 +529,7 @@ pub unsafe extern "C" fn shell_builtin_read(
         /* Remove trailing space $IFS chars */
         {
           bufpos -= 1;
-          if !(bufpos >= 0i32
+          if !(bufpos >= 0
             && ({
               let mut bb__isspace: libc::c_uchar =
                 (*buffer.offset(bufpos as isize) as libc::c_int - 9i32) as libc::c_uchar;
@@ -553,14 +553,14 @@ pub unsafe extern "C" fn shell_builtin_read(
          * echo "X:Y:"    | (read x y; echo "|$x|$y|") # |X|Y|, not |X|Y:|
          * echo "X:Y  : " | (read x y; echo "|$x|$y|") # |X|Y|
          */
-        if bufpos >= 0i32 && !strchr(ifs, *buffer.offset(bufpos as isize) as libc::c_int).is_null()
+        if bufpos >= 0 && !strchr(ifs, *buffer.offset(bufpos as isize) as libc::c_int).is_null()
         {
           loop
           /* There _is_ a non-whitespace IFS char */
           /* Skip whitespace IFS char before it */
           {
             bufpos -= 1;
-            if !(bufpos >= 0i32
+            if !(bufpos >= 0
               && ({
                 let mut bb__isspace: libc::c_uchar =
                   (*buffer.offset(bufpos as isize) as libc::c_int - 9i32) as libc::c_uchar;
@@ -607,7 +607,7 @@ pub unsafe extern "C" fn shell_builtin_read(
   }
   free(buffer as *mut libc::c_void);
   if read_flags & BUILTIN_READ_SILENT as libc::c_int != 0 {
-    tcsetattr(pfd[0].fd, 0i32, &mut old_tty);
+    tcsetattr(pfd[0].fd, 0, &mut old_tty);
   }
   *bb_errno = err as libc::c_int;
   return retval;
@@ -630,7 +630,7 @@ static mut limits_tbl: [limits; 15] = [
   {
     let mut init = limits {
       cmd: __RLIMIT_NICE as libc::c_int as u8,
-      factor_shift: 0i32 as u8,
+      factor_shift: 0 as u8,
     };
     init
   },
@@ -644,7 +644,7 @@ static mut limits_tbl: [limits; 15] = [
   {
     let mut init = limits {
       cmd: __RLIMIT_SIGPENDING as libc::c_int as u8,
-      factor_shift: 0i32 as u8,
+      factor_shift: 0 as u8,
     };
     init
   },
@@ -665,21 +665,21 @@ static mut limits_tbl: [limits; 15] = [
   {
     let mut init = limits {
       cmd: RLIMIT_NOFILE as libc::c_int as u8,
-      factor_shift: 0i32 as u8,
+      factor_shift: 0 as u8,
     };
     init
   },
   {
     let mut init = limits {
       cmd: __RLIMIT_MSGQUEUE as libc::c_int as u8,
-      factor_shift: 0i32 as u8,
+      factor_shift: 0 as u8,
     };
     init
   },
   {
     let mut init = limits {
       cmd: __RLIMIT_RTPRIO as libc::c_int as u8,
-      factor_shift: 0i32 as u8,
+      factor_shift: 0 as u8,
     };
     init
   },
@@ -693,14 +693,14 @@ static mut limits_tbl: [limits; 15] = [
   {
     let mut init = limits {
       cmd: RLIMIT_CPU as libc::c_int as u8,
-      factor_shift: 0i32 as u8,
+      factor_shift: 0 as u8,
     };
     init
   },
   {
     let mut init = limits {
       cmd: __RLIMIT_NPROC as libc::c_int as u8,
-      factor_shift: 0i32 as u8,
+      factor_shift: 0 as u8,
     };
     init
   },
@@ -714,7 +714,7 @@ static mut limits_tbl: [limits; 15] = [
   {
     let mut init = limits {
       cmd: __RLIMIT_LOCKS as libc::c_int as u8,
-      factor_shift: 0i32 as u8,
+      factor_shift: 0 as u8,
     };
     init
   },
@@ -783,7 +783,7 @@ pub unsafe extern "C" fn shell_builtin_ulimit(mut argv: *mut *mut libc::c_char) 
   /* In case getopt() was already called:
    * reset libc getopt() internal state.
    */
-  optind = 0i32;
+  optind = 0;
   // bash 4.4.23:
   //
   // -H and/or -S change meaning even of options *before* them: ulimit -f 2000 -H
@@ -821,8 +821,8 @@ pub unsafe extern "C" fn shell_builtin_ulimit(mut argv: *mut *mut libc::c_char) 
    * and "bare ulimit" and "only one option" cases
    * by counting other opts.
    */
-  opt_cnt = 0i32 as libc::c_uint; /* while (there are options) */
-  opts = 0i32 as libc::c_uint;
+  opt_cnt = 0 as libc::c_uint; /* while (there are options) */
+  opts = 0 as libc::c_uint;
   loop {
     let mut opt_char: libc::c_int = getopt(argc as libc::c_int, argv, ulimit_opt_string.as_ptr());
     if opt_char == -1i32 {
@@ -847,7 +847,7 @@ pub unsafe extern "C" fn shell_builtin_ulimit(mut argv: *mut *mut libc::c_char) 
   }
   if opts & OPT_all as libc::c_int as libc::c_uint != 0 {
     let mut help: *const libc::c_char = limits_help.as_ptr();
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     while i
       < (::std::mem::size_of::<[limits; 15]>() as libc::c_ulong)
         .wrapping_div(::std::mem::size_of::<limits>() as libc::c_ulong) as libc::c_uint
@@ -865,10 +865,10 @@ pub unsafe extern "C" fn shell_builtin_ulimit(mut argv: *mut *mut libc::c_char) 
       help = help.offset(strlen(help).wrapping_add(1i32 as libc::c_ulong) as isize);
       i = i.wrapping_add(1)
     }
-    return 0i32;
+    return 0;
   }
   /* Second pass: set or print limits, in order */
-  optind = 0i32; /* while (there are options) */
+  optind = 0; /* while (there are options) */
   loop {
     let mut val_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut opt_char_0: libc::c_int = getopt(argc as libc::c_int, argv, ulimit_opt_string.as_ptr());
@@ -915,7 +915,7 @@ pub unsafe extern "C" fn shell_builtin_ulimit(mut argv: *mut *mut libc::c_char) 
             let mut val: rlim_t = 0xffffffffffffffffu64 as rlim_t;
             if strcmp(val_str,
                       b"unlimited\x00" as *const u8 as *const libc::c_char) !=
-                   0i32 {
+                   0 {
                 if ::std::mem::size_of::<rlim_t>() as libc::c_ulong ==
                        ::std::mem::size_of::<libc::c_int>() as libc::c_ulong {
                     val =
@@ -951,17 +951,17 @@ pub unsafe extern "C" fn shell_builtin_ulimit(mut argv: *mut *mut libc::c_char) 
             }
             //bb_error_msg("setrlimit(%d, %lld, %lld)", limits_tbl[i].cmd, (long long)limit.rlim_cur, (long long)limit.rlim_max);
             if setrlimit(limits_tbl[i as usize].cmd as __rlimit_resource_t,
-                         &mut limit) < 0i32 {
+                         &mut limit) < 0 {
                 crate::libbb::perror_msg::bb_simple_perror_msg(b"error setting limit\x00" as *const u8
                                          as *const libc::c_char);
                 return 1i32
             }
         }
   }
-  if opt_cnt == 0i32 as libc::c_uint {
+  if opt_cnt == 0 as libc::c_uint {
     /* "bare ulimit": treat it as if it was -f */
     getrlimit(limits_tbl[3].cmd as __rlimit_resource_t, &mut limit);
     printlim(opts, &mut limit, &*limits_tbl.as_ptr().offset(3));
   }
-  return 0i32;
+  return 0;
 }

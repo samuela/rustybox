@@ -537,7 +537,7 @@ unsafe extern "C" fn get_lsa(
   let mut lsa: len_and_sockaddr = std::mem::zeroed();
   let mut lsa_ptr: *mut len_and_sockaddr = std::ptr::null_mut();
   lsa.len = LSA_SIZEOF_SA as libc::c_int as socklen_t;
-  if get_name.expect("non-null function pointer")(fd, &mut lsa.u.sa, &mut lsa.len) != 0i32 {
+  if get_name.expect("non-null function pointer")(fd, &mut lsa.u.sa, &mut lsa.len) != 0 {
     return 0 as *mut len_and_sockaddr;
   }
   lsa_ptr = crate::libbb::xfuncs_printf::xzalloc(
@@ -610,7 +610,7 @@ pub unsafe extern "C" fn xconnect(
       __sockaddr__: s_addr,
     },
     addrlen,
-  ) < 0i32
+  ) < 0
   {
     if (*s_addr).sa_family as libc::c_int == 2i32 {
       crate::libbb::perror_msg::bb_perror_msg_and_die(
@@ -711,7 +711,7 @@ unsafe extern "C" fn str2sockaddr(
   let mut org_host: *const libc::c_char = host;
   let mut cp: *const libc::c_char = std::ptr::null();
   let mut hint: addrinfo = std::mem::zeroed();
-  if 0i32 != 0
+  if 0 != 0
     && !crate::libbb::compare_string_array::is_prefixed_with(
       host,
       b"local:\x00" as *const u8 as *const libc::c_char,
@@ -809,7 +809,7 @@ unsafe extern "C" fn str2sockaddr(
    * check whether this is a numeric IPv4 */
   if af as libc::c_int != 10i32 {
     let mut in4: in_addr = in_addr { s_addr: 0 };
-    if inet_aton(host, &mut in4) != 0i32 {
+    if inet_aton(host, &mut in4) != 0 {
       r = crate::libbb::xfuncs_printf::xzalloc(
         (LSA_LEN_SIZE as libc::c_int as libc::c_ulong)
           .wrapping_add(::std::mem::size_of::<sockaddr_in>() as libc::c_ulong),
@@ -853,7 +853,7 @@ unsafe extern "C" fn str2sockaddr(
         _ => {
           memset(
             &mut hint as *mut addrinfo as *mut libc::c_void,
-            0i32,
+            0,
             ::std::mem::size_of::<addrinfo>() as libc::c_ulong,
           );
           hint.ai_family = af as libc::c_int;
@@ -932,7 +932,7 @@ pub unsafe extern "C" fn host_and_af2sockaddr(
   mut port: libc::c_int,
   mut af: sa_family_t,
 ) -> *mut len_and_sockaddr {
-  return str2sockaddr(host, port, af, 0i32);
+  return str2sockaddr(host, port, af, 0);
 }
 #[no_mangle]
 pub unsafe extern "C" fn xhost_and_af2sockaddr(
@@ -947,21 +947,21 @@ pub unsafe extern "C" fn host2sockaddr(
   mut host: *const libc::c_char,
   mut port: libc::c_int,
 ) -> *mut len_and_sockaddr {
-  return str2sockaddr(host, port, 0i32 as sa_family_t, 0i32);
+  return str2sockaddr(host, port, 0 as sa_family_t, 0);
 }
 #[no_mangle]
 pub unsafe extern "C" fn xhost2sockaddr(
   mut host: *const libc::c_char,
   mut port: libc::c_int,
 ) -> *mut len_and_sockaddr {
-  return str2sockaddr(host, port, 0i32 as sa_family_t, 0x2i32);
+  return str2sockaddr(host, port, 0 as sa_family_t, 0x2i32);
 }
 #[no_mangle]
 pub unsafe extern "C" fn xdotted2sockaddr(
   mut host: *const libc::c_char,
   mut port: libc::c_int,
 ) -> *mut len_and_sockaddr {
-  return str2sockaddr(host, port, 0i32 as sa_family_t, 0x4i32 | 0x2i32);
+  return str2sockaddr(host, port, 0 as sa_family_t, 0x4i32 | 0x2i32);
 }
 #[no_mangle]
 pub unsafe extern "C" fn xsocket_type(
@@ -1188,7 +1188,7 @@ unsafe extern "C" fn sockaddr2str(
 }
 #[no_mangle]
 pub unsafe extern "C" fn xmalloc_sockaddr2host(mut sa: *const sockaddr) -> *mut libc::c_char {
-  return sockaddr2str(sa, 0i32);
+  return sockaddr2str(sa, 0);
 }
 #[no_mangle]
 pub unsafe extern "C" fn xmalloc_sockaddr2host_noport(
@@ -1204,7 +1204,7 @@ pub unsafe extern "C" fn xmalloc_sockaddr2hostonly_noport(
 }
 #[no_mangle]
 pub unsafe extern "C" fn xmalloc_sockaddr2dotted(mut sa: *const sockaddr) -> *mut libc::c_char {
-  return sockaddr2str(sa, 1i32 | 0i32);
+  return sockaddr2str(sa, 1i32 | 0);
 }
 
 /*

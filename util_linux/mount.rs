@@ -159,16 +159,16 @@ pub type C2RustUnnamed_4 = libc::c_uint;
 pub const GETMNTENT_BUFSIZE: C2RustUnnamed_4 = 1008;
 
 static mut mount_options: [i32; 44] = [
-  0i32,
-  0i32,
+  0,
+  0,
   MOUNT_NOAUTO as libc::c_int,
   MOUNT_SWAP as libc::c_int,
   MOUNT_SWAP as libc::c_int,
   MOUNT_USERS as libc::c_int,
   MOUNT_USERS as libc::c_int,
   MOUNT_NOFAIL as libc::c_int,
-  0i32,
-  0i32,
+  0,
+  0,
   MS_NOSUID as libc::c_int,
   !(MS_NOSUID as libc::c_int),
   !(MS_NODEV as libc::c_int),
@@ -231,7 +231,7 @@ unsafe extern "C" fn verbose_mount(
   mut data: *const libc::c_void,
 ) -> libc::c_int {
   let mut rc: libc::c_int = 0;
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   rc = mount(source, target, filesystemtype, mountflags, data);
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose >= 2i32 as libc::c_uint {
     crate::libbb::perror_msg::bb_perror_msg(
@@ -318,7 +318,7 @@ unsafe extern "C" fn parse_mount_options(
     }
     // FIXME: use hasmntopt()
     // Find this option in mount_options
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     loop {
       if !(i
         < (::std::mem::size_of::<[i32; 44]>() as libc::c_ulong)
@@ -328,7 +328,7 @@ unsafe extern "C" fn parse_mount_options(
         break;
       }
       let mut opt_len: libc::c_uint = strlen(option_str) as libc::c_uint;
-      if strncasecmp(option_str, options, opt_len as libc::c_ulong) == 0i32
+      if strncasecmp(option_str, options, opt_len as libc::c_ulong) == 0
         && (*options.offset(opt_len as isize) as libc::c_int == '\u{0}' as i32
           || *option_str.offset(opt_len.wrapping_sub(1i32 as libc::c_uint) as isize) as libc::c_int
             == '=' as i32)
@@ -362,7 +362,7 @@ unsafe extern "C" fn parse_mount_options(
           let mut len: libc::c_uint = if !p.is_null() {
             strlen(p)
           } else {
-            0i32 as libc::c_ulong
+            0 as libc::c_ulong
           } as libc::c_uint;
           p = crate::libbb::xfuncs_printf::xrealloc(
             p as *mut libc::c_void,
@@ -407,7 +407,7 @@ unsafe extern "C" fn get_block_backed_filesystems() -> *mut llist_t {
   let mut list: *mut llist_t = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut f: *mut FILE = std::ptr::null_mut();
-  i = 0i32;
+  i = 0;
   while i < 2i32 {
     f = crate::libbb::wfopen::fopen_for_read(filesystems[i as usize].as_ptr());
     if !f.is_null() {
@@ -450,7 +450,7 @@ unsafe extern "C" fn mount_it_now(
   mut vfsflags: libc::c_ulong,
   mut filteropts: *mut libc::c_char,
 ) -> libc::c_int {
-  let mut rc: libc::c_int = 0i32;
+  let mut rc: libc::c_int = 0;
   vfsflags &= !(MOUNT_FAKEFLAGS as libc::c_int as libc::c_ulong);
   if option_mask32 & OPT_f as libc::c_int as libc::c_uint != 0 {
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose >= 2i32 as libc::c_uint {
@@ -468,7 +468,7 @@ unsafe extern "C" fn mount_it_now(
     loop
     // Mount, with fallback to read-only if necessary.
     {
-      *bb_errno = 0i32;
+      *bb_errno = 0;
       rc = verbose_mount(
         (*mp).mnt_fsname,
         (*mp).mnt_dir,
@@ -491,7 +491,7 @@ unsafe extern "C" fn mount_it_now(
           rc = rc + 1;
           args[fresh1 as usize] = b"-f\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
         }
-        if false && 0i32 == 0 {
+        if false && 0 == 0 {
           let fresh2 = rc;
           rc = rc + 1;
           args[fresh2 as usize] = b"-n\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
@@ -556,9 +556,9 @@ unsafe extern "C" fn mount_it_now(
       );
     } else {
       // Add vfs string flags
-      i = 0i32;
+      i = 0;
       while mount_options[i as usize] != MS_REMOUNT as libc::c_int {
-        if mount_options[i as usize] > 0i32
+        if mount_options[i as usize] > 0
           && mount_options[i as usize] as libc::c_ulong & vfsflags != 0
         {
           append_mount_options(&mut (*mp).mnt_opts, option_str);
@@ -569,7 +569,7 @@ unsafe extern "C" fn mount_it_now(
       }
       // Remove trailing / (if any) from directory we mounted on
       i = strlen((*mp).mnt_dir).wrapping_sub(1i32 as libc::c_ulong) as libc::c_int;
-      while i > 0i32 && *(*mp).mnt_dir.offset(i as isize) as libc::c_int == '/' as i32 {
+      while i > 0 && *(*mp).mnt_dir.offset(i as isize) as libc::c_int == '/' as i32 {
         let fresh7 = i;
         i = i - 1;
         *(*mp).mnt_dir.offset(fresh7 as isize) = '\u{0}' as i32 as libc::c_char
@@ -583,7 +583,7 @@ unsafe extern "C" fn mount_it_now(
         (*mp).mnt_fsname = fsname;
         (*mp).mnt_type = b"bind\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
       }
-      (*mp).mnt_passno = 0i32;
+      (*mp).mnt_passno = 0;
       (*mp).mnt_freq = (*mp).mnt_passno;
       // Write and close
       addmntent(mountTable, mp);
@@ -615,7 +615,7 @@ unsafe extern "C" fn nfsmount(
     end = strchr((*mp).mnt_fsname, ':' as i32)
   }
   *end = '\u{0}' as i32 as libc::c_char;
-  lsa = crate::libbb::xconnect::xhost2sockaddr((*mp).mnt_fsname, 0i32);
+  lsa = crate::libbb::xconnect::xhost2sockaddr((*mp).mnt_fsname, 0);
   *end = ':' as i32 as libc::c_char;
   dotted = crate::libbb::xconnect::xmalloc_sockaddr2dotted_noport(&mut (*lsa).u.sa);
   opts = crate::libbb::xfuncs_printf::xasprintf(
@@ -647,14 +647,14 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
   let mut filteropts: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fl: *mut llist_t = std::ptr::null_mut();
   let mut st: stat = std::mem::zeroed();
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   vfsflags = parse_mount_options((*mp).mnt_opts, &mut filteropts);
   // Treat fstype "auto" as unspecified
   if !(*mp).mnt_type.is_null()
     && strcmp(
       (*mp).mnt_type,
       b"auto\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
   {
     (*mp).mnt_type = std::ptr::null_mut::<libc::c_char>()
   }
@@ -672,7 +672,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
     // "mount: can't find sh#-c#sh in /etc/fstab"
     // (if /etc/fstab has it, it's ok: root sets up /etc/fstab).
     s = (*mp).mnt_fsname;
-    n = 0i32;
+    n = 0;
     let fresh8 = n;
     n = n + 1;
     args[fresh8 as usize] = s;
@@ -696,7 +696,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
       || strcmp(
         (*mp).mnt_type,
         b"cifs\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32)
+      ) == 0)
     && (*(*mp).mnt_fsname.offset(0) as libc::c_int == '/' as i32
       || *(*mp).mnt_fsname.offset(0) as libc::c_int == '\\' as i32)
     && *(*mp).mnt_fsname.offset(0) as libc::c_int == *(*mp).mnt_fsname.offset(1) as libc::c_int
@@ -711,7 +711,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
     hostname = (*mp).mnt_fsname.offset(2);
     len = strcspn(hostname, b"/\\\x00" as *const u8 as *const libc::c_char) as libc::c_int;
     share = hostname.offset(len as isize).offset(1);
-    if !(len == 0i32
+    if !(len == 0
       || *share.offset(-1i32 as isize) as libc::c_int == '\u{0}' as i32
       || *share.offset(0) as libc::c_int == '\u{0}' as i32)
     {
@@ -734,7 +734,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
         share.offset(len as isize).offset(1),
       );
       parse_mount_options(unc, &mut filteropts);
-      lsa = crate::libbb::xconnect::host2sockaddr(hostname, 0i32);
+      lsa = crate::libbb::xconnect::host2sockaddr(hostname, 0);
       *share.offset(-1i32 as isize) = c;
       if !lsa.is_null() {
         // If there is no "ip=..." option yet
@@ -798,14 +798,14 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
         loopfd = crate::libbb::r#loop::set_loop(
           &mut (*mp).mnt_fsname,
           loopFile,
-          0i32 as libc::c_ulonglong,
+          0 as libc::c_ulonglong,
           ((if vfsflags & MS_RDONLY as libc::c_int as libc::c_ulong != 0 {
             1i32
           } else {
-            0i32
+            0
           }) | 4i32) as libc::c_uint,
         );
-        if loopfd < 0i32 {
+        if loopfd < 0 {
           if *bb_errno == 1i32 || *bb_errno == 13i32 {
             crate::libbb::verror_msg::bb_simple_error_msg(bb_msg_perm_denied_are_you_root.as_ptr());
           } else {
@@ -846,7 +846,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
           *next = '\u{0}' as i32 as libc::c_char
         }
         rc = mount_it_now(mp, vfsflags, filteropts);
-        if rc == 0i32 || next.is_null() {
+        if rc == 0 || next.is_null() {
           break;
         }
         (*mp).mnt_type = next.offset(1)
@@ -868,7 +868,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
         //    if (ENABLE_FEATURE_CLEAN_UP && fslist)
         // in the C code. Not sure what ENABLE_FEATURE_CLEAN_UP is, but it's not
         // in the default config.
-        // if 0i32 != 0
+        // if 0 != 0
         //   && !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         //     .fslist
         //     .is_null()
@@ -882,7 +882,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
       while !fl.is_null() {
         (*mp).mnt_type = (*fl).data;
         rc = mount_it_now(mp, vfsflags, filteropts);
-        if rc == 0i32 {
+        if rc == 0 {
           break;
         }
         fl = (*fl).link
@@ -896,16 +896,16 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
     }
   }
   // empty share name
-  if loopfd >= 0i32 {
+  if loopfd >= 0 {
     close(loopfd);
   }
   if *bb_errno == 16i32 && ignore_busy != 0 {
-    return 0i32;
+    return 0;
   }
   if *bb_errno == 2i32 && vfsflags & MOUNT_NOFAIL as libc::c_int as libc::c_ulong != 0 {
-    return 0i32;
+    return 0;
   }
-  if rc != 0i32 {
+  if rc != 0 {
     crate::libbb::perror_msg::bb_perror_msg(
       b"mounting %s on %s failed\x00" as *const u8 as *const libc::c_char,
       (*mp).mnt_fsname,
@@ -939,7 +939,7 @@ unsafe extern "C" fn match_opt(
     let mut match_0: libc::c_int = 0;
     // If option begins with "no" then treat as an inverted match:
     // matching is a failure
-    match_0 = 0i32;
+    match_0 = 0;
     if *O_opt.offset(0) as libc::c_int == 'n' as i32
       && *O_opt.offset(1) as libc::c_int == 'o' as i32
     {
@@ -951,12 +951,12 @@ unsafe extern "C" fn match_opt(
     loop
     // Check for a match against existing options
     {
-      if strncmp(fs_opt, O_opt, O_len as libc::c_ulong) == 0i32
+      if strncmp(fs_opt, O_opt, O_len as libc::c_ulong) == 0
         && (*fs_opt.offset(O_len as isize) as libc::c_int == '\u{0}' as i32
           || *fs_opt.offset(O_len as isize) as libc::c_int == ',' as i32)
       {
         if match_0 != 0 {
-          return 0i32;
+          return 0;
         } // "no" prefix, but option found
         match_0 = 1i32; // current O option found, go check next one
         break; // match wanted but not found
@@ -968,8 +968,8 @@ unsafe extern "C" fn match_opt(
         fs_opt = fs_opt.offset(1)
       }
     }
-    if match_0 == 0i32 {
-      return 0i32;
+    if match_0 == 0 {
+      return 0;
     }
     if *O_opt.offset(O_len as isize) as libc::c_int == '\u{0}' as i32 {
       break;
@@ -997,7 +997,7 @@ pub unsafe extern "C" fn mount_main(
   let mut fstab: *mut FILE = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
-  let mut rc: libc::c_int = 0i32;
+  let mut rc: libc::c_int = 0;
   let mut cmdopt_flags: libc::c_ulong = 0;
   let mut opt: libc::c_uint = 0;
   let mut mtpair: [mntent; 2] = [mntent {
@@ -1080,7 +1080,7 @@ pub unsafe extern "C" fn mount_main(
         // Don't show rootfs. FIXME: why??
         // util-linux 2.12a happily shows rootfs...
         //if (strcmp(mtpair->mnt_fsname, "rootfs") == 0) continue;
-        if fstype.is_null() || strcmp((*mtpair.as_mut_ptr()).mnt_type, fstype) == 0i32 {
+        if fstype.is_null() || strcmp((*mtpair.as_mut_ptr()).mnt_type, fstype) == 0 {
           printf(
             b"%s on %s type %s (%s)\n\x00" as *const u8 as *const libc::c_char,
             (*mtpair.as_mut_ptr()).mnt_fsname,
@@ -1090,7 +1090,7 @@ pub unsafe extern "C" fn mount_main(
           );
         }
       }
-      return 0i32;
+      return 0;
     }
     storage_path = std::ptr::null_mut::<libc::c_char>()
   } else {
@@ -1112,7 +1112,7 @@ pub unsafe extern "C" fn mount_main(
       crate::util_linux::volume_id::get_devname::resolve_mount_spec(
         &mut (*mtpair.as_mut_ptr()).mnt_fsname,
       );
-      rc = singlemount(mtpair.as_mut_ptr(), 0i32);
+      rc = singlemount(mtpair.as_mut_ptr(), 0);
       return rc;
     }
     storage_path = crate::libbb::simplify_path::bb_simplify_path(*argv.offset(0))
@@ -1168,7 +1168,7 @@ pub unsafe extern "C" fn mount_main(
   // Loop through entries until we find what we're looking for
   memset(
     mtpair.as_mut_ptr() as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<[mntent; 2]>() as libc::c_ulong,
   );
   loop {
@@ -1188,7 +1188,7 @@ pub unsafe extern "C" fn mount_main(
           (if mtcur == mtpair.as_mut_ptr() {
             (GETMNTENT_BUFSIZE as libc::c_int) / 2i32
           } else {
-            0i32
+            0
           }) as isize,
         ),
       GETMNTENT_BUFSIZE as libc::c_int / 2i32,
@@ -1204,10 +1204,10 @@ pub unsafe extern "C" fn mount_main(
       // skip it.  Note we must match the exact text in fstab (ala
       // "proc") or a full path from root
       // Is this what we're looking for?
-      if strcmp(*argv.offset(0), (*mtcur).mnt_fsname) != 0i32
-        && strcmp(storage_path, (*mtcur).mnt_fsname) != 0i32
-        && strcmp(*argv.offset(0), (*mtcur).mnt_dir) != 0i32
-        && strcmp(storage_path, (*mtcur).mnt_dir) != 0i32
+      if strcmp(*argv.offset(0), (*mtcur).mnt_fsname) != 0
+        && strcmp(storage_path, (*mtcur).mnt_fsname) != 0
+        && strcmp(*argv.offset(0), (*mtcur).mnt_dir) != 0
+        && strcmp(storage_path, (*mtcur).mnt_dir) != 0
       {
         continue;
       }
@@ -1233,7 +1233,7 @@ pub unsafe extern "C" fn mount_main(
         || strcasecmp(
           (*mtcur).mnt_type,
           b"swap\x00" as *const u8 as *const libc::c_char,
-        ) == 0i32
+        ) == 0
       {
         continue;
       }
@@ -1247,7 +1247,7 @@ pub unsafe extern "C" fn mount_main(
       (*mtcur).mnt_opts = crate::libbb::xfuncs_printf::xstrdup((*mtcur).mnt_opts);
       // If nothing is mounted on this directory...
       // (otherwise repeated "mount -a" mounts everything again)
-      mp = crate::libbb::find_mount_point::find_mount_point((*mtcur).mnt_dir, 0i32);
+      mp = crate::libbb::find_mount_point::find_mount_point((*mtcur).mnt_dir, 0);
       // We do not check fsname match of found mount point -
       // "/" may have fsname of "/dev/root" while fstab
       // says "/dev/something_else".
@@ -1312,7 +1312,7 @@ pub unsafe extern "C" fn mount_main(
     crate::util_linux::volume_id::get_devname::resolve_mount_spec(
       &mut (*mtpair.as_mut_ptr()).mnt_fsname,
     );
-    rc = singlemount(mtcur, 0i32)
+    rc = singlemount(mtcur, 0)
   }
   //ret:
   //TODO: exitcode should be ORed mask of (from "man mount"):

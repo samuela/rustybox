@@ -199,7 +199,7 @@ pub unsafe extern "C" fn hexdump_main(
   let mut p: *const libc::c_char = std::ptr::null();
   let mut ch: libc::c_int = 0;
   let mut fp: *mut FILE = std::ptr::null_mut();
-  let mut rdump: smallint = 0i32 as smallint;
+  let mut rdump: smallint = 0 as smallint;
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(2) == 0) {
     /* we are "hd" */
     ch = 'C' as i32;
@@ -214,7 +214,7 @@ pub unsafe extern "C" fn hexdump_main(
        * E.g. "hexdump -C -C file" should dump each line twice */
       {
         ch = getopt(argc, argv, hexdump_opts.as_ptr());
-        if !(ch > 0i32) {
+        if !(ch > 0) {
           break;
         }
         p = strchr(hexdump_opts.as_ptr(), ch);
@@ -265,8 +265,8 @@ pub unsafe extern "C" fn hexdump_main(
       /* compat: -s accepts hex numbers too */
       (*dumper).dump_skip = crate::libbb::xatonum::xstrtoull_range_sfx(
         optarg,
-        0i32,
-        0i32 as libc::c_ulonglong,
+        0,
+        0 as libc::c_ulonglong,
         !((1i32 as off_t)
           << (::std::mem::size_of::<off_t>() as libc::c_ulong)
             .wrapping_mul(8i32 as libc::c_ulong)

@@ -177,9 +177,9 @@ unsafe extern "C" fn remove_ids(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut id: libc::c_ulong = 0;
-  let mut nb_errors: libc::c_int = 0i32;
+  let mut nb_errors: libc::c_int = 0;
   let mut arg: semun = semun { val: 0 };
-  arg.val = 0i32;
+  arg.val = 0;
   while !(*argv.offset(0)).is_null() {
     id = bb_strtoul(*argv.offset(0), 0 as *mut *mut libc::c_char, 10i32);
     if *bb_errno != 0 || id > 2147483647i32 as libc::c_ulong {
@@ -189,13 +189,13 @@ unsafe extern "C" fn remove_ids(
       );
       nb_errors += 1
     } else {
-      let mut ret: libc::c_int = 0i32;
+      let mut ret: libc::c_int = 0;
       if type_0 as libc::c_uint == SEM as libc::c_int as libc::c_uint {
-        ret = semctl(id as libc::c_int, 0i32, 0i32, arg)
+        ret = semctl(id as libc::c_int, 0, 0, arg)
       } else if type_0 as libc::c_uint == MSG as libc::c_int as libc::c_uint {
-        ret = msgctl(id as libc::c_int, 0i32, 0 as *mut msqid_ds)
+        ret = msgctl(id as libc::c_int, 0, 0 as *mut msqid_ds)
       } else if type_0 as libc::c_uint == SHM as libc::c_int as libc::c_uint {
-        ret = shmctl(id as libc::c_int, 0i32, 0 as *mut shmid_ds)
+        ret = shmctl(id as libc::c_int, 0, 0 as *mut shmid_ds)
       }
       if ret != 0 {
         crate::libbb::perror_msg::bb_perror_msg(
@@ -224,10 +224,10 @@ pub unsafe extern "C" fn ipcrm_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut c: libc::c_int = 0;
-  let mut error: libc::c_int = 0i32;
+  let mut error: libc::c_int = 0;
   /* if the command is executed without parameters, do nothing */
   if argc == 1i32 {
-    return 0i32;
+    return 0;
   }
   /* check to see if the command is being invoked in the old way if so
   then run the old code. Valid commands are msg, shm, sem. */
@@ -259,7 +259,7 @@ pub unsafe extern "C" fn ipcrm_main(
       crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(1i32);
     }
     puts(b"resource(s) deleted\x00" as *const u8 as *const libc::c_char);
-    return 0i32;
+    return 0;
   }
   loop
   /* IPCRM_LEGACY */
@@ -282,13 +282,13 @@ pub unsafe extern "C" fn ipcrm_main(
       /* option not in the string */
       crate::libbb::appletlib::bb_show_usage(); /* uppercase? */
     }
-    id = 0i32;
-    arg.val = 0i32;
+    id = 0;
+    arg.val = 0;
     iskey = (c & 0x20i32 == 0) as libc::c_int;
     if iskey != 0 {
       /* keys are in hex or decimal */
-      let mut key: key_t = xstrtoul(optarg, 0i32) as key_t; /* lowercase. c is 'q', 'm' or 's' now */
-      if key == 0i32 {
+      let mut key: key_t = xstrtoul(optarg, 0) as key_t; /* lowercase. c is 'q', 'm' or 's' now */
+      if key == 0 {
         error += 1;
         crate::libbb::verror_msg::bb_error_msg(
           b"illegal key (%s)\x00" as *const u8 as *const libc::c_char,
@@ -299,13 +299,13 @@ pub unsafe extern "C" fn ipcrm_main(
         c |= 0x20i32;
         /* convert key to id */
         id = if c == 'q' as i32 {
-          msgget(key, 0i32)
+          msgget(key, 0)
         } else if c == 'm' as i32 {
-          shmget(key, 0i32 as size_t, 0i32)
+          shmget(key, 0 as size_t, 0)
         } else {
-          semget(key, 0i32, 0i32)
+          semget(key, 0, 0)
         };
-        if id < 0i32 {
+        if id < 0 {
           let mut errmsg: *const libc::c_char = std::ptr::null();
           error += 1;
           match *bb_errno {
@@ -328,11 +328,11 @@ pub unsafe extern "C" fn ipcrm_main(
       id = xatoul(optarg) as libc::c_int
     }
     result = if c == 'q' as i32 {
-      msgctl(id, 0i32, 0 as *mut msqid_ds)
+      msgctl(id, 0, 0 as *mut msqid_ds)
     } else if c == 'm' as i32 {
-      shmctl(id, 0i32, 0 as *mut shmid_ds)
+      shmctl(id, 0, 0 as *mut shmid_ds)
     } else {
-      semctl(id, 0i32, 0i32, arg)
+      semctl(id, 0, 0, arg)
     };
     if !(result != 0) {
       continue;

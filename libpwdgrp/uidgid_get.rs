@@ -76,7 +76,7 @@ pub unsafe extern "C" fn get_uidgid(
     /* it is not numeric */
     pwd = bb_internal_getpwnam(user);
     if pwd.is_null() {
-      return 0i32;
+      return 0;
     }
     (*u).uid = (*pwd).pw_uid;
     (*u).gid = (*pwd).pw_gid
@@ -89,7 +89,7 @@ pub unsafe extern "C" fn get_uidgid(
     }
     gr = crate::libpwdgrp::pwd_grp::bb_internal_getgrnam(group);
     if gr.is_null() {
-      return 0i32;
+      return 0;
     }
     (*u).gid = (*gr).gr_gid
   }

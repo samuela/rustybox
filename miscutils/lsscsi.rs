@@ -40,7 +40,7 @@ unsafe extern "C" fn get_line(
 ) -> *mut libc::c_char {
   let mut bufsize: libc::c_uint = *bufsize_p;
   let mut sz: ssize_t = 0;
-  if bufsize.wrapping_sub(2i32 as libc::c_uint) as libc::c_int <= 0i32 {
+  if bufsize.wrapping_sub(2i32 as libc::c_uint) as libc::c_int <= 0 {
     return buf;
   }
   sz = crate::libbb::read::open_read_close(
@@ -88,7 +88,7 @@ pub unsafe extern "C" fn lsscsi_main(
     if strchr((*de).d_name.as_mut_ptr(), ':' as i32).is_null() {
       continue;
     }
-    if chdir((*de).d_name.as_mut_ptr()) != 0i32 {
+    if chdir((*de).d_name.as_mut_ptr()) != 0 {
       continue;
     }
     bufsize = ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong as libc::c_uint;
@@ -147,5 +147,5 @@ pub unsafe extern "C" fn lsscsi_main(
      */
     crate::libbb::xfuncs_printf::xchdir(scsi_dir.as_ptr());
   }
-  return 0i32;
+  return 0;
 }

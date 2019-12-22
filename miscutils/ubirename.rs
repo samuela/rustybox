@@ -84,7 +84,7 @@ pub unsafe extern "C" fn ubirename_main(
   }
   ubi_devname = *argv.offset(1);
   ubi_devnum = crate::libbb::ubi::ubi_devnum_from_devname(ubi_devname);
-  n = 0i32 as libc::c_uint;
+  n = 0 as libc::c_uint;
   argv = argv.offset(2);
   while !(*argv.offset(0)).is_null() {
     (*rnvol).ents[n as usize].vol_id =
@@ -107,14 +107,14 @@ pub unsafe extern "C" fn ubirename_main(
     argv = argv.offset(2)
   }
   crate::libbb::xfuncs_printf::bb_xioctl(
-    crate::libbb::xfuncs_printf::xopen(ubi_devname, 0i32),
-    ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-      | (('o' as i32) << 0i32 + 8i32) as libc::c_uint
-      | (3i32 << 0i32) as libc::c_uint) as libc::c_ulong
-      | (::std::mem::size_of::<ubi_rnvol_req>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+    crate::libbb::xfuncs_printf::xopen(ubi_devname, 0),
+    ((1u32 << 0 + 8i32 + 8i32 + 14i32
+      | (('o' as i32) << 0 + 8i32) as libc::c_uint
+      | (3i32 << 0) as libc::c_uint) as libc::c_ulong
+      | (::std::mem::size_of::<ubi_rnvol_req>() as libc::c_ulong) << 0 + 8i32 + 8i32)
       as libc::c_uint,
     rnvol as *mut libc::c_void,
     b"UBI_IOCRNVOL\x00" as *const u8 as *const libc::c_char,
   );
-  return 0i32;
+  return 0;
 }

@@ -199,7 +199,7 @@ unsafe extern "C" fn kw_lookup(
 ) -> libc::c_int {
   if !(**pargs).is_null() {
     loop {
-      if strcmp(kwtbl.offset(2), **pargs) == 0i32 {
+      if strcmp(kwtbl.offset(2), **pargs) == 0 {
         /* Found a match. */
         *pargs = (*pargs).offset(1);
         if *kwtbl.offset(1) as libc::c_int & 0o20i32 != 0 {
@@ -218,7 +218,7 @@ unsafe extern "C" fn kw_lookup(
       }
     }
   }
-  return 0i32;
+  return 0;
 }
 /* Add or delete a route, depending on action. */
 #[inline(never)]
@@ -239,7 +239,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
   /* Clean out the RTREQ structure. */
   memset(
     rt as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<rtentry>() as libc::c_ulong,
   );
   let fresh0 = args;
@@ -252,7 +252,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
     let mut prefix_len: libc::c_int = 0;
     prefix_len = xatoul_range(
       prefix.offset(1),
-      0i32 as libc::c_ulong,
+      0 as libc::c_ulong,
       32i32 as libc::c_ulong,
     ) as libc::c_int;
     (*(&mut (*rt).rt_genmask as *mut sockaddr as *mut sockaddr_in))
@@ -287,7 +287,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
     &mut (*rt).rt_dst as *mut sockaddr as *mut sockaddr_in,
     xflag & 2i32,
   );
-  if isnet < 0i32 {
+  if isnet < 0 {
     crate::libbb::verror_msg::bb_error_msg_and_die(
       b"resolving %s\x00" as *const u8 as *const libc::c_char,
       target,
@@ -332,9 +332,9 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
       isnet = crate::libbb::inet_common::INET_resolve(
         netmask,
         &mut mask as *mut sockaddr as *mut sockaddr_in,
-        0i32,
+        0,
       );
-      if isnet < 0i32 {
+      if isnet < 0 {
         crate::libbb::verror_msg::bb_error_msg_and_die(
           b"resolving %s\x00" as *const u8 as *const libc::c_char,
           netmask,
@@ -352,7 +352,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
       );
       (*rt).rt_flags = ((*rt).rt_flags as libc::c_int | 0x2i32) as libc::c_ushort;
       if isnet != 0 {
-        if isnet < 0i32 {
+        if isnet < 0 {
           crate::libbb::verror_msg::bb_error_msg_and_die(
             b"resolving %s\x00" as *const u8 as *const libc::c_char,
             args_m1,
@@ -460,7 +460,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
       .s_addr = 0xffffffffu32
   }
   /* Create a socket to the INET kernel. */
-  skfd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+  skfd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
   if action == 1i32 {
     crate::libbb::xfuncs_printf::bb_xioctl(
       skfd,
@@ -488,11 +488,11 @@ unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut
   let fresh7 = args; /* Yes... const to non is ok. */
   args = args.offset(1);
   let mut target: *const libc::c_char = *fresh7;
-  if strcmp(target, b"default\x00" as *const u8 as *const libc::c_char) == 0i32 {
-    prefix_len = 0i32;
+  if strcmp(target, b"default\x00" as *const u8 as *const libc::c_char) == 0 {
+    prefix_len = 0;
     memset(
       &mut sa6 as *mut sockaddr_in6 as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong,
     );
   } else {
@@ -501,11 +501,11 @@ unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut
     if !cp.is_null() {
       *cp = '\u{0}' as i32 as libc::c_char;
       prefix_len =
-        xatoul_range(cp.offset(1), 0i32 as libc::c_ulong, 128i32 as libc::c_ulong) as libc::c_int
+        xatoul_range(cp.offset(1), 0 as libc::c_ulong, 128i32 as libc::c_ulong) as libc::c_int
     } else {
       prefix_len = 128i32
     }
-    if crate::libbb::inet_common::INET6_resolve(target, &mut sa6 as *mut sockaddr_in6) < 0i32 {
+    if crate::libbb::inet_common::INET6_resolve(target, &mut sa6 as *mut sockaddr_in6) < 0 {
       crate::libbb::verror_msg::bb_error_msg_and_die(
         b"resolving %s\x00" as *const u8 as *const libc::c_char,
         target,
@@ -515,7 +515,7 @@ unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut
   /* Clean out the RTREQ structure. */
   memset(
     &mut rt as *mut in6_rtmsg as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<in6_rtmsg>() as libc::c_ulong,
   );
   memcpy(
@@ -543,7 +543,7 @@ unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut
       if rt.rtmsg_flags & 0x2i32 as libc::c_uint != 0 {
         crate::libbb::appletlib::bb_show_usage();
       }
-      if crate::libbb::inet_common::INET6_resolve(args_m1, &mut sa6 as *mut sockaddr_in6) < 0i32 {
+      if crate::libbb::inet_common::INET6_resolve(args_m1, &mut sa6 as *mut sockaddr_in6) < 0 {
         crate::libbb::verror_msg::bb_error_msg_and_die(
           b"resolving %s\x00" as *const u8 as *const libc::c_char,
           args_m1,
@@ -572,8 +572,8 @@ unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut
     }
   }
   /* Create a socket to the INET6 kernel. */
-  skfd = crate::libbb::xfuncs_printf::xsocket(10i32, SOCK_DGRAM as libc::c_int, 0i32);
-  rt.rtmsg_ifindex = 0i32;
+  skfd = crate::libbb::xfuncs_printf::xsocket(10i32, SOCK_DGRAM as libc::c_int, 0);
+  rt.rtmsg_ifindex = 0;
   if !devname.is_null() {
     let mut ifr: ifreq = ifreq {
       ifr_ifrn: C2RustUnnamed_1 { ifrn_name: [0; 16] },
@@ -628,10 +628,10 @@ static mut flagvals: [libc::c_uint; 11] = [
 static mut flagchars: [libc::c_char; 12] = [85, 71, 72, 82, 68, 77, 68, 65, 67, 33, 110, 0];
 unsafe extern "C" fn set_flags(mut flagstr: *mut libc::c_char, mut flags: libc::c_int) {
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   loop {
     *flagstr = flagchars[i as usize];
-    if !(*flagstr as libc::c_int != 0i32) {
+    if !(*flagstr as libc::c_int != 0) {
       break;
     }
     if flags as libc::c_uint & flagvals[i as usize] != 0 {
@@ -680,7 +680,7 @@ pub unsafe extern "C" fn bb_displayroutes(mut noresolve: libc::c_int, mut netsta
   );
   /* Skip the first line. */
   r = fscanf(fp, b"%*[^\n]\n\x00" as *const u8 as *const libc::c_char);
-  if r < 0i32 {
+  if r < 0 {
     current_block = 3405502113825085733;
   } else {
     current_block = 17216689946888361452;
@@ -692,7 +692,7 @@ pub unsafe extern "C" fn bb_displayroutes(mut noresolve: libc::c_int, mut netsta
        * is completely empty, /proc/net/route has no header.
        */
       {
-        if r < 0i32 && feof_unlocked(fp) != 0 {
+        if r < 0 && feof_unlocked(fp) != 0 {
           break;
         }
         crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
@@ -734,7 +734,7 @@ pub unsafe extern "C" fn bb_displayroutes(mut noresolve: libc::c_int, mut netsta
         }
         memset(
           &mut s_addr as *mut sockaddr_in as *mut libc::c_void,
-          0i32,
+          0,
           ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong,
         );
         s_addr.sin_family = 2i32 as sa_family_t;
@@ -824,14 +824,14 @@ unsafe extern "C" fn INET6_displayroutes() {
       iface.as_mut_ptr(),
     );
     if r != 9i32 {
-      if r < 0i32 && feof_unlocked(fp) != 0 {
+      if r < 0 && feof_unlocked(fp) != 0 {
         break;
       }
     } else {
       /* Do the addr6x shift-and-insert changes to ':'-delimit addresses.
        * For now, always do this to validate the proc route format, even
        * if the interface is down. */
-      let mut i: libc::c_int = 0i32;
+      let mut i: libc::c_int = 0;
       let mut p: *mut libc::c_char = addr6x.as_mut_ptr().offset(14);
       loop {
         if *p == 0 {
@@ -840,7 +840,7 @@ unsafe extern "C" fn INET6_displayroutes() {
             break;
           }
           /* nul terminator for 1st address? */
-          addr6x[39] = 0i32 as libc::c_char; /* Fixup... need 0 instead of ':'. */
+          addr6x[39] = 0 as libc::c_char; /* Fixup... need 0 instead of ':'. */
           p = p.offset(1)
         } else {
           let fresh8 = p; /* Skip and continue. */
@@ -874,11 +874,11 @@ unsafe extern "C" fn INET6_displayroutes() {
                 | 0x200i32
                 | 0x200000i32),
           );
-          r = 0i32;
+          r = 0;
           loop {
             memset(
               &mut snaddr6 as *mut sockaddr_in6 as *mut libc::c_void,
-              0i32,
+              0,
               ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong,
             );
             inet_pton(
@@ -951,8 +951,8 @@ pub unsafe extern "C" fn route_main(
     if (*p).is_null() {
       break;
     }
-    if strcmp(*p, b"-net\x00" as *const u8 as *const libc::c_char) == 0i32
-      || strcmp(*p, b"-host\x00" as *const u8 as *const libc::c_char) == 0i32
+    if strcmp(*p, b"-net\x00" as *const u8 as *const libc::c_char) == 0
+      || strcmp(*p, b"-host\x00" as *const u8 as *const libc::c_char) == 0
     {
       *(*p.offset(0)).offset(0) = '#' as i32 as libc::c_char
     }
@@ -963,9 +963,9 @@ pub unsafe extern "C" fn route_main(
     &mut family as *mut *mut libc::c_char,
   );
   if opt & 0x1i32 as libc::c_uint != 0
-    && strcmp(family, b"inet\x00" as *const u8 as *const libc::c_char) != 0i32
+    && strcmp(family, b"inet\x00" as *const u8 as *const libc::c_char) != 0
   {
-    if strcmp(family, b"inet6\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    if strcmp(family, b"inet6\x00" as *const u8 as *const libc::c_char) == 0 {
       opt |= 0x8i32 as libc::c_uint
     /* Set flag for ipv6. */
     } else {
@@ -978,7 +978,7 @@ pub unsafe extern "C" fn route_main(
     let mut noresolve: libc::c_int = if opt & 0x2i32 as libc::c_uint != 0 {
       0xfffi32
     } else {
-      0i32
+      0
     };
     if opt & 0x8i32 as libc::c_uint != 0 {
       INET6_displayroutes();
@@ -998,5 +998,5 @@ pub unsafe extern "C" fn route_main(
   } else {
     INET_setroute(what, argv);
   }
-  return 0i32;
+  return 0;
 }

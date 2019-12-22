@@ -110,7 +110,7 @@ pub unsafe extern "C" fn install_main(
   let mut copy_flags: libc::c_int =
     FILEUTILS_DEREFERENCE as libc::c_int | FILEUTILS_FORCE as libc::c_int;
   let mut opts: libc::c_int = 0;
-  let mut ret: libc::c_int = 0i32;
+  let mut ret: libc::c_int = 0;
   let mut isdir: libc::c_int = 0;
   /* -c exists for backwards compatibility, it's needed */
   /* -b is ignored ("make a backup of each existing destination file") */
@@ -169,8 +169,8 @@ pub unsafe extern "C" fn install_main(
     let ref mut fresh0 = *argv.offset(argc as isize);
     *fresh0 = std::ptr::null_mut::<libc::c_char>();
     /* coreutils install resolves link in this case, don't use lstat */
-    isdir = if stat(last, &mut statbuf) < 0i32 {
-      0i32
+    isdir = if stat(last, &mut statbuf) < 0 {
+      0
     } else {
       (statbuf.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint) as libc::c_int
     }
@@ -230,7 +230,7 @@ pub unsafe extern "C" fn install_main(
           crate::libbb::get_last_path_component::bb_basename(arg),
         )
       }
-      if crate::libbb::copy_file::copy_file(arg, dest, copy_flags) != 0i32 {
+      if crate::libbb::copy_file::copy_file(arg, dest, copy_flags) != 0 {
         /* copy is not made */
         ret = 1i32; /* -p --preserve-dates */
         current_block = 11038358249373066665;

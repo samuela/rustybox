@@ -102,10 +102,10 @@ pub unsafe extern "C" fn fdformat_main(
   /* original message was: "Could not determine current format type" */
   crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
-    ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
-      | (2i32 << 0i32 + 8i32) as libc::c_uint
-      | (0x4i32 << 0i32) as libc::c_uint) as libc::c_ulong
-      | (::std::mem::size_of::<floppy_struct>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+    ((2u32 << 0 + 8i32 + 8i32 + 14i32
+      | (2i32 << 0 + 8i32) as libc::c_uint
+      | (0x4i32 << 0) as libc::c_uint) as libc::c_ulong
+      | (::std::mem::size_of::<floppy_struct>() as libc::c_ulong) << 0 + 8i32 + 8i32)
       as libc::c_uint,
     &mut param as *mut floppy_struct as *mut libc::c_void,
     b"FDGETPRM\x00" as *const u8 as *const libc::c_char,
@@ -126,24 +126,24 @@ pub unsafe extern "C" fn fdformat_main(
   printf(b"Formatting... \x00" as *const u8 as *const libc::c_char);
   crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
-    0u32 << 0i32 + 8i32 + 8i32 + 14i32
-      | (2i32 << 0i32 + 8i32) as libc::c_uint
-      | (0x47i32 << 0i32) as libc::c_uint
-      | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
+    0u32 << 0 + 8i32 + 8i32 + 14i32
+      | (2i32 << 0 + 8i32) as libc::c_uint
+      | (0x47i32 << 0) as libc::c_uint
+      | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
     0 as *mut libc::c_void,
     b"FDFMTBEG\x00" as *const u8 as *const libc::c_char,
   );
   /* n == track */
-  n = 0i32;
+  n = 0;
   while (n as libc::c_uint) < param.track {
-    descr.head = 0i32 as libc::c_uint;
+    descr.head = 0 as libc::c_uint;
     descr.track = n as libc::c_uint;
     crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
-      ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (2i32 << 0i32 + 8i32) as libc::c_uint
-        | (0x48i32 << 0i32) as libc::c_uint) as libc::c_ulong
-        | (::std::mem::size_of::<format_descr>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+      ((1u32 << 0 + 8i32 + 8i32 + 14i32
+        | (2i32 << 0 + 8i32) as libc::c_uint
+        | (0x48i32 << 0) as libc::c_uint) as libc::c_ulong
+        | (::std::mem::size_of::<format_descr>() as libc::c_ulong) << 0 + 8i32 + 8i32)
         as libc::c_uint,
       &mut descr as *mut format_descr as *mut libc::c_void,
       b"FDFMTTRK\x00" as *const u8 as *const libc::c_char,
@@ -156,10 +156,10 @@ pub unsafe extern "C" fn fdformat_main(
       descr.head = 1i32 as libc::c_uint;
       crate::libbb::xfuncs_printf::bb_xioctl(
         fd,
-        ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (2i32 << 0i32 + 8i32) as libc::c_uint
-          | (0x48i32 << 0i32) as libc::c_uint) as libc::c_ulong
-          | (::std::mem::size_of::<format_descr>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+        ((1u32 << 0 + 8i32 + 8i32 + 14i32
+          | (2i32 << 0 + 8i32) as libc::c_uint
+          | (0x48i32 << 0) as libc::c_uint) as libc::c_ulong
+          | (::std::mem::size_of::<format_descr>() as libc::c_ulong) << 0 + 8i32 + 8i32)
           as libc::c_uint,
         &mut descr as *mut format_descr as *mut libc::c_void,
         b"FDFMTTRK\x00" as *const u8 as *const libc::c_char,
@@ -169,10 +169,10 @@ pub unsafe extern "C" fn fdformat_main(
   }
   crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
-    0u32 << 0i32 + 8i32 + 8i32 + 14i32
-      | (2i32 << 0i32 + 8i32) as libc::c_uint
-      | (0x49i32 << 0i32) as libc::c_uint
-      | (0i32 << 0i32 + 8i32 + 8i32) as libc::c_uint,
+    0u32 << 0 + 8i32 + 8i32 + 14i32
+      | (2i32 << 0 + 8i32) as libc::c_uint
+      | (0x49i32 << 0) as libc::c_uint
+      | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint,
     0 as *mut libc::c_void,
     b"FDFMTEND\x00" as *const u8 as *const libc::c_char,
   );
@@ -186,7 +186,7 @@ pub unsafe extern "C" fn fdformat_main(
       .wrapping_mul(512i32 as libc::c_uint) as libc::c_int;
     data = xmalloc(n as size_t) as *mut libc::c_uchar;
     printf(b"Verifying... \x00" as *const u8 as *const libc::c_char);
-    cyl = 0i32;
+    cyl = 0;
     while (cyl as libc::c_uint) < param.track {
       printf(
         b"%3d\x08\x08\x08\x00" as *const u8 as *const libc::c_char,
@@ -195,7 +195,7 @@ pub unsafe extern "C" fn fdformat_main(
       read_bytes =
         crate::libbb::read::safe_read(fd, data as *mut libc::c_void, n as size_t) as libc::c_int;
       if read_bytes != n {
-        if read_bytes < 0i32 {
+        if read_bytes < 0 {
           crate::libbb::perror_msg::bb_simple_perror_msg(
             b"read error\x00" as *const u8 as *const libc::c_char,
           );
@@ -213,7 +213,7 @@ pub unsafe extern "C" fn fdformat_main(
       /* Check backwards so we don't need a counter */
       {
         read_bytes -= 1;
-        if !(read_bytes >= 0i32) {
+        if !(read_bytes >= 0) {
           break;
         }
         if *data.offset(read_bytes as isize) as libc::c_int != 0xf6i32 {
@@ -232,5 +232,5 @@ pub unsafe extern "C" fn fdformat_main(
   }
   /* Don't bother closing.  Exit does
    * that, so we can save a few bytes */
-  return 0i32;
+  return 0;
 }

@@ -91,7 +91,7 @@ unsafe extern "C" fn xfind_str(
   mut table: *const libc::c_char,
   mut str: *const libc::c_char,
 ) -> *const libc::c_char {
-  while strcasecmp(str, table.offset(1)) != 0i32 {
+  while strcasecmp(str, table.offset(1)) != 0 {
     if *table.offset(0) == 0 {
       crate::libbb::appletlib::bb_show_usage();
     }
@@ -106,14 +106,14 @@ static mut cmds: [libc::c_char; 80] = [
   'a' as i32 as libc::c_char,
   'd' as i32 as libc::c_char,
   'd' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   3i32 as libc::c_char,
   DEL_VLAN_CMD as libc::c_int as libc::c_char,
   7i32 as libc::c_char,
   'r' as i32 as libc::c_char,
   'e' as i32 as libc::c_char,
   'm' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   3i32 as libc::c_char,
   SET_VLAN_NAME_TYPE_CMD as libc::c_int as libc::c_char,
   17i32 as libc::c_char,
@@ -130,7 +130,7 @@ static mut cmds: [libc::c_char; 80] = [
   'y' as i32 as libc::c_char,
   'p' as i32 as libc::c_char,
   'e' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   5i32 as libc::c_char,
   SET_VLAN_FLAG_CMD as libc::c_int as libc::c_char,
   12i32 as libc::c_char,
@@ -142,7 +142,7 @@ static mut cmds: [libc::c_char; 80] = [
   'l' as i32 as libc::c_char,
   'a' as i32 as libc::c_char,
   'g' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   5i32 as libc::c_char,
   SET_VLAN_EGRESS_PRIORITY_CMD as libc::c_int as libc::c_char,
   18i32 as libc::c_char,
@@ -160,10 +160,10 @@ static mut cmds: [libc::c_char; 80] = [
   'm' as i32 as libc::c_char,
   'a' as i32 as libc::c_char,
   'p' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   5i32 as libc::c_char,
   SET_VLAN_INGRESS_PRIORITY_CMD as libc::c_int as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   's' as i32 as libc::c_char,
   'e' as i32 as libc::c_char,
   't' as i32 as libc::c_char,
@@ -179,7 +179,7 @@ static mut cmds: [libc::c_char; 80] = [
   'm' as i32 as libc::c_char,
   'a' as i32 as libc::c_char,
   'p' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
 ];
 static mut name_types: [libc::c_char; 76] = [
   VLAN_NAME_TYPE_PLUS_VID as libc::c_int as libc::c_char,
@@ -197,7 +197,7 @@ static mut name_types: [libc::c_char; 76] = [
   'V' as i32 as libc::c_char,
   'I' as i32 as libc::c_char,
   'D' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   VLAN_NAME_TYPE_PLUS_VID_NO_PAD as libc::c_int as libc::c_char,
   22i32 as libc::c_char,
   'V' as i32 as libc::c_char,
@@ -220,7 +220,7 @@ static mut name_types: [libc::c_char; 76] = [
   'P' as i32 as libc::c_char,
   'A' as i32 as libc::c_char,
   'D' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   VLAN_NAME_TYPE_RAW_PLUS_VID as libc::c_int as libc::c_char,
   15i32 as libc::c_char,
   'D' as i32 as libc::c_char,
@@ -235,9 +235,9 @@ static mut name_types: [libc::c_char; 76] = [
   'V' as i32 as libc::c_char,
   'I' as i32 as libc::c_char,
   'D' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   VLAN_NAME_TYPE_RAW_PLUS_VID_NO_PAD as libc::c_int as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   'D' as i32 as libc::c_char,
   'E' as i32 as libc::c_char,
   'V' as i32 as libc::c_char,
@@ -257,7 +257,7 @@ static mut name_types: [libc::c_char; 76] = [
   'P' as i32 as libc::c_char,
   'A' as i32 as libc::c_char,
   'D' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
 ];
 #[no_mangle]
 pub unsafe extern "C" fn vconfig_main(
@@ -274,7 +274,7 @@ pub unsafe extern "C" fn vconfig_main(
   let mut fd: libc::c_int = 0;
   memset(
     &mut ifr as *mut vlan_ioctl_args as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<vlan_ioctl_args>() as libc::c_ulong,
   );
   argv = argv.offset(1);
@@ -301,18 +301,18 @@ pub unsafe extern "C" fn vconfig_main(
     if ifr.cmd == SET_VLAN_FLAG_CMD as libc::c_int {
       /* set_flag */
       ifr.u.flag =
-        crate::libbb::xatonum::xatou_range(p, 0i32 as libc::c_uint, 1i32 as libc::c_uint);
+        crate::libbb::xatonum::xatou_range(p, 0 as libc::c_uint, 1i32 as libc::c_uint);
       /* DM: in order to set reorder header, qos must be set */
       ifr.vlan_qos = crate::libbb::xatonum::xatou_range(
         *argv.offset(3),
-        0i32 as libc::c_uint,
+        0 as libc::c_uint,
         7i32 as libc::c_uint,
       ) as libc::c_short
     } else if ifr.cmd == ADD_VLAN_CMD as libc::c_int {
       /* add */
       ifr.u.VID = crate::libbb::xatonum::xatou_range(
         p,
-        0i32 as libc::c_uint,
+        0 as libc::c_uint,
         (4096i32 - 1i32) as libc::c_uint,
       ) as libc::c_int
     } else if ifr.cmd != DEL_VLAN_CMD as libc::c_int {
@@ -320,12 +320,12 @@ pub unsafe extern "C" fn vconfig_main(
       ifr.u.skb_priority = crate::libbb::xatonum::xatou(p);
       ifr.vlan_qos = crate::libbb::xatonum::xatou_range(
         *argv.offset(3),
-        0i32 as libc::c_uint,
+        0 as libc::c_uint,
         7i32 as libc::c_uint,
       ) as libc::c_short
     }
   }
-  fd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_STREAM as libc::c_int, 0i32);
+  fd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_STREAM as libc::c_int, 0);
   crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
     fd,
     0x8983i32 as libc::c_uint,
@@ -333,5 +333,5 @@ pub unsafe extern "C" fn vconfig_main(
     b"ioctl error for %s\x00" as *const u8 as *const libc::c_char,
     *argv.offset(0),
   );
-  return 0i32;
+  return 0;
 }

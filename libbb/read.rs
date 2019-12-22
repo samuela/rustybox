@@ -31,7 +31,7 @@ pub unsafe extern "C" fn safe_read(
       break;
     }
     /* repeat the read() */
-    *bb_errno = 0i32
+    *bb_errno = 0
   }
   return n;
 }
@@ -53,7 +53,7 @@ pub unsafe extern "C" fn full_read(
 ) -> ssize_t {
   let mut cc: ssize_t = 0;
   let mut total: ssize_t = 0;
-  total = 0i32 as ssize_t;
+  total = 0 as ssize_t;
   while len != 0 {
     cc = safe_read(fd, buf, len);
     if cc < 0 {
@@ -325,8 +325,8 @@ pub unsafe extern "C" fn open_read_close(
   mut buf: *mut libc::c_void,
   mut size: size_t,
 ) -> ssize_t {
-  let mut fd: libc::c_int = open(filename, 0i32);
-  if fd < 0i32 {
+  let mut fd: libc::c_int = open(filename, 0);
+  if fd < 0 {
     return fd as ssize_t;
   }
   return read_close(fd, buf, size);

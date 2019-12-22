@@ -101,7 +101,7 @@ static mut split_suffixes: [suffix_mult; 5] = [
   {
     let mut init = suffix_mult {
       suffix: [0, 0, 0, 0],
-      mult: 0i32 as libc::c_uint,
+      mult: 0 as libc::c_uint,
     };
     init
   },
@@ -141,7 +141,7 @@ pub unsafe extern "C" fn split_main(
   let mut count_p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sfx: *const libc::c_char = std::ptr::null();
   let mut cnt: off_t = 1000i32 as off_t;
-  let mut remaining: off_t = 0i32 as off_t;
+  let mut remaining: off_t = 0 as off_t;
   let mut opt: libc::c_uint = 0;
   let mut bytes_read: ssize_t = 0;
   let mut to_write: ssize_t = 0;
@@ -153,10 +153,10 @@ pub unsafe extern "C" fn split_main(
     &mut count_p as *mut *mut libc::c_char,
     &mut suffix_len as *mut libc::c_uint,
   );
-  if opt & (1i32 << 0i32) as libc::c_uint != 0 {
+  if opt & (1i32 << 0) as libc::c_uint != 0 {
     cnt = xatoul_range(
       count_p,
-      0i32 as libc::c_ulong,
+      0 as libc::c_ulong,
       9223372036854775807i64 as libc::c_ulong,
     ) as off_t
   }
@@ -172,7 +172,7 @@ pub unsafe extern "C" fn split_main(
       sfx = *argv.offset(1)
     }
     fd = crate::libbb::wfopen_input::xopen_stdin(*argv.offset(0));
-    crate::libbb::xfuncs_printf::xmove_fd(fd, 0i32);
+    crate::libbb::xfuncs_printf::xmove_fd(fd, 0);
   } else {
     let ref mut fresh0 = *argv.offset(0);
     *fresh0 = bb_msg_standard_input.as_ptr() as *mut libc::c_char
@@ -197,7 +197,7 @@ pub unsafe extern "C" fn split_main(
   );
   loop {
     bytes_read = crate::libbb::read::safe_read(
-      0i32,
+      0,
       bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
       READ_BUFFER_SIZE as libc::c_int as size_t,
     );
@@ -254,5 +254,5 @@ pub unsafe extern "C" fn split_main(
       }
     }
   }
-  return 0i32;
+  return 0;
 }

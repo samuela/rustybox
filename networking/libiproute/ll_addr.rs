@@ -48,10 +48,10 @@ pub unsafe extern "C" fn ll_addr_n2a(
   if alen == 4i32 && (type_0 == 768i32 || type_0 == 776i32 || type_0 == 778i32) {
     return inet_ntop(2i32, addr as *const libc::c_void, buf, blen as socklen_t);
   }
-  l = 0i32;
-  i = 0i32;
+  l = 0;
+  i = 0;
   while i < alen {
-    if i == 0i32 {
+    if i == 0 {
       snprintf(
         buf.offset(l as isize),
         blen as libc::c_ulong,
@@ -105,12 +105,12 @@ pub unsafe extern "C" fn ll_addr_a2n(
     );
     return 4i32;
   }
-  i = 0i32;
+  i = 0;
   while i < len {
     let mut temp: libc::c_int = 0;
     let mut cp: *mut libc::c_char = strchr(arg, ':' as i32);
     if !cp.is_null() {
-      *cp = 0i32 as libc::c_char;
+      *cp = 0 as libc::c_char;
       cp = cp.offset(1)
     }
     if sscanf(
@@ -118,7 +118,7 @@ pub unsafe extern "C" fn ll_addr_a2n(
       b"%x\x00" as *const u8 as *const libc::c_char,
       &mut temp as *mut libc::c_int,
     ) != 1i32
-      || (temp < 0i32 || temp > 255i32)
+      || (temp < 0 || temp > 255i32)
     {
       crate::libbb::verror_msg::bb_error_msg(
         b"\"%s\" is invalid lladdr\x00" as *const u8 as *const libc::c_char,

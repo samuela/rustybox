@@ -51,7 +51,7 @@ pub unsafe extern "C" fn regcomp_or_errmsg(
       ret,
       preg,
       std::ptr::null_mut::<libc::c_char>(),
-      0i32 as size_t,
+      0 as size_t,
     ) as libc::c_int;
     let mut errmsg: *mut libc::c_char = xmalloc(errmsgsz as size_t) as *mut libc::c_char;
     regerror(ret, preg, errmsg, errmsgsz as size_t);

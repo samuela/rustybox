@@ -178,7 +178,7 @@ unsafe extern "C" fn modinfo(
           if 1i32 << j & OPT_TAGS as libc::c_int != 0 {
             pattern = shortcuts[(j - 2i32) as usize]
           }
-          if strcmp(pattern, shortcuts[0]) == 0i32 {
+          if strcmp(pattern, shortcuts[0]) == 0 {
             /* "-n" or "-F filename" */
             display(path, shortcuts[0]);
           } else {
@@ -198,7 +198,7 @@ unsafe extern "C" fn modinfo(
               after_pattern = crate::libbb::compare_string_array::is_prefixed_with(ptr, pattern);
               if !after_pattern.is_null() && *after_pattern as libc::c_int == '=' as i32 {
                 /* field prefixes are 0x80 or 0x00 */
-                if *ptr.offset(-1i32 as isize) as libc::c_int & 0x7fi32 == 0i32 {
+                if *ptr.offset(-1i32 as isize) as libc::c_int & 0x7fi32 == 0 {
                   ptr = after_pattern.offset(1);
                   display(ptr, pattern);
                   ptr = ptr.offset(strlen(ptr) as isize)
@@ -288,9 +288,9 @@ pub unsafe extern "C" fn modinfo_main(
       crate::libbb::get_last_path_component::bb_basename(tokens[0]),
       name.as_mut_ptr(),
     );
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     while !(*argv.offset(i as isize)).is_null() {
-      if fnmatch(*argv.offset(i as isize), name.as_mut_ptr(), 0i32) == 0i32 {
+      if fnmatch(*argv.offset(i as isize), name.as_mut_ptr(), 0) == 0 {
         modinfo(tokens[0], uts.release.as_mut_ptr(), field);
         let ref mut fresh1 = *argv.offset(i as isize);
         *fresh1 = b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
@@ -298,12 +298,12 @@ pub unsafe extern "C" fn modinfo_main(
       i = i.wrapping_add(1)
     }
   }
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while !(*argv.offset(i as isize)).is_null() {
     if *(*argv.offset(i as isize)).offset(0) != 0 {
       modinfo(*argv.offset(i as isize), uts.release.as_mut_ptr(), field);
     }
     i = i.wrapping_add(1)
   }
-  return 0i32;
+  return 0;
 }

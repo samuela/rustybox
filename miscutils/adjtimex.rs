@@ -106,7 +106,7 @@ static mut statlist_bit: [u16; 14] = [
   0x400i32 as u16,
   0x800i32 as u16,
   0x1000i32 as u16,
-  0i32 as u16,
+  0 as u16,
 ];
 static mut statlist_name: [libc::c_char; 96] = [
   80, 76, 76, 0, 80, 80, 83, 70, 82, 69, 81, 0, 80, 80, 83, 84, 73, 77, 69, 0, 70, 70, 76, 0, 73,
@@ -160,7 +160,7 @@ pub unsafe extern "C" fn adjtimex_main(
   let mut descript: *const libc::c_char = std::ptr::null();
   memset(
     &mut txc as *mut timex as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<timex>() as libc::c_ulong,
   );
   opt = crate::libbb::getopt32::getopt32(
@@ -197,7 +197,7 @@ pub unsafe extern "C" fn adjtimex_main(
    * If you need to make it more complex, feel free to downgrade to NOEXEC
    */
   ret = adjtimex(&mut txc);
-  if ret < 0i32 {
+  if ret < 0 {
     crate::libbb::perror_nomsg_and_die::bb_perror_nomsg_and_die();
   }
   if opt & OPT_quiet as libc::c_int as libc::c_uint == 0 {
@@ -212,7 +212,7 @@ pub unsafe extern "C" fn adjtimex_main(
      */
     name = statlist_name.as_ptr();
     sep = b"\x00" as *const u8 as *const libc::c_char;
-    i = 0i32;
+    i = 0;
     while statlist_bit[i as usize] != 0 {
       if txc.status & statlist_bit[i as usize] as libc::c_int != 0 {
         printf(b"%s%s\x00" as *const u8 as *const libc::c_char, sep, name);
@@ -230,5 +230,5 @@ pub unsafe extern "C" fn adjtimex_main(
                txc.precision, txc.tolerance, txc.tick, txc.time.tv_sec,
                txc.time.tv_usec, ret, descript);
   }
-  return 0i32;
+  return 0;
 }

@@ -69,13 +69,13 @@ pub unsafe extern "C" fn query_loop(mut device: *const libc::c_char) -> *mut lib
     lo_init: [0; 2],
   };
   let mut dev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  fd = open(device, 0i32);
-  if fd >= 0i32 {
+  fd = open(device, 0);
+  if fd >= 0 {
     if ioctl(
       fd,
       0x4c05i32 as libc::c_ulong,
       &mut loopinfo as *mut bb_loop_info,
-    ) == 0i32
+    ) == 0
     {
       dev = crate::libbb::xfuncs_printf::xasprintf(
         b"%lu %s\x00" as *const u8 as *const libc::c_char,
@@ -91,11 +91,11 @@ pub unsafe extern "C" fn query_loop(mut device: *const libc::c_char) -> *mut lib
 pub unsafe extern "C" fn del_loop(mut device: *const libc::c_char) -> libc::c_int {
   let mut fd: libc::c_int = 0;
   let mut rc: libc::c_int = 0;
-  fd = open(device, 0i32);
-  if fd < 0i32 {
+  fd = open(device, 0);
+  if fd < 0 {
     return 1i32;
   }
-  rc = ioctl(fd, 0x4c01i32 as libc::c_ulong, 0i32);
+  rc = ioctl(fd, 0x4c01i32 as libc::c_ulong, 0);
   close(fd);
   return rc;
 }
@@ -556,15 +556,15 @@ pub unsafe extern "C" fn set_loop(
   rc = dfd;
   /* Open the file.  Barf if this doesn't work.  */
   mode = if flags & 1i32 as libc::c_uint != 0 {
-    0i32
+    0
   } else {
     0o2i32
   };
   loop {
     ffd = open(file, mode);
-    if ffd < 0i32 {
-      if mode != 0i32 {
-        mode = 0i32
+    if ffd < 0 {
+      if mode != 0 {
+        mode = 0
       } else {
         return -*bb_errno;
       }
@@ -584,7 +584,7 @@ pub unsafe extern "C" fn set_loop(
       i = get_free_loop();
       if i == -2i32 {
         /* no /dev/loop-control */
-        i = 0i32;
+        i = 0;
         try_0 = dev.as_mut_ptr();
         current_block = 4495394744059808450;
       } else {
@@ -608,7 +608,7 @@ pub unsafe extern "C" fn set_loop(
     /* Find a loop device.  */
     /* 1048575 (0xfffff) is a max possible minor number in Linux circa 2010 */
     {
-      i = 0i32;
+      i = 0;
       current_block = 15089075282327824602;
     }
     _ => {}
@@ -624,8 +624,8 @@ pub unsafe extern "C" fn set_loop(
           b"/dev/loop%u\x00" as *const u8 as *const libc::c_char,
           i,
         );
-        *bb_errno = 0i32;
-        if !(stat(try_0, &mut statbuf) != 0i32
+        *bb_errno = 0;
+        if !(stat(try_0, &mut statbuf) != 0
           || !(statbuf.st_mode & 0o170000i32 as libc::c_uint == 0o60000i32 as libc::c_uint))
         {
           current_block = 5504172152099367553;
@@ -638,7 +638,7 @@ pub unsafe extern "C" fn set_loop(
             (0o60000i32 | 0o644i32) as mode_t,
             crate::libbb::makedev::bb_makedev(7i32 as libc::c_uint, i as libc::c_uint)
               as libc::dev_t,
-          ) == 0i32
+          ) == 0
           {
             current_block = 5504172152099367553;
             continue;
@@ -651,11 +651,11 @@ pub unsafe extern "C" fn set_loop(
       _ => {
         /* Open the sucker and check its loopiness.  */
         dfd = open(try_0, mode);
-        if dfd < 0i32 && *bb_errno == 30i32 {
-          mode = 0i32;
+        if dfd < 0 && *bb_errno == 30i32 {
+          mode = 0;
           dfd = open(try_0, mode)
         }
-        if dfd < 0i32 {
+        if dfd < 0 {
           if *bb_errno == 6i32 {
             /* Happens if loop module is not loaded */
             rc = -1i32;
@@ -670,10 +670,10 @@ pub unsafe extern "C" fn set_loop(
           /* If device is free, claim it.  */
           if rc != 0 && *bb_errno == 6i32 {
             /* Associate free loop device with file.  */
-            if ioctl(dfd, 0x4c00i32 as libc::c_ulong, ffd) == 0i32 {
+            if ioctl(dfd, 0x4c00i32 as libc::c_ulong, ffd) == 0 {
               memset(
                 &mut loopinfo as *mut bb_loop_info as *mut libc::c_void,
-                0i32,
+                0,
                 ::std::mem::size_of::<bb_loop_info>() as libc::c_ulong,
               );
               crate::libbb::safe_strncpy::safe_strncpy(
@@ -694,7 +694,7 @@ pub unsafe extern "C" fn set_loop(
                 0x4c04i32 as libc::c_ulong,
                 &mut loopinfo as *mut bb_loop_info,
               );
-              if rc != 0i32 && loopinfo.lo_flags & 4i32 as libc::c_uint != 0 {
+              if rc != 0 && loopinfo.lo_flags & 4i32 as libc::c_uint != 0 {
                 /* Old kernel, does not support LO_FLAGS_AUTOCLEAR? */
                 /* (this code path is not tested) */
                 loopinfo.lo_flags = (loopinfo.lo_flags as libc::c_uint)
@@ -706,15 +706,15 @@ pub unsafe extern "C" fn set_loop(
                   &mut loopinfo as *mut bb_loop_info,
                 )
               }
-              if rc != 0i32 {
-                ioctl(dfd, 0x4c01i32 as libc::c_ulong, 0i32);
+              if rc != 0 {
+                ioctl(dfd, 0x4c01i32 as libc::c_ulong, 0);
                 // actually, 0 param is unnecessary
               }
             }
           } else {
             rc = -1i32
           }
-          if rc != 0i32 {
+          if rc != 0 {
             close(dfd);
           }
         }
@@ -727,7 +727,7 @@ pub unsafe extern "C" fn set_loop(
     }
   }
   close(ffd);
-  if rc == 0i32 {
+  if rc == 0 {
     if (*device).is_null() {
       *device = crate::libbb::xfuncs_printf::xstrdup(dev.as_mut_ptr())
     }

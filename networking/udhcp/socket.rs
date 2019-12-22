@@ -146,7 +146,7 @@ pub unsafe extern "C" fn udhcp_read_interface(
   let mut our_ip: *mut sockaddr_in = std::ptr::null_mut();
   memset(
     ifr as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<ifreq>() as libc::c_ulong,
   );
   fd =
@@ -180,7 +180,7 @@ pub unsafe extern "C" fn udhcp_read_interface(
       0x8933i32 as libc::c_uint,
       ifr as *mut libc::c_void,
       b"SIOCGIFINDEX\x00" as *const u8 as *const libc::c_char,
-    ) != 0i32
+    ) != 0
     {
       close(fd);
       return -1i32;
@@ -199,7 +199,7 @@ pub unsafe extern "C" fn udhcp_read_interface(
       0x8927i32 as libc::c_uint,
       ifr as *mut libc::c_void,
       b"SIOCGIFHWADDR\x00" as *const u8 as *const libc::c_char,
-    ) != 0i32
+    ) != 0
     {
       close(fd);
       return -1i32;
@@ -222,7 +222,7 @@ pub unsafe extern "C" fn udhcp_read_interface(
     }
   }
   close(fd);
-  return 0i32;
+  return 0;
 }
 
 /*
@@ -416,7 +416,7 @@ pub unsafe extern "C" fn udhcp_listen_socket(
   }
   memset(
     &mut addr as *mut sockaddr_in as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong,
   );
   addr.sin_family = 2i32 as sa_family_t;

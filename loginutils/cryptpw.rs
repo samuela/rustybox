@@ -112,7 +112,7 @@ pub unsafe extern "C" fn cryptpw_main(
     115, 116, 100, 105, 110, 0, 0, 115, 112, 97, 115, 115, 119, 111, 114, 100, 45, 102, 100, 0, 1,
     80, 115, 97, 108, 116, 0, 1, 83, 109, 101, 116, 104, 111, 100, 0, 1, 109, 0,
   ];
-  fd = 0i32;
+  fd = 0;
   opt_m = b"des\x00" as *const u8 as *const libc::c_char;
   opt_S = std::ptr::null();
   /* at most two non-option arguments; -P NUM */
@@ -142,7 +142,7 @@ pub unsafe extern "C" fn cryptpw_main(
       ),
     );
   }
-  crate::libbb::xfuncs_printf::xmove_fd(fd, 0i32);
+  crate::libbb::xfuncs_printf::xmove_fd(fd, 0);
   password = *argv.offset(0);
   if password.is_null() {
     /* Only mkpasswd, and only from tty, prompts.
@@ -164,5 +164,5 @@ pub unsafe extern "C" fn cryptpw_main(
       1i32,
     ));
   }
-  return 0i32;
+  return 0;
 }

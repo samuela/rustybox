@@ -73,11 +73,11 @@ pub unsafe extern "C" fn shred_main(
   );
   argv = argv.offset(optind as isize);
   zero_fd =
-    crate::libbb::xfuncs_printf::xopen(b"/dev/zero\x00" as *const u8 as *const libc::c_char, 0i32);
-  if num_iter != 0i32 as libc::c_uint {
+    crate::libbb::xfuncs_printf::xopen(b"/dev/zero\x00" as *const u8 as *const libc::c_char, 0);
+  if num_iter != 0 as libc::c_uint {
     rand_fd = crate::libbb::xfuncs_printf::xopen(
       b"/dev/urandom\x00" as *const u8 as *const libc::c_char,
-      0i32,
+      0,
     )
   }
   if (*argv).is_null() {
@@ -97,20 +97,20 @@ pub unsafe extern "C" fn shred_main(
     fd = -1i32;
     if opt & OPT_f as libc::c_int as libc::c_uint != 0 {
       fd = open(fname, 0o1i32);
-      if fd < 0i32 {
+      if fd < 0 {
         chmod(fname, 0o666i32 as mode_t);
       }
     }
-    if fd < 0i32 {
+    if fd < 0 {
       fd = crate::libbb::xfuncs_printf::xopen(fname, 0o1i32)
     }
-    if fstat(fd, &mut sb) == 0i32 && sb.st_size > 0 {
+    if fstat(fd, &mut sb) == 0 && sb.st_size > 0 {
       let mut size: off_t = sb.st_size;
-      i = 0i32 as libc::c_uint;
+      i = 0 as libc::c_uint;
       while i < num_iter {
         crate::libbb::copyfd::bb_copyfd_size(rand_fd, fd, size);
         fdatasync(fd);
-        crate::libbb::xfuncs_printf::xlseek(fd, 0i32 as off_t, 0i32);
+        crate::libbb::xfuncs_printf::xlseek(fd, 0 as off_t, 0);
         i = i.wrapping_add(1)
       }
       if opt & OPT_z as libc::c_int as libc::c_uint != 0 {
@@ -118,11 +118,11 @@ pub unsafe extern "C" fn shred_main(
         fdatasync(fd);
       }
       if opt & OPT_u as libc::c_int as libc::c_uint != 0 {
-        ftruncate(fd, 0i32 as off64_t);
+        ftruncate(fd, 0 as off64_t);
         crate::libbb::xfuncs_printf::xunlink(fname);
       }
       crate::libbb::xfuncs_printf::xclose(fd);
     }
   }
-  return 0i32;
+  return 0;
 }

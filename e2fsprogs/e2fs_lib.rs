@@ -61,7 +61,7 @@ pub unsafe extern "C" fn iterate_on_dir(
     func.expect("non-null function pointer")(dir_name, de, private);
   }
   closedir(dir);
-  return 0i32;
+  return 0;
 }
 /* Get/set a file version on an ext2 file system */
 #[no_mangle]
@@ -73,7 +73,7 @@ pub unsafe extern "C" fn fgetsetversion(
   let mut fd: libc::c_int = 0;
   let mut r: libc::c_int = 0;
   let mut ver: libc::c_int = 0;
-  fd = open(name, 0i32 | 0o4000i32);
+  fd = open(name, 0 | 0o4000i32);
   if fd == -1i32 {
     return -1i32;
   }
@@ -81,19 +81,19 @@ pub unsafe extern "C" fn fgetsetversion(
     ver = set_version as libc::c_int;
     r = ioctl(
       fd,
-      (1u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (('v' as i32) << 0i32 + 8i32) as libc::c_uint
-        | (2i32 << 0i32) as libc::c_uint) as libc::c_ulong
-        | (::std::mem::size_of::<libc::c_long>() as libc::c_ulong) << 0i32 + 8i32 + 8i32,
+      (1u32 << 0 + 8i32 + 8i32 + 14i32
+        | (('v' as i32) << 0 + 8i32) as libc::c_uint
+        | (2i32 << 0) as libc::c_uint) as libc::c_ulong
+        | (::std::mem::size_of::<libc::c_long>() as libc::c_ulong) << 0 + 8i32 + 8i32,
       &mut ver as *mut libc::c_int,
     )
   } else {
     r = ioctl(
       fd,
-      (2u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (('v' as i32) << 0i32 + 8i32) as libc::c_uint
-        | (1i32 << 0i32) as libc::c_uint) as libc::c_ulong
-        | (::std::mem::size_of::<libc::c_long>() as libc::c_ulong) << 0i32 + 8i32 + 8i32,
+      (2u32 << 0 + 8i32 + 8i32 + 14i32
+        | (('v' as i32) << 0 + 8i32) as libc::c_uint
+        | (1i32 << 0) as libc::c_uint) as libc::c_ulong
+        | (::std::mem::size_of::<libc::c_long>() as libc::c_ulong) << 0 + 8i32 + 8i32,
       &mut ver as *mut libc::c_int,
     );
     *get_version = ver as libc::c_ulong
@@ -125,7 +125,7 @@ pub unsafe extern "C" fn fgetsetflags(
   let mut fd: libc::c_int = 0;
   let mut r: libc::c_int = 0;
   let mut f: libc::c_int = 0;
-  if stat(name, &mut buf) == 0i32
+  if stat(name, &mut buf) == 0
     && !(buf.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
     && !(buf.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint)
   {
@@ -133,7 +133,7 @@ pub unsafe extern "C" fn fgetsetflags(
     *bb_errno = 95i32; /* neither read nor write asked for */
     return -1i32;
   } else {
-    fd = open(name, 0i32 | 0o4000i32);
+    fd = open(name, 0 | 0o4000i32);
     if fd == -1i32 {
       return -1i32;
     }
@@ -141,19 +141,19 @@ pub unsafe extern "C" fn fgetsetflags(
       f = set_flags as libc::c_int;
       r = ioctl(
         fd,
-        (1u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (('f' as i32) << 0i32 + 8i32) as libc::c_uint
-          | (2i32 << 0i32) as libc::c_uint) as libc::c_ulong
-          | (::std::mem::size_of::<libc::c_long>() as libc::c_ulong) << 0i32 + 8i32 + 8i32,
+        (1u32 << 0 + 8i32 + 8i32 + 14i32
+          | (('f' as i32) << 0 + 8i32) as libc::c_uint
+          | (2i32 << 0) as libc::c_uint) as libc::c_ulong
+          | (::std::mem::size_of::<libc::c_long>() as libc::c_ulong) << 0 + 8i32 + 8i32,
         &mut f as *mut libc::c_int,
       )
     } else {
       r = ioctl(
         fd,
-        (2u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (('f' as i32) << 0i32 + 8i32) as libc::c_uint
-          | (1i32 << 0i32) as libc::c_uint) as libc::c_ulong
-          | (::std::mem::size_of::<libc::c_long>() as libc::c_ulong) << 0i32 + 8i32 + 8i32,
+        (2u32 << 0 + 8i32 + 8i32 + 14i32
+          | (('f' as i32) << 0 + 8i32) as libc::c_uint
+          | (1i32 << 0) as libc::c_uint) as libc::c_ulong
+          | (::std::mem::size_of::<libc::c_long>() as libc::c_ulong) << 0 + 8i32 + 8i32,
         &mut f as *mut libc::c_int,
       );
       *get_flags = f as libc::c_ulong
@@ -215,7 +215,7 @@ pub unsafe extern "C" fn print_e2flags(
           fputs_unlocked(b", \x00" as *const u8 as *const libc::c_char, f);
         }
         fputs_unlocked(fn_0, f);
-        first = 0i32
+        first = 0
       }
       fv = fv.offset(1);
       fn_0 = fn_0.offset(strlen(fn_0).wrapping_add(1i32 as libc::c_ulong) as isize);

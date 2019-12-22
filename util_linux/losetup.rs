@@ -44,30 +44,30 @@ pub unsafe extern "C" fn losetup_main(
       *argv.offset(0),
       s,
     );
-    return 0i32;
+    return 0;
   }
   /* -c LOOPDEV */
   if opt == OPT_c as libc::c_int as libc::c_uint && !(*argv.offset(0)).is_null() {
-    let mut fd: libc::c_int = crate::libbb::xfuncs_printf::xopen(*argv.offset(0), 0i32);
+    let mut fd: libc::c_int = crate::libbb::xfuncs_printf::xopen(*argv.offset(0), 0);
     crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       0x4c07i32 as libc::c_uint,
       0 as *mut libc::c_void,
       b"LOOP_SET_CAPACITY\x00" as *const u8 as *const libc::c_char,
     );
-    return 0i32;
+    return 0;
   }
   /* -d LOOPDEV */
   if opt == OPT_d as libc::c_int as libc::c_uint && !(*argv.offset(0)).is_null() {
     if crate::libbb::r#loop::del_loop(*argv.offset(0)) != 0 {
       crate::libbb::perror_msg::bb_simple_perror_msg_and_die(*argv.offset(0));
     }
-    return 0i32;
+    return 0;
   }
   /* -a */
   if opt == OPT_a as libc::c_int as libc::c_uint {
     let mut n: libc::c_int = 0;
-    n = 0i32;
+    n = 0;
     while n < 1023i32 {
       let mut s_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       sprintf(
@@ -86,7 +86,7 @@ pub unsafe extern "C" fn losetup_main(
       }
       n += 1
     }
-    return 0i32;
+    return 0;
   }
   /* contains -f */
   if opt & OPT_f as libc::c_int as libc::c_uint != 0 {
@@ -98,9 +98,9 @@ pub unsafe extern "C" fn losetup_main(
         b"no free loop devices\x00" as *const u8 as *const libc::c_char,
       );
     }
-    if n_0 < 0i32 {
+    if n_0 < 0 {
       /* n == -2: no /dev/loop-control, use legacy method */
-      n_0 = 0i32
+      n_0 = 0
     }
     loop
     /* or: n >= 0: the number of next free loopdev, just verify it */
@@ -126,14 +126,14 @@ pub unsafe extern "C" fn losetup_main(
     /* now: dev is next free "/dev/loopN" */
     if opt == OPT_f as libc::c_int as libc::c_uint && (*argv.offset(0)).is_null() {
       puts(dev.as_mut_ptr());
-      return 0i32;
+      return 0;
     }
   }
   /* [-rP] [-o OFS] {-f|LOOPDEV} FILE */
   if !(*argv.offset(0)).is_null()
     && (opt & OPT_f as libc::c_int as libc::c_uint != 0 || !(*argv.offset(1)).is_null())
   {
-    let mut offset: libc::c_ulonglong = 0i32 as libc::c_ulonglong;
+    let mut offset: libc::c_ulonglong = 0 as libc::c_ulonglong;
     let mut d: *mut libc::c_char = dev.as_mut_ptr();
     if opt & OPT_o as libc::c_int as libc::c_uint != 0 {
       offset = crate::libbb::xatonum::xatoull(opt_o)
@@ -147,15 +147,15 @@ pub unsafe extern "C" fn losetup_main(
       let mut flags: libc::c_uint = if opt & OPT_r as libc::c_int as libc::c_uint != 0 {
         1i32
       } else {
-        0i32
+        0
       } as libc::c_uint;
       if opt & OPT_P as libc::c_int as libc::c_uint != 0 {
         flags |= 8i32 as libc::c_uint
       }
-      if crate::libbb::r#loop::set_loop(&mut d, *argv.offset(0), offset, flags) < 0i32 {
+      if crate::libbb::r#loop::set_loop(&mut d, *argv.offset(0), offset, flags) < 0 {
         crate::libbb::perror_msg::bb_simple_perror_msg_and_die(*argv.offset(0));
       }
-      return 0i32;
+      return 0;
     }
   }
   /* TODO: util-linux 2.28 shows this when run w/o params:

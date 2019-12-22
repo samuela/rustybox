@@ -31,7 +31,7 @@ unsafe extern "C" fn read_byte(mut timeout: libc::c_uint) -> libc::c_int {
   alarm(timeout);
   /* NOT safe_read! We want ALRM to interrupt us */
   n = read(
-    0i32,
+    0,
     &mut buf as *mut libc::c_uchar as *mut libc::c_void,
     1i32 as size_t,
   ) as libc::c_int;
@@ -44,15 +44,15 @@ unsafe extern "C" fn read_byte(mut timeout: libc::c_uint) -> libc::c_int {
 unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
   let mut current_block: u64;
   let mut blockBuf: [libc::c_uchar; 1024] = [0; 1024];
-  let mut blockLength: libc::c_uint = 0i32 as libc::c_uint;
-  let mut errors: libc::c_uint = 0i32 as libc::c_uint;
+  let mut blockLength: libc::c_uint = 0 as libc::c_uint;
+  let mut errors: libc::c_uint = 0 as libc::c_uint;
   let mut wantBlockNo: libc::c_uint = 1i32 as libc::c_uint;
-  let mut length: libc::c_uint = 0i32 as libc::c_uint;
+  let mut length: libc::c_uint = 0 as libc::c_uint;
   let mut do_crc: libc::c_int = 1i32;
   let mut reply_char: libc::c_char = 0;
   let mut timeout: libc::c_uint = 10i32 as libc::c_uint;
   /* Flush pending input */
-  tcflush(0i32, 0i32);
+  tcflush(0i32, 0);
   /* Ask for CRC; if we get errors, we will go with checksum */
   reply_char = 'C' as i32 as libc::c_char;
   crate::libbb::full_write::full_write(
@@ -69,7 +69,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
     let mut i: libc::c_int = 0;
     let mut j: libc::c_int = 0;
     blockBegin = read_byte(timeout);
-    if blockBegin < 0i32 {
+    if blockBegin < 0 {
       current_block = 17524159567010234572;
     } else {
       /* If last block, remove padding */
@@ -93,7 +93,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
         }
       }
       /* Write previously received block */
-      *bb_errno = 0i32;
+      *bb_errno = 0;
       if crate::libbb::full_write::full_write(
         file_fd,
         blockBuf.as_mut_ptr() as *const libc::c_void,
@@ -123,10 +123,10 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
               _ => {
                 /* Block no */
                 blockNo = read_byte(1i32 as libc::c_uint);
-                if !(blockNo < 0i32) {
+                if !(blockNo < 0) {
                   /* Block no, in one's complement form */
                   blockNoOnesCompl = read_byte(1i32 as libc::c_uint);
-                  if !(blockNoOnesCompl < 0i32) {
+                  if !(blockNoOnesCompl < 0) {
                     if blockNo != 255i32 - blockNoOnesCompl {
                       crate::libbb::verror_msg::bb_simple_error_msg(
                         b"bad block ones compl\x00" as *const u8 as *const libc::c_char,
@@ -137,14 +137,14 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                       } else {
                         1024i32
                       } as libc::c_uint;
-                      i = 0i32;
+                      i = 0;
                       loop {
                         if !((i as libc::c_uint) < blockLength) {
                           current_block = 790185930182612747;
                           break;
                         }
                         let mut cc: libc::c_int = read_byte(1i32 as libc::c_uint);
-                        if cc < 0i32 {
+                        if cc < 0 {
                           current_block = 17524159567010234572;
                           break;
                         }
@@ -155,10 +155,10 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                         17524159567010234572 => {}
                         _ => {
                           cksum_or_crc = read_byte(1i32 as libc::c_uint);
-                          if !(cksum_or_crc < 0i32) {
+                          if !(cksum_or_crc < 0) {
                             if do_crc != 0 {
                               cksum_or_crc = cksum_or_crc << 8i32 | read_byte(1i32 as libc::c_uint);
-                              if cksum_or_crc < 0i32 {
+                              if cksum_or_crc < 0 {
                                 current_block = 17524159567010234572;
                               } else {
                                 current_block = 13460095289871124136;
@@ -176,7 +176,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                                   /* a repeat of the last block is ok, just ignore it. */
                                   /* this also ignores the initial block 0 which is */
                                   /* meta data. */
-                                  blockLength = 0i32 as libc::c_uint;
+                                  blockLength = 0 as libc::c_uint;
                                   current_block = 1735099875076272758;
                                 } else if blockNo as libc::c_uint
                                   != wantBlockNo & 0xffi32 as libc::c_uint
@@ -190,14 +190,14 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                                   );
                                   current_block = 17524159567010234572;
                                 } else {
-                                  expected = 0i32 as libc::c_uint;
+                                  expected = 0 as libc::c_uint;
                                   if do_crc != 0 {
-                                    i = 0i32;
+                                    i = 0;
                                     while (i as libc::c_uint) < blockLength {
                                       expected = expected
                                         ^ ((blockBuf[i as usize] as libc::c_int) << 8i32)
                                           as libc::c_uint;
-                                      j = 0i32;
+                                      j = 0;
                                       while j < 8i32 {
                                         if expected & 0x8000i32 as libc::c_uint != 0 {
                                           expected = expected << 1i32 ^ 0x1021i32 as libc::c_uint
@@ -210,7 +210,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                                     }
                                     expected &= 0xffffi32 as libc::c_uint
                                   } else {
-                                    i = 0i32;
+                                    i = 0;
                                     while (i as libc::c_uint) < blockLength {
                                       expected =
                                         expected.wrapping_add(blockBuf[i as usize] as libc::c_uint);
@@ -241,7 +241,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                                 match current_block {
                                   17524159567010234572 => {}
                                   _ => {
-                                    errors = 0i32 as libc::c_uint;
+                                    errors = 0 as libc::c_uint;
                                     reply_char = 0x6i32 as libc::c_char;
                                     crate::libbb::full_write::full_write(
                                       1i32,
@@ -277,9 +277,9 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
               }
               _ => {
                 blockNo = read_byte(1i32 as libc::c_uint);
-                if !(blockNo < 0i32) {
+                if !(blockNo < 0) {
                   blockNoOnesCompl = read_byte(1i32 as libc::c_uint);
-                  if !(blockNoOnesCompl < 0i32) {
+                  if !(blockNoOnesCompl < 0) {
                     if blockNo != 255i32 - blockNoOnesCompl {
                       crate::libbb::verror_msg::bb_simple_error_msg(
                         b"bad block ones compl\x00" as *const u8 as *const libc::c_char,
@@ -290,14 +290,14 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                       } else {
                         1024i32
                       } as libc::c_uint;
-                      i = 0i32;
+                      i = 0;
                       loop {
                         if !((i as libc::c_uint) < blockLength) {
                           current_block = 790185930182612747;
                           break;
                         }
                         let mut cc: libc::c_int = read_byte(1i32 as libc::c_uint);
-                        if cc < 0i32 {
+                        if cc < 0 {
                           current_block = 17524159567010234572;
                           break;
                         }
@@ -308,10 +308,10 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                         17524159567010234572 => {}
                         _ => {
                           cksum_or_crc = read_byte(1i32 as libc::c_uint);
-                          if !(cksum_or_crc < 0i32) {
+                          if !(cksum_or_crc < 0) {
                             if do_crc != 0 {
                               cksum_or_crc = cksum_or_crc << 8i32 | read_byte(1i32 as libc::c_uint);
-                              if cksum_or_crc < 0i32 {
+                              if cksum_or_crc < 0 {
                                 current_block = 17524159567010234572;
                               } else {
                                 current_block = 13460095289871124136;
@@ -326,7 +326,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                                   == wantBlockNo.wrapping_sub(1i32 as libc::c_uint)
                                     & 0xffi32 as libc::c_uint
                                 {
-                                  blockLength = 0i32 as libc::c_uint;
+                                  blockLength = 0 as libc::c_uint;
                                   current_block = 1735099875076272758;
                                 } else if blockNo as libc::c_uint
                                   != wantBlockNo & 0xffi32 as libc::c_uint
@@ -340,14 +340,14 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                                   );
                                   current_block = 17524159567010234572;
                                 } else {
-                                  expected = 0i32 as libc::c_uint;
+                                  expected = 0 as libc::c_uint;
                                   if do_crc != 0 {
-                                    i = 0i32;
+                                    i = 0;
                                     while (i as libc::c_uint) < blockLength {
                                       expected = expected
                                         ^ ((blockBuf[i as usize] as libc::c_int) << 8i32)
                                           as libc::c_uint;
-                                      j = 0i32;
+                                      j = 0;
                                       while j < 8i32 {
                                         if expected & 0x8000i32 as libc::c_uint != 0 {
                                           expected = expected << 1i32 ^ 0x1021i32 as libc::c_uint
@@ -360,7 +360,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                                     }
                                     expected &= 0xffffi32 as libc::c_uint
                                   } else {
-                                    i = 0i32;
+                                    i = 0;
                                     while (i as libc::c_uint) < blockLength {
                                       expected =
                                         expected.wrapping_add(blockBuf[i as usize] as libc::c_uint);
@@ -391,7 +391,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
                                 match current_block {
                                   17524159567010234572 => {}
                                   _ => {
-                                    errors = 0i32 as libc::c_uint;
+                                    errors = 0 as libc::c_uint;
                                     reply_char = 0x6i32 as libc::c_char;
                                     crate::libbb::full_write::full_write(
                                       1i32,
@@ -432,15 +432,15 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
           return -1i32;
         }
         _ => {
-          blockLength = 0i32 as libc::c_uint;
+          blockLength = 0 as libc::c_uint;
           errors = errors.wrapping_add(1);
           if errors == 10i32 as libc::c_uint {
             /* Abort */
             /* If were asking for crc, try again w/o crc */
             if reply_char as libc::c_int == 'C' as i32 {
               reply_char = 0x15i32 as libc::c_char;
-              errors = 0i32 as libc::c_uint;
-              do_crc = 0i32;
+              errors = 0 as libc::c_uint;
+              do_crc = 0;
               current_block = 17524159567010234572;
             } else {
               crate::libbb::verror_msg::bb_simple_error_msg(
@@ -450,7 +450,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
             }
           } else {
             /* Flush pending input */
-            tcflush(0i32, 0i32);
+            tcflush(0i32, 0);
             crate::libbb::full_write::full_write(
               1i32,
               &mut reply_char as *mut libc::c_char as *const libc::c_void,
@@ -502,7 +502,7 @@ pub unsafe extern "C" fn rx_main(
     0o2i32 | 0o100i32 | 0o1000i32,
   );
   termios_err = tcgetattr(0i32, &mut tty);
-  if termios_err == 0i32 {
+  if termios_err == 0 {
     //TODO: use set_termios_to_raw()
     orig_tty = tty;
     cfmakeraw(&mut tty);
@@ -514,8 +514,8 @@ pub unsafe extern "C" fn rx_main(
     Some(sigalrm_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   n = receive(file_fd);
-  if termios_err == 0i32 {
+  if termios_err == 0 {
     tcsetattr(0i32, 2i32, &mut orig_tty);
   }
-  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit((n >= 0i32) as libc::c_int);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit((n >= 0) as libc::c_int);
 }

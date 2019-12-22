@@ -120,9 +120,9 @@ pub unsafe extern "C" fn cp_main(
   if flags & FILEUTILS_REFLINK as libc::c_int != 0 {
     if reflink.is_null() {
       flags |= FILEUTILS_REFLINK_ALWAYS as libc::c_int
-    } else if strcmp(reflink, b"always\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    } else if strcmp(reflink, b"always\x00" as *const u8 as *const libc::c_char) == 0 {
       flags |= FILEUTILS_REFLINK_ALWAYS as libc::c_int
-    } else if strcmp(reflink, b"auto\x00" as *const u8 as *const libc::c_char) != 0i32 {
+    } else if strcmp(reflink, b"auto\x00" as *const u8 as *const libc::c_char) != 0 {
       crate::libbb::appletlib::bb_show_usage();
     }
   }
@@ -184,7 +184,7 @@ pub unsafe extern "C" fn cp_main(
     /* -L */
     flags |= FILEUTILS_DEREFERENCE as libc::c_int
   }
-  status = 0i32;
+  status = 0;
   last = *argv.offset((argc - 1i32) as isize);
   /* If there are only two arguments and...  */
   if argc == 2i32 {
@@ -197,11 +197,11 @@ pub unsafe extern "C" fn cp_main(
         Some(lstat as unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int)
       },
     );
-    if s_flags < 0i32 {
+    if s_flags < 0 {
       return 1i32;
     }
     d_flags = crate::coreutils::libcoreutils::cp_mv_stat::cp_mv_stat(last, &mut dest_stat);
-    if d_flags < 0i32 {
+    if d_flags < 0 {
       return 1i32;
     }
     if flags & FILEUTILS_NO_TARGET_DIR as libc::c_int != 0 {
@@ -250,7 +250,7 @@ pub unsafe extern "C" fn cp_main(
   loop {
     match current_block {
       1243268177428749716 => {
-        if crate::libbb::copy_file::copy_file(*argv, dest, flags) < 0i32 {
+        if crate::libbb::copy_file::copy_file(*argv, dest, flags) < 0 {
           status = 1i32
         }
         argv = argv.offset(1);

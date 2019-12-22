@@ -277,7 +277,7 @@ pub unsafe extern "C" fn parse_pasv_epsv(mut buf: *mut libc::c_char) -> libc::c_
     *ptr = '\u{0}' as i32 as libc::c_char;
     port = crate::libbb::xatonum::xatou_range(
       ptr.offset(1),
-      0i32 as libc::c_uint,
+      0 as libc::c_uint,
       255i32 as libc::c_uint,
     ) as libc::c_int;
     ptr = strrchr(buf, ',' as i32);
@@ -288,7 +288,7 @@ pub unsafe extern "C" fn parse_pasv_epsv(mut buf: *mut libc::c_char) -> libc::c_
     port = (port as libc::c_uint).wrapping_add(
       crate::libbb::xatonum::xatou_range(
         ptr.offset(1),
-        0i32 as libc::c_uint,
+        0 as libc::c_uint,
         255i32 as libc::c_uint,
       )
       .wrapping_mul(256i32 as libc::c_uint),
@@ -308,7 +308,7 @@ pub unsafe extern "C" fn parse_pasv_epsv(mut buf: *mut libc::c_char) -> libc::c_
     *ptr = '\u{0}' as i32 as libc::c_char;
     port = crate::libbb::xatonum::xatou_range(
       ptr.offset(1),
-      0i32 as libc::c_uint,
+      0 as libc::c_uint,
       65535i32 as libc::c_uint,
     ) as libc::c_int
   }

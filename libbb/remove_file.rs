@@ -157,7 +157,7 @@ pub unsafe extern "C" fn remove_file(
   mut flags: libc::c_int,
 ) -> libc::c_int {
   let mut path_stat: stat = std::mem::zeroed();
-  if lstat(path, &mut path_stat) < 0i32 {
+  if lstat(path, &mut path_stat) < 0 {
     if *bb_errno != 2i32 {
       crate::libbb::perror_msg::bb_perror_msg(
         b"can\'t stat \'%s\'\x00" as *const u8 as *const libc::c_char,
@@ -172,12 +172,12 @@ pub unsafe extern "C" fn remove_file(
       );
       return -1i32;
     }
-    return 0i32;
+    return 0;
   }
   if path_stat.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
     let mut dp: *mut DIR = std::ptr::null_mut();
     let mut d: *mut dirent = std::ptr::null_mut();
-    let mut status: libc::c_int = 0i32;
+    let mut status: libc::c_int = 0;
     if flags & FILEUTILS_RECUR as libc::c_int == 0 {
       crate::libbb::verror_msg::bb_error_msg(
         b"\'%s\' is a directory\x00" as *const u8 as *const libc::c_char,
@@ -185,7 +185,7 @@ pub unsafe extern "C" fn remove_file(
       );
       return -1i32;
     }
-    if flags & FILEUTILS_FORCE as libc::c_int == 0 && access(path, 2i32) < 0i32 && isatty(0i32) != 0
+    if flags & FILEUTILS_FORCE as libc::c_int == 0 && access(path, 2i32) < 0 && isatty(0i32) != 0
       || flags & FILEUTILS_INTERACTIVE as libc::c_int != 0
     {
       fprintf(
@@ -195,7 +195,7 @@ pub unsafe extern "C" fn remove_file(
         path,
       );
       if crate::libbb::ask_confirmation::bb_ask_y_confirmation() == 0 {
-        return 0i32;
+        return 0;
       }
     }
     dp = opendir(path);
@@ -213,12 +213,12 @@ pub unsafe extern "C" fn remove_file(
       if new_path.is_null() {
         continue;
       }
-      if remove_file(new_path, flags) < 0i32 {
+      if remove_file(new_path, flags) < 0 {
         status = -1i32
       }
       free(new_path as *mut libc::c_void);
     }
-    if closedir(dp) < 0i32 {
+    if closedir(dp) < 0 {
       crate::libbb::perror_msg::bb_perror_msg(
         b"can\'t close \'%s\'\x00" as *const u8 as *const libc::c_char,
         path,
@@ -236,7 +236,7 @@ pub unsafe extern "C" fn remove_file(
         return status;
       }
     }
-    if status == 0i32 && rmdir(path) < 0i32 {
+    if status == 0 && rmdir(path) < 0 {
       crate::libbb::perror_msg::bb_perror_msg(
         b"can\'t remove \'%s\'\x00" as *const u8 as *const libc::c_char,
         path,
@@ -253,7 +253,7 @@ pub unsafe extern "C" fn remove_file(
   }
   /* !ISDIR */
   if flags & FILEUTILS_FORCE as libc::c_int == 0
-    && access(path, 2i32) < 0i32
+    && access(path, 2i32) < 0
     && !(path_stat.st_mode & 0o170000i32 as libc::c_uint == 0o120000i32 as libc::c_uint)
     && isatty(0i32) != 0
     || flags & FILEUTILS_INTERACTIVE as libc::c_int != 0
@@ -265,10 +265,10 @@ pub unsafe extern "C" fn remove_file(
       path,
     );
     if crate::libbb::ask_confirmation::bb_ask_y_confirmation() == 0 {
-      return 0i32;
+      return 0;
     }
   }
-  if unlink(path) < 0i32 {
+  if unlink(path) < 0 {
     crate::libbb::perror_msg::bb_perror_msg(
       b"can\'t remove \'%s\'\x00" as *const u8 as *const libc::c_char,
       path,
@@ -281,5 +281,5 @@ pub unsafe extern "C" fn remove_file(
       path,
     );
   }
-  return 0i32;
+  return 0;
 }

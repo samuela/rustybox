@@ -57,11 +57,11 @@ pub unsafe extern "C" fn flock_main(
   ) as libc::c_int;
   argv = argv.offset(optind as isize);
   if !(*argv.offset(1)).is_null() {
-    fd = open(*argv.offset(0), 0i32 | 0o400i32 | 0o100i32, 0o666i32);
-    if fd < 0i32 && *bb_errno == 21i32 {
-      fd = open(*argv.offset(0), 0i32 | 0o400i32)
+    fd = open(*argv.offset(0), 0 | 0o400i32 | 0o100i32, 0o666i32);
+    if fd < 0 && *bb_errno == 21i32 {
+      fd = open(*argv.offset(0), 0 | 0o400i32)
     }
-    if fd < 0i32 {
+    if fd < 0 {
       crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
         *argv.offset(0),
@@ -84,7 +84,7 @@ pub unsafe extern "C" fn flock_main(
         && strcmp(
           (*argv.offset(0)).offset(1),
           b"-command\x00" as *const u8 as *const libc::c_char,
-        ) == 0i32)
+        ) == 0)
   {
     argv = argv.offset(1);
     if !(*argv.offset(1)).is_null() {
@@ -116,7 +116,7 @@ pub unsafe extern "C" fn flock_main(
       mode |= 4i32
     }
   }
-  if flock(fd, mode) != 0i32 {
+  if flock(fd, mode) != 0 {
     if *bb_errno == 11i32 {
       return 1i32;
     }
@@ -135,10 +135,10 @@ pub unsafe extern "C" fn flock_main(
       /* argv[3] = NULL; */
     }
     rc = crate::libbb::vfork_daemon_rexec::spawn_and_wait(argv);
-    if rc < 0i32 {
+    if rc < 0 {
       crate::libbb::perror_msg::bb_simple_perror_msg(*argv.offset(0));
     }
     return rc;
   }
-  return 0i32;
+  return 0;
 }

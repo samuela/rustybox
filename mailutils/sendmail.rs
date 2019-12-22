@@ -221,8 +221,8 @@ unsafe extern "C" fn rcptto_list(mut list: *const libc::c_char) {
   let mut free_me: *mut libc::c_char = crate::libbb::xfuncs_printf::xstrdup(list);
   let mut str: *mut libc::c_char = free_me;
   let mut s: *mut libc::c_char = free_me;
-  let mut prev: libc::c_char = 0i32 as libc::c_char;
-  let mut in_quote: libc::c_int = 0i32;
+  let mut prev: libc::c_char = 0 as libc::c_char;
+  let mut in_quote: libc::c_int = 0;
   while *s != 0 {
     let fresh0 = s;
     s = s.offset(1);
@@ -253,11 +253,11 @@ pub unsafe extern "C" fn sendmail_main(
   let mut list: *mut llist_t = std::ptr::null_mut();
   let mut host: *mut libc::c_char =
     sane_address(crate::libbb::safe_gethostname::safe_gethostname());
-  let mut nheaders: libc::c_uint = 0i32 as libc::c_uint;
+  let mut nheaders: libc::c_uint = 0 as libc::c_uint;
   let mut code: libc::c_int = 0;
   let mut last_hdr: C2RustUnnamed = HDR_OTHER;
   let mut check_hdr: libc::c_int = 0;
-  let mut has_to: libc::c_int = 0i32;
+  let mut has_to: libc::c_int = 0;
   // init global variables
   let ref mut fresh1 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
@@ -366,7 +366,7 @@ pub unsafe extern "C" fn sendmail_main(
     let mut fd: libc::c_int = 0;
     fd = crate::libbb::xconnect::create_and_connect_stream_or_die(opt_connect, 25i32);
     // and make ourselves a simple IO filter
-    crate::libbb::xfuncs_printf::xmove_fd(fd, 0i32);
+    crate::libbb::xfuncs_printf::xmove_fd(fd, 0);
     crate::libbb::xfuncs_printf::xdup2(0i32, 1i32);
     // Wait for initial server 220 message
     smtp_check(0 as *const libc::c_char, 220i32);
@@ -471,7 +471,7 @@ pub unsafe extern "C" fn sendmail_main(
   // read recipients from message and add them to those given on cmdline.
   // this means we scan stdin for To:, Cc:, Bcc: lines until an empty line
   // and then use the rest of stdin as message body
-  code = 0i32; // set "analyze headers" mode
+  code = 0; // set "analyze headers" mode
   's_369: loop {
     s = crate::libbb::get_line_from_file::xmalloc_fgetline((*ptr_to_globals).fp0);
     if !s.is_null() {
@@ -519,7 +519,7 @@ pub unsafe extern "C" fn sendmail_main(
             has_to |= check_hdr;
             if (*ptr_to_globals).opts & OPT_t as libc::c_int as libc::c_uint != 0 {
               if check_hdr != 0
-                || 0i32
+                || 0
                   == strncasecmp(
                     (b"Bcc:\x00" as *const u8 as *const libc::c_char).offset(1),
                     s,
@@ -530,7 +530,7 @@ pub unsafe extern "C" fn sendmail_main(
                 last_hdr = HDR_TOCC;
                 current_block = 2265380199544777579;
                 break;
-              } else if 0i32
+              } else if 0
                 == strncasecmp(
                   b"Bcc:\x00" as *const u8 as *const libc::c_char,
                   s,
@@ -594,7 +594,7 @@ pub unsafe extern "C" fn sendmail_main(
             &mut list,
             crate::libbb::xfuncs_printf::xasprintf(hdr, t) as *mut libc::c_void,
           );
-          check_hdr = 0i32
+          check_hdr = 0
         }
         argv = argv.offset(1)
       }
@@ -644,5 +644,5 @@ pub unsafe extern "C" fn sendmail_main(
   // ... and say goodbye
   smtp_check(b"QUIT\x00" as *const u8 as *const libc::c_char, 221i32);
   // cleanup
-  return 0i32;
+  return 0;
 }

@@ -65,7 +65,7 @@ unsafe extern "C" fn fe_select(
 ) {
   let mask: byte = -(condition as libc::c_int) as byte;
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while i < 32i32 {
     *dst.offset(i as isize) = (*zero.offset(i as isize) as libc::c_int
       ^ mask as libc::c_int
@@ -89,7 +89,7 @@ unsafe extern "C" fn fe_normalize(mut x: *mut byte) {
   c = ((*x.offset(31) as libc::c_int >> 7i32) * 19i32) as libc::c_uint;
   let ref mut fresh0 = *x.offset(31);
   *fresh0 = (*fresh0 as libc::c_int & 127i32) as byte;
-  i = 0i32;
+  i = 0;
   while i < 32i32 {
     c = c.wrapping_add(*x.offset(i as isize) as libc::c_uint);
     *x.offset(i as isize) = c as byte;
@@ -101,7 +101,7 @@ unsafe extern "C" fn fe_normalize(mut x: *mut byte) {
    * value if underflow did not occur.
    */
   c = 19i32 as libc::c_uint;
-  i = 0i32;
+  i = 0;
   while i < 32i32 - 1i32 {
     c = c.wrapping_add(*x.offset(i as isize) as libc::c_uint);
     minusp[i as usize] = c as byte;
@@ -119,10 +119,10 @@ unsafe extern "C" fn fe_normalize(mut x: *mut byte) {
   );
 }
 unsafe extern "C" fn lm_add(mut r: *mut byte, mut a: *const byte, mut b: *const byte) {
-  let mut c: libc::c_uint = 0i32 as libc::c_uint;
+  let mut c: libc::c_uint = 0 as libc::c_uint;
   let mut i: libc::c_int = 0;
   /* Add */
-  i = 0i32;
+  i = 0;
   while i < 32i32 {
     c >>= 8i32;
     c = c.wrapping_add(
@@ -135,7 +135,7 @@ unsafe extern "C" fn lm_add(mut r: *mut byte, mut a: *const byte, mut b: *const 
   let ref mut fresh1 = *r.offset(31);
   *fresh1 = (*fresh1 as libc::c_int & 127i32) as byte;
   c = (c >> 7i32).wrapping_mul(19i32 as libc::c_uint);
-  i = 0i32;
+  i = 0;
   while i < 32i32 {
     c = c.wrapping_add(*r.offset(i as isize) as libc::c_uint);
     *r.offset(i as isize) = c as byte;
@@ -144,11 +144,11 @@ unsafe extern "C" fn lm_add(mut r: *mut byte, mut a: *const byte, mut b: *const 
   }
 }
 unsafe extern "C" fn lm_sub(mut r: *mut byte, mut a: *const byte, mut b: *const byte) {
-  let mut c: word32 = 0i32 as word32;
+  let mut c: word32 = 0 as word32;
   let mut i: libc::c_int = 0;
   /* Calculate a + 2p - b, to avoid underflow */
   c = 218i32 as word32;
-  i = 0i32;
+  i = 0;
   while i + 1i32 < 32i32 {
     c = (c as libc::c_uint).wrapping_add(
       (65280i32 as libc::c_uint)
@@ -164,7 +164,7 @@ unsafe extern "C" fn lm_sub(mut r: *mut byte, mut a: *const byte, mut b: *const 
     as word32;
   *r.offset(31) = (c & 127i32 as libc::c_uint) as byte;
   c = (c >> 7i32).wrapping_mul(19i32 as libc::c_uint);
-  i = 0i32;
+  i = 0;
   while i < 32i32 {
     c = (c as libc::c_uint).wrapping_add(*r.offset(i as isize) as libc::c_uint) as word32 as word32;
     *r.offset(i as isize) = c as byte;
@@ -174,13 +174,13 @@ unsafe extern "C" fn lm_sub(mut r: *mut byte, mut a: *const byte, mut b: *const 
 }
 //UNUSED
 unsafe extern "C" fn fe_mul__distinct(mut r: *mut byte, mut a: *const byte, mut b: *const byte) {
-  let mut c: word32 = 0i32 as word32;
+  let mut c: word32 = 0 as word32;
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while i < 32i32 {
     let mut j: libc::c_int = 0;
     c >>= 8i32;
-    j = 0i32;
+    j = 0;
     while j <= i {
       c = (c as libc::c_uint).wrapping_add(
         (*a.offset(j as isize) as word32).wrapping_mul(*b.offset((i - j) as isize) as word32),
@@ -201,7 +201,7 @@ unsafe extern "C" fn fe_mul__distinct(mut r: *mut byte, mut a: *const byte, mut 
   let ref mut fresh2 = *r.offset(31);
   *fresh2 = (*fresh2 as libc::c_int & 127i32) as byte;
   c = (c >> 7i32).wrapping_mul(19i32 as libc::c_uint);
-  i = 0i32;
+  i = 0;
   while i < 32i32 {
     c = (c as libc::c_uint).wrapping_add(*r.offset(i as isize) as libc::c_uint) as word32 as word32;
     *r.offset(i as isize) = c as byte;
@@ -211,9 +211,9 @@ unsafe extern "C" fn fe_mul__distinct(mut r: *mut byte, mut a: *const byte, mut 
 }
 //UNUSED
 unsafe extern "C" fn fe_mul_c(mut r: *mut byte, mut a: *const byte, mut b: word32) {
-  let mut c: word32 = 0i32 as word32;
+  let mut c: word32 = 0 as word32;
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while i < 32i32 {
     c >>= 8i32;
     c = (c as libc::c_uint).wrapping_add(b.wrapping_mul(*a.offset(i as isize) as word32)) as word32
@@ -225,7 +225,7 @@ unsafe extern "C" fn fe_mul_c(mut r: *mut byte, mut a: *const byte, mut b: word3
   *fresh3 = (*fresh3 as libc::c_int & 127i32) as byte;
   c >>= 7i32;
   c = (c as libc::c_uint).wrapping_mul(19i32 as libc::c_uint) as word32 as word32;
-  i = 0i32;
+  i = 0;
   while i < 32i32 {
     c = (c as libc::c_uint).wrapping_add(*r.offset(i as isize) as libc::c_uint) as word32 as word32;
     *r.offset(i as isize) = c as byte;
@@ -255,7 +255,7 @@ unsafe extern "C" fn fe_inv__distinct(mut r: *mut byte, mut x: *const byte) {
   fe_mul__distinct(s.as_mut_ptr(), x, x);
   fe_mul__distinct(r, s.as_mut_ptr(), x);
   /* 1 x 248 */
-  i = 0i32;
+  i = 0;
   while i < 248i32 {
     fe_mul__distinct(s.as_mut_ptr(), r, r);
     fe_mul__distinct(r, s.as_mut_ptr(), x);
@@ -366,7 +366,7 @@ pub unsafe extern "C" fn curve25519(mut result: *mut byte, mut e: *const byte, m
   };
   memset(
     &mut z as *mut C2RustUnnamed as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<C2RustUnnamed>() as libc::c_ulong,
   );
   z.f25519_one[0] = 1i32 as byte;
@@ -375,7 +375,7 @@ pub unsafe extern "C" fn curve25519(mut result: *mut byte, mut e: *const byte, m
   /* Note: bit 254 is assumed to be 1 */
   lm_copy(z.xm.as_mut_ptr(), q);
   i = 253i32;
-  while i >= 0i32 {
+  while i >= 0 {
     let bit: libc::c_int = *e.offset((i >> 3i32) as isize) as libc::c_int >> (i & 7i32) & 1i32;
     let mut xms: [byte; 32] = [0; 32];
     let mut zms: [byte; 32] = [0; 32];

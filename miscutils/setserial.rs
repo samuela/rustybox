@@ -114,7 +114,7 @@ unsafe extern "C" fn cmd_needs_arg(mut cmd: libc::c_int) -> bool {
   return cmd >= CMD_PORT as libc::c_int && cmd <= CMD_WAIT as libc::c_int;
 }
 static mut setbits: [u16; 16] = [
-  0i32 as u16,
+  0 as u16,
   (1u32 << 4i32) as u16,
   (1u32 << 5i32) as u16,
   (1u32 << 12i32) as u16,
@@ -122,7 +122,7 @@ static mut setbits: [u16; 16] = [
   (1u32 << 4i32 | 1u32 << 5i32) as u16,
   (1u32 << 2i32) as u16,
   (1u32 << 1i32) as u16,
-  (1u32 << 0i32) as u16,
+  (1u32 << 0) as u16,
   (1u32 << 6i32) as u16,
   (1u32 << 7i32) as u16,
   (1u32 << 3i32) as u16,
@@ -142,9 +142,9 @@ unsafe extern "C" fn index_in_strings_case_insensitive(
   mut strings: *const libc::c_char,
   mut key: *const libc::c_char,
 ) -> libc::c_int {
-  let mut idx: libc::c_int = 0i32; /* skip NUL */
+  let mut idx: libc::c_int = 0; /* skip NUL */
   while *strings != 0 {
-    if strcasecmp(strings, key) == 0i32 {
+    if strcasecmp(strings, key) == 0 {
       return idx;
     }
     strings = strings.offset(strlen(strings).wrapping_add(1i32 as libc::c_ulong) as isize);
@@ -173,20 +173,20 @@ unsafe extern "C" fn get_spd(mut flags: libc::c_int, mut mode: print_mode) -> *c
   return crate::libbb::compare_string_array::nth_string(commands.as_ptr(), idx);
 }
 unsafe extern "C" fn get_numeric(mut arg: *const libc::c_char) -> libc::c_int {
-  return bb_strtol(arg, 0 as *mut *mut libc::c_char, 0i32) as libc::c_int;
+  return bb_strtol(arg, 0 as *mut *mut libc::c_char, 0) as libc::c_int;
 }
 unsafe extern "C" fn get_wait(mut arg: *const libc::c_char) -> libc::c_int {
-  if strcasecmp(arg, b"none\x00" as *const u8 as *const libc::c_char) == 0i32 {
+  if strcasecmp(arg, b"none\x00" as *const u8 as *const libc::c_char) == 0 {
     return 65535i32;
   }
-  if strcasecmp(arg, b"infinite\x00" as *const u8 as *const libc::c_char) == 0i32 {
-    return 0i32;
+  if strcasecmp(arg, b"infinite\x00" as *const u8 as *const libc::c_char) == 0 {
+    return 0;
   }
   return get_numeric(arg);
 }
 unsafe extern "C" fn get_uart(mut arg: *const libc::c_char) -> libc::c_int {
   let mut uart: libc::c_int = uart_id(arg);
-  if uart < 0i32 {
+  if uart < 0 {
     crate::libbb::verror_msg::bb_error_msg_and_die(
       b"illegal UART type: %s\x00" as *const u8 as *const libc::c_char,
       arg,
@@ -197,7 +197,7 @@ unsafe extern "C" fn get_uart(mut arg: *const libc::c_char) -> libc::c_int {
 unsafe extern "C" fn serial_open(mut dev: *const libc::c_char, mut quiet: bool) -> libc::c_int {
   let mut fd: libc::c_int = 0;
   fd = crate::libbb::device_open::device_open(dev, 0o2i32 | 0o4000i32);
-  if fd < 0i32 && !quiet {
+  if fd < 0 && !quiet {
     crate::libbb::perror_msg::bb_simple_perror_msg(dev);
   }
   return fd;
@@ -208,11 +208,11 @@ unsafe extern "C" fn serial_ctl(
   mut serinfo: *mut serial_struct,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut ret: libc::c_int = 0i32;
+  let mut ret: libc::c_int = 0;
   let mut err: *const libc::c_char = std::ptr::null();
-  if ops & 1i32 << 0i32 != 0 {
+  if ops & 1i32 << 0 != 0 {
     ret = ioctl(fd, 0x541fi32 as libc::c_ulong, serinfo);
-    if ret < 0i32 {
+    if ret < 0 {
       err = b"can\'t set serial info\x00" as *const u8 as *const libc::c_char;
       current_block = 183908852989203104;
     } else {
@@ -225,7 +225,7 @@ unsafe extern "C" fn serial_ctl(
     11875828834189669668 => {
       if ops & 1i32 << 1i32 != 0 {
         ret = ioctl(fd, 0x5453i32 as libc::c_ulong);
-        if ret < 0i32 {
+        if ret < 0 {
           err = b"can\'t autoconfigure port\x00" as *const u8 as *const libc::c_char;
           current_block = 183908852989203104;
         } else {
@@ -239,7 +239,7 @@ unsafe extern "C" fn serial_ctl(
         _ => {
           if ops & 1i32 << 2i32 != 0 {
             ret = ioctl(fd, 0x541ei32 as libc::c_ulong, serinfo);
-            if ret < 0i32 {
+            if ret < 0 {
               err = b"can\'t get serial info\x00" as *const u8 as *const libc::c_char;
               current_block = 183908852989203104;
             } else {
@@ -356,11 +356,11 @@ unsafe extern "C" fn serial_get(mut device: *const libc::c_char, mut mode: print
     device,
     mode as libc::c_uint == PRINT_SUMMARY as libc::c_int as libc::c_uint,
   );
-  if fd < 0i32 {
+  if fd < 0 {
     return;
   }
   ret = serial_ctl(fd, 1i32 << 2i32 | 1i32 << 3i32 | 1i32 << 4i32, &mut serinfo);
-  if ret < 0i32 {
+  if ret < 0 {
     return;
   }
   uart = uart_type(serinfo.type_0);
@@ -428,7 +428,7 @@ unsafe extern "C" fn serial_get(mut device: *const libc::c_char, mut mode: print
 unsafe extern "C" fn find_cmd(mut cmd: *const libc::c_char) -> libc::c_int {
   let mut idx: libc::c_int = 0;
   idx = index_in_strings_case_insensitive(commands.as_ptr(), cmd);
-  if idx < 0i32 {
+  if idx < 0 {
     crate::libbb::verror_msg::bb_error_msg_and_die(
       b"invalid flag: %s\x00" as *const u8 as *const libc::c_char,
       cmd,
@@ -458,13 +458,13 @@ unsafe extern "C" fn serial_set(mut arg: *mut *mut libc::c_char, mut opts: libc:
     iomap_base: 0,
   };
   let mut fd: libc::c_int = 0;
-  fd = serial_open(*arg, 0i32 != 0);
-  if fd < 0i32 {
+  fd = serial_open(*arg, 0 != 0);
+  if fd < 0 {
     exit(201i32);
   }
   serial_ctl(fd, 1i32 << 2i32, &mut serinfo);
   if opts & 1i32 << 4i32 != 0 {
-    serinfo.flags = 0i32
+    serinfo.flags = 0
   }
   loop {
     arg = arg.offset(1);
@@ -529,7 +529,7 @@ unsafe extern "C" fn serial_set(mut arg: *mut *mut libc::c_char, mut opts: libc:
         current_block_27 = 12199444798915819164;
       }
       23 => {
-        serial_ctl(fd, 1i32 << 0i32 | 1i32 << 1i32 | 1i32 << 2i32, &mut serinfo);
+        serial_ctl(fd, 1i32 << 0 | 1i32 << 1i32 | 1i32 << 2i32, &mut serinfo);
         current_block_27 = 12199444798915819164;
       }
       _ => {
@@ -549,7 +549,7 @@ unsafe extern "C" fn serial_set(mut arg: *mut *mut libc::c_char, mut opts: libc:
       _ => {}
     }
   } /* force display */
-  serial_ctl(fd, 1i32 << 0i32 | 1i32 << 3i32, &mut serinfo);
+  serial_ctl(fd, 1i32 << 0 | 1i32 << 3i32, &mut serinfo);
 }
 #[no_mangle]
 pub unsafe extern "C" fn setserial_main(
@@ -576,7 +576,7 @@ pub unsafe extern "C" fn setserial_main(
     loop {
       serial_get(
         *argv,
-        (opts & (1i32 << 2i32 | 1i32 << 0i32 | 1i32 << 1i32)) as print_mode,
+        (opts & (1i32 << 2i32 | 1i32 << 0 | 1i32 << 1i32)) as print_mode,
       );
       argv = argv.offset(1);
       if (*argv).is_null() {
@@ -584,5 +584,5 @@ pub unsafe extern "C" fn setserial_main(
       }
     }
   }
-  return 0i32;
+  return 0;
 }

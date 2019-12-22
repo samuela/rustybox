@@ -47,7 +47,7 @@ pub unsafe extern "C" fn readahead_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut retval: libc::c_int = 0i32;
+  let mut retval: libc::c_int = 0;
   if (*argv.offset(1)).is_null() {
     crate::libbb::appletlib::bb_show_usage();
   }
@@ -56,16 +56,16 @@ pub unsafe extern "C" fn readahead_main(
     if (*argv).is_null() {
       break;
     }
-    let mut fd: libc::c_int = crate::libbb::xfuncs_printf::open_or_warn(*argv, 0i32);
-    if fd >= 0i32 {
+    let mut fd: libc::c_int = crate::libbb::xfuncs_printf::open_or_warn(*argv, 0);
+    if fd >= 0 {
       let mut len: off_t = 0;
       let mut r: libc::c_int = 0;
       /* fdlength was reported to be unreliable - use seek */
-      len = crate::libbb::xfuncs_printf::xlseek(fd, 0i32 as off_t, 2i32);
-      crate::libbb::xfuncs_printf::xlseek(fd, 0i32 as off_t, 0i32);
-      r = readahead(fd, 0i32 as off64_t, len as size_t) as libc::c_int;
+      len = crate::libbb::xfuncs_printf::xlseek(fd, 0 as off_t, 2i32);
+      crate::libbb::xfuncs_printf::xlseek(fd, 0 as off_t, 0);
+      r = readahead(fd, 0 as off64_t, len as size_t) as libc::c_int;
       close(fd);
-      if r >= 0i32 {
+      if r >= 0 {
         continue;
       }
     }

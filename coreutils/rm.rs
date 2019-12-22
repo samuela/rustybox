@@ -60,8 +60,8 @@ pub unsafe extern "C" fn rm_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut status: libc::c_int = 0i32;
-  let mut flags: libc::c_int = 0i32;
+  let mut status: libc::c_int = 0;
+  let mut flags: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;
   opt = crate::libbb::getopt32::getopt32(
     argv,
@@ -93,7 +93,7 @@ pub unsafe extern "C" fn rm_main(
           b"can\'t remove \'.\' or \'..\'\x00" as *const u8 as *const libc::c_char,
         );
         current_block_12 = 15652330335145281839;
-      } else if crate::libbb::remove_file::remove_file(*argv, flags) >= 0i32 {
+      } else if crate::libbb::remove_file::remove_file(*argv, flags) >= 0 {
         current_block_12 = 7651349459974463963;
       } else {
         current_block_12 = 15652330335145281839;

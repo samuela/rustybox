@@ -140,7 +140,7 @@ pub unsafe extern "C" fn rdate_main(
       crate::libbb::verror_msg::bb_simple_error_msg(
         b"current time matches remote time\x00" as *const u8 as *const libc::c_char,
       );
-    } else if stime(&mut remote_time) < 0i32 {
+    } else if stime(&mut remote_time) < 0 {
       crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
         b"can\'t set time of day\x00" as *const u8 as *const libc::c_char,
       );
@@ -153,5 +153,5 @@ pub unsafe extern "C" fn rdate_main(
       ctime(&mut remote_time),
     );
   }
-  return 0i32;
+  return 0;
 }

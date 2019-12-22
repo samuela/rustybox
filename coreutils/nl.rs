@@ -93,7 +93,7 @@ pub unsafe extern "C" fn nl_main(
     argv = argv.offset(-1);
     *argv = b"-\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
   }
-  exitcode = 0i32;
+  exitcode = 0;
   loop {
     exitcode |= crate::libbb::print_numbered_lines::print_numbered_lines(&mut ns, *argv);
     argv = argv.offset(1);

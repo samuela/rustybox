@@ -697,7 +697,7 @@ static mut forbid: [libc::c_char; 150] = [
 pub unsafe extern "C" fn sanitize_env_if_suid() -> libc::c_int {
   let mut p: *const libc::c_char = std::ptr::null();
   if getuid() == geteuid() {
-    return 0i32;
+    return 0;
   }
   p = forbid.as_ptr();
   loop {

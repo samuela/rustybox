@@ -45,7 +45,7 @@ unsafe extern "C" fn edit_file(mut pas: *const passwd, mut file: *const libc::c_
   let mut pid: pid_t = 0;
   pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
-    if bb__xvfork_pid < 0i32 {
+    if bb__xvfork_pid < 0 {
       crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
         b"vfork\x00" as *const u8 as *const libc::c_char,
       );
@@ -62,7 +62,7 @@ unsafe extern "C" fn edit_file(mut pas: *const passwd, mut file: *const libc::c_
   crate::libbb::change_identity::change_identity(pas); /* -u USER */
   crate::libbb::setup_environment::setup_environment(
     (*pas).pw_shell,
-    1i32 << 0i32 | 1i32 << 2i32,
+    1i32 << 0 | 1i32 << 2i32,
     pas,
   );
   ptr = getenv(b"VISUAL\x00" as *const u8 as *const libc::c_char);
@@ -128,7 +128,7 @@ pub unsafe extern "C" fn crontab_main(
     crate::libbb::appletlib::bb_show_usage();
   }
   /* Read replacement file under user's UID/GID/group vector */
-  src_fd = 0i32;
+  src_fd = 0;
   if opt_ler == 0 {
     /* Replace? */
     if (*argv.offset(0)).is_null() {
@@ -139,7 +139,7 @@ pub unsafe extern "C" fn crontab_main(
     {
       src_fd = crate::libbb::xfuncs_printf::xopen_as_uid_gid(
         *argv.offset(0),
-        0i32,
+        0,
         (*pas).pw_uid,
         (*pas).pw_gid,
       )
@@ -171,11 +171,11 @@ pub unsafe extern "C" fn crontab_main(
       src_fd =
         crate::libbb::xfuncs_printf::xopen3(tmp_fname, 0o2i32 | 0o100i32 | 0o1000i32, 0o600i32); /* don't want editor to see this fd */
       fchown(src_fd, (*pas).pw_uid, (*pas).pw_gid);
-      fd = open((*pas).pw_name, 0i32);
-      if fd >= 0i32 {
+      fd = open((*pas).pw_name, 0);
+      if fd >= 0 {
         crate::libbb::copyfd::bb_copyfd_eof(fd, src_fd);
         close(fd);
-        crate::libbb::xfuncs_printf::xlseek(src_fd, 0i32 as off_t, 0i32);
+        crate::libbb::xfuncs_printf::xlseek(src_fd, 0 as off_t, 0);
       }
       crate::libbb::xfuncs::close_on_exec_on(src_fd);
       edit_file(pas, tmp_fname);
@@ -206,7 +206,7 @@ pub unsafe extern "C" fn crontab_main(
         0o1i32 | 0o100i32 | 0o1000i32 | 0o2000i32,
         0o600i32,
       );
-      if fd >= 0i32 {
+      if fd >= 0 {
         crate::libbb::copyfd::bb_copyfd_eof(src_fd, fd);
         close(fd);
         crate::libbb::xfuncs_printf::xrename(new_fname, (*pas).pw_name);
@@ -233,7 +233,7 @@ pub unsafe extern "C" fn crontab_main(
       0o1i32 | 0o100i32 | 0o2000i32,
       0o600i32,
     );
-    if !(fd >= 0i32) {
+    if !(fd >= 0) {
       break;
     }
     let mut st: stat = std::mem::zeroed();
@@ -242,20 +242,20 @@ pub unsafe extern "C" fn crontab_main(
       b"%s\n\x00" as *const u8 as *const libc::c_char,
       (*pas).pw_name,
     );
-    if fstat(fd, &mut st) != 0i32 || st.st_nlink != 0i32 as libc::c_ulong {
+    if fstat(fd, &mut st) != 0 || st.st_nlink != 0 as libc::c_ulong {
       break;
     }
     /* loop */
     close(fd);
   }
-  if fd < 0i32 {
+  if fd < 0 {
     crate::libbb::verror_msg::bb_error_msg(
       b"can\'t append to %s/%s\x00" as *const u8 as *const libc::c_char,
       crontab_dir,
       b"cron.update\x00" as *const u8 as *const libc::c_char,
     );
   }
-  return 0i32;
+  return 0;
 }
 /* st.st_nlink == 0:
  * file was deleted, maybe crond missed our notification */

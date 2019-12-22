@@ -204,5 +204,5 @@ pub unsafe extern "C" fn volume_id_probe_ext(mut id: *mut volume_id) -> libc::c_
   } else {
     (*id).type_0 = b"ext2\x00" as *const u8 as *const libc::c_char
   }
-  return 0i32;
+  return 0;
 }

@@ -151,7 +151,7 @@ unsafe extern "C" fn sysctl_dots_to_slashes(mut name: *mut libc::c_char) {
       if *cptr as libc::c_int == '.' as i32 {
         *cptr = '\u{0}' as i32 as libc::c_char;
         //bb_error_msg("trying:'%s'", name);
-        if access(name, 0i32) == 0i32 {
+        if access(name, 0) == 0 {
           *cptr = '/' as i32 as libc::c_char;
           //bb_error_msg("replaced:'%s'", name);
           last_good = cptr; /* for compiler */
@@ -168,7 +168,7 @@ unsafe extern "C" fn sysctl_dots_to_slashes(mut name: *mut libc::c_char) {
 unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut fd: libc::c_int = 0;
-  let mut retval: libc::c_int = 0i32;
+  let mut retval: libc::c_int = 0;
   let mut cptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut outname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut value: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -217,12 +217,12 @@ unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> li
       }
     }
   } else {
-    fd = open(setting, 0i32);
+    fd = open(setting, 0);
     current_block = 4068382217303356765;
   }
   match current_block {
     4068382217303356765 => {
-      if fd < 0i32 {
+      if fd < 0 {
         match *bb_errno {
           13 => {}
           2 => {
@@ -335,9 +335,9 @@ unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> li
 }
 unsafe extern "C" fn sysctl_act_recursive(mut path: *const libc::c_char) -> libc::c_int {
   let mut buf: stat = std::mem::zeroed();
-  let mut retval: libc::c_int = 0i32;
+  let mut retval: libc::c_int = 0;
   if option_mask32 & FLAG_WRITE as libc::c_int as libc::c_uint == 0
-    && stat(path, &mut buf) == 0i32
+    && stat(path, &mut buf) == 0
     && buf.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint
   {
     let mut entry: *mut dirent = std::ptr::null_mut();
@@ -387,7 +387,7 @@ unsafe extern "C" fn sysctl_handle_preload_file(mut filename: *const libc::c_cha
   parser = crate::libbb::parse_config::config_open(filename);
   /* Must do it _after_ config_open(): */
   crate::libbb::xfuncs_printf::xchdir(b"/proc/sys\x00" as *const u8 as *const libc::c_char); // NO (var==val is not var=val) - treat consecutive delimiters as one
-  parse_flags = 0i32; // NO - trim leading and trailing delimiters
+  parse_flags = 0; // NO - trim leading and trailing delimiters
   parse_flags &= !(PARSE_COLLAPSE as libc::c_int); // YES - last token takes entire remainder of the line
   parse_flags &= !(PARSE_TRIM as libc::c_int); // NO - die if < min tokens found
   parse_flags |= PARSE_GREEDY as libc::c_int; // NO (only first char) - comments are recognized even if not first char
@@ -415,7 +415,7 @@ unsafe extern "C" fn sysctl_handle_preload_file(mut filename: *const libc::c_cha
     crate::libbb::safe_strncpy::overlapping_strcpy(tp, token[1]);
     sysctl_act_on_setting(token[0]);
   }
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn sysctl_main(
@@ -438,7 +438,7 @@ pub unsafe extern "C" fn sysctl_main(
     }
     cur_dir_fd = crate::libbb::xfuncs_printf::xopen(
       b".\x00" as *const u8 as *const libc::c_char,
-      0i32 | 0o200000i32,
+      0 | 0o200000i32,
     );
     loop {
       /* procps-ng 3.3.10 does not flag parse errors */
@@ -451,14 +451,14 @@ pub unsafe extern "C" fn sysctl_main(
       }
       /* files can be relative, must restore cwd */
     }
-    return 0i32;
+    return 0;
   }
   crate::libbb::xfuncs_printf::xchdir(b"/proc/sys\x00" as *const u8 as *const libc::c_char);
   if opt & (FLAG_TABLE_FORMAT as libc::c_int | FLAG_SHOW_ALL as libc::c_int) != 0 {
     return sysctl_act_recursive(b".\x00" as *const u8 as *const libc::c_char);
   }
   //TODO: if(!argv[0]) bb_show_usage() ?
-  retval = 0i32;
+  retval = 0;
   while !(*argv).is_null() {
     sysctl_dots_to_slashes(*argv);
     retval |= sysctl_act_recursive(*argv);

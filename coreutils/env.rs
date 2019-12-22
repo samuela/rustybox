@@ -90,7 +90,7 @@ pub unsafe extern "C" fn env_main(
     putenv(var);
   }
   while !(*argv).is_null() && !strchr(*argv, '=' as i32).is_null() {
-    if putenv(*argv) < 0i32 {
+    if putenv(*argv) < 0 {
       crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
         b"putenv\x00" as *const u8 as *const libc::c_char,
       );

@@ -293,11 +293,11 @@ unsafe extern "C" fn do_shm(mut format: libc::c_int) {
   let mut ipcp: *mut ipc_perm = &mut shmseg.shm_perm;
   let mut pw: *mut passwd = std::ptr::null_mut();
   maxid = shmctl(
-    0i32,
+    0,
     14i32,
     &mut shm_info as *mut shm_info as *mut libc::c_void as *mut shmid_ds,
   );
-  if maxid < 0i32 {
+  if maxid < 0 {
     printf(
       b"kernel not configured for %s\n\x00" as *const u8 as *const libc::c_char,
       b"shared memory\x00" as *const u8 as *const libc::c_char,
@@ -311,10 +311,10 @@ unsafe extern "C" fn do_shm(mut format: libc::c_int) {
         b"Limits\x00" as *const u8 as *const libc::c_char,
       );
       if shmctl(
-        0i32,
+        0,
         3i32,
         &mut shminfo as *mut shminfo as *mut libc::c_void as *mut shmid_ds,
-      ) < 0i32
+      ) < 0
       {
         return;
       }
@@ -395,10 +395,10 @@ unsafe extern "C" fn do_shm(mut format: libc::c_int) {
       );
     }
   }
-  id = 0i32;
+  id = 0;
   while id <= maxid {
     shmid = shmctl(id, 13i32, &mut shmseg);
-    if !(shmid < 0i32) {
+    if !(shmid < 0) {
       if format == 3i32 {
         print_perms(shmid, ipcp);
       } else {
@@ -548,8 +548,8 @@ unsafe extern "C" fn do_sem(mut format: libc::c_int) {
   let mut pw: *mut passwd = std::ptr::null_mut();
   let mut arg: semun = semun { val: 0 };
   arg.array = &mut seminfo as *mut seminfo as *mut libc::c_void as *mut libc::c_ushort;
-  maxid = semctl(0i32, 0i32, 19i32, arg);
-  if maxid < 0i32 {
+  maxid = semctl(0i32, 0, 19i32, arg);
+  if maxid < 0 {
     printf(
       b"kernel not configured for %s\n\x00" as *const u8 as *const libc::c_char,
       b"semaphores\x00" as *const u8 as *const libc::c_char,
@@ -563,7 +563,7 @@ unsafe extern "C" fn do_sem(mut format: libc::c_int) {
         b"Limits\x00" as *const u8 as *const libc::c_char,
       );
       arg.array = &mut seminfo as *mut seminfo as *mut libc::c_void as *mut libc::c_ushort;
-      if semctl(0i32, 0i32, 3i32, arg) < 0i32 {
+      if semctl(0i32, 0, 3i32, arg) < 0 {
         return;
       }
       printf(b"max number of arrays = %d\nmax semaphores per array = %d\nmax semaphores system wide = %d\nmax ops per semop call = %d\nsemaphore max value = %d\n\x00"
@@ -628,11 +628,11 @@ unsafe extern "C" fn do_sem(mut format: libc::c_int) {
       );
     }
   }
-  id = 0i32;
+  id = 0;
   while id <= maxid {
     arg.buf = &mut semary as *mut semid_ds;
-    semid = semctl(id, 0i32, 18i32, arg);
-    if !(semid < 0i32) {
+    semid = semctl(id, 0, 18i32, arg);
+    if !(semid < 0) {
       if format == 3i32 {
         print_perms(semid, ipcp);
       } else {
@@ -744,11 +744,11 @@ unsafe extern "C" fn do_msg(mut format: libc::c_int) {
   let mut ipcp: *mut ipc_perm = &mut msgque.msg_perm;
   let mut pw: *mut passwd = std::ptr::null_mut();
   maxid = msgctl(
-    0i32,
+    0,
     12i32,
     &mut msginfo as *mut msginfo as *mut libc::c_void as *mut msqid_ds,
   );
-  if maxid < 0i32 {
+  if maxid < 0 {
     printf(
       b"kernel not configured for %s\n\x00" as *const u8 as *const libc::c_char,
       b"message queues\x00" as *const u8 as *const libc::c_char,
@@ -758,10 +758,10 @@ unsafe extern "C" fn do_msg(mut format: libc::c_int) {
   match format {
     1 => {
       if msgctl(
-        0i32,
+        0,
         3i32,
         &mut msginfo as *mut msginfo as *mut libc::c_void as *mut msqid_ds,
-      ) < 0i32
+      ) < 0
       {
         return;
       }
@@ -846,10 +846,10 @@ unsafe extern "C" fn do_msg(mut format: libc::c_int) {
       );
     }
   }
-  id = 0i32;
+  id = 0;
   while id <= maxid {
     msqid = msgctl(id, 11i32, &mut msgque);
-    if !(msqid < 0i32) {
+    if !(msqid < 0) {
       if format == 3i32 {
         print_perms(msqid, ipcp);
       } else {
@@ -1096,7 +1096,7 @@ unsafe extern "C" fn print_sem(mut semid: libc::c_int) {
   let mut arg: semun = semun { val: 0 };
   let mut i: libc::c_uint = 0;
   arg.buf = &mut semds;
-  if semctl(semid, 0i32, 2i32, arg) != 0 {
+  if semctl(semid, 0, 2i32, arg) != 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg(
       b"semctl\x00" as *const u8 as *const libc::c_char,
     );
@@ -1120,8 +1120,8 @@ unsafe extern "C" fn print_sem(mut semid: libc::c_int) {
     b"zcount\x00" as *const u8 as *const libc::c_char,
     b"pid\x00" as *const u8 as *const libc::c_char,
   );
-  arg.val = 0i32;
-  i = 0i32 as libc::c_uint;
+  arg.val = 0;
+  i = 0 as libc::c_uint;
   while (i as libc::c_ulong) < semds.sem_nsems {
     let mut val: libc::c_int = 0;
     let mut ncnt: libc::c_int = 0;
@@ -1131,7 +1131,7 @@ unsafe extern "C" fn print_sem(mut semid: libc::c_int) {
     ncnt = semctl(semid, i as libc::c_int, 14i32, arg);
     zcnt = semctl(semid, i as libc::c_int, 15i32, arg);
     pid = semctl(semid, i as libc::c_int, 11i32, arg);
-    if val < 0i32 || ncnt < 0i32 || zcnt < 0i32 || pid < 0i32 {
+    if val < 0 || ncnt < 0 || zcnt < 0 || pid < 0 {
       crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
         b"semctl\x00" as *const u8 as *const libc::c_char,
       );
@@ -1168,7 +1168,7 @@ pub unsafe extern "C" fn ipcs_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut format: libc::c_int = 0i32; // -t
+  let mut format: libc::c_int = 0; // -t
   let mut opt: libc::c_uint = 0; // -c
   let mut opt_i: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); // -p
   opt = crate::libbb::getopt32::getopt32(
@@ -1191,7 +1191,7 @@ pub unsafe extern "C" fn ipcs_main(
   if opt & (1i32 << 9i32) as libc::c_uint != 0 {
     format = 2i32
   }
-  if opt & (1i32 << 0i32) as libc::c_uint != 0 {
+  if opt & (1i32 << 0) as libc::c_uint != 0 {
     // -i
     let mut id: libc::c_int = 0;
     id = crate::libbb::xatonum::xatoi(opt_i);

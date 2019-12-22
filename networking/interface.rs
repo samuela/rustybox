@@ -244,7 +244,7 @@ unsafe extern "C" fn INET_sprint(
   mut sap: *mut sockaddr,
   mut numeric: libc::c_int,
 ) -> *const libc::c_char {
-  if (*sap).sa_family as libc::c_int == 0xffffi32 || (*sap).sa_family as libc::c_int == 0i32 {
+  if (*sap).sa_family as libc::c_int == 0xffffi32 || (*sap).sa_family as libc::c_int == 0 {
     return b"[NONE SET]\x00" as *const u8 as *const libc::c_char;
   }
   return crate::libbb::auto_string::auto_string(crate::libbb::inet_common::INET_rresolve(
@@ -257,7 +257,7 @@ unsafe extern "C" fn INET_input(
   mut bufp: *const libc::c_char,
   mut sap: *mut sockaddr,
 ) -> libc::c_int {
-  return crate::libbb::inet_common::INET_resolve(bufp, sap as *mut sockaddr_in, 0i32);
+  return crate::libbb::inet_common::INET_resolve(bufp, sap as *mut sockaddr_in, 0);
   /*
     switch (type) {
     case 1:
@@ -297,7 +297,7 @@ unsafe extern "C" fn INET6_sprint(
   mut sap: *mut sockaddr,
   mut numeric: libc::c_int,
 ) -> *const libc::c_char {
-  if (*sap).sa_family as libc::c_int == 0xffffi32 || (*sap).sa_family as libc::c_int == 0i32 {
+  if (*sap).sa_family as libc::c_int == 0xffffi32 || (*sap).sa_family as libc::c_int == 0 {
     return b"[NONE SET]\x00" as *const u8 as *const libc::c_char;
   }
   return crate::libbb::auto_string::auto_string(crate::libbb::inet_common::INET6_rresolve(
@@ -354,7 +354,7 @@ unsafe extern "C" fn UNSPEC_print(mut ptr: *mut libc::c_uchar) -> *mut libc::c_c
       .wrapping_add(1i32 as libc::c_ulong),
   ) as *mut libc::c_char);
   pos = buff;
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while (i as libc::c_ulong) < ::std::mem::size_of::<sockaddr>() as libc::c_ulong {
     /* careful -- not every libc's sprintf returns # bytes written */
     let fresh0 = ptr;
@@ -377,7 +377,7 @@ unsafe extern "C" fn UNSPEC_sprint(
   mut sap: *mut sockaddr,
   mut _numeric: libc::c_int,
 ) -> *const libc::c_char {
-  if (*sap).sa_family as libc::c_int == 0xffffi32 || (*sap).sa_family as libc::c_int == 0i32 {
+  if (*sap).sa_family as libc::c_int == 0xffffi32 || (*sap).sa_family as libc::c_int == 0 {
     return b"[NONE SET]\x00" as *const u8 as *const libc::c_char;
   }
   return UNSPEC_print((*sap).sa_data.as_mut_ptr() as *mut libc::c_uchar);
@@ -387,8 +387,8 @@ static mut unspec_aftype: aftype = {
   let mut init = aftype {
     name: b"unspec\x00" as *const u8 as *const libc::c_char,
     title: b"UNSPEC\x00" as *const u8 as *const libc::c_char,
-    af: 0i32,
-    alen: 0i32,
+    af: 0,
+    alen: 0,
     print: Some(UNSPEC_print as unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char),
     sprint: Some(
       UNSPEC_sprint
@@ -417,7 +417,7 @@ pub unsafe extern "C" fn get_aftype(mut name: *const libc::c_char) -> *const aft
   let mut afp: *const *const aftype = std::ptr::null();
   afp = aftypes.as_ptr();
   while !(*afp).is_null() {
-    if strcmp((**afp).name, name) == 0i32 {
+    if strcmp((**afp).name, name) == 0 {
       return *afp;
     }
     afp = afp.offset(1)
@@ -446,10 +446,10 @@ unsafe extern "C" fn add_interface(
   ife = (*ilist).int_last;
   while !ife.is_null() {
     let mut n: libc::c_int = strcmp((*ife).name.as_mut_ptr(), name);
-    if n == 0i32 {
+    if n == 0 {
       return ife;
     }
-    if n < 0i32 {
+    if n < 0 {
       break;
     }
     ife = (*ife).prev
@@ -530,7 +530,7 @@ unsafe extern "C" fn get_dev_fields(
 ) {
   memset(
     &mut (*ife).stats as *mut user_net_device_stats as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<user_net_device_stats>() as libc::c_ulong,
   );
   sscanf(
@@ -554,13 +554,13 @@ unsafe extern "C" fn get_dev_fields(
     &mut (*ife).stats.tx_compressed as *mut libc::c_ulong,
   );
   if procnetdev_vsn <= 1i32 {
-    if procnetdev_vsn == 0i32 {
-      (*ife).stats.rx_bytes = 0i32 as libc::c_ulonglong;
-      (*ife).stats.tx_bytes = 0i32 as libc::c_ulonglong
+    if procnetdev_vsn == 0 {
+      (*ife).stats.rx_bytes = 0 as libc::c_ulonglong;
+      (*ife).stats.tx_bytes = 0 as libc::c_ulonglong
     }
-    (*ife).stats.rx_multicast = 0i32 as libc::c_ulong;
-    (*ife).stats.rx_compressed = 0i32 as libc::c_ulong;
-    (*ife).stats.tx_compressed = 0i32 as libc::c_ulong
+    (*ife).stats.rx_multicast = 0 as libc::c_ulong;
+    (*ife).stats.rx_compressed = 0 as libc::c_ulong;
+    (*ife).stats.tx_compressed = 0 as libc::c_ulong
   };
 }
 unsafe extern "C" fn procnetdev_version(mut buf: *mut libc::c_char) -> libc::c_int {
@@ -570,7 +570,7 @@ unsafe extern "C" fn procnetdev_version(mut buf: *mut libc::c_char) -> libc::c_i
   if !strstr(buf, b"bytes\x00" as *const u8 as *const libc::c_char).is_null() {
     return 1i32;
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn if_readconf(mut ilist: *mut iface_list) {
   let mut numreqs: libc::c_int = 30i32;
@@ -586,7 +586,7 @@ unsafe extern "C" fn if_readconf(mut ilist: *mut iface_list) {
   ifc.ifc_ifcu.ifcu_buf = 0 as __caddr_t;
   /* SIOCGIFCONF currently seems to only work properly on AF_INET sockets
   (as of 2.1.128) */
-  skfd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+  skfd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
   loop {
     ifc.ifc_len = (::std::mem::size_of::<ifreq>() as libc::c_ulong)
       .wrapping_mul(numreqs as libc::c_ulong) as libc::c_int;
@@ -610,7 +610,7 @@ unsafe extern "C" fn if_readconf(mut ilist: *mut iface_list) {
     numreqs += 10i32
   }
   ifr = ifc.ifc_ifcu.ifcu_req;
-  n = 0i32;
+  n = 0;
   while n < ifc.ifc_len {
     add_interface(ilist, (*ifr).ifr_ifrn.ifrn_name.as_mut_ptr());
     ifr = ifr.offset(1);
@@ -634,7 +634,7 @@ unsafe extern "C" fn if_readlist_proc(
     b"r\x00" as *const u8 as *const libc::c_char,
   );
   if fh.is_null() {
-    return 0i32;
+    return 0;
     /* "not found" */
   } /* eat line */
   fgets_unlocked(
@@ -648,7 +648,7 @@ unsafe extern "C" fn if_readlist_proc(
     fh,
   );
   procnetdev_vsn = procnetdev_version(buf.as_mut_ptr());
-  ret = 0i32;
+  ret = 0;
   while !fgets_unlocked(
     buf.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 512]>() as libc::c_ulong as libc::c_int,
@@ -662,7 +662,7 @@ unsafe extern "C" fn if_readlist_proc(
     ife = add_interface(ilist, name.as_mut_ptr());
     get_dev_fields(s, ife, procnetdev_vsn);
     (*ife).statistics_valid = 1i32 as smallint;
-    if !(!ifname.is_null() && strcmp(ifname, name.as_mut_ptr()) == 0i32) {
+    if !(!ifname.is_null() && strcmp(ifname, name.as_mut_ptr()) == 0) {
       continue;
     }
     ret = 1i32;
@@ -691,9 +691,9 @@ unsafe extern "C" fn if_fetch(mut ife: *mut interface) -> libc::c_int {
   };
   let mut ifname: *mut libc::c_char = (*ife).name.as_mut_ptr();
   let mut skfd: libc::c_int = 0;
-  skfd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0i32);
+  skfd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
   crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
-  if ioctl(skfd, 0x8913i32 as libc::c_ulong, &mut ifr as *mut ifreq) < 0i32 {
+  if ioctl(skfd, 0x8913i32 as libc::c_ulong, &mut ifr as *mut ifreq) < 0 {
     close(skfd);
     return -1i32;
   }
@@ -702,13 +702,13 @@ unsafe extern "C" fn if_fetch(mut ife: *mut interface) -> libc::c_int {
   (*ife).tx_queue_len = -1i32; /* unknown value */
   memset(
     &mut (*ife).metric as *mut libc::c_int as *mut libc::c_void,
-    0i32,
+    0,
     136u64
       .wrapping_sub(40u64)
       .wrapping_add(::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong),
   );
   crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
-  if ioctl(skfd, 0x8927i32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0i32 {
+  if ioctl(skfd, 0x8927i32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0 {
     memcpy(
       (*ife).hwaddr.as_mut_ptr() as *mut libc::c_void,
       ifr.ifr_ifru.ifru_hwaddr.sa_data.as_mut_ptr() as *const libc::c_void,
@@ -718,44 +718,44 @@ unsafe extern "C" fn if_fetch(mut ife: *mut interface) -> libc::c_int {
   //er.... why this _isnt_ inside if()?
   (*ife).type_0 = ifr.ifr_ifru.ifru_hwaddr.sa_family as libc::c_short;
   crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
-  if ioctl(skfd, 0x891di32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0i32 {
+  if ioctl(skfd, 0x891di32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0 {
     (*ife).metric = ifr.ifr_ifru.ifru_ivalue
   }
   crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
-  if ioctl(skfd, 0x8921i32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0i32 {
+  if ioctl(skfd, 0x8921i32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0 {
     (*ife).mtu = ifr.ifr_ifru.ifru_mtu
   }
   crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
-  if ioctl(skfd, 0x8970i32 as libc::c_ulong, &mut ifr as *mut ifreq) == 0i32 {
+  if ioctl(skfd, 0x8970i32 as libc::c_ulong, &mut ifr as *mut ifreq) == 0 {
     (*ife).map = ifr.ifr_ifru.ifru_map
   }
   crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
-  if ioctl(skfd, 0x8942i32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0i32 {
+  if ioctl(skfd, 0x8942i32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0 {
     (*ife).tx_queue_len = ifr.ifr_ifru.ifru_ivalue
   }
   crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
   ifr.ifr_ifru.ifru_addr.sa_family = 2i32 as sa_family_t;
-  if ioctl(skfd, 0x8915i32 as libc::c_ulong, &mut ifr as *mut ifreq) == 0i32 {
+  if ioctl(skfd, 0x8915i32 as libc::c_ulong, &mut ifr as *mut ifreq) == 0 {
     (*ife).has_ip = 1i32 as smallint;
     (*ife).addr = ifr.ifr_ifru.ifru_addr;
     crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
-    if ioctl(skfd, 0x8917i32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0i32 {
+    if ioctl(skfd, 0x8917i32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0 {
       (*ife).dstaddr = ifr.ifr_ifru.ifru_dstaddr
     }
     crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
-    if ioctl(skfd, 0x8919i32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0i32 {
+    if ioctl(skfd, 0x8919i32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0 {
       (*ife).broadaddr = ifr.ifr_ifru.ifru_broadaddr
     }
     crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
-    if ioctl(skfd, 0x891bi32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0i32 {
+    if ioctl(skfd, 0x891bi32 as libc::c_ulong, &mut ifr as *mut ifreq) >= 0 {
       (*ife).netmask = ifr.ifr_ifru.ifru_netmask
     }
   }
   close(skfd);
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn do_if_fetch(mut ife: *mut interface) -> libc::c_int {
-  if if_fetch(ife) < 0i32 {
+  if if_fetch(ife) < 0 {
     let mut errmsg: *const libc::c_char = std::ptr::null();
     if *bb_errno == 19i32 {
       /* Give better error message for this case. */
@@ -770,7 +770,7 @@ unsafe extern "C" fn do_if_fetch(mut ife: *mut interface) -> libc::c_int {
     );
     return -1i32;
   }
-  return 0i32;
+  return 0;
 }
 
 static mut unspec_hwtype: hwtype = {
@@ -903,7 +903,7 @@ pub unsafe extern "C" fn get_hwtype(mut name: *const libc::c_char) -> *const hwt
   let mut hwp: *const *const hwtype = std::ptr::null();
   hwp = hwtypes.as_ptr();
   while !(*hwp).is_null() {
-    if strcmp((**hwp).name, name) == 0i32 {
+    if strcmp((**hwp).name, name) == 0 {
       return *hwp;
     }
     hwp = hwp.offset(1)
@@ -930,10 +930,10 @@ unsafe extern "C" fn hw_null_address(
 ) -> libc::c_int {
   let mut i: libc::c_int = 0;
   let mut address: *mut libc::c_uchar = ap as *mut libc::c_uchar;
-  i = 0i32;
+  i = 0;
   while i < (*hw).alen {
     if *address.offset(i as isize) != 0 {
-      return 0i32;
+      return 0;
     }
     i += 1
   }
@@ -945,7 +945,7 @@ unsafe extern "C" fn print_bytes_scaled(mut ull: libc::c_ulonglong, mut end: *co
   let mut ext: *const libc::c_char = std::ptr::null();
   let mut frac_part: libc::c_uint = 0;
   let mut i: libc::c_int = 0;
-  frac_part = 0i32 as libc::c_uint;
+  frac_part = 0 as libc::c_uint;
   ext = TRext.as_ptr();
   int_part = ull;
   i = 4i32;
@@ -1007,7 +1007,7 @@ unsafe extern "C" fn ife_print6(mut ptr: *mut interface) {
     devname.as_mut_ptr(),
   ) != -1i32
   {
-    if strcmp(devname.as_mut_ptr(), (*ptr).name.as_mut_ptr()) == 0i32 {
+    if strcmp(devname.as_mut_ptr(), (*ptr).name.as_mut_ptr()) == 0 {
       sprintf(
         addr6.as_mut_ptr(),
         b"%s:%s:%s:%s:%s:%s:%s:%s\x00" as *const u8 as *const libc::c_char,
@@ -1022,7 +1022,7 @@ unsafe extern "C" fn ife_print6(mut ptr: *mut interface) {
       );
       memset(
         &mut sap as *mut sockaddr_in6 as *mut libc::c_void,
-        0i32,
+        0,
         ::std::mem::size_of::<sockaddr_in6>() as libc::c_ulong,
       );
       inet_pton(
@@ -1065,7 +1065,7 @@ unsafe extern "C" fn ife_print(mut ptr: *mut interface) {
   let mut ap: *const aftype = std::ptr::null();
   let mut hw: *const hwtype = std::ptr::null();
   let mut hf: libc::c_int = 0;
-  let mut can_compress: libc::c_int = 0i32;
+  let mut can_compress: libc::c_int = 0;
   ap = get_afntype((*ptr).addr.sa_family as libc::c_int);
   if ap.is_null() {
     ap = get_afntype(0i32)
@@ -1132,7 +1132,7 @@ unsafe extern "C" fn ife_print(mut ptr: *mut interface) {
   ife_print6(ptr);
   printf(b"          \x00" as *const u8 as *const libc::c_char);
   /* DONT FORGET TO ADD THE FLAGS IN ife_print_short, too */
-  if (*ptr).flags as libc::c_int == 0i32 {
+  if (*ptr).flags as libc::c_int == 0 {
     printf(b"[NO FLAGS] \x00" as *const u8 as *const libc::c_char);
   } else {
     static mut ife_print_flags_strs: [libc::c_char; 106] = [
@@ -1281,7 +1281,7 @@ unsafe extern "C" fn do_if_print(
 ) -> libc::c_int {
   let mut res: libc::c_int = 0;
   res = do_if_fetch(ife);
-  if res >= 0i32 {
+  if res >= 0 {
     if (*ife).flags as libc::c_int & IFF_UP as libc::c_int != 0 || show_downed_too != 0 {
       ife_print(ife);
     }
@@ -1315,7 +1315,7 @@ pub unsafe extern "C" fn display_interfaces(mut ifname: *mut libc::c_char) -> li
         break;
       }
       res = do_if_print(ife, ifname as intptr_t as libc::c_int);
-      if res < 0i32 {
+      if res < 0 {
         current_block = 3896182693824010770;
         break;
       }
@@ -1323,13 +1323,13 @@ pub unsafe extern "C" fn display_interfaces(mut ifname: *mut libc::c_char) -> li
     }
     match current_block {
       3896182693824010770 => {}
-      _ => return 0i32,
+      _ => return 0,
     }
   } else {
     ife = add_interface(&mut ilist, ifname);
     res = do_if_print(ife, 1i32)
   }
-  return (res < 0i32) as libc::c_int;
+  return (res < 0) as libc::c_int;
   /* status < 0 == 1 -- error */
 }
 
@@ -1735,5 +1735,5 @@ pub unsafe extern "C" fn in_ib(
   (*sap).sa_family = ib_hwtype.type_0 as sa_family_t;
   //TODO: error check?
   crate::libbb::xfuncs::hex2bin((*sap).sa_data.as_mut_ptr(), bufp, 20i32);
-  return 0i32;
+  return 0;
 }

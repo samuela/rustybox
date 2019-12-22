@@ -14,7 +14,7 @@ extern "C" {
  */
 #[no_mangle]
 pub unsafe extern "C" fn bb_ask_y_confirmation_FILE(mut fp: *mut FILE) -> libc::c_int {
-  let mut first: libc::c_char = 0i32 as libc::c_char;
+  let mut first: libc::c_char = 0 as libc::c_char;
   let mut c: libc::c_int = 0;
   crate::libbb::xfuncs_printf::fflush_all();
   loop {
@@ -22,7 +22,7 @@ pub unsafe extern "C" fn bb_ask_y_confirmation_FILE(mut fp: *mut FILE) -> libc::
     if !(c != -1i32 && c != '\n' as i32) {
       break;
     }
-    if first as libc::c_int == 0i32
+    if first as libc::c_int == 0
       && ({
         let mut bb__isblank: libc::c_uchar = c as libc::c_uchar;
         (bb__isblank as libc::c_int == ' ' as i32 || bb__isblank as libc::c_int == '\t' as i32)

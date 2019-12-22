@@ -163,7 +163,7 @@ pub unsafe extern "C" fn volume_id_probe_exfat(mut id: *mut volume_id) -> libc::
   // Primary super block
   sb = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
-    0i32 as u64,
+    0 as u64,
     ::std::mem::size_of::<exfat_super_block>() as libc::c_ulong,
   ) as *mut exfat_super_block;
   if sb.is_null() {
@@ -173,7 +173,7 @@ pub unsafe extern "C" fn volume_id_probe_exfat(mut id: *mut volume_id) -> libc::
     (*sb).fs_name.as_mut_ptr() as *const libc::c_void,
     b"EXFAT   \x00" as *const u8 as *const libc::c_char as *const libc::c_void,
     8i32 as libc::c_ulong,
-  ) != 0i32
+  ) != 0
   {
     return -1i32;
   }
@@ -198,8 +198,8 @@ pub unsafe extern "C" fn volume_id_probe_exfat(mut id: *mut volume_id) -> libc::
   // The Root Directory may hold an unlimited number of entries,
   // so we do not want to check all. Usually label and GUID
   // are in the beginning, but there are no guarantees.
-  need_lbl_guid = (1i32 << 0i32 | 1i32 << 1i32) as libc::c_uint;
-  count = 0i32 as libc::c_uint;
+  need_lbl_guid = (1i32 << 0 | 1i32 << 1i32) as libc::c_uint;
+  count = 0 as libc::c_uint;
   while count < 100i32 as libc::c_uint {
     de = crate::util_linux::volume_id::util::volume_id_get_buffer(
       id,
@@ -209,7 +209,7 @@ pub unsafe extern "C" fn volume_id_probe_exfat(mut id: *mut volume_id) -> libc::
     if de.is_null() {
       break;
     }
-    if (*de).entry_type as libc::c_int == 0i32 {
+    if (*de).entry_type as libc::c_int == 0 {
       break;
     }
     if (*de).entry_type as libc::c_int == 0x83i32 {
@@ -220,7 +220,7 @@ pub unsafe extern "C" fn volume_id_probe_exfat(mut id: *mut volume_id) -> libc::
         LE,
         (2i32 * (*de).type_0.label.char_count as libc::c_int) as size_t,
       );
-      need_lbl_guid &= !(1i32 << 0i32) as libc::c_uint
+      need_lbl_guid &= !(1i32 << 0) as libc::c_uint
     }
     if (*de).entry_type as libc::c_int == 0xa0i32 {
       // Volume GUID Directory Entry
@@ -237,5 +237,5 @@ pub unsafe extern "C" fn volume_id_probe_exfat(mut id: *mut volume_id) -> libc::
     count = count.wrapping_add(1)
   }
   (*id).type_0 = b"exfat\x00" as *const u8 as *const libc::c_char;
-  return 0i32;
+  return 0;
 }

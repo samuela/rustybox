@@ -185,7 +185,7 @@ unsafe extern "C" fn addstr(
   let mut len: libc::c_int = if !buf.is_null() {
     strlen(buf)
   } else {
-    0i32 as libc::c_ulong
+    0 as libc::c_ulong
   } as libc::c_int;
   str_length = str_length.wrapping_add(1);
   buf = crate::libbb::xfuncs_printf::xrealloc(
@@ -202,7 +202,7 @@ unsafe extern "C" fn strncmpz(
   mut llen: size_t,
 ) -> libc::c_int {
   let mut i: libc::c_int = strncmp(l, r, llen);
-  if i == 0i32 {
+  if i == 0 {
     return -(*r.offset(llen as isize) as libc::c_uchar as libc::c_int);
   }
   return i;
@@ -213,7 +213,7 @@ unsafe extern "C" fn get_var(
   mut ifd: *mut interface_defn_t,
 ) -> *mut libc::c_char {
   let mut i: libc::c_int = 0;
-  if strncmpz(id, b"iface\x00" as *const u8 as *const libc::c_char, idlen) == 0i32 {
+  if strncmpz(id, b"iface\x00" as *const u8 as *const libc::c_char, idlen) == 0 {
     // ubuntu's ifup doesn't do this:
     //static char *label_buf;
     //char *result;
@@ -225,12 +225,12 @@ unsafe extern "C" fn get_var(
     //return label_buf;
     return (*ifd).iface;
   }
-  if strncmpz(id, b"label\x00" as *const u8 as *const libc::c_char, idlen) == 0i32 {
+  if strncmpz(id, b"label\x00" as *const u8 as *const libc::c_char, idlen) == 0 {
     return (*ifd).iface;
   }
-  i = 0i32;
+  i = 0;
   while i < (*ifd).n_options {
-    if strncmpz(id, (*(*ifd).option.offset(i as isize)).name, idlen) == 0i32 {
+    if strncmpz(id, (*(*ifd).option.offset(i as isize)).name, idlen) == 0 {
       return (*(*ifd).option.offset(i as isize)).value;
     }
     i += 1
@@ -251,7 +251,7 @@ unsafe extern "C" fn count_netmask_bits(mut dotted_quad: *const libc::c_char) ->
   let mut result: libc::c_int = 0; /* malformed dotted IP */
   let mut ip: in_addr = in_addr { s_addr: 0 }; /* IP in host order */
   let mut d: libc::c_uint = 0; /* 11110000 -> 00001111 */
-  if inet_aton(dotted_quad, &mut ip) == 0i32 {
+  if inet_aton(dotted_quad, &mut ip) == 0 {
     return -1i32;
   } /* no it is not */
   d = {
@@ -307,7 +307,7 @@ unsafe extern "C" fn parse(
           old_pos[opt_depth as usize] = if !result.is_null() {
             strlen(result)
           } else {
-            0i32 as libc::c_ulong
+            0 as libc::c_ulong
           };
           okay[opt_depth as usize] = 1i32 as smallint;
           opt_depth += 1;
@@ -375,7 +375,7 @@ unsafe extern "C" fn parse(
             );
             if !varvalue.is_null() {
               res = count_netmask_bits(varvalue) as libc::c_uint;
-              if res > 0i32 as libc::c_uint {
+              if res > 0 as libc::c_uint {
                 let mut argument: *const libc::c_char = crate::libbb::xfuncs::utoa(res);
                 addstr(&mut result, argument, strlen(argument));
                 command = nextpercent.offset(1);
@@ -392,7 +392,7 @@ unsafe extern "C" fn parse(
           match current_block_42 {
             9353995356876505083 => {}
             _ => {
-              okay[(opt_depth - 1i32) as usize] = 0i32 as smallint;
+              okay[(opt_depth - 1i32) as usize] = 0 as smallint;
               current_block_42 = 5892776923941496671;
             }
           }
@@ -431,7 +431,7 @@ unsafe extern "C" fn execute(
   out = parse(command, ifd);
   if out.is_null() {
     /* parse error? */
-    return 0i32;
+    return 0;
   }
   /* out == "": parsed ok but not all needed variables known, skip */
   ret = if *out.offset(0) as libc::c_int != 0 {
@@ -441,7 +441,7 @@ unsafe extern "C" fn execute(
   };
   free(out as *mut libc::c_void);
   if ret != 1i32 {
-    return 0i32;
+    return 0;
   }
   return 1i32;
 }
@@ -461,7 +461,7 @@ unsafe extern "C" fn loopback_up6(
     ifd,
     exec,
   );
-  return if result == 2i32 { 2i32 } else { 0i32 };
+  return if result == 2i32 { 2i32 } else { 0 };
 }
 unsafe extern "C" fn loopback_down6(
   mut ifd: *mut interface_defn_t,
@@ -503,7 +503,7 @@ unsafe extern "C" fn static_up6(
     ifd,
     exec,
   ); /* already gone */
-  return if result == 3i32 { 3i32 } else { 0i32 };
+  return if result == 3i32 { 3i32 } else { 0 };
 }
 unsafe extern "C" fn static_down6(
   mut ifd: *mut interface_defn_t,
@@ -545,7 +545,7 @@ unsafe extern "C" fn v4tunnel_up(
     ifd,
     exec,
   );
-  return if result == 4i32 { 4i32 } else { 0i32 };
+  return if result == 4i32 { 4i32 } else { 0 };
 }
 unsafe extern "C" fn v4tunnel_down(
   mut ifd: *mut interface_defn_t,
@@ -662,7 +662,7 @@ unsafe extern "C" fn loopback_up(
     ifd,
     exec,
   );
-  return if result == 2i32 { 2i32 } else { 0i32 };
+  return if result == 2i32 { 2i32 } else { 0 };
 }
 unsafe extern "C" fn loopback_down(
   mut ifd: *mut interface_defn_t,
@@ -679,7 +679,7 @@ unsafe extern "C" fn loopback_down(
     ifd,
     exec,
   );
-  return if result == 2i32 { 2i32 } else { 0i32 };
+  return if result == 2i32 { 2i32 } else { 0 };
 }
 unsafe extern "C" fn static_up(
   mut ifd: *mut interface_defn_t,
@@ -701,7 +701,7 @@ unsafe extern "C" fn static_up(
     ifd,
     exec,
   );
-  return if result == 3i32 { 3i32 } else { 0i32 };
+  return if result == 3i32 { 3i32 } else { 0 };
 }
 unsafe extern "C" fn static_down(
   mut ifd: *mut interface_defn_t,
@@ -724,7 +724,7 @@ unsafe extern "C" fn static_down(
     ifd,
     exec,
   );
-  return if result == 2i32 { 2i32 } else { 0i32 };
+  return if result == 2i32 { 2i32 } else { 0 };
 }
 /* FEATURE_IFUPDOWN_EXTERNAL_DHCPC */
 unsafe extern "C" fn dhcp_up(
@@ -738,7 +738,7 @@ unsafe extern "C" fn dhcp_up(
     exec,
   ) == 0
   {
-    return 0i32;
+    return 0;
   }
   return execute(b"udhcpc -R -n -p /var/run/udhcpc.%iface%.pid -i %iface%[[ -x hostname:%hostname%]][[ -c %client%]][[ -s %script%]][[ %udhcpc_opts%]]\x00"
                        as *const u8 as *const libc::c_char, ifd, exec);
@@ -761,7 +761,7 @@ unsafe extern "C" fn dhcp_down(
   and it may come back up because udhcpc is still shutting down */
   usleep(100000i32 as useconds_t);
   result += static_down(ifd, exec);
-  return if result == 3i32 { 3i32 } else { 0i32 };
+  return if result == 3i32 { 3i32 } else { 0 };
 }
 unsafe extern "C" fn manual_up_down(
   mut _ifd: *mut interface_defn_t,
@@ -1035,9 +1035,9 @@ unsafe extern "C" fn get_address_family(
   if name.is_null() {
     return 0 as *const address_family_t;
   }
-  i = 0i32;
+  i = 0;
   while !(*af.offset(i as isize)).is_null() {
-    if strcmp((**af.offset(i as isize)).name, name) == 0i32 {
+    if strcmp((**af.offset(i as isize)).name, name) == 0 {
       return *af.offset(i as isize);
     }
     i += 1
@@ -1053,9 +1053,9 @@ unsafe extern "C" fn get_method(
     return 0 as *const method_t;
   }
   /* TODO: use index_in_str_array() */
-  i = 0i32;
+  i = 0;
   while i < (*af).n_methods {
-    if strcmp((*(*af).method.offset(i as isize)).name, name) == 0i32 {
+    if strcmp((*(*af).method.offset(i as isize)).name, name) == 0 {
       return &*(*af).method.offset(i as isize) as *const method_t;
     }
     i += 1
@@ -1132,7 +1132,7 @@ unsafe extern "C" fn read_interfaces(
       if strcmp(
         first_word,
         b"mapping\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
+      ) == 0
       {
         currmap = crate::libbb::xfuncs_printf::xzalloc(
           ::std::mem::size_of::<mapping_defn_t>() as libc::c_ulong
@@ -1163,7 +1163,7 @@ unsafe extern "C" fn read_interfaces(
         *where_0 = currmap;
         currently_processing = MAPPING
       /*currmap->next = NULL;*/
-      } else if strcmp(first_word, b"iface\x00" as *const u8 as *const libc::c_char) == 0i32 {
+      } else if strcmp(first_word, b"iface\x00" as *const u8 as *const libc::c_char) == 0 {
         static mut addr_fams: [*const address_family_t; 4] = unsafe {
           [
             &addr_inet as *const address_family_t,
@@ -1216,7 +1216,7 @@ unsafe extern "C" fn read_interfaces(
           currif as *mut libc::c_char as *mut libc::c_void,
         );
         currently_processing = IFACE
-      } else if strcmp(first_word, b"auto\x00" as *const u8 as *const libc::c_char) == 0i32 {
+      } else if strcmp(first_word, b"auto\x00" as *const u8 as *const libc::c_char) == 0 {
         loop {
           first_word = next_word(&mut rest_of_line);
           if first_word.is_null() {
@@ -1239,7 +1239,7 @@ unsafe extern "C" fn read_interfaces(
       } else if strcmp(
         first_word,
         b"source\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
+      ) == 0
       {
         read_interfaces(next_word(&mut rest_of_line), defn);
       } else if !crate::libbb::compare_string_array::is_prefixed_with(
@@ -1280,13 +1280,13 @@ unsafe extern "C" fn read_interfaces(
             if strcmp(
               first_word,
               b"post-up\x00" as *const u8 as *const libc::c_char,
-            ) == 0i32
+            ) == 0
             {
               first_word = first_word.offset(5)
             } else if strcmp(
               first_word,
               b"pre-down\x00" as *const u8 as *const libc::c_char,
-            ) == 0i32
+            ) == 0
             {
               first_word = first_word.offset(4)
             }
@@ -1294,12 +1294,12 @@ unsafe extern "C" fn read_interfaces(
             if crate::libbb::compare_string_array::index_in_strings(
               keywords_up_down.as_ptr(),
               first_word,
-            ) < 0i32
+            ) < 0
             {
               let mut i: libc::c_int = 0;
-              i = 0i32;
+              i = 0;
               while i < (*currif).n_options {
-                if strcmp((*(*currif).option.offset(i as isize)).name, first_word) == 0i32 {
+                if strcmp((*(*currif).option.offset(i as isize)).name, first_word) == 0 {
                   crate::libbb::verror_msg::bb_error_msg_and_die(
                     b"duplicate option \"%s\"\x00" as *const u8 as *const libc::c_char,
                     buf,
@@ -1324,7 +1324,7 @@ unsafe extern "C" fn read_interfaces(
             if strcmp(
               first_word,
               b"script\x00" as *const u8 as *const libc::c_char,
-            ) == 0i32
+            ) == 0
             {
               if !(*currmap).script.is_null() {
                 crate::libbb::verror_msg::bb_error_msg_and_die(
@@ -1333,7 +1333,7 @@ unsafe extern "C" fn read_interfaces(
                 );
               }
               (*currmap).script = crate::libbb::xfuncs_printf::xstrdup(next_word(&mut rest_of_line))
-            } else if strcmp(first_word, b"map\x00" as *const u8 as *const libc::c_char) == 0i32 {
+            } else if strcmp(first_word, b"map\x00" as *const u8 as *const libc::c_char) == 0 {
               (*currmap).mapping = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
                 (*currmap).mapping as *mut libc::c_void,
                 ((::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong) << 8i32)
@@ -1361,7 +1361,7 @@ unsafe extern "C" fn read_interfaces(
       free(buf as *mut libc::c_void);
     }
   }
-  if ferror_unlocked(f) != 0i32 {
+  if ferror_unlocked(f) != 0 {
     /* ferror does NOT set errno! */
     crate::libbb::verror_msg::bb_error_msg_and_die(
       b"%s: I/O error\x00" as *const u8 as *const libc::c_char,
@@ -1429,12 +1429,12 @@ unsafe extern "C" fn set_environ(
       .wrapping_mul(((*iface).n_options + 7i32) as libc::c_ulong),
   ) as *mut *mut libc::c_char;
   pp = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).my_environ;
-  i = 0i32;
+  i = 0;
   while i < (*iface).n_options {
     if !(crate::libbb::compare_string_array::index_in_strings(
       keywords_up_down.as_ptr(),
       (*(*iface).option.offset(i as isize)).name,
-    ) >= 0i32)
+    ) >= 0)
     {
       let fresh11 = pp;
       pp = pp.offset(1);
@@ -1503,11 +1503,11 @@ unsafe extern "C" fn doit(mut str: *mut libc::c_char) -> libc::c_int {
     let mut status: libc::c_int = 0;
     crate::libbb::xfuncs_printf::fflush_all();
     child = vfork();
-    if child < 0i32 {
+    if child < 0 {
       /* failure */
-      return 0i32;
+      return 0;
     }
-    if child == 0i32 {
+    if child == 0 {
       /* child */
       execle(
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).shell,
@@ -1519,9 +1519,9 @@ unsafe extern "C" fn doit(mut str: *mut libc::c_char) -> libc::c_int {
       );
       _exit(127i32);
     }
-    crate::libbb::xfuncs::safe_waitpid(child, &mut status, 0i32);
-    if !(status & 0x7fi32 == 0i32) || (status & 0xff00i32) >> 8i32 != 0i32 {
-      return 0i32;
+    crate::libbb::xfuncs::safe_waitpid(child, &mut status, 0);
+    if !(status & 0x7fi32 == 0) || (status & 0xff00i32) >> 8i32 != 0 {
+      return 0;
     }
   }
   return 1i32;
@@ -1535,11 +1535,11 @@ unsafe extern "C" fn execute_all(
    */
   let mut buf: [libc::c_char; 49] = [0; 49];
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while i < (*ifd).n_options {
-    if strcmp((*(*ifd).option.offset(i as isize)).name, opt) == 0i32 {
+    if strcmp((*(*ifd).option.offset(i as isize)).name, opt) == 0 {
       if doit((*(*ifd).option.offset(i as isize)).value) == 0 {
-        return 0i32;
+        return 0;
       }
     }
     i += 1
@@ -1574,14 +1574,14 @@ unsafe extern "C" fn iface_up(mut iface: *mut interface_defn_t) -> libc::c_int {
     b"pre-up\x00" as *const u8 as *const libc::c_char,
   );
   if execute_all(iface, b"pre-up\x00" as *const u8 as *const libc::c_char) == 0 {
-    return 0i32;
+    return 0;
   }
   if (*(*iface).method).up.expect("non-null function pointer")(
     iface,
     Some(doit as unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int),
   ) == 0
   {
-    return 0i32;
+    return 0;
   }
   set_environ(
     iface,
@@ -1589,7 +1589,7 @@ unsafe extern "C" fn iface_up(mut iface: *mut interface_defn_t) -> libc::c_int {
     b"post-up\x00" as *const u8 as *const libc::c_char,
   );
   if execute_all(iface, b"up\x00" as *const u8 as *const libc::c_char) == 0 {
-    return 0i32;
+    return 0;
   }
   return 1i32;
 }
@@ -1607,14 +1607,14 @@ unsafe extern "C" fn iface_down(mut iface: *mut interface_defn_t) -> libc::c_int
     b"pre-down\x00" as *const u8 as *const libc::c_char,
   );
   if execute_all(iface, b"down\x00" as *const u8 as *const libc::c_char) == 0 {
-    return 0i32;
+    return 0;
   }
   if (*(*iface).method).down.expect("non-null function pointer")(
     iface,
     Some(doit as unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int),
   ) == 0
   {
-    return 0i32;
+    return 0;
   }
   set_environ(
     iface,
@@ -1622,7 +1622,7 @@ unsafe extern "C" fn iface_down(mut iface: *mut interface_defn_t) -> libc::c_int
     b"post-down\x00" as *const u8 as *const libc::c_char,
   );
   if execute_all(iface, b"post-down\x00" as *const u8 as *const libc::c_char) == 0 {
-    return 0i32;
+    return 0;
   }
   return 1i32;
 }
@@ -1641,19 +1641,19 @@ unsafe extern "C" fn popen2(
   crate::libbb::xfuncs_printf::fflush_all();
   pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
-    if bb__xvfork_pid < 0i32 {
+    if bb__xvfork_pid < 0 {
       crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
         b"vfork\x00" as *const u8 as *const libc::c_char,
       );
     }
     bb__xvfork_pid
   };
-  if pid == 0i32 {
+  if pid == 0 {
     /* Child */
     /* NB: close _first_, then move fds! */
     close(infd.wr);
     close(outfd.rd);
-    crate::libbb::xfuncs_printf::xmove_fd(infd.rd, 0i32);
+    crate::libbb::xfuncs_printf::xmove_fd(infd.rd, 0);
     crate::libbb::xfuncs_printf::xmove_fd(outfd.wr, 1i32);
     crate::libbb::executable::BB_EXECVP_or_die(argv.as_mut_ptr());
   }
@@ -1677,7 +1677,7 @@ unsafe extern "C" fn run_mapping(
   /* Run the mapping script. Never fails. */
   pid = popen2(&mut in_0, &mut out, (*map).script, physical);
   /* Write mappings to stdin of mapping script. */
-  i = 0i32;
+  i = 0;
   while i < (*map).n_mappings {
     fprintf(
       in_0,
@@ -1687,8 +1687,8 @@ unsafe extern "C" fn run_mapping(
     i += 1
   }
   fclose(in_0);
-  crate::libbb::xfuncs::safe_waitpid(pid, &mut status, 0i32);
-  if status & 0x7fi32 == 0i32 && (status & 0xff00i32) >> 8i32 == 0i32 {
+  crate::libbb::xfuncs::safe_waitpid(pid, &mut status, 0);
+  if status & 0x7fi32 == 0 && (status & 0xff00i32) >> 8i32 == 0 {
     /* If the mapping script exited successfully, try to
      * grab a line of output and use that as the name of the
      * logical interface. */
@@ -1762,7 +1762,7 @@ unsafe extern "C" fn open_new_state_file() -> *mut FILE {
   let mut fd: libc::c_int = 0;
   let mut flags: libc::c_int = 0;
   let mut cnt: libc::c_int = 0;
-  cnt = 0i32;
+  cnt = 0;
   flags = 0o1i32 | 0o100i32 | 0o200i32;
   loop {
     fd = open(
@@ -1770,7 +1770,7 @@ unsafe extern "C" fn open_new_state_file() -> *mut FILE {
       flags,
       0o666i32,
     );
-    if fd >= 0i32 {
+    if fd >= 0 {
       break;
     }
     if *bb_errno != 17i32 || flags == 0o1i32 | 0o100i32 | 0o1000i32 {
@@ -1803,7 +1803,7 @@ pub unsafe extern "C" fn ifupdown_main(
   let mut target_list: *mut llist_t = std::ptr::null_mut();
   let mut interfaces: *const libc::c_char =
     b"/etc/network/interfaces\x00" as *const u8 as *const libc::c_char;
-  let mut any_failures: bool = 0i32 != 0;
+  let mut any_failures: bool = 0 != 0;
   let ref mut fresh19 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).startup_PATH;
   *fresh19 = getenv(b"PATH\x00" as *const u8 as *const libc::c_char);
   let ref mut fresh20 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).shell;
@@ -1841,9 +1841,9 @@ pub unsafe extern "C" fn ifupdown_main(
     let mut iface: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut liface: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut pch: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut okay: bool = 0i32 != 0;
+    let mut okay: bool = 0 != 0;
     let mut cmds_ret: libc::c_int = 0;
-    let mut curr_failure: bool = 0i32 != 0;
+    let mut curr_failure: bool = 0 != 0;
     iface = crate::libbb::xfuncs_printf::xstrdup((*target_list).data);
     target_list = (*target_list).link;
     pch = strchr(iface, '=' as i32);
@@ -1898,9 +1898,9 @@ pub unsafe extern "C" fn ifupdown_main(
           currmap = (*defn).mappings;
           while !currmap.is_null() {
             let mut i: libc::c_int = 0;
-            i = 0i32;
+            i = 0;
             while i < (*currmap).n_matches {
-              if fnmatch(*(*currmap).match_0.offset(i as isize), liface, 0i32) != 0i32 {
+              if fnmatch(*(*currmap).match_0.offset(i as isize), liface, 0) != 0 {
                 i += 1
               } else {
                 if option_mask32 & OPT_verbose as libc::c_int as libc::c_uint != 0 {
@@ -1920,7 +1920,7 @@ pub unsafe extern "C" fn ifupdown_main(
         iface_list = (*defn).ifaces;
         while !iface_list.is_null() {
           currif = (*iface_list).data as *mut interface_defn_t;
-          if strcmp(liface, (*currif).iface) == 0i32 {
+          if strcmp(liface, (*currif).iface) == 0 {
             let mut oldiface: *mut libc::c_char = (*currif).iface;
             okay = 1i32 != 0;
             (*currif).iface = iface;
@@ -1935,7 +1935,7 @@ pub unsafe extern "C" fn ifupdown_main(
               );
               curr_failure = 1i32 != 0;
               any_failures = curr_failure
-            } else if cmds_ret == 0i32 {
+            } else if cmds_ret == 0 {
               curr_failure = 1i32 != 0;
               any_failures = curr_failure
             }

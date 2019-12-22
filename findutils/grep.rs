@@ -242,12 +242,12 @@ unsafe extern "C" fn print_line(
 unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
   let mut current_block: u64; /* while (read line) */
   let mut found: smalluint = 0; /* for gcc */
-  let mut linenum: libc::c_int = 0i32; /* while (pattern_ptr) */
-  let mut nmatches: libc::c_int = 0i32;
+  let mut linenum: libc::c_int = 0; /* while (pattern_ptr) */
+  let mut nmatches: libc::c_int = 0;
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut print_n_lines_after: libc::c_int = 0i32;
-  let mut curpos: libc::c_int = 0i32;
-  let mut idx: libc::c_int = 0i32;
+  let mut print_n_lines_after: libc::c_int = 0;
+  let mut curpos: libc::c_int = 0;
+  let mut idx: libc::c_int = 0;
   loop {
     line = crate::libbb::get_line_from_file::xmalloc_fgetline(file);
     if line.is_null() {
@@ -258,7 +258,7 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
     let mut gl: *mut grep_list_data_t = std::ptr::null_mut();
     gl = gl;
     linenum += 1;
-    found = 0i32 as smalluint;
+    found = 0 as smalluint;
     while !pattern_ptr.is_null() {
       gl = (*pattern_ptr).data as *mut grep_list_data_t;
       if option_mask32 & OPT_F as libc::c_int as libc::c_uint != 0 {
@@ -334,9 +334,9 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
             (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).reflags,
           );
         }
-        (*gl).matched_range.rm_so = 0i32;
-        (*gl).matched_range.rm_eo = 0i32;
-        match_flg = 0i32;
+        (*gl).matched_range.rm_so = 0;
+        (*gl).matched_range.rm_eo = 0;
+        match_flg = 0;
         match_at = line;
         //bb_error_msg("'%s' start_pos:%d line_len:%d", match_at, start_pos, line_len);
         while regexec(
@@ -345,11 +345,11 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
           1i32 as size_t,
           &mut (*gl).matched_range,
           match_flg,
-        ) == 0i32
+        ) == 0
         {
           if option_mask32 & OPT_x as libc::c_int as libc::c_uint != 0 {
             found = (found as libc::c_int
-              | ((*gl).matched_range.rm_so == 0i32
+              | ((*gl).matched_range.rm_so == 0
                 && *match_at.offset((*gl).matched_range.rm_eo as isize) as libc::c_int
                   == '\u{0}' as i32) as libc::c_int) as smalluint;
             break;
@@ -358,7 +358,7 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
             break;
           } else {
             let mut c_0: libc::c_char = ' ' as i32 as libc::c_char;
-            if match_at > line || (*gl).matched_range.rm_so != 0i32 {
+            if match_at > line || (*gl).matched_range.rm_so != 0 {
               c_0 = *match_at.offset(((*gl).matched_range.rm_so - 1i32) as isize)
             }
             if bb_ascii_isalnum(c_0 as libc::c_uchar) == 0 && c_0 as libc::c_int != '_' as i32 {
@@ -375,7 +375,7 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
                * "echo foo | grep -w ^" prints nothing.
                * Without such check, we can loop forever.
                */
-              if !((*gl).matched_range.rm_eo != 0i32) {
+              if !((*gl).matched_range.rm_eo != 0) {
                 break;
               }
               match_at = match_at.offset((*gl).matched_range.rm_eo as isize);
@@ -437,8 +437,8 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
         break;
       }
       /* print the matched line */
-      if option_mask32 & OPT_c as libc::c_int as libc::c_uint == 0i32 as libc::c_uint {
-        let mut prevpos: libc::c_int = if curpos == 0i32 {
+      if option_mask32 & OPT_c as libc::c_int as libc::c_uint == 0 as libc::c_uint {
+        let mut prevpos: libc::c_int = if curpos == 0 {
           ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lines_before) - 1i32
         } else {
           (curpos) - 1i32
@@ -508,7 +508,7 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
               let mut old: libc::c_char = *line.offset(end as isize);
               *line.offset(end as isize) = '\u{0}' as i32 as libc::c_char;
               /* Empty match is not printed: try "echo test | grep -o ''" */
-              if len != 0i32 as libc::c_uint {
+              if len != 0 as libc::c_uint {
                 print_line(
                   line.offset(start as isize),
                   linenum,
@@ -519,7 +519,7 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
                 break;
               }
               *line.offset(end as isize) = old;
-              if len == 0i32 as libc::c_uint {
+              if len == 0 as libc::c_uint {
                 end = end.wrapping_add(1)
               }
               if regexec(
@@ -528,7 +528,7 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
                 1i32 as size_t,
                 &mut (*gl).matched_range,
                 1i32,
-              ) != 0i32
+              ) != 0
               {
                 break;
               }
@@ -638,11 +638,11 @@ unsafe extern "C" fn file_action_grep(
    * example will return the raw directory contents). */
   if (*statbuf).st_mode & 0o170000i32 as libc::c_uint == 0o120000i32 as libc::c_uint {
     let mut sb: stat = std::mem::zeroed();
-    if stat(filename, &mut sb) != 0i32 {
+    if stat(filename, &mut sb) != 0 {
       if option_mask32 & OPT_s as libc::c_int as libc::c_uint == 0 {
         crate::libbb::perror_msg::bb_simple_perror_msg(filename);
       }
-      return 0i32;
+      return 0;
     }
     if sb.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
       return 1i32;
@@ -654,7 +654,7 @@ unsafe extern "C" fn file_action_grep(
       crate::libbb::perror_msg::bb_simple_perror_msg(filename);
     }
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).open_errors = 1i32 as smalluint;
-    return 0i32;
+    return 0;
   }
   let ref mut fresh2 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_file;
   *fresh2 = filename;
@@ -663,7 +663,7 @@ unsafe extern "C" fn file_action_grep(
   return 1i32;
 }
 unsafe extern "C" fn grep_dir(mut dir: *const libc::c_char) -> libc::c_int {
-  let mut matched: libc::c_int = 0i32;
+  let mut matched: libc::c_int = 0;
   crate::libbb::recursive_action::recursive_action(
     dir,
     (ACTION_RECURSE as libc::c_int
@@ -680,7 +680,7 @@ unsafe extern "C" fn grep_dir(mut dir: *const libc::c_char) -> libc::c_int {
     ),
     None,
     &mut matched as *mut libc::c_int as *mut libc::c_void,
-    0i32 as libc::c_uint,
+    0 as libc::c_uint,
   );
   return matched;
 }
@@ -728,9 +728,9 @@ pub unsafe extern "C" fn grep_main(
     != 0
   {
     option_mask32 &= !(OPT_n as libc::c_int) as libc::c_uint;
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lines_before = 0i32;
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lines_after = 0i32
-  } else if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lines_before > 0i32 {
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lines_before = 0;
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lines_after = 0
+  } else if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lines_before > 0 {
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lines_before as libc::c_ulong
       > (2147483647i32 as libc::c_ulong)
         .wrapping_div(::std::mem::size_of::<libc::c_longlong>() as libc::c_ulong)
@@ -748,7 +748,7 @@ pub unsafe extern "C" fn grep_main(
     ) as *mut *mut libc::c_char
   }
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).invert_search =
-    (option_mask32 & OPT_v as libc::c_int as libc::c_uint != 0i32 as libc::c_uint) as libc::c_int
+    (option_mask32 & OPT_v as libc::c_int as libc::c_uint != 0 as libc::c_uint) as libc::c_int
       as smalluint;
   /* convert char **argv to grep_list_data_t */
   let mut cur: *mut llist_t = std::ptr::null_mut();
@@ -820,11 +820,11 @@ pub unsafe extern "C" fn grep_main(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).print_filename = 1i32 as smalluint
   }
   if option_mask32 & OPT_h as libc::c_int as libc::c_uint != 0 {
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).print_filename = 0i32 as smalluint
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).print_filename = 0 as smalluint
   }
   /* If no files were specified, or '-' was specified, take input from
    * stdin. Otherwise, we grep through all the files specified. */
-  matched = 0i32;
+  matched = 0;
   let mut current_block_71: u64;
   loop {
     let ref mut fresh6 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_file;
@@ -851,7 +851,7 @@ pub unsafe extern "C" fn grep_main(
         if stat(
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_file,
           &mut st,
-        ) == 0i32
+        ) == 0
           && st.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint
         {
           if option_mask32 & OPT_h as libc::c_int as libc::c_uint == 0 {

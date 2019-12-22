@@ -40,11 +40,11 @@ pub unsafe extern "C" fn write_pidfile(mut path: *const libc::c_char) {
   }
   /* we will overwrite stale pidfile */
   pid_fd = open(path, 0o1i32 | 0o100i32 | 0o1000i32, 0o666i32);
-  if pid_fd < 0i32 {
+  if pid_fd < 0 {
     return;
   }
   /* path can be "/dev/null"! Test for such cases */
-  wrote_pidfile = (fstat(pid_fd, &mut sb) == 0i32
+  wrote_pidfile = (fstat(pid_fd, &mut sb) == 0
     && sb.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
     as libc::c_int as smallint;
   if wrote_pidfile != 0 {

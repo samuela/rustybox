@@ -491,7 +491,7 @@ pub unsafe extern "C" fn is_tty_secure(mut short_tty: *const libc::c_char) -> li
     b"# \t\x00" as *const u8 as *const libc::c_char,
   ) != 0
   {
-    if strcmp(buf, short_tty) == 0i32 {
+    if strcmp(buf, short_tty) == 0 {
       break;
     }
     buf = std::ptr::null_mut::<libc::c_char>()

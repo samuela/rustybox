@@ -92,10 +92,10 @@ unsafe extern "C" fn show_entry(mut ut: *mut utmpx, mut state: libc::c_int, mut 
     b"- %s\x00" as *const u8 as *const libc::c_char,
     ctime(&mut tmp).offset(11),
   );
-  dur_secs = if dur_secs - (*ut).ut_tv.tv_sec as time_t > 0i32 as time_t {
+  dur_secs = if dur_secs - (*ut).ut_tv.tv_sec as time_t > 0 as time_t {
     (dur_secs) - (*ut).ut_tv.tv_sec as time_t
   } else {
-    0i32 as time_t
+    0 as time_t
   };
   /* unsigned int is easier to divide than time_t (which may be signed long) */
   mins = (dur_secs / 60i32 as libc::c_long) as libc::c_uint;
@@ -154,34 +154,34 @@ unsafe extern "C" fn get_ut_type(mut ut: *mut utmpx) -> libc::c_int {
     if strcmp(
       (*ut).ut_user.as_mut_ptr(),
       b"shutdown\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
     {
       return 254i32;
     }
     if strcmp(
       (*ut).ut_user.as_mut_ptr(),
       b"reboot\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
     {
       return 2i32;
     }
     if strcmp(
       (*ut).ut_user.as_mut_ptr(),
       b"runlevel\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
     {
       return 1i32;
     }
     return (*ut).ut_type as libc::c_int;
   }
-  if (*ut).ut_user[0] as libc::c_int == 0i32 {
+  if (*ut).ut_user[0] as libc::c_int == 0 {
     return 8i32;
   }
   if (*ut).ut_type as libc::c_int != 8i32
     && strcmp(
       (*ut).ut_user.as_mut_ptr(),
       b"LOGIN\x00" as *const u8 as *const libc::c_char,
-    ) != 0i32
+    ) != 0
     && (*ut).ut_user[0] as libc::c_int != 0
     && (*ut).ut_line[0] as libc::c_int != 0
   {
@@ -190,7 +190,7 @@ unsafe extern "C" fn get_ut_type(mut ut: *mut utmpx) -> libc::c_int {
   if strcmp(
     (*ut).ut_user.as_mut_ptr(),
     b"date\x00" as *const u8 as *const libc::c_char,
-  ) == 0i32
+  ) == 0
   {
     if (*ut).ut_line[0] as libc::c_int == '|' as i32 {
       return 4i32;
@@ -205,7 +205,7 @@ unsafe extern "C" fn is_runlevel_shutdown(mut ut: *mut utmpx) -> libc::c_int {
   if (*ut).ut_pid & 255i32 == '0' as i32 || (*ut).ut_pid & 255i32 == '6' as i32 {
     return 1i32;
   }
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn last_main(
@@ -228,18 +228,18 @@ pub unsafe extern "C" fn last_main(
     b"Wf:\x00" as *const u8 as *const libc::c_char,
     &mut filename as *mut *const libc::c_char,
   );
-  file = crate::libbb::xfuncs_printf::xopen(filename, 0i32);
+  file = crate::libbb::xfuncs_printf::xopen(filename, 0);
   /* in case the file is empty... */
   let mut st: stat = std::mem::zeroed(); /* 0 */
   fstat(file, &mut st);
   start_time = st.st_ctime;
   time(&mut down_time);
-  going_down = 0i32 as smallint;
+  going_down = 0 as smallint;
   boot_down = NORMAL as libc::c_int as smallint;
   zlist = std::ptr::null_mut();
-  boot_time = 0i32 as time_t;
+  boot_time = 0 as time_t;
   /* get file size, rounding down to last full record */
-  pos = (crate::libbb::xfuncs_printf::xlseek(file, 0i32 as off_t, 2i32) as libc::c_ulong)
+  pos = (crate::libbb::xfuncs_printf::xlseek(file, 0 as off_t, 2i32) as libc::c_ulong)
     .wrapping_div(::std::mem::size_of::<utmpx>() as libc::c_ulong)
     .wrapping_mul(::std::mem::size_of::<utmpx>() as libc::c_ulong) as off_t;
   loop {
@@ -247,7 +247,7 @@ pub unsafe extern "C" fn last_main(
     if pos < 0 {
       break;
     }
-    crate::libbb::xfuncs_printf::xlseek(file, pos, 0i32);
+    crate::libbb::xfuncs_printf::xlseek(file, pos, 0);
     crate::libbb::read_printf::xread(
       file,
       &mut ut as *mut utmpx as *mut libc::c_void,
@@ -305,11 +305,11 @@ pub unsafe extern "C" fn last_main(
               (*up).ut_line.as_mut_ptr(),
               ut.ut_line.as_mut_ptr(),
               32i32 as libc::c_ulong,
-            ) == 0i32
+            ) == 0
             {
               if show != 0 {
                 show_entry(&mut ut, NORMAL as libc::c_int, (*up).ut_tv.tv_sec as time_t);
-                show = 0i32
+                show = 0
               }
               crate::libbb::llist::llist_unlink(&mut zlist, el);
               free((*el).data as *mut libc::c_void);
@@ -322,7 +322,7 @@ pub unsafe extern "C" fn last_main(
             if boot_time == 0 {
               state = LOGGED as libc::c_int;
               /* Check if the process is alive */
-              if ut.ut_pid > 0i32 && kill(ut.ut_pid, 0i32) != 0i32 && *bb_errno == 3i32 {
+              if ut.ut_pid > 0 && kill(ut.ut_pid, 0) != 0 && *bb_errno == 3i32 {
                 state = GONE as libc::c_int
               }
             }
@@ -347,7 +347,7 @@ pub unsafe extern "C" fn last_main(
         Some(free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
       );
       zlist = std::ptr::null_mut();
-      going_down = 0i32 as smallint
+      going_down = 0 as smallint
     }
   }
   printf(

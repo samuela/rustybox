@@ -174,8 +174,8 @@ pub unsafe extern "C" fn pscan_main(
   let mut port: libc::c_uint = 0;
   let mut max_port: libc::c_uint = 0;
   let mut nports: libc::c_uint = 0;
-  let mut closed_ports: libc::c_uint = 0i32 as libc::c_uint;
-  let mut open_ports: libc::c_uint = 0i32 as libc::c_uint;
+  let mut closed_ports: libc::c_uint = 0 as libc::c_uint;
+  let mut open_ports: libc::c_uint = 0 as libc::c_uint;
   /* all in usec */
   let mut timeout: libc::c_uint = 0;
   let mut min_rtt: libc::c_uint = 0;
@@ -247,7 +247,7 @@ pub unsafe extern "C" fn pscan_main(
     s = crate::libbb::xfuncs_printf::xsocket(
       (*lsap).u.sa.sa_family as libc::c_int,
       SOCK_STREAM as libc::c_int,
-      0i32,
+      0,
     );
     /* We need unblocking socket so we don't need to wait for ETIMEOUT. */
     /* Nonblocking connect typically "fails" with errno == EINPROGRESS */
@@ -260,7 +260,7 @@ pub unsafe extern "C" fn pscan_main(
         __sockaddr__: &mut (*lsap).u.sa,
       },
       (*lsap).len,
-    ) == 0i32
+    ) == 0
     {
       current_block_42 = 3964065496216564342;
     } else {
@@ -268,7 +268,7 @@ pub unsafe extern "C" fn pscan_main(
       if *bb_errno != 11i32 && *bb_errno != 115i32 && *bb_errno != 111i32 {
         crate::libbb::perror_nomsg_and_die::bb_perror_nomsg_and_die();
       }
-      diff = 0i32 as libc::c_uint;
+      diff = 0 as libc::c_uint;
       current_block_42 = 17281240262373992796;
     }
     loop {
@@ -347,5 +347,5 @@ pub unsafe extern "C" fn pscan_main(
     open_ports,
     nports.wrapping_sub(closed_ports.wrapping_add(open_ports)),
   );
-  return 0i32;
+  return 0;
 }

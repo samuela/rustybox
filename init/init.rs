@@ -334,7 +334,7 @@ unsafe extern "C" fn message(
   msg[l as usize] = '\u{0}' as i32 as libc::c_char;
   if where_0 & L_LOG as libc::c_int != 0 {
     /* Log the message to syslogd */
-    openlog(applet_name, 0i32, 3i32 << 3i32);
+    openlog(applet_name, 0, 3i32 << 3i32);
     /* don't print "\r" */
     syslog(
       6i32,
@@ -365,8 +365,8 @@ unsafe extern "C" fn console_init() {
   }
   if !s.is_null() {
     let mut fd: libc::c_int = open(s, 0o2i32 | 0o4000i32 | 0o400i32);
-    if fd >= 0i32 {
-      dup2(fd, 0i32);
+    if fd >= 0 {
+      dup2(fd, 0);
       dup2(fd, 1i32);
       crate::libbb::xfuncs_printf::xmove_fd(fd, 2i32);
     }
@@ -380,15 +380,15 @@ unsafe extern "C" fn console_init() {
   }
   s = getenv(b"TERM\x00" as *const u8 as *const libc::c_char);
   if ioctl(
-    0i32,
+    0,
     0x5600i32 as libc::c_ulong,
     &mut vtno as *mut libc::c_int,
-  ) != 0i32
+  ) != 0
   {
     /* Not a linux terminal, probably serial console.
      * Force the TERM setting to vt102
      * if TERM is set to linux (the default) */
-    if s.is_null() || strcmp(s, b"linux\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    if s.is_null() || strcmp(s, b"linux\x00" as *const u8 as *const libc::c_char) == 0 {
       putenv(b"TERM=vt102\x00" as *const u8 as *const libc::c_char as *mut libc::c_char);
     }
   } else if s.is_null() {
@@ -419,7 +419,7 @@ unsafe extern "C" fn set_sane_term() {
   tty.c_cc[9] = 19i32 as cc_t; /* C-s */
   tty.c_cc[10] = 26i32 as cc_t; /* C-z */
   /* use line discipline 0 */
-  tty.c_line = 0i32 as cc_t;
+  tty.c_line = 0 as cc_t;
   /* Make it be sane */
   /* added CRTSCTS to fix Debian bug 528560 */
   tty.c_cflag &= (0o10017i32 | 0o10000i32 | 0o60i32 | 0o100i32 | 0o400i32 | 0o1000i32)
@@ -451,7 +451,7 @@ unsafe extern "C" fn open_stdio_to_tty(mut tty_name: *const libc::c_char) -> lib
         b"can\'t open %s: %m\x00" as *const u8 as *const libc::c_char,
         tty_name,
       );
-      return 0i32;
+      return 0;
       /* failure */
     }
     dup2(0i32, 1i32);
@@ -463,7 +463,7 @@ unsafe extern "C" fn open_stdio_to_tty(mut tty_name: *const libc::c_char) -> lib
 }
 unsafe extern "C" fn reset_sighandlers_and_unblock_sigs() {
   crate::libbb::signals::bb_signals(
-    0i32
+    0
       + (1i32 << 10i32)
       + (1i32 << 12i32)
       + (1i32 << 15i32)
@@ -523,7 +523,7 @@ unsafe extern "C" fn init_exec(mut command: *const libc::c_char) {
     /* Convert command (char*) into cmd (char**, one word per string) */
     let mut word: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* command including "-" */
     let mut next: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut i: libc::c_int = 0i32;
+    let mut i: libc::c_int = 0;
     next = strcpy(buf.as_mut_ptr(), command.offset(-(dash as isize)));
     command = next.offset(dash as isize);
     loop {
@@ -546,7 +546,7 @@ unsafe extern "C" fn init_exec(mut command: *const libc::c_char) {
    */
   if 1i32 != 0 && dash != 0 {
     /* _Attempt_ to make stdin a controlling tty. */
-    ioctl(0i32, 0x540ei32 as libc::c_ulong, 0i32);
+    ioctl(0i32, 0x540ei32 as libc::c_ulong, 0);
   }
   /* Here command never contains the dash, cmd[0] might */
   execvp(command, cmd.as_mut_ptr() as *const *mut libc::c_char);
@@ -567,7 +567,7 @@ unsafe extern "C" fn run(mut a: *const init_action) -> pid_t {
   } else {
     pid = vfork()
   }
-  if pid < 0i32 {
+  if pid < 0 {
     message(
       L_LOG as libc::c_int | L_CONSOLE as libc::c_int,
       b"can\'t fork\x00" as *const u8 as *const libc::c_char,
@@ -611,7 +611,7 @@ unsafe extern "C" fn run(mut a: *const init_action) -> pid_t {
         .wrapping_sub(1i32 as libc::c_ulong),
     );
     while crate::libbb::read::safe_read(
-      0i32,
+      0,
       &mut c as *mut libc::c_char as *mut libc::c_void,
       1i32 as size_t,
     ) == 1
@@ -640,12 +640,12 @@ unsafe extern "C" fn run(mut a: *const init_action) -> pid_t {
 }
 unsafe extern "C" fn mark_terminated(mut pid: pid_t) -> *mut init_action {
   let mut a: *mut init_action = std::ptr::null_mut();
-  if pid > 0i32 {
+  if pid > 0 {
     crate::libbb::utmp::update_utmp_DEAD_PROCESS(pid);
     a = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).init_action_list;
     while !a.is_null() {
       if (*a).pid == pid {
-        (*a).pid = 0i32;
+        (*a).pid = 0;
         return a;
       }
       a = (*a).next
@@ -655,7 +655,7 @@ unsafe extern "C" fn mark_terminated(mut pid: pid_t) -> *mut init_action {
 }
 unsafe extern "C" fn waitfor(mut pid: pid_t) {
   /* waitfor(run(x)): protect against failed fork inside run() */
-  if pid <= 0i32 {
+  if pid <= 0 {
     return;
   }
   loop
@@ -667,7 +667,7 @@ unsafe extern "C" fn waitfor(mut pid: pid_t) {
     /* Unsafe. SIGTSTP handler might have wait'ed it already */
     /*if (wpid == pid) break;*/
     /* More reliable: */
-    if kill(pid, 0i32) != 0 {
+    if kill(pid, 0) != 0 {
       break;
     }
   }
@@ -688,7 +688,7 @@ unsafe extern "C" fn run_actions(mut action_type: libc::c_int) {
         /* Only run stuff with pid == 0. If pid != 0,
          * it is already running
          */
-        if (*a).pid == 0i32 {
+        if (*a).pid == 0 {
           (*a).pid = run(a)
         }
       }
@@ -725,8 +725,8 @@ unsafe extern "C" fn new_init_action(
     /* Don't enter action if it's already in the list.
      * This prevents losing running RESPAWNs.
      */
-    if strcmp((*a).command.as_mut_ptr(), command) == 0i32
-      && strcmp((*a).terminal.as_mut_ptr(), cons) == 0i32
+    if strcmp((*a).command.as_mut_ptr(), command) == 0
+      && strcmp((*a).terminal.as_mut_ptr(), cons) == 0
     {
       /* Remove from list */
       *nextp = (*a).next;
@@ -854,7 +854,7 @@ unsafe extern "C" fn parse_inittab() {
     let mut tty: *mut libc::c_char = token[0];
     if !token[3].is_null() {
       action = crate::libbb::compare_string_array::index_in_strings(actions.as_ptr(), token[2]);
-      if !(action < 0i32 || *token[3].offset(0) == 0) {
+      if !(action < 0 || *token[3].offset(0) == 0) {
         /* turn .*TTY -> /dev/TTY */
         if *tty.offset(0) != 0 {
           tty = crate::libbb::concat_path_file::concat_path_file(
@@ -886,7 +886,7 @@ unsafe extern "C" fn pause_and_low_level_reboot(mut magic: libc::c_uint) -> ! {
    * in linux/kernel/sys.c, which can cause the machine to panic when
    * the init process exits... */
   pid = vfork();
-  if pid == 0i32 {
+  if pid == 0 {
     /* child */
     reboot(magic as libc::c_int);
     _exit(0i32);
@@ -895,7 +895,7 @@ unsafe extern "C" fn pause_and_low_level_reboot(mut magic: libc::c_uint) -> ! {
    * However, in containers reboot() call is ignored, and with that loop
    * we would eternally sleep here - not what we want.
    */
-  waitpid(pid, 0 as *mut libc::c_int, 0i32); /* paranoia */
+  waitpid(pid, 0 as *mut libc::c_int, 0); /* paranoia */
   sleep(1i32 as libc::c_uint);
   _exit(0i32);
 }
@@ -1066,7 +1066,7 @@ unsafe extern "C" fn reload_inittab() {
   /* Disable old entries */
   a = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).init_action_list;
   while !a.is_null() {
-    (*a).action_type = 0i32 as u8;
+    (*a).action_type = 0 as u8;
     a = (*a).next
   }
   /* Append new entries, or modify existing entries
@@ -1091,7 +1091,7 @@ unsafe extern "C" fn reload_inittab() {
      * If we delete its entry but process still runs,
      * duplicate is spawned when the entry is re-added.
      */
-    if (*a).action_type as libc::c_int & !0x1i32 == 0i32 && (*a).pid == 0i32 {
+    if (*a).action_type as libc::c_int & !0x1i32 == 0 && (*a).pid == 0 {
       *nextp = (*a).next;
       free(a as *mut libc::c_void);
     } else {
@@ -1103,13 +1103,13 @@ unsafe extern "C" fn reload_inittab() {
   /* - we return to main loop, which does this automagically */
 }
 unsafe extern "C" fn check_delayed_sigs() -> libc::c_int {
-  let mut sigs_seen: libc::c_int = 0i32;
+  let mut sigs_seen: libc::c_int = 0;
   loop {
     let mut sig: smallint = bb_got_signal;
     if sig == 0 {
       return sigs_seen;
     }
-    bb_got_signal = 0i32 as smallint;
+    bb_got_signal = 0 as smallint;
     sigs_seen = 1i32;
     if sig as libc::c_int == 1i32 {
       reload_inittab();
@@ -1122,7 +1122,7 @@ unsafe extern "C" fn check_delayed_sigs() -> libc::c_int {
       /* returns only if no restart action defined */
     }
     if 1i32 << sig as libc::c_int
-      & 0i32 + (1i32 << 30i32) + (1i32 << 10i32) + (1i32 << 12i32) + (1i32 << 15i32)
+      & 0 + (1i32 << 30i32) + (1i32 << 10i32) + (1i32 << 12i32) + (1i32 << 15i32)
       != 0
     {
       halt_reboot_pwoff(sig as libc::c_int);
@@ -1141,11 +1141,11 @@ pub unsafe extern "C" fn init_main(
     && strcmp(
       *argv.offset(1),
       b"-q\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
   {
     return kill(1i32, 1i32);
   }
-  if 0i32 == 0 {
+  if 0 == 0 {
     /* Some users send poweroff signals to init VERY early.
      * To handle this, mask signals early,
      * and unmask them only after signal handlers are installed.
@@ -1192,11 +1192,11 @@ pub unsafe extern "C" fn init_main(
     && (strcmp(
       *argv.offset(1),
       b"single\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
       || strcmp(
         *argv.offset(1),
         b"-s\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
+      ) == 0
       || *(*argv.offset(1)).offset(0) as libc::c_int == '1' as i32
         && *(*argv.offset(1)).offset(1) == 0)
   {
@@ -1231,12 +1231,12 @@ pub unsafe extern "C" fn init_main(
     crate::libbb::nuke_str::nuke_str(*argv);
   }
   /* Set up signal handlers */
-  if 0i32 == 0 {
+  if 0 == 0 {
     let mut sa: sigaction = std::mem::zeroed();
     /* Stop handler must allow only SIGCONT inside itself */
     memset(
       &mut sa as *mut sigaction as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<sigaction>() as libc::c_ulong,
     );
     sigfillset(&mut sa.sa_mask);
@@ -1255,7 +1255,7 @@ pub unsafe extern "C" fn init_main(
      * setting handler without SA_RESTART flag.
      */
     crate::libbb::signals::bb_signals_recursive_norestart(
-      0i32
+      0
         + (1i32 << 2i32)
         + (1i32 << 3i32)
         + (1i32 << 30i32)
@@ -1305,7 +1305,7 @@ pub unsafe extern "C" fn init_main(
        * bb_signals_recursive_norestart set them up that way
        */
       wpid = waitpid(-1i32, 0 as *mut libc::c_int, maybe_WNOHANG);
-      if wpid <= 0i32 {
+      if wpid <= 0 {
         break;
       }
       a = mark_terminated(wpid);

@@ -45,5 +45,5 @@ pub unsafe extern "C" fn usleep_main(
    * and uclibc does not loop back on EINTR.
    */
   usleep(crate::libbb::xatonum::xatou(*argv.offset(1)));
-  return 0i32;
+  return 0;
 }

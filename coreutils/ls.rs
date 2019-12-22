@@ -297,7 +297,7 @@ unsafe extern "C" fn print_name(mut name: *const libc::c_char) -> libc::c_uint {
  */
 #[inline(never)]
 unsafe extern "C" fn display_single(mut dn: *const dnode) -> libc::c_uint {
-  let mut column: libc::c_uint = 0i32 as libc::c_uint;
+  let mut column: libc::c_uint = 0 as libc::c_uint;
   let mut lpath: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;
   let mut statbuf: stat = std::mem::zeroed();
@@ -378,7 +378,7 @@ unsafe extern "C" fn display_single(mut dn: *const dnode) -> libc::c_uint {
         crate::libbb::human_readable::make_human_readable_str(
           (*dn).dn_size as libc::c_ulonglong,
           1i32 as libc::c_ulong,
-          0i32 as libc::c_ulong,
+          0 as libc::c_ulong,
         ),
       ) as libc::c_uint)
     } else {
@@ -436,7 +436,7 @@ unsafe extern "C" fn display_single(mut dn: *const dnode) -> libc::c_uint {
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).show_color != 0 {
     let mut mode: mode_t = (*dn).dn_mode_lstat;
     if mode == 0 {
-      if lstat((*dn).fullname, &mut statbuf) == 0i32 {
+      if lstat((*dn).fullname, &mut statbuf) == 0 {
         mode = statbuf.st_mode
       }
     }
@@ -457,7 +457,7 @@ unsafe extern "C" fn display_single(mut dn: *const dnode) -> libc::c_uint {
     {
       let mut mode_0: mode_t = (*dn).dn_mode_stat;
       if mode_0 == 0 {
-        if stat((*dn).fullname, &mut statbuf) == 0i32 {
+        if stat((*dn).fullname, &mut statbuf) == 0 {
           mode_0 = statbuf.st_mode
         }
       }
@@ -492,12 +492,12 @@ unsafe extern "C" fn display_files(mut dn: *mut *mut dnode, mut nfiles: libc::c_
   let mut nc: libc::c_uint = 0;
   let mut column: libc::c_uint = 0;
   let mut nexttab: libc::c_uint = 0;
-  let mut column_width: libc::c_uint = 0i32 as libc::c_uint;
+  let mut column_width: libc::c_uint = 0 as libc::c_uint;
   if option_mask32 & (OPT_l as libc::c_int | OPT_1 as libc::c_int) as libc::c_uint != 0 {
     ncols = 1i32 as libc::c_uint
   } else {
     /* find the longest file name, use that as the column width */
-    i = 0i32 as libc::c_uint; /* "alloc block" width */
+    i = 0 as libc::c_uint; /* "alloc block" width */
     while !(*dn.offset(i as isize)).is_null() {
       let mut len: libc::c_int = calc_name_len((**dn.offset(i as isize)).name) as libc::c_int;
       if column_width < len as libc::c_uint {
@@ -510,17 +510,17 @@ unsafe extern "C" fn display_files(mut dn: *mut *mut dnode, mut nfiles: libc::c_
         + (if option_mask32 & OPT_Z as libc::c_int as libc::c_uint != 0 {
           33i32
         } else {
-          0i32
+          0
         })
         + (if option_mask32 & OPT_i as libc::c_int as libc::c_uint != 0 {
           8i32
         } else {
-          0i32
+          0
         })
         + (if option_mask32 & OPT_s as libc::c_int as libc::c_uint != 0 {
           5i32
         } else {
-          0i32
+          0
         })) as libc::c_uint,
     );
     ncols = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -537,11 +537,11 @@ unsafe extern "C" fn display_files(mut dn: *mut *mut dnode, mut nfiles: libc::c_
     nrows = nfiles;
     ncols = 1i32 as libc::c_uint
   }
-  column = 0i32 as libc::c_uint;
-  nexttab = 0i32 as libc::c_uint;
-  row = 0i32 as libc::c_uint;
+  column = 0 as libc::c_uint;
+  nexttab = 0 as libc::c_uint;
+  row = 0 as libc::c_uint;
   while row < nrows {
-    nc = 0i32 as libc::c_uint;
+    nc = 0 as libc::c_uint;
     while nc < ncols {
       /* reach into the array based on the column and row */
       if option_mask32 & OPT_x as libc::c_int as libc::c_uint != 0 {
@@ -551,7 +551,7 @@ unsafe extern "C" fn display_files(mut dn: *mut *mut dnode, mut nfiles: libc::c_
         i = nc.wrapping_mul(nrows).wrapping_add(row)
       } /* display across row */
       if i < nfiles {
-        if column > 0i32 as libc::c_uint {
+        if column > 0 as libc::c_uint {
           nexttab = nexttab.wrapping_sub(column);
           printf(
             b"%*s\x00" as *const u8 as *const libc::c_char,
@@ -566,7 +566,7 @@ unsafe extern "C" fn display_files(mut dn: *mut *mut dnode, mut nfiles: libc::c_
       nc = nc.wrapping_add(1)
     }
     putchar_unlocked('\n' as i32);
-    column = 0i32 as libc::c_uint;
+    column = 0 as libc::c_uint;
     row = row.wrapping_add(1)
   }
 }
@@ -622,9 +622,9 @@ unsafe extern "C" fn count_dirs(mut dn: *mut *mut dnode, mut which: libc::c_int)
   let mut dirs: libc::c_uint = 0;
   let mut all: libc::c_uint = 0;
   if dn.is_null() {
-    return 0i32 as libc::c_uint;
+    return 0 as libc::c_uint;
   }
-  all = 0i32 as libc::c_uint;
+  all = 0 as libc::c_uint;
   dirs = all;
   while !(*dn).is_null() {
     let mut name: *const libc::c_char = std::ptr::null();
@@ -662,7 +662,7 @@ unsafe extern "C" fn dfree(mut dnp: *mut *mut dnode) {
   if dnp.is_null() {
     return;
   }
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while !(*dnp.offset(i as isize)).is_null() {
     let mut cur: *mut dnode = *dnp.offset(i as isize);
     if (*cur).fname_allocated != 0 {
@@ -689,7 +689,7 @@ unsafe extern "C" fn splitdnarray(
   /* allocate a file array and a dir array */
   dnp = dnalloc(dncnt);
   /* copy the entrys into the file or dir array */
-  d = 0i32 as libc::c_uint; /* assume sort by name */
+  d = 0 as libc::c_uint; /* assume sort by name */
   while !(*dn).is_null() {
     if (**dn).dn_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
       let mut name: *const libc::c_char = std::ptr::null();
@@ -725,7 +725,7 @@ unsafe extern "C" fn sortcmp(
   let mut d2: *mut dnode = *(b as *mut *mut dnode);
   let mut opt: libc::c_uint = option_mask32;
   let mut dif: off_t = 0;
-  dif = 0i32 as off_t;
+  dif = 0 as off_t;
   // TODO: use pre-initialized function pointer
   // instead of branch forest
   if opt & OPT_dirs_first as libc::c_int as libc::c_uint != 0 {
@@ -806,7 +806,7 @@ unsafe extern "C" fn scan_one_dir(
   let mut dir: *mut DIR = std::ptr::null_mut();
   let mut i: libc::c_uint = 0;
   let mut nfiles: libc::c_uint = 0;
-  *nfiles_p = 0i32 as libc::c_uint;
+  *nfiles_p = 0 as libc::c_uint;
   dir = crate::libbb::xfuncs_printf::warn_opendir(path);
   if dir.is_null() {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exit_code = 1i32 as smallint;
@@ -814,7 +814,7 @@ unsafe extern "C" fn scan_one_dir(
     /* could not open the dir */
   }
   dn = std::ptr::null_mut();
-  nfiles = 0i32 as libc::c_uint;
+  nfiles = 0 as libc::c_uint;
   loop {
     entry = readdir(dir);
     if entry.is_null() {
@@ -838,7 +838,7 @@ unsafe extern "C" fn scan_one_dir(
     cur = my_stat(
       fullname,
       crate::libbb::get_last_path_component::bb_basename(fullname),
-      0i32,
+      0,
     );
     if cur.is_null() {
       free(fullname as *mut libc::c_void);
@@ -858,7 +858,7 @@ unsafe extern "C" fn scan_one_dir(
    */
   *nfiles_p = nfiles; /* save pointer to node in array */
   dnp = dnalloc(nfiles);
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   loop {
     let ref mut fresh4 = *dnp.offset(i as isize);
     *fresh4 = dn;
@@ -905,7 +905,7 @@ unsafe extern "C" fn scan_and_display_dirs_recur(mut dn: *mut *mut dnode, mut fi
       if first == 0 {
         crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
       }
-      first = 0i32;
+      first = 0;
       printf(
         b"%s:\n\x00" as *const u8 as *const libc::c_char,
         (**dn).fullname,
@@ -918,8 +918,8 @@ unsafe extern "C" fn scan_and_display_dirs_recur(mut dn: *mut *mut dnode, mut fi
           b"total %-7s\n\x00" as *const u8 as *const libc::c_char,
           crate::libbb::human_readable::make_human_readable_str(
             (calculate_blocks(subdnp) * 1024i32 as libc::c_long) as libc::c_ulonglong,
-            0i32 as libc::c_ulong,
-            0i32 as libc::c_ulong,
+            0 as libc::c_ulong,
+            0 as libc::c_ulong,
           ),
         );
       } else {
@@ -929,7 +929,7 @@ unsafe extern "C" fn scan_and_display_dirs_recur(mut dn: *mut *mut dnode, mut fi
         );
       }
     }
-    if nfiles > 0i32 as libc::c_uint {
+    if nfiles > 0 as libc::c_uint {
       /* list all files at this level */
       sort_and_display_files(subdnp, nfiles);
       if 1i32 != 0 && option_mask32 & OPT_R as libc::c_int as libc::c_uint != 0 {
@@ -938,9 +938,9 @@ unsafe extern "C" fn scan_and_display_dirs_recur(mut dn: *mut *mut dnode, mut fi
         /* recursive - list the sub-dirs */
         dnd = splitdnarray(subdnp, SPLIT_SUBDIR as libc::c_int);
         dndirs = count_dirs(subdnp, SPLIT_SUBDIR as libc::c_int);
-        if dndirs > 0i32 as libc::c_uint {
+        if dndirs > 0 as libc::c_uint {
           dnsort(dnd, dndirs as libc::c_int);
-          scan_and_display_dirs_recur(dnd, 0i32);
+          scan_and_display_dirs_recur(dnd, 0);
           /* free the array of dnode pointers to the dirs */
           free(dnd as *mut libc::c_void);
         }
@@ -1378,7 +1378,7 @@ pub unsafe extern "C" fn ls_main(
   ];
   memset(
     bb_common_bufsiz1.as_mut_ptr() as *mut globals as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<globals>() as libc::c_ulong,
   );
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).terminal_width =
@@ -1407,14 +1407,14 @@ pub unsafe extern "C" fn ls_main(
     /* LS_COLORS is unset, or (not empty && not "none") ? */
     if p.is_null()
       || *p.offset(0) as libc::c_int != 0
-        && strcmp(p, b"none\x00" as *const u8 as *const libc::c_char) != 0i32
+        && strcmp(p, b"none\x00" as *const u8 as *const libc::c_char) != 0
     {
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).show_color = 1i32 as smallint
     }
   }
   if opt & OPT_color as libc::c_int as libc::c_uint != 0 {
     if *color_opt.offset(0) as libc::c_int == 'n' as i32 {
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).show_color = 0i32 as smallint
+      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).show_color = 0 as smallint
     } else {
       let mut current_block_15: u64;
       match crate::libbb::compare_string_array::index_in_substrings(color_str.as_ptr(), color_opt) {
@@ -1482,7 +1482,7 @@ pub unsafe extern "C" fn ls_main(
   }
   /* stuff the command line file names into a dnode array */
   dn = std::ptr::null_mut();
-  nfiles = 0i32 as libc::c_uint;
+  nfiles = 0 as libc::c_uint;
   loop {
     cur = my_stat(
       *argv,
@@ -1507,14 +1507,14 @@ pub unsafe extern "C" fn ls_main(
     }
   }
   /* nfiles _may_ be 0 here - try "ls doesnt_exist" */
-  if nfiles == 0i32 as libc::c_uint {
+  if nfiles == 0 as libc::c_uint {
     return (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exit_code as libc::c_int;
   }
   /* now that we know how many files there are
    * allocate memory for an array to hold dnode pointers
    */
   dnp = dnalloc(nfiles); /* save pointer to node in array */
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   loop {
     let ref mut fresh6 = *dnp.offset(i as isize);
     *fresh6 = dn;
@@ -1531,12 +1531,12 @@ pub unsafe extern "C" fn ls_main(
     dnf = splitdnarray(dnp, SPLIT_FILE as libc::c_int);
     dndirs = count_dirs(dnp, SPLIT_DIR as libc::c_int);
     dnfiles = nfiles.wrapping_sub(dndirs);
-    if dnfiles > 0i32 as libc::c_uint {
+    if dnfiles > 0 as libc::c_uint {
       sort_and_display_files(dnf, dnfiles);
     }
-    if dndirs > 0i32 as libc::c_uint {
+    if dndirs > 0 as libc::c_uint {
       dnsort(dnd, dndirs as libc::c_int);
-      scan_and_display_dirs_recur(dnd, (dnfiles == 0i32 as libc::c_uint) as libc::c_int);
+      scan_and_display_dirs_recur(dnd, (dnfiles == 0 as libc::c_uint) as libc::c_int);
     }
   }
   return (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exit_code as libc::c_int;

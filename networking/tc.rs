@@ -230,12 +230,12 @@ unsafe extern "C" fn print_tc_classid(mut cid: u32) -> *mut libc::c_char {
   /* IMPOSSIBLE */
   if cid == 0u32 {
     return crate::libbb::xfuncs_printf::xasprintf(b"none\x00" as *const u8 as *const libc::c_char);
-  } else if cid & 0xffff0000u32 == 0i32 as libc::c_uint {
+  } else if cid & 0xffff0000u32 == 0 as libc::c_uint {
     return crate::libbb::xfuncs_printf::xasprintf(
       b":%x\x00" as *const u8 as *const libc::c_char,
       cid & 0xffffu32,
     );
-  } else if cid & 0xffffu32 == 0i32 as libc::c_uint {
+  } else if cid & 0xffffu32 == 0 as libc::c_uint {
     return crate::libbb::xfuncs_printf::xasprintf(
       b"%x:\x00" as *const u8 as *const libc::c_char,
       (cid & 0xffff0000u32) >> 16i32,
@@ -256,7 +256,7 @@ unsafe extern "C" fn get_qdisc_handle(
   let mut maj: u32 = 0;
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   maj = 0u32;
-  if !(strcmp(str, b"none\x00" as *const u8 as *const libc::c_char) == 0i32) {
+  if !(strcmp(str, b"none\x00" as *const u8 as *const libc::c_char) == 0) {
     maj = strtoul(str, &mut p, 16i32) as u32;
     if p == str as *mut libc::c_char {
       return 1i32;
@@ -267,7 +267,7 @@ unsafe extern "C" fn get_qdisc_handle(
     }
   }
   *h = maj;
-  return 0i32;
+  return 0;
 }
 /* Get class ID.  Return 0 on success, !0 otherwise.  */
 unsafe extern "C" fn get_tc_classid(mut h: *mut u32, mut str: *const libc::c_char) -> libc::c_int {
@@ -275,15 +275,15 @@ unsafe extern "C" fn get_tc_classid(mut h: *mut u32, mut str: *const libc::c_cha
   let mut min: u32 = 0;
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   maj = 0xffffffffu32;
-  if !(strcmp(str, b"root\x00" as *const u8 as *const libc::c_char) == 0i32) {
+  if !(strcmp(str, b"root\x00" as *const u8 as *const libc::c_char) == 0) {
     maj = 0u32;
-    if !(strcmp(str, b"none\x00" as *const u8 as *const libc::c_char) == 0i32) {
+    if !(strcmp(str, b"none\x00" as *const u8 as *const libc::c_char) == 0) {
       maj = strtoul(str, &mut p, 16i32) as u32;
       if p == str as *mut libc::c_char {
         if *p as libc::c_int != ':' as i32 {
           return 1i32;
         }
-        maj = 0i32 as u32
+        maj = 0 as u32
       }
       if *p as libc::c_int == ':' as i32 {
         if maj >= (1i32 << 16i32) as libc::c_uint {
@@ -297,13 +297,13 @@ unsafe extern "C" fn get_tc_classid(mut h: *mut u32, mut str: *const libc::c_cha
           return 1i32;
         }
         maj |= min
-      } else if *p as libc::c_int != 0i32 {
+      } else if *p as libc::c_int != 0 {
         return 1i32;
       }
     }
   }
   *h = maj;
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn print_rate(mut buf: *mut libc::c_char, mut len: libc::c_int, mut rate: u32) {
   let mut tmp: libc::c_double = rate as libc::c_double * 8i32 as libc::c_double;
@@ -335,13 +335,13 @@ unsafe extern "C" fn prio_print_opt(mut opt: *mut rtattr) -> libc::c_int {
   let mut qopt: *mut tc_prio_qopt = std::ptr::null_mut();
   let mut tb: [*mut rtattr; 2] = [0 as *mut rtattr; 2];
   if opt.is_null() {
-    return 0i32;
+    return 0;
   }
   printf(
     b"bands %u priomap \x00" as *const u8 as *const libc::c_char,
     (*qopt).bands,
   );
-  i = 0i32;
+  i = 0;
   while i <= 15i32 {
     printf(
       b" %d\x00" as *const u8 as *const libc::c_char,
@@ -367,7 +367,7 @@ unsafe extern "C" fn prio_print_opt(mut opt: *mut rtattr) -> libc::c_int {
       },
     );
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
   let mut tb: [*mut rtattr; 8] = [0 as *mut rtattr; 8];
@@ -544,7 +544,7 @@ unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
       );
     }
     if !lss.is_null() && (*lss).flags as libc::c_int != 0 {
-      let mut comma: bool = 0i32 != 0;
+      let mut comma: bool = 0 != 0;
       crate::libbb::xfuncs_printf::bb_putchar('(' as i32);
       if (*lss).flags as libc::c_int & 1i32 != 0 {
         printf(b"bounded\x00" as *const u8 as *const libc::c_char);
@@ -569,7 +569,7 @@ unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
       }
     }
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn print_qdisc(
   mut _who: *const sockaddr_nl,
@@ -590,7 +590,7 @@ unsafe extern "C" fn print_qdisc(
     && (*hdr).nlmsg_type as libc::c_int != RTM_DELQDISC as libc::c_int
   {
     /* bb_error_msg("not a qdisc"); */
-    return 0i32;
+    return 0;
     /* ??? mimic upstream; should perhaps return -1 */
   }
   len = (len as libc::c_ulong).wrapping_sub(
@@ -602,7 +602,7 @@ unsafe extern "C" fn print_qdisc(
         as libc::c_ulong,
     ),
   ) as libc::c_int as libc::c_int;
-  if len < 0i32 {
+  if len < 0 {
     /* bb_error_msg("wrong len %d", len); */
     return -1i32;
   }
@@ -610,11 +610,11 @@ unsafe extern "C" fn print_qdisc(
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_ifindex != 0
     && (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_ifindex != (*msg).tcm_ifindex
   {
-    return 0i32;
+    return 0;
   }
   memset(
     tb.as_mut_ptr() as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<[*mut rtattr; 13]>() as libc::c_ulong,
   );
   crate::networking::libiproute::libnetlink::parse_rtattr(
@@ -647,7 +647,7 @@ unsafe extern "C" fn print_qdisc(
     name,
     (*msg).tcm_handle >> 16i32,
   );
-  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_ifindex == 0i32 {
+  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_ifindex == 0 {
     printf(
       b"dev %s \x00" as *const u8 as *const libc::c_char,
       crate::networking::libiproute::ll_map::ll_index_to_name((*msg).tcm_ifindex),
@@ -674,7 +674,7 @@ unsafe extern "C" fn print_qdisc(
     ];
     let mut qqq: libc::c_int =
       crate::libbb::compare_string_array::index_in_strings(_q_.as_ptr(), name);
-    if qqq == 0i32 {
+    if qqq == 0 {
       /* pfifo_fast aka prio */
       prio_print_opt(tb[TCA_OPTIONS as libc::c_int as usize]);
     } else if qqq == 1i32 {
@@ -688,7 +688,7 @@ unsafe extern "C" fn print_qdisc(
     }
   }
   crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn print_class(
   mut _who: *const sockaddr_nl,
@@ -711,7 +711,7 @@ unsafe extern "C" fn print_class(
     && (*hdr).nlmsg_type as libc::c_int != RTM_DELTCLASS as libc::c_int
   {
     /* bb_error_msg("not a class"); */
-    return 0i32;
+    return 0;
     /* ??? mimic upstream; should perhaps return -1 */
   }
   len = (len as libc::c_ulong).wrapping_sub(
@@ -723,7 +723,7 @@ unsafe extern "C" fn print_class(
         as libc::c_ulong,
     ),
   ) as libc::c_int as libc::c_int;
-  if len < 0i32 {
+  if len < 0 {
     /* bb_error_msg("wrong len %d", len); */
     return -1i32;
   }
@@ -733,11 +733,11 @@ unsafe extern "C" fn print_class(
       & 0xffff0000u32
       != 0
   {
-    return 0i32;
+    return 0;
   }
   memset(
     tb.as_mut_ptr() as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<[*mut rtattr; 13]>() as libc::c_ulong,
   );
   crate::networking::libiproute::libnetlink::parse_rtattr(
@@ -781,7 +781,7 @@ unsafe extern "C" fn print_class(
     name,
     classid,
   );
-  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_ifindex == 0i32 {
+  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_ifindex == 0 {
     printf(
       b"dev %s \x00" as *const u8 as *const libc::c_char,
       crate::networking::libiproute::ll_map::ll_index_to_name((*msg).tcm_ifindex),
@@ -815,7 +815,7 @@ unsafe extern "C" fn print_class(
     ];
     let mut qqq: libc::c_int =
       crate::libbb::compare_string_array::index_in_strings(_q_.as_ptr(), name);
-    if !(qqq == 0i32) {
+    if !(qqq == 0) {
       if qqq == 1i32 {
         /* class based queuing */
         /* cbq_print_copt() is identical to cbq_print_opt(). */
@@ -829,14 +829,14 @@ unsafe extern "C" fn print_class(
     }
   }
   crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn print_filter(
   mut _who: *const sockaddr_nl,
   mut _hdr: *mut nlmsghdr,
   mut _arg: *mut libc::c_void,
 ) -> libc::c_int {
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn tc_main(
@@ -868,11 +868,11 @@ pub unsafe extern "C" fn tc_main(
     crate::libbb::appletlib::bb_show_usage();
   }
   crate::networking::libiproute::libnetlink::xrtnl_open(&mut rth);
-  ret = 0i32;
+  ret = 0;
   let fresh0 = argv;
   argv = argv.offset(1);
   obj = crate::libbb::compare_string_array::index_in_substrings(objects.as_ptr(), *fresh0);
-  if obj < 0i32 {
+  if obj < 0 {
     crate::libbb::appletlib::bb_show_usage();
   }
   if (*argv).is_null() {
@@ -880,18 +880,18 @@ pub unsafe extern "C" fn tc_main(
     cmd = CMD_show as libc::c_int
   } else {
     cmd = crate::libbb::compare_string_array::index_in_substrings(commands.as_ptr(), *argv); /* list is the default */
-    if cmd < 0i32 {
+    if cmd < 0 {
       crate::networking::libiproute::utils::invarg_1_to_2(*argv, *argv.offset(-1i32 as isize));
     }
     argv = argv.offset(1)
   }
   memset(
     &mut msg as *mut tcmsg as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<tcmsg>() as libc::c_ulong,
   );
-  if 0i32 != 0i32 {
-    msg.tcm_family = 0i32 as libc::c_uchar
+  if 0 != 0 {
+    msg.tcm_family = 0 as libc::c_uchar
   }
   crate::networking::libiproute::ll_map::ll_init_map(&mut rth);
   while !(*argv).is_null() {
@@ -1046,7 +1046,7 @@ pub unsafe extern "C" fn tc_main(
       },
       &mut msg as *mut tcmsg as *mut libc::c_void,
       ::std::mem::size_of::<tcmsg>() as libc::c_ulong as libc::c_int,
-    ) < 0i32
+    ) < 0
     {
       crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
         b"can\'t send dump request\x00" as *const u8 as *const libc::c_char,

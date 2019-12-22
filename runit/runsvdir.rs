@@ -99,7 +99,7 @@ unsafe extern "C" fn runsv(mut name: *const libc::c_char) -> pid_t {
   let mut pid: pid_t = 0;
   /* If we got signaled, stop spawning children at once! */
   if bb_got_signal != 0 {
-    return 0i32;
+    return 0;
   }
   pid = vfork();
   if pid == -1i32 {
@@ -107,9 +107,9 @@ unsafe extern "C" fn runsv(mut name: *const libc::c_char) -> pid_t {
       b"vfork\x00" as *const u8 as *const libc::c_char,
       b"\x00" as *const u8 as *const libc::c_char,
     );
-    return 0i32;
+    return 0;
   }
-  if pid == 0i32 {
+  if pid == 0 {
     /* child */
     if option_mask32 & 1i32 as libc::c_uint != 0 {
       /* -P option? */
@@ -139,7 +139,7 @@ unsafe extern "C" fn do_rescan() -> libc::c_int {
   let mut d: *mut dirent = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut s: stat = std::mem::zeroed();
-  let mut need_rescan: libc::c_int = 0i32;
+  let mut need_rescan: libc::c_int = 0;
   dir = opendir(b".\x00" as *const u8 as *const libc::c_char);
   if dir.is_null() {
     warn2_cannot(
@@ -149,7 +149,7 @@ unsafe extern "C" fn do_rescan() -> libc::c_int {
     return 1i32;
     /* need to rescan again soon */
   }
-  i = 0i32;
+  i = 0;
   while i < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).svnum {
     (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .sv
@@ -160,7 +160,7 @@ unsafe extern "C" fn do_rescan() -> libc::c_int {
   let mut svnew: *mut service = std::ptr::null_mut();
   let mut current_block_20: u64;
   's_55: loop {
-    *bb_errno = 0i32;
+    *bb_errno = 0;
     d = readdir(dir);
     if d.is_null() {
       break;
@@ -178,7 +178,7 @@ unsafe extern "C" fn do_rescan() -> libc::c_int {
         continue;
       }
       /* Do we have this service listed already? */
-      i = 0i32; /* "we still see you" */
+      i = 0; /* "we still see you" */
       loop {
         if !(i < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).svnum) {
           current_block_20 = 7172762164747879670;
@@ -194,7 +194,7 @@ unsafe extern "C" fn do_rescan() -> libc::c_int {
             .sv
             .offset(i as isize))
           .pid
-            == 0i32
+            == 0
           {
             current_block_20 = 14858922589835423217;
             break;
@@ -202,7 +202,7 @@ unsafe extern "C" fn do_rescan() -> libc::c_int {
           (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
             .sv
             .offset(i as isize))
-          .isgone = 0i32 as smallint;
+          .isgone = 0 as smallint;
           continue 's_55;
         } else {
           i += 1
@@ -245,7 +245,7 @@ unsafe extern "C" fn do_rescan() -> libc::c_int {
       (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .sv
         .offset(i as isize))
-      .isgone = 0i32 as smallint
+      .isgone = 0 as smallint
     }
   }
   i = *bb_errno;
@@ -261,7 +261,7 @@ unsafe extern "C" fn do_rescan() -> libc::c_int {
   }
   /* Send SIGTERM to runsv whose directories
    * were no longer found (-> must have been removed) */
-  i = 0i32;
+  i = 0;
   while i < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).svnum {
     if !((*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .sv
@@ -324,13 +324,13 @@ pub unsafe extern "C" fn runsvdir_main(
   argv = argv.offset(optind as isize);
   i_am_init = getpid() == 1i32;
   crate::libbb::signals::bb_signals(
-    0i32
+    0
       | 1i32 << 15i32
       | 1i32 << 1i32
       | (if i_am_init as libc::c_int != 0 {
         (1i32 << 10i32 | 1i32 << 12i32) | 1i32 << 2i32
       } else {
-        0i32
+        0
       }),
     Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
@@ -340,7 +340,7 @@ pub unsafe extern "C" fn runsvdir_main(
   *fresh4 = *fresh3;
   curdir = open(
     b".\x00" as *const u8 as *const libc::c_char,
-    0i32 | 0o4000i32,
+    0 | 0o4000i32,
   );
   if curdir == -1i32 {
     fatal2_cannot(
@@ -351,7 +351,7 @@ pub unsafe extern "C" fn runsvdir_main(
   crate::libbb::xfuncs::close_on_exec_on(curdir);
   stampcheck = crate::libbb::time::monotonic_sec();
   need_rescan = 1i32;
-  last_mtime = 0i32 as time_t;
+  last_mtime = 0 as time_t;
   loop {
     let mut now: libc::c_uint = 0;
     let mut sig: libc::c_uint = 0;
@@ -360,10 +360,10 @@ pub unsafe extern "C" fn runsvdir_main(
     /* collect children */
     {
       let mut pid: pid_t = crate::libbb::xfuncs::wait_any_nohang(0 as *mut libc::c_int);
-      if pid <= 0i32 {
+      if pid <= 0 {
         break;
       }
-      i = 0i32;
+      i = 0;
       while i < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).svnum {
         if pid
           == (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -375,14 +375,14 @@ pub unsafe extern "C" fn runsvdir_main(
           (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
             .sv
             .offset(i as isize))
-          .pid = 0i32;
+          .pid = 0;
           need_rescan = 1i32
         }
         i += 1
       }
     }
     now = crate::libbb::time::monotonic_sec();
-    if now.wrapping_sub(stampcheck) as libc::c_int >= 0i32 {
+    if now.wrapping_sub(stampcheck) as libc::c_int >= 0 {
       /* wait at least a second */
       stampcheck = now.wrapping_add(1i32 as libc::c_uint);
       if stat(
@@ -434,7 +434,7 @@ pub unsafe extern "C" fn runsvdir_main(
     if sig == 0 {
       continue;
     }
-    bb_got_signal = 0i32 as smallint;
+    bb_got_signal = 0 as smallint;
     /* -s SCRIPT: useful if we are init.
      * In this case typically script never returns,
      * it halts/powers off/reboots the system. */
@@ -443,14 +443,14 @@ pub unsafe extern "C" fn runsvdir_main(
       /* Single parameter: signal# */
       opt_s_argv[1] = crate::libbb::xfuncs::utoa(sig);
       pid_0 = crate::libbb::vfork_daemon_rexec::spawn(opt_s_argv.as_mut_ptr());
-      if pid_0 > 0i32 {
+      if pid_0 > 0 {
         /* Remembering to wait for _any_ children,
          * not just pid */
         while wait(0 as *mut libc::c_int) != pid_0 {}
       }
     }
     if sig == 1i32 as libc::c_uint {
-      i = 0i32;
+      i = 0;
       while i < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).svnum {
         if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
           .sv
@@ -473,7 +473,7 @@ pub unsafe extern "C" fn runsvdir_main(
       return if 1i32 as libc::c_uint == sig {
         111i32
       } else {
-        0i32
+        0
       };
     }
   }

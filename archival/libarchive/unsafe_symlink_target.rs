@@ -38,7 +38,7 @@ pub unsafe extern "C" fn create_or_remember_link(
     );
     return;
   }
-  if symlink(target, linkname) != 0i32 {
+  if symlink(target, linkname) != 0 {
     /* shared message */
     crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t create %slink \'%s\' to \'%s\'\x00" as *const u8 as *const libc::c_char,

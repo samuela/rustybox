@@ -51,7 +51,7 @@ pub unsafe extern "C" fn tty_main(
   argv = argv.offset(optind as isize);
   /* gnu tty outputs a warning that it is ignoring all args. */
   crate::libbb::warn_ignoring_args::bb_warn_ignoring_args(*argv.offset(0));
-  retval = 0i32;
+  retval = 0;
   s = crate::libbb::xfuncs_printf::xmalloc_ttyname(0i32);
   if s.is_null() {
     /* According to SUSv3, ttyname can fail with EBADF or ENOTTY.

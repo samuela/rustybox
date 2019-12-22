@@ -252,7 +252,7 @@ pub unsafe extern "C" fn date_main(
   argv = argv.offset(optind as isize);
   maybe_set_utc(opt as libc::c_int);
   if 1i32 != 0 && opt & OPT_TIMESPEC as libc::c_int as libc::c_uint != 0 {
-    ifmt = 0i32; /* default is date */
+    ifmt = 0; /* default is date */
     if !isofmt_arg.is_null() {
       // "date\0""hours\0""minutes\0""seconds\0"
       static mut isoformats: [libc::c_char; 28] = [
@@ -294,10 +294,10 @@ pub unsafe extern "C" fn date_main(
          * Some users actually do use it.
          */
         len -= 8i32;
-        if len < 0i32 || len > 4i32 || len & 1i32 != 0 {
+        if len < 0 || len > 4i32 || len & 1i32 != 0 {
           crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_invalid_date.as_ptr(), date_str);
         }
-        if len != 0i32 {
+        if len != 0 {
           /* move YY or CCYY to front */
           let mut buf: [libc::c_char; 4] = [0; 4];
           memcpy(
@@ -336,9 +336,9 @@ pub unsafe extern "C" fn date_main(
   /* If date string is given, update tm_time, and maybe set date */
   if !date_str.is_null() {
     /* Zero out fields - take her back to midnight! */
-    tm_time.tm_sec = 0i32;
-    tm_time.tm_min = 0i32;
-    tm_time.tm_hour = 0i32;
+    tm_time.tm_sec = 0;
+    tm_time.tm_min = 0;
+    tm_time.tm_hour = 0;
     /* Process any date input to UNIX time since 1 Jan 1970 */
     if 1i32 != 0 && opt & OPT_HINT as libc::c_int as libc::c_uint != 0 {
       if strptime(date_str, fmt_str2dt, &mut tm_time).is_null() {
@@ -354,7 +354,7 @@ pub unsafe extern "C" fn date_main(
     }
     ts.tv_sec = crate::libbb::time::validate_tm_time(date_str, &mut tm_time);
     /* if setting time, set it */
-    if opt & OPT_SET as libc::c_int as libc::c_uint != 0 && stime(&mut ts.tv_sec) < 0i32 {
+    if opt & OPT_SET as libc::c_int as libc::c_uint != 0 && stime(&mut ts.tv_sec) < 0 {
       crate::libbb::perror_msg::bb_simple_perror_msg(
         b"can\'t set date\x00" as *const u8 as *const libc::c_char,
       );
@@ -366,14 +366,14 @@ pub unsafe extern "C" fn date_main(
     let mut i: libc::c_int = 0;
     fmt_dt2str = buf_fmt_dt2str.as_mut_ptr();
     let mut current_block_70: u64;
-    if 1i32 != 0 && ifmt >= 0i32 {
+    if 1i32 != 0 && ifmt >= 0 {
       /* -I[SPEC]: 0:date 1:hours 2:minutes 3:seconds */
       strcpy(
         fmt_dt2str,
         b"%Y-%m-%dT%H:%M:%S\x00" as *const u8 as *const libc::c_char,
       ); /* default case */
       i = 8i32 + 3i32 * ifmt;
-      if ifmt != 0i32 {
+      if ifmt != 0 {
         current_block_70 = 15120539257450533204;
       } else {
         current_block_70 = 4216521074440650966;
@@ -437,5 +437,5 @@ pub unsafe extern "C" fn date_main(
     );
   }
   puts(bb_common_bufsiz1.as_mut_ptr());
-  return 0i32;
+  return 0;
 }

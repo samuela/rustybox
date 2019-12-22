@@ -193,7 +193,7 @@ unsafe extern "C" fn write_tables() {
   (*ptr_to_globals).u.SB.s_state =
     ((*ptr_to_globals).u.SB.s_state as libc::c_int & !(MINIX_ERROR_FS as libc::c_int)) as u16;
   msg_eol = b"seek to 0 failed\x00" as *const u8 as *const libc::c_char;
-  crate::libbb::xfuncs_printf::xlseek(dev_fd as libc::c_int, 0i32 as off_t, 0i32);
+  crate::libbb::xfuncs_printf::xlseek(dev_fd as libc::c_int, 0 as off_t, 0);
   msg_eol = b"can\'t clear boot sector\x00" as *const u8 as *const libc::c_char;
   crate::libbb::xfuncs_printf::xwrite(
     dev_fd as libc::c_int,
@@ -204,7 +204,7 @@ unsafe extern "C" fn write_tables() {
   crate::libbb::xfuncs_printf::xlseek(
     dev_fd as libc::c_int,
     BLOCK_SIZE as libc::c_int as off_t,
-    0i32,
+    0,
   );
   msg_eol = b"can\'t write superblock\x00" as *const u8 as *const libc::c_char;
   crate::libbb::xfuncs_printf::xwrite(
@@ -244,7 +244,7 @@ unsafe extern "C" fn write_block(mut blk: libc::c_int, mut buffer: *mut libc::c_
   crate::libbb::xfuncs_printf::xlseek(
     dev_fd as libc::c_int,
     (blk * BLOCK_SIZE as libc::c_int) as off_t,
-    0i32,
+    0,
   );
   crate::libbb::xfuncs_printf::xwrite(
     dev_fd as libc::c_int,
@@ -297,7 +297,7 @@ unsafe extern "C" fn get_free_block() -> libc::c_int {
 }
 unsafe extern "C" fn mark_good_blocks() {
   let mut blk: libc::c_int = 0;
-  blk = 0i32;
+  blk = 0;
   while blk < (*ptr_to_globals).used_good_blocks {
     minix_setbit(
       (*ptr_to_globals).zone_map,
@@ -331,7 +331,7 @@ unsafe extern "C" fn next(mut zone: libc::c_int) -> libc::c_int {
       return zone;
     }
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn make_bad_inode() {
   let mut current_block: u64;
@@ -342,8 +342,8 @@ unsafe extern "C" fn make_bad_inode() {
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   let mut zone: libc::c_int = 0;
-  let mut ind: libc::c_int = 0i32;
-  let mut dind: libc::c_int = 0i32;
+  let mut ind: libc::c_int = 0;
+  let mut dind: libc::c_int = 0;
   /* moved to globals to reduce stack usage
   unsigned short ind_block[BLOCK_SIZE >> 1];
   unsigned short dind_block[BLOCK_SIZE >> 1];
@@ -358,11 +358,11 @@ unsafe extern "C" fn make_bad_inode() {
   (*inode).i_nlinks = 1i32 as u8;
   /* BTW, setting this makes all images different */
   /* it's harder to check for bugs then - diff isn't helpful :(... */
-  (*inode).i_time = 0i32 as u32;
-  (*inode).i_mode = (0o100000i32 + 0i32) as u16;
+  (*inode).i_time = 0 as u32;
+  (*inode).i_mode = (0o100000i32 + 0) as u16;
   (*inode).i_size = ((*ptr_to_globals).badblocks * BLOCK_SIZE as libc::c_int) as u32;
   zone = next(0i32);
-  i = 0i32;
+  i = 0;
   loop {
     if !(i < 7i32) {
       current_block = 2979737022853876585;
@@ -382,10 +382,10 @@ unsafe extern "C" fn make_bad_inode() {
       (*inode).i_zone[7] = ind as u16;
       memset(
         (*ptr_to_globals).ind_block1.as_mut_ptr() as *mut libc::c_void,
-        0i32,
+        0,
         BLOCK_SIZE as libc::c_int as libc::c_ulong,
       );
-      i = 0i32;
+      i = 0;
       loop {
         if !(i < 512i32) {
           current_block = 13242334135786603907;
@@ -406,10 +406,10 @@ unsafe extern "C" fn make_bad_inode() {
           (*inode).i_zone[8] = dind as u16;
           memset(
             (*ptr_to_globals).dind_block1.as_mut_ptr() as *mut libc::c_void,
-            0i32,
+            0,
             BLOCK_SIZE as libc::c_int as libc::c_ulong,
           );
-          i = 0i32;
+          i = 0;
           's_108: loop {
             if !(i < 512i32) {
               current_block = 11459959175219260272;
@@ -423,10 +423,10 @@ unsafe extern "C" fn make_bad_inode() {
             (*ptr_to_globals).dind_block1[i as usize] = ind as libc::c_ushort;
             memset(
               (*ptr_to_globals).ind_block1.as_mut_ptr() as *mut libc::c_void,
-              0i32,
+              0,
               BLOCK_SIZE as libc::c_int as libc::c_ulong,
             );
-            j = 0i32;
+            j = 0;
             while j < 512i32 {
               (*ptr_to_globals).ind_block1[j as usize] = zone as libc::c_ushort;
               zone = next(zone);
@@ -473,8 +473,8 @@ unsafe extern "C" fn make_bad_inode2() {
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   let mut zone: libc::c_int = 0;
-  let mut ind: libc::c_int = 0i32;
-  let mut dind: libc::c_int = 0i32;
+  let mut ind: libc::c_int = 0;
+  let mut dind: libc::c_int = 0;
   /* moved to globals to reduce stack usage
   unsigned long ind_block[BLOCK_SIZE >> 2];
   unsigned long dind_block[BLOCK_SIZE >> 2];
@@ -487,13 +487,13 @@ unsafe extern "C" fn make_bad_inode2() {
     MINIX_BAD_INO as libc::c_int as libc::c_uint,
   );
   (*inode).i_nlinks = 1i32 as u16;
-  (*inode).i_ctime = 0i32 as u32;
+  (*inode).i_ctime = 0 as u32;
   (*inode).i_mtime = (*inode).i_ctime;
   (*inode).i_atime = (*inode).i_mtime;
-  (*inode).i_mode = (0o100000i32 + 0i32) as u16;
+  (*inode).i_mode = (0o100000i32 + 0) as u16;
   (*inode).i_size = ((*ptr_to_globals).badblocks * BLOCK_SIZE as libc::c_int) as u32;
   zone = next(0i32);
-  i = 0i32;
+  i = 0;
   loop {
     if !(i < 7i32) {
       current_block = 2979737022853876585;
@@ -513,10 +513,10 @@ unsafe extern "C" fn make_bad_inode2() {
       (*inode).i_zone[7] = ind as u32;
       memset(
         (*ptr_to_globals).ind_block2.as_mut_ptr() as *mut libc::c_void,
-        0i32,
+        0,
         BLOCK_SIZE as libc::c_int as libc::c_ulong,
       );
-      i = 0i32;
+      i = 0;
       loop {
         if !(i < 256i32) {
           current_block = 13242334135786603907;
@@ -537,10 +537,10 @@ unsafe extern "C" fn make_bad_inode2() {
           (*inode).i_zone[8] = dind as u32;
           memset(
             (*ptr_to_globals).dind_block2.as_mut_ptr() as *mut libc::c_void,
-            0i32,
+            0,
             BLOCK_SIZE as libc::c_int as libc::c_ulong,
           );
-          i = 0i32;
+          i = 0;
           's_108: loop {
             if !(i < 256i32) {
               current_block = 11459959175219260272;
@@ -554,10 +554,10 @@ unsafe extern "C" fn make_bad_inode2() {
             (*ptr_to_globals).dind_block2[i as usize] = ind as libc::c_ulong;
             memset(
               (*ptr_to_globals).ind_block2.as_mut_ptr() as *mut libc::c_void,
-              0i32,
+              0,
               BLOCK_SIZE as libc::c_int as libc::c_ulong,
             );
-            j = 0i32;
+            j = 0;
             while j < 256i32 {
               (*ptr_to_globals).ind_block2[j as usize] = zone as libc::c_ulong;
               zone = next(zone);
@@ -607,7 +607,7 @@ unsafe extern "C" fn make_root_inode() {
   );
   (*inode).i_zone[0] = get_free_block() as u16;
   (*inode).i_nlinks = 2i32 as u8;
-  (*inode).i_time = 0i32 as u32;
+  (*inode).i_time = 0 as u32;
   if (*ptr_to_globals).badblocks != 0 {
     (*inode).i_size = (3i32 * (*ptr_to_globals).dirsize) as u32
   } else {
@@ -618,9 +618,9 @@ unsafe extern "C" fn make_root_inode() {
     (*inode).i_size = (2i32 * (*ptr_to_globals).dirsize) as u32
   }
   (*inode).i_mode = (0o40000i32 + 0o755i32) as u16;
-  (*inode).i_uid = 0i32 as u16;
+  (*inode).i_uid = 0 as u16;
   if (*inode).i_uid != 0 {
-    (*inode).i_gid = 0i32 as u8
+    (*inode).i_gid = 0 as u8
   }
   write_block(
     (*inode).i_zone[0] as libc::c_int,
@@ -638,7 +638,7 @@ unsafe extern "C" fn make_root_inode2() {
   );
   (*inode).i_zone[0] = get_free_block() as u32;
   (*inode).i_nlinks = 2i32 as u16;
-  (*inode).i_ctime = 0i32 as u32;
+  (*inode).i_ctime = 0 as u32;
   (*inode).i_mtime = (*inode).i_ctime;
   (*inode).i_atime = (*inode).i_mtime;
   if (*ptr_to_globals).badblocks != 0 {
@@ -651,9 +651,9 @@ unsafe extern "C" fn make_root_inode2() {
     (*inode).i_size = (2i32 * (*ptr_to_globals).dirsize) as u32
   }
   (*inode).i_mode = (0o40000i32 + 0o755i32) as u16;
-  (*inode).i_uid = 0i32 as u16;
+  (*inode).i_uid = 0 as u16;
   if (*inode).i_uid != 0 {
-    (*inode).i_gid = 0i32 as u16
+    (*inode).i_gid = 0 as u16
   }
   write_block(
     (*inode).i_zone[0] as libc::c_int,
@@ -675,7 +675,7 @@ unsafe extern "C" fn do_check(
   crate::libbb::xfuncs_printf::xlseek(
     dev_fd as libc::c_int,
     current_block.wrapping_mul(BLOCK_SIZE as libc::c_int as libc::c_uint) as off_t,
-    0i32,
+    0,
   );
   msg_eol = b"\n\x00" as *const u8 as *const libc::c_char;
   /* Try the read */
@@ -724,7 +724,7 @@ unsafe extern "C" fn alarm_intr(mut _alnum: libc::c_int) {
 unsafe extern "C" fn check_blocks() {
   let mut try_0: size_t = 0;
   let mut got: size_t = 0;
-  (*ptr_to_globals).currently_testing = 0i32 as libc::c_uint;
+  (*ptr_to_globals).currently_testing = 0 as libc::c_uint;
   signal(
     14i32,
     Some(alarm_intr as unsafe extern "C" fn(_: libc::c_int) -> ()),
@@ -743,7 +743,7 @@ unsafe extern "C" fn check_blocks() {
       (*ptr_to_globals)
         .currently_testing
         .wrapping_mul(BLOCK_SIZE as libc::c_int as libc::c_uint) as off_t,
-      0i32,
+      0,
     );
     msg_eol = b"\n\x00" as *const u8 as *const libc::c_char;
     try_0 = TEST_BUFFER_BLOCKS as libc::c_int as size_t;
@@ -825,7 +825,7 @@ unsafe extern "C" fn setup_tables() {
   /* memset(G.u.superblock_buffer, 0, BLOCK_SIZE); */
   /* memset(G.boot_block_buffer, 0, 512); */
   (*ptr_to_globals).u.SB.s_magic = (*ptr_to_globals).magic as u16;
-  (*ptr_to_globals).u.SB.s_log_zone_size = 0i32 as u16;
+  (*ptr_to_globals).u.SB.s_log_zone_size = 0 as u16;
   (*ptr_to_globals).u.SB.s_max_size = if (*ptr_to_globals).version2 as libc::c_int != 0 {
     0x7fffffffi32
   } else {
@@ -837,7 +837,7 @@ unsafe extern "C" fn setup_tables() {
     (*ptr_to_globals).u.SB.s_nzones = (*ptr_to_globals).total_blocks as u16
   }
   /* some magic nrs: 1 inode / 3 blocks */
-  if (*ptr_to_globals).req_nr_inodes == 0i32 as libc::c_ulong {
+  if (*ptr_to_globals).req_nr_inodes == 0 as libc::c_ulong {
     inodes = (*ptr_to_globals)
       .total_blocks
       .wrapping_div(3i32 as libc::c_uint) as libc::c_ulong
@@ -873,7 +873,7 @@ unsafe extern "C" fn setup_tables() {
   /* This code is not insane: NORM_FIRSTZONE is not a constant,
    * it is calculated from SB_INODES, SB_IMAPS and SB_ZMAPS */
   i = 999i32 as libc::c_uint;
-  (*ptr_to_globals).u.SB.s_zmap_blocks = 0i32 as u16;
+  (*ptr_to_globals).u.SB.s_zmap_blocks = 0 as u16;
   loop {
     norm_firstzone = ((2i32
       + (*ptr_to_globals).u.SB.s_imap_blocks as libc::c_int
@@ -1057,7 +1057,7 @@ pub unsafe extern "C" fn mkfs_minix_main(
     crate::libbb::appletlib::bb_show_usage();
   }
   /* Check if it is mounted */
-  if !crate::libbb::find_mount_point::find_mount_point((*ptr_to_globals).device_name, 0i32)
+  if !crate::libbb::find_mount_point::find_mount_point((*ptr_to_globals).device_name, 0)
     .is_null()
   {
     crate::libbb::verror_msg::bb_simple_error_msg_and_die(
@@ -1116,5 +1116,5 @@ pub unsafe extern "C" fn mkfs_minix_main(
   }
   mark_good_blocks();
   write_tables();
-  return 0i32;
+  return 0;
 }

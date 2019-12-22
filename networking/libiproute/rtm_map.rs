@@ -107,13 +107,13 @@ pub unsafe extern "C" fn rtnl_rtntype_a2n(
   } else if key as libc::c_int == ARG_throw as libc::c_int {
     res = RTN_THROW as libc::c_int as libc::c_ulong
   } else {
-    res = strtoul(arg, &mut end, 0i32);
+    res = strtoul(arg, &mut end, 0);
     if end == arg || *end as libc::c_int != 0 || res > 255i32 as libc::c_ulong {
       return -1i32;
     }
   }
   *id = res as libc::c_int;
-  return 0i32;
+  return 0;
 }
 
 #[no_mangle]
@@ -121,11 +121,11 @@ pub unsafe extern "C" fn get_rt_realms(
   mut realms: *mut u32,
   mut arg: *mut libc::c_char,
 ) -> libc::c_int {
-  let mut realm: u32 = 0i32 as u32;
+  let mut realm: u32 = 0 as u32;
   let mut p: *mut libc::c_char = strchr(arg, '/' as i32);
-  *realms = 0i32 as u32;
+  *realms = 0 as u32;
   if !p.is_null() {
-    *p = 0i32 as libc::c_char;
+    *p = 0 as libc::c_char;
     if crate::networking::libiproute::rt_names::rtnl_rtrealm_a2n(realms, arg) != 0 {
       *p = '/' as i32 as libc::c_char;
       return -1i32;
@@ -140,5 +140,5 @@ pub unsafe extern "C" fn get_rt_realms(
     return -1i32;
   }
   *realms |= realm;
-  return 0i32;
+  return 0;
 }

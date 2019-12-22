@@ -204,7 +204,7 @@ unsafe extern "C" fn set_tty_cooked() {
   crate::libbb::xfuncs_printf::fflush_all();
   tcsetattr(
     (*ptr_to_globals).kbd_fd,
-    0i32,
+    0,
     &mut (*ptr_to_globals).term_orig,
   );
 }
@@ -246,7 +246,7 @@ unsafe extern "C" fn less_exit(mut code: libc::c_int) {
     crate::libbb::xfuncs::ndelay_off((*ptr_to_globals).kbd_fd);
   }
   clear_line();
-  if code < 0i32 {
+  if code < 0 {
     crate::libbb::signals::kill_myself_with_sig(-code);
   }
   exit(code);
@@ -257,7 +257,7 @@ unsafe extern "C" fn re_wrap() {
   let mut new_line_pos: libc::c_int = 0;
   let mut src_idx: libc::c_int = 0;
   let mut dst_idx: libc::c_int = 0;
-  let mut new_cur_fline: libc::c_int = 0i32;
+  let mut new_cur_fline: libc::c_int = 0;
   let mut lineno: u32 = 0;
   let vla = (w + 1i32) as usize;
   let mut linebuf: Vec<libc::c_char> = ::std::vec::from_elem(0, vla);
@@ -268,12 +268,12 @@ unsafe extern "C" fn re_wrap() {
   if option_mask32 & FLAG_N as libc::c_int as libc::c_uint != 0 {
     w -= 8i32
   }
-  src_idx = 0i32;
-  dst_idx = 0i32;
+  src_idx = 0;
+  dst_idx = 0;
   s = *old_flines.offset(0);
   lineno = *(s.offset(-4) as *mut u32);
   d = linebuf.as_mut_ptr();
-  new_line_pos = 0i32;
+  new_line_pos = 0;
   loop {
     *d = *s;
     if *d as libc::c_int != '\u{0}' as i32 {
@@ -336,7 +336,7 @@ unsafe extern "C" fn re_wrap() {
       lineno = *(s.offset(-4) as *mut u32)
     }
     d = linebuf.as_mut_ptr();
-    new_line_pos = 0i32
+    new_line_pos = 0
   }
   free(old_flines as *mut libc::c_void);
   (*ptr_to_globals).flines = new_flines as *mut *const libc::c_char;
@@ -344,7 +344,7 @@ unsafe extern "C" fn re_wrap() {
   (*ptr_to_globals).last_line_pos = new_line_pos as size_t;
   (*ptr_to_globals).cur_fline = new_cur_fline;
   /* max_lineno is screen-size independent */
-  (*ptr_to_globals).pattern_valid = 0i32 as smallint;
+  (*ptr_to_globals).pattern_valid = 0 as smallint;
 }
 unsafe extern "C" fn at_end() -> libc::c_int {
   return if option_mask32 & FLAG_S as libc::c_int as libc::c_uint != 0 {
@@ -392,7 +392,7 @@ unsafe extern "C" fn read_lines() {
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut w: libc::c_int = (*ptr_to_globals).width as libc::c_int;
   let mut last_terminated: libc::c_char = (*ptr_to_globals).terminated as libc::c_char;
-  let mut last_time: time_t = 0i32 as time_t;
+  let mut last_time: time_t = 0 as time_t;
   let mut retry_EAGAIN: libc::c_int = 2i32;
   let mut old_max_fline: libc::c_uint = (*ptr_to_globals).max_fline;
   /* (careful: max_fline can be -1) */
@@ -417,14 +417,14 @@ unsafe extern "C" fn read_lines() {
   /* last_line_pos is still valid from previous read_lines() */
   } else {
     (*ptr_to_globals).max_fline = (*ptr_to_globals).max_fline.wrapping_add(1); /* end of "read lines until we reach cur_fline" loop */
-    (*ptr_to_globals).last_line_pos = 0i32 as size_t
+    (*ptr_to_globals).last_line_pos = 0 as size_t
   }
   let mut current_block_58: u64;
   loop
   /* read lines until we reach cur_fline or wanted_match */
   {
     *p = '\u{0}' as i32 as libc::c_char; /* end of "read chars until we have a line" loop */
-    (*ptr_to_globals).terminated = 0i32 as smallint;
+    (*ptr_to_globals).terminated = 0 as smallint;
     loop
     /* read chars until we have a line */
     {
@@ -434,9 +434,9 @@ unsafe extern "C" fn read_lines() {
         let mut flags: libc::c_int = crate::libbb::xfuncs::ndelay_on(0i32); /* ndelay_off(0) */
         loop {
           let mut t: time_t = 0;
-          *bb_errno = 0i32;
+          *bb_errno = 0;
           (*ptr_to_globals).eof_error = crate::libbb::read::safe_read(
-            0i32,
+            0,
             bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
             COMMON_BUFSIZE as libc::c_int as size_t,
           );
@@ -447,14 +447,14 @@ unsafe extern "C" fn read_lines() {
           if t != last_time {
             last_time = t;
             retry_EAGAIN -= 1;
-            if retry_EAGAIN < 0i32 {
+            if retry_EAGAIN < 0 {
               break;
             }
           }
           sched_yield();
         }
         fcntl(0i32, 4i32, flags);
-        (*ptr_to_globals).readpos = 0i32 as ssize_t;
+        (*ptr_to_globals).readpos = 0 as ssize_t;
         (*ptr_to_globals).readeof = (*ptr_to_globals).eof_error;
         if (*ptr_to_globals).eof_error <= 0 {
           break;
@@ -489,7 +489,7 @@ unsafe extern "C" fn read_lines() {
               current_block_58 = 8727269132939964787;
             } else {
               /* Hmm, unexpected end of "ESC [ N ; N m" sequence */
-              (*ptr_to_globals).in_escape = 0i32 as smallint;
+              (*ptr_to_globals).in_escape = 0 as smallint;
               current_block_58 = 5141539773904409130;
             }
           } else {
@@ -521,7 +521,7 @@ unsafe extern "C" fn read_lines() {
         (*ptr_to_globals).readpos += 1;
         if c as libc::c_int == '\n' as i32 {
           (*ptr_to_globals).terminated = 1i32 as smallint;
-          (*ptr_to_globals).last_line_pos = 0i32 as size_t;
+          (*ptr_to_globals).last_line_pos = 0 as size_t;
           break;
         } else {
           /* NUL is substituted by '\n'! */
@@ -560,7 +560,7 @@ unsafe extern "C" fn read_lines() {
       (*ptr_to_globals).max_lineno = (*ptr_to_globals).max_lineno.wrapping_add(1)
     }
     if (*ptr_to_globals).max_fline >= MAXLINES as libc::c_int as libc::c_uint {
-      (*ptr_to_globals).eof_error = 0i32 as ssize_t;
+      (*ptr_to_globals).eof_error = 0 as ssize_t;
       break;
     } else {
       if at_end() == 0 {
@@ -579,7 +579,7 @@ unsafe extern "C" fn read_lines() {
       (*ptr_to_globals).max_fline = (*ptr_to_globals).max_fline.wrapping_add(1);
       current_line = (xmalloc((w + 5i32) as size_t) as *mut libc::c_char).offset(4);
       p = current_line;
-      (*ptr_to_globals).last_line_pos = 0i32 as size_t
+      (*ptr_to_globals).last_line_pos = 0 as size_t
     }
   }
   if (*ptr_to_globals).eof_error < 0 {
@@ -602,8 +602,8 @@ unsafe extern "C" fn safe_lineno(mut fline: libc::c_int) -> libc::c_int {
       .wrapping_sub(1i32 as libc::c_uint) as libc::c_int
   }
   /* also catches empty file (max_fline == 0) */
-  if fline < 0i32 {
-    return 0i32;
+  if fline < 0 {
+    return 0;
   }
   return (*((*(*ptr_to_globals).flines.offset(fline as isize)).offset(-4) as *mut u32))
     .wrapping_add(1i32 as libc::c_uint) as libc::c_int;
@@ -618,21 +618,21 @@ unsafe extern "C" fn update_num_lines() {
   let mut buf: [libc::c_char; 4096] = [0; 4096];
   /* only do this for regular files */
   if (*ptr_to_globals).num_lines == -1i32 || (*ptr_to_globals).num_lines == -2i32 {
-    count = 0i32;
+    count = 0;
     fd = open(
       b"/proc/self/fd/0\x00" as *const u8 as *const libc::c_char,
-      0i32,
+      0,
     );
-    if fd < 0i32 && (*ptr_to_globals).num_lines == -1i32 {
+    if fd < 0 && (*ptr_to_globals).num_lines == -1i32 {
       /* "filename" is valid only if REOPEN_AND_COUNT */
-      fd = open((*ptr_to_globals).filename, 0i32)
+      fd = open((*ptr_to_globals).filename, 0)
     }
-    if fd < 0i32 {
+    if fd < 0 {
       /* somebody stole my file! */
       (*ptr_to_globals).num_lines = -3i32;
       return;
     }
-    if fstat(fd, &mut stbuf) != 0i32
+    if fstat(fd, &mut stbuf) != 0
       || !(stbuf.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
     {
       (*ptr_to_globals).num_lines = -3i32
@@ -646,7 +646,7 @@ unsafe extern "C" fn update_num_lines() {
         if !(len > 0) {
           break;
         }
-        i = 0i32 as ssize_t;
+        i = 0 as ssize_t;
         while i < len {
           if buf[i as usize] as libc::c_int == '\n' as i32 && {
             count += 1;
@@ -667,7 +667,7 @@ unsafe extern "C" fn m_status_print() {
   let mut first: libc::c_int = 0;
   let mut last: libc::c_int = 0;
   let mut percent: libc::c_uint = 0;
-  if (*ptr_to_globals).less_gets_pos >= 0i32 {
+  if (*ptr_to_globals).less_gets_pos >= 0 {
     /* don't touch statusline while input is done! */
     return;
   }
@@ -704,7 +704,7 @@ unsafe extern "C" fn m_status_print() {
     last,
   );
   update_num_lines();
-  if (*ptr_to_globals).num_lines >= 0i32 {
+  if (*ptr_to_globals).num_lines >= 0 {
     printf(
       b"/%i\x00" as *const u8 as *const libc::c_char,
       (*ptr_to_globals).num_lines,
@@ -722,7 +722,7 @@ unsafe extern "C" fn m_status_print() {
           .offset((*ptr_to_globals).current_file as isize),
       );
     }
-  } else if (*ptr_to_globals).num_lines > 0i32 {
+  } else if (*ptr_to_globals).num_lines > 0 {
     percent = ((100i32 * last + (*ptr_to_globals).num_lines / 2i32) / (*ptr_to_globals).num_lines)
       as libc::c_uint;
     printf(
@@ -739,7 +739,7 @@ unsafe extern "C" fn m_status_print() {
 /* Print the status line */
 unsafe extern "C" fn status_print() {
   let mut p: *const libc::c_char = std::ptr::null();
-  if (*ptr_to_globals).less_gets_pos >= 0i32 {
+  if (*ptr_to_globals).less_gets_pos >= 0 {
     /* don't touch statusline while input is done! */
     return;
   }
@@ -827,7 +827,7 @@ unsafe extern "C" fn print_found(mut line: *const libc::c_char) {
    * from quarantined copy (buf[]) */
   str = buf.as_mut_ptr();
   growline = std::ptr::null_mut::<libc::c_char>();
-  eflags = 0i32;
+  eflags = 0;
   loop {
     /* Most of the time doesn't find the regex, optimize for that */
     match_status = regexec(
@@ -841,7 +841,7 @@ unsafe extern "C" fn print_found(mut line: *const libc::c_char) {
     if match_structs.rm_so >= match_structs.rm_eo {
       match_status = 1i32
     }
-    if !(match_status == 0i32) {
+    if !(match_status == 0) {
       break;
     }
     new = crate::libbb::xfuncs_printf::xasprintf(
@@ -923,8 +923,8 @@ unsafe extern "C" fn print_ascii(mut str: *const libc::c_char) {
 /* Print the buffer */
 unsafe extern "C" fn buffer_print() {
   let mut i: libc::c_uint = 0;
-  move_cursor(0i32, 0i32);
-  i = 0i32 as libc::c_uint;
+  move_cursor(0i32, 0);
+  i = 0 as libc::c_uint;
   while i <= (*ptr_to_globals).max_displayed_line {
     printf(b"\x1b[K\x00" as *const u8 as *const libc::c_char);
     if option_mask32 & FLAG_N as libc::c_int as libc::c_uint != 0 {
@@ -941,7 +941,7 @@ unsafe extern "C" fn buffer_print() {
     && (*ptr_to_globals).eof_error <= 0
   {
     i = if option_mask32 & FLAG_F as libc::c_int as libc::c_uint != 0 {
-      0i32
+      0
     } else {
       (*ptr_to_globals).cur_fline
     } as libc::c_uint;
@@ -963,7 +963,7 @@ unsafe extern "C" fn buffer_fill_and_print() {
       fpos -= 1
     }
   }
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i <= (*ptr_to_globals).max_displayed_line
     && fpos as libc::c_uint <= (*ptr_to_globals).max_fline
   {
@@ -992,8 +992,8 @@ unsafe extern "C" fn buffer_fill_and_print() {
 }
 /* move cur_fline to a given line number, reading lines if necessary */
 unsafe extern "C" fn goto_lineno(mut target: libc::c_int) {
-  if target <= 0i32 {
-    (*ptr_to_globals).cur_fline = 0i32
+  if target <= 0 {
+    (*ptr_to_globals).cur_fline = 0
   } else if target as libc::c_uint
     > *((*(*ptr_to_globals)
       .flines
@@ -1029,7 +1029,7 @@ unsafe extern "C" fn goto_lineno(mut target: libc::c_int) {
       .offset((*ptr_to_globals).cur_fline as isize))
     .offset(-4) as *mut u32)
       != target as libc::c_uint
-      && (*ptr_to_globals).cur_fline > 0i32
+      && (*ptr_to_globals).cur_fline > 0
     {
       (*ptr_to_globals).cur_fline -= 1
     }
@@ -1070,8 +1070,8 @@ unsafe extern "C" fn cap_cur_fline() {
         .wrapping_add(TILDES as libc::c_int as libc::c_uint)
         as libc::c_int
     }
-    if (*ptr_to_globals).cur_fline < 0i32 {
-      (*ptr_to_globals).cur_fline = 0i32
+    if (*ptr_to_globals).cur_fline < 0 {
+      (*ptr_to_globals).cur_fline = 0
     }
   };
 }
@@ -1103,8 +1103,8 @@ unsafe extern "C" fn buffer_up(mut nlines: libc::c_int) {
     );
   } else {
     (*ptr_to_globals).cur_fline -= nlines;
-    if (*ptr_to_globals).cur_fline < 0i32 {
-      (*ptr_to_globals).cur_fline = 0i32
+    if (*ptr_to_globals).cur_fline < 0 {
+      (*ptr_to_globals).cur_fline = 0
     }
   }
   read_lines();
@@ -1113,8 +1113,8 @@ unsafe extern "C" fn buffer_up(mut nlines: libc::c_int) {
 /* display a given line where the argument can be either an index into
  * the flines array or a line number */
 unsafe extern "C" fn buffer_to_line(mut linenum: libc::c_int, mut is_lineno: libc::c_int) {
-  if linenum <= 0i32 {
-    (*ptr_to_globals).cur_fline = 0i32
+  if linenum <= 0 {
+    (*ptr_to_globals).cur_fline = 0
   } else if is_lineno != 0 {
     goto_lineno(linenum);
   } else {
@@ -1125,7 +1125,7 @@ unsafe extern "C" fn buffer_to_line(mut linenum: libc::c_int, mut is_lineno: lib
   buffer_fill_and_print();
 }
 unsafe extern "C" fn buffer_line(mut linenum: libc::c_int) {
-  buffer_to_line(linenum, 0i32);
+  buffer_to_line(linenum, 0);
 }
 unsafe extern "C" fn buffer_lineno(mut lineno: libc::c_int) {
   buffer_to_line(lineno, 1i32);
@@ -1133,8 +1133,8 @@ unsafe extern "C" fn buffer_lineno(mut lineno: libc::c_int) {
 unsafe extern "C" fn open_file_and_read_lines() {
   if !(*ptr_to_globals).filename.is_null() {
     crate::libbb::xfuncs_printf::xmove_fd(
-      crate::libbb::xfuncs_printf::xopen((*ptr_to_globals).filename, 0i32),
-      0i32,
+      crate::libbb::xfuncs_printf::xopen((*ptr_to_globals).filename, 0),
+      0,
     );
     (*ptr_to_globals).num_lines = -1i32
   } else {
@@ -1144,9 +1144,9 @@ unsafe extern "C" fn open_file_and_read_lines() {
       crate::libbb::xfuncs_printf::xstrdup(bb_msg_standard_input.as_ptr());
     (*ptr_to_globals).num_lines = -2i32
   }
-  (*ptr_to_globals).readpos = 0i32 as ssize_t;
-  (*ptr_to_globals).readeof = 0i32 as ssize_t;
-  (*ptr_to_globals).last_line_pos = 0i32 as size_t;
+  (*ptr_to_globals).readpos = 0 as ssize_t;
+  (*ptr_to_globals).readeof = 0 as ssize_t;
+  (*ptr_to_globals).last_line_pos = 0 as size_t;
   (*ptr_to_globals).terminated = 1i32 as smallint;
   read_lines();
 }
@@ -1154,7 +1154,7 @@ unsafe extern "C" fn open_file_and_read_lines() {
 unsafe extern "C" fn reinitialize() {
   let mut i: libc::c_uint = 0;
   if !(*ptr_to_globals).flines.is_null() {
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     while i <= (*ptr_to_globals).max_fline {
       free(
         (*(*ptr_to_globals).flines.offset(i as isize) as *mut libc::c_char).offset(-4)
@@ -1166,8 +1166,8 @@ unsafe extern "C" fn reinitialize() {
     (*ptr_to_globals).flines = std::ptr::null_mut()
   }
   (*ptr_to_globals).max_fline = -1i32 as libc::c_uint;
-  (*ptr_to_globals).cur_fline = 0i32;
-  (*ptr_to_globals).max_lineno = 0i32 as libc::c_uint;
+  (*ptr_to_globals).cur_fline = 0;
+  (*ptr_to_globals).max_lineno = 0 as libc::c_uint;
   open_file_and_read_lines();
   if (*ptr_to_globals).winsize_err != 0 {
     printf(b"\x1b[999;999H\x1b[6n\x00" as *const u8 as *const libc::c_char);
@@ -1182,14 +1182,14 @@ unsafe extern "C" fn getch_nowait() -> int64_t {
     events: 0,
     revents: 0,
   }; 2];
-  pfd[0].fd = 0i32;
+  pfd[0].fd = 0;
   pfd[0].events = 0x1i32 as libc::c_short;
   pfd[1].fd = (*ptr_to_globals).kbd_fd;
   pfd[1].events = 0x1i32 as libc::c_short;
   loop {
     tcsetattr(
       (*ptr_to_globals).kbd_fd,
-      0i32,
+      0,
       &mut (*ptr_to_globals).term_less,
     );
     /* NB: select/poll returns whenever read will not block. Therefore:
@@ -1203,12 +1203,12 @@ unsafe extern "C" fn getch_nowait() -> int64_t {
     if at_end() != 0 {
       if (*ptr_to_globals).eof_error > 0 {
         /* did NOT reach eof yet */
-        rd = 0i32
+        rd = 0
       }
       /* yes, we are interested in stdin */
     }
     /* Position cursor if line input is done */
-    if (*ptr_to_globals).less_gets_pos >= 0i32 {
+    if (*ptr_to_globals).less_gets_pos >= 0 {
       move_cursor(
         (*ptr_to_globals)
           .max_displayed_line
@@ -1217,7 +1217,7 @@ unsafe extern "C" fn getch_nowait() -> int64_t {
       );
     }
     crate::libbb::xfuncs_printf::fflush_all();
-    if (*ptr_to_globals).kbd_input[0] as libc::c_int == 0i32 {
+    if (*ptr_to_globals).kbd_input[0] as libc::c_int == 0 {
       loop
       /* if nothing is buffered */
       {
@@ -1275,7 +1275,7 @@ unsafe extern "C" fn less_getch(mut pos: libc::c_int) -> int64_t {
      * (checking only lower 32 bits is a size optimization:
      * upper 32 bits are used only by KEYCODE_CURSOR_POS)
      */
-    if !(key >= 0i32 && key < ' ' as i32 && key != 0xdi32 && key != 8i32) {
+    if !(key >= 0 && key < ' ' as i32 && key != 0xdi32 && key != 8i32) {
       break;
     }
   }
@@ -1283,7 +1283,7 @@ unsafe extern "C" fn less_getch(mut pos: libc::c_int) -> int64_t {
 }
 unsafe extern "C" fn less_gets(mut sz: libc::c_int) -> *mut libc::c_char {
   let mut c: libc::c_int = 0;
-  let mut i: libc::c_uint = 0i32 as libc::c_uint;
+  let mut i: libc::c_uint = 0 as libc::c_uint;
   let mut result: *mut libc::c_char =
     crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t) as *mut libc::c_char;
   loop
@@ -1334,7 +1334,7 @@ unsafe extern "C" fn examine_file() {
   );
   if *new_fname.offset(0) == 0 {
     status_print();
-  } else if access(new_fname, 4i32) != 0i32 {
+  } else if access(new_fname, 4i32) != 0 {
     print_statusline(b"Cannot read this file\x00" as *const u8 as *const libc::c_char);
   } else {
     free((*ptr_to_globals).filename as *mut libc::c_void);
@@ -1358,7 +1358,7 @@ unsafe extern "C" fn examine_file() {
  *  1: go forward one file */
 unsafe extern "C" fn change_file(mut direction: libc::c_int) {
   if (*ptr_to_globals).current_file
-    != (if direction > 0i32 {
+    != (if direction > 0 {
       (*ptr_to_globals).num_files
     } else {
       1i32 as libc::c_uint
@@ -1381,7 +1381,7 @@ unsafe extern "C" fn change_file(mut direction: libc::c_int) {
     );
     reinitialize();
   } else {
-    print_statusline(if direction > 0i32 {
+    print_statusline(if direction > 0 {
       b"No next file\x00" as *const u8 as *const libc::c_char
     } else {
       b"No previous file\x00" as *const u8 as *const libc::c_char
@@ -1456,8 +1456,8 @@ unsafe extern "C" fn normalize_match_pos(mut match_0: libc::c_int) {
   if match_0 >= (*ptr_to_globals).num_matches {
     match_0 = (*ptr_to_globals).num_matches - 1i32
   }
-  if match_0 < 0i32 {
-    match_0 = 0i32
+  if match_0 < 0 {
+    match_0 = 0
   }
   (*ptr_to_globals).match_pos = match_0;
 }
@@ -1465,8 +1465,8 @@ unsafe extern "C" fn goto_match(mut match_0: libc::c_int) {
   if (*ptr_to_globals).pattern_valid == 0 {
     return;
   }
-  if match_0 < 0i32 {
-    match_0 = 0i32
+  if match_0 < 0 {
+    match_0 = 0
   }
   /* Try to find next match if eof isn't reached yet */
   if match_0 >= (*ptr_to_globals).num_matches && (*ptr_to_globals).eof_error > 0 {
@@ -1494,10 +1494,10 @@ unsafe extern "C" fn fill_match_lines(mut pos: libc::c_uint) {
     if regexec(
       &mut (*ptr_to_globals).pattern,
       *(*ptr_to_globals).flines.offset(pos as isize),
-      0i32 as size_t,
+      0 as size_t,
       0 as *mut regmatch_t,
-      0i32,
-    ) == 0i32
+      0,
+    ) == 0
       && !((*ptr_to_globals).num_matches != 0
         && *(*ptr_to_globals)
           .match_lines
@@ -1523,11 +1523,11 @@ unsafe extern "C" fn regex_process() {
   /* Reset variables */
   free((*ptr_to_globals).match_lines as *mut libc::c_void);
   (*ptr_to_globals).match_lines = std::ptr::null_mut();
-  (*ptr_to_globals).match_pos = 0i32;
-  (*ptr_to_globals).num_matches = 0i32;
+  (*ptr_to_globals).match_pos = 0;
+  (*ptr_to_globals).num_matches = 0;
   if (*ptr_to_globals).pattern_valid != 0 {
     regfree(&mut (*ptr_to_globals).pattern);
-    (*ptr_to_globals).pattern_valid = 0i32 as smallint
+    (*ptr_to_globals).pattern_valid = 0 as smallint
   }
   /* Get the uncompiled regular expression from the user */
   clear_line();
@@ -1551,7 +1551,7 @@ unsafe extern "C" fn regex_process() {
     if option_mask32 & FLAG_I as libc::c_int as libc::c_uint != 0 {
       (1i32) << 1i32
     } else {
-      0i32
+      0
     },
   );
   free(uncomp_regex as *mut libc::c_void);
@@ -1561,7 +1561,7 @@ unsafe extern "C" fn regex_process() {
     return;
   }
   (*ptr_to_globals).pattern_valid = 1i32 as smallint;
-  (*ptr_to_globals).match_pos = 0i32;
+  (*ptr_to_globals).match_pos = 0;
   fill_match_lines(0i32 as libc::c_uint);
   while (*ptr_to_globals).match_pos < (*ptr_to_globals).num_matches {
     if *(*ptr_to_globals)
@@ -1631,7 +1631,7 @@ unsafe extern "C" fn number_process(mut first_digit: libc::c_int) {
     112 | 37 => {
       update_num_lines();
       num = (num as libc::c_uint)
-        .wrapping_mul(if (*ptr_to_globals).num_lines > 0i32 {
+        .wrapping_mul(if (*ptr_to_globals).num_lines > 0 {
           (*ptr_to_globals).num_lines as libc::c_uint
         } else {
           (*ptr_to_globals).max_lineno
@@ -1691,7 +1691,7 @@ unsafe extern "C" fn save_input_to_file() {
     if fp.is_null() {
       msg = b"Error opening log file\x00" as *const u8 as *const libc::c_char
     } else {
-      i = 0i32 as libc::c_uint;
+      i = 0 as libc::c_uint;
       while i <= (*ptr_to_globals).max_fline {
         fprintf(
           fp,
@@ -1717,7 +1717,7 @@ unsafe extern "C" fn add_mark() {
   if ((letter | 0x20i32) - 'a' as i32) as libc::c_uchar as libc::c_int <= 'z' as i32 - 'a' as i32 {
     /* If we exceed 15 marks, start overwriting previous ones */
     if (*ptr_to_globals).num_marks == 14i32 as libc::c_uint {
-      (*ptr_to_globals).num_marks = 0i32 as libc::c_uint
+      (*ptr_to_globals).num_marks = 0 as libc::c_uint
     }
     (*ptr_to_globals).mark_lines[(*ptr_to_globals).num_marks as usize][0] = letter as libc::c_uint;
     (*ptr_to_globals).mark_lines[(*ptr_to_globals).num_marks as usize][1] =
@@ -1737,7 +1737,7 @@ unsafe extern "C" fn goto_mark() {
   ) as libc::c_int;
   clear_line();
   if ((letter | 0x20i32) - 'a' as i32) as libc::c_uchar as libc::c_int <= 'z' as i32 - 'a' as i32 {
-    i = 0i32;
+    i = 0;
     while i as libc::c_uint <= (*ptr_to_globals).num_marks {
       if letter as libc::c_uint == (*ptr_to_globals).mark_lines[i as usize][0] {
         buffer_line((*ptr_to_globals).mark_lines[i as usize][1] as libc::c_int);
@@ -1832,7 +1832,7 @@ unsafe extern "C" fn match_left_bracket(mut bracket: libc::c_char) {
     return;
   }
   bracket = opp_bracket(bracket);
-  while i >= 0i32 {
+  while i >= 0 {
     if !strchr(
       *(*ptr_to_globals).flines.offset(i as isize),
       bracket as libc::c_int,
@@ -2039,9 +2039,9 @@ pub unsafe extern "C" fn less_main(
   tty_name = crate::libbb::xfuncs_printf::xmalloc_ttyname(1i32);
   let mut current_block_42: u64;
   if !tty_name.is_null() {
-    tty_fd = open(tty_name, 0i32);
+    tty_fd = open(tty_name, 0);
     free(tty_name as *mut libc::c_void);
-    if tty_fd < 0i32 {
+    if tty_fd < 0 {
       current_block_42 = 904142995672188764;
     } else {
       current_block_42 = 313581471991351815;
@@ -2053,8 +2053,8 @@ pub unsafe extern "C" fn less_main(
     904142995672188764 =>
     /* Try controlling tty */
     {
-      tty_fd = open(b"/dev/tty\x00" as *const u8 as *const libc::c_char, 0i32);
-      if tty_fd < 0i32 {
+      tty_fd = open(b"/dev/tty\x00" as *const u8 as *const libc::c_char, 0);
+      if tty_fd < 0 {
         /* If all else fails, less 481 uses stdout. Mimic that */
         tty_fd = 1i32
       }

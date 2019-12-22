@@ -78,7 +78,7 @@ pub unsafe extern "C" fn add_remove_shell_main(
           current_block_13 = 4808432441040389987;
           break;
         }
-        if *cpp != 1i32 as uintptr_t as *mut libc::c_char && strcmp(*cpp, line) == 0i32 {
+        if *cpp != 1i32 as uintptr_t as *mut libc::c_char && strcmp(*cpp, line) == 0 {
           /* Old file has this shell name */
           if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(0) as libc::c_int == 'r' as i32) {
             current_block_13 = 221764114354898702;
@@ -112,7 +112,7 @@ pub unsafe extern "C" fn add_remove_shell_main(
     }
   }
   /* Ensure we wrote out everything */
-  if fclose(stdout) != 0i32 {
+  if fclose(stdout) != 0 {
     crate::libbb::xfuncs_printf::xunlink(new_fn);
     crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"%s: write error\x00" as *const u8 as *const libc::c_char,
@@ -121,5 +121,5 @@ pub unsafe extern "C" fn add_remove_shell_main(
   }
   /* Small hole: if rename fails, /etc/shells.tmp is not removed */
   crate::libbb::xfuncs_printf::xrename(new_fn, orig_fn);
-  return 0i32;
+  return 0;
 }

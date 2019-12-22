@@ -436,8 +436,8 @@ pub unsafe extern "C" fn kill_main(
   let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pid: pid_t = 0;
   let mut signo: libc::c_int = 15i32;
-  let mut errors: libc::c_int = 0i32;
-  let mut quiet: libc::c_int = 0i32;
+  let mut errors: libc::c_int = 0;
+  let mut quiet: libc::c_int = 0;
   /* How to determine who we are? find 3rd char from the end:
    * kill, killall, killall5
    *  ^i       ^a        ^l  - it's unique
@@ -460,7 +460,7 @@ pub unsafe extern "C" fn kill_main(
       if arg.is_null() {
         /* Print the whole signal list */
         crate::libbb::u_signal_names::print_signames();
-        return 0i32;
+        return 0;
       }
       loop
       /* -l <sig list> */
@@ -481,7 +481,7 @@ pub unsafe extern "C" fn kill_main(
           puts(crate::libbb::u_signal_names::get_signame(signo & 0x7fi32));
         } else {
           signo = crate::libbb::u_signal_names::get_signum(arg);
-          if signo < 0i32 {
+          if signo < 0 {
             crate::libbb::verror_msg::bb_error_msg(
               b"unknown signal \'%s\'\x00" as *const u8 as *const libc::c_char,
               arg,
@@ -496,7 +496,7 @@ pub unsafe extern "C" fn kill_main(
           break;
         }
       }
-      return 0i32;
+      return 0;
     }
     /* Exitcodes >= 0x80 are to be treated
      * as "killed by signal (exitcode & 0x7f)" */
@@ -544,7 +544,7 @@ pub unsafe extern "C" fn kill_main(
               arg = *argv
             }
             signo = crate::libbb::u_signal_names::get_signum(arg);
-            if signo < 0i32 {
+            if signo < 0 {
               crate::libbb::verror_msg::bb_error_msg(
                 b"bad signal name \'%s\'\x00" as *const u8 as *const libc::c_char,
                 arg,
@@ -580,7 +580,7 @@ pub unsafe extern "C" fn kill_main(
       }
       let mut args: *mut *mut libc::c_char = std::ptr::null_mut();
       if (*p).sid == sid as libc::c_uint
-        || (*p).sid == 0i32 as libc::c_uint
+        || (*p).sid == 0 as libc::c_uint
         || (*p).pid == pid as libc::c_uint
         || (*p).pid == 1i32 as libc::c_uint
       {
@@ -624,7 +624,7 @@ pub unsafe extern "C" fn kill_main(
         }
       }
       kill((*p).pid as pid_t, signo);
-      errors = 0i32
+      errors = 0
     }
     /* And let them continue */
     if signo != 19i32 && signo != 18i32 {
@@ -645,7 +645,7 @@ pub unsafe extern "C" fn kill_main(
       {
         let mut pidList: *mut pid_t = std::ptr::null_mut();
         pidList = crate::libbb::find_pid_by_name::find_pid_by_name(arg);
-        if *pidList == 0i32 {
+        if *pidList == 0 {
           errors += 1;
           if quiet == 0 {
             crate::libbb::verror_msg::bb_error_msg(
@@ -658,7 +658,7 @@ pub unsafe extern "C" fn kill_main(
           pl = pidList;
           while *pl != 0 {
             if !(*pl == pid) {
-              if !(kill(*pl, signo) == 0i32) {
+              if !(kill(*pl, signo) == 0) {
                 errors += 1;
                 if quiet == 0 {
                   crate::libbb::perror_msg::bb_perror_msg(
@@ -701,7 +701,7 @@ pub unsafe extern "C" fn kill_main(
           errors += 1;
           break;
         } else {
-          if kill(pid, signo) != 0i32 {
+          if kill(pid, signo) != 0 {
             crate::libbb::perror_msg::bb_perror_msg(
               b"can\'t kill pid %d\x00" as *const u8 as *const libc::c_char,
               pid,

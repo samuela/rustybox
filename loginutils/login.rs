@@ -110,7 +110,7 @@ unsafe extern "C" fn die_if_nologin() {
       crate::libbb::xfuncs_printf::bb_putchar('\r' as i32);
     }
     crate::libbb::xfuncs_printf::bb_putchar(c);
-    empty = 0i32
+    empty = 0
   }
   if empty != 0 {
     puts(b"\r\nSystem closed for routine maintenance\r\x00" as *const u8 as *const libc::c_char);
@@ -199,8 +199,8 @@ unsafe extern "C" fn get_username_or_die(mut buf: *mut libc::c_char, mut size_bu
 }
 unsafe extern "C" fn motd() {
   let mut fd: libc::c_int = 0;
-  fd = open(b"/etc/motd\x00" as *const u8 as *const libc::c_char, 0i32);
-  if fd >= 0i32 {
+  fd = open(b"/etc/motd\x00" as *const u8 as *const libc::c_char, 0);
+  if fd >= 0 {
     crate::libbb::xfuncs_printf::fflush_all();
     crate::libbb::copyfd::bb_copyfd_eof(fd, 1i32);
     close(fd);
@@ -239,7 +239,7 @@ pub unsafe extern "C" fn login_main(
   let mut username: [libc::c_char; 64] = [0; 64];
   let mut run_by_root: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;
-  let mut count: libc::c_int = 0i32;
+  let mut count: libc::c_int = 0;
   let mut pw: *mut passwd = std::ptr::null_mut();
   let mut opt_host: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt_user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -286,9 +286,9 @@ pub unsafe extern "C" fn login_main(
   }
   /* Save tty attributes - and by doing it, check that it's indeed a tty */
   if tcgetattr(
-    0i32,
+    0,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tty_attrs,
-  ) < 0i32
+  ) < 0
     || isatty(1i32) == 0
   {
     /*|| !isatty(STDERR_FILENO) - no, guess some people might want to redirect this */
@@ -326,7 +326,7 @@ pub unsafe extern "C" fn login_main(
   loop
   /* flush away any type-ahead (as getty does) */
   {
-    tcflush(0i32, 0i32);
+    tcflush(0i32, 0);
     if username[0] == 0 {
       get_username_or_die(
         username.as_mut_ptr(),
@@ -349,7 +349,7 @@ pub unsafe extern "C" fn login_main(
       if opt & LOGIN_OPT_f as libc::c_int as libc::c_uint != 0 {
         break;
       }
-      if (*pw).pw_uid == 0i32 as libc::c_uint
+      if (*pw).pw_uid == 0 as libc::c_uint
         && crate::libbb::securetty::is_tty_secure(short_tty) == 0
       {
         current_block = 8456411428248478739;
@@ -368,7 +368,7 @@ pub unsafe extern "C" fn login_main(
        * If we get interrupted by SIGALRM, we need to restore attrs.
        */
       {
-        if crate::libbb::correct_password::ask_and_check_password(pw) > 0i32 {
+        if crate::libbb::correct_password::ask_and_check_password(pw) > 0 {
           break;
         }
       }
@@ -394,7 +394,7 @@ pub unsafe extern "C" fn login_main(
   alarm(0i32 as libc::c_uint);
   /* We can ignore /etc/nologin if we are logging in as root,
    * it doesn't matter whether we are run by root or not */
-  if (*pw).pw_uid != 0i32 as libc::c_uint {
+  if (*pw).pw_uid != 0 as libc::c_uint {
     die_if_nologin();
   }
   /* Try these, but don't complain if they fail.
@@ -420,13 +420,13 @@ pub unsafe extern "C" fn login_main(
   crate::libbb::setup_environment::setup_environment(
     (*pw).pw_shell,
     (opt & LOGIN_OPT_p as libc::c_int as libc::c_uint == 0) as libc::c_int * (1i32 << 1i32)
-      + (1i32 << 0i32),
+      + (1i32 << 0),
     pw,
   );
-  if access(b".hushlogin\x00" as *const u8 as *const libc::c_char, 0i32) != 0i32 {
+  if access(b".hushlogin\x00" as *const u8 as *const libc::c_char, 0) != 0 {
     motd();
   }
-  if (*pw).pw_uid == 0i32 as libc::c_uint {
+  if (*pw).pw_uid == 0 as libc::c_uint {
     syslog(
       6i32,
       b"root login%s\x00" as *const u8 as *const libc::c_char,

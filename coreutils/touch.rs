@@ -108,7 +108,7 @@ pub unsafe extern "C" fn touch_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut fd: libc::c_int = 0;
-  let mut status: libc::c_int = 0i32;
+  let mut status: libc::c_int = 0;
   let mut opts: libc::c_int = 0;
   static mut touch_longopts: [libc::c_char; 49] = [
     110, 111, 45, 99, 114, 101, 97, 116, 101, 0, 0, 99, 114, 101, 102, 101, 114, 101, 110, 99, 101,
@@ -121,7 +121,7 @@ pub unsafe extern "C" fn touch_main(
     tv_sec: 0,
     tv_usec: 0,
   }; 2];
-  timebuf[0].tv_usec = 0i32 as suseconds_t;
+  timebuf[0].tv_usec = 0 as suseconds_t;
   timebuf[1].tv_usec = timebuf[0].tv_usec;
   /* -d and -t both set time. In coreutils,
    * accepted data format differs a bit between -d and -t.
@@ -192,7 +192,7 @@ pub unsafe extern "C" fn touch_main(
         0 as *mut timeval
       } as *const timeval,
     );
-    if result != 0i32 {
+    if result != 0 {
       if *bb_errno == 2i32 {
         /* no such file? */
         if opts & OPT_c as libc::c_int != 0 {
@@ -200,7 +200,7 @@ pub unsafe extern "C" fn touch_main(
         } else {
           /* Try to create the file */
           fd = open(*argv, 0o2i32 | 0o100i32, 0o666i32);
-          if fd >= 0i32 {
+          if fd >= 0 {
             crate::libbb::xfuncs_printf::xclose(fd);
             if !reference_file.is_null() || !date_str.is_null() {
               utimes(*argv, timebuf.as_mut_ptr() as *const timeval);

@@ -77,10 +77,10 @@ unsafe extern "C" fn restricted_shell(mut shell: *const libc::c_char) -> libc::c
     if line.is_null() {
       break;
     }
-    if !(strcmp(line, shell) == 0i32) {
+    if !(strcmp(line, shell) == 0) {
       continue;
     }
-    result = 0i32;
+    result = 0;
     break;
   }
   return result;
@@ -137,7 +137,7 @@ pub unsafe extern "C" fn su_main(
   if getlogin_r(
     user_buf.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong,
-  ) != 0i32
+  ) != 0
   {
     pw = crate::libpwdgrp::pwd_grp::bb_internal_getpwuid(cur_uid);
     old_user = if !pw.is_null() {
@@ -146,14 +146,14 @@ pub unsafe extern "C" fn su_main(
       b"\x00" as *const u8 as *const libc::c_char
     }
   }
-  openlog(applet_name, 0i32, 4i32 << 3i32);
+  openlog(applet_name, 0, 4i32 << 3i32);
   pw = crate::libbb::bb_pwd::xgetpwnam(opt_username);
   r = 1i32;
-  if cur_uid != 0i32 as libc::c_uint {
+  if cur_uid != 0 as libc::c_uint {
     r = crate::libbb::correct_password::ask_and_check_password(pw)
   }
   's_191: {
-    if r > 0i32 {
+    if r > 0 {
       if !(0i32 != 0 && r == 2i32 && crate::libbb::securetty::is_tty_secure(tty) == 0) {
         syslog(
           5i32,
@@ -187,7 +187,7 @@ pub unsafe extern "C" fn su_main(
     opt_shell = getenv(b"SHELL\x00" as *const u8 as *const libc::c_char)
   }
   if !opt_shell.is_null()
-    && cur_uid != 0i32 as libc::c_uint
+    && cur_uid != 0 as libc::c_uint
     && !(*pw).pw_shell.is_null()
     && restricted_shell((*pw).pw_shell) != 0
   {
@@ -213,7 +213,7 @@ pub unsafe extern "C" fn su_main(
       .wrapping_div(4i32 as libc::c_uint)
       .wrapping_mul((1i32 << 1i32) as libc::c_uint)
       .wrapping_add(
-        ((flags & 3i32 as libc::c_uint == 0) as libc::c_int * (1i32 << 0i32)) as libc::c_uint,
+        ((flags & 3i32 as libc::c_uint == 0) as libc::c_int * (1i32 << 0)) as libc::c_uint,
       )
       .wrapping_add(
         ((flags & 4i32 as libc::c_uint == 0) as libc::c_int * (1i32 << 4i32)) as libc::c_uint,

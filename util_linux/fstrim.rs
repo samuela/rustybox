@@ -89,7 +89,7 @@ pub unsafe extern "C" fn fstrim_main(
   );
   memset(
     &mut range as *mut fstrim_range as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<fstrim_range>() as libc::c_ulong,
   );
   range.len = (9223372036854775807i64 as libc::c_ulonglong)
@@ -113,10 +113,10 @@ pub unsafe extern "C" fn fstrim_main(
    */
   crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
-    (((2u32 | 1u32) << 0i32 + 8i32 + 8i32 + 14i32
-      | (('X' as i32) << 0i32 + 8i32) as libc::c_uint
-      | (121i32 << 0i32) as libc::c_uint) as libc::c_ulong
-      | (::std::mem::size_of::<fstrim_range>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+    (((2u32 | 1u32) << 0 + 8i32 + 8i32 + 14i32
+      | (('X' as i32) << 0 + 8i32) as libc::c_uint
+      | (121i32 << 0) as libc::c_uint) as libc::c_ulong
+      | (::std::mem::size_of::<fstrim_range>() as libc::c_ulong) << 0 + 8i32 + 8i32)
       as libc::c_uint,
     &mut range as *mut fstrim_range as *mut libc::c_void,
     b"FITRIM\x00" as *const u8 as *const libc::c_char,
@@ -128,5 +128,5 @@ pub unsafe extern "C" fn fstrim_main(
       range.len,
     );
   }
-  return 0i32;
+  return 0;
 }

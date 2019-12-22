@@ -53,15 +53,15 @@ pub unsafe extern "C" fn loadkmap_main(
     );
   }
   crate::libbb::read_printf::xread(0i32, flags as *mut libc::c_void, 256i32 as size_t);
-  i = 0i32;
+  i = 0;
   while i < 256i32 {
     if !(*flags.offset(i as isize) as libc::c_int != 1i32) {
       crate::libbb::read_printf::xread(
-        0i32,
+        0,
         ibuff.as_mut_ptr() as *mut libc::c_void,
         (128i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u16>() as libc::c_ulong),
       );
-      j = 0i32;
+      j = 0;
       while j < 128i32 {
         ke.kb_index = j as libc::c_uchar;
         ke.kb_table = i as libc::c_uchar;
@@ -82,5 +82,5 @@ pub unsafe extern "C" fn loadkmap_main(
     }
     i += 1
   }
-  return 0i32;
+  return 0;
 }

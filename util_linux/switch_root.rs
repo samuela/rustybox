@@ -190,7 +190,7 @@ unsafe extern "C" fn drop_capset(mut cap_idx: libc::c_int) {
   };
   crate::libbb::capability::getcaps(&mut caps as *mut caps as *mut libc::c_void);
   caps.data[(cap_idx >> 5i32) as usize].inheritable &= !(1i32 << (cap_idx & 31i32)) as libc::c_uint;
-  if capset(&mut caps.header, caps.data.as_mut_ptr()) != 0i32 {
+  if capset(&mut caps.header, caps.data.as_mut_ptr()) != 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
       b"capset\x00" as *const u8 as *const libc::c_char,
     );
@@ -198,16 +198,16 @@ unsafe extern "C" fn drop_capset(mut cap_idx: libc::c_int) {
 }
 unsafe extern "C" fn drop_bounding_set(mut cap_idx: libc::c_int) {
   let mut ret: libc::c_int = 0;
-  ret = prctl(23i32, cap_idx, 0i32, 0i32, 0i32);
-  if ret < 0i32 {
+  ret = prctl(23i32, cap_idx, 0, 0, 0);
+  if ret < 0 {
     crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"prctl: %s\x00" as *const u8 as *const libc::c_char,
       b"PR_CAPBSET_READ\x00" as *const u8 as *const libc::c_char,
     );
   }
   if ret == 1i32 {
-    ret = prctl(24i32, cap_idx, 0i32, 0i32, 0i32);
-    if ret != 0i32 {
+    ret = prctl(24i32, cap_idx, 0, 0, 0);
+    if ret != 0 {
       crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"prctl: %s\x00" as *const u8 as *const libc::c_char,
         b"PR_CAPBSET_DROP\x00" as *const u8 as *const libc::c_char,
@@ -230,7 +230,7 @@ unsafe extern "C" fn drop_usermodehelper(
     (::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong)
       .wrapping_sub(1i32 as libc::c_ulong),
   ) as libc::c_int;
-  if ret < 0i32 {
+  if ret < 0 {
     return;
   }
   buf[ret as usize] = '\u{0}' as i32 as libc::c_char;
@@ -290,7 +290,7 @@ pub unsafe extern "C" fn switch_root_main(
   let mut console: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut st: stat = std::mem::zeroed();
   let mut stfs: statfs = std::mem::zeroed();
-  let mut dry_run: libc::c_uint = 0i32 as libc::c_uint;
+  let mut dry_run: libc::c_uint = 0 as libc::c_uint;
   let mut rootdev: libc::dev_t = 0;
   // Parse args. '+': stop at first non-option
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(0) as libc::c_int == 's' as i32) {
@@ -348,7 +348,7 @@ pub unsafe extern "C" fn switch_root_main(
   // Additional sanity checks: we're about to rm -rf /, so be REALLY SURE
   // we mean it. I could make this a CONFIG option, but I would get email
   // from all the people who WILL destroy their filesystems.
-  if stat(b"/init\x00" as *const u8 as *const libc::c_char, &mut st) != 0i32
+  if stat(b"/init\x00" as *const u8 as *const libc::c_char, &mut st) != 0
     || !(st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
   {
     crate::libbb::verror_msg::bb_error_msg_and_die(
@@ -388,8 +388,8 @@ pub unsafe extern "C" fn switch_root_main(
   // If a new console specified, redirect stdin/stdout/stderr to it
   if !console.is_null() {
     let mut fd: libc::c_int = crate::libbb::xfuncs_printf::open_or_warn(console, 0o2i32);
-    if fd >= 0i32 {
-      crate::libbb::xfuncs_printf::xmove_fd(fd, 0i32);
+    if fd >= 0 {
+      crate::libbb::xfuncs_printf::xmove_fd(fd, 0);
       crate::libbb::xfuncs_printf::xdup2(0i32, 1i32);
       crate::libbb::xfuncs_printf::xdup2(0i32, 2i32);
     }
@@ -399,8 +399,8 @@ pub unsafe extern "C" fn switch_root_main(
     //xstat(argv[0], &st);
     //if (!S_ISREG(st.st_mode))
     //	bb_perror_msg_and_die("'%s' is not a regular file", argv[0]);
-    if access(*argv.offset(0), 1i32) == 0i32 {
-      return 0i32;
+    if access(*argv.offset(0), 1i32) == 0 {
+      return 0;
     }
   } else {
     // Exec NEW_INIT

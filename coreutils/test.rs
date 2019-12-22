@@ -563,9 +563,9 @@ unsafe extern "C" fn syntax(mut op: *const libc::c_char, mut msg: *const libc::c
 unsafe extern "C" fn getn(mut s: *const libc::c_char) -> number_t {
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut r: libc::c_longlong = 0;
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   r = strtoll(s, &mut p, 10i32);
-  if *bb_errno != 0i32 {
+  if *bb_errno != 0 {
     syntax(s, b"out of range\x00" as *const u8 as *const libc::c_char);
   }
   if p == s as *mut libc::c_char || *skip_whitespace(p) as libc::c_int != '\u{0}' as i32 {
@@ -613,7 +613,7 @@ unsafe extern "C" fn check_operator(mut s: *const libc::c_char) -> token {
     return EOI;
   }
   n = crate::libbb::compare_string_array::index_in_strings(ops_texts.as_ptr(), s);
-  if n < 0i32 {
+  if n < 0 {
     return OPERAND;
   }
   (*test_ptr_to_statics).last_operator =
@@ -680,7 +680,7 @@ unsafe extern "C" fn binop() -> libc::c_int {
   let mut b1: stat = std::mem::zeroed(); /* false, since at least one stat failed */
   let mut b2: stat = std::mem::zeroed();
   if stat(opnd1, &mut b1) != 0 || stat(opnd2, &mut b2) != 0 {
-    return 0i32;
+    return 0;
   }
   if (*op).op_num as libc::c_int == FILNT as libc::c_int {
     return (b1.st_mtime > b2.st_mtime) as libc::c_int;
@@ -706,34 +706,34 @@ unsafe extern "C" fn is_a_group_member(mut gid: gid_t) -> libc::c_int {
   if gid == getgid() || gid == getegid() {
     return 1i32;
   }
-  if (*test_ptr_to_statics).ngroups == 0i32 {
+  if (*test_ptr_to_statics).ngroups == 0 {
     initialize_group_array();
   }
   /* Search through the list looking for GID. */
-  i = 0i32;
+  i = 0;
   while i < (*test_ptr_to_statics).ngroups {
     if gid == *(*test_ptr_to_statics).group_array.offset(i as isize) {
       return 1i32;
     }
     i += 1
   }
-  return 0i32;
+  return 0;
 }
 /* Do the same thing access(2) does, but use the effective uid and gid,
 and don't make the mistake of telling root that any file is
 executable. */
 unsafe extern "C" fn test_eaccess(mut st: *mut stat, mut mode: libc::c_int) -> libc::c_int {
   let mut euid: libc::c_uint = geteuid();
-  if euid == 0i32 as libc::c_uint {
+  if euid == 0 as libc::c_uint {
     /* Root can read or write any file. */
     if mode != 1i32 {
-      return 0i32;
+      return 0;
     }
     /* Root can execute any file that has any one of the execute
      * bits set. */
     if (*st).st_mode & (0o100i32 | 0o100i32 >> 3i32 | 0o100i32 >> 3i32 >> 3i32) as libc::c_uint != 0
     {
-      return 0i32;
+      return 0;
     }
   }
   if (*st).st_uid == euid {
@@ -743,7 +743,7 @@ unsafe extern "C" fn test_eaccess(mut st: *mut stat, mut mode: libc::c_int) -> l
     mode <<= 3i32
   } /* gcc 3.x thinks it can be used uninitialized */
   if (*st).st_mode & mode as libc::c_uint != 0 {
-    return 0i32;
+    return 0;
   }
   return -1i32;
 }
@@ -752,14 +752,14 @@ unsafe extern "C" fn filstat(mut nm: *mut libc::c_char, mut mode: token) -> libc
   let mut i: libc::c_uint = 0;
   i = i;
   if mode as libc::c_uint == FILSYM as libc::c_int as libc::c_uint {
-    if lstat(nm, &mut s) == 0i32 {
+    if lstat(nm, &mut s) == 0 {
       i = 0o120000i32 as libc::c_uint
     } else {
-      return 0i32;
+      return 0;
     }
   } else {
-    if stat(nm, &mut s) != 0i32 {
-      return 0i32;
+    if stat(nm, &mut s) != 0 {
+      return 0;
     }
     if mode as libc::c_uint == FILEXIST as libc::c_int as libc::c_uint {
       return 1i32;
@@ -777,7 +777,7 @@ unsafe extern "C" fn filstat(mut nm: *mut libc::c_char, mut mode: token) -> libc
       if mode as libc::c_uint == FILEX as libc::c_int as libc::c_uint {
         i = 1i32 as libc::c_uint
       }
-      return (test_eaccess(&mut s, i as libc::c_int) == 0i32) as libc::c_int;
+      return (test_eaccess(&mut s, i as libc::c_int) == 0) as libc::c_int;
     }
     if (mode as libc::c_uint).wrapping_sub(FILREG as libc::c_int as libc::c_uint) as libc::c_uchar
       as libc::c_int
@@ -815,7 +815,7 @@ unsafe extern "C" fn filstat(mut nm: *mut libc::c_char, mut mode: token) -> libc
         if mode as libc::c_uint == FILSTCK as libc::c_int as libc::c_uint {
           i = 0o1000i32 as libc::c_uint
         }
-        return (s.st_mode & i != 0i32 as libc::c_uint) as libc::c_int;
+        return (s.st_mode & i != 0 as libc::c_uint) as libc::c_int;
       }
       if mode as libc::c_uint == FILGZ as libc::c_int as libc::c_uint {
         return (s.st_size > 0i64) as libc::c_int;
@@ -1358,7 +1358,7 @@ pub unsafe extern "C" fn test_main(
     } else if strcmp(
       *argv.offset(argc as isize),
       b"]]\x00" as *const u8 as *const libc::c_char,
-    ) != 0i32
+    ) != 0
     {
       crate::libbb::verror_msg::bb_simple_error_msg(
         b"missing ]]\x00" as *const u8 as *const libc::c_char,
@@ -1394,7 +1394,7 @@ pub unsafe extern "C" fn test_main(
      * Testcase: "test '(' = '('"
      * The general parser would misinterpret '(' as group start.
      */
-    let mut negate: libc::c_int = 0i32;
+    let mut negate: libc::c_int = 0;
     loop {
       if (*argv.offset(0)).is_null() {
         /* "test" */
@@ -1421,7 +1421,7 @@ pub unsafe extern "C" fn test_main(
             {
               /* "test [!] arg1 <binary_op> arg2" */
               (*test_ptr_to_statics).args = argv;
-              res = (binop() == 0i32) as libc::c_int;
+              res = (binop() == 0) as libc::c_int;
               current_block = 9086154867617767870;
               break;
             }

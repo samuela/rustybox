@@ -32,7 +32,7 @@ pub const ARG_IPv6: C2RustUnnamed = 3;
  * Rani Assaf <rani@magic.metawire.com> 980929: resolve addresses
  */
 #[no_mangle]
-pub static mut preferred_family: family_t = 0i32 as family_t;
+pub static mut preferred_family: family_t = 0 as family_t;
 #[no_mangle]
 pub static mut oneline: smallint = 0;
 #[no_mangle]
@@ -62,7 +62,7 @@ pub unsafe extern "C" fn ip_parse_common_args(
       }
     }
     arg = crate::libbb::compare_string_array::index_in_substrings(ip_common_commands.as_ptr(), opt);
-    if arg < 0i32 {
+    if arg < 0 {
       crate::libbb::appletlib::bb_show_usage();
     }
     if arg == ARG_oneline as libc::c_int {
@@ -78,7 +78,7 @@ pub unsafe extern "C" fn ip_parse_common_args(
           crate::libbb::appletlib::bb_show_usage();
         }
         arg = crate::libbb::compare_string_array::index_in_strings(families.as_ptr(), *argv);
-        if arg < 0i32 {
+        if arg < 0 {
           crate::networking::libiproute::utils::invarg_1_to_2(
             *argv,
             b"family\x00" as *const u8 as *const libc::c_char,

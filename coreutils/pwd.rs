@@ -33,7 +33,7 @@ unsafe extern "C" fn logical_getcwd() -> libc::c_int {
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   wd = getenv(b"PWD\x00" as *const u8 as *const libc::c_char);
   if wd.is_null() || *wd.offset(0) as libc::c_int != '/' as i32 {
-    return 0i32;
+    return 0;
   }
   p = wd;
   while *p != 0 {
@@ -52,21 +52,21 @@ unsafe extern "C" fn logical_getcwd() -> libc::c_int {
       p = p.offset(1)
     }
     if *p as libc::c_int == '\u{0}' as i32 || *p as libc::c_int == '/' as i32 {
-      return 0i32;
+      return 0;
     }
     /* "/./" or "/../" component: bad */
   }
-  if stat(wd, &mut st1) != 0i32 {
-    return 0i32;
+  if stat(wd, &mut st1) != 0 {
+    return 0;
   }
-  if stat(b".\x00" as *const u8 as *const libc::c_char, &mut st2) != 0i32 {
-    return 0i32;
+  if stat(b".\x00" as *const u8 as *const libc::c_char, &mut st2) != 0 {
+    return 0;
   }
   if st1.st_ino != st2.st_ino {
-    return 0i32;
+    return 0;
   }
   if st1.st_dev != st2.st_dev {
-    return 0i32;
+    return 0;
   }
   puts(wd);
   return 1i32;

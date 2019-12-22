@@ -66,7 +66,7 @@ pub unsafe extern "C" fn timeout_main(
 ) -> libc::c_int {
   let mut signo: libc::c_int = 0;
   let mut status: libc::c_int = 0;
-  let mut parent: libc::c_int = 0i32;
+  let mut parent: libc::c_int = 0;
   let mut timeout: libc::c_int = 0;
   let mut pid: pid_t = 0;
   let mut opt_s: *const libc::c_char = b"TERM\x00" as *const u8 as *const libc::c_char;
@@ -81,7 +81,7 @@ pub unsafe extern "C" fn timeout_main(
   );
   /*argv += optind; - no, wait for bb_daemonize_or_rexec! */
   signo = crate::libbb::u_signal_names::get_signum(opt_s);
-  if signo < 0i32 {
+  if signo < 0 {
     crate::libbb::verror_msg::bb_error_msg_and_die(
       b"unknown signal \'%s\'\x00" as *const u8 as *const libc::c_char,
       opt_s,
@@ -108,14 +108,14 @@ pub unsafe extern "C" fn timeout_main(
   if !(parent != 0) {
     pid = {
       let mut bb__xvfork_pid: pid_t = vfork();
-      if bb__xvfork_pid < 0i32 {
+      if bb__xvfork_pid < 0 {
         crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
           b"vfork\x00" as *const u8 as *const libc::c_char,
         );
       }
       bb__xvfork_pid
     };
-    if pid == 0i32 {
+    if pid == 0 {
       /* Child: spawn grandchild and exit */
       parent = getppid();
       /* NB: exits with nonzero on error: */
@@ -124,7 +124,7 @@ pub unsafe extern "C" fn timeout_main(
       /* Parent */
       wait(&mut status); /* wait for child to die */
       /* Did intermediate [v]fork or exec fail? */
-      if !(status & 0x7fi32 == 0i32) || (status & 0xff00i32) >> 8i32 != 0i32 {
+      if !(status & 0x7fi32 == 0) || (status & 0xff00i32) >> 8i32 != 0 {
         return 1i32;
       }
       /* Ok, exec a program as requested */
@@ -138,14 +138,14 @@ pub unsafe extern "C" fn timeout_main(
   {
     sleep(1i32 as libc::c_uint);
     timeout -= 1;
-    if timeout <= 0i32 {
+    if timeout <= 0 {
       break;
     }
-    if kill(parent, 0i32) != 0 {
+    if kill(parent, 0) != 0 {
       /* process is gone */
-      return 0i32;
+      return 0;
     }
   }
   kill(parent, signo);
-  return 0i32;
+  return 0;
 }

@@ -357,9 +357,9 @@ pub static mut option_mask32: u32 = 0;
 static mut bb_null_long_options: [option; 1] = [{
   let mut init = option {
     name: 0 as *const libc::c_char,
-    has_arg: 0i32,
+    has_arg: 0,
     flag: 0 as *const libc::c_int as *mut libc::c_int,
-    val: 0i32,
+    val: 0,
   };
   init
 }];
@@ -372,8 +372,8 @@ unsafe extern "C" fn vgetopt32(
 ) -> u32 {
   let mut current_block: u64; /* last stays zero-filled */
   let mut argc: libc::c_int = 0;
-  let mut flags: libc::c_uint = 0i32 as libc::c_uint;
-  let mut requires: libc::c_uint = 0i32 as libc::c_uint;
+  let mut flags: libc::c_uint = 0 as libc::c_uint;
+  let mut requires: libc::c_uint = 0 as libc::c_uint;
   let mut len: libc::c_uint = 0;
   let mut complementary: [t_complementary; 33] = [t_complementary {
     opt_char: 0,
@@ -393,13 +393,13 @@ unsafe extern "C" fn vgetopt32(
   let mut l_o: *const option = std::ptr::null();
   let mut long_options: *mut option = &bb_null_long_options as *const [option; 1] as *mut option;
   let mut trigger: libc::c_uint = 0;
-  let mut min_arg: libc::c_int = 0i32;
+  let mut min_arg: libc::c_int = 0;
   let mut max_arg: libc::c_int = -1i32;
-  let mut _spec_flgs: libc::c_int = 0i32; // assigned to but never used
+  let mut _spec_flgs: libc::c_int = 0; // assigned to but never used
   on_off = complementary.as_mut_ptr();
   memset(
     on_off as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<[t_complementary; 33]>() as libc::c_ulong,
   );
   len = strlen(applet_opts) as libc::c_uint;
@@ -425,7 +425,7 @@ unsafe extern "C" fn vgetopt32(
   if *s as libc::c_int == '+' as i32 || *s as libc::c_int == '-' as i32 {
     s = s.offset(1)
   }
-  c = 0i32;
+  c = 0;
   while *s != 0 {
     if c >= 32i32 {
       break;
@@ -478,10 +478,10 @@ unsafe extern "C" fn vgetopt32(
     long_options = fresh1.as_mut_ptr() as *mut option;
     memset(
       long_options as *mut libc::c_void,
-      0i32,
+      0,
       (count as libc::c_ulong).wrapping_mul(::std::mem::size_of::<option>() as libc::c_ulong),
     );
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     optstr = applet_long_options;
     loop {
       count = count.wrapping_sub(1);
@@ -524,7 +524,7 @@ unsafe extern "C" fn vgetopt32(
             }
             (*on_off).opt_char = (*l_o).val as libc::c_uchar;
             (*on_off).switch_on = 1u32 << c;
-            if (*l_o).has_arg != 0i32 {
+            if (*l_o).has_arg != 0 {
               (*on_off).optarg = p.arg::<*mut *mut libc::c_void>()
             }
             c += 1
@@ -642,7 +642,7 @@ unsafe extern "C" fn vgetopt32(
    * run_nofork_applet() does this, but we might end up here
    * also via gunzip_main() -> gzip_main(). Play safe.
    */
-  optind = 0i32;
+  optind = 0;
   /* skip 0: some applets cheat: they do not actually HAVE argv[0] */
   argc = (1i32 as libc::c_uint)
     .wrapping_add(crate::libbb::appletlib::string_array_len(argv.offset(1)))
@@ -713,7 +713,7 @@ unsafe extern "C" fn vgetopt32(
         }
         if (*on_off).requires != 0
           && flags & (*on_off).switch_on != 0
-          && flags & (*on_off).requires == 0i32 as libc::c_uint
+          && flags & (*on_off).requires == 0 as libc::c_uint
         {
           current_block = 6652860238994955486;
           break;
@@ -723,9 +723,9 @@ unsafe extern "C" fn vgetopt32(
       match current_block {
         6652860238994955486 => {}
         _ => {
-          if !(requires != 0 && flags & requires == 0i32 as libc::c_uint) {
+          if !(requires != 0 && flags & requires == 0 as libc::c_uint) {
             argc -= optind;
-            if !(argc < min_arg || max_arg >= 0i32 && argc > max_arg) {
+            if !(argc < min_arg || max_arg >= 0 && argc > max_arg) {
               option_mask32 = flags;
               return flags;
             }

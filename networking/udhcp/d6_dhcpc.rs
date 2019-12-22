@@ -468,8 +468,8 @@ static mut d6_optflags: [dhcp_optflag; 10] = [
   },
   {
     let mut init = dhcp_optflag {
-      flags: 0i32 as u8,
-      code: 0i32 as u8,
+      flags: 0 as u8,
+      code: 0 as u8,
     };
     init
   },
@@ -497,10 +497,10 @@ static mut udhcpc6_longopts: [libc::c_char; 197] = [
 static mut opt_fqdn_req: [libc::c_char; 6] = [
   (39i32 >> 8i32) as libc::c_char,
   (39i32 & 0xffi32) as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   2i32 as libc::c_char,
-  0i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
+  0 as libc::c_char,
 ];
 /* ** Utility functions ***/
 unsafe extern "C" fn d6_find_option(
@@ -511,7 +511,7 @@ unsafe extern "C" fn d6_find_option(
   /* "length minus 4" */
   let mut len_m4: libc::c_int =
     (option_end.wrapping_offset_from(option) as libc::c_long - 4i32 as libc::c_long) as libc::c_int;
-  while len_m4 >= 0i32 {
+  while len_m4 >= 0 {
     /* Next option's len is too big? */
     if *option.offset(3) as libc::c_int > len_m4 {
       return 0 as *mut libc::c_void;
@@ -520,7 +520,7 @@ unsafe extern "C" fn d6_find_option(
      * or len >255 as bogus, and stop at once.
      * This simplifies big-endian handling.
      */
-    if *option.offset(0) as libc::c_int != 0i32 || *option.offset(2) as libc::c_int != 0i32 {
+    if *option.offset(0) as libc::c_int != 0 || *option.offset(2) as libc::c_int != 0 {
       return 0 as *mut libc::c_void;
     }
     /* Option seems to be valid */
@@ -592,7 +592,7 @@ unsafe extern "C" fn string_option_to_env(
   let mut val_len: libc::c_uint = 0;
   let mut i: libc::c_int = 0;
   ptr = d6_option_strings.as_ptr();
-  i = 0i32;
+  i = 0;
   loop {
     if !(*ptr != 0) {
       current_block = 3276175668257526147;
@@ -640,10 +640,10 @@ unsafe extern "C" fn option_to_env(mut option: *const u8, mut option_end: *const
   /* "length minus 4" */
   let mut len_m4: libc::c_int =
     (option_end.wrapping_offset_from(option) as libc::c_long - 4i32 as libc::c_long) as libc::c_int;
-  while len_m4 >= 0i32 {
+  while len_m4 >= 0 {
     let mut v32: u32 = 0;
     let mut ipv6str: [libc::c_char; 40] = [0; 40];
-    if *option.offset(0) as libc::c_int != 0i32 || *option.offset(2) as libc::c_int != 0i32 {
+    if *option.offset(0) as libc::c_int != 0 || *option.offset(2) as libc::c_int != 0 {
       break;
     }
     /* Check if option-length exceeds size of option */
@@ -751,7 +751,7 @@ unsafe extern "C" fn option_to_env(mut option: *const u8, mut option_end: *const
       23 => {
         let mut dlist: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         /* Make sure payload-size is a multiple of 16 */
-        if *option.offset(3) as libc::c_int & 0xfi32 != 0i32 {
+        if *option.offset(3) as libc::c_int & 0xfi32 != 0 {
           current_block_28 = 5141539773904409130;
         } else {
           /* Get the number of addresses on the option */
@@ -761,7 +761,7 @@ unsafe extern "C" fn option_to_env(mut option: *const u8, mut option_end: *const
           let ref mut fresh7 = *new_env();
           *fresh7 = dlist;
           dlist = stpcpy(dlist, b"dns=\x00" as *const u8 as *const libc::c_char);
-          option_offset = 0i32;
+          option_offset = 0;
           loop {
             let fresh8 = addrs;
             addrs = addrs - 1;
@@ -800,7 +800,7 @@ unsafe extern "C" fn option_to_env(mut option: *const u8, mut option_end: *const
       }
       39 => {
         let mut dlist_1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-        if *option.offset(3) as libc::c_int == 0i32 {
+        if *option.offset(3) as libc::c_int == 0 {
           current_block_28 = 5141539773904409130;
         } else {
           /* Work around broken ISC DHCPD6.
@@ -893,7 +893,7 @@ unsafe extern "C" fn fill_envp(
     (COMMON_BUFSIZE as libc::c_int as libc::c_ulong)
       .wrapping_sub(::std::mem::size_of::<client6_data_t>() as libc::c_ulong) as isize,
   ) as *mut libc::c_char as *mut client6_data_t))
-    .env_idx = 0i32 as libc::c_uint;
+    .env_idx = 0 as libc::c_uint;
   let ref mut fresh17 = *new_env();
   *fresh17 = crate::libbb::xfuncs_printf::xasprintf(
     b"interface=%s\x00" as *const u8 as *const libc::c_char,
@@ -998,7 +998,7 @@ unsafe extern "C" fn init_d6_packet(
   let mut secs: libc::c_uint = 0;
   memset(
     packet as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<d6_packet>() as libc::c_ulong,
   );
   (*packet).d6_u.d6_xid32 = xid;
@@ -1036,7 +1036,7 @@ unsafe extern "C" fn init_d6_packet(
     .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize) as *mut libc::c_char
     as *mut client_data_t))
     .first_secs
-    == 0i32 as libc::c_uint
+    == 0 as libc::c_uint
   {
     (*(&mut *bb_common_bufsiz1
       .as_mut_ptr()
@@ -1156,19 +1156,19 @@ unsafe extern "C" fn d6_mcast_from_client_data_ifindex(
   static mut FF02__1_2: [u8; 16] = [
     0xffi32 as u8,
     0x2i32 as u8,
-    0i32 as u8,
-    0i32 as u8,
-    0i32 as u8,
-    0i32 as u8,
-    0i32 as u8,
-    0i32 as u8,
-    0i32 as u8,
-    0i32 as u8,
-    0i32 as u8,
-    0i32 as u8,
-    0i32 as u8,
+    0 as u8,
+    0 as u8,
+    0 as u8,
+    0 as u8,
+    0 as u8,
+    0 as u8,
+    0 as u8,
+    0 as u8,
+    0 as u8,
+    0 as u8,
+    0 as u8,
     0x1i32 as u8,
-    0i32 as u8,
+    0 as u8,
     0x2i32 as u8,
   ];
   return crate::networking::udhcp::d6_packet::d6_send_raw_packet(
@@ -1831,7 +1831,7 @@ unsafe extern "C" fn d6_recv_raw_packet(
     &mut packet as *mut ip6_udp_d6_packet as *mut libc::c_void,
     ::std::mem::size_of::<ip6_udp_d6_packet>() as libc::c_ulong,
   ) as libc::c_int;
-  if bytes < 0i32 {
+  if bytes < 0 {
     if dhcp_verbose >= 1i32 as libc::c_uint {
       crate::libbb::verror_msg::bb_simple_info_msg(
         b"packet read error, ignoring\x00" as *const u8 as *const libc::c_char,
@@ -2021,7 +2021,7 @@ unsafe extern "C" fn d6_raw_socket(mut ifindex: libc::c_int) -> libc::c_int {
   );
   memset(
     &mut sock as *mut sockaddr_ll as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<sockaddr_ll>() as libc::c_ulong,
   );
   sock.sll_family = 17i32 as libc::c_ushort;
@@ -2062,7 +2062,7 @@ unsafe extern "C" fn change_listen_mode(mut new_mode: libc::c_int) {
   if dhcp_verbose >= 1i32 as libc::c_uint {
     crate::libbb::verror_msg::bb_info_msg(
       b"entering listen mode: %s\x00" as *const u8 as *const libc::c_char,
-      if new_mode != 0i32 {
+      if new_mode != 0 {
         if new_mode == 1i32 {
           b"kernel\x00" as *const u8 as *const libc::c_char
         } else {
@@ -2083,7 +2083,7 @@ unsafe extern "C" fn change_listen_mode(mut new_mode: libc::c_int) {
     .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize) as *mut libc::c_char
     as *mut client_data_t))
     .sockfd
-    >= 0i32
+    >= 0
   {
     close(
       (*(&mut *bb_common_bufsiz1
@@ -2111,7 +2111,7 @@ unsafe extern "C" fn change_listen_mode(mut new_mode: libc::c_int) {
         as *mut client_data_t))
         .interface,
     )
-  } else if new_mode != 0i32 {
+  } else if new_mode != 0 {
     (*(&mut *bb_common_bufsiz1
       .as_mut_ptr()
       .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize) as *mut libc::c_char
@@ -2164,7 +2164,7 @@ unsafe extern "C" fn perform_renew() {
         .as_mut_ptr()
         .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize) as *mut libc::c_char
         as *mut client_data_t))
-        .state = 0i32 as smallint
+        .state = 0 as smallint
     }
     10596831121517990951 => {
       (*(&mut *bb_common_bufsiz1
@@ -2319,7 +2319,7 @@ pub unsafe extern "C" fn udhcpc6_main(
   let mut srv6_buf: in6_addr = std::mem::zeroed();
   let mut ipv6_buf: in6_addr = std::mem::zeroed();
   let mut requested_ipv6: *mut in6_addr = std::ptr::null_mut();
-  let mut xid: u32 = 0i32 as u32;
+  let mut xid: u32 = 0 as u32;
   let mut packet_num: libc::c_int = 0;
   let mut timeout: libc::c_int = 0;
   let mut already_waited_sec: libc::c_uint = 0;
@@ -2383,14 +2383,14 @@ pub unsafe extern "C" fn udhcpc6_main(
     option_mask32 &= !(OPT_r as libc::c_int) as libc::c_uint
   } else if opt & OPT_r as libc::c_int as libc::c_uint != 0 {
     /* explicit "-r ARG" given */
-    if strcmp(str_r, b"no\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    if strcmp(str_r, b"no\x00" as *const u8 as *const libc::c_char) == 0 {
       option_mask32 &= !(OPT_r as libc::c_int) as libc::c_uint
     } else {
       if inet_pton(
         10i32,
         str_r,
         &mut ipv6_buf as *mut in6_addr as *mut libc::c_void,
-      ) <= 0i32
+      ) <= 0
       {
         crate::libbb::verror_msg::bb_error_msg_and_die(
           b"bad IPv6 address \'%s\'\x00" as *const u8 as *const libc::c_char,
@@ -2404,7 +2404,7 @@ pub unsafe extern "C" fn udhcpc6_main(
     let mut optstr: *mut libc::c_char =
       crate::libbb::llist::llist_pop(&mut list_O) as *mut libc::c_char;
     let mut n: libc::c_uint =
-      crate::libbb::bb_strtonum::bb_strtou(optstr, 0 as *mut *mut libc::c_char, 0i32);
+      crate::libbb::bb_strtonum::bb_strtou(optstr, 0 as *mut *mut libc::c_char, 0);
     if *bb_errno != 0 || n > 254i32 as libc::c_uint {
       n = crate::networking::udhcp::common::udhcp_option_idx(optstr, d6_option_strings.as_ptr());
       n = d6_optflags[n as usize].code as libc::c_uint
@@ -2419,10 +2419,10 @@ pub unsafe extern "C" fn udhcpc6_main(
   if opt & OPT_o as libc::c_int as libc::c_uint == 0 {
     let mut i: libc::c_uint = 0;
     let mut n_0: libc::c_uint = 0;
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     loop {
       n_0 = d6_optflags[i as usize].code as libc::c_uint;
-      if !(n_0 != 0i32 as libc::c_uint) {
+      if !(n_0 != 0 as libc::c_uint) {
         break;
       }
       if d6_optflags[i as usize].flags as libc::c_int & OPTION_REQ as libc::c_int != 0 {
@@ -2524,12 +2524,12 @@ pub unsafe extern "C" fn udhcpc6_main(
     .as_mut_ptr()
     .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize) as *mut libc::c_char
     as *mut client_data_t))
-    .state = 0i32 as smallint;
+    .state = 0 as smallint;
   d6_run_script_no_option(b"deconfig\x00" as *const u8 as *const libc::c_char);
   change_listen_mode(2i32);
-  packet_num = 0i32;
-  timeout = 0i32;
-  already_waited_sec = 0i32 as libc::c_uint;
+  packet_num = 0;
+  timeout = 0;
+  already_waited_sec = 0 as libc::c_uint;
   /* Main event loop. select() waits on signal pipe and possibly
    * on sockfd.
    * "continue" statements in code below jump to the top of the loop.
@@ -2559,9 +2559,9 @@ pub unsafe extern "C" fn udhcpc6_main(
         .sockfd,
     );
     tv = (timeout as libc::c_uint).wrapping_sub(already_waited_sec) as libc::c_int;
-    retval = 0i32;
+    retval = 0;
     /* If we already timed out, fall through with retval = 0, else... */
-    if tv > 0i32 {
+    if tv > 0 {
       if dhcp_verbose >= 1i32 as libc::c_uint {
         crate::libbb::verror_msg::bb_info_msg(
           b"waiting %u seconds\x00" as *const u8 as *const libc::c_char,
@@ -2578,7 +2578,7 @@ pub unsafe extern "C" fn udhcpc6_main(
           2147483647i32
         },
       );
-      if retval < 0i32 {
+      if retval < 0 {
         /* EINTR? A signal was caught, don't panic */
         if *bb_errno == 4i32 {
           already_waited_sec = already_waited_sec
@@ -2595,7 +2595,7 @@ pub unsafe extern "C" fn udhcpc6_main(
     /* If timeout dropped to zero, time to become active:
      * resend discover/renew/whatever
      */
-    if retval == 0i32 {
+    if retval == 0 {
       /* if poll timed out */
       /* When running on a bridge, the ifindex may have changed
        * (e.g. if member interfaces were added/removed
@@ -2642,7 +2642,7 @@ pub unsafe extern "C" fn udhcpc6_main(
           6i32 as libc::c_ulong,
         );
         /* We will restart the wait in any case */
-        already_waited_sec = 0i32 as libc::c_uint;
+        already_waited_sec = 0 as libc::c_uint;
         match (*(&mut *bb_common_bufsiz1
           .as_mut_ptr()
           .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
@@ -2674,13 +2674,13 @@ pub unsafe extern "C" fn udhcpc6_main(
                     .as_mut_ptr()
                     .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
                     as *mut libc::c_char as *mut client_data_t))
-                    .state = 0i32 as smallint
+                    .state = 0 as smallint
                 }
                 current_block = 1431398736652930548;
               }
               1265706858151309666 => {
                 if discover_retries == 0 || packet_num < discover_retries {
-                  if packet_num == 0i32 {
+                  if packet_num == 0 {
                     xid = random_xid()
                   }
                   /* multicast */
@@ -2708,7 +2708,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                   .as_mut_ptr()
                   .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
                   as *mut libc::c_char as *mut client_data_t))
-                  .first_secs = 0i32 as libc::c_uint;
+                  .first_secs = 0 as libc::c_uint;
                 change_listen_mode(1i32);
                 if dhcp_verbose >= 1i32 as libc::c_uint {
                   crate::libbb::verror_msg::bb_simple_info_msg(
@@ -2750,7 +2750,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                 }
                 /* wait before trying again */
                 timeout = tryagain_timeout;
-                packet_num = 0i32;
+                packet_num = 0;
                 continue;
               }
             }
@@ -2774,13 +2774,13 @@ pub unsafe extern "C" fn udhcpc6_main(
                     .as_mut_ptr()
                     .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
                     as *mut libc::c_char as *mut client_data_t))
-                    .state = 0i32 as smallint
+                    .state = 0 as smallint
                 }
                 current_block = 1431398736652930548;
               }
               1265706858151309666 => {
                 if discover_retries == 0 || packet_num < discover_retries {
-                  if packet_num == 0i32 {
+                  if packet_num == 0 {
                     xid = random_xid()
                   }
                   if opt & OPT_l as libc::c_int as libc::c_uint != 0 {
@@ -2805,7 +2805,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                   .as_mut_ptr()
                   .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
                   as *mut libc::c_char as *mut client_data_t))
-                  .first_secs = 0i32 as libc::c_uint;
+                  .first_secs = 0 as libc::c_uint;
                 change_listen_mode(1i32);
                 if dhcp_verbose >= 1i32 as libc::c_uint {
                   crate::libbb::verror_msg::bb_simple_info_msg(
@@ -2835,7 +2835,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                   break;
                 }
                 timeout = tryagain_timeout;
-                packet_num = 0i32;
+                packet_num = 0;
                 continue;
               }
             }
@@ -2859,13 +2859,13 @@ pub unsafe extern "C" fn udhcpc6_main(
                     .as_mut_ptr()
                     .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
                     as *mut libc::c_char as *mut client_data_t))
-                    .state = 0i32 as smallint
+                    .state = 0 as smallint
                 }
                 current_block = 1431398736652930548;
               }
               1265706858151309666 => {
                 if discover_retries == 0 || packet_num < discover_retries {
-                  if packet_num == 0i32 {
+                  if packet_num == 0 {
                     xid = random_xid()
                   }
                   if opt & OPT_l as libc::c_int as libc::c_uint != 0 {
@@ -2890,7 +2890,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                   .as_mut_ptr()
                   .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
                   as *mut libc::c_char as *mut client_data_t))
-                  .first_secs = 0i32 as libc::c_uint;
+                  .first_secs = 0 as libc::c_uint;
                 change_listen_mode(1i32);
                 if dhcp_verbose >= 1i32 as libc::c_uint {
                   crate::libbb::verror_msg::bb_simple_info_msg(
@@ -2920,7 +2920,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                   break;
                 }
                 timeout = tryagain_timeout;
-                packet_num = 0i32;
+                packet_num = 0;
                 continue;
               }
             }
@@ -2950,13 +2950,13 @@ pub unsafe extern "C" fn udhcpc6_main(
                     .as_mut_ptr()
                     .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
                     as *mut libc::c_char as *mut client_data_t))
-                    .state = 0i32 as smallint
+                    .state = 0 as smallint
                 }
                 current_block = 1431398736652930548;
               }
               1265706858151309666 => {
                 if discover_retries == 0 || packet_num < discover_retries {
-                  if packet_num == 0i32 {
+                  if packet_num == 0 {
                     xid = random_xid()
                   }
                   if opt & OPT_l as libc::c_int as libc::c_uint != 0 {
@@ -2981,7 +2981,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                   .as_mut_ptr()
                   .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
                   as *mut libc::c_char as *mut client_data_t))
-                  .first_secs = 0i32 as libc::c_uint;
+                  .first_secs = 0 as libc::c_uint;
                 change_listen_mode(1i32);
                 if dhcp_verbose >= 1i32 as libc::c_uint {
                   crate::libbb::verror_msg::bb_simple_info_msg(
@@ -3011,7 +3011,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                   break;
                 }
                 timeout = tryagain_timeout;
-                packet_num = 0i32;
+                packet_num = 0;
                 continue;
               }
             }
@@ -3028,8 +3028,8 @@ pub unsafe extern "C" fn udhcpc6_main(
             .as_mut_ptr()
             .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
             as *mut libc::c_char as *mut client_data_t))
-            .first_secs = 0i32 as libc::c_uint; /* make secs field count from 0 */
-          already_waited_sec = 0i32 as libc::c_uint;
+            .first_secs = 0 as libc::c_uint; /* make secs field count from 0 */
+          already_waited_sec = 0 as libc::c_uint;
           perform_renew();
           if (*(&mut *bb_common_bufsiz1
             .as_mut_ptr()
@@ -3051,9 +3051,9 @@ pub unsafe extern "C" fn udhcpc6_main(
             }
           } else {
             /* Start things over */
-            packet_num = 0i32;
+            packet_num = 0;
             /* Kill any timeouts, user wants this to hurry along */
-            timeout = 0i32;
+            timeout = 0;
             continue;
           }
         }
@@ -3124,7 +3124,7 @@ pub unsafe extern "C" fn udhcpc6_main(
            * Be sure timeout is properly decreased. */
           already_waited_sec = already_waited_sec
             .wrapping_add(crate::libbb::time::monotonic_sec().wrapping_sub(timestamp_before_wait));
-          if len < 0i32 {
+          if len < 0 {
             continue;
           }
           packet_end = (&mut packet as *mut d6_packet as *mut u8).offset(len as isize);
@@ -3216,8 +3216,8 @@ pub unsafe extern "C" fn udhcpc6_main(
               }
               _ => {}
             }
-            address_timeout = 0i32 as libc::c_uint;
-            prefix_timeout = 0i32 as libc::c_uint;
+            address_timeout = 0 as libc::c_uint;
+            prefix_timeout = 0 as libc::c_uint;
             option = d6_find_option(
               packet.d6_options.as_mut_ptr(),
               packet_end,
@@ -3226,7 +3226,7 @@ pub unsafe extern "C" fn udhcpc6_main(
             if !option.is_null()
               && *(*option).data.as_mut_ptr().offset(0) as libc::c_int
                 | *(*option).data.as_mut_ptr().offset(1) as libc::c_int
-                != 0i32
+                != 0
             {
               /* return to init state */
               crate::libbb::verror_msg::bb_info_msg(
@@ -3253,16 +3253,16 @@ pub unsafe extern "C" fn udhcpc6_main(
                 .as_mut_ptr()
                 .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
                 as *mut libc::c_char as *mut client_data_t))
-                .state = 0i32 as smallint;
+                .state = 0 as smallint;
               (*(&mut *bb_common_bufsiz1
                 .as_mut_ptr()
                 .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
                 as *mut libc::c_char as *mut client_data_t))
-                .first_secs = 0i32 as libc::c_uint;
+                .first_secs = 0 as libc::c_uint;
               requested_ipv6 = std::ptr::null_mut();
-              timeout = 0i32;
-              packet_num = 0i32;
-              already_waited_sec = 0i32 as libc::c_uint;
+              timeout = 0;
+              packet_num = 0;
+              already_waited_sec = 0 as libc::c_uint;
               continue;
             } else {
               option = d6_copy_option(
@@ -3303,9 +3303,9 @@ pub unsafe extern "C" fn udhcpc6_main(
                     .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize)
                     as *mut libc::c_char as *mut client_data_t))
                     .state = 1i32 as smallint;
-                  timeout = 0i32;
-                  packet_num = 0i32;
-                  already_waited_sec = 0i32 as libc::c_uint;
+                  timeout = 0;
+                  packet_num = 0;
+                  already_waited_sec = 0 as libc::c_uint;
                   continue;
                 } else {
                   /* It's a D6_MSG_REPLY */
@@ -3732,7 +3732,7 @@ pub unsafe extern "C" fn udhcpc6_main(
                     opt = opt & !(OPT_b as libc::c_int) as libc::c_uint
                       | OPT_f as libc::c_int as libc::c_uint
                   }
-                  already_waited_sec = 0i32 as libc::c_uint;
+                  already_waited_sec = 0 as libc::c_uint;
                   continue;
                 }
               }
@@ -3782,7 +3782,7 @@ pub unsafe extern "C" fn udhcpc6_main(
     /* fall right through */
     /* Switch to bcast receive */
     change_listen_mode(2i32);
-    if timeout > 0i32 {
+    if timeout > 0 {
       if opt & OPT_l as libc::c_int as libc::c_uint != 0 {
         send_d6_info_request(xid);
       } else {
@@ -3802,14 +3802,14 @@ pub unsafe extern "C" fn udhcpc6_main(
         .as_mut_ptr()
         .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize) as *mut libc::c_char
         as *mut client_data_t))
-        .state = 0i32 as smallint;
+        .state = 0 as smallint;
       (*(&mut *bb_common_bufsiz1
         .as_mut_ptr()
         .offset((COMMON_BUFSIZE as libc::c_int / 2i32) as isize) as *mut libc::c_char
         as *mut client_data_t))
-        .first_secs = 0i32 as libc::c_uint;
+        .first_secs = 0 as libc::c_uint;
       /*timeout = 0; - already is */
-      packet_num = 0i32
+      packet_num = 0
     }
   }
   match current_block {
@@ -3820,7 +3820,7 @@ pub unsafe extern "C" fn udhcpc6_main(
         /* release on quit */
         perform_d6_release(&mut srv6_buf, requested_ipv6);
       }
-      retval = 0i32
+      retval = 0
     }
     _ => {}
   }

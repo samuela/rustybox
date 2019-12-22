@@ -185,7 +185,7 @@ unsafe extern "C" fn set_inh_caps(mut capstring: *mut libc::c_char) {
       b",\x00" as *const u8 as *const libc::c_char,
     )
   }
-  if capset(&mut caps.header, caps.data.as_mut_ptr()) != 0i32 {
+  if capset(&mut caps.header, caps.data.as_mut_ptr()) != 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
       b"capset\x00" as *const u8 as *const libc::c_char,
     );
@@ -198,12 +198,12 @@ unsafe extern "C" fn set_ambient_caps(mut string: *mut libc::c_char) {
     let mut idx: libc::c_uint = 0;
     idx = parse_cap(cap);
     if *cap.offset(0) as libc::c_int == '+' as i32 {
-      if prctl(47i32, 2i32, idx, 0i32, 0i32) < 0i32 {
+      if prctl(47i32, 2i32, idx, 0, 0) < 0 {
         crate::libbb::perror_msg::bb_simple_perror_msg(
           b"cap_ambient_raise\x00" as *const u8 as *const libc::c_char,
         );
       }
-    } else if prctl(47i32, 3i32, idx, 0i32, 0i32) < 0i32 {
+    } else if prctl(47i32, 3i32, idx, 0, 0) < 0 {
       crate::libbb::perror_msg::bb_simple_perror_msg(
         b"cap_ambient_lower\x00" as *const u8 as *const libc::c_char,
       );
@@ -238,10 +238,10 @@ unsafe extern "C" fn dump() -> libc::c_int {
   let mut nnp: libc::c_int = 0;
   getresuid(&mut ruid, &mut euid, &mut suid);
   getresgid(&mut rgid, &mut egid, &mut sgid);
-  ngids = 0i32;
+  ngids = 0;
   gids = crate::libbb::bb_getgroups::bb_getgroups(&mut ngids, 0 as *mut gid_t);
-  nnp = prctl(39i32, 0i32, 0i32, 0i32, 0i32);
-  if nnp < 0i32 {
+  nnp = prctl(39i32, 0, 0, 0, 0);
+  if nnp < 0 {
     crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"prctl: %s\x00" as *const u8 as *const libc::c_char,
       b"GET_NO_NEW_PRIVS\x00" as *const u8 as *const libc::c_char,
@@ -252,11 +252,11 @@ unsafe extern "C" fn dump() -> libc::c_int {
   printf(b"gid: %u\n\x00" as *const u8 as *const libc::c_char, rgid);
   printf(b"egid: %u\n\x00" as *const u8 as *const libc::c_char, egid);
   printf(b"Supplementary groups: \x00" as *const u8 as *const libc::c_char);
-  if ngids == 0i32 {
+  if ngids == 0 {
     printf(b"[none]\x00" as *const u8 as *const libc::c_char);
   } else {
     fmt = (b",%u\x00" as *const u8 as *const libc::c_char).offset(1);
-    i = 0i32;
+    i = 0;
     while i < ngids {
       printf(fmt, *gids.offset(i as isize));
       fmt = b",%u\x00" as *const u8 as *const libc::c_char;
@@ -270,8 +270,8 @@ unsafe extern "C" fn dump() -> libc::c_int {
   crate::libbb::capability::getcaps(&mut caps as *mut caps as *mut libc::c_void);
   printf(b"Inheritable capabilities: \x00" as *const u8 as *const libc::c_char);
   fmt = b"\x00" as *const u8 as *const libc::c_char;
-  i = 0i32;
-  while i >= 0i32 && i <= 37i32 {
+  i = 0;
+  while i >= 0 && i <= 37i32 {
     let mut idx: libc::c_uint = (i >> 5i32) as libc::c_uint;
     if idx >= caps.u32s {
       printf(
@@ -295,10 +295,10 @@ unsafe extern "C" fn dump() -> libc::c_int {
   }
   printf(b"\nAmbient capabilities: \x00" as *const u8 as *const libc::c_char);
   fmt = b"\x00" as *const u8 as *const libc::c_char;
-  i = 0i32;
-  while i >= 0i32 && i <= 37i32 {
+  i = 0;
+  while i >= 0 && i <= 37i32 {
     let mut ret: libc::c_int = prctl(47i32, 1i32, i as libc::c_ulong, 0u64, 0u64);
-    if ret < 0i32 {
+    if ret < 0 {
       crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"prctl: %s\x00" as *const u8 as *const libc::c_char,
         b"CAP_AMBIENT_IS_SET\x00" as *const u8 as *const libc::c_char,
@@ -310,17 +310,17 @@ unsafe extern "C" fn dump() -> libc::c_int {
     }
     i += 1
   }
-  if i == 0i32 {
+  if i == 0 {
     printf(b"[unsupported]\x00" as *const u8 as *const libc::c_char);
   } else if *fmt.offset(0) == 0 {
     printf(b"[none]\x00" as *const u8 as *const libc::c_char);
   }
   printf(b"\nCapability bounding set: \x00" as *const u8 as *const libc::c_char);
   fmt = b"\x00" as *const u8 as *const libc::c_char;
-  i = 0i32;
-  while i >= 0i32 && i <= 37i32 {
+  i = 0;
+  while i >= 0 && i <= 37i32 {
     let mut ret_0: libc::c_int = prctl(23i32, i as libc::c_ulong, 0u64, 0u64, 0u64);
-    if ret_0 < 0i32 {
+    if ret_0 < 0 {
       crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"prctl: %s\x00" as *const u8 as *const libc::c_char,
         b"CAPBSET_READ\x00" as *const u8 as *const libc::c_char,
@@ -336,7 +336,7 @@ unsafe extern "C" fn dump() -> libc::c_int {
     printf(b"[none]\x00" as *const u8 as *const libc::c_char);
   }
   crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
-  return 0i32;
+  return 0;
 }
 /* FEATURE_SETPRIV_DUMP */
 #[no_mangle]
@@ -361,13 +361,13 @@ pub unsafe extern "C" fn setpriv_main(
   ) as libc::c_int;
   argv = argv.offset(optind as isize);
   if opts & OPT_DUMP as libc::c_int != 0 {
-    if !(*argv.offset(0)).is_null() || opts - OPT_DUMP as libc::c_int != 0i32 {
+    if !(*argv.offset(0)).is_null() || opts - OPT_DUMP as libc::c_int != 0 {
       crate::libbb::appletlib::bb_show_usage();
     }
     return dump();
   }
   if opts & OPT_NNP as libc::c_int != 0 {
-    if prctl(38i32, 1i32, 0i32, 0i32, 0i32) != 0 {
+    if prctl(38i32, 1i32, 0, 0, 0) != 0 {
       crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"prctl: %s\x00" as *const u8 as *const libc::c_char,
         b"SET_NO_NEW_PRIVS\x00" as *const u8 as *const libc::c_char,

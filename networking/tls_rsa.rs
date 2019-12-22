@@ -55,7 +55,7 @@ unsafe extern "C" fn pkcs1Pad(
     );
   }
   c = out;
-  *c = 0i32 as libc::c_uchar;
+  *c = 0 as libc::c_uchar;
   c = c.offset(1);
   *c = cryptType as libc::c_uchar;
   c = c.offset(1);
@@ -63,7 +63,7 @@ unsafe extern "C" fn pkcs1Pad(
     loop {
       let fresh0 = randomLen;
       randomLen = randomLen - 1;
-      if !(fresh0 > 0i32) {
+      if !(fresh0 > 0) {
         break;
       }
       let fresh1 = c;
@@ -72,7 +72,7 @@ unsafe extern "C" fn pkcs1Pad(
     }
   } else {
     crate::networking::tls::tls_get_random(c as *mut libc::c_void, randomLen as uint32);
-    if 0i32 < 0i32 {
+    if 0 < 0 {
       return -7i32;
     }
     loop
@@ -83,16 +83,16 @@ unsafe extern "C" fn pkcs1Pad(
     {
       let fresh2 = randomLen;
       randomLen = randomLen - 1;
-      if !(fresh2 > 0i32) {
+      if !(fresh2 > 0) {
         break;
       }
-      if *c as libc::c_int == 0i32 {
+      if *c as libc::c_int == 0 {
         *c = 0x1i32 as libc::c_uchar
       }
       c = c.offset(1)
     }
   }
-  *c = 0i32 as libc::c_uchar;
+  *c = 0 as libc::c_uchar;
   c = c.offset(1);
   memcpy(
     c as *mut libc::c_void,
@@ -143,7 +143,7 @@ unsafe extern "C" fn psRsaCrypt(
     &mut tmp,
     (inlen as libc::c_ulong).wrapping_add(::std::mem::size_of::<pstm_digit>() as libc::c_ulong)
       as uint32,
-  ) != 0i32
+  ) != 0
   {
     return -1i32;
   }
@@ -151,7 +151,7 @@ unsafe extern "C" fn psRsaCrypt(
     &mut tmp,
     in_0 as *mut libc::c_uchar,
     inlen as int32,
-  ) != 0i32
+  ) != 0
   {
     crate::networking::tls_pstm::pstm_clear(&mut tmp);
     return -1i32;
@@ -162,12 +162,12 @@ unsafe extern "C" fn psRsaCrypt(
   } else {
     if type_0 == 0x2i32 {
       if (*key).optimized != 0 {
-        if crate::networking::tls_pstm::pstm_init_size(&mut tmpa, (*key).p.alloc as uint32) != 0i32
+        if crate::networking::tls_pstm::pstm_init_size(&mut tmpa, (*key).p.alloc as uint32) != 0
         {
           res = -1i32;
           current_block = 6275814254496255747;
         } else if crate::networking::tls_pstm::pstm_init_size(&mut tmpb, (*key).q.alloc as uint32)
-          != 0i32
+          != 0
         {
           crate::networking::tls_pstm::pstm_clear(&mut tmpa);
           res = -1i32;
@@ -178,7 +178,7 @@ unsafe extern "C" fn psRsaCrypt(
             &mut (*key).dP,
             &mut (*key).p,
             &mut tmpa,
-          ) != 0i32
+          ) != 0
           {
             crate::libbb::verror_msg::bb_simple_error_msg_and_die(
               b"decrypt error: pstm_exptmod dP, p\n\x00" as *const u8 as *const libc::c_char,
@@ -188,12 +188,12 @@ unsafe extern "C" fn psRsaCrypt(
             &mut (*key).dQ,
             &mut (*key).q,
             &mut tmpb,
-          ) != 0i32
+          ) != 0
           {
             crate::libbb::verror_msg::bb_simple_error_msg_and_die(
               b"decrypt error: pstm_exptmod dQ, q\n\x00" as *const u8 as *const libc::c_char,
             );
-          } else if crate::networking::tls_pstm::pstm_sub(&mut tmpa, &mut tmpb, &mut tmp) != 0i32 {
+          } else if crate::networking::tls_pstm::pstm_sub(&mut tmpa, &mut tmpb, &mut tmp) != 0 {
             crate::libbb::verror_msg::bb_simple_error_msg_and_die(
               b"decrypt error: sub tmpb, tmp\n\x00" as *const u8 as *const libc::c_char,
             );
@@ -202,7 +202,7 @@ unsafe extern "C" fn psRsaCrypt(
             &mut (*key).qP,
             &mut (*key).p,
             &mut tmp,
-          ) != 0i32
+          ) != 0
           {
             crate::libbb::verror_msg::bb_simple_error_msg_and_die(
               b"decrypt error: pstm_mulmod qP, p\n\x00" as *const u8 as *const libc::c_char,
@@ -212,13 +212,13 @@ unsafe extern "C" fn psRsaCrypt(
             &mut (*key).q,
             &mut tmp,
             0 as *mut pstm_digit,
-            0i32 as uint32,
-          ) != 0i32
+            0 as uint32,
+          ) != 0
           {
             crate::libbb::verror_msg::bb_simple_error_msg_and_die(
               b"decrypt error: pstm_mul q \n\x00" as *const u8 as *const libc::c_char,
             );
-          } else if crate::networking::tls_pstm::pstm_add(&mut tmp, &mut tmpb, &mut tmp) != 0i32 {
+          } else if crate::networking::tls_pstm::pstm_add(&mut tmp, &mut tmpb, &mut tmp) != 0 {
             crate::libbb::verror_msg::bb_simple_error_msg_and_die(
               b"decrypt error: pstm_add tmp \n\x00" as *const u8 as *const libc::c_char,
             );
@@ -230,7 +230,7 @@ unsafe extern "C" fn psRsaCrypt(
         &mut (*key).d,
         &mut (*key).N,
         &mut tmp,
-      ) != 0i32
+      ) != 0
       {
         crate::libbb::verror_msg::bb_simple_error_msg_and_die(
           b"psRsaCrypt error: pstm_exptmod\n\x00" as *const u8 as *const libc::c_char,
@@ -245,7 +245,7 @@ unsafe extern "C" fn psRsaCrypt(
           &mut (*key).e,
           &mut (*key).N,
           &mut tmp,
-        ) != 0i32
+        ) != 0
         {
           crate::libbb::verror_msg::bb_simple_error_msg_and_die(
             b"psRsaCrypt error: pstm_exptmod\n\x00" as *const u8 as *const libc::c_char,
@@ -273,25 +273,25 @@ unsafe extern "C" fn psRsaCrypt(
           while (x as libc::c_ulong) < (*key).size as libc::c_ulong {
             let fresh3 = out;
             out = out.offset(1);
-            *fresh3 = 0i32 as libc::c_uchar;
+            *fresh3 = 0 as libc::c_uchar;
             x = x.wrapping_add(1)
           }
           *outlen = x;
           /* Convert it */
-          memset(out as *mut libc::c_void, 0i32, x as libc::c_ulong);
+          memset(out as *mut libc::c_void, 0, x as libc::c_ulong);
           if crate::networking::tls_pstm::pstm_to_unsigned_bin(
             &mut tmp,
             out.offset(x.wrapping_sub(
               crate::networking::tls_pstm::pstm_unsigned_bin_size(&mut tmp) as libc::c_uint,
             ) as isize),
-          ) != 0i32
+          ) != 0
           {
             crate::libbb::verror_msg::bb_simple_error_msg_and_die(
               b"psRsaCrypt error: pstm_to_unsigned_bin\n\x00" as *const u8 as *const libc::c_char,
             );
           } else {
             /* Clean up and return */
-            res = 0i32
+            res = 0
           }
         }
       }
@@ -335,14 +335,14 @@ pub unsafe extern "C" fn psRsaEncryptPub(
     );
   }
   err = pkcs1Pad(in_0, inlen, out, size, 0x2i32);
-  if err < 0i32 {
+  if err < 0 {
     crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"Error padding psRsaEncryptPub. Likely data too long\n\x00" as *const u8
         as *const libc::c_char,
     );
   }
   err = psRsaCrypt(out, size, out, &mut outlen as *mut uint32, key, 0x1i32);
-  if err < 0i32 {
+  if err < 0 {
     crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"Error performing psRsaEncryptPub\n\x00" as *const u8 as *const libc::c_char,
     );

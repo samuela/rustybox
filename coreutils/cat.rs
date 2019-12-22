@@ -27,7 +27,7 @@ pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 
 unsafe extern "C" fn catv(mut opts: libc::c_uint, mut argv: *mut *mut libc::c_char) -> libc::c_int {
-  let mut retval: libc::c_int = 0i32;
+  let mut retval: libc::c_int = 0;
   let mut fd: libc::c_int = 0;
   let mut eol_seen: bool = opts & ((1 << 4) * 1 | (1 << 5) * 1) as libc::c_uint != 0;
   let mut eol_char: libc::c_uint = if eol_seen as libc::c_int != 0 {

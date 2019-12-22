@@ -139,7 +139,7 @@ pub unsafe extern "C" fn ts_main(
       ts.tv_sec -= base.tv_sec;
       //printf("%d %d\n", ts.tv_sec, base.tv_sec);
       ts.tv_usec -= base.tv_usec;
-      if (ts.tv_usec as i32) < 0i32 {
+      if (ts.tv_usec as i32) < 0 {
         ts.tv_sec -= 1;
         ts.tv_usec += (1000i32 * 1000i32) as libc::c_long
       }
@@ -171,5 +171,5 @@ pub unsafe extern "C" fn ts_main(
     }
     free(line as *mut libc::c_void);
   }
-  return 0i32;
+  return 0;
 }

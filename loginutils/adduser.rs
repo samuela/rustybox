@@ -210,7 +210,7 @@ pub unsafe extern "C" fn adduser_main(
   );
   if opts & (1i32 << 7i32) as libc::c_uint != 0 {
     pw.pw_uid =
-      crate::libbb::xatonum::xatou_range(uid, 0i32 as libc::c_uint, 60000i32 as libc::c_uint)
+      crate::libbb::xatonum::xatou_range(uid, 0 as libc::c_uint, 60000i32 as libc::c_uint)
   }
   argv = argv.offset(optind as isize);
   pw.pw_name = *argv.offset(0);
@@ -257,7 +257,7 @@ pub unsafe extern "C" fn adduser_main(
     pw.pw_name,
     p,
     0 as *const libc::c_char,
-  ) < 0i32
+  ) < 0
   {
     return 1i32;
   }
@@ -293,7 +293,7 @@ pub unsafe extern "C" fn adduser_main(
      * then fix up the permissions to 2755. Can't do it before
      * since chown will clear the setgid bit */
     let mut mkdir_err: libc::c_int = mkdir(pw.pw_dir, 0o755i32 as mode_t);
-    if mkdir_err == 0i32 {
+    if mkdir_err == 0 {
       /* New home. Copy /etc/skel to it */
       let mut args: [*const libc::c_char; 5] = [
         b"chown\x00" as *const u8 as *const libc::c_char,
@@ -314,9 +314,9 @@ pub unsafe extern "C" fn adduser_main(
       logmode = LOGMODE_STDIO as libc::c_int as smallint;
       crate::coreutils::chown::chown_main(4i32, args.as_mut_ptr() as *mut *mut libc::c_char);
     }
-    if mkdir_err != 0i32 && *bb_errno != 17i32
-      || chown(pw.pw_dir, pw.pw_uid, pw.pw_gid) != 0i32
-      || chmod(pw.pw_dir, 0o2755i32 as mode_t) != 0i32
+    if mkdir_err != 0 && *bb_errno != 17i32
+      || chown(pw.pw_dir, pw.pw_uid, pw.pw_gid) != 0
+      || chmod(pw.pw_dir, 0o2755i32 as mode_t) != 0
     {
       /* set setgid bit on homedir */
       crate::libbb::perror_msg::bb_simple_perror_msg(pw.pw_dir);
@@ -326,5 +326,5 @@ pub unsafe extern "C" fn adduser_main(
     /* interactively set passwd */
     passwd_wrapper(pw.pw_name);
   }
-  return 0i32;
+  return 0;
 }

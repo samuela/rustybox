@@ -116,7 +116,7 @@ pub struct squashfs_superblock {
 pub unsafe extern "C" fn volume_id_probe_squashfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut sb: *mut squashfs_superblock = std::ptr::null_mut();
-  sb = crate::util_linux::volume_id::util::volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t)
+  sb = crate::util_linux::volume_id::util::volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t)
     as *mut squashfs_superblock;
   if sb.is_null() {
     return -1i32;
@@ -141,7 +141,7 @@ pub unsafe extern "C" fn volume_id_probe_squashfs(mut id: *mut volume_id) -> lib
         .wrapping_add('s' as i32 as libc::c_uint)
   {
     (*id).type_0 = b"squashfs\x00" as *const u8 as *const libc::c_char;
-    return 0i32;
+    return 0;
   }
   return -1i32;
 }

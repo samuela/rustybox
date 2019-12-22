@@ -228,7 +228,7 @@ unsafe extern "C" fn print_rule(
   let mut host_len: libc::c_int = -1i32;
   let mut tb: [*mut rtattr; 27] = [0 as *mut rtattr; 27];
   if (*n).nlmsg_type as libc::c_int != RTM_NEWRULE as libc::c_int {
-    return 0i32;
+    return 0;
   }
   len = (len as libc::c_ulong).wrapping_sub(
     (::std::mem::size_of::<rtmsg>() as libc::c_ulong).wrapping_add(
@@ -239,7 +239,7 @@ unsafe extern "C" fn print_rule(
         as libc::c_ulong,
     ),
   ) as libc::c_int as libc::c_int;
-  if len < 0i32 {
+  if len < 0 {
     return -1i32;
   }
   //memset(tb, 0, sizeof(tb)); - parse_rtattr does this
@@ -275,7 +275,7 @@ unsafe extern "C" fn print_rule(
           .wrapping_add(0i32 as libc::c_ulong) as isize,
       ) as *mut libc::c_void as *mut libc::c_uint)
     } else {
-      0i32 as libc::c_uint
+      0 as libc::c_uint
     },
   );
   printf(b"from \x00" as *const u8 as *const libc::c_char);
@@ -507,13 +507,13 @@ unsafe extern "C" fn print_rule(
   }
   crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   /*fflush_all();*/
-  return 0i32;
+  return 0;
 }
 /* Return value becomes exitcode. It's okay to not return at all */
 unsafe extern "C" fn iprule_list(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut rth: rtnl_handle = std::mem::zeroed();
   let mut af: libc::c_int = preferred_family as libc::c_int;
-  if af == 0i32 {
+  if af == 0 {
     af = 2i32
   }
   if !(*argv).is_null() {
@@ -539,14 +539,14 @@ unsafe extern "C" fn iprule_list(mut argv: *mut *mut libc::c_char) -> libc::c_in
     ),
     0 as *mut libc::c_void,
   );
-  return 0i32;
+  return 0;
 }
 /* Return value becomes exitcode. It's okay to not return at all */
 unsafe extern "C" fn iprule_modify(
   mut cmd: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut table_ok: bool = 0i32 != 0;
+  let mut table_ok: bool = 0 != 0;
   let mut rth: rtnl_handle = std::mem::zeroed();
   let mut req: C2RustUnnamed_1 = C2RustUnnamed_1 {
     n: nlmsghdr {
@@ -572,7 +572,7 @@ unsafe extern "C" fn iprule_modify(
   let mut key: smalluint = 0;
   memset(
     &mut req as *mut C2RustUnnamed_1 as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong,
   );
   req.n.nlmsg_type = cmd as __u16;
@@ -586,11 +586,11 @@ unsafe extern "C" fn iprule_modify(
   req.n.nlmsg_flags = 0x1i32 as __u16;
   req.r.rtm_family = preferred_family as libc::c_uchar;
   req.r.rtm_protocol = 3i32 as libc::c_uchar;
-  if RT_SCOPE_UNIVERSE as libc::c_int != 0i32 {
+  if RT_SCOPE_UNIVERSE as libc::c_int != 0 {
     req.r.rtm_scope = RT_SCOPE_UNIVERSE as libc::c_int as libc::c_uchar
   }
   /*req.r.rtm_table = 0; - already is */
-  if RTN_UNSPEC as libc::c_int != 0i32 {
+  if RTN_UNSPEC as libc::c_int != 0 {
     req.r.rtm_type = RTN_UNSPEC as libc::c_int as libc::c_uchar
   }
   if cmd == RTM_NEWRULE as libc::c_int {
@@ -600,7 +600,7 @@ unsafe extern "C" fn iprule_modify(
   while !(*argv).is_null() {
     key = (crate::libbb::compare_string_array::index_in_substrings(keywords.as_ptr(), *argv) + 1i32)
       as smalluint;
-    if key as libc::c_int == 0i32 {
+    if key as libc::c_int == 0 {
       /* no match found in keywords array, bail out. */
       crate::networking::libiproute::utils::invarg_1_to_2(*argv, applet_name);
     }
@@ -830,7 +830,7 @@ unsafe extern "C" fn iprule_modify(
     }
     argv = argv.offset(1)
   }
-  if req.r.rtm_family as libc::c_int == 0i32 {
+  if req.r.rtm_family as libc::c_int == 0 {
     req.r.rtm_family = 2i32 as libc::c_uchar
   }
   if !table_ok && cmd == RTM_NEWRULE as libc::c_int {
@@ -838,11 +838,11 @@ unsafe extern "C" fn iprule_modify(
   }
   crate::networking::libiproute::libnetlink::xrtnl_open(&mut rth);
   if crate::networking::libiproute::libnetlink::rtnl_talk(&mut rth, &mut req.n, 0 as *mut nlmsghdr)
-    < 0i32
+    < 0
   {
     return 2i32;
   }
-  return 0i32;
+  return 0;
 }
 
 //int FAST_FUNC print_neigh(struct sockaddr_nl *who, struct nlmsghdr *n, void *arg);
@@ -858,13 +858,13 @@ pub unsafe extern "C" fn do_iprule(mut argv: *mut *mut libc::c_char) -> libc::c_
   if !(*argv).is_null() {
     let mut cmd: libc::c_int =
       crate::libbb::compare_string_array::index_in_substrings(ip_rule_commands.as_ptr(), *argv);
-    if cmd < 0i32 {
+    if cmd < 0 {
       crate::networking::libiproute::utils::invarg_1_to_2(*argv, applet_name);
     }
     argv = argv.offset(1);
     if cmd < 2i32 {
       return iprule_modify(
-        if cmd == 0i32 {
+        if cmd == 0 {
           RTM_NEWRULE as libc::c_int
         } else {
           RTM_DELRULE as libc::c_int

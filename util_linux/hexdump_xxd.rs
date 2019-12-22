@@ -125,7 +125,7 @@ pub unsafe extern "C" fn xxd_main(
   let mut opt_l: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt_s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut bytes: libc::c_uint = 2i32 as libc::c_uint;
-  let mut cols: libc::c_uint = 0i32 as libc::c_uint;
+  let mut cols: libc::c_uint = 0 as libc::c_uint;
   let mut opt: libc::c_uint = 0;
   dumper = crate::libbb::dump::alloc_dumper();
   opt = crate::libbb::getopt32::getopt32(
@@ -140,19 +140,19 @@ pub unsafe extern "C" fn xxd_main(
   (*dumper).dump_vflag = ALL as libc::c_int as smallint;
   //	if (opt & OPT_a)
   //		dumper->dump_vflag = SKIPNUL; ..does not exist
-  if opt & (1i32 << 0i32) as libc::c_uint != 0 {
+  if opt & (1i32 << 0) as libc::c_uint != 0 {
     (*dumper).dump_length = crate::libbb::xatonum::xstrtou_range(
       opt_l,
-      0i32,
-      0i32 as libc::c_uint,
+      0,
+      0 as libc::c_uint,
       2147483647i32 as libc::c_uint,
     ) as libc::c_int
   }
   if opt & (1i32 << 1i32) as libc::c_uint != 0 {
     (*dumper).dump_skip = crate::libbb::xatonum::xstrtoull_range(
       opt_s,
-      0i32,
-      0i32 as libc::c_ulonglong,
+      0,
+      0 as libc::c_ulonglong,
       !((1i32 as off_t)
         << (::std::mem::size_of::<off_t>() as libc::c_ulong)
           .wrapping_mul(8i32 as libc::c_ulong)
@@ -161,13 +161,13 @@ pub unsafe extern "C" fn xxd_main(
     //BUGGY for /proc/version (unseekable?)
   }
   if opt & (1i32 << 3i32) as libc::c_uint != 0 {
-    if cols == 0i32 as libc::c_uint {
+    if cols == 0 as libc::c_uint {
       cols = 30i32 as libc::c_uint
     }
     bytes = cols
   /* -p ignores -gN */
   } else {
-    if cols == 0i32 as libc::c_uint {
+    if cols == 0 as libc::c_uint {
       cols = 16i32 as libc::c_uint
     }
     crate::libbb::dump::bb_dump_add(

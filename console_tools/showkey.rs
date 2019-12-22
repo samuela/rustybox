@@ -109,14 +109,14 @@ pub unsafe extern "C" fn showkey_main(
   } else {
     // we assume a PC keyboard
     crate::libbb::xfuncs_printf::bb_xioctl(
-      0i32,
+      0,
       0x4b44i32 as libc::c_uint,
       &mut (*ptr_to_globals).kbmode as *mut libc::c_int as *mut libc::c_void,
       b"KDGKBMODE\x00" as *const u8 as *const libc::c_char,
     );
     printf(
       b"Keyboard mode was %s.\r\n\n\x00" as *const u8 as *const libc::c_char,
-      if (*ptr_to_globals).kbmode == 0i32 {
+      if (*ptr_to_globals).kbmode == 0 {
         b"RAW\x00" as *const u8 as *const libc::c_char
       } else if (*ptr_to_globals).kbmode == 0x1i32 {
         b"XLATE\x00" as *const u8 as *const libc::c_char
@@ -130,12 +130,12 @@ pub unsafe extern "C" fn showkey_main(
     );
     // set raw keyboard mode
     crate::libbb::xfuncs_printf::bb_xioctl(
-      0i32,
+      0,
       0x4b45i32 as libc::c_uint,
       if option_mask32 & OPT_k as libc::c_int as libc::c_uint != 0 {
         0x2i32
       } else {
-        0i32
+        0
       } as ptrdiff_t as *mut libc::c_void,
       b"KDSKBMODE\x00" as *const u8 as *const libc::c_char,
     );
@@ -158,11 +158,11 @@ pub unsafe extern "C" fn showkey_main(
       alarm(10i32 as libc::c_uint);
       // read scancodes
       n = read(
-        0i32,
+        0,
         buf.as_mut_ptr() as *mut libc::c_void,
         ::std::mem::size_of::<[libc::c_char; 18]>() as libc::c_ulong,
       ) as libc::c_int;
-      i = 0i32;
+      i = 0;
       while i < n {
         if option_mask32 & OPT_s as libc::c_int as libc::c_uint != 0 {
           // show raw scancodes
@@ -177,9 +177,9 @@ pub unsafe extern "C" fn showkey_main(
           let mut c_0: libc::c_char = buf[i as usize];
           let mut kc: libc::c_int = 0;
           if i + 2i32 < n
-            && c_0 as libc::c_int & 0x7fi32 == 0i32
-            && buf[(i + 1i32) as usize] as libc::c_int & 0x80i32 != 0i32
-            && buf[(i + 2i32) as usize] as libc::c_int & 0x80i32 != 0i32
+            && c_0 as libc::c_int & 0x7fi32 == 0
+            && buf[(i + 1i32) as usize] as libc::c_int & 0x80i32 != 0
+            && buf[(i + 2i32) as usize] as libc::c_int & 0x80i32 != 0
           {
             kc = (buf[(i + 1i32) as usize] as libc::c_int & 0x7fi32) << 7i32
               | buf[(i + 2i32) as usize] as libc::c_int & 0x7fi32;
@@ -203,7 +203,7 @@ pub unsafe extern "C" fn showkey_main(
     }
     // restore keyboard mode
     crate::libbb::xfuncs_printf::bb_xioctl(
-      0i32,
+      0,
       0x4b45i32 as libc::c_uint,
       (*ptr_to_globals).kbmode as ptrdiff_t as *mut libc::c_void,
       b"KDSKBMODE\x00" as *const u8 as *const libc::c_char,
@@ -211,5 +211,5 @@ pub unsafe extern "C" fn showkey_main(
   }
   // restore console settings
   xset1(&mut (*ptr_to_globals).tio0);
-  return 0i32;
+  return 0;
 }

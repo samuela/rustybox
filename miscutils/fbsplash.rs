@@ -174,7 +174,7 @@ unsafe extern "C" fn fb_setpal(mut fd: libc::c_int) {
   let mut blue: [libc::c_ushort; 256] = [0; 256];
   let mut i: libc::c_uint = 0;
   /* RGB:332 */
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < 256i32 as libc::c_uint {
     /* Color is encoded in pixel value as rrrgggbb.
      * 3-bit color is mapped to 16-bit one as:
@@ -196,7 +196,7 @@ unsafe extern "C" fn fb_setpal(mut fd: libc::c_int) {
       (i & 0x3i32 as libc::c_uint).wrapping_mul(0x5555i32 as libc::c_uint) as libc::c_ushort;
     i = i.wrapping_add(1)
   }
-  cmap.start = 0i32 as u32;
+  cmap.start = 0 as u32;
   cmap.len = 256i32 as u32;
   cmap.red = red.as_mut_ptr();
   cmap.green = green.as_mut_ptr();
@@ -264,7 +264,7 @@ unsafe extern "C" fn fb_open(mut strfb_device: *const libc::c_char) {
     0x2i32,
     0x1i32,
     fbfd,
-    0i32 as off64_t,
+    0 as off64_t,
   ) as *mut libc::c_uchar;
   if (*ptr_to_globals).addr == -1i32 as *mut libc::c_void as *mut libc::c_uchar {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
@@ -374,7 +374,7 @@ unsafe extern "C" fn fb_drawrectangle() {
     ptr1 = ptr1.offset((*ptr_to_globals).bytes_per_pixel as isize);
     ptr2 = ptr2.offset((*ptr_to_globals).bytes_per_pixel as isize);
     cnt -= 1;
-    if !(cnt >= 0i32) {
+    if !(cnt >= 0) {
       break;
     }
   }
@@ -399,7 +399,7 @@ unsafe extern "C" fn fb_drawrectangle() {
     ptr1 = ptr1.offset((*ptr_to_globals).scr_fix.line_length as isize);
     ptr2 = ptr2.offset((*ptr_to_globals).scr_fix.line_length as isize);
     cnt -= 1;
-    if !(cnt >= 0i32) {
+    if !(cnt >= 0) {
       break;
     }
   }
@@ -441,13 +441,13 @@ unsafe extern "C" fn fb_drawfullrectangle(
       fb_write_pixel(ptr, thispix);
       ptr = ptr.offset((*ptr_to_globals).bytes_per_pixel as isize);
       cnt2 -= 1;
-      if !(cnt2 >= 0i32) {
+      if !(cnt2 >= 0) {
         break;
       }
     }
     nypos += 1;
     cnt1 -= 1;
-    if !(cnt1 >= 0i32) {
+    if !(cnt1 >= 0) {
       break;
     }
   }
@@ -467,7 +467,7 @@ unsafe extern "C" fn fb_drawprogressbar(mut percent: libc::c_uint) {
   top_y = (*ptr_to_globals).ns[3] as libc::c_int;
   width = (*ptr_to_globals).ns[0].wrapping_sub(1i32 as libc::c_uint);
   height = (*ptr_to_globals).ns[1].wrapping_sub(1i32 as libc::c_uint);
-  if ((height | width) as libc::c_int) < 0i32 {
+  if ((height | width) as libc::c_int) < 0 {
     return;
   }
   // NB: "width" of 1 actually makes rect with width of 2!
@@ -477,11 +477,11 @@ unsafe extern "C" fn fb_drawprogressbar(mut percent: libc::c_uint) {
   top_y += 1;
   width = width.wrapping_sub(2i32 as libc::c_uint);
   height = height.wrapping_sub(2i32 as libc::c_uint);
-  if ((height | width) as libc::c_int) < 0i32 {
+  if ((height | width) as libc::c_int) < 0 {
     return;
   }
   pos_x = left_x;
-  if percent > 0i32 as libc::c_uint {
+  if percent > 0 as libc::c_uint {
     let mut i: libc::c_int = 0;
     let mut y: libc::c_int = 0;
     // actual progress bar
@@ -492,10 +492,10 @@ unsafe extern "C" fn fb_drawprogressbar(mut percent: libc::c_uint) {
     ) as libc::c_int as libc::c_int; // divide by 0 is bad
     y = top_y;
     i = height as libc::c_int;
-    if height == 0i32 as libc::c_uint {
+    if height == 0 as libc::c_uint {
       height = height.wrapping_add(1)
     }
-    while i >= 0i32 {
+    while i >= 0 {
       // draw one-line thick "rectangle"
       // top line will have gray lvl 200, bottom one 100
       let mut gray_level: libc::c_uint = (100i32 as libc::c_uint).wrapping_add(
@@ -545,9 +545,9 @@ unsafe extern "C" fn fb_drawimage() {
   } else {
     let mut fd: libc::c_int = crate::archival::libarchive::open_transformer::open_zipped(
       (*ptr_to_globals).image_filename,
-      0i32,
+      0,
     );
-    if fd < 0i32 {
+    if fd < 0 {
       crate::libbb::perror_msg::bb_simple_perror_msg_and_die((*ptr_to_globals).image_filename);
     }
     theme_file = crate::libbb::wfopen::xfdopen_for_read(fd)
@@ -611,7 +611,7 @@ unsafe extern "C" fn fb_drawimage() {
       .yres
       .wrapping_sub((*ptr_to_globals).ns[8])
   }
-  j = 0i32 as libc::c_uint;
+  j = 0 as libc::c_uint;
   while j < height {
     let mut pixel: *mut libc::c_uchar = std::ptr::null_mut();
     let mut src: *mut libc::c_uchar = std::ptr::null_mut();
@@ -636,7 +636,7 @@ unsafe extern "C" fn fb_drawimage() {
           .wrapping_mul((*ptr_to_globals).scr_fix.line_length) as isize,
       )
       .offset((*ptr_to_globals).ns[7].wrapping_mul((*ptr_to_globals).bytes_per_pixel) as isize);
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     while i < width {
       let mut thispix: libc::c_uint = fb_pixel_value(
         *pixel.offset(0) as libc::c_uint,
@@ -685,13 +685,13 @@ unsafe extern "C" fn init(mut cfg_filename: *const libc::c_char) {
     let mut val: libc::c_uint = crate::libbb::xatonum::xatoi_positive(token[1]) as libc::c_uint;
     let mut i: libc::c_int =
       crate::libbb::compare_string_array::index_in_strings(param_names.as_ptr(), token[0]);
-    if i < 0i32 {
+    if i < 0 {
       crate::libbb::verror_msg::bb_error_msg_and_die(
         b"syntax error: %s\x00" as *const u8 as *const libc::c_char,
         token[0],
       );
     }
-    if i >= 0i32 && i < 9i32 {
+    if i >= 0 && i < 9i32 {
       (*ptr_to_globals).ns[i as usize] = val
     }
   }
@@ -748,7 +748,7 @@ pub unsafe extern "C" fn fbsplash_main(
   }
   fb_drawimage();
   if fifo_filename.is_null() {
-    return 0i32;
+    return 0;
   }
   fp = crate::libbb::wfopen_input::xfopen_stdin(fifo_filename);
   if fp != stdin {
@@ -801,5 +801,5 @@ pub unsafe extern "C" fn fbsplash_main(
       6i32 as size_t,
     );
   }
-  return 0i32;
+  return 0;
 }

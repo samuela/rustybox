@@ -197,43 +197,43 @@ pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_
     (*vsd).id.as_mut_ptr() as *const libc::c_void,
     b"NSR02\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
     5i32 as libc::c_ulong,
-  ) == 0i32)
+  ) == 0)
   {
     if !(memcmp(
       (*vsd).id.as_mut_ptr() as *const libc::c_void,
       b"NSR03\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       5i32 as libc::c_ulong,
-    ) == 0i32)
+    ) == 0)
     {
       if !(memcmp(
         (*vsd).id.as_mut_ptr() as *const libc::c_void,
         b"BEA01\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
         5i32 as libc::c_ulong,
-      ) == 0i32)
+      ) == 0)
       {
         if !(memcmp(
           (*vsd).id.as_mut_ptr() as *const libc::c_void,
           b"BOOT2\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
           5i32 as libc::c_ulong,
-        ) == 0i32)
+        ) == 0)
         {
           if !(memcmp(
             (*vsd).id.as_mut_ptr() as *const libc::c_void,
             b"CD001\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
             5i32 as libc::c_ulong,
-          ) == 0i32)
+          ) == 0)
           {
             if !(memcmp(
               (*vsd).id.as_mut_ptr() as *const libc::c_void,
               b"CDW02\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
               5i32 as libc::c_ulong,
-            ) == 0i32)
+            ) == 0)
             {
               if !(memcmp(
                 (*vsd).id.as_mut_ptr() as *const libc::c_void,
                 b"TEA03\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
                 5i32 as libc::c_ulong,
-              ) == 0i32)
+              ) == 0)
               {
                 return -1i32;
               }
@@ -271,7 +271,7 @@ pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_
     _ =>
     /* search the list of VSDs for a NSR descriptor */
     {
-      b = 0i32 as libc::c_uint;
+      b = 0 as libc::c_uint;
       loop {
         if !(b < 64i32 as libc::c_uint) {
           current_block = 7245201122033322888;
@@ -294,7 +294,7 @@ pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_
           (*vsd).id.as_mut_ptr() as *const libc::c_void,
           b"NSR02\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
           5i32 as libc::c_ulong,
-        ) == 0i32
+        ) == 0
         {
           current_block = 1900569641276003734;
           break;
@@ -303,7 +303,7 @@ pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_
           (*vsd).id.as_mut_ptr() as *const libc::c_void,
           b"NSR03\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
           5i32 as libc::c_ulong,
-        ) == 0i32
+        ) == 0
         {
           current_block = 1900569641276003734;
           break;
@@ -328,7 +328,7 @@ pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_
             count = (*vd).type_0.anchor.length.wrapping_div(bs);
             loc = (*vd).type_0.anchor.location;
             /* pick the primary descriptor from the list */
-            b = 0i32 as libc::c_uint;
+            b = 0 as libc::c_uint;
             loop {
               if !(b < count) {
                 current_block = 1843993682127799951;
@@ -344,7 +344,7 @@ pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_
               }
               type_0 = (*vd).tag.id as libc::c_uint;
               /* check validity */
-              if type_0 == 0i32 as libc::c_uint {
+              if type_0 == 0 as libc::c_uint {
                 current_block = 1843993682127799951;
                 break;
               }
@@ -385,7 +385,7 @@ pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_
           /* TAG_ID_AVDP */
           //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
           (*id).type_0 = b"udf\x00" as *const u8 as *const libc::c_char;
-          return 0i32;
+          return 0;
         }
       }
     }

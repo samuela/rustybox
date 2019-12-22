@@ -160,8 +160,8 @@ unsafe extern "C" fn map(
   let mut last: libc::c_char = '0' as i32 as libc::c_char;
   let mut i: libc::c_uint = 0;
   let mut j: libc::c_uint = 0;
-  j = 0i32 as libc::c_uint;
-  i = 0i32 as libc::c_uint;
+  j = 0 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < string1_len {
     if string2_len <= j {
       *pvector.offset(*string1.offset(i as isize) as libc::c_uchar as isize) = last
@@ -194,7 +194,7 @@ unsafe extern "C" fn expand(
   mut buffer_p: *mut *mut libc::c_char,
 ) -> libc::c_uint {
   let mut buffer: *mut libc::c_char = *buffer_p; /* can't be unsigned char: must be able to hold 256 */
-  let mut pos: libc::c_uint = 0i32 as libc::c_uint;
+  let mut pos: libc::c_uint = 0 as libc::c_uint;
   let mut size: libc::c_uint = TR_BUFSIZ as libc::c_int as libc::c_uint;
   let mut i: libc::c_uint = 0;
   let mut ac: libc::c_uchar = 0;
@@ -422,7 +422,7 @@ unsafe extern "C" fn complement(
   let mut len: libc::c_int = 0; /* not equal to any char */
   let mut conv: [libc::c_char; 256] = [0; 256];
   let mut ch: libc::c_uchar = 0;
-  len = 0i32;
+  len = 0;
   ch = '\u{0}' as i32 as libc::c_uchar;
   loop {
     if memchr(
@@ -472,7 +472,7 @@ pub unsafe extern "C" fn tr_main(
       as *mut libc::c_char;
   let mut invec: *mut libc::c_char = vector.offset(ASCII as libc::c_int as isize);
   let mut outvec: *mut libc::c_char = vector.offset((ASCII as libc::c_int * 2i32) as isize);
-  i = 0i32;
+  i = 0;
   while i < ASCII as libc::c_int {
     *vector.offset(i as isize) = i as libc::c_char;
     i += 1
@@ -491,8 +491,8 @@ pub unsafe extern "C" fn tr_main(
   let fresh21 = argv;
   argv = argv.offset(1);
   str1_length = expand(*fresh21, &mut str1) as libc::c_int;
-  str2_length = 0i32;
-  if opts as libc::c_int & 3i32 << 0i32 != 0 {
+  str2_length = 0;
+  if opts as libc::c_int & 3i32 << 0 != 0 {
     str1_length = complement(str1, str1_length)
   }
   if !(*argv).is_null() {
@@ -510,21 +510,21 @@ pub unsafe extern "C" fn tr_main(
       str2_length as libc::c_uint,
     );
   }
-  i = 0i32;
+  i = 0;
   while i < str1_length {
     *invec.offset(*str1.offset(i as isize) as libc::c_uchar as isize) = 1i32 as libc::c_char;
     i += 1
   }
-  i = 0i32;
+  i = 0;
   while i < str2_length {
     *outvec.offset(*str2.offset(i as isize) as libc::c_uchar as isize) = 1i32 as libc::c_char;
     i += 1
   }
   'c_9891: loop {
-    out_index = 0i32 as size_t;
+    out_index = 0 as size_t;
     loop {
       read_chars = crate::libbb::read::safe_read(
-        0i32,
+        0,
         str1 as *mut libc::c_void,
         TR_BUFSIZ as libc::c_int as size_t,
       );
@@ -536,7 +536,7 @@ pub unsafe extern "C" fn tr_main(
         }
         break 'c_9891;
       } else {
-        in_index = 0i32 as size_t;
+        in_index = 0 as size_t;
         loop {
           let fresh22 = in_index;
           in_index = in_index.wrapping_add(1);
@@ -569,5 +569,5 @@ pub unsafe extern "C" fn tr_main(
       }
     }
   }
-  return 0i32;
+  return 0;
 }

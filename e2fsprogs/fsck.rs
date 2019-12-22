@@ -118,7 +118,7 @@ unsafe extern "C" fn base_device(mut device: *const libc::c_char) -> *mut libc::
      * on one disk, since we don't know how to parallelize them.
      */
     if *cp.offset(0) as libc::c_int == 'm' as i32 && *cp.offset(1) as libc::c_int == 'd' as i32 {
-      *cp.offset(2) = 0i32 as libc::c_char;
+      *cp.offset(2) = 0 as libc::c_char;
       return str;
     }
     /* Handle DAC 960 devices */
@@ -134,7 +134,7 @@ unsafe extern "C" fn base_device(mut device: *const libc::c_char) -> *mut libc::
         || *cp.offset(2) as libc::c_int != 'd' as i32
         || !((*cp.offset(3) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32))
       {
-        *cp.offset(4) = 0i32 as libc::c_char;
+        *cp.offset(4) = 0 as libc::c_char;
         return str;
       }
     } else if (*cp.offset(0) as libc::c_int == 'h' as i32
@@ -151,7 +151,7 @@ unsafe extern "C" fn base_device(mut device: *const libc::c_char) -> *mut libc::
       if ((*cp as libc::c_int | 0x20i32) - 'a' as i32) as libc::c_uchar as libc::c_int
         <= 'z' as i32 - 'a' as i32
       {
-        *cp.offset(1) = 0i32 as libc::c_char;
+        *cp.offset(1) = 0 as libc::c_char;
         return str;
       }
     }
@@ -186,7 +186,7 @@ unsafe extern "C" fn create_fs_device(
   } else {
     b"\x00" as *const u8 as *const libc::c_char
   });
-  (*fs).passno = if passno < 0i32 { 1i32 } else { passno };
+  (*fs).passno = if passno < 0 { 1i32 } else { passno };
   /*fs->flags = 0; */
   /*fs->next = NULL; */
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -250,8 +250,8 @@ unsafe extern "C" fn lookup(mut filesys: *mut libc::c_char) -> *mut fs_info {
   let mut fs: *mut fs_info = std::ptr::null_mut();
   fs = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filesys_info;
   while !fs.is_null() {
-    if strcmp(filesys, (*fs).device) == 0i32
-      || !(*fs).mountpt.is_null() && strcmp(filesys, (*fs).mountpt) == 0i32
+    if strcmp(filesys, (*fs).device) == 0
+      || !(*fs).mountpt.is_null() && strcmp(filesys, (*fs).mountpt) == 0
     {
       break;
     }
@@ -300,11 +300,11 @@ unsafe extern "C" fn wait_one(mut flags: libc::c_int) -> libc::c_int {
   {
     pid = waitpid(-1i32, &mut status, flags);
     kill_all_if_got_signal();
-    if pid == 0i32 {
+    if pid == 0 {
       /* flags == WNOHANG and no children exited */
       return -1i32;
     }
-    if pid < 0i32 {
+    if pid < 0 {
       if *bb_errno == 4i32 {
         continue;
       }
@@ -334,7 +334,7 @@ unsafe extern "C" fn wait_one(mut flags: libc::c_int) -> libc::c_int {
     }
   }
   exitcode = (status & 0xff00i32) >> 8i32;
-  if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0i32 {
+  if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0 {
     let mut sig: libc::c_uint = 0;
     sig = (status & 0x7fi32) as libc::c_uint;
     exitcode = 4i32;
@@ -368,8 +368,8 @@ unsafe extern "C" fn wait_one(mut flags: libc::c_int) -> libc::c_int {
 }
 unsafe extern "C" fn wait_many(mut flags: libc::c_int) -> libc::c_int {
   let mut exit_status: libc::c_int = 0;
-  let mut global_status: libc::c_int = 0i32;
-  let mut wait_flags: libc::c_int = 0i32;
+  let mut global_status: libc::c_int = 0;
+  let mut wait_flags: libc::c_int = 0;
   loop {
     exit_status = wait_one(wait_flags);
     if !(exit_status != -1i32) {
@@ -417,7 +417,7 @@ unsafe extern "C" fn execute(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).num_running,
       if !mntpt.is_null() { mntpt } else { device },
     );
-    i = 0i32;
+    i = 0;
     while !(*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .args
       .offset(i as isize))
@@ -439,7 +439,7 @@ unsafe extern "C" fn execute(
     pid = crate::libbb::vfork_daemon_rexec::spawn(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args,
     );
-    if pid < 0i32 {
+    if pid < 0 {
       crate::libbb::perror_msg::bb_simple_perror_msg(
         *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
           .args
@@ -448,7 +448,7 @@ unsafe extern "C" fn execute(
     }
   }
   /* No child, so don't record an instance */
-  if pid <= 0i32 {
+  if pid <= 0 {
     free(
       *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .args
@@ -488,7 +488,7 @@ unsafe extern "C" fn fsck_device(mut fs: *mut fs_info)
   if strcmp(
     (*fs).type_0,
     b"auto\x00" as *const u8 as *const libc::c_char,
-  ) != 0i32
+  ) != 0
   {
     type_0 = (*fs).type_0;
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose > 2i32 {
@@ -555,7 +555,7 @@ unsafe extern "C" fn device_already_active(mut device: *mut libc::c_char) -> lib
   let mut inst: *mut fsck_instance = std::ptr::null_mut();
   let mut base: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).force_all_parallel != 0 {
-    return 0i32;
+    return 0;
   }
   /* Don't check a soft raid disk with any other disk */
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -585,14 +585,14 @@ unsafe extern "C" fn device_already_active(mut device: *mut libc::c_char) -> lib
   }
   inst = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).instance_list;
   while !inst.is_null() {
-    if (*inst).base_device.is_null() || strcmp(base, (*inst).base_device) == 0i32 {
+    if (*inst).base_device.is_null() || strcmp(base, (*inst).base_device) == 0 {
       free(base as *mut libc::c_void);
       return 1i32;
     }
     inst = (*inst).next
   }
   free(base as *mut libc::c_void);
-  return 0i32;
+  return 0;
 }
 /*
  * This function returns true if a particular option appears in a
@@ -605,14 +605,14 @@ unsafe extern "C" fn opt_in_list(
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len: libc::c_int = 0;
   if optlist.is_null() {
-    return 0i32;
+    return 0;
   }
   len = strlen(opt) as libc::c_int;
   s = optlist.offset(-1);
   loop {
     s = strstr(s.offset(1), opt);
     if s.is_null() {
-      return 0i32;
+      return 0;
     }
     /* neither "opt.." nor "xxx,opt.."? */
     if s != optlist && *s.offset(-1i32 as isize) as libc::c_int != ',' as i32 {
@@ -639,9 +639,9 @@ unsafe extern "C" fn fs_match(mut fs: *mut fs_info) -> libc::c_int {
   {
     return 1i32;
   }
-  ret = 0i32;
-  checked_type = 0i32;
-  n = 0i32;
+  ret = 0;
+  checked_type = 0;
+  n = 0;
   loop {
     cp = *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .fs_type_list
@@ -655,25 +655,25 @@ unsafe extern "C" fn fs_match(mut fs: *mut fs_info) -> libc::c_int {
     {
       0 => {
         checked_type += 1;
-        if strcmp(cp, (*fs).type_0) == 0i32 {
+        if strcmp(cp, (*fs).type_0) == 0 {
           ret = 1i32
         }
       }
       2 => {
         if opt_in_list(cp, (*fs).opts) != 0 {
-          return 0i32;
+          return 0;
         }
       }
       1 => {
         if opt_in_list(cp, (*fs).opts) == 0 {
-          return 0i32;
+          return 0;
         }
       }
       _ => {}
     }
     n += 1
   }
-  if checked_type == 0i32 {
+  if checked_type == 0 {
     return 1i32;
   }
   return if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).fs_type_negated as libc::c_int != 0
@@ -688,7 +688,7 @@ unsafe extern "C" fn ignore(mut fs: *mut fs_info) -> libc::c_int {
   /*
    * If the pass number is 0, ignore it.
    */
-  if (*fs).passno == 0i32 {
+  if (*fs).passno == 0 {
     return 1i32;
   }
   /*
@@ -700,17 +700,17 @@ unsafe extern "C" fn ignore(mut fs: *mut fs_info) -> libc::c_int {
   }
   /* Are we ignoring this type? */
   if crate::libbb::compare_string_array::index_in_strings(ignored_types.as_ptr(), (*fs).type_0)
-    >= 0i32
+    >= 0
   {
     return 1i32;
   }
   /* We can and want to check this file system type. */
-  return 0i32;
+  return 0;
 }
 /* Check all file systems, using the /etc/fstab table. */
 unsafe extern "C" fn check_all() -> libc::c_int {
   let mut fs: *mut fs_info = std::ptr::null_mut();
-  let mut status: libc::c_int = 0i32;
+  let mut status: libc::c_int = 0;
   let mut not_done_yet: smallint = 0;
   let mut pass_done: smallint = 0;
   let mut passno: libc::c_int = 0;
@@ -767,7 +767,7 @@ unsafe extern "C" fn check_all() -> libc::c_int {
   not_done_yet = 1i32 as smallint;
   passno = 1i32;
   while not_done_yet != 0 {
-    not_done_yet = 0i32 as smallint;
+    not_done_yet = 0 as smallint;
     pass_done = 1i32 as smallint;
     fs = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filesys_info;
     while !fs.is_null() {
@@ -783,7 +783,7 @@ unsafe extern "C" fn check_all() -> libc::c_int {
         if (*fs).passno > passno {
           not_done_yet = 1i32 as smallint
         } else if device_already_active((*fs).device) != 0 {
-          pass_done = 0i32 as smallint
+          pass_done = 0 as smallint
         } else {
           /*
            * If a filesystem on a particular device has
@@ -804,7 +804,7 @@ unsafe extern "C" fn check_all() -> libc::c_int {
             || (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).num_running
               >= (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_running
           {
-            pass_done = 0i32 as smallint;
+            pass_done = 0 as smallint;
             break;
           }
         }
@@ -821,7 +821,7 @@ unsafe extern "C" fn check_all() -> libc::c_int {
       );
     }
     status |= wait_many(if pass_done as libc::c_int != 0 {
-      0i32
+      0
     } else {
       1i32
     });
@@ -866,12 +866,12 @@ unsafe extern "C" fn compile_fs_type(mut fs_type: *mut libc::c_char) {
     (num as libc::c_ulong).wrapping_mul(::std::mem::size_of::<u8>() as libc::c_ulong),
   ) as *mut u8;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).fs_type_negated = -1i32 as smallint;
-  num = 0i32;
+  num = 0;
   s = fs_type;
   let mut current_block_28: u64;
   loop {
     let mut comma: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    negate = 0i32 as smallint;
+    negate = 0 as smallint;
     if *s.offset(0) as libc::c_int == 'n' as i32 && *s.offset(1) as libc::c_int == 'o' as i32 {
       /* "no.." */
       s = s.offset(2);
@@ -880,7 +880,7 @@ unsafe extern "C" fn compile_fs_type(mut fs_type: *mut libc::c_char) {
       s = s.offset(1);
       negate = 1i32 as smallint
     }
-    if strcmp(s, b"loop\x00" as *const u8 as *const libc::c_char) == 0i32 {
+    if strcmp(s, b"loop\x00" as *const u8 as *const libc::c_char) == 0 {
       current_block_28 = 11934833676784627535;
     } else if !crate::libbb::compare_string_array::is_prefixed_with(
       s,
@@ -975,11 +975,11 @@ pub unsafe extern "C" fn fsck_main(
     Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   setbuf(stdout, std::ptr::null_mut::<libc::c_char>());
-  notitle = 0i32 as smallint;
+  notitle = 0 as smallint;
   doall = notitle;
   opts_for_fsck = doall;
   devices = std::ptr::null_mut();
-  num_devices = 0i32;
+  num_devices = 0;
   new_args();
   loop
   /* G.instance_list = NULL; - in bss, so already zeroed */
@@ -1017,7 +1017,7 @@ pub unsafe extern "C" fn fsck_main(
       /* "--" ? */
       opts_for_fsck = 1i32 as smallint
     } else {
-      optpos = 0i32;
+      optpos = 0;
       options = std::ptr::null_mut::<libc::c_char>();
       j = 1i32;
       while *arg.offset(j as isize) != 0 {
@@ -1105,7 +1105,7 @@ pub unsafe extern "C" fn fsck_main(
   }
   load_fs_info(fstab);
   /*interactive = (num_devices == 1) | G.serialize;*/
-  if num_devices == 0i32 {
+  if num_devices == 0 {
     /*interactive =*/
     doall = 1i32 as smallint;
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).serialize = doall
@@ -1113,8 +1113,8 @@ pub unsafe extern "C" fn fsck_main(
   if doall != 0 {
     return check_all();
   }
-  status = 0i32;
-  i = 0i32;
+  status = 0;
+  i = 0;
   while i < num_devices {
     if bb_got_signal != 0 {
       kill_all_if_got_signal();
@@ -1136,7 +1136,7 @@ pub unsafe extern "C" fn fsck_main(
           >= (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_running
       {
         let mut exit_status: libc::c_int = wait_one(0i32);
-        if exit_status >= 0i32 {
+        if exit_status >= 0 {
           status |= exit_status
         }
         if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose > 1i32 {

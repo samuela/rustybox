@@ -158,7 +158,7 @@ pub unsafe extern "C" fn makedevs_main(
   let mut parser: *mut parser_t = std::ptr::null_mut(); /* ensure root dir exists */
   let mut line: *mut libc::c_char =
     b"-\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
-  let mut ret: libc::c_int = 0i32;
+  let mut ret: libc::c_int = 0;
   crate::libbb::getopt32::getopt32(
     argv,
     b"^d:\x00=1\x00" as *const u8 as *const libc::c_char,
@@ -188,11 +188,11 @@ pub unsafe extern "C" fn makedevs_main(
     let mut linenum: libc::c_int = 0;
     let mut type_0: libc::c_char = 0;
     let mut mode: libc::c_uint = 0o755i32 as libc::c_uint;
-    let mut major: libc::c_uint = 0i32 as libc::c_uint;
-    let mut minor: libc::c_uint = 0i32 as libc::c_uint;
-    let mut count: libc::c_uint = 0i32 as libc::c_uint;
-    let mut increment: libc::c_uint = 0i32 as libc::c_uint;
-    let mut start: libc::c_uint = 0i32 as libc::c_uint;
+    let mut major: libc::c_uint = 0 as libc::c_uint;
+    let mut minor: libc::c_uint = 0 as libc::c_uint;
+    let mut count: libc::c_uint = 0 as libc::c_uint;
+    let mut increment: libc::c_uint = 0 as libc::c_uint;
+    let mut start: libc::c_uint = 0 as libc::c_uint;
     let mut user: [libc::c_char; 41] = [0; 41];
     let mut group: [libc::c_char; 41] = [0; 41];
     let mut full_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -262,14 +262,14 @@ pub unsafe extern "C" fn makedevs_main(
         if chown(full_name, uid, gid) == -1i32 {
           current_block_56 = 6367029485986847337;
         } else {
-          if !(chmod(full_name, mode) < 0i32) {
+          if !(chmod(full_name, mode) < 0) {
             continue;
           }
           current_block_56 = 1050926138102375056;
         }
       } else if type_0 as libc::c_int == 'f' as i32 {
         let mut st: stat = std::mem::zeroed();
-        if stat(full_name, &mut st) < 0i32
+        if stat(full_name, &mut st) < 0
           || !(st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
         {
           crate::libbb::perror_msg::bb_perror_msg(
@@ -279,10 +279,10 @@ pub unsafe extern "C" fn makedevs_main(
           );
           ret = 1i32;
           continue;
-        } else if chown(full_name, uid, gid) < 0i32 {
+        } else if chown(full_name, uid, gid) < 0 {
           current_block_56 = 6367029485986847337;
         } else {
-          if !(chmod(full_name, mode) < 0i32) {
+          if !(chmod(full_name, mode) < 0) {
             continue;
           }
           current_block_56 = 1050926138102375056;
@@ -304,14 +304,14 @@ pub unsafe extern "C" fn makedevs_main(
           ret = 1i32;
           continue;
         }
-        if count != 0i32 as libc::c_uint {
+        if count != 0 as libc::c_uint {
           count = count.wrapping_sub(1)
         }
-        i = 0i32 as libc::c_uint;
+        i = 0 as libc::c_uint;
         while i <= count {
           let mut rdev: libc::dev_t = 0;
           let mut nameN: *mut libc::c_char = full_name;
-          if count != 0i32 as libc::c_uint {
+          if count != 0 as libc::c_uint {
             nameN = crate::libbb::xfuncs_printf::xasprintf(
               b"%s%u\x00" as *const u8 as *const libc::c_char,
               full_name,
@@ -321,21 +321,21 @@ pub unsafe extern "C" fn makedevs_main(
           rdev =
             crate::libbb::makedev::bb_makedev(major, minor.wrapping_add(i.wrapping_mul(increment)))
               as libc::dev_t;
-          if mknod(nameN, mode, rdev) != 0i32 && *bb_errno != 17i32 {
+          if mknod(nameN, mode, rdev) != 0 && *bb_errno != 17i32 {
             crate::libbb::perror_msg::bb_perror_msg(
               b"line %d: can\'t create node %s\x00" as *const u8 as *const libc::c_char,
               linenum,
               nameN,
             );
             ret = 1i32
-          } else if chown(nameN, uid, gid) < 0i32 {
+          } else if chown(nameN, uid, gid) < 0 {
             crate::libbb::perror_msg::bb_perror_msg(
               b"line %d: can\'t chown %s\x00" as *const u8 as *const libc::c_char,
               linenum,
               nameN,
             );
             ret = 1i32
-          } else if chmod(nameN, mode) < 0i32 {
+          } else if chmod(nameN, mode) < 0 {
             crate::libbb::perror_msg::bb_perror_msg(
               b"line %d: can\'t chmod %s\x00" as *const u8 as *const libc::c_char,
               linenum,
@@ -343,7 +343,7 @@ pub unsafe extern "C" fn makedevs_main(
             );
             ret = 1i32
           }
-          if count != 0i32 as libc::c_uint {
+          if count != 0 as libc::c_uint {
             free(nameN as *mut libc::c_void);
           }
           i = i.wrapping_add(1)

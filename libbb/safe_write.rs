@@ -270,7 +270,7 @@ pub unsafe extern "C" fn safe_write(
       break;
     }
     /* repeat the write() */
-    *bb_errno = 0i32
+    *bb_errno = 0
   }
   return n;
 }

@@ -50,7 +50,7 @@ unsafe extern "C" fn get_flag(mut c: libc::c_char) -> libc::c_ulong {
   return (1i32 << fp.wrapping_offset_from(bit_to_char.as_ptr()) as libc::c_long) as libc::c_ulong;
 }
 unsafe extern "C" fn decode_arg(mut arg: *const libc::c_char) -> libc::c_uint {
-  let mut fl: libc::c_uint = 0i32 as libc::c_uint;
+  let mut fl: libc::c_uint = 0 as libc::c_uint;
   loop {
     arg = arg.offset(1);
     if !(*arg != 0) {
@@ -65,8 +65,8 @@ pub unsafe extern "C" fn fatattr_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut set_mask: libc::c_uint = 0i32 as libc::c_uint;
-  let mut clear_mask: libc::c_uint = 0i32 as libc::c_uint;
+  let mut set_mask: libc::c_uint = 0 as libc::c_uint;
+  let mut clear_mask: libc::c_uint = 0 as libc::c_uint;
   loop {
     let mut fl: libc::c_uint = 0;
     argv = argv.offset(1);
@@ -88,13 +88,13 @@ pub unsafe extern "C" fn fatattr_main(
     let mut fd: libc::c_int = 0;
     let mut i: libc::c_int = 0;
     let mut attr: u32 = 0;
-    fd = crate::libbb::xfuncs_printf::xopen(*argv, 0i32);
+    fd = crate::libbb::xfuncs_printf::xopen(*argv, 0);
     crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
-      ((2u32 << 0i32 + 8i32 + 8i32 + 14i32
-        | (('r' as i32) << 0i32 + 8i32) as libc::c_uint
-        | (0x10i32 << 0i32) as libc::c_uint) as libc::c_ulong
-        | (::std::mem::size_of::<u32>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+      ((2u32 << 0 + 8i32 + 8i32 + 14i32
+        | (('r' as i32) << 0 + 8i32) as libc::c_uint
+        | (0x10i32 << 0) as libc::c_uint) as libc::c_ulong
+        | (::std::mem::size_of::<u32>() as libc::c_ulong) << 0 + 8i32 + 8i32)
         as libc::c_uint,
       &mut attr as *mut u32 as *mut libc::c_void,
       b"FAT_IOCTL_GET_ATTRIBUTES\x00" as *const u8 as *const libc::c_char,
@@ -103,16 +103,16 @@ pub unsafe extern "C" fn fatattr_main(
     if set_mask | clear_mask != 0 {
       crate::libbb::xfuncs_printf::bb_xioctl(
         fd,
-        ((1u32 << 0i32 + 8i32 + 8i32 + 14i32
-          | (('r' as i32) << 0i32 + 8i32) as libc::c_uint
-          | (0x11i32 << 0i32) as libc::c_uint) as libc::c_ulong
-          | (::std::mem::size_of::<u32>() as libc::c_ulong) << 0i32 + 8i32 + 8i32)
+        ((1u32 << 0 + 8i32 + 8i32 + 14i32
+          | (('r' as i32) << 0 + 8i32) as libc::c_uint
+          | (0x11i32 << 0) as libc::c_uint) as libc::c_ulong
+          | (::std::mem::size_of::<u32>() as libc::c_ulong) << 0 + 8i32 + 8i32)
           as libc::c_uint,
         &mut attr as *mut u32 as *mut libc::c_void,
         b"FAT_IOCTL_SET_ATTRIBUTES\x00" as *const u8 as *const libc::c_char,
       );
     } else {
-      i = 0i32;
+      i = 0;
       while bit_to_char[i as usize] != 0 {
         crate::libbb::xfuncs_printf::bb_putchar(if attr & 1i32 as libc::c_uint != 0 {
           bit_to_char[i as usize] as libc::c_int
@@ -130,5 +130,5 @@ pub unsafe extern "C" fn fatattr_main(
       break;
     }
   }
-  return 0i32;
+  return 0;
 }

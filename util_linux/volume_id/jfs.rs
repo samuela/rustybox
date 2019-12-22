@@ -137,7 +137,7 @@ pub unsafe extern "C" fn volume_id_probe_jfs(mut id: *mut volume_id) -> libc::c_
     (*js).magic.as_mut_ptr() as *const libc::c_void,
     b"JFS1\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
     4i32 as libc::c_ulong,
-  ) != 0i32
+  ) != 0
   {
     return -1i32;
   }
@@ -150,5 +150,5 @@ pub unsafe extern "C" fn volume_id_probe_jfs(mut id: *mut volume_id) -> libc::c_
   crate::util_linux::volume_id::util::volume_id_set_uuid(id, (*js).uuid.as_mut_ptr(), UUID_DCE);
   //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
   (*id).type_0 = b"jfs\x00" as *const u8 as *const libc::c_char;
-  return 0i32;
+  return 0;
 }

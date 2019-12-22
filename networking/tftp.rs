@@ -176,7 +176,7 @@ pub const TFTP_OPT_GET: C2RustUnnamed_3 = 1;
 unsafe extern "C" fn tftp_progress_update() {
   crate::libbb::progress::bb_progress_update(
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pmt,
-    0i32 as uoff_t,
+    0 as uoff_t,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pos as uoff_t,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).size as uoff_t,
   );
@@ -231,15 +231,15 @@ unsafe extern "C" fn tftp_get_option(
   mut buf: *mut libc::c_char,
   mut len: libc::c_int,
 ) -> *mut libc::c_char {
-  let mut opt_val: libc::c_int = 0i32;
-  let mut opt_found: libc::c_int = 0i32;
+  let mut opt_val: libc::c_int = 0;
+  let mut opt_found: libc::c_int = 0;
   let mut k: libc::c_int = 0;
   /* buf points to:
    * "opt_name<NUL>opt_val<NUL>opt_name2<NUL>opt_val2<NUL>..." */
-  while len > 0i32 {
+  while len > 0 {
     let mut current_block_13: u64;
     /* Make sure options are terminated correctly */
-    k = 0i32;
+    k = 0;
     loop {
       if !(k < len) {
         current_block_13 = 11006700562992250127;
@@ -254,9 +254,9 @@ unsafe extern "C" fn tftp_get_option(
     match current_block_13 {
       11006700562992250127 => return std::ptr::null_mut::<libc::c_char>(),
       _ => {
-        if opt_val == 0i32 {
+        if opt_val == 0 {
           /* it's "name" part */
-          if strcasecmp(buf, option) == 0i32 {
+          if strcasecmp(buf, option) == 0 {
             opt_found = 1i32
           }
         } else if opt_found != 0 {
@@ -289,8 +289,8 @@ unsafe extern "C" fn tftp_protocol(
   }; 1];
   let mut len: libc::c_int = 0;
   let mut send_len: libc::c_int = 0;
-  let mut expect_OACK: smallint = 0i32 as smallint;
-  let mut finished: smallint = 0i32 as smallint;
+  let mut expect_OACK: smallint = 0 as smallint;
+  let mut finished: smallint = 0 as smallint;
   let mut opcode: u16 = 0;
   let mut block_nr: u16 = 0;
   let mut recv_blk: u16 = 0;
@@ -311,7 +311,7 @@ unsafe extern "C" fn tftp_protocol(
   pfd[0].fd = crate::libbb::xfuncs_printf::xsocket(
     (*peer_lsa).u.sa.sa_family as libc::c_int,
     SOCK_DGRAM as libc::c_int,
-    0i32,
+    0,
   );
   crate::libbb::xconnect::setsockopt_reuseaddr(pfd[0].fd);
   if 1i32 == 0 || !our_lsa.is_null() {
@@ -353,7 +353,7 @@ unsafe extern "C" fn tftp_protocol(
     15976848397966268834 => {
       /* Prepare open mode */
       if option_mask32 & TFTP_OPT_PUT as libc::c_int as libc::c_uint != 0 {
-        open_mode = 0i32
+        open_mode = 0
       } else {
         open_mode = 0o1i32 | 0o1000i32 | 0o100i32;
         if option_mask32 & (TFTPD_OPT as libc::c_int + TFTPD_OPT_c as libc::c_int) as libc::c_uint
@@ -397,7 +397,7 @@ unsafe extern "C" fn tftp_protocol(
         /* tftpd */
         /* Open file (must be after changing user) */
         local_fd = open(local_file, open_mode, 0o666i32);
-        if local_fd < 0i32 {
+        if local_fd < 0 {
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[3] = 1i32 as u8;
           strcpy(
             (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -420,7 +420,7 @@ unsafe extern "C" fn tftp_protocol(
             /* It's upload and we don't send OACK.
              * We must ACK 1st packet (with filename)
              * as if it is "block 0" */
-            block_nr = 0i32 as u16
+            block_nr = 0 as u16
           }
           /* Using mostly goto's - continue/break will be less clear
            * in where we actually jump to */
@@ -431,7 +431,7 @@ unsafe extern "C" fn tftp_protocol(
         local_fd = if option_mask32 & TFTP_OPT_GET as libc::c_int as libc::c_uint != 0 {
           1i32
         } else {
-          0i32
+          0
         };
         if *local_file.offset(0) as libc::c_int != '-' as i32
           || *local_file.offset(1) as libc::c_int != 0
@@ -524,7 +524,7 @@ unsafe extern "C" fn tftp_protocol(
                 strcpy(cp, b"tsize\x00" as *const u8 as *const libc::c_char);
                 cp =
                   cp.offset(::std::mem::size_of::<[libc::c_char; 6]>() as libc::c_ulong as isize);
-                st.st_size = 0i32 as off_t;
+                st.st_size = 0 as off_t;
                 fstat(local_fd, &mut st);
                 cp = cp.offset(
                   (sprintf(
@@ -550,7 +550,7 @@ unsafe extern "C" fn tftp_protocol(
               4894395567674443800 =>
               /*bb_perror_msg("poll"); - done in safe_poll */
               {
-                return (finished as libc::c_int == 0i32) as libc::c_int
+                return (finished as libc::c_int == 0) as libc::c_int
               }
               13484060386966298149 => {
                 /* returns 1 on failure */
@@ -586,7 +586,7 @@ unsafe extern "C" fn tftp_protocol(
                   cp as *mut libc::c_void,
                   blksize as size_t,
                 ) as libc::c_int;
-                if len < 0i32 {
+                if len < 0 {
                   current_block = 12367016239538502269;
                   break;
                 }
@@ -664,7 +664,7 @@ unsafe extern "C" fn tftp_protocol(
                     ) {
                       0 => {
                         retries -= 1;
-                        if retries == 0i32 {
+                        if retries == 0 {
                           current_block = 6406431739208918833;
                           break;
                         } else {
@@ -681,7 +681,7 @@ unsafe extern "C" fn tftp_protocol(
                             pfd[0].fd,
                             rbuf as *mut libc::c_void,
                             io_bufsize as size_t,
-                            0i32,
+                            0,
                             __SOCKADDR_ARG {
                               __sockaddr__: &mut (*peer_lsa).u.sa as *mut sockaddr,
                             },
@@ -690,7 +690,7 @@ unsafe extern "C" fn tftp_protocol(
                           /* Our first dgram went to port 69
                            * but reply may come from different one.
                            * Remember and use this new port (and IP) */
-                          if len >= 0i32 {
+                          if len >= 0 {
                             crate::libbb::xconnect::xconnect(
                               pfd[0].fd,
                               &mut (*peer_lsa).u.sa,
@@ -708,7 +708,7 @@ unsafe extern "C" fn tftp_protocol(
                             io_bufsize as size_t,
                           ) as libc::c_int
                         }
-                        if len < 0i32 {
+                        if len < 0 {
                           current_block = 12367016239538502269;
                           break 's_871;
                         }
@@ -782,7 +782,7 @@ unsafe extern "C" fn tftp_protocol(
                             continue 's_871;
                           } else {
                             if expect_OACK != 0 {
-                              expect_OACK = 0i32 as smallint;
+                              expect_OACK = 0 as smallint;
                               if opcode as libc::c_int == 6i32 {
                                 /* server seems to support options */
                                 res = std::ptr::null_mut::<libc::c_char>();
@@ -897,7 +897,7 @@ unsafe extern "C" fn tftp_protocol(
                   }
                   17392506108461345148 => {
                     blksize = tftp_blksize_check(res, blksize);
-                    if blksize < 0i32 {
+                    if blksize < 0 {
                       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[3] = 8i32 as u8;
                       current_block = 15308042354214156955;
                       break;
@@ -940,7 +940,7 @@ unsafe extern "C" fn tftp_protocol(
                 if option_mask32 & TFTP_OPT_GET as libc::c_int as libc::c_uint != 0 {
                   /* We'll send ACK for OACK,
                    * such ACK has "block no" of 0 */
-                  block_nr = 0i32 as u16
+                  block_nr = 0 as u16
                 }
                 current_block = 13484060386966298149;
               }
@@ -1034,7 +1034,7 @@ pub unsafe extern "C" fn tftp_main(
       if strcmp(
         *argv.offset(i as isize),
         b"get\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
+      ) == 0
       {
         let ref mut fresh15 = *argv.offset(i.wrapping_sub(1i32 as libc::c_uint) as isize);
         *fresh15 = b"-g\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
@@ -1044,7 +1044,7 @@ pub unsafe extern "C" fn tftp_main(
       } else if strcmp(
         *argv.offset(i as isize),
         b"put\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
+      ) == 0
       {
         let ref mut fresh17 = *argv.offset(i.wrapping_sub(1i32 as libc::c_uint) as isize);
         *fresh17 = b"-p\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
@@ -1067,7 +1067,7 @@ pub unsafe extern "C" fn tftp_main(
   /* Check if the blksize is valid:
    * RFC2348 says between 8 and 65464 */
   blksize = tftp_blksize_check(blksize_str, 65564i32);
-  if blksize < 0i32 {
+  if blksize < 0 {
     //bb_error_msg("bad block size");
     return 1i32;
   }
@@ -1104,7 +1104,7 @@ pub unsafe extern "C" fn tftp_main(
     blksize,
   );
   tftp_progress_done();
-  if result != 0i32
+  if result != 0
     && (*local_file.offset(0) as libc::c_int != '-' as i32
       || *local_file.offset(1) as libc::c_int != 0)
     && opt & TFTP_OPT_GET as libc::c_int != 0
@@ -1131,7 +1131,7 @@ pub unsafe extern "C" fn tftpd_main(
   let mut result: libc::c_int = 0;
   let mut opcode: libc::c_int = 0;
   let mut blksize: libc::c_int = 512i32;
-  let mut want_transfer_size: libc::c_int = 0i32;
+  let mut want_transfer_size: libc::c_int = 0;
   our_lsa = crate::libbb::xconnect::get_sock_lsa(0i32);
   if our_lsa.is_null() {
     /* This is confusing:
@@ -1168,13 +1168,13 @@ pub unsafe extern "C" fn tftpd_main(
     crate::libbb::xfuncs_printf::xchroot(*argv.offset(0));
   }
   result = crate::libbb::udp_io::recv_from_to(
-    0i32,
+    0,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .block_buf
       .as_mut_ptr() as *mut libc::c_void,
     (::std::mem::size_of::<[libc::c_char; 516]>() as libc::c_ulong)
       .wrapping_add(1i32 as libc::c_ulong),
-    0i32,
+    0,
     &mut (*peer_lsa).u.sa,
     &mut (*our_lsa).u.sa,
     (*our_lsa).len,
@@ -1228,7 +1228,7 @@ pub unsafe extern "C" fn tftpd_main(
           .block_buf
           .as_mut_ptr()
           .offset(result as isize)
-        || strcasecmp(mode, b"octet\x00" as *const u8 as *const libc::c_char) != 0i32
+        || strcasecmp(mode, b"octet\x00" as *const u8 as *const libc::c_char) != 0
       {
         error_msg = b"mode is not \'octet\'\x00" as *const u8 as *const libc::c_char;
         current_block = 16343923103195422028;
@@ -1242,7 +1242,7 @@ pub unsafe extern "C" fn tftpd_main(
           .offset(result as isize)
           .wrapping_offset_from(opt_str) as libc::c_long
           as libc::c_int;
-        if opt_len > 0i32 {
+        if opt_len > 0 {
           res = tftp_get_option(
             b"blksize\x00" as *const u8 as *const libc::c_char,
             opt_str,
@@ -1250,7 +1250,7 @@ pub unsafe extern "C" fn tftpd_main(
           );
           if !res.is_null() {
             blksize = tftp_blksize_check(res, 65564i32);
-            if blksize < 0i32 {
+            if blksize < 0 {
               (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[3] = 8i32 as u8;
               /* will just send error pkt */
               current_block = 13887286082274607397;

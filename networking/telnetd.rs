@@ -199,7 +199,7 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
      * We removed it from the buffer back then.
      * Now pretend it's still there, and jump to IAC processing.
      */
-    (*ts).buffered_IAC_for_pty = 0i32 as smallint; /* Yes, this can point before the buffer. It's ok */
+    (*ts).buffered_IAC_for_pty = 0 as smallint; /* Yes, this can point before the buffer. It's ok */
     wr = wr.wrapping_add(1);
     (*ts).size1 += 1;
     buf = buf.offset(-1);
@@ -298,14 +298,14 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
          */
         rc = 2i32 as ssize_t
       } else if *buf.offset(1) as libc::c_int == 246i32 {
-        if (*ts).size2 == 0i32 {
+        if (*ts).size2 == 0 {
           /* if nothing buffered yet... */
           /* Send back evidence that AYT was seen */
           let mut buf2: *mut libc::c_uchar =
             (ts.offset(1) as *mut libc::c_uchar).offset(BUFSIZE as libc::c_int as isize);
           *buf2.offset(0) = 255i32 as libc::c_uchar;
           *buf2.offset(1) = 241i32 as libc::c_uchar;
-          (*ts).wridx2 = 0i32;
+          (*ts).wridx2 = 0;
           (*ts).size2 = 2i32;
           (*ts).rdidx2 = (*ts).size2
         }
@@ -336,7 +336,7 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
             } else {
               memset(
                 &mut ws as *mut winsize as *mut libc::c_void,
-                0i32,
+                0,
                 ::std::mem::size_of::<winsize>() as libc::c_ulong,
               ); /* pixel sizes are set to 0 */
               ws.ws_col = ((*buf.offset(3) as libc::c_int) << 8i32 | *buf.offset(4) as libc::c_int)
@@ -373,7 +373,7 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
   (*ts).wridx1 = ((*ts).wridx1 + rc as i32) as libc::c_int;
   if (*ts).wridx1 >= BUFSIZE as libc::c_int {
     /* actually == BUFSIZE */
-    (*ts).wridx1 = 0i32
+    (*ts).wridx1 = 0
   }
   (*ts).size1 = ((*ts).size1 - rc as i32) as libc::c_int;
   /*
@@ -383,15 +383,15 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
    * to have wrapped IAC (people don't type at 2k/second).
    * It also allows for bigger reads in common case.
    */
-  if (*ts).size1 == 0i32 {
+  if (*ts).size1 == 0 {
     /* very typical */
     //bb_error_msg("zero size1");
-    (*ts).rdidx1 = 0i32;
-    (*ts).wridx1 = 0i32;
+    (*ts).rdidx1 = 0;
+    (*ts).wridx1 = 0;
     return rc;
   }
   wr = (*ts).wridx1 as libc::c_uint;
-  if wr != 0i32 as libc::c_uint && wr < (*ts).rdidx1 as libc::c_uint {
+  if wr != 0 as libc::c_uint && wr < (*ts).rdidx1 as libc::c_uint {
     /* Buffer is not wrapped yet.
      * We can easily move it to the beginning.
      */
@@ -402,7 +402,7 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
       (*ts).size1 as libc::c_ulong,
     );
     (*ts).rdidx1 = ((*ts).rdidx1 as libc::c_uint).wrapping_sub(wr) as libc::c_int as libc::c_int;
-    (*ts).wridx1 = 0i32
+    (*ts).wridx1 = 0
   }
   return rc;
 }
@@ -418,9 +418,9 @@ unsafe extern "C" fn safe_write_double_iac(
   let mut wr: size_t = 0;
   let mut rc: size_t = 0;
   let mut total: size_t = 0;
-  total = 0i32 as size_t;
+  total = 0 as size_t;
   loop {
-    if count == 0i32 as libc::c_ulong {
+    if count == 0 as libc::c_ulong {
       return total;
     }
     if *buf as libc::c_int == 255i32 as libc::c_char as libc::c_int {
@@ -456,10 +456,10 @@ unsafe extern "C" fn safe_write_double_iac(
   /* here: rc - result of last short write */
   if (rc as ssize_t) < 0 {
     /* error? */
-    if total == 0i32 as libc::c_ulong {
+    if total == 0 as libc::c_ulong {
       return rc;
     }
-    rc = 0i32 as size_t
+    rc = 0 as size_t
   }
   return total.wrapping_add(rc);
 }
@@ -496,7 +496,7 @@ unsafe extern "C" fn make_new_session(mut sock: libc::c_int) -> *mut tsession {
   crate::libbb::xconnect::setsockopt_keepalive(sock);
   (*ts).sockfd_read = sock;
   crate::libbb::xfuncs::ndelay_on(sock);
-  if sock == 0i32 {
+  if sock == 0 {
     /* We are called with fd 0 - we are in inetd mode */
     sock += 1; /* so use fd 1 for output */
     crate::libbb::xfuncs::ndelay_on(sock);
@@ -538,7 +538,7 @@ unsafe extern "C" fn make_new_session(mut sock: libc::c_int) -> *mut tsession {
   //ts->size2 = sizeof(iacs_to_send);
   /* So just stuff it into TCP stream! (no error check...) */
   pid = vfork(); /* NOMMU-friendly */
-  if pid < 0i32 {
+  if pid < 0 {
     free(ts as *mut libc::c_void);
     close(fd);
     /* sock will be closed by caller */
@@ -547,7 +547,7 @@ unsafe extern "C" fn make_new_session(mut sock: libc::c_int) -> *mut tsession {
     );
     return 0 as *mut tsession;
   }
-  if pid > 0i32 {
+  if pid > 0 {
     /* Parent */
     (*ts).shell_pid = pid;
     return ts;
@@ -640,7 +640,7 @@ unsafe extern "C" fn free_session(mut ts: *mut tsession) {
    * we do not reach this */
   free(ts as *mut libc::c_void);
   /* Scan all sessions and find new maxfd */
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).maxfd = 0i32;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).maxfd = 0;
   ts = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).sessions;
   while !ts.is_null() {
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).maxfd < (*ts).ptyfd {
@@ -661,7 +661,7 @@ unsafe extern "C" fn handle_sigchld(mut _sig: libc::c_int) {
   /* Looping: more than one child may have exited */
   {
     pid = crate::libbb::xfuncs::wait_any_nohang(0 as *mut libc::c_int); /* for compiler */
-    if pid <= 0i32 {
+    if pid <= 0 {
       break;
     }
     ts = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).sessions;
@@ -741,7 +741,7 @@ pub unsafe extern "C" fn telnetd_main(
       return 1i32;
     }
   } else {
-    master_fd = 0i32;
+    master_fd = 0;
     if opt & OPT_WAIT as libc::c_int as libc::c_uint == 0 {
       let mut portnbr: libc::c_uint = 23i32 as libc::c_uint;
       if opt & OPT_PORT as libc::c_int as libc::c_uint != 0 {
@@ -831,7 +831,7 @@ pub unsafe extern "C" fn telnetd_main(
         /* Child died and we detected that */
         free_session(ts);
       } else {
-        if (*ts).size1 > 0i32 {
+        if (*ts).size1 > 0 {
           /* can write to pty */
           wrfdset.fds_bits[((*ts).ptyfd
             / (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
@@ -849,7 +849,7 @@ pub unsafe extern "C" fn telnetd_main(
               % (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
             as __fd_mask
         }
-        if (*ts).size2 > 0i32 {
+        if (*ts).size2 > 0 {
           /* can write to socket */
           wrfdset.fds_bits[((*ts).sockfd_write
             / (8i32 * ::std::mem::size_of::<__fd_mask>() as libc::c_ulong as libc::c_int))
@@ -894,7 +894,7 @@ pub unsafe extern "C" fn telnetd_main(
         .is_null()
     {
       tv.tv_sec = sec_linger as time_t;
-      tv.tv_usec = 0i32 as suseconds_t;
+      tv.tv_usec = 0 as suseconds_t;
       tv_ptr = &mut tv
     }
     count = select(
@@ -904,11 +904,11 @@ pub unsafe extern "C" fn telnetd_main(
       0 as *mut fd_set,
       tv_ptr,
     );
-    if count == 0i32 {
+    if count == 0 {
       /* "telnetd -w SEC" timed out */
-      return 0i32;
+      return 0;
     } /* EINTR or ENOMEM */
-    if count < 0i32 {
+    if count < 0 {
       continue;
     }
     /* Check for and accept new sessions */
@@ -931,7 +931,7 @@ pub unsafe extern "C" fn telnetd_main(
         },
         0 as *mut socklen_t,
       );
-      if fd < 0i32 {
+      if fd < 0 {
         continue;
       }
       crate::libbb::xfuncs::close_on_exec_on(fd);
@@ -961,7 +961,7 @@ pub unsafe extern "C" fn telnetd_main(
       {
         /* Write to pty from buffer 1 */
         count = safe_write_to_pty_decode_iac(ts) as libc::c_int;
-        if count < 0i32 {
+        if count < 0 {
           if *bb_errno == 11i32 {
             current_block = 454644968774100691;
           } else {
@@ -998,7 +998,7 @@ pub unsafe extern "C" fn telnetd_main(
                 as *const libc::c_char,
               count as size_t,
             ) as libc::c_int;
-            if count < 0i32 {
+            if count < 0 {
               if *bb_errno == 11i32 {
                 current_block = 14977138807965774745;
               } else {
@@ -1008,12 +1008,12 @@ pub unsafe extern "C" fn telnetd_main(
               (*ts).wridx2 += count;
               if (*ts).wridx2 >= BUFSIZE as libc::c_int {
                 /* actually == BUFSIZE */
-                (*ts).wridx2 = 0i32
+                (*ts).wridx2 = 0
               }
               (*ts).size2 -= count;
-              if (*ts).size2 == 0i32 {
-                (*ts).rdidx2 = 0i32;
-                (*ts).wridx2 = 0i32
+              if (*ts).size2 == 0 {
+                (*ts).rdidx2 = 0;
+                (*ts).wridx2 = 0
               }
               current_block = 14977138807965774745;
             }
@@ -1045,8 +1045,8 @@ pub unsafe extern "C" fn telnetd_main(
                     as *mut libc::c_void,
                   count as size_t,
                 ) as libc::c_int;
-                if count <= 0i32 {
-                  if count < 0i32 && *bb_errno == 11i32 {
+                if count <= 0 {
+                  if count < 0 && *bb_errno == 11i32 {
                     current_block = 1387731475740922237;
                   } else {
                     current_block = 13644292938706749517;
@@ -1063,7 +1063,7 @@ pub unsafe extern "C" fn telnetd_main(
                   (*ts).rdidx1 += count;
                   if (*ts).rdidx1 >= BUFSIZE as libc::c_int {
                     /* actually == BUFSIZE */
-                    (*ts).rdidx1 = 0i32
+                    (*ts).rdidx1 = 0
                   }
                   current_block = 1387731475740922237;
                 }
@@ -1084,7 +1084,7 @@ pub unsafe extern "C" fn telnetd_main(
                     != 0
                   {
                     /* Read from pty to buffer 2 */
-                    let mut eio: libc::c_int = 0i32;
+                    let mut eio: libc::c_int = 0;
                     loop {
                       count = if BUFSIZE as libc::c_int - (*ts).rdidx2
                         < BUFSIZE as libc::c_int - (*ts).size2
@@ -1101,8 +1101,8 @@ pub unsafe extern "C" fn telnetd_main(
                           as *mut libc::c_void,
                         count as size_t,
                       ) as libc::c_int;
-                      if count <= 0i32 {
-                        if !(count < 0i32) {
+                      if count <= 0 {
+                        if !(count < 0) {
                           current_block = 13644292938706749517;
                           break;
                         }
@@ -1126,7 +1126,7 @@ pub unsafe extern "C" fn telnetd_main(
                         (*ts).rdidx2 += count;
                         if (*ts).rdidx2 >= BUFSIZE as libc::c_int {
                           /* actually == BUFSIZE */
-                          (*ts).rdidx2 = 0i32
+                          (*ts).rdidx2 = 0
                         }
                         current_block = 16043883375386484726;
                         break;
@@ -1149,7 +1149,7 @@ pub unsafe extern "C" fn telnetd_main(
         }
         _ => {}
       }
-      if (*ts).shell_pid > 0i32 {
+      if (*ts).shell_pid > 0 {
         crate::libbb::utmp::update_utmp_DEAD_PROCESS((*ts).shell_pid);
       }
       free_session(ts);

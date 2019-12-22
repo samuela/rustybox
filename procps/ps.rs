@@ -129,8 +129,8 @@ unsafe extern "C" fn get_uptime() -> libc::c_ulong {
     mem_unit: 0,
     _f: [0; 0],
   };
-  if sysinfo(&mut info) < 0i32 {
-    return 0i32 as libc::c_ulong;
+  if sysinfo(&mut info) < 0 {
+    return 0 as libc::c_ulong;
   }
   return info.uptime as libc::c_ulong;
 }
@@ -430,7 +430,7 @@ unsafe extern "C" fn find_out_spec(mut name: *const libc::c_char) -> *const ps_o
   let mut i: libc::c_uint = 0;
   let mut buf: [libc::c_char; 120] = [0; 120];
   let mut p: *mut libc::c_char = buf.as_mut_ptr();
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i
     < (::std::mem::size_of::<[ps_out_t; 17]>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<ps_out_t>() as libc::c_ulong) as libc::c_uint
@@ -439,7 +439,7 @@ unsafe extern "C" fn find_out_spec(mut name: *const libc::c_char) -> *const ps_o
       name,
       out_spec[i as usize].name6.as_ptr(),
       6i32 as libc::c_ulong,
-    ) == 0i32
+    ) == 0
     {
       return &*out_spec.as_ptr().offset(i as isize) as *const ps_out_t;
     }
@@ -498,8 +498,8 @@ unsafe extern "C" fn parse_o(mut opt: *mut libc::c_char) {
 }
 unsafe extern "C" fn alloc_line_buffer() {
   let mut i: libc::c_int = 0;
-  let mut width: libc::c_int = 0i32;
-  i = 0i32;
+  let mut width: libc::c_int = 0;
+  i = 0;
   while i < (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).out_cnt {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).need_flags |=
       (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -523,7 +523,7 @@ unsafe extern "C" fn alloc_line_buffer() {
     if (width as libc::c_uint)
       .wrapping_sub((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).terminal_width)
       as libc::c_int
-      > 0i32
+      > 0
     {
       /* The rest does not fit on the screen */
       //out[i].width -= (width - terminal_width - 1);
@@ -545,7 +545,7 @@ unsafe extern "C" fn format_header() {
     return;
   }
   p = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).buffer;
-  i = 0i32;
+  i = 0;
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).out_cnt != 0 {
     loop {
       op = &mut *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -574,7 +574,7 @@ unsafe extern "C" fn format_process(mut ps: *const procps_status_t) {
   let mut i: libc::c_int = 0;
   let mut len: libc::c_int = 0;
   let mut p: *mut libc::c_char = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).buffer;
-  i = 0i32;
+  i = 0;
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).out_cnt != 0 {
     loop {
       (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -700,7 +700,7 @@ pub unsafe extern "C" fn ps_main(
     }
     format_process(p);
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn run_static_initializers() {
   out_spec = [

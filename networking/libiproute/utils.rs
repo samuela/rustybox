@@ -103,7 +103,7 @@ pub unsafe extern "C" fn get_unsigned(
   let mut res: libc::c_ulong = 0;
   let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if *arg != 0 {
-    res = strtoul(arg, &mut ptr, 0i32);
+    res = strtoul(arg, &mut ptr, 0);
     //FIXME: "" will be accepted too, is it correct?!
     if *ptr == 0
       && res
@@ -125,7 +125,7 @@ pub unsafe extern "C" fn get_u32(
   let mut res: libc::c_ulong = 0;
   let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if *arg != 0 {
-    res = strtoul(arg, &mut ptr, 0i32);
+    res = strtoul(arg, &mut ptr, 0);
     //FIXME: "" will be accepted too, is it correct?!
     if *ptr == 0 && res <= 0xffffffffu64 {
       return res as u32;
@@ -142,7 +142,7 @@ pub unsafe extern "C" fn get_u16(
   let mut res: libc::c_ulong = 0;
   let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if *arg != 0 {
-    res = strtoul(arg, &mut ptr, 0i32);
+    res = strtoul(arg, &mut ptr, 0);
     //FIXME: "" will be accepted too, is it correct?!
     if *ptr == 0 && res <= 0xffffi32 as libc::c_ulong {
       return res as u16;
@@ -159,38 +159,38 @@ pub unsafe extern "C" fn get_addr_1(
 ) -> libc::c_int {
   memset(
     addr as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<inet_prefix>() as libc::c_ulong,
   );
-  if strcmp(name, b"default\x00" as *const u8 as *const libc::c_char) == 0i32
-    || strcmp(name, b"all\x00" as *const u8 as *const libc::c_char) == 0i32
-    || strcmp(name, b"any\x00" as *const u8 as *const libc::c_char) == 0i32
+  if strcmp(name, b"default\x00" as *const u8 as *const libc::c_char) == 0
+    || strcmp(name, b"all\x00" as *const u8 as *const libc::c_char) == 0
+    || strcmp(name, b"any\x00" as *const u8 as *const libc::c_char) == 0
   {
     (*addr).family = family as u8;
     (*addr).bytelen = if family == 10i32 { 16i32 } else { 4i32 } as u8;
     (*addr).bitlen = -1i32 as i16;
-    return 0i32;
+    return 0;
   }
   if !strchr(name, ':' as i32).is_null() {
     (*addr).family = 10i32 as u8;
-    if family != 0i32 && family != 10i32 {
+    if family != 0 && family != 10i32 {
       return -1i32;
     }
-    if inet_pton(10i32, name, (*addr).data.as_mut_ptr() as *mut libc::c_void) <= 0i32 {
+    if inet_pton(10i32, name, (*addr).data.as_mut_ptr() as *mut libc::c_void) <= 0 {
       return -1i32;
     }
     (*addr).bytelen = 16i32 as u8;
     (*addr).bitlen = -1i32 as i16;
-    return 0i32;
+    return 0;
   }
-  if family != 0i32 && family != 2i32 {
+  if family != 0 && family != 2i32 {
     return -1i32;
   }
   /* Try to parse it as IPv4 */
   (*addr).family = 2i32 as u8;
   /* Doesn't handle e.g. "10.10", for example, "ip r l root 10.10/16" */
-  let mut i: libc::c_uint = 0i32 as libc::c_uint;
-  let mut n: libc::c_uint = 0i32 as libc::c_uint;
+  let mut i: libc::c_uint = 0 as libc::c_uint;
+  let mut n: libc::c_uint = 0 as libc::c_uint;
   let mut cp: *const libc::c_char = name.offset(-1);
   loop {
     cp = cp.offset(1);
@@ -209,14 +209,14 @@ pub unsafe extern "C" fn get_addr_1(
       i = i.wrapping_add(1);
       (i) <= 3i32 as libc::c_uint
     } {
-      n = 0i32 as libc::c_uint
+      n = 0 as libc::c_uint
     } else {
       return -1i32;
     }
   }
   (*addr).bytelen = 4i32 as u8;
   (*addr).bitlen = -1i32 as i16;
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn get_prefix_1(
   mut dst: *mut inet_prefix,
@@ -227,12 +227,12 @@ unsafe extern "C" fn get_prefix_1(
   let mut slash: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   memset(
     dst as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<inet_prefix>() as libc::c_ulong,
   );
-  if strcmp(arg, b"default\x00" as *const u8 as *const libc::c_char) == 0i32
-    || strcmp(arg, b"all\x00" as *const u8 as *const libc::c_char) == 0i32
-    || strcmp(arg, b"any\x00" as *const u8 as *const libc::c_char) == 0i32
+  if strcmp(arg, b"default\x00" as *const u8 as *const libc::c_char) == 0
+    || strcmp(arg, b"all\x00" as *const u8 as *const libc::c_char) == 0
+    || strcmp(arg, b"any\x00" as *const u8 as *const libc::c_char) == 0
   {
     (*dst).family = family as u8;
     /*dst->bytelen = 0; - done by memset */
@@ -243,7 +243,7 @@ unsafe extern "C" fn get_prefix_1(
   if !slash.is_null() {
     *slash = '\u{0}' as i32 as libc::c_char
   }
-  if get_addr_1(dst, arg, family) == 0i32 {
+  if get_addr_1(dst, arg, family) == 0 {
     (*dst).bitlen = if (*dst).family as libc::c_int == 10i32 {
       128i32
     } else {
@@ -257,11 +257,11 @@ unsafe extern "C" fn get_prefix_1(
         bitlen: 0,
         data: [0; 4],
       };
-      netmask_pfx.family = 0i32 as u8;
+      netmask_pfx.family = 0 as u8;
       plen =
-        crate::libbb::bb_strtonum::bb_strtou(slash.offset(1), 0 as *mut *mut libc::c_char, 0i32);
+        crate::libbb::bb_strtonum::bb_strtou(slash.offset(1), 0 as *mut *mut libc::c_char, 0);
       if (*bb_errno != 0 || plen > (*dst).bitlen as libc::c_uint)
-        && get_addr_1(&mut netmask_pfx, slash.offset(1), family) != 0i32
+        && get_addr_1(&mut netmask_pfx, slash.offset(1), family) != 0
       {
         current_block = 5733981528044815378;
       } else {
@@ -290,7 +290,7 @@ unsafe extern "C" fn get_prefix_1(
           if host & host.wrapping_add(1i32 as libc::c_uint) != 0 {
             current_block = 5733981528044815378;
           } else {
-            plen = 0i32 as libc::c_uint;
+            plen = 0 as libc::c_uint;
             while mask != 0 {
               plen = plen.wrapping_add(1);
               mask <<= 1i32
@@ -352,7 +352,7 @@ pub unsafe extern "C" fn get_addr(
       arg,
     );
   }
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn get_prefix(
@@ -469,7 +469,7 @@ pub unsafe extern "C" fn inet_addr_match(
       return 1i32;
     }
   }
-  return 0i32;
+  return 0;
 }
 
 /* UNUSED */

@@ -235,7 +235,7 @@ unsafe extern "C" fn xconnect_ftpdata() -> libc::c_int {
       .buf
       .as_mut_ptr(),
   );
-  if port_num < 0i32 {
+  if port_num < 0 {
     ftp_die(b"PASV\x00" as *const u8 as *const libc::c_char);
   }
   crate::libbb::xconnect::set_nport(
@@ -280,7 +280,7 @@ unsafe extern "C" fn pump_data_and_QUIT(mut from: libc::c_int, mut to: libc::c_i
     b"QUIT\x00" as *const u8 as *const libc::c_char,
     0 as *const libc::c_char,
   );
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn ftp_receive(
   mut local_path: *const libc::c_char,
@@ -288,20 +288,20 @@ unsafe extern "C" fn ftp_receive(
 ) -> libc::c_int {
   let mut fd_data: libc::c_int = 0;
   let mut fd_local: libc::c_int = -1i32;
-  let mut beg_range: off_t = 0i32 as off_t;
+  let mut beg_range: off_t = 0 as off_t;
   /* connect to the data socket */
   fd_data = xconnect_ftpdata();
   if ftpcmd(b"SIZE\x00" as *const u8 as *const libc::c_char, server_path) != 213i32 {
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_continue = 0i32
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_continue = 0
   }
   if *local_path.offset(0) as libc::c_int == '-' as i32 && *local_path.offset(1) == 0 {
     fd_local = 1i32;
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_continue = 0i32
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_continue = 0
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_continue != 0 {
     let mut sbuf: stat = std::mem::zeroed();
     /* lstat would be wrong here! */
-    if stat(local_path, &mut sbuf) < 0i32 {
+    if stat(local_path, &mut sbuf) < 0 {
       crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
         b"stat\x00" as *const u8 as *const libc::c_char,
       );
@@ -309,7 +309,7 @@ unsafe extern "C" fn ftp_receive(
     if sbuf.st_size > 0 {
       beg_range = sbuf.st_size
     } else {
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_continue = 0i32
+      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_continue = 0
     }
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_continue != 0 {
@@ -327,7 +327,7 @@ unsafe extern "C" fn ftp_receive(
       0 as *const libc::c_char,
     ) != 350i32
     {
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_continue = 0i32
+      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_continue = 0
     }
   }
   if ftpcmd(b"RETR\x00" as *const u8 as *const libc::c_char, server_path) > 150i32 {
@@ -356,10 +356,10 @@ unsafe extern "C" fn ftp_send(
   /* connect to the data socket */
   fd_data = xconnect_ftpdata();
   /* get the local file */
-  fd_local = 0i32;
+  fd_local = 0;
   if *local_path.offset(0) as libc::c_int != '-' as i32 || *local_path.offset(1) as libc::c_int != 0
   {
-    fd_local = crate::libbb::xfuncs_printf::xopen(local_path, 0i32)
+    fd_local = crate::libbb::xfuncs_printf::xopen(local_path, 0)
   }
   response = ftpcmd(b"STOR\x00" as *const u8 as *const libc::c_char, server_path);
   match response {

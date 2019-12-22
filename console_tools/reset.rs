@@ -51,5 +51,5 @@ pub unsafe extern "C" fn reset_main(
      * people want it to reset echo etc: */
     return crate::coreutils::stty::stty_main(2i32, args.as_ptr() as *mut *mut libc::c_char);
   }
-  return 0i32;
+  return 0;
 }

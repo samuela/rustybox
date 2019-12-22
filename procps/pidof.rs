@@ -146,7 +146,7 @@ pub unsafe extern "C" fn pidof_main(
             (b" %u\x00" as *const u8 as *const libc::c_char).offset(first as isize),
             *pl as libc::c_uint,
           );
-          first = 0i32 as libc::c_uint;
+          first = 0 as libc::c_uint;
           if 1i32 != 0 && opt & OPT_SINGLE as libc::c_int as libc::c_uint != 0 {
             break;
           }

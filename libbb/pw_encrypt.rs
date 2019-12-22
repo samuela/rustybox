@@ -94,7 +94,7 @@ use crate::librb::sha1_ctx_t;
  */
 unsafe extern "C" fn i64c(mut i: libc::c_int) -> libc::c_int {
   i &= 0x3fi32;
-  if i == 0i32 {
+  if i == 0 {
     return '.' as i32;
   }
   if i == 1i32 {
@@ -178,7 +178,7 @@ pub unsafe extern "C" fn crypt_make_pw_salt(
     if *algo.offset(0) as libc::c_int | 0x20i32 == 's' as i32 {
       /* sha */
       *salt.offset(1) = ('5' as i32
-        + (strcasecmp(algo, b"sha512\x00" as *const u8 as *const libc::c_char) == 0i32)
+        + (strcasecmp(algo, b"sha512\x00" as *const u8 as *const libc::c_char) == 0)
           as libc::c_int) as libc::c_char;
       len = 16i32 / 2i32
     }
@@ -193,7 +193,7 @@ unsafe extern "C" fn to64(
 ) -> *mut libc::c_char {
   loop {
     n -= 1;
-    if !(n >= 0i32) {
+    if !(n >= 0) {
       break;
     }
     /* *s++ = ascii64[v & 0x3f]; */
@@ -799,24 +799,24 @@ static mut bits8: [u8; 8] = [
 ];
 unsafe extern "C" fn ascii_to_bin(mut ch: libc::c_char) -> libc::c_int {
   if ch as libc::c_int > 'z' as i32 {
-    return 0i32;
+    return 0;
   }
   if ch as libc::c_int >= 'a' as i32 {
     return ch as libc::c_int - 'a' as i32 + 38i32;
   }
   if ch as libc::c_int > 'Z' as i32 {
-    return 0i32;
+    return 0;
   }
   if ch as libc::c_int >= 'A' as i32 {
     return ch as libc::c_int - 'A' as i32 + 12i32;
   }
   if ch as libc::c_int > '9' as i32 {
-    return 0i32;
+    return 0;
   }
   if ch as libc::c_int >= '.' as i32 {
     return ch as libc::c_int - '.' as i32;
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn const_des_init() -> *mut const_des_ctx {
   let mut i: libc::c_uint = 0;
@@ -828,11 +828,11 @@ unsafe extern "C" fn const_des_init() -> *mut const_des_ctx {
    * Convert the inverted S-boxes into 4 arrays of 8 bits.
    * Each will handle 12 bits of the S-box input.
    */
-  b = 0i32 as libc::c_uint;
+  b = 0 as libc::c_uint;
   while b < 4i32 as libc::c_uint {
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     while i < 64i32 as libc::c_uint {
-      j = 0i32 as libc::c_uint;
+      j = 0 as libc::c_uint;
       while j < 64i32 as libc::c_uint {
         let mut lo: u8 = 0;
         let mut hi: u8 = 0;
@@ -856,7 +856,7 @@ unsafe extern "C" fn const_des_init() -> *mut const_des_ctx {
   /*
    * Set up the initial & final permutations into a useful form.
    */
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < 64i32 as libc::c_uint {
     (*cctx).final_perm[i as usize] = (IP[i as usize] as libc::c_int - 1i32) as u8;
     i = i.wrapping_add(1)
@@ -880,11 +880,11 @@ unsafe extern "C" fn des_init(
     ctx = xmalloc(::std::mem::size_of::<des_ctx>() as libc::c_ulong) as *mut des_ctx
   }
   (*ctx).const_ctx = cctx;
-  (*ctx).saltbits = 0i32 as u32;
+  (*ctx).saltbits = 0 as u32;
   bits28 = bits32.as_ptr().offset(4);
   bits24 = bits28.offset(4);
   /* Initialise the inverted key permutation. */
-  i = 0i32;
+  i = 0;
   while i < 64i32 {
     (*ctx).inv_key_perm[i as usize] = 255i32 as u8;
     i += 1
@@ -893,14 +893,14 @@ unsafe extern "C" fn des_init(
    * Invert the key permutation and initialise the inverted key
    * compression permutation.
    */
-  i = 0i32;
+  i = 0;
   while i < 56i32 {
     (*ctx).inv_key_perm[(key_perm[i as usize] as libc::c_int - 1i32) as usize] = i as u8;
     (*ctx).inv_comp_perm[i as usize] = 255i32 as u8;
     i += 1
   }
   /* Invert the key compression permutation. */
-  i = 0i32;
+  i = 0;
   while i < 48i32 {
     (*ctx).inv_comp_perm[(comp_perm[i as usize] as libc::c_int - 1i32) as usize] = i as u8;
     i += 1
@@ -909,17 +909,17 @@ unsafe extern "C" fn des_init(
    * Set up the OR-mask arrays for the initial and final permutations,
    * and for the key initial and compression permutations.
    */
-  k = 0i32;
+  k = 0;
   while k < 8i32 {
     let mut il: u32 = 0;
     let mut ir: u32 = 0;
     let mut fl: u32 = 0;
     let mut fr: u32 = 0;
-    i = 0i32;
+    i = 0;
     while i < 256i32 {
-      fl = 0i32 as u32;
-      fr = 0i32 as u32;
-      j = 0i32;
+      fl = 0 as u32;
+      fr = 0 as u32;
+      j = 0;
       while j < 8i32 {
         inbit = 8i32 * k + j;
         if i & bits8[j as usize] as libc::c_int != 0 {
@@ -936,11 +936,11 @@ unsafe extern "C" fn des_init(
       (*ctx).fp_maskr[k as usize][i as usize] = fr;
       i += 1
     }
-    i = 0i32;
+    i = 0;
     while i < 128i32 {
-      il = 0i32 as u32;
-      ir = 0i32 as u32;
-      j = 0i32;
+      il = 0 as u32;
+      ir = 0 as u32;
+      j = 0;
       while j < 7i32 {
         inbit = 8i32 * k + j;
         if i & bits8[(j + 1i32) as usize] as libc::c_int != 0 {
@@ -957,9 +957,9 @@ unsafe extern "C" fn des_init(
       }
       (*ctx).key_perm_maskl[k as usize][i as usize] = il;
       (*ctx).key_perm_maskr[k as usize][i as usize] = ir;
-      il = 0i32 as u32;
-      ir = 0i32 as u32;
-      j = 0i32;
+      il = 0 as u32;
+      ir = 0 as u32;
+      j = 0;
       while j < 7i32 {
         inbit = 7i32 * k + j;
         if i & bits8[(j + 1i32) as usize] as libc::c_int != 0 {
@@ -984,17 +984,17 @@ unsafe extern "C" fn des_init(
    * Invert the P-box permutation, and convert into OR-masks for
    * handling the output of the S-box arrays setup above.
    */
-  i = 0i32;
+  i = 0;
   while i < 32i32 {
     (*ctx).un_pbox[(pbox[i as usize] as libc::c_int - 1i32) as usize] = i as u8;
     i += 1
   }
-  b = 0i32;
+  b = 0;
   while b < 4i32 {
-    i = 0i32;
+    i = 0;
     while i < 256i32 {
-      p = 0i32 as u32;
-      j = 0i32;
+      p = 0 as u32;
+      j = 0;
       while j < 8i32 {
         if i & bits8[j as usize] as libc::c_int != 0 {
           p |= bits32[(*ctx).un_pbox[(8i32 * b + j) as usize] as usize]
@@ -1012,10 +1012,10 @@ unsafe extern "C" fn setup_salt(mut ctx: *mut des_ctx, mut salt: u32) {
   let mut obit: u32 = 0;
   let mut saltbit: u32 = 0;
   let mut i: libc::c_int = 0;
-  (*ctx).saltbits = 0i32 as u32;
+  (*ctx).saltbits = 0 as u32;
   saltbit = 1i32 as u32;
   obit = 0x800000i32 as u32;
-  i = 0i32;
+  i = 0;
   while i < 24i32 {
     if salt & saltbit != 0 {
       (*ctx).saltbits |= obit
@@ -1090,8 +1090,8 @@ unsafe extern "C" fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_c
   /*
    * Rotate subkeys and do compression permutation.
    */
-  shifts = 0i32;
-  round = 0i32;
+  shifts = 0;
+  round = 0;
   while round < 16i32 {
     let mut t0: u32 = 0;
     let mut t1: u32 = 0;
@@ -1141,7 +1141,7 @@ unsafe extern "C" fn do_des(
   /* Do initial permutation (IP). */
   /* -65 bytes (using the fact that l_in == r_in == 0) */
   /* using the fact that ip_maskX[] is constant (written to by des_init) */
-  r = 0i32 as u32;
+  r = 0 as u32;
   l = r;
   loop {
     /* Do each round. */
@@ -1342,7 +1342,7 @@ unsafe extern "C" fn md5_crypt(
   crate::libbb::hash_md5_sha::md5_hash(&mut ctx1, pw as *const libc::c_void, pw_len as size_t);
   crate::libbb::hash_md5_sha::md5_end(&mut ctx1, final_0.as_mut_ptr() as *mut libc::c_void);
   pl = pw_len;
-  while pl > 0i32 {
+  while pl > 0 {
     crate::libbb::hash_md5_sha::md5_hash(
       &mut ctx,
       final_0.as_mut_ptr() as *const libc::c_void,
@@ -1353,7 +1353,7 @@ unsafe extern "C" fn md5_crypt(
   /* Then something really weird... */
   memset(
     final_0.as_mut_ptr() as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<[libc::c_uchar; 17]>() as libc::c_ulong,
   );
   i = pw_len;
@@ -1374,7 +1374,7 @@ unsafe extern "C" fn md5_crypt(
    * On a 60 Mhz Pentium this takes 34 msec, so you would
    * need 30 seconds to build a 1000 entry dictionary...
    */
-  i = 0i32; /* 12 bytes max (sl is up to 8 bytes) */
+  i = 0; /* 12 bytes max (sl is up to 8 bytes) */
   while i < 1000i32 {
     crate::libbb::hash_md5_sha::md5_begin(&mut ctx1);
     if i & 1i32 != 0 {
@@ -1407,7 +1407,7 @@ unsafe extern "C" fn md5_crypt(
   p = result.offset(sl as isize).offset(4);
   /* Add 5*4+2 = 22 bytes of hash, + NUL byte. */
   final_0[16] = final_0[5];
-  i = 0i32;
+  i = 0;
   while i < 5i32 {
     let mut l: libc::c_uint = ((final_0[i as usize] as libc::c_int) << 16i32
       | (final_0[(i + 6i32) as usize] as libc::c_int) << 8i32
@@ -1420,7 +1420,7 @@ unsafe extern "C" fn md5_crypt(
   /* Don't leave anything around in vm they could use. */
   memset(
     final_0.as_mut_ptr() as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<[libc::c_uchar; 17]>() as libc::c_ulong,
   );
   return result;
@@ -1495,7 +1495,7 @@ unsafe extern "C" fn sha_crypt(
   *fresh19 = '$' as i32 as libc::c_char;
   rounds = 5000i32 as libc::c_uint;
   salt_data = salt_data.offset(3);
-  if strncmp(salt_data, str_rounds.as_ptr(), 7i32 as libc::c_ulong) == 0i32 {
+  if strncmp(salt_data, str_rounds.as_ptr(), 7i32 as libc::c_ulong) == 0 {
     /* 7 == strlen("rounds=") */
     let mut endp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     cnt = crate::libbb::bb_strtonum::bb_strtou(salt_data.offset(7), &mut endp, 10i32);
@@ -1647,8 +1647,8 @@ unsafe extern "C" fn sha_crypt(
   /* Take the binary representation of the length of the key and for every
   1 add the alternate sum, for every 0 the key.  */
   cnt = key_len;
-  while cnt != 0i32 as libc::c_uint {
-    if cnt & 1i32 as libc::c_uint != 0i32 as libc::c_uint {
+  while cnt != 0 as libc::c_uint {
+    if cnt & 1i32 as libc::c_uint != 0 as libc::c_uint {
       sha_hash.expect("non-null function pointer")(
         &mut L.ctx as *mut C2RustUnnamed_1 as *mut libc::c_void,
         L.alt_result.as_mut_ptr() as *const libc::c_void,
@@ -1673,7 +1673,7 @@ unsafe extern "C" fn sha_crypt(
   sha_begin.expect("non-null function pointer")(
     &mut L.alt_ctx as *mut C2RustUnnamed_0 as *mut libc::c_void,
   );
-  cnt = 0i32 as libc::c_uint;
+  cnt = 0 as libc::c_uint;
   while cnt < key_len {
     sha_hash.expect("non-null function pointer")(
       &mut L.alt_ctx as *mut C2RustUnnamed_0 as *mut libc::c_void,
@@ -1710,7 +1710,7 @@ unsafe extern "C" fn sha_crypt(
   sha_begin.expect("non-null function pointer")(
     &mut L.alt_ctx as *mut C2RustUnnamed_0 as *mut libc::c_void,
   );
-  cnt = 0i32 as libc::c_uint;
+  cnt = 0 as libc::c_uint;
   while cnt < (16i32 + L.alt_result[0] as libc::c_int) as libc::c_uint {
     sha_hash.expect("non-null function pointer")(
       &mut L.alt_ctx as *mut C2RustUnnamed_0 as *mut libc::c_void,
@@ -1744,13 +1744,13 @@ unsafe extern "C" fn sha_crypt(
   );
   /* Repeatedly run the collected hash value through SHA to burn
   CPU cycles.  */
-  cnt = 0i32 as libc::c_uint;
+  cnt = 0 as libc::c_uint;
   while cnt < rounds {
     sha_begin.expect("non-null function pointer")(
       &mut L.ctx as *mut C2RustUnnamed_1 as *mut libc::c_void,
     );
     /* Add key or last result.  */
-    if cnt & 1i32 as libc::c_uint != 0i32 as libc::c_uint {
+    if cnt & 1i32 as libc::c_uint != 0 as libc::c_uint {
       sha_hash.expect("non-null function pointer")(
         &mut L.ctx as *mut C2RustUnnamed_1 as *mut libc::c_void,
         key_data as *const libc::c_void,
@@ -1764,7 +1764,7 @@ unsafe extern "C" fn sha_crypt(
       );
     }
     /* Add salt for numbers not divisible by 3.  */
-    if cnt.wrapping_rem(3i32 as libc::c_uint) != 0i32 as libc::c_uint {
+    if cnt.wrapping_rem(3i32 as libc::c_uint) != 0 as libc::c_uint {
       sha_hash.expect("non-null function pointer")(
         &mut L.ctx as *mut C2RustUnnamed_1 as *mut libc::c_void,
         salt_data as *const libc::c_void,
@@ -1772,7 +1772,7 @@ unsafe extern "C" fn sha_crypt(
       );
     }
     /* Add key for numbers not divisible by 7.  */
-    if cnt.wrapping_rem(7i32 as libc::c_uint) != 0i32 as libc::c_uint {
+    if cnt.wrapping_rem(7i32 as libc::c_uint) != 0 as libc::c_uint {
       sha_hash.expect("non-null function pointer")(
         &mut L.ctx as *mut C2RustUnnamed_1 as *mut libc::c_void,
         key_data as *const libc::c_void,
@@ -1780,7 +1780,7 @@ unsafe extern "C" fn sha_crypt(
       );
     }
     /* Add key or last result.  */
-    if cnt & 1i32 as libc::c_uint != 0i32 as libc::c_uint {
+    if cnt & 1i32 as libc::c_uint != 0 as libc::c_uint {
       sha_hash.expect("non-null function pointer")(
         &mut L.ctx as *mut C2RustUnnamed_1 as *mut libc::c_void,
         L.alt_result.as_mut_ptr() as *const libc::c_void,
@@ -1804,7 +1804,7 @@ unsafe extern "C" fn sha_crypt(
   //	bb_uuencode(cp, src, length, bb_uuenc_tbl_XXXbase64);
   if _32or64 == 32i32 {
     /* sha256 */
-    let mut i: libc::c_uint = 0i32 as libc::c_uint;
+    let mut i: libc::c_uint = 0 as libc::c_uint;
     loop {
       let mut j: libc::c_uint = i.wrapping_add(10i32 as libc::c_uint);
       let mut k: libc::c_uint = i.wrapping_add(20i32 as libc::c_uint);
@@ -1828,7 +1828,7 @@ unsafe extern "C" fn sha_crypt(
       | L.alt_result[30] as libc::c_int) as libc::c_uint;
     resptr = to64(resptr, w_0, 3i32)
   } else {
-    let mut i_0: libc::c_uint = 0i32 as libc::c_uint;
+    let mut i_0: libc::c_uint = 0 as libc::c_uint;
     loop {
       let mut j_0: libc::c_uint = i_0.wrapping_add(21i32 as libc::c_uint);
       let mut k_0: libc::c_uint = i_0.wrapping_add(42i32 as libc::c_uint);
@@ -1849,7 +1849,7 @@ unsafe extern "C" fn sha_crypt(
       i_0 = j_0.wrapping_add(1i32 as libc::c_uint)
     }
     let mut w_2: libc::c_uint =
-      (0i32 << 16i32 | 0i32 << 8i32 | L.alt_result[63] as libc::c_int) as libc::c_uint;
+      (0i32 << 16i32 | 0 << 8i32 | L.alt_result[63] as libc::c_int) as libc::c_uint;
     resptr = to64(resptr, w_2, 2i32)
     /* was:
     b64_from_24bit(alt_result[0], alt_result[21], alt_result[42], 4);
@@ -1882,17 +1882,17 @@ unsafe extern "C" fn sha_crypt(
   information.  */
   memset(
     &mut L as *mut C2RustUnnamed as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<C2RustUnnamed>() as libc::c_ulong,
   ); /* [alt]_ctx and XXX_result buffers */
   memset(
     key_data as *mut libc::c_void,
-    0i32,
+    0,
     key_len as libc::c_ulong,
   ); /* also p_bytes */
   memset(
     salt_data as *mut libc::c_void,
-    0i32,
+    0,
     salt_len as libc::c_ulong,
   ); /* also s_bytes */
   free(key_data as *mut libc::c_void);

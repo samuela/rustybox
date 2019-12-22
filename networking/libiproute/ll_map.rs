@@ -208,7 +208,7 @@ pub unsafe extern "C" fn ll_remember_index(
   let mut imp: *mut *mut idxmap = std::ptr::null_mut();
   let mut tb: [*mut rtattr; 50] = [0 as *mut rtattr; 50];
   if (*n).nlmsg_type as libc::c_int != RTM_NEWLINK as libc::c_int {
-    return 0i32;
+    return 0;
   }
   if ((*n).nlmsg_len as libc::c_ulong)
     < (::std::mem::size_of::<*mut ifinfomsg>() as libc::c_ulong).wrapping_add(
@@ -246,7 +246,7 @@ pub unsafe extern "C" fn ll_remember_index(
     ) as libc::c_int,
   );
   if tb[IFLA_IFNAME as libc::c_int as usize].is_null() {
-    return 0i32;
+    return 0;
   }
   if idxmap.is_null() {
     idxmap = crate::libbb::xfuncs_printf::xzalloc(
@@ -304,10 +304,10 @@ pub unsafe extern "C" fn ll_remember_index(
       alen as libc::c_ulong,
     );
   } else {
-    (*im).alen = 0i32;
+    (*im).alen = 0;
     memset(
       (*im).addr.as_mut_ptr() as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<[libc::c_uchar; 8]>() as libc::c_ulong,
     );
   }
@@ -321,12 +321,12 @@ pub unsafe extern "C" fn ll_remember_index(
         .wrapping_add(0i32 as libc::c_ulong) as isize,
     ) as *mut libc::c_void as *const libc::c_char,
   );
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn ll_idx_n2a(mut idx: libc::c_int) -> *const libc::c_char
 /*, char *buf*/ {
   let mut im: *mut idxmap = std::ptr::null_mut();
-  if idx == 0i32 {
+  if idx == 0 {
     return b"*\x00" as *const u8 as *const libc::c_char;
   }
   im = find_by_index(idx);
@@ -350,22 +350,22 @@ pub unsafe extern "C" fn ll_index_to_name(mut idx: libc::c_int) -> *const libc::
 #[no_mangle]
 pub unsafe extern "C" fn ll_index_to_flags(mut idx: libc::c_int) -> libc::c_uint {
   let mut im: *mut idxmap = std::ptr::null_mut();
-  if idx == 0i32 {
-    return 0i32 as libc::c_uint;
+  if idx == 0 {
+    return 0 as libc::c_uint;
   }
   im = find_by_index(idx);
   if !im.is_null() {
     return (*im).flags;
   }
-  return 0i32 as libc::c_uint;
+  return 0 as libc::c_uint;
 }
 #[no_mangle]
 pub unsafe extern "C" fn xll_name_to_index(mut name: *const libc::c_char) -> libc::c_int {
-  let mut ret: libc::c_int = 0i32;
+  let mut ret: libc::c_int = 0;
   /* caching is not warranted - no users which repeatedly call it */
   ret = if_nametoindex(name) as libc::c_int;
   /* out:*/
-  if ret <= 0i32 {
+  if ret <= 0 {
     crate::libbb::verror_msg::bb_error_msg_and_die(
       b"can\'t find device \'%s\'\x00" as *const u8 as *const libc::c_char,
       name,
@@ -377,7 +377,7 @@ pub unsafe extern "C" fn xll_name_to_index(mut name: *const libc::c_char) -> lib
 pub unsafe extern "C" fn ll_init_map(mut rth: *mut rtnl_handle) -> libc::c_int {
   crate::networking::libiproute::libnetlink::xrtnl_wilddump_request(
     rth,
-    0i32,
+    0,
     RTM_GETLINK as libc::c_int,
   );
   crate::networking::libiproute::libnetlink::xrtnl_dump_filter(
@@ -392,5 +392,5 @@ pub unsafe extern "C" fn ll_init_map(mut rth: *mut rtnl_handle) -> libc::c_int {
     ),
     0 as *mut libc::c_void,
   );
-  return 0i32;
+  return 0;
 }

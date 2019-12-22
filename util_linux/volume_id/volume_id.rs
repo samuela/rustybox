@@ -168,7 +168,7 @@ pub unsafe extern "C" fn volume_id_probe_all(mut id: *mut volume_id, mut size: u
   let mut i: libc::c_uint = 0;
   /* probe for raid first, cause fs probes may be successful on raid members */
   if size != 0 {
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     loop {
       if !(i
         < (::std::mem::size_of::<[raid_probe_fptr; 1]>() as libc::c_ulong)
@@ -178,7 +178,7 @@ pub unsafe extern "C" fn volume_id_probe_all(mut id: *mut volume_id, mut size: u
         current_block = 7815301370352969686;
         break;
       }
-      if raid1[i as usize].expect("non-null function pointer")(id, size) == 0i32 {
+      if raid1[i as usize].expect("non-null function pointer")(id, size) == 0 {
         current_block = 13835600803501426168;
         break;
       }
@@ -193,7 +193,7 @@ pub unsafe extern "C" fn volume_id_probe_all(mut id: *mut volume_id, mut size: u
   }
   match current_block {
     7815301370352969686 => {
-      i = 0i32 as libc::c_uint;
+      i = 0 as libc::c_uint;
       loop {
         if !(i
           < (::std::mem::size_of::<[probe_fptr; 1]>() as libc::c_ulong)
@@ -203,7 +203,7 @@ pub unsafe extern "C" fn volume_id_probe_all(mut id: *mut volume_id, mut size: u
           current_block = 2979737022853876585;
           break;
         }
-        if raid2[i as usize].expect("non-null function pointer")(id) == 0i32 {
+        if raid2[i as usize].expect("non-null function pointer")(id) == 0 {
           current_block = 13835600803501426168;
           break;
         }
@@ -218,7 +218,7 @@ pub unsafe extern "C" fn volume_id_probe_all(mut id: *mut volume_id, mut size: u
         _ =>
         /* signature in the first block, only small buffer needed */
         {
-          i = 0i32 as libc::c_uint;
+          i = 0 as libc::c_uint;
           loop {
             if !(i
               < (::std::mem::size_of::<[probe_fptr; 6]>() as libc::c_ulong)
@@ -228,7 +228,7 @@ pub unsafe extern "C" fn volume_id_probe_all(mut id: *mut volume_id, mut size: u
               current_block = 17833034027772472439;
               break;
             }
-            if fs1[i as usize].expect("non-null function pointer")(id) == 0i32 {
+            if fs1[i as usize].expect("non-null function pointer")(id) == 0 {
               current_block = 13835600803501426168;
               break;
             }
@@ -244,16 +244,16 @@ pub unsafe extern "C" fn volume_id_probe_all(mut id: *mut volume_id, mut size: u
               /* fill buffer with maximum */
               crate::util_linux::volume_id::util::volume_id_get_buffer(
                 id,
-                0i32 as u64,
+                0 as u64,
                 0x11000i32 as size_t,
               );
-              i = 0i32 as libc::c_uint;
+              i = 0 as libc::c_uint;
               while i
                 < (::std::mem::size_of::<[probe_fptr; 17]>() as libc::c_ulong)
                   .wrapping_div(::std::mem::size_of::<probe_fptr>() as libc::c_ulong)
                   as libc::c_uint
               {
-                if fs2[i as usize].expect("non-null function pointer")(id) == 0i32 {
+                if fs2[i as usize].expect("non-null function pointer")(id) == 0 {
                   break;
                 }
                 if (*id).error != 0 {

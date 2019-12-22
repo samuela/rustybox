@@ -17,7 +17,7 @@ pub unsafe extern "C" fn rmdir_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut status: libc::c_int = 0i32; /* Match gnu rmdir msg. */
+  let mut status: libc::c_int = 0; /* Match gnu rmdir msg. */
   let mut flags: libc::c_int = 0;
   let mut path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   flags = crate::libbb::getopt32::getopt32long(
@@ -39,7 +39,7 @@ pub unsafe extern "C" fn rmdir_main(
           path,
         );
       }
-      if rmdir(path) < 0i32 {
+      if rmdir(path) < 0 {
         if flags & (1i32 << 2i32) * 1i32 != 0 && *bb_errno == 39i32 {
           break;
         }
@@ -50,7 +50,7 @@ pub unsafe extern "C" fn rmdir_main(
         status = 1i32;
         break;
       } else {
-        if !(flags & 1i32 << 0i32 != 0) {
+        if !(flags & 1i32 << 0 != 0) {
           break;
         }
         /* Note: path was not "" since rmdir succeeded. */

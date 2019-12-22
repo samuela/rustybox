@@ -37,8 +37,8 @@ pub type C2RustUnnamed = libc::c_uint;
 #[no_mangle]
 pub unsafe extern "C" fn xmalloc_readlink(mut path: *const libc::c_char) -> *mut libc::c_char {
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* how large we will grow strings by */
-  let mut bufsize: libc::c_int = 0i32;
-  let mut readsize: libc::c_int = 0i32;
+  let mut bufsize: libc::c_int = 0;
+  let mut readsize: libc::c_int = 0;
   loop {
     bufsize += GROWBY as libc::c_int;
     buf = crate::libbb::xfuncs_printf::xrealloc(buf as *mut libc::c_void, bufsize as size_t)
@@ -264,7 +264,7 @@ pub unsafe extern "C" fn xmalloc_realpath_coreutils(
   mut path: *const libc::c_char,
 ) -> *mut libc::c_char {
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   buf = xmalloc_realpath(path);
   /*
    * There is one case when "readlink -f" and

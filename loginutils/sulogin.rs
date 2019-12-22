@@ -51,7 +51,7 @@ pub unsafe extern "C" fn sulogin_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut timeout: libc::c_int = 0i32;
+  let mut timeout: libc::c_int = 0;
   let mut pwd: *mut passwd = std::ptr::null_mut();
   let mut shell: *const libc::c_char = std::ptr::null();
   /* Note: sulogin is not a suid app. It is meant to be run by init
@@ -62,7 +62,7 @@ pub unsafe extern "C" fn sulogin_main(
    * are no more dangerous here than in e.g. cp applet.
    */
   logmode = LOGMODE_BOTH as libc::c_int as smallint;
-  openlog(applet_name, 0i32, 4i32 << 3i32);
+  openlog(applet_name, 0, 4i32 << 3i32);
   crate::libbb::getopt32::getopt32(
     argv,
     b"t:+\x00" as *const u8 as *const libc::c_char,
@@ -90,14 +90,14 @@ pub unsafe extern "C" fn sulogin_main(
       b"Give root password for system maintenance\n(or type Control-D for normal startup):\x00"
         as *const u8 as *const libc::c_char,
     );
-    if r < 0i32 {
+    if r < 0 {
       /* ^D, ^C, timeout, or read error */
       crate::libbb::verror_msg::bb_simple_info_msg(
         b"normal startup\x00" as *const u8 as *const libc::c_char,
       );
-      return 0i32;
+      return 0;
     }
-    if r > 0i32 {
+    if r > 0 {
       break;
     }
     crate::libbb::bb_do_delay::bb_do_delay(3i32);

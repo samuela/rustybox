@@ -45,7 +45,7 @@ pub const DAEMON_CHDIR_ROOT: C2RustUnnamed = 1;
 #[no_mangle]
 pub unsafe extern "C" fn set_task_comm(mut comm: *const libc::c_char) {
   /* okay if too long (truncates) */
-  prctl(15i32, comm as libc::c_long, 0i32, 0i32, 0i32);
+  prctl(15i32, comm as libc::c_long, 0, 0, 0);
 }
 /*
  * NOFORK/NOEXEC support
@@ -62,9 +62,9 @@ pub unsafe extern "C" fn spawn(mut argv: *mut *mut libc::c_char) -> pid_t {
   let mut pid: pid_t = 0;
   crate::libbb::xfuncs_printf::fflush_all();
   /* Be nice to nommu machines. */
-  ::std::ptr::write_volatile(&mut failed as *mut libc::c_int, 0i32);
+  ::std::ptr::write_volatile(&mut failed as *mut libc::c_int, 0);
   pid = vfork();
-  if pid < 0i32 {
+  if pid < 0 {
     /* error */
     return pid;
   }
@@ -88,7 +88,7 @@ pub unsafe extern "C" fn spawn(mut argv: *mut *mut libc::c_char) -> pid_t {
    * Interested party can wait on pid and learn exit code.
    * If 111 - then it (most probably) failed to exec */
   if failed != 0 {
-    crate::libbb::xfuncs::safe_waitpid(pid, 0 as *mut libc::c_int, 0i32); /* prevent zombie */
+    crate::libbb::xfuncs::safe_waitpid(pid, 0 as *mut libc::c_int, 0); /* prevent zombie */
     *bb_errno = failed;
     return -1i32;
   }
@@ -98,7 +98,7 @@ pub unsafe extern "C" fn spawn(mut argv: *mut *mut libc::c_char) -> pid_t {
 #[no_mangle]
 pub unsafe extern "C" fn xspawn(mut argv: *mut *mut libc::c_char) -> pid_t {
   let mut pid: pid_t = spawn(argv);
-  if pid < 0i32 {
+  if pid < 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(*argv);
   }
   return pid;
@@ -118,16 +118,16 @@ pub unsafe extern "C" fn bb_daemonize_or_rexec(mut flags: libc::c_int) {
     crate::libbb::xfuncs_printf::xchdir(b"/\x00" as *const u8 as *const libc::c_char);
   }
   fd = open(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0o2i32);
-  if fd < 0i32 {
+  if fd < 0 {
     /* NB: we can be called as bb_sanitize_stdio() from init
      * or mdev, and there /dev/null may legitimately not (yet) exist!
      * Do not use xopen above, but obtain _ANY_ open descriptor,
      * even bogus one as below. */
-    fd = crate::libbb::xfuncs_printf::xopen(b"/\x00" as *const u8 as *const libc::c_char, 0i32)
+    fd = crate::libbb::xfuncs_printf::xopen(b"/\x00" as *const u8 as *const libc::c_char, 0)
     /* don't believe this can fail */
   }
   if flags & DAEMON_DEVNULL_STDIO as libc::c_int != 0 {
-    crate::libbb::xfuncs_printf::xdup2(fd, 0i32);
+    crate::libbb::xfuncs_printf::xdup2(fd, 0);
     crate::libbb::xfuncs_printf::xdup2(fd, 1i32);
     crate::libbb::xfuncs_printf::xdup2(fd, 2i32);
   } else {
@@ -150,7 +150,7 @@ pub unsafe extern "C" fn bb_daemonize_or_rexec(mut flags: libc::c_int) {
     //				_exit(EXIT_SUCCESS); /* parent */
     //		}
     setsid();
-    dup2(fd, 0i32);
+    dup2(fd, 0);
     dup2(fd, 1i32);
     dup2(fd, 2i32);
   }

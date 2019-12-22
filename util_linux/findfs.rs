@@ -60,7 +60,7 @@ pub unsafe extern "C" fn findfs_main(
   }
   if *argv != dev {
     puts(*argv);
-    return 0i32;
+    return 0;
   }
   return 1i32;
 }

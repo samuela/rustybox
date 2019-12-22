@@ -129,9 +129,9 @@ pub unsafe extern "C" fn bb_logenv_override() {
   if mode.is_null() {
     return;
   }
-  if strcmp(mode, b"none\x00" as *const u8 as *const libc::c_char) == 0i32 {
+  if strcmp(mode, b"none\x00" as *const u8 as *const libc::c_char) == 0 {
     logmode = LOGMODE_NONE as libc::c_int as smallint
-  } else if strcmp(mode, b"syslog\x00" as *const u8 as *const libc::c_char) == 0i32 {
+  } else if strcmp(mode, b"syslog\x00" as *const u8 as *const libc::c_char) == 0 {
     logmode = LOGMODE_SYSLOG as libc::c_int as smallint
   };
 }

@@ -52,7 +52,7 @@ unsafe extern "C" fn cut_file(
 ) {
   let mut current_block: u64;
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut linenum: libc::c_uint = 0i32 as libc::c_uint;
+  let mut linenum: libc::c_uint = 0 as libc::c_uint;
   loop
   /* go through every line in the file */
   {
@@ -65,10 +65,10 @@ unsafe extern "C" fn cut_file(
     let mut printed: *mut libc::c_char =
       crate::libbb::xfuncs_printf::xzalloc((linelen + 1i32) as size_t) as *mut libc::c_char;
     let mut orig_line: *mut libc::c_char = line;
-    let mut cl_pos: libc::c_uint = 0i32 as libc::c_uint;
+    let mut cl_pos: libc::c_uint = 0 as libc::c_uint;
     let mut spos: libc::c_int = 0;
     /* cut based on chars/bytes XXX: only works when sizeof(char) == byte */
-    if option_mask32 & (1i32 << 1i32 | 1i32 << 0i32) as libc::c_uint != 0 {
+    if option_mask32 & (1i32 << 1i32 | 1i32 << 0) as libc::c_uint != 0 {
       /* print the chars specified in each cut list */
       while cl_pos < nlists {
         spos = (*cut_lists.offset(cl_pos as isize)).startpos; /* cut by fields */
@@ -134,11 +134,11 @@ unsafe extern "C" fn cut_file(
       }
     } else {
       let mut ndelim: libc::c_int = -1i32;
-      let mut nfields_printed: libc::c_int = 0i32;
+      let mut nfields_printed: libc::c_int = 0;
       let mut field: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut delimiter: [libc::c_char; 2] = [0; 2];
       delimiter[0] = delim;
-      delimiter[1] = 0i32 as libc::c_char;
+      delimiter[1] = 0 as libc::c_char;
       /* does this line contain any delimiters? */
       if strchr(line, delim as libc::c_int).is_null() {
         if option_mask32 & (1i32 << 4i32) as libc::c_uint == 0 {
@@ -164,7 +164,7 @@ unsafe extern "C" fn cut_file(
               /* if this isn't our first time through, we need to
                * print the delimiter after the last field that was
                * printed */
-              if nfields_printed > 0i32 {
+              if nfields_printed > 0 {
                 putchar_unlocked(delim as libc::c_int);
               }
               fputs_unlocked(field, stdout);
@@ -205,7 +205,7 @@ pub unsafe extern "C" fn cut_main(
 ) -> libc::c_int {
   /* growable array holding a series of lists */
   let mut cut_lists: *mut cut_list = std::ptr::null_mut(); /* number of elements in above list */
-  let mut nlists: libc::c_uint = 0i32 as libc::c_uint; /* delimiter, default is tab */
+  let mut nlists: libc::c_uint = 0 as libc::c_uint; /* delimiter, default is tab */
   let mut delim: libc::c_char = '\t' as i32 as libc::c_char;
   let mut sopt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ltok: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -220,7 +220,7 @@ pub unsafe extern "C" fn cut_main(
   );
   //	argc -= optind;
   argv = argv.offset(optind as isize);
-  if opt & (1i32 << 0i32 | 1i32 << 1i32 | 1i32 << 2i32) as libc::c_uint == 0 {
+  if opt & (1i32 << 0 | 1i32 << 1i32 | 1i32 << 2i32) as libc::c_uint == 0 {
     crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"expected a list of bytes, characters, or fields\x00" as *const u8 as *const libc::c_char,
     );
@@ -259,8 +259,8 @@ pub unsafe extern "C" fn cut_main(
    * more than one list can be separated by commas
    */
   let mut ntok: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut s: libc::c_int = 0i32;
-  let mut e: libc::c_int = 0i32;
+  let mut s: libc::c_int = 0;
+  let mut e: libc::c_int = 0;
   loop
   /* take apart the lists, one by one (they are separated with commas) */
   {
@@ -280,7 +280,7 @@ pub unsafe extern "C" fn cut_main(
       s = crate::libbb::xatonum::xatoi_positive(ntok);
       /* account for the fact that arrays are zero based, while
        * the user expects the first char on the line to be char #1 */
-      if s != 0i32 {
+      if s != 0 {
         s -= 1
       }
     }
@@ -293,7 +293,7 @@ pub unsafe extern "C" fn cut_main(
       e = crate::libbb::xatonum::xatoi_positive(ltok);
       /* if the user specified and end position of 0,
        * that means "til the end of the line" */
-      if e == 0i32 {
+      if e == 0 {
         e = EOL as libc::c_int
       } /* again, arrays are zero based, lines are 1 based */
       e -= 1;
@@ -315,7 +315,7 @@ pub unsafe extern "C" fn cut_main(
     nlists = nlists.wrapping_add(1)
   }
   /* make sure we got some cut positions out of all that */
-  if nlists == 0i32 as libc::c_uint {
+  if nlists == 0 as libc::c_uint {
     crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"missing list of positions\x00" as *const u8 as *const libc::c_char,
     );
@@ -332,7 +332,7 @@ pub unsafe extern "C" fn cut_main(
         as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int,
     ),
   );
-  let mut retval: libc::c_int = 0i32;
+  let mut retval: libc::c_int = 0;
   if (*argv).is_null() {
     argv = argv.offset(-1);
     *argv = b"-\x00" as *const u8 as *const libc::c_char as *mut libc::c_char

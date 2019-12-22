@@ -117,7 +117,7 @@ pub unsafe extern "C" fn bb_wcstombs(
       let fresh1 = dest;
       dest = dest.offset(1);
       *fresh1 = c as libc::c_char;
-      if c == 0i32 {
+      if c == 0 {
         break;
       }
       n = n.wrapping_sub(1)
@@ -174,7 +174,7 @@ unsafe extern "C" fn mbstowc_internal(
   /* 10000-1FFFFF -> 11110zzz 10zzyyyy 10yyyyxx 10xxxxxx */
   /* 200000-3FFFFFF -> 111110tt 10zzzzzz 10zzyyyy 10yyyyxx 10xxxxxx */
   /* 4000000-FFFFFFFF -> 111111tt 10tttttt 10zzzzzz 10zzyyyy 10yyyyxx 10xxxxxx */
-  bytes = 0i32;
+  bytes = 0;
   loop {
     c <<= 1i32;
     bytes += 1;
@@ -232,7 +232,7 @@ pub unsafe extern "C" fn bb_mbstowcs(
         dest = dest.offset(1);
         *fresh6 = c as wchar_t
       }
-      if c as libc::c_int == 0i32 {
+      if c as libc::c_int == 0 {
         break;
       }
       n = n.wrapping_sub(1)
@@ -251,7 +251,7 @@ pub unsafe extern "C" fn bb_mbstowcs(
       dest = dest.offset(1);
       *fresh7 = wc
     }
-    if wc == 0i32 {
+    if wc == 0 {
       break;
     }
     n = n.wrapping_sub(1)
@@ -405,8 +405,8 @@ pub unsafe extern "C" fn bb_iswpunct(mut wc: bb_wint_t) -> libc::c_int {
  */
 #[no_mangle]
 pub unsafe extern "C" fn bb_wcwidth(mut ucs: libc::c_uint) -> libc::c_int {
-  if ucs == 0i32 as libc::c_uint {
-    return 0i32;
+  if ucs == 0 as libc::c_uint {
+    return 0;
   }
   /* Test for 8-bit control characters (00-1f, 80-9f, 7f) */
   if (ucs & !0x80i32 as libc::c_uint) < 0x20i32 as libc::c_uint || ucs == 0x7fi32 as libc::c_uint {
@@ -464,7 +464,7 @@ unsafe extern "C" fn unicode_conv_to_printable2(
       d = dst;
       loop {
         width = width.wrapping_sub(1);
-        if !(width as libc::c_int >= 0i32) {
+        if !(width as libc::c_int >= 0) {
           break;
         }
         let mut c: libc::c_uchar = *src as libc::c_uchar;
@@ -474,7 +474,7 @@ unsafe extern "C" fn unicode_conv_to_printable2(
             d = d.offset(1);
             *fresh8 = ' ' as i32 as libc::c_char;
             width = width.wrapping_sub(1);
-            if !(width as libc::c_int >= 0i32) {
+            if !(width as libc::c_int >= 0) {
               break;
             }
           }
@@ -510,9 +510,9 @@ unsafe extern "C" fn unicode_conv_to_printable2(
     return dst;
   }
   dst = std::ptr::null_mut::<libc::c_char>();
-  uni_width = 0i32 as libc::c_uint;
+  uni_width = 0 as libc::c_uint;
   uni_count = uni_width;
-  dst_len = 0i32 as libc::c_uint;
+  dst_len = 0 as libc::c_uint;
   loop {
     let mut w: libc::c_int = 0;
     let mut wc: wchar_t = 0;
@@ -524,14 +524,14 @@ unsafe extern "C" fn unicode_conv_to_printable2(
     if wc == !0i32 {
       current_block = 6651542264556950584;
     } else {
-      if wc == 0i32 {
+      if wc == 0 {
         break;
       }
       if 767i32 != 0 && wc > 767i32 {
         current_block = 6651542264556950584;
       } else {
         w = bb_wcwidth(wc as libc::c_uint);
-        if false && w < 0i32 || 0i32 == 0 && w <= 0i32 || 0i32 == 0 && w > 1i32 {
+        if false && w < 0 || 0 == 0 && w <= 0 || 0 == 0 && w > 1i32 {
           current_block = 6651542264556950584;
         } else {
           current_block = 12199444798915819164;
@@ -550,7 +550,7 @@ unsafe extern "C" fn unicode_conv_to_printable2(
     width = width.wrapping_sub(w as libc::c_uint);
     /* Note: if width == 0, we still may add more chars,
      * they may be zero-width or combining ones */
-    if (width as libc::c_int) < 0i32 {
+    if (width as libc::c_int) < 0 {
       /* can't add this wc, string would become longer than width */
       width = width.wrapping_add(w as libc::c_uint);
       break;
@@ -579,7 +579,7 @@ unsafe extern "C" fn unicode_conv_to_printable2(
     uni_width = uni_width.wrapping_add(width);
     loop {
       width = width.wrapping_sub(1);
-      if !(width as libc::c_int >= 0i32) {
+      if !(width as libc::c_int >= 0) {
         break;
       }
       let fresh10 = dst_len;
@@ -606,7 +606,7 @@ pub unsafe extern "C" fn unicode_conv_to_printable(
   mut stats: *mut uni_stat_t,
   mut src: *const libc::c_char,
 ) -> *mut libc::c_char {
-  return unicode_conv_to_printable2(stats, src, 2147483647i32 as libc::c_uint, 0i32);
+  return unicode_conv_to_printable2(stats, src, 2147483647i32 as libc::c_uint, 0);
 }
 //UNUSED: char* FAST_FUNC unicode_conv_to_printable_maxwidth(uni_stat_t *stats, const char *src, unsigned maxwidth);
 #[no_mangle]

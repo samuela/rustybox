@@ -52,14 +52,14 @@ unsafe extern "C" fn sum_file(
   mut file: *const libc::c_char,
   mut type_0: libc::c_uint,
 ) -> libc::c_uint {
-  let mut total_bytes: libc::c_ulonglong = 0i32 as libc::c_ulonglong;
+  let mut total_bytes: libc::c_ulonglong = 0 as libc::c_ulonglong;
   let mut fd: libc::c_int = 0;
   let mut r: libc::c_int = 0;
   /* The sum of all the input bytes, modulo (UINT_MAX + 1).  */
-  let mut s: libc::c_uint = 0i32 as libc::c_uint;
+  let mut s: libc::c_uint = 0 as libc::c_uint;
   fd = crate::libbb::wfopen_input::open_or_warn_stdin(file);
   if fd == -1i32 {
-    return 0i32 as libc::c_uint;
+    return 0 as libc::c_uint;
   }
   loop {
     let mut bytes_read: size_t = crate::libbb::read::safe_read(
@@ -68,12 +68,12 @@ unsafe extern "C" fn sum_file(
       COMMON_BUFSIZE as libc::c_int as size_t,
     ) as size_t;
     if bytes_read as ssize_t <= 0 {
-      r = (fd != 0 && close(fd) != 0i32) as libc::c_int;
+      r = (fd != 0 && close(fd) != 0) as libc::c_int;
       if bytes_read == 0 && r == 0 {
         break;
       }
       crate::libbb::perror_msg::bb_simple_perror_msg(file);
-      return 0i32 as libc::c_uint;
+      return 0 as libc::c_uint;
     } else {
       total_bytes = total_bytes.wrapping_add(bytes_read as libc::c_ulonglong);
       if type_0 >= SUM_SYSV as libc::c_int as libc::c_uint {
@@ -87,7 +87,7 @@ unsafe extern "C" fn sum_file(
           }
         }
       } else {
-        r = 0i32;
+        r = 0;
         loop {
           s = (s >> 1i32).wrapping_add((s & 1i32 as libc::c_uint) << 15i32);
           let fresh0 = r;

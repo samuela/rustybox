@@ -441,11 +441,11 @@ pub unsafe extern "C" fn get_linux_version_code() -> libc::c_int {
   let mut r: libc::c_int = 0;
   uname(&mut name);
   t = name.release.as_mut_ptr();
-  r = 0i32;
-  i = 0i32;
+  r = 0;
+  i = 0;
   while i < 3i32 {
     t = strtok(t, b".\x00" as *const u8 as *const libc::c_char);
-    r = r * 256i32 + (if !t.is_null() { atoi(t) } else { 0i32 });
+    r = r * 256i32 + (if !t.is_null() { atoi(t) } else { 0 });
     t = std::ptr::null_mut::<libc::c_char>();
     i += 1
   }

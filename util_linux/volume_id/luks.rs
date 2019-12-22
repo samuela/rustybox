@@ -123,7 +123,7 @@ pub unsafe extern "C" fn volume_id_probe_luks(mut id: *mut volume_id) -> libc::c
   let mut header: *mut luks_phdr = std::ptr::null_mut();
   header = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
-    0i32 as u64,
+    0 as u64,
     ::std::mem::size_of::<luks_phdr>() as libc::c_ulong,
   ) as *mut luks_phdr;
   if header.is_null() {
@@ -144,5 +144,5 @@ pub unsafe extern "C" fn volume_id_probe_luks(mut id: *mut volume_id) -> libc::c
     UUID_DCE_STRING,
   );
   (*id).type_0 = b"crypto_LUKS\x00" as *const u8 as *const libc::c_char;
-  return 0i32;
+  return 0;
 }

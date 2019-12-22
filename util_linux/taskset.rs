@@ -117,7 +117,7 @@ unsafe extern "C" fn from_mask(
     }
     sz_in_bytes =
       sz_in_bytes.wrapping_sub(::std::mem::size_of::<ul>() as libc::c_ulong as libc::c_uint);
-    if sz_in_bytes as libc::c_int <= 0i32 {
+    if sz_in_bytes as libc::c_int <= 0 {
       break;
     }
   }
@@ -141,11 +141,11 @@ unsafe extern "C" fn get_aff(
       sz_in_bytes as size_t,
       mask as *mut libc::c_void as *mut cpu_set_t,
     );
-    if r == 0i32 {
+    if r == 0 {
       break;
     }
     sz_in_bytes = sz_in_bytes.wrapping_mul(2i32 as libc::c_uint);
-    if *bb_errno == 22i32 && sz_in_bytes as libc::c_int > 0i32 {
+    if *bb_errno == 22i32 && sz_in_bytes as libc::c_int > 0 {
       continue;
     }
     crate::libbb::perror_msg::bb_perror_msg_and_die(
@@ -165,7 +165,7 @@ pub unsafe extern "C" fn taskset_main(
 ) -> libc::c_int {
   let mut mask: *mut ul = std::ptr::null_mut();
   let mut mask_size_in_bytes: libc::c_uint = 0;
-  let mut pid: pid_t = 0i32;
+  let mut pid: pid_t = 0;
   let mut opt_p: libc::c_uint = 0;
   let mut current_new: *const libc::c_char = std::ptr::null();
   let mut aff: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -216,14 +216,14 @@ pub unsafe extern "C" fn taskset_main(
         /* Either it was just "-p <pid>",
          * or it was "-p <aff> <pid>" and we came here
          * for the second time (see goto below) */
-        return 0i32;
+        return 0;
       }
       *argv = std::ptr::null_mut::<libc::c_char>();
       current_new = b"new\x00" as *const u8 as *const libc::c_char
     }
     memset(
       mask as *mut libc::c_void,
-      0i32,
+      0,
       mask_size_in_bytes as libc::c_ulong,
     );
     /* Affinity was specified, translate it into mask */
@@ -238,7 +238,7 @@ pub unsafe extern "C" fn taskset_main(
     } else {
       let mut i: libc::c_uint = 0;
       let mut last_char: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-      i = 0i32 as libc::c_uint;
+      i = 0 as libc::c_uint;
       /* aff is ASCII hex string, accept very long masks in this form.
        * Process hex string AABBCCDD... to ulong mask[]
        * from the rightmost nibble, which is least-significant.

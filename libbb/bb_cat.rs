@@ -10,17 +10,17 @@ extern "C" {
 #[no_mangle]
 pub unsafe extern "C" fn bb_cat(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut fd: libc::c_int = 0;
-  let mut retval: libc::c_int = 0i32;
+  let mut retval: libc::c_int = 0;
   if (*argv).is_null() {
     argv = &bb_argv_dash as *const [*const libc::c_char; 0] as *mut *mut libc::c_char
   }
   let mut current_block_5: u64;
   loop {
     fd = crate::libbb::wfopen_input::open_or_warn_stdin(*argv);
-    if fd >= 0i32 {
+    if fd >= 0 {
       /* This is not a xfunc - never exits */
       let mut r: off_t = crate::libbb::copyfd::bb_copyfd_eof(fd, 1i32);
-      if fd != 0i32 {
+      if fd != 0 {
         close(fd);
       }
       if r >= 0 {

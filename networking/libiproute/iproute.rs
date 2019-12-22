@@ -358,15 +358,15 @@ unsafe extern "C" fn flush_update() -> libc::c_int {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).rth,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushb as *const libc::c_void,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp,
-  ) < 0i32
+  ) < 0
   {
     crate::libbb::perror_msg::bb_simple_perror_msg(
       b"can\'t send flush request\x00" as *const u8 as *const libc::c_char,
     );
     return -1i32;
   }
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp = 0i32;
-  return 0i32;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp = 0;
+  return 0;
 }
 unsafe extern "C" fn print_route(
   mut _who: *const sockaddr_nl,
@@ -406,14 +406,14 @@ unsafe extern "C" fn print_route(
       (*n).nlmsg_type as libc::c_int,
       (*n).nlmsg_flags as libc::c_int,
     );
-    return 0i32;
+    return 0;
   }
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
     .flushb
     .is_null()
     && (*n).nlmsg_type as libc::c_int != RTM_NEWROUTE as libc::c_int
   {
-    return 0i32;
+    return 0;
   }
   len = (len as libc::c_ulong).wrapping_sub(
     (::std::mem::size_of::<rtmsg>() as libc::c_ulong).wrapping_add(
@@ -424,7 +424,7 @@ unsafe extern "C" fn print_route(
         as libc::c_ulong,
     ),
   ) as libc::c_int as libc::c_int;
-  if len < 0i32 {
+  if len < 0 {
     crate::libbb::verror_msg::bb_error_msg_and_die(
       b"wrong nlmsg len %d\x00" as *const u8 as *const libc::c_char,
       len,
@@ -460,40 +460,40 @@ unsafe extern "C" fn print_route(
   }
   if (*r).rtm_family as libc::c_int == 10i32 {
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).tb != 0 {
-      if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).tb < 0i32 {
+      if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).tb < 0 {
         if (*r).rtm_flags & 0x200i32 as libc::c_uint == 0 {
-          return 0i32;
+          return 0;
         }
       } else {
         if (*r).rtm_flags & 0x200i32 as libc::c_uint != 0 {
-          return 0i32;
+          return 0;
         }
         if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).tb == RT_TABLE_LOCAL as libc::c_int
         {
           if (*r).rtm_type as libc::c_int != RTN_LOCAL as libc::c_int {
-            return 0i32;
+            return 0;
           }
         } else if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).tb
           == RT_TABLE_MAIN as libc::c_int
         {
           if (*r).rtm_type as libc::c_int == RTN_LOCAL as libc::c_int {
-            return 0i32;
+            return 0;
           }
         } else {
-          return 0i32;
+          return 0;
         }
       }
     }
-  } else if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).tb > 0i32
+  } else if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).tb > 0
     && (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).tb as libc::c_uint != tid
   {
-    return 0i32;
+    return 0;
   }
   if ((*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scope ^ (*r).rtm_scope as libc::c_int)
     & (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scopemask
     != 0
   {
-    return 0i32;
+    return 0;
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
     .rdst
@@ -508,7 +508,7 @@ unsafe extern "C" fn print_route(
         .bitlen as libc::c_int
         > (*r).rtm_dst_len as libc::c_int)
   {
-    return 0i32;
+    return 0;
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
     .mdst
@@ -521,13 +521,13 @@ unsafe extern "C" fn print_route(
       || (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
         .mdst
         .bitlen as libc::c_int
-        >= 0i32
+        >= 0
         && ((*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
           .mdst
           .bitlen as libc::c_int)
           < (*r).rtm_dst_len as libc::c_int)
   {
-    return 0i32;
+    return 0;
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
     .rsrc
@@ -542,7 +542,7 @@ unsafe extern "C" fn print_route(
         .bitlen as libc::c_int
         > (*r).rtm_src_len as libc::c_int)
   {
-    return 0i32;
+    return 0;
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
     .msrc
@@ -555,22 +555,22 @@ unsafe extern "C" fn print_route(
       || (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
         .msrc
         .bitlen as libc::c_int
-        >= 0i32
+        >= 0
         && ((*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
           .msrc
           .bitlen as libc::c_int)
           < (*r).rtm_src_len as libc::c_int)
   {
-    return 0i32;
+    return 0;
   }
   memset(
     &mut src as *mut inet_prefix as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<inet_prefix>() as libc::c_ulong,
   );
   memset(
     &mut dst as *mut inet_prefix as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<inet_prefix>() as libc::c_ulong,
   );
   if !tb[RTA_SRC as libc::c_int as usize].is_null() {
@@ -623,7 +623,7 @@ unsafe extern "C" fn print_route(
         .bitlen as libc::c_int,
     ) != 0
   {
-    return 0i32;
+    return 0;
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
     .mdst
@@ -632,14 +632,14 @@ unsafe extern "C" fn print_route(
     && (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
       .mdst
       .bitlen as libc::c_int
-      >= 0i32
+      >= 0
     && crate::networking::libiproute::utils::inet_addr_match(
       &mut dst,
       &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).mdst,
       (*r).rtm_dst_len as libc::c_int,
     ) != 0
   {
-    return 0i32;
+    return 0;
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
     .rsrc
@@ -653,7 +653,7 @@ unsafe extern "C" fn print_route(
         .bitlen as libc::c_int,
     ) != 0
   {
-    return 0i32;
+    return 0;
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
     .msrc
@@ -662,18 +662,18 @@ unsafe extern "C" fn print_route(
     && (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
       .msrc
       .bitlen as libc::c_int
-      >= 0i32
+      >= 0
     && crate::networking::libiproute::utils::inet_addr_match(
       &mut src,
       &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).msrc,
       (*r).rtm_src_len as libc::c_int,
     ) != 0
   {
-    return 0i32;
+    return 0;
   }
-  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).oif != 0i32 {
+  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).oif != 0 {
     if tb[RTA_OIF as libc::c_int as usize].is_null() {
-      return 0i32;
+      return 0;
     }
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).oif
       != *((tb[RTA_OIF as libc::c_int as usize] as *mut libc::c_char).offset(
@@ -684,7 +684,7 @@ unsafe extern "C" fn print_route(
           .wrapping_add(0i32 as libc::c_ulong) as isize,
       ) as *mut libc::c_void as *mut libc::c_int)
     {
-      return 0i32;
+      return 0;
     }
   }
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
@@ -694,7 +694,7 @@ unsafe extern "C" fn print_route(
     let mut fn_0: *mut nlmsghdr = std::ptr::null_mut();
     /* We are creating route flush commands */
     if (*r).rtm_family as libc::c_int == 10i32
-      && (*r).rtm_dst_len as libc::c_int == 0i32
+      && (*r).rtm_dst_len as libc::c_int == 0
       && (*r).rtm_type as libc::c_int == RTN_UNREACHABLE as libc::c_int
       && !tb[RTA_PRIORITY as libc::c_int as usize].is_null()
       && *((tb[RTA_PRIORITY as libc::c_int as usize] as *mut libc::c_char).offset(
@@ -706,7 +706,7 @@ unsafe extern "C" fn print_route(
       ) as *mut libc::c_void as *mut libc::c_int)
         == -1i32
     {
-      return 0i32;
+      return 0;
     }
     if (((*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp as libc::c_uint)
       .wrapping_add(4u32)
@@ -743,7 +743,7 @@ unsafe extern "C" fn print_route(
       as libc::c_long
       as libc::c_int;
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed = 1i32 as smallint;
-    return 0i32;
+    return 0;
   }
   /* We are printing routes */
   if (*n).nlmsg_type as libc::c_int == RTM_DELROUTE as libc::c_int {
@@ -886,7 +886,7 @@ unsafe extern "C" fn print_route(
       );
     }
   }
-  if !tb[RTA_PREFSRC as libc::c_int as usize].is_null() && 0i32 != host_len {
+  if !tb[RTA_PREFSRC as libc::c_int as usize].is_null() && 0 != host_len {
     /* Do not use format_host(). It is our local addr
       and symbolic name will not be useful.
     */
@@ -953,14 +953,14 @@ unsafe extern "C" fn print_route(
             .wrapping_div(crate::networking::libiproute::utils::get_hz()),
         );
       }
-      if (*ci).rta_error != 0i32 as libc::c_uint {
+      if (*ci).rta_error != 0 as libc::c_uint {
         printf(
           b" error %d\x00" as *const u8 as *const libc::c_char,
           (*ci).rta_error,
         );
       }
     } else if !ci.is_null() {
-      if (*ci).rta_error != 0i32 as libc::c_uint {
+      if (*ci).rta_error != 0 as libc::c_uint {
         printf(
           b" error %d\x00" as *const u8 as *const libc::c_char,
           (*ci).rta_error,
@@ -969,7 +969,7 @@ unsafe extern "C" fn print_route(
     }
   }
   if !tb[RTA_IIF as libc::c_int as usize].is_null()
-    && (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).iif == 0i32
+    && (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).iif == 0
   {
     printf(
       b" iif %s\x00" as *const u8 as *const libc::c_char,
@@ -985,10 +985,10 @@ unsafe extern "C" fn print_route(
     );
   }
   crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn str_is_lock(mut str: *const libc::c_char) -> libc::c_int {
-  return (strcmp(str, b"lock\x00" as *const u8 as *const libc::c_char) == 0i32) as libc::c_int;
+  return (strcmp(str, b"lock\x00" as *const u8 as *const libc::c_char) == 0) as libc::c_int;
 }
 /* Return value becomes exitcode. It's okay to not return at all */
 unsafe extern "C" fn iproute_modify(
@@ -1027,14 +1027,14 @@ unsafe extern "C" fn iproute_modify(
   };
   let mut mxbuf: [libc::c_char; 256] = [0; 256];
   let mut mxrta: *mut rtattr = mxbuf.as_mut_ptr() as *mut libc::c_void as *mut rtattr;
-  let mut mxlock: libc::c_uint = 0i32 as libc::c_uint;
+  let mut mxlock: libc::c_uint = 0 as libc::c_uint;
   let mut d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut ok: smalluint = 0i32 as smalluint;
-  let mut scope_ok: smalluint = 0i32 as smalluint;
+  let mut ok: smalluint = 0 as smalluint;
+  let mut scope_ok: smalluint = 0 as smalluint;
   let mut arg: libc::c_int = 0;
   memset(
     &mut req as *mut C2RustUnnamed_2 as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<C2RustUnnamed_2>() as libc::c_ulong,
   );
   req.n.nlmsg_len = (::std::mem::size_of::<rtmsg>() as libc::c_ulong).wrapping_add(
@@ -1047,19 +1047,19 @@ unsafe extern "C" fn iproute_modify(
   req.n.nlmsg_flags = (0x1i32 as libc::c_uint | flags) as __u16;
   req.n.nlmsg_type = cmd as __u16;
   req.r.rtm_family = preferred_family as libc::c_uchar;
-  if RT_TABLE_MAIN as libc::c_int != 0i32 {
+  if RT_TABLE_MAIN as libc::c_int != 0 {
     /* if it is zero, memset already did it */
     req.r.rtm_table = RT_TABLE_MAIN as libc::c_int as libc::c_uchar
   }
-  if RT_SCOPE_NOWHERE as libc::c_int != 0i32 {
+  if RT_SCOPE_NOWHERE as libc::c_int != 0 {
     req.r.rtm_scope = RT_SCOPE_NOWHERE as libc::c_int as libc::c_uchar
   }
   if cmd != RTM_DELROUTE as libc::c_int {
     req.r.rtm_scope = RT_SCOPE_UNIVERSE as libc::c_int as libc::c_uchar;
-    if 3i32 != 0i32 {
+    if 3i32 != 0 {
       req.r.rtm_protocol = 3i32 as libc::c_uchar
     }
-    if RTN_UNICAST as libc::c_int != 0i32 {
+    if RTN_UNICAST as libc::c_int != 0 {
       req.r.rtm_type = RTN_UNICAST as libc::c_int as libc::c_uchar
     }
   }
@@ -1084,7 +1084,7 @@ unsafe extern "C" fn iproute_modify(
         *argv,
         req.r.rtm_family as libc::c_int,
       );
-      if req.r.rtm_family as libc::c_int == 0i32 {
+      if req.r.rtm_family as libc::c_int == 0 {
         req.r.rtm_family = addr.family
       }
       crate::networking::libiproute::libnetlink::addattr_l(
@@ -1108,7 +1108,7 @@ unsafe extern "C" fn iproute_modify(
         *argv,
         req.r.rtm_family as libc::c_int,
       );
-      if req.r.rtm_family as libc::c_int == 0i32 {
+      if req.r.rtm_family as libc::c_int == 0 {
         req.r.rtm_family = addr_0.family
       }
       crate::networking::libiproute::libnetlink::addattr_l(
@@ -1250,7 +1250,7 @@ unsafe extern "C" fn iproute_modify(
         argv = crate::networking::libiproute::utils::next_arg(argv)
       }
       if ((**argv as libc::c_int) < '0' as i32 || **argv as libc::c_int > '9' as i32)
-        && crate::networking::libiproute::rtm_map::rtnl_rtntype_a2n(&mut type_0, *argv) == 0i32
+        && crate::networking::libiproute::rtm_map::rtnl_rtntype_a2n(&mut type_0, *argv) == 0
       {
         argv = crate::networking::libiproute::utils::next_arg(argv);
         req.r.rtm_type = type_0 as libc::c_uchar;
@@ -1267,7 +1267,7 @@ unsafe extern "C" fn iproute_modify(
         *argv,
         req.r.rtm_family as libc::c_int,
       );
-      if req.r.rtm_family as libc::c_int == 0i32 {
+      if req.r.rtm_family as libc::c_int == 0 {
         req.r.rtm_family = dst.family
       }
       req.r.rtm_dst_len = dst.bitlen as libc::c_uchar;
@@ -1354,15 +1354,15 @@ unsafe extern "C" fn iproute_modify(
       }
     }
   }
-  if req.r.rtm_family as libc::c_int == 0i32 {
+  if req.r.rtm_family as libc::c_int == 0 {
     req.r.rtm_family = 2i32 as libc::c_uchar
   }
   if crate::networking::libiproute::libnetlink::rtnl_talk(&mut rth, &mut req.n, 0 as *mut nlmsghdr)
-    < 0i32
+    < 0
   {
     return 2i32;
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn rtnl_rtcache_request(
   mut rth: *mut rtnl_handle,
@@ -1372,12 +1372,12 @@ unsafe extern "C" fn rtnl_rtcache_request(
   let mut nladdr: sockaddr_nl = std::mem::zeroed();
   memset(
     &mut nladdr as *mut sockaddr_nl as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<sockaddr_nl>() as libc::c_ulong,
   );
   memset(
     &mut req as *mut C2RustUnnamed_5 as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<C2RustUnnamed_5>() as libc::c_ulong,
   );
   nladdr.nl_family = 16i32 as __kernel_sa_family_t;
@@ -1408,7 +1408,7 @@ unsafe extern "C" fn iproute_flush_cache() {
     111, 117, 116, 101, 47, 102, 108, 117, 115, 104, 0,
   ];
   let mut flush_fd: libc::c_int = crate::libbb::xfuncs_printf::open_or_warn(fn_0.as_ptr(), 0o1i32);
-  if flush_fd < 0i32 {
+  if flush_fd < 0 {
     return;
   }
   if write(
@@ -1427,7 +1427,7 @@ unsafe extern "C" fn iproute_flush_cache() {
 unsafe extern "C" fn iproute_reset_filter() {
   memset(
     bb_common_bufsiz1.as_mut_ptr() as *mut filter_t as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<filter_t>() as libc::c_ulong,
   );
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
@@ -1465,7 +1465,7 @@ unsafe extern "C" fn iproute_list_or_flush(
   while !(*argv).is_null() {
     arg = crate::libbb::compare_string_array::index_in_substrings(keywords.as_ptr(), *argv);
     if arg == KW_proto as libc::c_int {
-      let mut prot: u32 = 0i32 as u32;
+      let mut prot: u32 = 0 as u32;
       argv = crate::networking::libiproute::utils::next_arg(argv);
       //G_filter.protocol = prot;
       if crate::networking::libiproute::rt_names::rtnl_rtprot_a2n(&mut prot, *argv) != 0 {
@@ -1477,7 +1477,7 @@ unsafe extern "C" fn iproute_list_or_flush(
             b"protocol\x00" as *const u8 as *const libc::c_char,
           );
         }
-        prot = 0i32 as u32
+        prot = 0 as u32
         //G_filter.protocolmask = -1;
         //G_filter.protocolmask = 0;
       }
@@ -1501,7 +1501,7 @@ unsafe extern "C" fn iproute_list_or_flush(
       if parm == KW_cache as libc::c_int {
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).tb = -1i32
       } else if parm == KW_all as libc::c_int {
-        (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).tb = 0i32
+        (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).tb = 0
       } else if parm != KW_main as libc::c_int {
         let mut tid: u32 = 0;
         if crate::networking::libiproute::rt_names::rtnl_rttable_a2n(&mut tid, *argv) != 0 {
@@ -1521,14 +1521,14 @@ unsafe extern "C" fn iproute_list_or_flush(
       argv = crate::networking::libiproute::utils::next_arg(argv);
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scopemask = -1i32;
       if crate::networking::libiproute::rt_names::rtnl_rtscope_a2n(&mut scope, *argv) != 0 {
-        if strcmp(*argv, b"all\x00" as *const u8 as *const libc::c_char) != 0i32 {
+        if strcmp(*argv, b"all\x00" as *const u8 as *const libc::c_char) != 0 {
           crate::networking::libiproute::utils::invarg_1_to_2(
             *argv,
             b"scope\x00" as *const u8 as *const libc::c_char,
           );
         }
         scope = RT_SCOPE_NOWHERE as libc::c_int as u32;
-        (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scopemask = 0i32
+        (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scopemask = 0
       }
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scope = scope as libc::c_int
     } else if arg == KW_from as libc::c_int {
@@ -1595,7 +1595,7 @@ unsafe extern "C" fn iproute_list_or_flush(
     }
     argv = argv.offset(1)
   }
-  if do_ipv6 == 0i32 && (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).tb != 0 {
+  if do_ipv6 == 0 && (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).tb != 0 {
     do_ipv6 = 2i32
   }
   crate::networking::libiproute::libnetlink::xrtnl_open(&mut rth);
@@ -1619,12 +1619,12 @@ unsafe extern "C" fn iproute_list_or_flush(
         iproute_flush_cache();
       }
       if do_ipv6 == 2i32 {
-        return 0i32;
+        return 0;
       }
     }
     let ref mut fresh1 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushb;
     *fresh1 = flushb.as_mut_ptr();
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp = 0i32;
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp = 0;
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushe =
       ::std::mem::size_of::<[libc::c_char; 3584]>() as libc::c_ulong as libc::c_int;
     let ref mut fresh2 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).rth;
@@ -1635,7 +1635,7 @@ unsafe extern "C" fn iproute_list_or_flush(
         do_ipv6,
         RTM_GETROUTE as libc::c_int,
       );
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed = 0i32 as smallint;
+      (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed = 0 as smallint;
       crate::networking::libiproute::libnetlink::xrtnl_dump_filter(
         &mut rth,
         Some(
@@ -1648,8 +1648,8 @@ unsafe extern "C" fn iproute_list_or_flush(
         ),
         0 as *mut libc::c_void,
       );
-      if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed as libc::c_int == 0i32 {
-        return 0i32;
+      if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed as libc::c_int == 0 {
+        return 0;
       }
       if flush_update() != 0 {
         return 1i32;
@@ -1662,7 +1662,7 @@ unsafe extern "C" fn iproute_list_or_flush(
       do_ipv6,
       RTM_GETROUTE as libc::c_int,
     );
-  } else if rtnl_rtcache_request(&mut rth, do_ipv6) < 0i32 {
+  } else if rtnl_rtcache_request(&mut rth, do_ipv6) < 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
       b"can\'t send dump request\x00" as *const u8 as *const libc::c_char,
     );
@@ -1679,7 +1679,7 @@ unsafe extern "C" fn iproute_list_or_flush(
     ),
     0 as *mut libc::c_void,
   );
-  return 0i32;
+  return 0;
 }
 /* Return value becomes exitcode. It's okay to not return at all */
 unsafe extern "C" fn iproute_get(mut argv: *mut *mut libc::c_char) -> libc::c_int {
@@ -1687,15 +1687,15 @@ unsafe extern "C" fn iproute_get(mut argv: *mut *mut libc::c_char) -> libc::c_in
   let mut req: C2RustUnnamed_7 = std::mem::zeroed();
   let mut idev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut odev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut connected: bool = 0i32 != 0;
-  let mut from_ok: bool = 0i32 != 0;
+  let mut connected: bool = 0 != 0;
+  let mut from_ok: bool = 0 != 0;
   static mut options: [libc::c_char; 38] = [
     102, 114, 111, 109, 0, 105, 105, 102, 0, 111, 105, 102, 0, 100, 101, 118, 0, 110, 111, 116,
     105, 102, 121, 0, 99, 111, 110, 110, 101, 99, 116, 101, 100, 0, 116, 111, 0, 0,
   ];
   memset(
     &mut req as *mut C2RustUnnamed_7 as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<C2RustUnnamed_7>() as libc::c_ulong,
   );
   iproute_reset_filter();
@@ -1736,7 +1736,7 @@ unsafe extern "C" fn iproute_get(mut argv: *mut *mut libc::c_char) -> libc::c_in
           *argv,
           req.r.rtm_family as libc::c_int,
         );
-        if req.r.rtm_family as libc::c_int == 0i32 {
+        if req.r.rtm_family as libc::c_int == 0 {
           req.r.rtm_family = addr.family
         }
         if addr.bytelen != 0 {
@@ -1796,7 +1796,7 @@ unsafe extern "C" fn iproute_get(mut argv: *mut *mut libc::c_char) -> libc::c_in
           *argv,
           req.r.rtm_family as libc::c_int,
         );
-        if req.r.rtm_family as libc::c_int == 0i32 {
+        if req.r.rtm_family as libc::c_int == 0 {
           req.r.rtm_family = addr_0.family
         }
         if addr_0.bytelen != 0 {
@@ -1814,7 +1814,7 @@ unsafe extern "C" fn iproute_get(mut argv: *mut *mut libc::c_char) -> libc::c_in
     }
     argv = argv.offset(1)
   }
-  if req.r.rtm_dst_len as libc::c_int == 0i32 {
+  if req.r.rtm_dst_len as libc::c_int == 0 {
     crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"need at least destination address\x00" as *const u8 as *const libc::c_char,
     );
@@ -1842,10 +1842,10 @@ unsafe extern "C" fn iproute_get(mut argv: *mut *mut libc::c_char) -> libc::c_in
       );
     }
   }
-  if req.r.rtm_family as libc::c_int == 0i32 {
+  if req.r.rtm_family as libc::c_int == 0 {
     req.r.rtm_family = 2i32 as libc::c_uchar
   }
-  if crate::networking::libiproute::libnetlink::rtnl_talk(&mut rth, &mut req.n, &mut req.n) < 0i32 {
+  if crate::networking::libiproute::libnetlink::rtnl_talk(&mut rth, &mut req.n, &mut req.n) < 0 {
     return 2i32;
   }
   if connected as libc::c_int != 0 && !from_ok {
@@ -1874,7 +1874,7 @@ unsafe extern "C" fn iproute_get(mut argv: *mut *mut libc::c_char) -> libc::c_in
           as libc::c_ulong,
       ),
     ) as libc::c_int as libc::c_int;
-    if len < 0i32 {
+    if len < 0 {
       crate::libbb::verror_msg::bb_error_msg_and_die(
         b"wrong len %d\x00" as *const u8 as *const libc::c_char,
         len,
@@ -1911,23 +1911,23 @@ unsafe extern "C" fn iproute_get(mut argv: *mut *mut libc::c_char) -> libc::c_in
       );
     }
     if odev.is_null() && !tb[RTA_OIF as libc::c_int as usize].is_null() {
-      (*tb[RTA_OIF as libc::c_int as usize]).rta_type = 0i32 as libc::c_ushort
+      (*tb[RTA_OIF as libc::c_int as usize]).rta_type = 0 as libc::c_ushort
     }
     if !tb[RTA_GATEWAY as libc::c_int as usize].is_null() {
-      (*tb[RTA_GATEWAY as libc::c_int as usize]).rta_type = 0i32 as libc::c_ushort
+      (*tb[RTA_GATEWAY as libc::c_int as usize]).rta_type = 0 as libc::c_ushort
     }
     if idev.is_null() && !tb[RTA_IIF as libc::c_int as usize].is_null() {
-      (*tb[RTA_IIF as libc::c_int as usize]).rta_type = 0i32 as libc::c_ushort
+      (*tb[RTA_IIF as libc::c_int as usize]).rta_type = 0 as libc::c_ushort
     }
     req.n.nlmsg_flags = 0x1i32 as __u16;
     req.n.nlmsg_type = RTM_GETROUTE as libc::c_int as __u16;
-    if crate::networking::libiproute::libnetlink::rtnl_talk(&mut rth, &mut req.n, &mut req.n) < 0i32
+    if crate::networking::libiproute::libnetlink::rtnl_talk(&mut rth, &mut req.n, &mut req.n) < 0
     {
       return 2i32;
     }
   }
   print_route(0 as *const sockaddr_nl, &mut req.n, 0 as *mut libc::c_void);
-  return 0i32;
+  return 0;
 }
 
 //int FAST_FUNC print_neigh(struct sockaddr_nl *who, struct nlmsghdr *n, void *arg);
@@ -1943,10 +1943,10 @@ pub unsafe extern "C" fn do_iproute(mut argv: *mut *mut libc::c_char) -> libc::c
     101, 115, 116, 0, 102, 108, 117, 115, 104, 0, 0,
   ];
   let mut command_num: libc::c_int = 0;
-  let mut flags: libc::c_uint = 0i32 as libc::c_uint;
+  let mut flags: libc::c_uint = 0 as libc::c_uint;
   let mut cmd: libc::c_int = RTM_NEWROUTE as libc::c_int;
   if (*argv).is_null() {
-    return iproute_list_or_flush(argv, 0i32);
+    return iproute_list_or_flush(argv, 0);
   }
   /* "Standard" 'ip r a' treats 'a' as 'add', not 'append' */
   /* It probably means that it is using "first match" rule */
@@ -1958,7 +1958,7 @@ pub unsafe extern "C" fn do_iproute(mut argv: *mut *mut libc::c_char) -> libc::c
     3 | 4 => flags = 0x100i32 as libc::c_uint,
     5 => cmd = RTM_DELROUTE as libc::c_int,
     6 => return iproute_get(argv.offset(1)),
-    7 | 8 => return iproute_list_or_flush(argv.offset(1), 0i32),
+    7 | 8 => return iproute_list_or_flush(argv.offset(1), 0),
     9 => flags = 0x400i32 as libc::c_uint,
     10 => flags = (0x400i32 | 0x100i32) as libc::c_uint,
     11 => flags = 0x200i32 as libc::c_uint,

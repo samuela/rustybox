@@ -57,12 +57,12 @@ pub unsafe extern "C" fn wall_main(
   let mut ut: *mut utmpx = std::ptr::null_mut();
   let mut msg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fd: libc::c_int = 0;
-  fd = 0i32;
+  fd = 0;
   if !(*argv.offset(1)).is_null() {
     /* The applet is setuid.
      * Access to the file must be under user's uid/gid.
      */
-    fd = crate::libbb::xfuncs_printf::xopen_as_uid_gid(*argv.offset(1), 0i32, getuid(), getgid())
+    fd = crate::libbb::xfuncs_printf::xopen_as_uid_gid(*argv.offset(1), 0, getuid(), getgid())
   }
   msg = crate::libbb::read_printf::xmalloc_read(fd, std::ptr::null_mut::<size_t>())
     as *mut libc::c_char;
@@ -86,5 +86,5 @@ pub unsafe extern "C" fn wall_main(
     crate::libbb::write::xopen_xwrite_close(line, msg);
     free(line as *mut libc::c_void);
   }
-  return 0i32;
+  return 0;
 }

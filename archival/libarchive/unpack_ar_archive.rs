@@ -24,7 +24,7 @@ pub unsafe extern "C" fn unpack_ar_archive(mut ar_archive: *mut archive_handle_t
     );
   }
   (*ar_archive).offset += 7i32 as libc::c_long;
-  while crate::archival::libarchive::get_header_ar::get_header_ar(ar_archive) as libc::c_int == 0i32
+  while crate::archival::libarchive::get_header_ar::get_header_ar(ar_archive) as libc::c_int == 0
   {
   }
 }

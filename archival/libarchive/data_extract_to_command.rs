@@ -96,7 +96,7 @@ pub unsafe extern "C" fn data_extract_to_command(mut archive_handle: *mut archiv
     let mut tar_env: [*mut libc::c_char; 8] = [0 as *mut libc::c_char; 8];
     memset(
       tar_env.as_mut_ptr() as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<[*mut libc::c_char; 8]>() as libc::c_ulong,
     );
     crate::libbb::xfuncs_printf::xpipe(p.as_mut_ptr());
@@ -105,7 +105,7 @@ pub unsafe extern "C" fn data_extract_to_command(mut archive_handle: *mut archiv
     } else {
       ({
         let mut bb__xvfork_pid: pid_t = vfork();
-        if bb__xvfork_pid < 0i32 {
+        if bb__xvfork_pid < 0 {
           crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
             b"vfork\x00" as *const u8 as *const libc::c_char,
           );
@@ -113,7 +113,7 @@ pub unsafe extern "C" fn data_extract_to_command(mut archive_handle: *mut archiv
         bb__xvfork_pid
       })
     };
-    if pid == 0i32 {
+    if pid == 0 {
       /* Child */
       /* str2env(tar_env, TAR_FILETYPE, "f"); - parent should do it once */
       oct2env(
@@ -157,7 +157,7 @@ pub unsafe extern "C" fn data_extract_to_command(mut archive_handle: *mut archiv
         (*file_header).gid as libc::c_ulonglong,
       );
       close(p[1]);
-      crate::libbb::xfuncs_printf::xdup2(p[0], 0i32);
+      crate::libbb::xfuncs_printf::xdup2(p[0], 0);
       signal(13i32, None);
       execl(
         (*archive_handle).tar__to_command_shell,
@@ -181,14 +181,14 @@ pub unsafe extern "C" fn data_extract_to_command(mut archive_handle: *mut archiv
     );
     close(p[1]);
     status = crate::libbb::xfuncs::wait_for_exitstatus(pid);
-    if status & 0x7fi32 == 0i32 && (status & 0xff00i32) >> 8i32 != 0 {
+    if status & 0x7fi32 == 0 && (status & 0xff00i32) >> 8i32 != 0 {
       crate::libbb::verror_msg::bb_error_msg_and_die(
         b"\'%s\' returned status %d\x00" as *const u8 as *const libc::c_char,
         (*archive_handle).tar__to_command,
         (status & 0xff00i32) >> 8i32,
       );
     }
-    if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0i32 {
+    if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0 {
       crate::libbb::verror_msg::bb_error_msg_and_die(
         b"\'%s\' terminated by signal %d\x00" as *const u8 as *const libc::c_char,
         (*archive_handle).tar__to_command,
@@ -197,7 +197,7 @@ pub unsafe extern "C" fn data_extract_to_command(mut archive_handle: *mut archiv
     }
     if 1i32 == 0 {
       let mut i: libc::c_int = 0;
-      i = 0i32;
+      i = 0;
       while i < TAR_MAX as libc::c_int {
         if !tar_env[i as usize].is_null() {
           crate::libbb::xfuncs_printf::bb_unsetenv_and_free(tar_env[i as usize]);

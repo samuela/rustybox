@@ -74,7 +74,7 @@ static mut duration_suffixes: [suffix_mult; 5] = [
   {
     let mut init = suffix_mult {
       suffix: [0, 0, 0, 0],
-      mult: 0i32 as libc::c_uint,
+      mult: 0 as libc::c_uint,
     };
     init
   },
@@ -89,7 +89,7 @@ pub unsafe extern "C" fn parse_duration_str(mut str: *mut libc::c_char) -> durat
       strspn(str, b"0123456789.\x00" as *const u8 as *const libc::c_char) as libc::c_int;
     let mut sv: libc::c_char = *str.offset(len as isize);
     *str.offset(len as isize) = '\u{0}' as i32 as libc::c_char;
-    *bb_errno = 0i32;
+    *bb_errno = 0;
     d = strtod(str, &mut pp);
     if *bb_errno != 0 || *pp as libc::c_int != 0 {
       crate::libbb::appletlib::bb_show_usage();
@@ -405,14 +405,14 @@ pub unsafe extern "C" fn sleep_for_duration(mut duration: duration_t) {
         .wrapping_mul(8i32 as libc::c_ulong)
         .wrapping_sub(1i32 as libc::c_ulong))
   };
-  ts.tv_nsec = 0i32 as __syscall_slong_t;
-  if duration >= 0i32 as libc::c_double && duration < ts.tv_sec as libc::c_double {
+  ts.tv_nsec = 0 as __syscall_slong_t;
+  if duration >= 0 as libc::c_double && duration < ts.tv_sec as libc::c_double {
     ts.tv_sec = duration as time_t;
     ts.tv_nsec = ((duration - ts.tv_sec as libc::c_double) * 1000000000i32 as libc::c_double)
       as __syscall_slong_t
   }
   loop {
-    *bb_errno = 0i32;
+    *bb_errno = 0;
     nanosleep(&mut ts, &mut ts);
     if !(*bb_errno == 4i32) {
       break;

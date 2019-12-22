@@ -48,14 +48,14 @@ pub unsafe extern "C" fn setlogcons_main(
   let mut arg: C2RustUnnamed = {
     let mut init = C2RustUnnamed {
       fn_0: 11i32 as libc::c_char,
-      subarg: 0i32 as libc::c_char,
+      subarg: 0 as libc::c_char,
     };
     init
   };
   if !(*argv.offset(1)).is_null() {
     arg.subarg = crate::libbb::xatonum::xatou_range(
       *argv.offset(1),
-      0i32 as libc::c_uint,
+      0 as libc::c_uint,
       63i32 as libc::c_uint,
     ) as libc::c_char
   }
@@ -70,10 +70,10 @@ pub unsafe extern "C" fn setlogcons_main(
     arg.subarg as libc::c_int,
   );
   crate::libbb::xfuncs_printf::bb_xioctl(
-    crate::libbb::xfuncs_printf::xopen(devname, 0i32),
+    crate::libbb::xfuncs_printf::xopen(devname, 0),
     0x541ci32 as libc::c_uint,
     &mut arg as *mut C2RustUnnamed as *mut libc::c_void,
     b"TIOCLINUX\x00" as *const u8 as *const libc::c_char,
   );
-  return 0i32;
+  return 0;
 }

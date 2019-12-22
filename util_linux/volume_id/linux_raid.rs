@@ -147,5 +147,5 @@ pub unsafe extern "C" fn volume_id_probe_linux_raid(
   //		le32_to_cpu(mdp->patch_version));
   //	volume_id_set_usage(id, VOLUME_ID_RAID);
   (*id).type_0 = b"linux_raid_member\x00" as *const u8 as *const libc::c_char;
-  return 0i32;
+  return 0;
 }

@@ -102,7 +102,7 @@ pub unsafe extern "C" fn llist_find_str(
   mut str: *const libc::c_char,
 ) -> *mut llist_t {
   while !list.is_null() {
-    if strcmp((*list).data, str) == 0i32 {
+    if strcmp((*list).data, str) == 0 {
       break;
     }
     list = (*list).link

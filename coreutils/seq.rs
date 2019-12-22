@@ -66,7 +66,7 @@ pub unsafe extern "C" fn seq_main(
   argv = argv.offset(optind as isize);
   increment = 1i32 as libc::c_double;
   first = increment;
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   's_87: {
     let mut pp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut current_block_10: u64;
@@ -106,8 +106,8 @@ pub unsafe extern "C" fn seq_main(
     crate::libbb::appletlib::bb_show_usage();
   }
   /* Last checked to be compatible with: coreutils-6.10 */
-  width = 0i32 as libc::c_uint;
-  frac_part = 0i32 as libc::c_uint;
+  width = 0 as libc::c_uint;
+  frac_part = 0 as libc::c_uint;
   loop {
     let mut dot: *mut libc::c_char = strchrnul(*argv, '.' as i32);
     let mut w: libc::c_int = dot.wrapping_offset_from(*argv) as libc::c_long as libc::c_int;
@@ -134,12 +134,12 @@ pub unsafe extern "C" fn seq_main(
     }
   }
   if opt & OPT_w as libc::c_int as libc::c_uint == 0 {
-    width = 0i32 as libc::c_uint
+    width = 0 as libc::c_uint
   }
   sep = b"\x00" as *const u8 as *const libc::c_char;
   v = first;
-  n = 0i32 as libc::c_uint;
-  while if increment >= 0i32 as libc::c_double {
+  n = 0 as libc::c_uint;
+  while if increment >= 0 as libc::c_double {
     (v <= last) as libc::c_int
   } else {
     (v >= last) as libc::c_int
@@ -151,7 +151,7 @@ pub unsafe extern "C" fn seq_main(
       width,
       frac_part,
       v,
-    ) < 0i32
+    ) < 0
     {
       break;
     }

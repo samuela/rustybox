@@ -67,7 +67,7 @@ pub unsafe extern "C" fn mountpoint_main(
   } else {
     lstat(arg, &mut st)
   };
-  if !(rc != 0i32) {
+  if !(rc != 0) {
     if opt & 4i32 != 0 {
       if st.st_mode & 0o170000i32 as libc::c_uint == 0o60000i32 as libc::c_uint {
         printf(
@@ -75,9 +75,9 @@ pub unsafe extern "C" fn mountpoint_main(
           gnu_dev_major(st.st_rdev),
           gnu_dev_minor(st.st_rdev),
         );
-        return 0i32;
+        return 0;
       }
-      *bb_errno = 0i32;
+      *bb_errno = 0;
       msg = b"%s: not a block device\x00" as *const u8 as *const libc::c_char
     } else {
       *bb_errno = 20i32;
@@ -88,7 +88,7 @@ pub unsafe extern "C" fn mountpoint_main(
           b"%s/..\x00" as *const u8 as *const libc::c_char,
           arg,
         );
-        if stat(p, &mut st) == 0i32 {
+        if stat(p, &mut st) == 0 {
           /* else: stat had set errno, just fall through */
           //int is_mnt = (st_dev != st.st_dev) || (st_dev == st.st_dev && st_ino == st.st_ino);
           let mut is_not_mnt: libc::c_int =

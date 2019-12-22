@@ -63,7 +63,7 @@ static mut modes_chars: [libc::c_char; 8] = [
   'c' as i32 as libc::c_char,
   'u' as i32 as libc::c_char,
   'b' as i32 as libc::c_char,
-  0i32 as libc::c_char,
+  0 as libc::c_char,
   1i32 as libc::c_char,
   1i32 as libc::c_char,
   2i32 as libc::c_char,
@@ -96,7 +96,7 @@ pub unsafe extern "C" fn mknod_main(
     crate::libbb::appletlib::bb_show_usage();
   }
   mode |= modes_cubp[*type_0.offset(4) as libc::c_int as usize];
-  dev = 0i32 as libc::dev_t;
+  dev = 0 as libc::dev_t;
   arg = *argv.offset(2);
   if *type_0 as libc::c_int != 'p' as i32 {
     if (*argv.offset(2)).is_null() || (*argv.offset(3)).is_null() {
@@ -107,7 +107,7 @@ pub unsafe extern "C" fn mknod_main(
     dev = crate::libbb::makedev::bb_makedev(
       xatoul_range(
         *argv.offset(2),
-        0i32 as libc::c_ulong,
+        0 as libc::c_ulong,
         gnu_dev_major(
           (2147483647i32 as libc::c_uint)
             .wrapping_mul(2u32)
@@ -116,7 +116,7 @@ pub unsafe extern "C" fn mknod_main(
       ) as libc::c_uint,
       xatoul_range(
         *argv.offset(3),
-        0i32 as libc::c_ulong,
+        0 as libc::c_ulong,
         gnu_dev_minor(
           (2147483647i32 as libc::c_uint)
             .wrapping_mul(2u32)
@@ -129,8 +129,8 @@ pub unsafe extern "C" fn mknod_main(
   if !arg.is_null() {
     crate::libbb::appletlib::bb_show_usage();
   }
-  if mknod(*argv.offset(0), mode, dev) != 0i32 {
+  if mknod(*argv.offset(0), mode, dev) != 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(*argv.offset(0));
   }
-  return 0i32;
+  return 0;
 }

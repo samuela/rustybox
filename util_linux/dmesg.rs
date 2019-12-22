@@ -92,10 +92,10 @@ pub unsafe extern "C" fn dmesg_main(
         b"klogctl\x00" as *const u8 as *const libc::c_char,
       );
     }
-    return 0i32;
+    return 0;
   }
   if opts & OPT_s as libc::c_int as libc::c_uint == 0 {
-    len = klogctl(10i32, std::ptr::null_mut::<libc::c_char>(), 0i32)
+    len = klogctl(10i32, std::ptr::null_mut::<libc::c_char>(), 0)
   }
   if len < 16i32 * 1024i32 {
     len = 16i32 * 1024i32
@@ -109,17 +109,17 @@ pub unsafe extern "C" fn dmesg_main(
     buf,
     len,
   );
-  if len < 0i32 {
+  if len < 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
       b"klogctl\x00" as *const u8 as *const libc::c_char,
     );
   }
-  if len == 0i32 {
-    return 0i32;
+  if len == 0 {
+    return 0;
   }
   if 1i32 != 0 && opts & OPT_r as libc::c_int as libc::c_uint == 0 {
     let mut last: libc::c_int = '\n' as i32;
-    let mut in_0: libc::c_int = 0i32;
+    let mut in_0: libc::c_int = 0;
     loop
     /* Skip <[0-9]+> at the start of lines */
     {
@@ -151,5 +151,5 @@ pub unsafe extern "C" fn dmesg_main(
       crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     }
   }
-  return 0i32;
+  return 0;
 }

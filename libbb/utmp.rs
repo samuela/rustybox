@@ -68,7 +68,7 @@ pub unsafe extern "C" fn write_new_utmp(
   let mut width: libc::c_uint = 0;
   memset(
     &mut utent as *mut utmpx as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<utmpx>() as libc::c_ulong,
   );
   utent.ut_pid = pid;
@@ -158,7 +158,7 @@ pub unsafe extern "C" fn update_utmp(
       /* Stale record. Nuke hostname */
       memset(
         (*utp).ut_host.as_mut_ptr() as *mut libc::c_void,
-        0i32,
+        0,
         ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong,
       );
     }

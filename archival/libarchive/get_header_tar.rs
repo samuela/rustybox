@@ -138,7 +138,7 @@ unsafe extern "C" fn getOctal(
     v = first as libc::c_ulonglong;
     loop {
       len -= 1;
-      if !(len != 0i32) {
+      if !(len != 0) {
         break;
       }
       str = str.offset(1);
@@ -166,7 +166,7 @@ unsafe extern "C" fn process_pax_hdr(
   (*archive_handle).offset += blk_sz as libc::c_long;
   /* prevent bb_strtou from running off the buffer */
   *buf.offset(sz as isize) = '\u{0}' as i32 as libc::c_char;
-  while sz != 0i32 as libc::c_uint {
+  while sz != 0 as libc::c_uint {
     let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut value: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut len: libc::c_uint = 0;
@@ -177,8 +177,8 @@ unsafe extern "C" fn process_pax_hdr(
      */
     p = p.offset(len as isize);
     sz = sz.wrapping_sub(len);
-    if ((sz | len) as libc::c_int) < 0i32
-      || len == 0i32 as libc::c_uint
+    if ((sz | len) as libc::c_int) < 0
+      || len == 0 as libc::c_uint
       || *bb_errno != 22i32
       || *end as libc::c_int != ' ' as i32
     {
@@ -266,7 +266,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
     /* return get_header_tar(archive_handle); */
     /* to prevent misdetection of bz2 sig */
     {
-      *(&mut tar as *mut tar_header_t as *mut aliased_u32) = 0i32 as aliased_u32;
+      *(&mut tar as *mut tar_header_t as *mut aliased_u32) = 0 as aliased_u32;
       i = crate::libbb::read::full_read(
         (*archive_handle).src_fd,
         &mut tar as *mut tar_header_t as *mut libc::c_void,
@@ -279,7 +279,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
        * We will mimic exit(EXIT_SUCCESS), although we will not mimic
        * the message and we don't check whether we indeed
        * saw zero block directly before this. */
-      if i == 0i32 {
+      if i == 0 {
         /* GNU tar 1.29 will be silent if tar archive ends abruptly
          * (if there are no zero blocks at all, and last read returns zero,
          * not short read 0 < len < 512). Complain only if
@@ -296,8 +296,8 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
       if !(i != 512i32) {
         (*archive_handle).offset += i as libc::c_long;
         /* If there is no filename its an empty header */
-        if tar.name[0] as libc::c_int == 0i32
-          && tar.prefix[0] as libc::c_int == 0i32
+        if tar.name[0] as libc::c_int == 0
+          && tar.prefix[0] as libc::c_int == 0
           && (*archive_handle).tar__longname.is_null()
         {
           if (*archive_handle).tar__end != 0 {
@@ -314,10 +314,10 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
             /* "end of archive" */
           }
           (*archive_handle).tar__end = 1i32 as smallint;
-          return 0i32 as libc::c_char;
+          return 0 as libc::c_char;
           /* "decoded one header" */
         }
-        (*archive_handle).tar__end = 0i32 as smallint;
+        (*archive_handle).tar__end = 0 as smallint;
         /* Check header has valid magic, "ustar" is for the proper tar,
          * five NULs are for the old tar format  */
         if !(crate::libbb::compare_string_array::is_prefixed_with(
@@ -330,7 +330,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
               tar.magic.as_mut_ptr() as *const libc::c_void,
               b"\x00\x00\x00\x00\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
               5i32 as libc::c_ulong,
-            ) != 0i32))
+            ) != 0))
         {
           /* Do checksum on headers.
            * POSIX says that checksum is done on unsigned bytes, but
@@ -340,7 +340,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
             .wrapping_mul(::std::mem::size_of::<[libc::c_char; 8]>() as libc::c_ulong)
             as libc::c_int;
           sum_s = sum_u;
-          i = 0i32;
+          i = 0;
           while i < 148i32 {
             sum_u += *(&mut tar as *mut tar_header_t as *mut libc::c_uchar).offset(i as isize)
               as libc::c_int;
@@ -617,13 +617,13 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
       }
       if crate::archival::libarchive::open_transformer::setup_unzip_on_fd(
         (*archive_handle).src_fd,
-        0i32,
-      ) != 0i32
+        0,
+      ) != 0
       {
         current_block = 25209135276526723;
         break 'c_8845;
       }
-      (*archive_handle).offset = 0i32 as off_t
+      (*archive_handle).offset = 0 as off_t
     }
   }
   match current_block {
@@ -643,7 +643,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
     _ => {}
   }
   match current_block {
-    8559883396898198220 => (*file_header).size = 0i32 as off_t,
+    8559883396898198220 => (*file_header).size = 0 as off_t,
     _ => {}
   }
   if !(*archive_handle).tar__longname.is_null() {
@@ -664,7 +664,7 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
   /* Must be done after mode is set as '/' is used to check if it's a directory */
   cp = crate::libbb::last_char_is::last_char_is((*file_header).name, '/' as i32);
   if (*archive_handle).filter.expect("non-null function pointer")(archive_handle) as libc::c_int
-    == 0i32
+    == 0
   {
     (*archive_handle)
       .action_header
@@ -698,6 +698,6 @@ pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_
    * It might be inserted in archive_handle->passed - see above */
   free((*file_header).tar__uname as *mut libc::c_void);
   free((*file_header).tar__gname as *mut libc::c_void);
-  return 0i32 as libc::c_char;
+  return 0 as libc::c_char;
   /* "decoded one header" */
 }

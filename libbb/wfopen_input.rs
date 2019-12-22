@@ -449,11 +449,11 @@ pub unsafe extern "C" fn xfopen_stdin(mut filename: *const libc::c_char) -> *mut
 }
 #[no_mangle]
 pub unsafe extern "C" fn open_or_warn_stdin(mut filename: *const libc::c_char) -> libc::c_int {
-  let mut fd: libc::c_int = 0i32;
+  let mut fd: libc::c_int = 0;
   if filename != bb_msg_standard_input.as_ptr()
     && (*filename.offset(0) as libc::c_int != '-' as i32 || *filename.offset(1) as libc::c_int != 0)
   {
-    fd = crate::libbb::xfuncs_printf::open_or_warn(filename, 0i32)
+    fd = crate::libbb::xfuncs_printf::open_or_warn(filename, 0)
   }
   return fd;
 }
@@ -613,7 +613,7 @@ pub unsafe extern "C" fn open_or_warn_stdin(mut filename: *const libc::c_char) -
 #[no_mangle]
 pub unsafe extern "C" fn xopen_stdin(mut filename: *const libc::c_char) -> libc::c_int {
   let mut fd: libc::c_int = open_or_warn_stdin(filename);
-  if fd >= 0i32 {
+  if fd >= 0 {
     return fd;
   }
   crate::libbb::xfunc_die::xfunc_die();

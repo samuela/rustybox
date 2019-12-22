@@ -81,7 +81,7 @@ unsafe extern "C" fn hash_file(
   > = None;
   let mut hash_algo: libc::c_char = 0;
   src_fd = crate::libbb::wfopen_input::open_or_warn_stdin(filename);
-  if src_fd < 0i32 {
+  if src_fd < 0 {
     return 0 as *mut u8;
   }
   hash_algo = *applet_name.offset(3);
@@ -205,7 +205,7 @@ unsafe extern "C" fn hash_file(
      * We allow any value which does not blow the algorithm up.
      */
     if sha3_width >= (1600i32 / 2i32) as libc::c_uint
-      || sha3_width == 0i32 as libc::c_uint
+      || sha3_width == 0 as libc::c_uint
       || sha3_width & 0x1fi32 as libc::c_uint != 0
     {
       /* should be multiple of 32 */
@@ -226,7 +226,7 @@ unsafe extern "C" fn hash_file(
   loop {
     count = crate::libbb::read::safe_read(src_fd, in_buf as *mut libc::c_void, 4096i32 as size_t)
       as libc::c_int;
-    if !(count > 0i32) {
+    if !(count > 0) {
       break;
     }
     update.expect("non-null function pointer")(
@@ -236,7 +236,7 @@ unsafe extern "C" fn hash_file(
     );
   }
   hash_value = std::ptr::null_mut();
-  if count < 0i32 {
+  if count < 0 {
     crate::libbb::perror_msg::bb_perror_msg(
       b"can\'t read \'%s\'\x00" as *const u8 as *const libc::c_char,
       filename,
@@ -250,7 +250,7 @@ unsafe extern "C" fn hash_file(
     hash_value = hash_bin_to_hex(in_buf, hash_len as libc::c_uint)
   }
   free(in_buf as *mut libc::c_void);
-  if src_fd != 0i32 {
+  if src_fd != 0 {
     close(src_fd);
   }
   return hash_value;
@@ -261,7 +261,7 @@ pub unsafe extern "C" fn md5_sha1_sum_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut return_value: libc::c_int = 0i32;
+  let mut return_value: libc::c_int = 0;
   let mut flags: libc::c_uint = 0;
   let mut sha3_width: libc::c_uint = 224i32 as libc::c_uint;
   /* -b "binary", -t "text" are ignored (shaNNNsum compat) */
@@ -288,8 +288,8 @@ pub unsafe extern "C" fn md5_sha1_sum_main(
     if 1i32 != 0 && flags & 2i32 as libc::c_uint != 0 {
       let mut pre_computed_stream: *mut FILE = std::ptr::null_mut();
       let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-      let mut count_total: libc::c_int = 0i32;
-      let mut count_failed: libc::c_int = 0i32;
+      let mut count_total: libc::c_int = 0;
+      let mut count_failed: libc::c_int = 0;
       pre_computed_stream = crate::libbb::wfopen_input::xfopen_stdin(*argv);
       loop {
         line = crate::libbb::get_line_from_file::xmalloc_fgetline(pre_computed_stream);
@@ -317,7 +317,7 @@ pub unsafe extern "C" fn md5_sha1_sum_main(
           *filename_ptr = '\u{0}' as i32 as libc::c_char;
           filename_ptr = filename_ptr.offset(2);
           hash_value = hash_file(filename_ptr, sha3_width);
-          if !hash_value.is_null() && strcmp(hash_value as *mut libc::c_char, line) == 0i32 {
+          if !hash_value.is_null() && strcmp(hash_value as *mut libc::c_char, line) == 0 {
             if flags & 1i32 as libc::c_uint == 0 {
               printf(
                 b"%s: OK\n\x00" as *const u8 as *const libc::c_char,
@@ -347,7 +347,7 @@ pub unsafe extern "C" fn md5_sha1_sum_main(
           count_total,
         );
       }
-      if count_total == 0i32 {
+      if count_total == 0 {
         return_value = 1i32;
         /*
          * md5sum from GNU coreutils 8.25 says:

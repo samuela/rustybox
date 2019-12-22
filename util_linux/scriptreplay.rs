@@ -51,7 +51,7 @@ pub unsafe extern "C" fn scriptreplay_main(
     }
   }
   tfp = crate::libbb::wfopen::xfopen_for_read(*argv.offset(1));
-  fd = crate::libbb::xfuncs_printf::xopen(script, 0i32);
+  fd = crate::libbb::xfuncs_printf::xopen(script, 0);
   while fscanf(
     tfp,
     b"%lf %lu\n\x00" as *const u8 as *const libc::c_char,
@@ -62,5 +62,5 @@ pub unsafe extern "C" fn scriptreplay_main(
     usleep((delay * factor) as useconds_t);
     crate::libbb::copyfd::bb_copyfd_exact_size(fd, 1i32, count as off_t);
   }
-  return 0i32;
+  return 0;
 }

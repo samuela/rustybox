@@ -343,7 +343,7 @@ unsafe extern "C" fn make_default_cur_rule() {
   memset(
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_rule as *mut rule
       as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<rule>() as libc::c_ulong,
   ); /* "not a @major,minor rule" */
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -478,7 +478,7 @@ unsafe extern "C" fn parse_next_rule() {
         || (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
           .cur_rule
           .maj
-          < 0i32
+          < 0
       {
         crate::libbb::verror_msg::bb_error_msg(
           b"bad @maj,min on line %d\x00" as *const u8 as *const libc::c_char,
@@ -546,7 +546,7 @@ unsafe extern "C" fn parse_next_rule() {
             .cur_rule
             .ugid,
           tokens[1],
-        ) == 0i32
+        ) == 0
         {
           crate::libbb::verror_msg::bb_error_msg(
             b"unknown user/group \'%s\' on line %d\x00" as *const u8 as *const libc::c_char,
@@ -706,18 +706,18 @@ unsafe extern "C" fn env_matches(mut e: *mut envmatch) -> libc::c_int {
     let mut r: libc::c_int = 0;
     let mut val: *mut libc::c_char = getenv((*e).envname);
     if val.is_null() {
-      return 0i32;
+      return 0;
     }
     r = regexec(
       &mut (*e).match_0,
       val,
-      0i32 as size_t,
+      0 as size_t,
       0 as *mut regmatch_t,
-      0i32,
+      0,
     );
-    if r != 0i32 {
+    if r != 0 {
       /* no match */
-      return 0i32;
+      return 0;
     }
     e = (*e).next
   }
@@ -837,8 +837,8 @@ unsafe extern "C" fn make_device(
       path_end.offset(1) as *mut libc::c_void,
       (128i32 - 1i32) as size_t,
     ) as libc::c_int;
-    if len < 0i32 {
-      len = 0i32
+    if len < 0 {
+      len = 0
     }
     *path_end = '\u{0}' as i32 as libc::c_char;
     *path_end.offset((1i32 + len) as isize) = '\u{0}' as i32 as libc::c_char;
@@ -877,7 +877,7 @@ unsafe extern "C" fn make_device(
   {
     type_0 = 0o60000i32
   }
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).rule_idx = 0i32 as libc::c_uint;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).rule_idx = 0 as libc::c_uint;
   loop {
     let mut str_to_match: *const libc::c_char = std::ptr::null();
     let mut off: [regmatch_t; 10] = [regmatch_t { rm_so: 0, rm_eo: 0 }; 10];
@@ -893,7 +893,7 @@ unsafe extern "C" fn make_device(
     if env_matches((*rule).envmatch) == 0 {
       continue;
     }
-    if (*rule).maj >= 0i32 {
+    if (*rule).maj >= 0 {
       /* @maj,min rule */
       if major != (*rule).maj {
         continue;
@@ -903,7 +903,7 @@ unsafe extern "C" fn make_device(
       }
       memset(
         off.as_mut_ptr() as *mut libc::c_void,
-        0i32,
+        0,
         ::std::mem::size_of::<[regmatch_t; 10]>() as libc::c_ulong,
       );
     } else {
@@ -923,7 +923,7 @@ unsafe extern "C" fn make_device(
             .wrapping_div(::std::mem::size_of::<regmatch_t>() as libc::c_ulong)
             as libc::c_uint as size_t,
           off.as_mut_ptr(),
-          0i32,
+          0,
         );
         //bb_error_msg("matches:");
         //for (int i = 0; i < ARRAY_SIZE(off); i++) {
@@ -932,8 +932,8 @@ unsafe extern "C" fn make_device(
         //		(int)(off[i].rm_eo - off[i].rm_so),
         //		device_name + off[i].rm_so);
         //}
-        if regex_match != 0i32
-          || off[0].rm_so != 0i32
+        if regex_match != 0
+          || off[0].rm_so != 0
           || off[0].rm_eo != strlen(str_to_match) as libc::c_int
         {
           continue;
@@ -966,7 +966,7 @@ unsafe extern "C" fn make_device(
         let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut n: libc::c_uint = 0;
         /* substitute %1..9 with off[1..9], if any */
-        n = 0i32 as libc::c_uint;
+        n = 0 as libc::c_uint;
         s = (*rule).ren_mov;
         while *s != 0 {
           let fresh12 = s;
@@ -985,7 +985,7 @@ unsafe extern "C" fn make_device(
           *p = *s;
           if '%' as i32 == *s as libc::c_int {
             let mut i: libc::c_uint = (*s.offset(1) as libc::c_int - '0' as i32) as libc::c_uint;
-            if i <= 9i32 as libc::c_uint && off[i as usize].rm_so >= 0i32 {
+            if i <= 9i32 as libc::c_uint && off[i as usize].rm_so >= 0 {
               n = (off[i as usize].rm_eo - off[i as usize].rm_so) as libc::c_uint;
               strncpy(
                 p,
@@ -1022,7 +1022,7 @@ unsafe extern "C" fn make_device(
       alias = build_alias(alias, device_name);
       node_name = alias
     }
-    if operation == OP_add as libc::c_int && major >= 0i32 {
+    if operation == OP_add as libc::c_int && major >= 0 {
       let mut slash: *mut libc::c_char = strrchr(node_name, '/' as i32);
       if !slash.is_null() {
         *slash = '\u{0}' as i32 as libc::c_char;
@@ -1153,10 +1153,10 @@ unsafe extern "C" fn fileAction(
   if strcmp(
     fileName.offset(len as isize),
     b"/dev\x00" as *const u8 as *const libc::c_char,
-  ) != 0i32
+  ) != 0
     || len >= (4096i32 - 32i32) as libc::c_ulong
   {
-    return 0i32;
+    return 0;
   } /* not .../dev */
   strcpy(path, fileName);
   *path.offset(len as isize) = '\u{0}' as i32 as libc::c_char;
@@ -1171,7 +1171,7 @@ unsafe extern "C" fn fileAction(
     (::std::mem::size_of::<[libc::c_char; 4096]>() as libc::c_ulong)
       .wrapping_sub(1i32 as libc::c_ulong),
   ) as libc::c_int;
-  if res > 0i32 {
+  if res > 0 {
     subsys[res as usize] = '\u{0}' as i32 as libc::c_char;
     free((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).subsystem as *mut libc::c_void);
     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -1239,19 +1239,19 @@ unsafe extern "C" fn load_firmware(
   let mut loading_fd: libc::c_int = 0;
   /* check for /lib/firmware/$FIRMWARE */
   firmware_fd = -1i32; /* can fail */
-  if chdir(b"/lib/firmware\x00" as *const u8 as *const libc::c_char) == 0i32 {
-    firmware_fd = open(firmware, 0i32)
+  if chdir(b"/lib/firmware\x00" as *const u8 as *const libc::c_char) == 0 {
+    firmware_fd = open(firmware, 0)
   }
   /* check for /sys/$DEVPATH/loading ... give 30 seconds to appear */
   crate::libbb::xfuncs_printf::xchdir(sysfs_path);
-  cnt = 0i32;
+  cnt = 0;
   loop {
     if !(cnt < 30i32) {
       current_block = 128850887951311672;
       break;
     }
     loading_fd = open(b"loading\x00" as *const u8 as *const libc::c_char, 0o1i32);
-    if loading_fd >= 0i32 {
+    if loading_fd >= 0 {
       current_block = 8596762549756051270;
       break;
     }
@@ -1260,8 +1260,8 @@ unsafe extern "C" fn load_firmware(
   }
   match current_block {
     8596762549756051270 => {
-      cnt = 0i32;
-      if firmware_fd >= 0i32 {
+      cnt = 0;
+      if firmware_fd >= 0 {
         let mut data_fd: libc::c_int = 0;
         /* tell kernel we're loading by "echo 1 > /sys/$DEVPATH/loading" */
         if crate::libbb::full_write::full_write(
@@ -1274,7 +1274,7 @@ unsafe extern "C" fn load_firmware(
         } else {
           /* load firmware into /sys/$DEVPATH/data */
           data_fd = open(b"data\x00" as *const u8 as *const libc::c_char, 0o1i32);
-          if data_fd < 0i32 {
+          if data_fd < 0 {
             current_block = 128850887951311672;
           } else {
             cnt = crate::libbb::copyfd::bb_copyfd_eof(firmware_fd, data_fd) as libc::c_int;
@@ -1292,7 +1292,7 @@ unsafe extern "C" fn load_firmware(
            * There are cases when otherwise kernel would wait for minutes
            * before timing out.
            */
-          if cnt > 0i32 {
+          if cnt > 0 {
             crate::libbb::full_write::full_write(
               loading_fd,
               b"0\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
@@ -1338,7 +1338,7 @@ unsafe extern "C" fn open_mdev_log(mut seq: *const libc::c_char, mut my_pid: lib
     b"mdev.log\x00" as *const u8 as *const libc::c_char,
     0o1i32 | 0o2000i32,
   );
-  if logfd >= 0i32 {
+  if logfd >= 0 {
     crate::libbb::xfuncs_printf::xmove_fd(logfd, 2i32);
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose = 2i32 as smallint;
     applet_name = crate::libbb::xfuncs_printf::xasprintf(
@@ -1361,7 +1361,7 @@ unsafe extern "C" fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c
   /* We time out after 2 sec */
   static mut ts: timespec = {
     let mut init = timespec {
-      tv_sec: 0i32 as time_t,
+      tv_sec: 0 as time_t,
       tv_nsec: (32i32 * 1000i32 * 1000i32) as __syscall_slong_t,
     };
     init
@@ -1377,9 +1377,9 @@ unsafe extern "C" fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c
     let mut seqlen: libc::c_int = 0;
     let mut seqbuf: [libc::c_char; 26] = [0; 26];
     let mut seqbufnum: libc::c_uint = 0;
-    if seq_fd < 0i32 {
+    if seq_fd < 0 {
       seq_fd = open(b"mdev.seq\x00" as *const u8 as *const libc::c_char, 0o2i32);
-      if seq_fd < 0i32 {
+      if seq_fd < 0 {
         break;
       }
       crate::libbb::xfuncs::close_on_exec_on(seq_fd);
@@ -1389,9 +1389,9 @@ unsafe extern "C" fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c
       seqbuf.as_mut_ptr() as *mut libc::c_void,
       (::std::mem::size_of::<[libc::c_char; 26]>() as libc::c_ulong)
         .wrapping_sub(1i32 as libc::c_ulong),
-      0i32 as off64_t,
+      0 as off64_t,
     ) as libc::c_int;
-    if seqlen < 0i32 {
+    if seqlen < 0 {
       close(seq_fd);
       seq_fd = -1i32;
       break;
@@ -1401,7 +1401,7 @@ unsafe extern "C" fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c
         /* don't decrement timeout! */
         /* seed file: write out seq ASAP */
         crate::libbb::xfuncs_printf::xwrite_str(seq_fd, crate::libbb::xfuncs::utoa(expected_seq));
-        crate::libbb::xfuncs_printf::xlseek(seq_fd, 0i32 as off_t, 0i32);
+        crate::libbb::xfuncs_printf::xlseek(seq_fd, 0 as off_t, 0);
         if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose as libc::c_int >= 2i32 {
           crate::libbb::verror_msg::bb_simple_error_msg(
             b"first seq written\x00" as *const u8 as *const libc::c_char,
@@ -1429,13 +1429,13 @@ unsafe extern "C" fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c
                 expected_seq,
               );
             }
-            do_once = 0i32
+            do_once = 0
           }
-          if sigtimedwait(&mut set_CHLD, 0 as *mut siginfo_t, &ts) >= 0i32 {
+          if sigtimedwait(&mut set_CHLD, 0 as *mut siginfo_t, &ts) >= 0 {
             continue;
           }
           timeout -= 1;
-          if !(timeout == 0i32) {
+          if !(timeout == 0) {
             continue;
           }
           if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose != 0 {
@@ -1465,7 +1465,7 @@ unsafe extern "C" fn signal_mdevs(mut my_pid: libc::c_uint) {
       && strcmp(
         crate::libbb::get_last_path_component::bb_basename((*p).argv0),
         b"mdev\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
+      ) == 0
     {
       kill((*p).pid as pid_t, 17i32);
     }
@@ -1547,7 +1547,7 @@ unsafe extern "C" fn process_action(mut temp: *mut libc::c_char, mut my_pid: lib
       load_firmware(fw, temp);
     }
   }
-  if seq_fd >= 0i32 {
+  if seq_fd >= 0 {
     crate::libbb::xfuncs_printf::xwrite_str(
       seq_fd,
       crate::libbb::xfuncs::utoa(seqnum.wrapping_add(1i32 as libc::c_uint)),
@@ -1586,7 +1586,7 @@ unsafe extern "C" fn initial_scan(mut temp: *mut libc::c_char) {
         ) -> libc::c_int,
     ),
     temp as *mut libc::c_void,
-    0i32 as libc::c_uint,
+    0 as libc::c_uint,
   );
 }
 unsafe extern "C" fn daemon_loop(mut temp: *mut libc::c_char, mut fd: libc::c_int) {
@@ -1610,7 +1610,7 @@ unsafe extern "C" fn daemon_loop(mut temp: *mut libc::c_char, mut fd: libc::c_in
     }
     end = netbuf.as_mut_ptr().offset(len as isize);
     *end = '\u{0}' as i32 as libc::c_char;
-    idx = 0i32;
+    idx = 0;
     s = netbuf.as_mut_ptr();
     while s < end && idx < 32i32 {
       if *crate::libbb::endofname::endofname(s).offset(0) as libc::c_int == '=' as i32 {
@@ -1621,7 +1621,7 @@ unsafe extern "C" fn daemon_loop(mut temp: *mut libc::c_char, mut fd: libc::c_in
       }
       s = s.offset(strlen(s).wrapping_add(1i32 as libc::c_ulong) as isize)
     }
-    process_action(temp, 0i32 as libc::c_uint);
+    process_action(temp, 0 as libc::c_uint);
     while idx != 0 {
       idx -= 1;
       crate::libbb::xfuncs_printf::bb_unsetenv(env[idx as usize]);
@@ -1667,7 +1667,7 @@ pub unsafe extern "C" fn mdev_main(
      */
     fd = crate::libbb::xconnect::create_and_bind_to_netlink(
       15i32,
-      1i32 << 0i32,
+      1i32 << 0,
       (2i32 * 1024i32 * 1024i32) as libc::c_uint,
     );
     /*
@@ -1695,5 +1695,5 @@ pub unsafe extern "C" fn mdev_main(
       );
     }
   }
-  return 0i32;
+  return 0;
 }

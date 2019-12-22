@@ -122,13 +122,13 @@ unsafe extern "C" fn chattr_dir_proc(
     change_attributes(path, gp as *mut globals);
     free(path as *mut libc::c_void);
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn change_attributes(mut name: *const libc::c_char, mut gp: *mut globals) {
   let mut current_block: u64;
   let mut fsflags: libc::c_ulong = 0;
   let mut st: stat = std::mem::zeroed();
-  if lstat(name, &mut st) != 0i32 {
+  if lstat(name, &mut st) != 0 {
     crate::libbb::perror_msg::bb_perror_msg(
       b"stat %s\x00" as *const u8 as *const libc::c_char,
       name,
@@ -152,7 +152,7 @@ unsafe extern "C" fn change_attributes(mut name: *const libc::c_char, mut gp: *m
   }
   if (*gp).flags & 8i32 != 0 {
     if crate::e2fsprogs::e2fs_lib::fgetsetversion(name, 0 as *mut libc::c_ulong, (*gp).version)
-      != 0i32
+      != 0
     {
       crate::libbb::perror_msg::bb_perror_msg(
         b"setting version on %s\x00" as *const u8 as *const libc::c_char,
@@ -163,8 +163,8 @@ unsafe extern "C" fn change_attributes(mut name: *const libc::c_char, mut gp: *m
   if (*gp).flags & 4i32 != 0 {
     fsflags = (*gp).af;
     current_block = 12124785117276362961;
-  } else if crate::e2fsprogs::e2fs_lib::fgetsetflags(name, &mut fsflags, 0i32 as libc::c_ulong)
-    != 0i32
+  } else if crate::e2fsprogs::e2fs_lib::fgetsetflags(name, &mut fsflags, 0 as libc::c_ulong)
+    != 0
   {
     crate::libbb::perror_msg::bb_perror_msg(
       b"reading flags on %s\x00" as *const u8 as *const libc::c_char,
@@ -184,7 +184,7 @@ unsafe extern "C" fn change_attributes(mut name: *const libc::c_char, mut gp: *m
   }
   match current_block {
     12124785117276362961 => {
-      if crate::e2fsprogs::e2fs_lib::fgetsetflags(name, 0 as *mut libc::c_ulong, fsflags) != 0i32 {
+      if crate::e2fsprogs::e2fs_lib::fgetsetflags(name, 0 as *mut libc::c_ulong, fsflags) != 0 {
         crate::libbb::perror_msg::bb_perror_msg(
           b"setting flags on %s\x00" as *const u8 as *const libc::c_char,
           name,
@@ -224,7 +224,7 @@ pub unsafe extern "C" fn chattr_main(
   };
   memset(
     &mut g as *mut globals as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<globals>() as libc::c_ulong,
   );
   loop
@@ -269,5 +269,5 @@ pub unsafe extern "C" fn chattr_main(
       break;
     }
   }
-  return 0i32;
+  return 0;
 }

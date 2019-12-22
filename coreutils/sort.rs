@@ -245,14 +245,14 @@ unsafe extern "C" fn get_key(
   }
   /* Find start of key on first pass, end on second pass */
   len = strlen(str) as libc::c_int;
-  j = 0i32;
+  j = 0;
   while j < 2i32 {
     if (*key).range[(2i32 * j) as usize] == 0 {
       end = len
     } else {
       /* Loop through fields */
-      let mut ch: libc::c_uchar = 0i32 as libc::c_uchar;
-      end = 0i32;
+      let mut ch: libc::c_uchar = 0 as libc::c_uchar;
+      end = 0;
       i = 1i32 as libc::c_uint;
       while i < (*key).range[(2i32 * j) as usize].wrapping_add(j as libc::c_uint) {
         if key_separator != 0 {
@@ -357,7 +357,7 @@ unsafe extern "C" fn get_key(
   str = crate::libbb::xfuncs_printf::xstrndup(str.offset(start as isize), end - start);
   /* Handle -d */
   if flags & FLAG_d as libc::c_int != 0 {
-    end = 0i32;
+    end = 0;
     start = end;
     while *str.offset(end as isize) != 0 {
       if ({
@@ -378,7 +378,7 @@ unsafe extern "C" fn get_key(
   }
   /* Handle -i */
   if flags & FLAG_i as libc::c_int != 0 {
-    end = 0i32;
+    end = 0;
     start = end;
     while *str.offset(end as isize) != 0 {
       if (*str.offset(end as isize) as libc::c_int - 0x20i32) as libc::c_uint
@@ -394,7 +394,7 @@ unsafe extern "C" fn get_key(
   }
   /* Handle -f */
   if flags & FLAG_f as libc::c_int != 0 {
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     while *str.offset(i as isize) != 0 {
       *str.offset(i as isize) =
         bb_ascii_toupper(*str.offset(i as isize) as libc::c_uchar) as libc::c_char;
@@ -418,7 +418,7 @@ unsafe extern "C" fn compare_keys(
   mut yarg: *const libc::c_void,
 ) -> libc::c_int {
   let mut flags: libc::c_int = option_mask32 as libc::c_int; /* for */
-  let mut retval: libc::c_int = 0i32;
+  let mut retval: libc::c_int = 0;
   let mut x: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut y: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut key: *mut sort_key = std::ptr::null_mut();
@@ -453,29 +453,29 @@ unsafe extern "C" fn compare_keys(
         let mut dy: libc::c_double = strtod(y, &mut yy);
         /* not numbers < NaN < -infinity < numbers < +infinity) */
         if x == xx {
-          retval = if y == yy { 0i32 } else { -1i32 }
+          retval = if y == yy { 0 } else { -1i32 }
         } else if y == yy {
           retval = 1i32
         } else if dx != dx {
-          retval = if dy != dy { 0i32 } else { -1i32 }
+          retval = if dy != dy { 0 } else { -1i32 }
         } else if dy != dy {
           retval = 1i32
         } else if 1.0f64 / dx == 0.0f64 {
-          if dx < 0i32 as libc::c_double {
-            retval = if 1.0f64 / dy == 0.0f64 && dy < 0i32 as libc::c_double {
-              0i32
+          if dx < 0 as libc::c_double {
+            retval = if 1.0f64 / dy == 0.0f64 && dy < 0 as libc::c_double {
+              0
             } else {
               -1i32
             }
           } else {
-            retval = if 1.0f64 / dy == 0.0f64 && dy > 0i32 as libc::c_double {
-              0i32
+            retval = if 1.0f64 / dy == 0.0f64 && dy > 0 as libc::c_double {
+              0
             } else {
               1i32
             }
           }
         } else if 1.0f64 / dy == 0.0f64 {
-          retval = if dy < 0i32 as libc::c_double {
+          retval = if dy < 0 as libc::c_double {
             1i32
           } else {
             -1i32
@@ -486,7 +486,7 @@ unsafe extern "C" fn compare_keys(
           } else if dx < dy {
             -1i32
           } else {
-            0i32
+            0
           }
         }
       }
@@ -511,7 +511,7 @@ unsafe extern "C" fn compare_keys(
         dx_0 = thyme.tm_mon;
         yy_0 = strptime(y, b"%b\x00" as *const u8 as *const libc::c_char, &mut thyme);
         if xx_0.is_null() {
-          retval = if yy_0.is_null() { 0i32 } else { -1i32 }
+          retval = if yy_0.is_null() { 0 } else { -1i32 }
         } else if yy_0.is_null() {
           retval = 1i32
         } else {
@@ -529,7 +529,7 @@ unsafe extern "C" fn compare_keys(
         } else if dx_1 < dy_0 {
           -1i32
         } else {
-          0i32
+          0
         }
       }
       _ => {
@@ -546,7 +546,7 @@ unsafe extern "C" fn compare_keys(
     }
     key = (*key).next_key
   }
-  if retval == 0i32 {
+  if retval == 0 {
     /* Free key copies. */
     /* So far lines are "the same" */
     if option_mask32 & FLAG_s as libc::c_int as libc::c_uint != 0 {
@@ -646,7 +646,7 @@ pub unsafe extern "C" fn sort_main(
     let mut key: *mut sort_key = add_key(); /* i==0 before comma, 1 after (-k3,6) */
     let mut str_k: *mut libc::c_char =
       crate::libbb::llist::llist_pop(&mut lst_k) as *mut libc::c_char;
-    i = 0i32;
+    i = 0;
     while *str_k != 0 {
       /* Start of range */
       /* Cannot use bb_strtou - suffix can be a letter */
@@ -695,7 +695,7 @@ pub unsafe extern "C" fn sort_main(
     argv = argv.offset(-1);
     *argv = b"-\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
   }
-  linecount = 0i32;
+  linecount = 0;
   lines = std::ptr::null_mut();
   loop {
     /* coreutils 6.9 compat: abort on first open error,
@@ -739,7 +739,7 @@ pub unsafe extern "C" fn sort_main(
     let mut j: libc::c_int = if option_mask32 & FLAG_u as libc::c_int as libc::c_uint != 0 {
       -1i32
     } else {
-      0i32
+      0
     };
     i = 1i32;
     while i < linecount {
@@ -757,11 +757,11 @@ pub unsafe extern "C" fn sort_main(
       }
       i += 1
     }
-    return 0i32;
+    return 0;
   }
   /* For stable sort, store original line position beyond terminating NUL */
   if option_mask32 & FLAG_s as libc::c_int as libc::c_uint != 0 {
-    i = 0i32;
+    i = 0;
     while i < linecount {
       let mut p32: *mut u32 = std::ptr::null_mut();
       let mut line_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -794,7 +794,7 @@ pub unsafe extern "C" fn sort_main(
   );
   /* Handle -u */
   if option_mask32 & FLAG_u as libc::c_int as libc::c_uint != 0 {
-    let mut j_0: libc::c_int = 0i32;
+    let mut j_0: libc::c_int = 0;
     /* coreutils 6.3 drop lines for which only key is the same
      * -- disabling last-resort compare, or else compare_keys()
      * will be the same only for completely identical lines.
@@ -805,7 +805,7 @@ pub unsafe extern "C" fn sort_main(
       if compare_keys(
         &mut *lines.offset(j_0 as isize) as *mut *mut libc::c_char as *const libc::c_void,
         &mut *lines.offset(i as isize) as *mut *mut libc::c_char as *const libc::c_void,
-      ) == 0i32
+      ) == 0
       {
         free(*lines.offset(i as isize) as *mut libc::c_void);
       } else {
@@ -832,7 +832,7 @@ pub unsafe extern "C" fn sort_main(
   } else {
     '\n' as i32
   };
-  i = 0i32;
+  i = 0;
   while i < linecount {
     printf(
       b"%s%c\x00" as *const u8 as *const libc::c_char,

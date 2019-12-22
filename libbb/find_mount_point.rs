@@ -431,11 +431,11 @@ pub unsafe extern "C" fn find_mount_point(
   let mut mountEntry: *mut mntent = std::ptr::null_mut();
   let mut devno_of_name: libc::dev_t = 0;
   let mut block_dev: bool = false;
-  if stat(name, &mut s) != 0i32 {
+  if stat(name, &mut s) != 0 {
     return 0 as *mut mntent;
   }
   devno_of_name = s.st_dev;
-  block_dev = 0i32 != 0;
+  block_dev = 0 != 0;
   /* Why S_ISCHR? - UBI volumes use char devices, not block */
   if s.st_mode & 0o170000i32 as libc::c_uint == 0o60000i32 as libc::c_uint
     || s.st_mode & 0o170000i32 as libc::c_uint == 0o20000i32 as libc::c_uint
@@ -462,11 +462,11 @@ pub unsafe extern "C" fn find_mount_point(
       && strcmp(
         (*mountEntry).mnt_fsname,
         b"rootfs\x00" as *const u8 as *const libc::c_char,
-      ) == 0i32
+      ) == 0
     {
       continue;
     }
-    if strcmp(name, (*mountEntry).mnt_dir) == 0i32 || strcmp(name, (*mountEntry).mnt_fsname) == 0i32
+    if strcmp(name, (*mountEntry).mnt_dir) == 0 || strcmp(name, (*mountEntry).mnt_fsname) == 0
     {
       break;
     }
@@ -475,13 +475,13 @@ pub unsafe extern "C" fn find_mount_point(
     }
     /* Is device's libc::dev_t == name's libc::dev_t? */
     if *(*mountEntry).mnt_fsname.offset(0) as libc::c_int == '/' as i32
-      && stat((*mountEntry).mnt_fsname, &mut s) == 0i32
+      && stat((*mountEntry).mnt_fsname, &mut s) == 0
       && s.st_rdev == devno_of_name
     {
       break;
     }
     /* Match the directory's mount point. */
-    if stat((*mountEntry).mnt_dir, &mut s) == 0i32 && s.st_dev == devno_of_name {
+    if stat((*mountEntry).mnt_dir, &mut s) == 0 && s.st_dev == devno_of_name {
       break;
     }
   }

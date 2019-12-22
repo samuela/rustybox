@@ -175,7 +175,7 @@ pub unsafe extern "C" fn xstrtoull_range_sfx(
      * Doing so could break an app that is deferring checking of errno.
      * So, save the old value so that we can restore it if successful. */
     old_errno = *bb_errno;
-    *bb_errno = 0i32;
+    *bb_errno = 0;
     r = strtoull(numstr, &mut e, base);
     /* Do the initial validity check.  Note: The standards do not
      * guarantee that errno is set if no digits were found.  So we
@@ -201,7 +201,7 @@ pub unsafe extern "C" fn xstrtoull_range_sfx(
             current_block = 7976072742316086414;
             break;
           }
-          if strcmp((*suffixes).suffix.as_ptr(), e) == 0i32 {
+          if strcmp((*suffixes).suffix.as_ptr(), e) == 0 {
             if (9223372036854775807i64 as libc::c_ulonglong)
               .wrapping_mul(2u64)
               .wrapping_add(1u64)
@@ -287,7 +287,7 @@ pub unsafe extern "C" fn xstrtou_range_sfx(
     }) != 0)
   {
     old_errno = *bb_errno;
-    *bb_errno = 0i32;
+    *bb_errno = 0;
     r = bb_strtoui(numstr, &mut e, base);
     if !(*bb_errno != 0 || numstr == e) {
       *bb_errno = old_errno;
@@ -297,7 +297,7 @@ pub unsafe extern "C" fn xstrtou_range_sfx(
             current_block = 7976072742316086414;
             break;
           }
-          if strcmp((*suffixes).suffix.as_ptr(), e) == 0i32 {
+          if strcmp((*suffixes).suffix.as_ptr(), e) == 0 {
             if (2147483647i32 as libc::c_uint)
               .wrapping_mul(2u32)
               .wrapping_add(1u32)
@@ -380,7 +380,7 @@ pub unsafe extern "C" fn xstrtoull_sfx(
   return xstrtoull_range_sfx(
     numstr,
     base,
-    0i32 as libc::c_ulonglong,
+    0 as libc::c_ulonglong,
     (9223372036854775807i64 as libc::c_ulonglong)
       .wrapping_mul(2u64)
       .wrapping_add(1u64),
@@ -396,7 +396,7 @@ pub unsafe extern "C" fn xstrtou_sfx(
   return xstrtou_range_sfx(
     numstr,
     base,
-    0i32 as libc::c_uint,
+    0 as libc::c_uint,
     (2147483647i32 as libc::c_uint)
       .wrapping_mul(2u32)
       .wrapping_add(1u32),
@@ -411,7 +411,7 @@ pub unsafe extern "C" fn xstrtou(
   return xstrtou_range_sfx(
     numstr,
     base,
-    0i32 as libc::c_uint,
+    0 as libc::c_uint,
     (2147483647i32 as libc::c_uint)
       .wrapping_mul(2u32)
       .wrapping_add(1u32),
@@ -426,7 +426,7 @@ pub unsafe extern "C" fn xstrtoull(
   return xstrtoull_range_sfx(
     numstr,
     base,
-    0i32 as libc::c_ulonglong,
+    0 as libc::c_ulonglong,
     (9223372036854775807i64 as libc::c_ulonglong)
       .wrapping_mul(2u64)
       .wrapping_add(1u64),
@@ -475,7 +475,7 @@ pub unsafe extern "C" fn xatou_sfx(
   return xstrtou_range_sfx(
     numstr,
     10i32,
-    0i32 as libc::c_uint,
+    0 as libc::c_uint,
     (2147483647i32 as libc::c_uint)
       .wrapping_mul(2u32)
       .wrapping_add(1u32),
@@ -490,7 +490,7 @@ pub unsafe extern "C" fn xatoull_sfx(
   return xstrtoull_range_sfx(
     numstr,
     10i32,
-    0i32 as libc::c_ulonglong,
+    0 as libc::c_ulonglong,
     (9223372036854775807i64 as libc::c_ulonglong)
       .wrapping_mul(2u64)
       .wrapping_add(1u64),
@@ -530,7 +530,7 @@ pub unsafe extern "C" fn xstrtoi_range_sfx(
     /* = <type>_MIN (01111... + 1 == 10000...) */
     /* = <type>_MIN (01111... + 1 == 10000...) */
   }
-  r = xstrtou_range_sfx(p, base, 0i32 as libc::c_uint, u, suffixes) as libc::c_int;
+  r = xstrtou_range_sfx(p, base, 0 as libc::c_uint, u, suffixes) as libc::c_int;
   if *numstr as libc::c_int == '-' as i32 {
     r = -r
   }
@@ -561,7 +561,7 @@ pub unsafe extern "C" fn xstrtoll_range_sfx(
       u = u.wrapping_add(1)
     }
   }
-  r = xstrtoull_range_sfx(p, base, 0i32 as libc::c_ulonglong, u, suffixes) as libc::c_longlong;
+  r = xstrtoull_range_sfx(p, base, 0 as libc::c_ulonglong, u, suffixes) as libc::c_longlong;
   if *numstr as libc::c_int == '-' as i32 {
     r = -r
   }
@@ -735,7 +735,7 @@ unsafe extern "C" fn bb_strtoui(
 /* A few special cases */
 #[no_mangle]
 pub unsafe extern "C" fn xatoi_positive(mut numstr: *const libc::c_char) -> libc::c_int {
-  return xatou_range(numstr, 0i32 as libc::c_uint, 2147483647i32 as libc::c_uint) as libc::c_int;
+  return xatou_range(numstr, 0 as libc::c_uint, 2147483647i32 as libc::c_uint) as libc::c_int;
 }
 
 /*
@@ -1026,7 +1026,7 @@ pub unsafe extern "C" fn xatoi_positive(mut numstr: *const libc::c_char) -> libc
 /* Useful for reading port numbers */
 #[no_mangle]
 pub unsafe extern "C" fn xatou16(mut numstr: *const libc::c_char) -> u16 {
-  return xatou_range(numstr, 0i32 as libc::c_uint, 0xffffi32 as libc::c_uint) as u16;
+  return xatou_range(numstr, 0 as libc::c_uint, 0xffffi32 as libc::c_uint) as u16;
 }
 #[no_mangle]
 pub static mut bkm_suffixes: [suffix_mult; 4] = [
@@ -1054,7 +1054,7 @@ pub static mut bkm_suffixes: [suffix_mult; 4] = [
   {
     let mut init = suffix_mult {
       suffix: [0, 0, 0, 0],
-      mult: 0i32 as libc::c_uint,
+      mult: 0 as libc::c_uint,
     };
     init
   },
@@ -1169,7 +1169,7 @@ pub static mut cwbkMG_suffixes: [suffix_mult; 16] = [
   {
     let mut init = suffix_mult {
       suffix: [0, 0, 0, 0],
-      mult: 0i32 as libc::c_uint,
+      mult: 0 as libc::c_uint,
     };
     init
   },
@@ -1284,7 +1284,7 @@ pub static mut kmg_i_suffixes: [suffix_mult; 16] = [
   {
     let mut init = suffix_mult {
       suffix: [0, 0, 0, 0],
-      mult: 0i32 as libc::c_uint,
+      mult: 0 as libc::c_uint,
     };
     init
   },

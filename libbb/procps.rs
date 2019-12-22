@@ -113,7 +113,7 @@ static mut groupname: cache_t = cache_t {
 unsafe extern "C" fn clear_cache(mut cp: *mut cache_t) {
   free((*cp).cache as *mut libc::c_void);
   (*cp).cache = std::ptr::null_mut();
-  (*cp).size = 0i32;
+  (*cp).size = 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn clear_username_cache() {
@@ -127,7 +127,7 @@ unsafe extern "C" fn get_cached(
   mut x2x_utoa: Option<unsafe extern "C" fn(_: uid_t) -> *mut libc::c_char>,
 ) -> *mut libc::c_char {
   let mut i: libc::c_int = 0;
-  i = 0i32;
+  i = 0;
   while i < (*cp).size {
     if (*(*cp).cache.offset(i as isize)).id == id {
       return (*(*cp).cache.offset(i as isize)).name.as_mut_ptr();
@@ -180,8 +180,8 @@ unsafe extern "C" fn read_to_buf(
   /* open_read_close() would do two reads, checking for EOF.
    * When you have 10000 /proc/$NUM/stat to read, it isn't desirable */
   let mut ret: ssize_t = -1i32 as ssize_t;
-  fd = open(filename, 0i32);
-  if fd >= 0i32 {
+  fd = open(filename, 0);
+  if fd >= 0 {
     ret = read(fd, buf, (1024i32 - 1i32) as size_t);
     close(fd);
   }
@@ -219,7 +219,7 @@ pub unsafe extern "C" fn free_procps_scan(mut sp: *mut procps_status_t) {
 unsafe extern "C" fn fast_strtoull_16(mut endptr: *mut *mut libc::c_char) -> libc::c_ulonglong {
   let mut c: libc::c_uchar = 0;
   let mut str: *mut libc::c_char = *endptr;
-  let mut n: libc::c_ulonglong = 0i32 as libc::c_ulonglong;
+  let mut n: libc::c_ulonglong = 0 as libc::c_ulonglong;
   loop
   /* Need to stop on both ' ' and '\n' */
   {
@@ -317,7 +317,7 @@ pub unsafe extern "C" fn procps_read_smaps(
   }
   memset(
     &mut currec as *mut smaprec as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<smaprec>() as libc::c_ulong,
   );
   while !fgets_unlocked(buf.as_mut_ptr(), 1024i32, file).is_null() {
@@ -402,7 +402,7 @@ pub unsafe extern "C" fn procps_read_smaps(
               }
               memset(
                 &mut currec as *mut smaprec as *mut libc::c_void,
-                0i32,
+                0,
                 ::std::mem::size_of::<smaprec>() as libc::c_ulong,
               );
               *tp = ' ' as i32 as libc::c_char;
@@ -424,7 +424,7 @@ pub unsafe extern "C" fn procps_read_smaps(
                 b"/dev/\x00" as *const u8 as *const libc::c_char,
               )
               .is_null()
-                || strcmp(tp, b"/dev/zero\n\x00" as *const u8 as *const libc::c_char) == 0i32
+                || strcmp(tp, b"/dev/zero\n\x00" as *const u8 as *const libc::c_char) == 0
               {
                 if currec.smap_mode[1] as libc::c_int == 'w' as i32 {
                   currec.mapped_rw = currec.smap_size; /* for (;;) */
@@ -434,7 +434,7 @@ pub unsafe extern "C" fn procps_read_smaps(
                   (*total).mapped_ro = (*total).mapped_ro.wrapping_add(currec.smap_size)
                 }
               }
-              if strcmp(tp, b"[stack]\n\x00" as *const u8 as *const libc::c_char) == 0i32 {
+              if strcmp(tp, b"[stack]\n\x00" as *const u8 as *const libc::c_char) == 0 {
                 (*total).stack = (*total).stack.wrapping_add(currec.smap_size)
               }
               if cb.is_some() {
@@ -462,7 +462,7 @@ pub unsafe extern "C" fn procps_read_smaps(
     }
     free(currec.smap_name as *mut libc::c_void);
   }
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn procps_scan(
@@ -530,7 +530,7 @@ pub unsafe extern "C" fn procps_scan(
        */
       memset(
         &mut (*sp).vsz as *mut libc::c_ulong as *mut libc::c_void,
-        0i32,
+        0,
         (::std::mem::size_of::<procps_status_t>() as libc::c_ulong).wrapping_sub(48u64),
       ); /* we needed only pid, we got it */
       (*sp).pid = pid; /* process probably exited */
@@ -589,7 +589,7 @@ pub unsafe extern "C" fn procps_scan(
           b"stat\x00" as *const u8 as *const libc::c_char,
         ); /* process probably exited */
         n = read_to_buf(filename.as_mut_ptr(), buf.as_mut_ptr() as *mut libc::c_void); /* split into "PID (cmd" and "<rest>" */
-        if n < 0i32 {
+        if n < 0 {
           continue;
         }
         cp = strrchr(buf.as_mut_ptr(), ')' as i32);
@@ -623,7 +623,7 @@ pub unsafe extern "C" fn procps_scan(
           continue;
         }
         if n == 11i32 {
-          (*sp).last_seen_on_cpu = 0i32
+          (*sp).last_seen_on_cpu = 0
         }
         /* vsz is in bytes and we want kb */
         (*sp).vsz = vsz >> 10i32;
@@ -636,7 +636,7 @@ pub unsafe extern "C" fn procps_scan(
         (*sp).state[1] = ' ' as i32 as libc::c_char;
         (*sp).state[2] = ' ' as i32 as libc::c_char;
         s_idx = 1i32;
-        if (*sp).vsz == 0i32 as libc::c_ulong && (*sp).state[0] as libc::c_int != 'Z' as i32 {
+        if (*sp).vsz == 0 as libc::c_ulong && (*sp).state[0] as libc::c_int != 'Z' as i32 {
           /* not sure what the purpose of this flag */
           (*sp).state[1] = 'W' as i32 as libc::c_char;
           s_idx = 2i32
@@ -727,7 +727,7 @@ pub unsafe extern "C" fn procps_scan(
         b"cmdline\x00" as *const u8 as *const libc::c_char,
       );
       n = read_to_buf(filename.as_mut_ptr(), buf.as_mut_ptr() as *mut libc::c_void);
-      if n <= 0i32 {
+      if n <= 0 {
         break;
       }
       if flags & PSSCAN_ARGVN as libc::c_int != 0 {
@@ -737,7 +737,7 @@ pub unsafe extern "C" fn procps_scan(
             as *mut libc::c_char
       /* sp->argv0[n] = '\0'; - buf has it */
       } else {
-        (*sp).argv_len = 0i32 as u16;
+        (*sp).argv_len = 0 as u16;
         (*sp).argv0 = crate::libbb::xfuncs_printf::xstrdup(buf.as_mut_ptr())
       }
       break;
@@ -1301,20 +1301,20 @@ pub unsafe extern "C" fn read_cmdline(
     buf as *mut libc::c_void,
     (col - 1i32) as size_t,
   ) as libc::c_int;
-  if sz > 0i32 {
+  if sz > 0 {
     let mut base: *const libc::c_char = std::ptr::null();
     let mut comm_len: libc::c_int = 0;
     *buf.offset(sz as isize) = '\u{0}' as i32 as libc::c_char;
     loop {
       sz -= 1;
-      if !(sz >= 0i32 && *buf.offset(sz as isize) as libc::c_int == '\u{0}' as i32) {
+      if !(sz >= 0 && *buf.offset(sz as isize) as libc::c_int == '\u{0}' as i32) {
         break;
       }
     }
     /* Prevent basename("process foo/bar") = "bar" */
     *strchrnul(buf, ' ' as i32).offset(0) = '\u{0}' as i32 as libc::c_char; /* before we replace argv0's NUL with space */
     base = crate::libbb::get_last_path_component::bb_basename(buf);
-    while sz >= 0i32 {
+    while sz >= 0 {
       if (*buf.offset(sz as isize) as libc::c_uchar as libc::c_int) < ' ' as i32 {
         *buf.offset(sz as isize) = ' ' as i32 as libc::c_char
       }
@@ -1337,7 +1337,7 @@ pub unsafe extern "C" fn read_cmdline(
      * I prefer to still treat argv0 "process foo bar"
      * as 'equal' to comm "process".
      */
-    if strncmp(base, comm, comm_len as libc::c_ulong) != 0i32 {
+    if strncmp(base, comm, comm_len as libc::c_ulong) != 0 {
       comm_len += 3i32;
       if col > comm_len {
         memmove(

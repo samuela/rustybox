@@ -136,7 +136,7 @@ unsafe extern "C" fn putcsi(mut s: *const libc::c_char) {
 unsafe extern "C" fn clrscr() {
   // Home, clear till end of screen
   putcsi(b"1;1H\x1b[J\x00" as *const u8 as *const libc::c_char);
-  (*ptr_to_globals).line = 0i32 as libc::c_uint;
+  (*ptr_to_globals).line = 0 as libc::c_uint;
   (*ptr_to_globals).col = (*ptr_to_globals).line;
 }
 unsafe extern "C" fn set_cursor(mut state: libc::c_int) {
@@ -165,7 +165,7 @@ unsafe extern "C" fn cleanup(mut code: libc::c_int) -> ! {
   set_cursor(-1i32);
   tcsetattr(
     (*ptr_to_globals).kbd_fd,
-    0i32,
+    0,
     &mut (*ptr_to_globals).term_orig,
   );
   // Reset attributes
@@ -184,7 +184,7 @@ unsafe extern "C" fn screen_read_close() {
   let mut vcsa_fd: libc::c_int = 0;
   let mut data: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   // Close & re-open vcsa in case they have swapped virtual consoles
-  vcsa_fd = crate::libbb::xfuncs_printf::xopen((*ptr_to_globals).vcsa_name.as_mut_ptr(), 0i32); // if will catch j < G.x too
+  vcsa_fd = crate::libbb::xfuncs_printf::xopen((*ptr_to_globals).vcsa_name.as_mut_ptr(), 0); // if will catch j < G.x too
   crate::libbb::read_printf::xread(
     vcsa_fd,
     &mut (*ptr_to_globals).remote as *mut screen_info as *mut libc::c_void,
@@ -212,14 +212,14 @@ unsafe extern "C" fn screen_read_close() {
     (*ptr_to_globals).size as size_t,
   );
   close(vcsa_fd);
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   while i < (*ptr_to_globals).remote.lines as libc::c_uint {
-    j = 0i32 as libc::c_uint;
+    j = 0 as libc::c_uint;
     while j < (*ptr_to_globals).remote.cols as libc::c_uint {
       let mut x: libc::c_uint = j.wrapping_sub((*ptr_to_globals).x as libc::c_uint);
       let mut y: libc::c_uint = i.wrapping_sub((*ptr_to_globals).y as libc::c_uint);
       if y >= (*ptr_to_globals).height || x >= (*ptr_to_globals).width {
-        *(data as *mut u16) = 0i32 as u16
+        *(data as *mut u16) = 0 as u16
       } else {
         let mut ch: u8 = *(data as *mut u8);
         if (ch as libc::c_int) < ' ' as i32 {
@@ -278,11 +278,11 @@ unsafe extern "C" fn screen_char(mut data: *mut libc::c_char) {
       // G.last_attr has 1 but attr has 0.
       // Here we check whether we have transition
       // bold->non-bold or blink->non-blink:
-      if (*ptr_to_globals).last_attr < 0i32
+      if (*ptr_to_globals).last_attr < 0
         || (*ptr_to_globals).last_attr
           & !(attr as libc::c_int)
           & (bold_mask as libc::c_int | blink_mask as libc::c_int)
-          != 0i32
+          != 0
       {
         let fresh0 = ptr; // "reset all attrs"
         ptr = ptr.offset(1);
@@ -352,11 +352,11 @@ unsafe extern "C" fn screen_dump() {
     .data
     .offset((*ptr_to_globals).current as isize)
     .offset((*ptr_to_globals).first_line_offset as isize);
-  linefeed_cnt = 0i32;
-  line = 0i32;
+  linefeed_cnt = 0;
+  line = 0;
   while line < linecnt && (line as libc::c_uint) < (*ptr_to_globals).height {
-    let mut space_cnt: libc::c_int = 0i32;
-    col = 0i32;
+    let mut space_cnt: libc::c_int = 0;
+    col = 0;
     while col < (*ptr_to_globals).remote.cols as libc::c_int {
       let mut tty_col: libc::c_uint = (col - (*ptr_to_globals).x) as libc::c_uint;
       if !(tty_col >= (*ptr_to_globals).width) {
@@ -364,7 +364,7 @@ unsafe extern "C" fn screen_dump() {
         if !(option_mask32 & (1i32 << FLAG_n as libc::c_int) as libc::c_uint != 0
           && *(data as *mut u8) as libc::c_int == ' ' as i32)
         {
-          while linefeed_cnt != 0i32 {
+          while linefeed_cnt != 0 {
             //bb_putchar('\r'); - tty driver does it for us
             crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
             linefeed_cnt -= 1
@@ -402,7 +402,7 @@ unsafe extern "C" fn create_cdev_if_doesnt_exist(
   mut name: *const libc::c_char,
   mut dev: libc::dev_t,
 ) {
-  let mut fd: libc::c_int = open(name, 0i32);
+  let mut fd: libc::c_int = open(name, 0);
   if fd != -1i32 {
     close(fd);
   } else if *bb_errno == 2i32 {
@@ -413,14 +413,14 @@ unsafe extern "C" fn create_cdev_if_doesnt_exist(
 unsafe extern "C" fn start_shell_in_child(mut tty_name: *const libc::c_char) {
   let mut pid: libc::c_int = {
     let mut bb__xvfork_pid: pid_t = vfork();
-    if bb__xvfork_pid < 0i32 {
+    if bb__xvfork_pid < 0 {
       crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
         b"vfork\x00" as *const u8 as *const libc::c_char,
       );
     }
     bb__xvfork_pid
   };
-  if pid == 0i32 {
+  if pid == 0 {
     let mut termchild: termios = termios {
       c_iflag: 0,
       c_oflag: 0,
@@ -501,11 +501,11 @@ pub unsafe extern "C" fn conspy_main(
     &mut (*ptr_to_globals).y as *mut libc::c_int,
   );
   argv = argv.offset(optind as isize);
-  ttynum = 0i32 as libc::c_uint;
+  ttynum = 0 as libc::c_uint;
   if !(*argv.offset(0)).is_null() {
     ttynum = crate::libbb::xatonum::xatou_range(
       *argv.offset(0),
-      0i32 as libc::c_uint,
+      0 as libc::c_uint,
       63i32 as libc::c_uint,
     );
     sprintf(
@@ -548,7 +548,7 @@ pub unsafe extern "C" fn conspy_main(
   if opts & (1i32 << FLAG_d as libc::c_int) as libc::c_uint != 0 {
     screen_dump();
     crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
-    return 0i32;
+    return 0;
   }
   crate::libbb::signals::bb_signals(
     BB_FATAL_SIGS as libc::c_int,
@@ -558,12 +558,12 @@ pub unsafe extern "C" fn conspy_main(
     >(Some(cleanup as unsafe extern "C" fn(_: libc::c_int) -> !)),
   );
   (*ptr_to_globals).kbd_fd =
-    crate::libbb::xfuncs_printf::xopen(b"/dev/tty\x00" as *const u8 as *const libc::c_char, 0i32);
+    crate::libbb::xfuncs_printf::xopen(b"/dev/tty\x00" as *const u8 as *const libc::c_char, 0);
   // All characters must be passed through to us unaltered
   crate::libbb::xfuncs::set_termios_to_raw(
     (*ptr_to_globals).kbd_fd,
     &mut (*ptr_to_globals).term_orig,
-    0i32 | 1i32 << 0i32 | 1i32 << 3i32,
+    0 | 1i32 << 0 | 1i32 << 3i32,
   );
   //Note: termios.c_oflag &= ~(OPOST); - no, we still want \n -> \r\n
   poll_timeout_ms = 250i32; /* while (1) */
@@ -595,22 +595,22 @@ pub unsafe extern "C" fn conspy_main(
         .wrapping_add(1i32 as libc::c_uint) as libc::c_int;
       if ((*ptr_to_globals).remote.cursor_x as libc::c_int) < (*ptr_to_globals).x {
         (*ptr_to_globals).x = (*ptr_to_globals).remote.cursor_x as libc::c_int;
-        i = 0i32
+        i = 0
         // force refresh
       }
       if nx > (*ptr_to_globals).x {
         (*ptr_to_globals).x = nx;
-        i = 0i32
+        i = 0
         // force refresh
       }
       if ((*ptr_to_globals).remote.cursor_y as libc::c_int) < (*ptr_to_globals).y {
         (*ptr_to_globals).y = (*ptr_to_globals).remote.cursor_y as libc::c_int;
-        i = 0i32
+        i = 0
         // force refresh
       }
       if ny > (*ptr_to_globals).y {
         (*ptr_to_globals).y = ny;
-        i = 0i32
+        i = 0
         // force refresh
       }
     }
@@ -640,7 +640,7 @@ pub unsafe extern "C" fn conspy_main(
         if iy >= (*ptr_to_globals).height {
           break;
         }
-        j = 0i32;
+        j = 0;
         while j < (*ptr_to_globals).remote.cols as libc::c_int {
           let mut jx: libc::c_uint = (j - (*ptr_to_globals).x) as libc::c_uint;
           if jx < (*ptr_to_globals).width
@@ -671,7 +671,7 @@ pub unsafe extern "C" fn conspy_main(
     crate::libbb::xfuncs_printf::fflush_all();
     pfd.fd = (*ptr_to_globals).kbd_fd;
     pfd.events = 0x1i32 as libc::c_short;
-    bytes_read = 0i32;
+    bytes_read = 0;
     match poll(&mut pfd, 1i32 as nfds_t, poll_timeout_ms) {
       -1 => {
         if *bb_errno != 4i32 {
@@ -681,7 +681,7 @@ pub unsafe extern "C" fn conspy_main(
       0 => {
         (*ptr_to_globals).nokeys += 1;
         if (*ptr_to_globals).nokeys >= 4i32 {
-          (*ptr_to_globals).escape_count = 0i32;
+          (*ptr_to_globals).escape_count = 0;
           (*ptr_to_globals).nokeys = (*ptr_to_globals).escape_count
         }
       }
@@ -695,12 +695,12 @@ pub unsafe extern "C" fn conspy_main(
           k as *mut libc::c_void,
           (COMMON_BUFSIZE as libc::c_int - (*ptr_to_globals).key_count) as size_t,
         ) as libc::c_int;
-        if bytes_read < 0i32 {
+        if bytes_read < 0 {
           break;
         }
         // Do exit processing
         if option_mask32 & (1i32 << FLAG_Q as libc::c_int) as libc::c_uint == 0 {
-          i = 0i32;
+          i = 0;
           while i < bytes_read {
             if *k.offset(i as isize) as libc::c_int != '\u{1b}' as i32 {
               (*ptr_to_globals).escape_count = -1i32
@@ -723,7 +723,7 @@ pub unsafe extern "C" fn conspy_main(
     // code mode - giving ASCII characters to a program expecting
     // scan codes will confuse it.
     (*ptr_to_globals).key_count += bytes_read;
-    if !((*ptr_to_globals).escape_count == 0i32) {
+    if !((*ptr_to_globals).escape_count == 0) {
       continue;
     }
     let mut handle: libc::c_int = 0;
@@ -735,16 +735,16 @@ pub unsafe extern "C" fn conspy_main(
       0x4b44i32 as libc::c_ulong,
       &mut kbd_mode as *mut libc::c_long,
     );
-    if result >= 0i32 {
+    if result >= 0 {
       let mut p: *mut libc::c_char = bb_common_bufsiz1.as_mut_ptr();
-      (*ptr_to_globals).ioerror_count = 0i32;
+      (*ptr_to_globals).ioerror_count = 0;
       if kbd_mode != 0x1i32 as libc::c_long && kbd_mode != 0x3i32 as libc::c_long {
-        (*ptr_to_globals).key_count = 0i32
+        (*ptr_to_globals).key_count = 0
         // scan code mode
       }
-      while (*ptr_to_globals).key_count != 0i32 {
+      while (*ptr_to_globals).key_count != 0 {
         result = ioctl(handle, 0x5412i32 as libc::c_ulong, p);
-        if result < 0i32 {
+        if result < 0 {
           memmove(
             bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
             p as *const libc::c_void,

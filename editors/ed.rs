@@ -94,7 +94,7 @@ unsafe extern "C" fn bad_nums(
     );
     return 1i32;
   }
-  return 0i32;
+  return 0;
 }
 /*
  * Return a pointer to the specified line number.
@@ -109,7 +109,7 @@ unsafe extern "C" fn findLine(mut num: libc::c_int) -> *mut LINE {
     );
     return 0 as *mut LINE;
   }
-  if (*ptr_to_globals).curNum <= 0i32 {
+  if (*ptr_to_globals).curNum <= 0 {
     (*ptr_to_globals).curNum = 1i32;
     (*ptr_to_globals).curLine = (*ptr_to_globals).lines.next
   }
@@ -150,7 +150,7 @@ unsafe extern "C" fn findString(
   let mut ncp: *const libc::c_char = std::ptr::null();
   cp = &*(*lp).data.as_ptr().offset(offset as isize) as *const libc::c_char;
   left = (*lp).len - offset - len;
-  while left >= 0i32 {
+  while left >= 0 {
     ncp = memchr(
       cp as *const libc::c_void,
       *str.offset(0) as libc::c_int,
@@ -165,7 +165,7 @@ unsafe extern "C" fn findString(
       cp as *const libc::c_void,
       str as *const libc::c_void,
       len as libc::c_ulong,
-    ) == 0i32
+    ) == 0
     {
       return cp.wrapping_offset_from((*lp).data.as_ptr()) as libc::c_long as libc::c_int;
     }
@@ -195,14 +195,14 @@ unsafe extern "C" fn searchLines(
     b"search\x00" as *const u8 as *const libc::c_char,
   ) != 0
   {
-    return 0i32;
+    return 0;
   }
   if *str as libc::c_int == '\u{0}' as i32 {
     if *bb_common_bufsiz1.as_mut_ptr().offset(0) as libc::c_int == '\u{0}' as i32 {
       crate::libbb::verror_msg::bb_simple_error_msg(
         b"no previous search string\x00" as *const u8 as *const libc::c_char,
       );
-      return 0i32;
+      return 0;
     }
     str = bb_common_bufsiz1.as_mut_ptr()
   }
@@ -212,10 +212,10 @@ unsafe extern "C" fn searchLines(
   len = strlen(str) as libc::c_int;
   lp = findLine(num1);
   if lp.is_null() {
-    return 0i32;
+    return 0;
   }
   while num1 <= num2 {
-    if findString(lp, str, len, 0i32) >= 0i32 {
+    if findString(lp, str, len, 0) >= 0 {
       return num1;
     }
     num1 += 1;
@@ -225,7 +225,7 @@ unsafe extern "C" fn searchLines(
     b"can\'t find string \"%s\"\x00" as *const u8 as *const libc::c_char,
     str,
   );
-  return 0i32;
+  return 0;
 }
 /*
  * Parse a line number argument if it is present.  This is a sum
@@ -246,9 +246,9 @@ unsafe extern "C" fn getNum(
   let mut num: libc::c_int = 0;
   let mut haveNum: smallint = 0;
   let mut minus: smallint = 0;
-  value = 0i32;
-  haveNum = 0i32 as smallint;
-  minus = 0i32 as smallint;
+  value = 0;
+  haveNum = 0 as smallint;
+  minus = 0 as smallint;
   while 1i32 != 0 {
     cp = skip_whitespace(cp);
     match *cp as libc::c_int {
@@ -291,7 +291,7 @@ unsafe extern "C" fn getNum(
           (*ptr_to_globals).curNum,
           (*ptr_to_globals).lastNum,
         );
-        if num == 0i32 {
+        if num == 0 {
           return 0 as *const libc::c_char;
         }
         haveNum = 1i32 as smallint
@@ -302,7 +302,7 @@ unsafe extern "C" fn getNum(
           *retNum = value;
           return cp;
         }
-        num = 0i32;
+        num = 0;
         while (*cp as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
           let fresh1 = cp;
           cp = cp.offset(1);
@@ -319,7 +319,7 @@ unsafe extern "C" fn getNum(
         cp = cp.offset(1)
       }
       43 => {
-        minus = 0i32 as smallint;
+        minus = 0 as smallint;
         cp = cp.offset(1)
       }
       _ => {
@@ -339,7 +339,7 @@ unsafe extern "C" fn setCurNum(mut num: libc::c_int) -> libc::c_int {
   let mut lp: *mut LINE = std::ptr::null_mut();
   lp = findLine(num);
   if lp.is_null() {
-    return 0i32;
+    return 0;
   }
   (*ptr_to_globals).curNum = num;
   (*ptr_to_globals).curLine = lp;
@@ -363,7 +363,7 @@ unsafe extern "C" fn insertLine(
     crate::libbb::verror_msg::bb_simple_error_msg(
       b"inserting at bad line number\x00" as *const u8 as *const libc::c_char,
     );
-    return 0i32;
+    return 0;
   }
   newLp = xmalloc(
     (::std::mem::size_of::<LINE>() as libc::c_ulong)
@@ -382,7 +382,7 @@ unsafe extern "C" fn insertLine(
     lp = findLine(num);
     if lp.is_null() {
       free(newLp as *mut libc::c_char as *mut libc::c_void);
-      return 0i32;
+      return 0;
     }
   }
   (*newLp).next = lp;
@@ -414,7 +414,7 @@ unsafe extern "C" fn addLines(mut num: libc::c_int) {
       buf.as_mut_ptr(),
       ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
     );
-    if len <= 0i32 {
+    if len <= 0 {
       /* Previously, ctrl-C was exiting to shell.
        * Now we exit to ed prompt. Is in important? */
       return;
@@ -447,18 +447,18 @@ unsafe extern "C" fn readLines(mut file: *const libc::c_char, mut num: libc::c_i
     crate::libbb::verror_msg::bb_simple_error_msg(
       b"bad line for read\x00" as *const u8 as *const libc::c_char,
     );
-    return 0i32;
+    return 0;
   }
-  fd = open(file, 0i32);
-  if fd < 0i32 {
+  fd = open(file, 0);
+  if fd < 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg(file);
-    return 0i32;
+    return 0;
   }
   (*ptr_to_globals).bufPtr = (*ptr_to_globals).bufBase;
-  (*ptr_to_globals).bufUsed = 0i32;
-  lineCount = 0i32;
-  charCount = 0i32;
-  cc = 0i32;
+  (*ptr_to_globals).bufUsed = 0;
+  lineCount = 0;
+  charCount = 0;
+  cc = 0;
   printf(b"\"%s\", \x00" as *const u8 as *const libc::c_char, file);
   crate::libbb::xfuncs_printf::fflush_all();
   loop {
@@ -471,7 +471,7 @@ unsafe extern "C" fn readLines(mut file: *const libc::c_char, mut num: libc::c_i
       len = (cp.wrapping_offset_from((*ptr_to_globals).bufPtr) as libc::c_long + 1) as libc::c_int;
       if insertLine(num, (*ptr_to_globals).bufPtr, len) == 0 {
         close(fd);
-        return 0i32;
+        return 0;
       }
       (*ptr_to_globals).bufPtr = (*ptr_to_globals).bufPtr.offset(len as isize);
       (*ptr_to_globals).bufUsed -= len;
@@ -509,14 +509,14 @@ unsafe extern "C" fn readLines(mut file: *const libc::c_char, mut num: libc::c_i
       (*ptr_to_globals).bufUsed += cc;
       (*ptr_to_globals).bufPtr = (*ptr_to_globals).bufBase
     }
-    if !(cc > 0i32) {
+    if !(cc > 0) {
       break;
     }
   }
-  if cc < 0i32 {
+  if cc < 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg(file);
     close(fd);
-    return 0i32;
+    return 0;
   }
   if (*ptr_to_globals).bufUsed != 0 {
     if insertLine(num, (*ptr_to_globals).bufPtr, (*ptr_to_globals).bufUsed) == 0 {
@@ -553,21 +553,21 @@ unsafe extern "C" fn writeLines(
   let mut lineCount: libc::c_int = 0;
   let mut charCount: libc::c_int = 0;
   if bad_nums(num1, num2, b"write\x00" as *const u8 as *const libc::c_char) != 0 {
-    return 0i32;
+    return 0;
   }
-  lineCount = 0i32;
-  charCount = 0i32;
+  lineCount = 0;
+  charCount = 0;
   fd = creat(file, 0o666i32 as mode_t);
-  if fd < 0i32 {
+  if fd < 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg(file);
-    return 0i32;
+    return 0;
   }
   printf(b"\"%s\", \x00" as *const u8 as *const libc::c_char, file);
   crate::libbb::xfuncs_printf::fflush_all();
   lp = findLine(num1);
   if lp.is_null() {
     close(fd);
-    return 0i32;
+    return 0;
   }
   loop {
     let fresh3 = num1;
@@ -583,15 +583,15 @@ unsafe extern "C" fn writeLines(
     {
       crate::libbb::perror_msg::bb_simple_perror_msg(file);
       close(fd);
-      return 0i32;
+      return 0;
     }
     charCount += (*lp).len;
     lineCount += 1;
     lp = (*lp).next
   }
-  if close(fd) < 0i32 {
+  if close(fd) < 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg(file);
-    return 0i32;
+    return 0;
   }
   printf(
     b"%d lines, %d chars\n\x00" as *const u8 as *const libc::c_char,
@@ -616,11 +616,11 @@ unsafe extern "C" fn printLines(
   let mut ch: libc::c_int = 0;
   let mut count: libc::c_int = 0;
   if bad_nums(num1, num2, b"print\x00" as *const u8 as *const libc::c_char) != 0 {
-    return 0i32;
+    return 0;
   }
   lp = findLine(num1);
   if lp.is_null() {
-    return 0i32;
+    return 0;
   }
   while num1 <= num2 {
     if expandFlag == 0 {
@@ -640,13 +640,13 @@ unsafe extern "C" fn printLines(
        */
       cp = (*lp).data.as_ptr();
       count = (*lp).len;
-      if count > 0i32 && *cp.offset((count - 1i32) as isize) as libc::c_int == '\n' as i32 {
+      if count > 0 && *cp.offset((count - 1i32) as isize) as libc::c_int == '\n' as i32 {
         count -= 1
       }
       loop {
         let fresh5 = count;
         count = count - 1;
-        if !(fresh5 > 0i32) {
+        if !(fresh5 > 0) {
           break;
         }
         let fresh6 = cp;
@@ -689,7 +689,7 @@ unsafe extern "C" fn deleteLines(mut num1: libc::c_int, mut num2: libc::c_int) {
     } else if num1 > 1i32 {
       setCurNum(num1 - 1i32);
     } else {
-      (*ptr_to_globals).curNum = 0i32
+      (*ptr_to_globals).curNum = 0
     }
   }
   count = num2 - num1 + 1i32;
@@ -700,7 +700,7 @@ unsafe extern "C" fn deleteLines(mut num1: libc::c_int, mut num2: libc::c_int) {
   loop {
     let fresh8 = count;
     count = count - 1;
-    if !(fresh8 > 0i32) {
+    if !(fresh8 > 0) {
       break;
     }
     nlp = (*lp).next;
@@ -744,10 +744,10 @@ unsafe extern "C" fn subCommand(
   {
     return;
   }
-  globalFlag = 0i32;
-  printFlag = 0i32;
-  didSub = 0i32;
-  needPrint = 0i32;
+  globalFlag = 0;
+  printFlag = 0;
+  didSub = 0;
+  needPrint = 0;
   /*
    * Copy the command so we can modify it.
    */
@@ -821,16 +821,16 @@ unsafe extern "C" fn subCommand(
   oldLen = strlen(oldStr) as libc::c_int;
   newLen = strlen(newStr) as libc::c_int;
   deltaLen = newLen - oldLen;
-  offset = 0i32;
+  offset = 0;
   nlp = std::ptr::null_mut();
   while num1 <= num2 {
     offset = findString(lp, oldStr, oldLen, offset);
-    if offset < 0i32 {
+    if offset < 0 {
       if needPrint != 0 {
-        printLines(num1, num1, 0i32);
-        needPrint = 0i32
+        printLines(num1, num1, 0);
+        needPrint = 0
       }
-      offset = 0i32;
+      offset = 0;
       lp = (*lp).next;
       num1 += 1
     } else {
@@ -841,7 +841,7 @@ unsafe extern "C" fn subCommand(
        * If the replacement string is the same size or shorter
        * than the old string, then the substitution is easy.
        */
-      if deltaLen <= 0i32 {
+      if deltaLen <= 0 {
         memcpy(
           &mut *(*lp).data.as_mut_ptr().offset(offset as isize) as *mut libc::c_char
             as *mut libc::c_void,
@@ -863,8 +863,8 @@ unsafe extern "C" fn subCommand(
           continue;
         }
         if needPrint != 0 {
-          printLines(num1, num1, 0i32);
-          needPrint = 0i32
+          printLines(num1, num1, 0);
+          needPrint = 0
         }
         lp = (*lp).next;
         num1 += 1
@@ -912,8 +912,8 @@ unsafe extern "C" fn subCommand(
           continue;
         }
         if needPrint != 0 {
-          printLines(num1, num1, 0i32);
-          needPrint = 0i32
+          printLines(num1, num1, 0);
+          needPrint = 0
         }
         lp = (*lp).next;
         num1 += 1
@@ -952,7 +952,7 @@ unsafe extern "C" fn doCommands() {
       buf.as_mut_ptr(),
       ::std::mem::size_of::<[libc::c_char; 1023]>() as libc::c_ulong as libc::c_int,
     );
-    if len <= 0i32 {
+    if len <= 0 {
       return;
     }
     while len != 0
@@ -966,12 +966,12 @@ unsafe extern "C" fn doCommands() {
     {
       buf[len as usize] = '\u{0}' as i32 as libc::c_char
     }
-    if (*ptr_to_globals).curNum == 0i32 && (*ptr_to_globals).lastNum > 0i32 {
+    if (*ptr_to_globals).curNum == 0 && (*ptr_to_globals).lastNum > 0 {
       (*ptr_to_globals).curNum = 1i32;
       (*ptr_to_globals).curLine = (*ptr_to_globals).lines.next
     }
-    have1 = 0i32 as smallint;
-    have2 = 0i32 as smallint;
+    have1 = 0 as smallint;
+    have2 = 0 as smallint;
     /* Don't pass &haveN, &numN to getNum() since this forces
      * compiler to keep them on stack, not in registers,
      * which is usually quite suboptimal.
@@ -1042,7 +1042,7 @@ unsafe extern "C" fn doCommands() {
         }
       }
       105 => {
-        if have1 == 0 && (*ptr_to_globals).lastNum == 0i32 {
+        if have1 == 0 && (*ptr_to_globals).lastNum == 0 {
           num1 = 1i32
         }
         addLines(num1);
@@ -1063,7 +1063,7 @@ unsafe extern "C" fn doCommands() {
         printLines(num1, num2, 1i32);
       }
       112 => {
-        printLines(num1, num2, 0i32);
+        printLines(num1, num2, 0);
       }
       113 => {
         cp = skip_whitespace(cp);
@@ -1082,7 +1082,7 @@ unsafe extern "C" fn doCommands() {
             16i32,
           );
           /* read error/EOF - no way to continue */
-          if len < 0i32 {
+          if len < 0 {
             return;
           }
           cp = skip_whitespace(buf.as_mut_ptr());
@@ -1144,7 +1144,7 @@ unsafe extern "C" fn doCommands() {
               if have1 == 0 {
                 num1 = 1i32;
                 num2 = (*ptr_to_globals).lastNum;
-                (*ptr_to_globals).dirty = 0i32 as smallint
+                (*ptr_to_globals).dirty = 0 as smallint
               }
               writeLines(cp, num1, num2);
             }
@@ -1156,21 +1156,21 @@ unsafe extern "C" fn doCommands() {
           printLines(
             (*ptr_to_globals).curNum - 21i32,
             (*ptr_to_globals).curNum,
-            0i32,
+            0,
           );
         }
         46 => {
           printLines(
             (*ptr_to_globals).curNum - 11i32,
             (*ptr_to_globals).curNum + 10i32,
-            0i32,
+            0,
           );
         }
         _ => {
           printLines(
             (*ptr_to_globals).curNum,
             (*ptr_to_globals).curNum + 21i32,
-            0i32,
+            0,
           );
         }
       },
@@ -1180,12 +1180,12 @@ unsafe extern "C" fn doCommands() {
             b"no arguments allowed\x00" as *const u8 as *const libc::c_char,
           );
         } else {
-          printLines((*ptr_to_globals).curNum, (*ptr_to_globals).curNum, 0i32);
+          printLines((*ptr_to_globals).curNum, (*ptr_to_globals).curNum, 0);
         }
       }
       45 => {
         if setCurNum((*ptr_to_globals).curNum - 1i32) != 0 {
-          printLines((*ptr_to_globals).curNum, (*ptr_to_globals).curNum, 0i32);
+          printLines((*ptr_to_globals).curNum, (*ptr_to_globals).curNum, 0);
         }
       }
       61 => {
@@ -1193,9 +1193,9 @@ unsafe extern "C" fn doCommands() {
       }
       0 => {
         if have1 != 0 {
-          printLines(num2, num2, 0i32);
+          printLines(num2, num2, 0);
         } else if setCurNum((*ptr_to_globals).curNum + 1i32) != 0 {
-          printLines((*ptr_to_globals).curNum, (*ptr_to_globals).curNum, 0i32);
+          printLines((*ptr_to_globals).curNum, (*ptr_to_globals).curNum, 0);
         }
       }
       _ => {
@@ -1225,13 +1225,13 @@ pub unsafe extern "C" fn ed_main(
   if !(*argv.offset(1)).is_null() {
     (*ptr_to_globals).fileName = crate::libbb::xfuncs_printf::xstrdup(*argv.offset(1));
     if readLines((*ptr_to_globals).fileName, 1i32) == 0 {
-      return 0i32;
+      return 0;
     }
     if (*ptr_to_globals).lastNum != 0 {
       setCurNum(1i32);
     }
-    (*ptr_to_globals).dirty = 0i32 as smallint
+    (*ptr_to_globals).dirty = 0 as smallint
   }
   doCommands();
-  return 0i32;
+  return 0;
 }

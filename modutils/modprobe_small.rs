@@ -132,7 +132,7 @@ pub unsafe extern "C" fn lsmod_main(
   crate::libbb::xfuncs_printf::xprint_and_close_file(crate::libbb::wfopen::xfopen_for_read(
     b"/proc/modules\x00" as *const u8 as *const libc::c_char,
   ));
-  return 0i32;
+  return 0;
 }
 /* some modules have lots of stuff */
 /* for example, drivers/media/video/saa7134/saa7134.ko */
@@ -176,7 +176,7 @@ unsafe extern "C" fn bksp() {
   };
 }
 unsafe extern "C" fn reset_stringbuf() {
-  (*ptr_to_globals).stringbuf_idx = 0i32 as libc::c_uint;
+  (*ptr_to_globals).stringbuf_idx = 0 as libc::c_uint;
 }
 unsafe extern "C" fn copy_stringbuf() -> *mut libc::c_char {
   let mut copy: *mut libc::c_char = crate::libbb::xfuncs_printf::xzalloc(
@@ -247,7 +247,7 @@ unsafe extern "C" fn filename2modname(
   // 'basenamization' was here in the first place.
   //from = bb_get_last_path_component_nostrip(filename);
   from = filename;
-  i = 0i32;
+  i = 0;
   while i < 64i32 - 1i32
     && *from.offset(i as isize) as libc::c_int != '\u{0}' as i32
     && *from.offset(i as isize) as libc::c_int != '.' as i32
@@ -272,7 +272,7 @@ unsafe extern "C" fn pathname_matches_modname(
     crate::libbb::get_last_path_component::bb_get_last_path_component_nostrip(pathname),
     name.as_mut_ptr(),
   );
-  r = (strcmp(name.as_mut_ptr(), modname) == 0i32) as libc::c_int;
+  r = (strcmp(name.as_mut_ptr(), modname) == 0) as libc::c_int;
   return r;
 }
 /* Take "word word", return malloced "word",NUL,"word",NUL,NUL */
@@ -335,12 +335,12 @@ unsafe extern "C" fn load_module(
    * back to normal module loading to support compressed modules.
    */
   r = 1i32;
-  let mut fd: libc::c_int = open(fname, 0i32 | 0o2000000i32);
-  if fd >= 0i32 {
-    r = (syscall(313i32 as libc::c_long, fd, options, 0i32) != 0) as libc::c_int;
+  let mut fd: libc::c_int = open(fname, 0 | 0o2000000i32);
+  if fd >= 0 {
+    r = (syscall(313i32 as libc::c_long, fd, options, 0) != 0) as libc::c_int;
     close(fd);
   }
-  if r != 0i32 {
+  if r != 0 {
     module_image = crate::archival::libarchive::open_transformer::xmalloc_open_zipped_read_close(
       fname, &mut len,
     ) as *mut libc::c_char;
@@ -362,7 +362,7 @@ unsafe extern "C" fn parse_module(
   let mut len: size_t = 0;
   let mut pos: size_t = 0;
   /* Read (possibly compressed) module */
-  *bb_errno = 0i32; /* 64 Mb at most */
+  *bb_errno = 0; /* 64 Mb at most */
   len = (64i32 * 1024i32 * 1024i32) as size_t;
   module_image = crate::archival::libarchive::open_transformer::xmalloc_open_zipped_read_close(
     pathname, &mut len,
@@ -371,7 +371,7 @@ unsafe extern "C" fn parse_module(
   //TODO: optimize redundant module body reads
   /* "alias1 symbol:sym1 alias2 symbol:sym2" */
   reset_stringbuf();
-  pos = 0i32 as size_t;
+  pos = 0 as size_t;
   loop {
     let mut start: libc::c_uint = (*ptr_to_globals).stringbuf_idx;
     ptr = find_keyword(
@@ -390,8 +390,8 @@ unsafe extern "C" fn parse_module(
       }
       /* DOCME: __ksymtab_gpl and __ksymtab_strings occur
        * in many modules. What do they mean? */
-      if strcmp(ptr, b"gpl\x00" as *const u8 as *const libc::c_char) == 0i32
-        || strcmp(ptr, b"strings\x00" as *const u8 as *const libc::c_char) == 0i32
+      if strcmp(ptr, b"gpl\x00" as *const u8 as *const libc::c_char) == 0
+        || strcmp(ptr, b"strings\x00" as *const u8 as *const libc::c_char) == 0
       {
         current_block = 14188675094891468690;
       } else {
@@ -425,7 +425,7 @@ unsafe extern "C" fn parse_module(
             (*ptr_to_globals).stringbuf,
             last,
             (*ptr_to_globals).stringbuf_idx.wrapping_sub(start) as libc::c_ulong,
-          ) == 0i32
+          ) == 0
           {
             /* First alias matches us */
             found = (*ptr_to_globals).stringbuf
@@ -506,12 +506,12 @@ unsafe extern "C" fn fileAction(
   if parse_module(
     &mut *(*ptr_to_globals).modinfo.offset(cur as isize),
     pathname,
-  ) != 0i32
+  ) != 0
   {
     return 1i32;
   }
   if !is_remove {
-    if load_module(pathname, (*ptr_to_globals).module_load_options) == 0i32 {
+    if load_module(pathname, (*ptr_to_globals).module_load_options) == 0 {
       /* Load was successful, there is nothing else to do.
        * This can happen ONLY for "top-level" module load,
        * not a dep, because deps don't do dirscan. */
@@ -525,7 +525,7 @@ unsafe extern "C" fn load_dep_bb() -> libc::c_int {
   let mut fp: *mut FILE =
     crate::libbb::wfopen::fopen_for_read(b"modules.dep.bb\x00" as *const u8 as *const libc::c_char);
   if fp.is_null() {
-    return 0i32;
+    return 0;
   }
   (*ptr_to_globals).dep_bb_seen = 1i32 as smallint;
   /* Why? There is a rare scenario: we did not find modprobe.dep.bb,
@@ -537,10 +537,10 @@ unsafe extern "C" fn load_dep_bb() -> libc::c_int {
    * But we already have modinfo[] filled, and "module_count = 0"
    * makes us start anew. Yes, we leak modinfo[].xxx pointers -
    * there is not much of data there anyway. */
-  (*ptr_to_globals).module_count = 0i32 as libc::c_uint;
+  (*ptr_to_globals).module_count = 0 as libc::c_uint;
   memset(
     &mut *(*ptr_to_globals).modinfo.offset(0) as *mut module_info as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<module_info>() as libc::c_ulong,
   );
   loop {
@@ -616,7 +616,7 @@ unsafe extern "C" fn start_dep_bb_writeout() -> libc::c_int {
     0o1i32 | 0o100i32 | 0o1000i32 | 0o200i32,
     0o644i32,
   );
-  if fd < 0i32 {
+  if fd < 0 {
     if *bb_errno == 17i32 {
       let mut count: libc::c_int = 5i32 * 20i32;
       loop {
@@ -648,7 +648,7 @@ unsafe extern "C" fn write_out_dep_bb(mut fd: libc::c_int) {
   let mut fp: *mut FILE = std::ptr::null_mut();
   /* We want good error reporting. fdprintf is not good enough. */
   fp = crate::libbb::wfopen::xfdopen_for_write(fd);
-  i = 0i32;
+  i = 0;
   while !(*(*ptr_to_globals).modinfo.offset(i as isize))
     .pathname
     .is_null()
@@ -681,7 +681,7 @@ unsafe extern "C" fn write_out_dep_bb(mut fd: libc::c_int) {
     i += 1
   }
   /* Badly formatted depfile is a no-no. Be paranoid. */
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   if ferror_unlocked(fp) | fclose(fp) != 0 {
     current_block = 14742036289623448043;
   } else {
@@ -690,7 +690,7 @@ unsafe extern "C" fn write_out_dep_bb(mut fd: libc::c_int) {
     } else if rename(
       b"modules.dep.bb.new\x00" as *const u8 as *const libc::c_char,
       b"modules.dep.bb\x00" as *const u8 as *const libc::c_char,
-    ) != 0i32
+    ) != 0
     {
       current_block = 14742036289623448043;
     } else {
@@ -728,7 +728,7 @@ unsafe extern "C" fn find_alias(mut alias: *const libc::c_char) -> *mut *mut mod
   /* modprobe.dep.bb appeared? */
   /* First try to find by name (cheaper) */
   {
-    i = 0i32;
+    i = 0;
     while !(*(*ptr_to_globals).modinfo.offset(i as isize))
       .pathname
       .is_null()
@@ -769,8 +769,8 @@ unsafe extern "C" fn find_alias(mut alias: *const libc::c_char) -> *mut *mut mod
     }
   }
   /* Scan all module bodies, extract modinfo (it contains aliases) */
-  i = 0i32;
-  infoidx = 0i32;
+  i = 0;
+  infoidx = 0;
   infovec = std::ptr::null_mut();
   while !(*(*ptr_to_globals).modinfo.offset(i as isize))
     .pathname
@@ -796,7 +796,7 @@ unsafe extern "C" fn find_alias(mut alias: *const libc::c_char) -> *mut *mut mod
        * shell patterns. Example:
        * "pci:v000010DEd000000D9sv*sd*bc*sc*i*".
        * Plain strcmp() won't catch that */
-      if fnmatch(s, alias, 0i32) == 0i32 {
+      if fnmatch(s, alias, 0) == 0 {
         infovec = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
           infovec as *mut libc::c_void,
           ((::std::mem::size_of::<*mut module_info>() as libc::c_ulong) << 8i32)
@@ -816,7 +816,7 @@ unsafe extern "C" fn find_alias(mut alias: *const libc::c_char) -> *mut *mut mod
     i += 1
   }
   /* Create module.dep.bb if needed */
-  if dep_bb_fd >= 0i32 {
+  if dep_bb_fd >= 0 {
     write_out_dep_bb(dep_bb_fd);
   }
   return infovec;
@@ -832,7 +832,7 @@ unsafe extern "C" fn already_loaded(mut name: *const libc::c_char) -> libc::c_in
       b"/proc/modules\x00" as *const u8 as *const libc::c_char,
     );
     if fp.is_null() {
-      return 0i32;
+      return 0;
     }
     loop {
       line = crate::libbb::get_line_from_file::xmalloc_fgetline(fp);
@@ -859,7 +859,7 @@ unsafe extern "C" fn already_loaded(mut name: *const libc::c_char) -> libc::c_in
            * Wait up to 5*20 ms for it to resolve.
            */
           ret -= 2i32; /* huh? report as "not loaded" */
-          if ret == 0i32 {
+          if ret == 0 {
             break 'c_11409;
           }
           fclose(fp);
@@ -884,7 +884,7 @@ unsafe extern "C" fn rmmod(mut filename: *const libc::c_char) -> libc::c_int {
     modname.as_mut_ptr(),
     0o4000i32 | 0o200i32,
   ) as libc::c_int;
-  if r != 0i32 && option_mask32 & OPT_q as libc::c_int as libc::c_uint == 0 {
+  if r != 0 && option_mask32 & OPT_q as libc::c_int as libc::c_uint == 0 {
     crate::libbb::perror_msg::bb_perror_msg(
       b"remove \'%s\'\x00" as *const u8 as *const libc::c_char,
       modname.as_mut_ptr(),
@@ -911,7 +911,7 @@ unsafe extern "C" fn process_module(
   let mut infoidx: libc::c_int = 0;
   let mut is_remove: bool = 1i32 != 0 && 1i32 + 1i32 + 1i32 + 1i32 == 1i32
     || (1i32 != 0 || 1i32 != 0) && option_mask32 & OPT_r as libc::c_int as libc::c_uint != 0;
-  let mut exitcode: libc::c_int = 0i32;
+  let mut exitcode: libc::c_int = 0;
   replace(name, '-' as i32 as libc::c_char, '_' as i32 as libc::c_char);
   if 1i32 != 0
     && (1i32 + 1i32 + 1i32 + 1i32 == 1i32 || *applet_name.offset(0) as libc::c_int == 'r' as i32)
@@ -920,7 +920,7 @@ unsafe extern "C" fn process_module(
      * (compat note: this allows and strips .ko suffix)
      */
     rmmod(name);
-    return 0i32;
+    return 0;
   }
   /*
    * We used to have "is_remove != already_loaded(name)" check here, but
@@ -929,7 +929,7 @@ unsafe extern "C" fn process_module(
    * which have this alias.
    */
   if !is_remove && already_loaded(name) != 0 {
-    return 0i32;
+    return 0;
   }
   options = std::ptr::null_mut::<libc::c_char>();
   if !is_remove {
@@ -986,10 +986,10 @@ unsafe extern "C" fn process_module(
       ),
       None,
       name as *mut libc::c_void,
-      0i32 as libc::c_uint,
+      0 as libc::c_uint,
     );
     /* Module was not found, or load failed, or is_remove */
-    if (*ptr_to_globals).module_found_idx >= 0i32 {
+    if (*ptr_to_globals).module_found_idx >= 0 {
       infovec = crate::libbb::xfuncs_printf::xzalloc(
         (2i32 as libc::c_ulong)
           .wrapping_mul(::std::mem::size_of::<*mut module_info>() as libc::c_ulong),
@@ -1031,7 +1031,7 @@ unsafe extern "C" fn process_module(
      */
     /* modprobe -r? unload module(s) */
     if is_remove {
-      infoidx = 0i32;
+      infoidx = 0;
       loop {
         let fresh12 = infoidx;
         infoidx = infoidx + 1;
@@ -1045,7 +1045,7 @@ unsafe extern "C" fn process_module(
             (*info).pathname,
           ),
         );
-        if r != 0i32 {
+        if r != 0 {
           current_block = 13810939424077242397;
           break;
         }
@@ -1062,7 +1062,7 @@ unsafe extern "C" fn process_module(
     match current_block {
       13810939424077242397 => {}
       _ => {
-        infoidx = 0i32;
+        infoidx = 0;
         loop {
           let fresh13 = infoidx;
           infoidx = infoidx + 1;
@@ -1096,8 +1096,8 @@ unsafe extern "C" fn process_module(
             /* We already tried it, didn't work. Don't try load again */
             exitcode = 1i32
           } else {
-            *bb_errno = 0i32;
-            if load_module((*info).pathname, options) != 0i32 {
+            *bb_errno = 0;
+            if load_module((*info).pathname, options) != 0 {
               if 17i32 != *bb_errno {
                 crate::libbb::verror_msg::bb_error_msg(
                   b"\'%s\': %s\x00" as *const u8 as *const libc::c_char,
@@ -1357,7 +1357,7 @@ pub unsafe extern "C" fn modprobe_main(
         moderror(*bb_errno),
       );
     }
-    return 0i32;
+    return 0;
   }
   /* Try to load modprobe.dep.bb */
   if !(1i32 != 0
@@ -1367,7 +1367,7 @@ pub unsafe extern "C" fn modprobe_main(
   }
   /* Load/remove modules.
    * Only rmmod/modprobe -r loops here, insmod/modprobe has only argv[0] */
-  exitcode = 0i32;
+  exitcode = 0;
   loop {
     exitcode |= process_module(*argv, options);
     argv = argv.offset(1);

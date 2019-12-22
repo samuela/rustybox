@@ -40,8 +40,8 @@ pub unsafe extern "C" fn blkid_main(
     }
     /* Note: bogus device names don't cause any error messages */
     crate::util_linux::volume_id::get_devname::add_to_uuid_cache(*argv);
-    scan_devices = 0i32
+    scan_devices = 0
   }
   crate::util_linux::volume_id::get_devname::display_uuid_cache(scan_devices);
-  return 0i32;
+  return 0;
 }

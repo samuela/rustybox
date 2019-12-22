@@ -47,7 +47,7 @@ pub unsafe extern "C" fn udhcp_sp_setup() {
   crate::libbb::xfuncs::ndelay_on(3i32);
   crate::libbb::xfuncs::ndelay_on(4i32);
   crate::libbb::signals::bb_signals(
-    0i32 + (1i32 << 10i32) + (1i32 << 12i32) + (1i32 << 15i32),
+    0 + (1i32 << 10i32) + (1i32 << 12i32) + (1i32 << 15i32),
     Some(signal_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
 }
@@ -59,13 +59,13 @@ pub unsafe extern "C" fn udhcp_sp_fd_set(mut pfds: *mut pollfd, mut extra_fd: li
   (*pfds.offset(0)).fd = 3i32;
   (*pfds.offset(0)).events = 0x1i32 as libc::c_short;
   (*pfds.offset(1)).fd = -1i32;
-  if extra_fd >= 0i32 {
+  if extra_fd >= 0 {
     crate::libbb::xfuncs::close_on_exec_on(extra_fd);
     (*pfds.offset(1)).fd = extra_fd;
     (*pfds.offset(1)).events = 0x1i32 as libc::c_short
   }
   /* this simplifies "is extra_fd ready?" tests elsewhere: */
-  (*pfds.offset(1)).revents = 0i32 as libc::c_short;
+  (*pfds.offset(1)).revents = 0 as libc::c_short;
 }
 
 /*
@@ -226,7 +226,7 @@ pub unsafe extern "C" fn udhcp_sp_read() -> libc::c_int {
     1i32 as size_t,
   ) != 1
   {
-    return 0i32;
+    return 0;
   }
   return sig as libc::c_int;
 }

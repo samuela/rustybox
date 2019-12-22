@@ -26,7 +26,7 @@ pub unsafe extern "C" fn starts_with_cpu(mut str: *const libc::c_char) -> libc::
   return (*str.offset(0) as libc::c_int - 'c' as i32
     | *str.offset(1) as libc::c_int - 'p' as i32
     | *str.offset(2) as libc::c_int - 'u' as i32
-    == 0i32) as libc::c_int;
+    == 0) as libc::c_int;
 }
 
 /*
@@ -584,7 +584,7 @@ pub unsafe extern "C" fn get_cpu_count() -> libc::c_uint {
   .is_null()
   {
     if starts_with_cpu(line.as_mut_ptr()) == 0 {
-      if proc_nr >= 0i32 {
+      if proc_nr >= 0 {
         break;
       }
     } else if line[3] as libc::c_int != ' ' as i32 {

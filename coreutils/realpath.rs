@@ -28,7 +28,7 @@ pub unsafe extern "C" fn realpath_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut retval: libc::c_int = 0i32;
+  let mut retval: libc::c_int = 0;
   argv = argv.offset(1);
   if (*argv).is_null() {
     crate::libbb::appletlib::bb_show_usage();

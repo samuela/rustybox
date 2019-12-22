@@ -93,7 +93,7 @@ unsafe extern "C" fn writeheader(
   let mut sum: libc::c_int = 0;
   memset(
     &mut header as *mut tar_header_t as *mut libc::c_void,
-    0i32,
+    0,
     512i32 as libc::c_ulong,
   );
   strcpy(header.name.as_mut_ptr(), path);
@@ -135,7 +135,7 @@ unsafe extern "C" fn writeheader(
    * digits, followed by a NUL like the other fields... */
   header.chksum[7] = ' ' as i32 as libc::c_char;
   sum = ' ' as i32 * 7i32;
-  i = 0i32;
+  i = 0;
   while i < 512i32 {
     sum +=
       *(&mut header as *mut tar_header_t as *mut libc::c_uchar).offset(i as isize) as libc::c_int;
@@ -158,10 +158,10 @@ unsafe extern "C" fn archivefile(mut path: *const libc::c_char) {
   let mut prev: *mut *mut fileblock = &mut start;
   let mut fd: libc::c_int = 0;
   let mut r: libc::c_int = 0;
-  let mut size: libc::c_uint = 0i32 as libc::c_uint;
+  let mut size: libc::c_uint = 0 as libc::c_uint;
   let mut s: stat = std::mem::zeroed();
   /* buffer the file */
-  fd = open(path, 0i32);
+  fd = open(path, 0);
   if fd == -1i32 {
     /* skip vanished processes between dir listing and traversal */
     return;
@@ -176,7 +176,7 @@ unsafe extern "C" fn archivefile(mut path: *const libc::c_char) {
       (*cur).data.as_mut_ptr() as *mut libc::c_void,
       512i32 as size_t,
     ) as libc::c_int;
-    if r > 0i32 {
+    if r > 0 {
       size = size.wrapping_add(r as libc::c_uint)
     }
     if !(r == 512i32) {
@@ -190,7 +190,7 @@ unsafe extern "C" fn archivefile(mut path: *const libc::c_char) {
   writeheader(path, &mut s, '0' as i32);
   /* dump file contents */
   cur = start;
-  while size as libc::c_int > 0i32 {
+  while size as libc::c_int > 0 {
     crate::libbb::xfuncs_printf::xwrite(
       1i32,
       (*cur).data.as_mut_ptr() as *const libc::c_void,
@@ -235,7 +235,7 @@ pub unsafe extern "C" fn smemcap_main(
       let mut s: stat = std::mem::zeroed();
       memset(
         &mut s as *mut stat as *mut libc::c_void,
-        0i32,
+        0,
         ::std::mem::size_of::<stat>() as libc::c_ulong,
       );
       s.st_mode = 0o555i32 as mode_t;
@@ -254,5 +254,5 @@ pub unsafe extern "C" fn smemcap_main(
       );
     }
   }
-  return 0i32;
+  return 0;
 }

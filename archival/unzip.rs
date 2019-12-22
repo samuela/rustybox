@@ -289,15 +289,15 @@ unsafe extern "C" fn find_cdf_offset() -> u32 {
   let mut p: *mut libc::c_uchar = std::ptr::null_mut();
   let mut end: off_t = 0;
   let mut found: u32 = 0;
-  end = lseek(zip_fd as libc::c_int, 0i32 as off64_t, 2i32);
+  end = lseek(zip_fd as libc::c_int, 0 as off64_t, 2i32);
   if end == -1i32 as off_t {
     return 0xffffffffu32;
   }
   end -= (64i32 * 1024i32) as libc::c_long;
   if end < 0 {
-    end = 0i32 as off_t
+    end = 0 as off_t
   }
-  crate::libbb::xfuncs_printf::xlseek(zip_fd as libc::c_int, end, 0i32);
+  crate::libbb::xfuncs_printf::xlseek(zip_fd as libc::c_int, end, 0);
   buf = crate::libbb::xfuncs_printf::xzalloc((64i32 * 1024i32) as size_t) as *mut libc::c_uchar;
   crate::libbb::read::full_read(
     zip_fd as libc::c_int,
@@ -357,7 +357,7 @@ unsafe extern "C" fn read_next_cdf(mut cdf_offset: u32, mut cdf: *mut cdf_header
   if cdf_offset == 0xffffffffu32 {
     return cdf_offset;
   }
-  crate::libbb::xfuncs_printf::xlseek(zip_fd as libc::c_int, cdf_offset as off_t, 0i32);
+  crate::libbb::xfuncs_printf::xlseek(zip_fd as libc::c_int, cdf_offset as off_t, 0);
   crate::libbb::read_printf::xread(
     zip_fd as libc::c_int,
     &mut magic as *mut u32 as *mut libc::c_void,
@@ -367,7 +367,7 @@ unsafe extern "C" fn read_next_cdf(mut cdf_offset: u32, mut cdf: *mut cdf_header
    * (more correct method is to use cde.cdf_entries_total counter)
    */
   if magic == ZIP_CDE_MAGIC as libc::c_int as libc::c_uint {
-    return 0i32 as u32;
+    return 0 as u32;
     /* EOF */
   }
   crate::libbb::read_printf::xread(
@@ -421,7 +421,7 @@ unsafe extern "C" fn unzip_extract_symlink(
 ) {
   let mut target: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   die_if_bad_fnamesize((*zip).fmt.ucmpsize);
-  if (*zip).fmt.method as libc::c_int == 0i32 {
+  if (*zip).fmt.method as libc::c_int == 0 {
     /* Method 0 - stored (not compressed) */
     target = crate::libbb::xfuncs_printf::xzalloc(
       (*zip).fmt.ucmpsize.wrapping_add(1i32 as libc::c_uint) as size_t,
@@ -440,13 +440,13 @@ unsafe extern "C" fn unzip_extract_symlink(
     symlink_placeholders,
     target,
     dst_fn,
-    0i32,
+    0,
   );
   free(target as *mut libc::c_void);
 }
 unsafe extern "C" fn unzip_extract(mut zip: *mut zip_header_t, mut dst_fd: libc::c_int) {
   let mut xstate: transformer_state_t = std::mem::zeroed();
-  if (*zip).fmt.method as libc::c_int == 0i32 {
+  if (*zip).fmt.method as libc::c_int == 0 {
     /* Method 0 - stored (not compressed) */
     let mut size: off_t = (*zip).fmt.ucmpsize as off_t;
     if size != 0 {
@@ -461,7 +461,7 @@ unsafe extern "C" fn unzip_extract(mut zip: *mut zip_header_t, mut dst_fd: libc:
   if (*zip).fmt.method as libc::c_int == 8i32 {
     /* Method 8 - inflate */
     if crate::archival::libarchive::decompress_gunzip::inflate_unzip(&mut xstate)
-      < 0i32 as libc::c_longlong
+      < 0 as libc::c_longlong
     {
       crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"inflate error\x00" as *const u8 as *const libc::c_char,
@@ -547,8 +547,8 @@ pub unsafe extern "C" fn unzip_main(
   let mut mode_0: libc::c_int = 0;
   let mut current_block: u64;
   let mut opts: libc::c_uint = 0;
-  let mut quiet: smallint = 0i32 as smallint;
-  let mut verbose: smallint = 0i32 as smallint;
+  let mut quiet: smallint = 0 as smallint;
+  let mut verbose: smallint = 0 as smallint;
   let mut overwrite: smallint = O_PROMPT as libc::c_int as smallint;
   let mut cdf_offset: u32 = 0;
   let mut total_usize: libc::c_ulong = 0;
@@ -603,7 +603,7 @@ pub unsafe extern "C" fn unzip_main(
    *  --------                   -------
    *    204372                   1 file
    */
-  opts = 0i32 as libc::c_uint;
+  opts = 0 as libc::c_uint;
   loop
   /* '-' makes getopt return 1 for non-options */
   {
@@ -700,10 +700,10 @@ pub unsafe extern "C" fn unzip_main(
     static mut extn: [[libc::c_char; 5]; 2] = [[46, 122, 105, 112, 0], [46, 90, 73, 80, 0]];
     let mut ext: *mut libc::c_char = src_fn.offset(strlen(src_fn) as isize);
     let mut src_fd: libc::c_int = 0;
-    i = 0i32;
+    i = 0;
     loop {
-      src_fd = open(src_fn, 0i32);
-      if src_fd >= 0i32 {
+      src_fd = open(src_fn, 0);
+      if src_fd >= 0 {
         break;
       }
       i += 1;
@@ -724,7 +724,7 @@ pub unsafe extern "C" fn unzip_main(
   }
   if quiet as libc::c_int <= 1i32 {
     /* not -qq */
-    if quiet as libc::c_int == 0i32 {
+    if quiet as libc::c_int == 0 {
       printf(
         b"Archive:  %s\n\x00" as *const u8 as *const libc::c_char,
         crate::libbb::printable_string::printable_string(src_fn),
@@ -759,9 +759,9 @@ pub unsafe extern "C" fn unzip_main(
    * 0070 [50 4b]05 06 00 00 00 00 01 00 01 00 3c 00 00 00 |PK..........<...|
    * 0080  34 00 00 00 00 00                               |4.....|
    */
-  total_usize = 0i32 as libc::c_ulong; /* try to seek to the end, find CDE and CDF start */
-  total_size = 0i32 as libc::c_ulong;
-  total_entries = 0i32 as libc::c_uint;
+  total_usize = 0 as libc::c_ulong; /* try to seek to the end, find CDE and CDF start */
+  total_size = 0 as libc::c_ulong;
+  total_entries = 0 as libc::c_uint;
   cdf_offset = find_cdf_offset();
   loop {
     let mut zip: zip_header_t = zip_header_t { raw: [0; 26] };
@@ -822,7 +822,7 @@ pub unsafe extern "C" fn unzip_main(
       /* cdf_offset is valid (and we know the file is seekable) */
       let mut cdf: cdf_header_t = cdf_header_t { raw: [0; 42] };
       cdf_offset = read_next_cdf(cdf_offset, &mut cdf);
-      if cdf_offset == 0i32 as libc::c_uint {
+      if cdf_offset == 0 as libc::c_uint {
         break;
       }
       crate::libbb::xfuncs_printf::xlseek(
@@ -831,7 +831,7 @@ pub unsafe extern "C" fn unzip_main(
           .fmt
           .relative_offset_of_local_header
           .wrapping_add(4i32 as libc::c_uint) as off_t,
-        0i32,
+        0,
       );
       crate::libbb::read_printf::xread(
         zip_fd as libc::c_int,
@@ -927,7 +927,7 @@ pub unsafe extern "C" fn unzip_main(
           b"%6u\x00" as *const u8 as *const libc::c_char,
           zip.fmt.method as libc::c_int,
         );
-        if zip.fmt.method as libc::c_int == 0i32 {
+        if zip.fmt.method as libc::c_int == 0 {
           strcpy(
             method6.as_mut_ptr(),
             b"Stored\x00" as *const u8 as *const libc::c_char,
@@ -943,8 +943,8 @@ pub unsafe extern "C" fn unzip_main(
             [(zip.fmt.zip_flags as libc::c_int >> 1i32 & 3i32) as usize]
         } /* happens if ucmpsize < cmpsize */
         percents = zip.fmt.ucmpsize.wrapping_sub(zip.fmt.cmpsize) as libc::c_ulong;
-        if (percents as i32) < 0i32 {
-          percents = 0i32 as libc::c_ulong
+        if (percents as i32) < 0 {
+          percents = 0 as libc::c_ulong
         }
         percents = percents.wrapping_mul(100i32 as libc::c_ulong);
         if zip.fmt.ucmpsize != 0 {
@@ -1163,7 +1163,7 @@ pub unsafe extern "C" fn unzip_main(
     } else {
       let mut percents_0: libc::c_ulong = total_usize.wrapping_sub(total_size);
       if (percents_0 as libc::c_long) < 0 {
-        percents_0 = 0i32 as libc::c_ulong
+        percents_0 = 0 as libc::c_ulong
       }
       percents_0 = percents_0.wrapping_mul(100i32 as libc::c_ulong);
       if total_usize != 0 {
@@ -1183,5 +1183,5 @@ pub unsafe extern "C" fn unzip_main(
       );
     }
   }
-  return 0i32;
+  return 0;
 }

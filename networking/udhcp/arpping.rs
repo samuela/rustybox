@@ -338,7 +338,7 @@ pub unsafe extern "C" fn arpping(
     /* send arp request */
     memset(
       &mut arp as *mut arpMsg as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<arpMsg>() as libc::c_ulong,
     ); /* MAC DA */
     memset(
@@ -436,7 +436,7 @@ pub unsafe extern "C" fn arpping(
     ); /* target IP address */
     memset(
       &mut addr as *mut sockaddr as *mut libc::c_void,
-      0i32,
+      0,
       ::std::mem::size_of::<sockaddr>() as libc::c_ulong,
     );
     crate::libbb::safe_strncpy::safe_strncpy(
@@ -448,7 +448,7 @@ pub unsafe extern "C" fn arpping(
       pfd[0].fd,
       &mut arp as *mut arpMsg as *const libc::c_void,
       ::std::mem::size_of::<arpMsg>() as libc::c_ulong,
-      0i32,
+      0,
       __CONST_SOCKADDR_ARG {
         __sockaddr__: &mut addr,
       },
@@ -462,7 +462,7 @@ pub unsafe extern "C" fn arpping(
         let mut prevTime: libc::c_uint = crate::libbb::time::monotonic_ms() as libc::c_uint;
         pfd[0].events = 0x1i32 as libc::c_short;
         r = crate::libbb::safe_poll::safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, timeout_ms);
-        if r < 0i32 {
+        if r < 0 {
           break;
         }
         if r != 0 {
@@ -471,7 +471,7 @@ pub unsafe extern "C" fn arpping(
             &mut arp as *mut arpMsg as *mut libc::c_void,
             ::std::mem::size_of::<arpMsg>() as libc::c_ulong,
           ) as libc::c_int;
-          if r < 0i32 {
+          if r < 0 {
             break;
           }
           //log3("sHaddr %02x:%02x:%02x:%02x:%02x:%02x",
@@ -507,9 +507,9 @@ pub unsafe extern "C" fn arpping(
                 safe_mac as *const libc::c_void,
                 arp.sHaddr.as_mut_ptr() as *const libc::c_void,
                 6i32 as libc::c_ulong,
-              ) != 0i32
+              ) != 0
             {
-              rv = 0i32
+              rv = 0
             }
             break;
           }

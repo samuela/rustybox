@@ -113,7 +113,7 @@ unsafe extern "C" fn not_vt_fd(mut fd: libc::c_int) -> libc::c_int {
 unsafe extern "C" fn get_vt_fd() -> libc::c_int {
   let mut fd: libc::c_int = 0;
   /* Do we, by chance, already have it? */
-  fd = 0i32;
+  fd = 0;
   while fd < 3i32 {
     if not_vt_fd(fd) == 0 {
       return fd;
@@ -122,9 +122,9 @@ unsafe extern "C" fn get_vt_fd() -> libc::c_int {
   }
   fd = open(
     b"/dev/console\x00" as *const u8 as *const libc::c_char,
-    0i32 | 0o4000i32,
+    0 | 0o4000i32,
   );
-  if fd >= 0i32 && not_vt_fd(fd) == 0 {
+  if fd >= 0 && not_vt_fd(fd) == 0 {
     return fd;
   }
   crate::libbb::verror_msg::bb_simple_error_msg_and_die(
@@ -134,14 +134,14 @@ unsafe extern "C" fn get_vt_fd() -> libc::c_int {
 unsafe extern "C" fn find_free_vtno() -> libc::c_int {
   let mut vtno: libc::c_int = 0;
   let mut fd: libc::c_int = get_vt_fd();
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   /*xfunc_error_retval = 3; - do we need compat? */
   if ioctl(
     fd,
     0x5600i32 as libc::c_ulong,
     &mut vtno as *mut libc::c_int,
-  ) != 0i32
-    || vtno <= 0i32
+  ) != 0
+    || vtno <= 0
   {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
       b"can\'t find open VT\x00" as *const u8 as *const libc::c_char,
@@ -158,11 +158,11 @@ unsafe extern "C" fn find_free_vtno() -> libc::c_int {
  */
 #[inline(never)]
 unsafe extern "C" fn vfork_child(mut argv: *mut *mut libc::c_char) {
-  if vfork() == 0i32 {
+  if vfork() == 0 {
     /* CHILD */
     /* Try to make this VT our controlling tty */
     setsid(); /* lose old ctty */
-    ioctl(0i32, 0x540ei32 as libc::c_ulong, 0i32);
+    ioctl(0i32, 0x540ei32 as libc::c_ulong, 0);
     //bb_error_msg("our sid %d", getsid(0));
     //bb_error_msg("our pgrp %d", getpgrp());
     //bb_error_msg("VT's sid %d", tcgetsid(0));
@@ -212,7 +212,7 @@ pub unsafe extern "C" fn openvt_main(
   /*setsid(); - BAD IDEA: after we exit, child is SIGHUPed... */
   crate::libbb::xfuncs_printf::xopen(vtname.as_mut_ptr(), 0o2i32);
   crate::libbb::xfuncs_printf::bb_xioctl(
-    0i32,
+    0,
     0x5603i32 as libc::c_uint,
     &mut vtstat as *mut vt_stat as *mut libc::c_void,
     b"VT_GETSTATE\x00" as *const u8 as *const libc::c_char,
@@ -231,19 +231,19 @@ pub unsafe extern "C" fn openvt_main(
   vfork_child(argv);
   if flags & OPT_w as libc::c_int != 0 {
     /* We have only one child, wait for it */
-    crate::libbb::xfuncs::safe_waitpid(-1i32, 0 as *mut libc::c_int, 0i32); /* loops on EINTR */
+    crate::libbb::xfuncs::safe_waitpid(-1i32, 0 as *mut libc::c_int, 0); /* loops on EINTR */
     if flags & OPT_s as libc::c_int != 0 {
       crate::libbb::get_console::console_make_active(0i32, vtstat.v_active as libc::c_int);
       // Compat: even with -c N (try to) disallocate:
       // # /usr/app/kbd-1.12/bin/openvt -f -c 9 -ws sleep 5
       // openvt: could not deallocate console 9
       crate::libbb::xfuncs_printf::bb_xioctl(
-        0i32,
+        0,
         0x5608i32 as libc::c_uint,
         vtno as ptrdiff_t as *mut libc::c_void,
         b"VT_DISALLOCATE\x00" as *const u8 as *const libc::c_char,
       );
     }
   }
-  return 0i32;
+  return 0;
 }

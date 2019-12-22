@@ -53,7 +53,7 @@ pub unsafe extern "C" fn logname_main(
   if getlogin_r(
     buf.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 64]>() as libc::c_ulong,
-  ) == 0i32
+  ) == 0
   {
     puts(buf.as_mut_ptr());
     return crate::libbb::xfuncs_printf::fflush_all();

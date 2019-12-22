@@ -87,9 +87,9 @@ pub unsafe extern "C" fn devmem_main(
   if (*argv.offset(1)).is_null() {
     crate::libbb::appletlib::bb_show_usage(); /* allows hex, oct etc */
   }
-  *bb_errno = 0i32;
+  *bb_errno = 0;
   target =
-    crate::libbb::bb_strtonum::bb_strtoull(*argv.offset(1), 0 as *mut *mut libc::c_char, 0i32)
+    crate::libbb::bb_strtonum::bb_strtoull(*argv.offset(1), 0 as *mut *mut libc::c_char, 0)
       as off_t;
   /* WIDTH */
   if !(*argv.offset(2)).is_null() {
@@ -110,7 +110,7 @@ pub unsafe extern "C" fn devmem_main(
     /* VALUE */
     if !(*argv.offset(3)).is_null() {
       writeval =
-        crate::libbb::bb_strtonum::bb_strtoull(*argv.offset(3), 0 as *mut *mut libc::c_char, 0i32)
+        crate::libbb::bb_strtonum::bb_strtoull(*argv.offset(3), 0 as *mut *mut libc::c_char, 0)
           as u64
     }
   } else {
@@ -192,7 +192,7 @@ pub unsafe extern "C" fn devmem_main(
     //				(unsigned long long)writeval,
     //				(unsigned long long)read_result);
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn run_static_initializers() {
   sizes = [
@@ -204,7 +204,7 @@ unsafe extern "C" fn run_static_initializers() {
       as u8,
     (8i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_long>() as libc::c_ulong)
       as u8,
-    0i32 as u8,
+    0 as u8,
   ]
 }
 #[used]

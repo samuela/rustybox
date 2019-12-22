@@ -39,14 +39,14 @@ pub unsafe extern "C" fn mkfifo_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut mode: mode_t = 0; /* Avoid multibyte problems. */
-  let mut retval: libc::c_int = 0i32;
+  let mut retval: libc::c_int = 0;
   mode = crate::coreutils::libcoreutils::getopt_mk_fifo_nod::getopt_mk_fifo_nod(argv);
   argv = argv.offset(optind as isize);
   if (*argv).is_null() {
     crate::libbb::appletlib::bb_show_usage();
   }
   loop {
-    if mkfifo(*argv, mode) < 0i32 {
+    if mkfifo(*argv, mode) < 0 {
       crate::libbb::perror_msg::bb_simple_perror_msg(*argv);
       retval = 1i32
     }

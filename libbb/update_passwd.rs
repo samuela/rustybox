@@ -638,7 +638,7 @@ pub unsafe extern "C" fn update_passwd(
   }
   if old_fp.is_null() {
     if !shadow.is_null() {
-      ret = 0i32
+      ret = 0
     }
   } else {
     old_fd = fileno_unlocked(old_fp);
@@ -647,7 +647,7 @@ pub unsafe extern "C" fn update_passwd(
     loop {
       // FIXME: on last iteration try w/o O_EXCL but with O_TRUNC?
       new_fd = open(fnamesfx, 0o1i32 | 0o100i32 | 0o200i32, 0o600i32);
-      if new_fd >= 0i32 {
+      if new_fd >= 0 {
         current_block = 16804866792809015806;
         break;
       }
@@ -671,11 +671,11 @@ pub unsafe extern "C" fn update_passwd(
         );
       }
       _ => {
-        if fstat(old_fd, &mut sb) == 0i32 {
+        if fstat(old_fd, &mut sb) == 0 {
           fchmod(new_fd, sb.st_mode & 0o777i32 as libc::c_uint);
           fchown(new_fd, sb.st_uid, sb.st_gid);
         }
-        *bb_errno = 0i32;
+        *bb_errno = 0;
         new_fp = crate::libbb::wfopen::xfdopen_for_write(new_fd);
         /* Backup file is "/etc/passwd-" */
         *sfx_char = '-' as i32 as libc::c_char;
@@ -691,10 +691,10 @@ pub unsafe extern "C" fn update_passwd(
         *sfx_char = '+' as i32 as libc::c_char;
         /* Lock the password file before updating */
         lock.l_type = 1i32 as libc::c_short;
-        lock.l_whence = 0i32 as libc::c_short;
-        lock.l_start = 0i32 as off64_t;
-        lock.l_len = 0i32 as off64_t;
-        if fcntl(old_fd, 6i32, &mut lock as *mut flock) < 0i32 {
+        lock.l_whence = 0 as libc::c_short;
+        lock.l_start = 0 as off64_t;
+        lock.l_len = 0 as off64_t;
+        if fcntl(old_fd, 6i32, &mut lock as *mut flock) < 0 {
           crate::libbb::perror_msg::bb_perror_msg(
             b"warning: can\'t lock \'%s\'\x00" as *const u8 as *const libc::c_char,
             filename,
@@ -702,7 +702,7 @@ pub unsafe extern "C" fn update_passwd(
         }
         lock.l_type = 2i32 as libc::c_short;
         /* Read current password file, write updated /etc/passwd+ */
-        changed_lines = 0i32;
+        changed_lines = 0;
         loop {
           let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -787,7 +787,7 @@ pub unsafe extern "C" fn update_passwd(
                   if cp.is_null() {
                     break;
                   }
-                  if strcmp(member, cp) != 0i32 {
+                  if strcmp(member, cp) != 0 {
                     fprintf(new_fp, fmt, cp);
                     fmt = b",%s\x00" as *const u8 as *const libc::c_char
                   } else {
@@ -813,7 +813,7 @@ pub unsafe extern "C" fn update_passwd(
                 let mut time_days: libc::c_uint = (time(0 as *mut time_t) as libc::c_ulong)
                   .wrapping_div((24i32 * 60i32 * 60i32) as libc::c_ulong)
                   as libc::c_uint;
-                if time_days == 0i32 as libc::c_uint {
+                if time_days == 0 as libc::c_uint {
                   /* 0 as change date has special meaning, avoid it */
                   time_days = 1i32 as libc::c_uint
                 }
@@ -843,7 +843,7 @@ pub unsafe extern "C" fn update_passwd(
           free(line as *mut libc::c_void);
         }
         /* EOF/error */
-        if changed_lines == 0i32 {
+        if changed_lines == 0 {
           if !member.is_null() {
             if 1i32 != 0 && *applet_name.offset(0) as libc::c_int == 'a' as i32 {
               crate::libbb::verror_msg::bb_error_msg(
@@ -876,7 +876,7 @@ pub unsafe extern "C" fn update_passwd(
         }
         fcntl(old_fd, 6i32, &mut lock as *mut flock);
         /* We do want all of them to execute, thus | instead of || */
-        *bb_errno = 0i32;
+        *bb_errno = 0;
         if ferror_unlocked(old_fp) | fflush(new_fp) | fsync(new_fd) | fclose(new_fp) != 0
           || rename(fnamesfx, filename) != 0
         {
@@ -886,7 +886,7 @@ pub unsafe extern "C" fn update_passwd(
           /* Success: ret >= 0 */
           ret = changed_lines
         }
-        if ret < 0i32 {
+        if ret < 0 {
           unlink(fnamesfx);
         }
       }

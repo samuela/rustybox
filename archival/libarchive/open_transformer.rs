@@ -49,7 +49,7 @@ pub const XZ_MAGIC1a: C2RustUnnamed_0 = 1484404733;
 pub unsafe extern "C" fn init_transformer_state(mut xstate: *mut transformer_state_t) {
   memset(
     xstate as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<transformer_state_t>() as libc::c_ulong,
   );
 }
@@ -74,7 +74,7 @@ pub unsafe extern "C" fn check_signature16(
     }
     (*xstate).signature_skipped = 2i32 as smallint
   }
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn transformer_write(
@@ -139,7 +139,7 @@ pub unsafe extern "C" fn check_errors_in_children(mut signo: libc::c_int) {
   let mut status: libc::c_int = 0;
   if signo == 0 {
     /* block waiting for any child */
-    if wait(&mut status) < 0i32 {
+    if wait(&mut status) < 0 {
       /* probably there are no children */
       //FIXME: check EINTR?
       return;
@@ -154,7 +154,7 @@ pub unsafe extern "C" fn check_errors_in_children(mut signo: libc::c_int) {
       7095457783677275021 =>
       /* this child exited with 0 */
       {
-        if crate::libbb::xfuncs::wait_any_nohang(&mut status) < 0i32 {
+        if crate::libbb::xfuncs::wait_any_nohang(&mut status) < 0 {
           //FIXME: check EINTR?
           /* wait failed?! I'm confused... */
           return;
@@ -165,7 +165,7 @@ pub unsafe extern "C" fn check_errors_in_children(mut signo: libc::c_int) {
       /*if (WIFEXITED(status) && WEXITSTATUS(status) == 0)*/
       /* On Linux, the above can be checked simply as: */
       {
-        if status == 0i32 {
+        if status == 0 {
           current_block = 7095457783677275021;
           continue;
         }
@@ -193,7 +193,7 @@ pub unsafe extern "C" fn fork_transformer(
   } else {
     ({
       let mut bb__xvfork_pid: pid_t = vfork();
-      if bb__xvfork_pid < 0i32 {
+      if bb__xvfork_pid < 0 {
         crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
           b"vfork\x00" as *const u8 as *const libc::c_char,
         );
@@ -201,7 +201,7 @@ pub unsafe extern "C" fn fork_transformer(
       bb__xvfork_pid
     })
   };
-  if pid == 0i32 {
+  if pid == 0 {
     /* Child */
     close(fd_pipe.rd); /* we don't want to read from the parent */
     /* notreached */
@@ -212,7 +212,7 @@ pub unsafe extern "C" fn fork_transformer(
     xstate.src_fd = fd;
     xstate.dst_fd = fd_pipe.wr;
     r = transformer.expect("non-null function pointer")(&mut xstate);
-    _exit((r < 0i32 as libc::c_longlong) as libc::c_int);
+    _exit((r < 0 as libc::c_longlong) as libc::c_int);
   }
   // FIXME: error check?
   /* must be _exit! bug was actually seen here */
@@ -314,7 +314,7 @@ pub unsafe extern "C" fn setup_unzip_on_fd(
     return 1i32;
   }
   fork_transformer_and_free(xstate);
-  return 0i32;
+  return 0;
 }
 /* lzma has no signature, need a little helper. NB: exist only for ENABLE_FEATURE_SEAMLESS_LZMA=y */
 /* ...and custom version for LZMA */
@@ -336,8 +336,8 @@ unsafe extern "C" fn open_transformer(
 ) -> *mut transformer_state_t {
   let mut xstate: *mut transformer_state_t = std::ptr::null_mut();
   let mut fd: libc::c_int = 0;
-  fd = open(fname, 0i32);
-  if fd < 0i32 {
+  fd = open(fname, 0);
+  if fd < 0 {
     return 0 as *mut transformer_state_t;
   }
   /* .lzma has no header/signature, can only detect it by extension */
@@ -381,7 +381,7 @@ pub unsafe extern "C" fn open_zipped(
       -((*xstate).signature_skipped as libc::c_int) as off_t,
       1i32,
     );
-    (*xstate).signature_skipped = 0i32 as smallint
+    (*xstate).signature_skipped = 0 as smallint
   }
   free(xstate as *mut libc::c_void);
   return fd;
@@ -634,7 +634,7 @@ pub unsafe extern "C" fn xmalloc_open_zipped_read_close(
 ) -> *mut libc::c_void {
   let mut xstate: *mut transformer_state_t = std::ptr::null_mut();
   let mut image: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  xstate = open_transformer(fname, 0i32);
+  xstate = open_transformer(fname, 0);
   if xstate.is_null() {
     /* file open error */
     return 0 as *mut libc::c_void;
@@ -675,7 +675,7 @@ pub unsafe extern "C" fn xmalloc_open_zipped_read_close(
       ) as *mut libc::c_char,
       (*xstate).signature_skipped as size_t,
     ) as *mut libc::c_char;
-    (*xstate).signature_skipped = 0i32 as smallint
+    (*xstate).signature_skipped = 0 as smallint
   }
   if image.is_null() {
     crate::libbb::perror_msg::bb_perror_msg(

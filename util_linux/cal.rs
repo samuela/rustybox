@@ -38,7 +38,7 @@ use libc::time_t;
 use libc::tm;
 /* used in day array */
 static mut days_in_month: [libc::c_uchar; 13] = [
-  0i32 as libc::c_uchar,
+  0 as libc::c_uchar,
   31i32 as libc::c_uchar,
   28i32 as libc::c_uchar,
   31i32 as libc::c_uchar,
@@ -106,7 +106,7 @@ pub unsafe extern "C" fn cal_main(
   flags = crate::libbb::getopt32::getopt32(argv, b"jy\x00" as *const u8 as *const libc::c_char);
   /* This sets julian = flags & 1: */
   option_mask32 &= 1i32 as libc::c_uint;
-  month = 0i32 as libc::c_uint;
+  month = 0 as libc::c_uint;
   argv = argv.offset(optind as isize);
   if (*argv.offset(0)).is_null() {
     let mut ptm: *mut tm = std::ptr::null_mut();
@@ -137,7 +137,7 @@ pub unsafe extern "C" fn cal_main(
       .wrapping_sub(7i32 as libc::c_ulong)
       .wrapping_add((7i32 as libc::c_uint).wrapping_mul(option_mask32) as libc::c_ulong),
   );
-  i = 0i32 as libc::c_uint;
+  i = 0 as libc::c_uint;
   loop {
     zero_tm.tm_mon = i as libc::c_int;
     /* full month name according to locale */
@@ -204,7 +204,7 @@ pub unsafe extern "C" fn cal_main(
       lineout.as_mut_ptr(),
       day_headings.as_mut_ptr(),
     );
-    row = 0i32 as libc::c_uint;
+    row = 0 as libc::c_uint;
     while row < 6i32 as libc::c_uint {
       *build_row(lineout.as_mut_ptr(), dp).offset(0) = '\u{0}' as i32 as libc::c_char;
       dp = dp.offset(7);
@@ -228,10 +228,10 @@ pub unsafe extern "C" fn cal_main(
       ((20i32 * 3i32 + 2i32 * 2i32) as libc::c_uint).wrapping_add(option_mask32.wrapping_mul(
         ((20i32 + 7i32) * 2i32 + 2i32 - (20i32 * 3i32 + 2i32 * 2i32)) as libc::c_uint,
       )),
-      0i32 as libc::c_uint,
+      0 as libc::c_uint,
     );
     puts(b"\n\x00" as *const u8 as *const libc::c_char);
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     while i < 12i32 as libc::c_uint {
       day_array(
         i.wrapping_add(1i32 as libc::c_uint),
@@ -246,7 +246,7 @@ pub unsafe extern "C" fn cal_main(
     );
     week_len = (20i32 as libc::c_uint)
       .wrapping_add(option_mask32.wrapping_mul((20i32 + 7i32 - 20i32) as libc::c_uint));
-    month = 0i32 as libc::c_uint;
+    month = 0 as libc::c_uint;
     while month < 12i32 as libc::c_uint {
       center(month_names[month as usize], week_len, 2i32 as libc::c_uint);
       if option_mask32 == 0 {
@@ -261,7 +261,7 @@ pub unsafe extern "C" fn cal_main(
           .wrapping_add(2i32 as libc::c_uint)
           .wrapping_sub(option_mask32) as usize],
         week_len,
-        0i32 as libc::c_uint,
+        0 as libc::c_uint,
       );
       printf(
         b"\n%s%*s%s\x00" as *const u8 as *const libc::c_char,
@@ -279,9 +279,9 @@ pub unsafe extern "C" fn cal_main(
         );
       }
       crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
-      row_0 = 0i32 as libc::c_uint;
+      row_0 = 0 as libc::c_uint;
       while row_0 < (6i32 * 7i32) as libc::c_uint {
-        which_cal = 0i32 as libc::c_uint;
+        which_cal = 0 as libc::c_uint;
         while which_cal < (3i32 as libc::c_uint).wrapping_sub(option_mask32) {
           dp_0 = days_0[month.wrapping_add(which_cal) as usize]
             .as_mut_ptr()
@@ -330,7 +330,7 @@ unsafe extern "C" fn day_array(
      * 3 Sep. 1752 through 13 Sep. 1752.
      */
     let mut j_offset: libc::c_uint = option_mask32.wrapping_mul(244i32 as libc::c_uint);
-    let mut oday: size_t = 0i32 as size_t;
+    let mut oday: size_t = 0 as size_t;
     loop {
       *days.offset(oday.wrapping_add(2i32 as libc::c_ulong) as isize) =
         (sep1752[oday as usize] as libc::c_uint).wrapping_add(j_offset);
@@ -370,7 +370,7 @@ unsafe extern "C" fn day_array(
             .wrapping_div(100i32 as libc::c_uint)
             .wrapping_sub(17i32 as libc::c_uint)
         } else {
-          0i32 as libc::c_uint
+          0 as libc::c_uint
         },
       )
       .wrapping_add(
@@ -380,7 +380,7 @@ unsafe extern "C" fn day_array(
             .wrapping_sub(1600i32 as libc::c_uint)
             .wrapping_div(400i32 as libc::c_uint)
         } else {
-          0i32 as libc::c_uint
+          0 as libc::c_uint
         },
       ) as libc::c_long
     + day as libc::c_long) as libc::c_ulong;
@@ -474,7 +474,7 @@ unsafe extern "C" fn build_row(
       .wrapping_add(3i32 as libc::c_uint)
       .wrapping_mul(7i32 as libc::c_uint) as libc::c_ulong,
   );
-  col = 0i32 as libc::c_uint;
+  col = 0 as libc::c_uint;
   loop {
     let fresh4 = dp;
     dp = dp.offset(1);
@@ -492,7 +492,7 @@ unsafe extern "C" fn build_row(
         }
       }
       val = day.wrapping_div(10i32 as libc::c_uint);
-      if val > 0i32 as libc::c_uint {
+      if val > 0 as libc::c_uint {
         *p = val.wrapping_add('0' as i32 as libc::c_uint) as libc::c_char
       }
       p = p.offset(1);

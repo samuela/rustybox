@@ -191,15 +191,15 @@ unsafe extern "C" fn flush_update() -> libc::c_int {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).rth,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushb as *const libc::c_void,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp,
-  ) < 0i32
+  ) < 0
   {
     crate::libbb::perror_msg::bb_simple_perror_msg(
       b"can\'t send flush request\x00" as *const u8 as *const libc::c_char,
     );
     return -1i32;
   }
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp = 0i32;
-  return 0i32;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp = 0;
+  return 0;
 }
 unsafe extern "C" fn nud_state_a2n(mut arg: *mut libc::c_char) -> libc::c_uint {
   static mut keywords: [libc::c_char; 68] = [
@@ -212,7 +212,7 @@ unsafe extern "C" fn nud_state_a2n(mut arg: *mut libc::c_char) -> libc::c_uint {
     0x80i32 as u8,
     0x2i32 as u8,
     0x40i32 as u8,
-    0i32 as u8,
+    0 as u8,
     0x4i32 as u8,
     0x1i32 as u8,
     0x8i32 as u8,
@@ -221,7 +221,7 @@ unsafe extern "C" fn nud_state_a2n(mut arg: *mut libc::c_char) -> libc::c_uint {
   ];
   let mut id: libc::c_int = 0;
   id = crate::libbb::compare_string_array::index_in_substrings(keywords.as_ptr(), arg);
-  if id < 0i32 {
+  if id < 0 {
     crate::libbb::verror_msg::bb_error_msg_and_die(
       bb_msg_invalid_arg_to.as_ptr(),
       arg,
@@ -263,7 +263,7 @@ unsafe extern "C" fn print_neigh(
         as libc::c_ulong,
     ),
   ) as libc::c_int as libc::c_int;
-  if len < 0i32 {
+  if len < 0 {
     crate::libbb::verror_msg::bb_error_msg_and_die(
       b"BUG: wrong nlmsg len %d\x00" as *const u8 as *const libc::c_char,
       len,
@@ -274,17 +274,17 @@ unsafe extern "C" fn print_neigh(
     .is_null()
     && (*n).nlmsg_type as libc::c_int != RTM_NEWNEIGH as libc::c_int
   {
-    return 0i32;
+    return 0;
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family != 0
     && (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family != (*r).ndm_family as libc::c_int
   {
-    return 0i32;
+    return 0;
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).index != 0
     && (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).index != (*r).ndm_ifindex
   {
-    return 0i32;
+    return 0;
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).state & (*r).ndm_state as libc::c_int == 0
     && (*r).ndm_flags as libc::c_int & 0x8i32 == 0
@@ -292,7 +292,7 @@ unsafe extern "C" fn print_neigh(
       || (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).state & 0x100i32 == 0)
     && (*r).ndm_family as libc::c_int != 12i32
   {
-    return 0i32;
+    return 0;
   }
   crate::networking::libiproute::libnetlink::parse_rtattr(
     tb.as_mut_ptr(),
@@ -327,7 +327,7 @@ unsafe extern "C" fn print_neigh(
       };
       memset(
         &mut dst as *mut inet_prefix as *mut libc::c_void,
-        0i32,
+        0,
         ::std::mem::size_of::<inet_prefix>() as libc::c_ulong,
       );
       dst.family = (*r).ndm_family;
@@ -357,7 +357,7 @@ unsafe extern "C" fn print_neigh(
           .bitlen as libc::c_int,
       ) != 0
       {
-        return 0i32;
+        return 0;
       }
     }
   }
@@ -373,7 +373,7 @@ unsafe extern "C" fn print_neigh(
           .wrapping_add(0i32 as libc::c_ulong) as isize,
       ) as *mut libc::c_void as *mut nda_cacheinfo;
     if (*ci).ndm_refcnt != 0 {
-      return 0i32;
+      return 0;
     }
   }
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
@@ -418,7 +418,7 @@ unsafe extern "C" fn print_neigh(
     let ref mut fresh1 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed;
     *fresh1 += 1;
     if (xshow_stats as libc::c_int) < 2i32 {
-      return 0i32;
+      return 0;
     }
   }
   if !tb[NDA_DST as libc::c_int as usize].is_null() {
@@ -561,12 +561,12 @@ unsafe extern "C" fn print_neigh(
     c = ',' as i32 as libc::c_char
   }
   crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn ipneigh_reset_filter() {
   memset(
     bb_common_bufsiz1.as_mut_ptr() as *mut filter_t as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<filter_t>() as libc::c_ulong,
   );
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).state = !0i32;
@@ -580,7 +580,7 @@ unsafe extern "C" fn ipneigh_list_or_flush(
   let mut rth: rtnl_handle = std::mem::zeroed();
   let mut ndm: ndmsg = {
     let mut init = ndmsg {
-      ndm_family: 0i32 as __u8,
+      ndm_family: 0 as __u8,
       ndm_pad1: 0,
       ndm_pad2: 0,
       ndm_ifindex: 0,
@@ -591,7 +591,7 @@ unsafe extern "C" fn ipneigh_list_or_flush(
     init
   };
   let mut filter_dev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut state_given: libc::c_int = 0i32;
+  let mut state_given: libc::c_int = 0;
   let mut arg: libc::c_int = 0;
   ipneigh_reset_filter();
   if flush != 0 && (*argv).is_null() {
@@ -618,9 +618,9 @@ unsafe extern "C" fn ipneigh_list_or_flush(
       argv = crate::networking::libiproute::utils::next_arg(argv);
       if state_given == 0 {
         state_given = 1i32;
-        (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).state = 0i32
+        (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).state = 0
       }
-      if strcmp(*argv, b"all\x00" as *const u8 as *const libc::c_char) == 0i32 {
+      if strcmp(*argv, b"all\x00" as *const u8 as *const libc::c_char) == 0 {
         state = !0i32 as libc::c_uint;
         if flush != 0 {
           state &= !0x40i32 as libc::c_uint
@@ -628,7 +628,7 @@ unsafe extern "C" fn ipneigh_list_or_flush(
       } else {
         state = nud_state_a2n(*argv)
       }
-      if state == 0i32 as libc::c_uint {
+      if state == 0 as libc::c_uint {
         state = 0x100i32 as libc::c_uint
       }
       let ref mut fresh2 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).state;
@@ -642,7 +642,7 @@ unsafe extern "C" fn ipneigh_list_or_flush(
         *argv,
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family,
       );
-      if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family == 0i32 {
+      if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family == 0 {
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family =
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
             .pfx
@@ -656,7 +656,7 @@ unsafe extern "C" fn ipneigh_list_or_flush(
   if !filter_dev.is_null() {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).index =
       crate::networking::libiproute::ll_map::xll_name_to_index(filter_dev);
-    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).index == 0i32 {
+    if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).index == 0 {
       crate::libbb::verror_msg::bb_error_msg_and_die(
         b"can\'t find device \'%s\'\x00" as *const u8 as *const libc::c_char,
         filter_dev,
@@ -664,11 +664,11 @@ unsafe extern "C" fn ipneigh_list_or_flush(
     }
   }
   if flush != 0 {
-    let mut round: libc::c_int = 0i32;
+    let mut round: libc::c_int = 0;
     let mut flushb: [libc::c_char; 3584] = [0; 3584];
     let ref mut fresh3 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushb;
     *fresh3 = flushb.as_mut_ptr();
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp = 0i32;
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp = 0;
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushe =
       ::std::mem::size_of::<[libc::c_char; 3584]>() as libc::c_ulong as libc::c_int;
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).state &= !0x20i32;
@@ -680,7 +680,7 @@ unsafe extern "C" fn ipneigh_list_or_flush(
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family,
         RTM_GETNEIGH as libc::c_int,
       );
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed = 0i32;
+      (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed = 0;
       if crate::networking::libiproute::libnetlink::xrtnl_dump_filter(
         &mut rth,
         Some(
@@ -692,14 +692,14 @@ unsafe extern "C" fn ipneigh_list_or_flush(
             ) -> libc::c_int,
         ),
         0 as *mut libc::c_void,
-      ) < 0i32
+      ) < 0
       {
         crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
           b"flush terminated\x00" as *const u8 as *const libc::c_char,
         );
       }
-      if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed == 0i32 {
-        if round == 0i32 {
+      if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed == 0 {
+        if round == 0 {
           puts(b"Nothing to flush\x00" as *const u8 as *const libc::c_char);
         } else {
           printf(
@@ -708,10 +708,10 @@ unsafe extern "C" fn ipneigh_list_or_flush(
             round,
           );
         }
-        return 0i32;
+        return 0;
       }
       round += 1;
-      if flush_update() < 0i32 {
+      if flush_update() < 0 {
         crate::libbb::xfunc_die::xfunc_die();
       }
       printf(
@@ -731,7 +731,7 @@ unsafe extern "C" fn ipneigh_list_or_flush(
     RTM_GETNEIGH as libc::c_int,
     &mut ndm as *mut ndmsg as *mut libc::c_void,
     ::std::mem::size_of::<ndmsg>() as libc::c_ulong as libc::c_int,
-  ) < 0i32
+  ) < 0
   {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
       b"can\'t send dump request\x00" as *const u8 as *const libc::c_char,
@@ -748,13 +748,13 @@ unsafe extern "C" fn ipneigh_list_or_flush(
         ) -> libc::c_int,
     ),
     0 as *mut libc::c_void,
-  ) < 0i32
+  ) < 0
   {
     crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"dump terminated\x00" as *const u8 as *const libc::c_char,
     );
   }
-  return 0i32;
+  return 0;
 }
 
 //int FAST_FUNC print_neigh(struct sockaddr_nl *who, struct nlmsghdr *n, void *arg);
@@ -767,14 +767,14 @@ pub unsafe extern "C" fn do_ipneigh(mut argv: *mut *mut libc::c_char) -> libc::c
     [115, 104, 111, 119, 0, 102, 108, 117, 115, 104, 0, 0];
   let mut command_num: libc::c_int = 0;
   if (*argv).is_null() {
-    return ipneigh_list_or_flush(argv, 0i32);
+    return ipneigh_list_or_flush(argv, 0);
   }
   command_num =
     crate::libbb::compare_string_array::index_in_substrings(ip_neigh_commands.as_ptr(), *argv);
   match command_num {
     0 => {
       /* show */
-      return ipneigh_list_or_flush(argv.offset(1), 0i32);
+      return ipneigh_list_or_flush(argv.offset(1), 0);
     }
     1 => {
       /* flush */

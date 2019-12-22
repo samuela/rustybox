@@ -105,7 +105,7 @@ unsafe extern "C" fn procps_get_maps(mut pid: pid_t, mut opt: libc::c_uint) -> l
   }
   memset(
     &mut total as *mut smaprec as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<smaprec>() as libc::c_ulong,
   );
   ret = crate::libbb::procps::procps_read_smaps(
@@ -134,7 +134,7 @@ unsafe extern "C" fn procps_get_maps(mut pid: pid_t, mut opt: libc::c_uint) -> l
       );
     }
   }
-  return 0i32;
+  return 0;
 }
 #[no_mangle]
 pub unsafe extern "C" fn pmap_main(
@@ -146,13 +146,13 @@ pub unsafe extern "C" fn pmap_main(
   opts =
     crate::libbb::getopt32::getopt32(argv, b"^xq\x00-1\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
-  ret = 0i32;
+  ret = 0;
   while !(*argv).is_null() {
     let fresh0 = argv;
     argv = argv.offset(1);
     let mut pid: pid_t = crate::libbb::xatonum::xatoi_positive(*fresh0);
     /* GNU pmap returns 42 if any of the pids failed */
-    if procps_get_maps(pid, opts) != 0i32 {
+    if procps_get_maps(pid, opts) != 0 {
       ret = 42i32
     }
   }

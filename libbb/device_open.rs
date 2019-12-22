@@ -132,15 +132,15 @@ pub unsafe extern "C" fn device_open(
   m = mode | 0o4000i32;
   /* Retry up to 5 times */
   /* TODO: explain why it can't be considered insane */
-  f = 0i32;
+  f = 0;
   while f < 5i32 {
     fd = open(device, m, 0o600i32);
-    if fd >= 0i32 {
+    if fd >= 0 {
       break;
     }
     f += 1
   }
-  if fd < 0i32 {
+  if fd < 0 {
     return fd;
   }
   /* Reset original flags. */

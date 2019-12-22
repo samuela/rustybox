@@ -622,7 +622,7 @@ pub unsafe extern "C" fn config_read(
   let mut t: libc::c_int = 0;
   let mut alt_comment_ch: libc::c_char = 0;
   if parser.is_null() {
-    return 0i32;
+    return 0;
   }
   alt_comment_ch = '\u{0}' as i32 as libc::c_char;
   if flags & PARSE_ALT_COMMENTS as libc::c_int as libc::c_uint != 0 {
@@ -635,13 +635,13 @@ pub unsafe extern "C" fn config_read(
   loop {
     memset(
       tokens as *mut libc::c_void,
-      0i32,
+      0,
       (::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong)
         .wrapping_mul(ntokens as libc::c_ulong),
     );
     /* Read one line (handling continuations with backslash) */
-    if get_line_with_continuation(parser) < 0i32 {
-      return 0i32;
+    if get_line_with_continuation(parser) < 0 {
+      return 0;
     }
     line = (*parser).line;
     /* Skip token in the start of line? */
@@ -663,7 +663,7 @@ pub unsafe extern "C" fn config_read(
       (*parser).data = crate::libbb::xfuncs_printf::xstrdup(line)
     }
     /* Tokenize the line */
-    t = 0i32;
+    t = 0;
     loop {
       /* Pin token */
       let ref mut fresh1 = *tokens.offset(t as isize);

@@ -92,7 +92,7 @@ pub unsafe extern "C" fn cap_name_to_number(mut cap: *const libc::c_char) -> lib
   {
     i = n
   } else {
-    i = 0i32 as libc::c_uint;
+    i = 0 as libc::c_uint;
     loop {
       if !(i
         < (::std::mem::size_of::<[*const libc::c_char; 38]>() as libc::c_ulong)
@@ -102,7 +102,7 @@ pub unsafe extern "C" fn cap_name_to_number(mut cap: *const libc::c_char) -> lib
         current_block = 10879442775620481940;
         break;
       }
-      if strcasecmp(capabilities[i as usize], cap) == 0i32 {
+      if strcasecmp(capabilities[i as usize], cap) == 0 {
         current_block = 8071902191298939548;
         break;
       }
@@ -118,7 +118,7 @@ pub unsafe extern "C" fn cap_name_to_number(mut cap: *const libc::c_char) -> lib
       }
     }
   }
-  if !(i >= 0i32 as libc::c_uint && i <= 37i32 as libc::c_uint) {
+  if !(i >= 0 as libc::c_uint && i <= 37i32 as libc::c_uint) {
     crate::libbb::verror_msg::bb_error_msg_and_die(
       b"unknown capability \'%s\'\x00" as *const u8 as *const libc::c_char,
       cap,
@@ -590,8 +590,8 @@ pub unsafe extern "C" fn getcaps(mut arg: *mut libc::c_void) {
   static mut versions: [u8; 3] = [2i32 as u8, 2i32 as u8, 1i32 as u8];
   let mut i: libc::c_int = 0;
   let mut caps: *mut caps = arg as *mut caps;
-  (*caps).header.pid = 0i32;
-  i = 0i32;
+  (*caps).header.pid = 0;
+  i = 0;
   loop {
     if !((i as libc::c_uint)
       < (::std::mem::size_of::<[u8; 3]>() as libc::c_ulong)
@@ -601,7 +601,7 @@ pub unsafe extern "C" fn getcaps(mut arg: *mut libc::c_void) {
       break;
     }
     (*caps).header.version = versions[i as usize] as u32;
-    if capget(&mut (*caps).header, 0 as cap_user_data_t) == 0i32 {
+    if capget(&mut (*caps).header, 0 as cap_user_data_t) == 0 {
       current_block = 3807955613399749250;
       break;
     }
@@ -624,7 +624,7 @@ pub unsafe extern "C" fn getcaps(mut arg: *mut libc::c_void) {
           );
         }
       }
-      if capget(&mut (*caps).header, (*caps).data.as_mut_ptr()) != 0i32 {
+      if capget(&mut (*caps).header, (*caps).data.as_mut_ptr()) != 0 {
         crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
           b"capget\x00" as *const u8 as *const libc::c_char,
         );

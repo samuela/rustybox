@@ -73,14 +73,14 @@ pub unsafe extern "C" fn nohup_main(
   if isatty(0i32) != 0 {
     /* bb_error_msg("ignoring input"); */
     close(0i32);
-    crate::libbb::xfuncs_printf::xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0i32);
+    crate::libbb::xfuncs_printf::xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0);
     /* will be fd 0 (STDIN_FILENO) */
   }
   nohupout = b"nohup.out\x00" as *const u8 as *const libc::c_char;
   /* Redirect stdout to nohup.out, either in "." or in "$HOME". */
   if isatty(1i32) != 0 {
     close(1i32);
-    if open(nohupout, 0o100i32 | 0o1i32 | 0o2000i32, 0o400i32 | 0o200i32) < 0i32 {
+    if open(nohupout, 0o100i32 | 0o1i32 | 0o2000i32, 0o400i32 | 0o200i32) < 0 {
       home = getenv(b"HOME\x00" as *const u8 as *const libc::c_char);
       if !home.is_null() {
         nohupout = crate::libbb::concat_path_file::concat_path_file(home, nohupout);
@@ -92,7 +92,7 @@ pub unsafe extern "C" fn nohup_main(
       } else {
         crate::libbb::xfuncs_printf::xopen(
           b"/dev/null\x00" as *const u8 as *const libc::c_char,
-          0i32,
+          0,
         );
         /* will be fd 1 */
       }

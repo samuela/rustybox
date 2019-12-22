@@ -62,7 +62,7 @@ pub unsafe extern "C" fn bb_parse_mode(
       s = s.offset(1)
     } else {
       /* Get a wholist. */
-      wholist = 0i32 as mode_t;
+      wholist = 0 as mode_t;
       'c_7959: loop {
         p = who_chars.as_ptr();
         loop {
@@ -109,7 +109,7 @@ pub unsafe extern "C" fn bb_parse_mode(
         p = who_chars.as_ptr().offset(1); /* Skip 'a' entry. */
         loop {
           if *p as libc::c_int == *s as libc::c_int {
-            let mut i: libc::c_int = 0i32;
+            let mut i: libc::c_int = 0;
             permlist = who_mask
               [p.wrapping_offset_from(who_chars.as_ptr()) as libc::c_long as libc::c_int as usize]
               & (0o400i32
@@ -141,7 +141,7 @@ pub unsafe extern "C" fn bb_parse_mode(
         match current_block_50 {
           14775119014532381840 => {
             /* It was not a permcopy, so get a permlist. */
-            permlist = 0i32 as mode_t;
+            permlist = 0 as mode_t;
             'c_7982: loop {
               p = perm_chars.as_ptr();
               loop {

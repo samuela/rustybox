@@ -95,7 +95,7 @@ unsafe extern "C" fn act(
   if depth == 2i32
     && ((*statbuf).st_mode & (0o100000i32 | 0o120000i32) as libc::c_uint == 0
       || invalid_name(file) as libc::c_int != 0
-      || option_mask32 & OPT_l as libc::c_int as libc::c_uint == 0 && access(file, 1i32) != 0i32)
+      || option_mask32 & OPT_l as libc::c_int as libc::c_uint == 0 && access(file, 1i32) != 0)
   {
     return 2i32;
   }
@@ -141,7 +141,7 @@ pub unsafe extern "C" fn run_parts_main(
   umask(crate::libbb::xatonum::xstrtou_range(
     umask_p,
     8i32,
-    0i32 as libc::c_uint,
+    0 as libc::c_uint,
     0o7777i32 as libc::c_uint,
   ));
   n = 1i32 as libc::c_uint;
@@ -181,7 +181,7 @@ pub unsafe extern "C" fn run_parts_main(
     .names
     .is_null()
   {
-    return 0i32;
+    return 0;
   }
   qsort(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).names as *mut libc::c_void,
@@ -192,7 +192,7 @@ pub unsafe extern "C" fn run_parts_main(
         as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int,
     ),
   );
-  n = 0i32 as libc::c_uint;
+  n = 0 as libc::c_uint;
   loop {
     let ref mut fresh6 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).names;
     let fresh7 = *fresh6;
@@ -211,11 +211,11 @@ pub unsafe extern "C" fn run_parts_main(
           .cmd
           .as_mut_ptr(),
       );
-      if ret == 0i32 {
+      if ret == 0 {
         continue;
       }
       n = 1i32 as libc::c_uint;
-      if ret < 0i32 {
+      if ret < 0 {
         crate::libbb::perror_msg::bb_perror_msg(
           b"can\'t execute \'%s\'\x00" as *const u8 as *const libc::c_char,
           name,

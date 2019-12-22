@@ -81,7 +81,7 @@ pub unsafe extern "C" fn umount_main(
   };
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut fstype: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut status: libc::c_int = 0i32;
+  let mut status: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;
   let mut mtl: *mut mtab_list = std::ptr::null_mut();
   let mut m: *mut mtab_list = std::ptr::null_mut();
@@ -94,7 +94,7 @@ pub unsafe extern "C" fn umount_main(
   argv = argv.offset(optind as isize);
   // MNT_FORCE and MNT_DETACH (from linux/fs.h) must match
   // OPT_FORCE and OPT_LAZY.
-  doForce = (opt & (1i32 << 0i32 | 1i32 << 1i32) as libc::c_uint) as libc::c_int;
+  doForce = (opt & (1i32 << 0 | 1i32 << 1i32) as libc::c_uint) as libc::c_int;
   /* Get a list of mount points from mtab.  We read them all in now mostly
    * for umount -a (so we don't have to worry about the list changing while
    * we iterate over it, or about getting stuck in a loop on the same failing
@@ -109,7 +109,7 @@ pub unsafe extern "C" fn umount_main(
     b"r\x00" as *const u8 as *const libc::c_char,
   );
   if fp.is_null() {
-    if opt & (if 1i32 != 0 { (1i32) << 5i32 } else { 0i32 }) as libc::c_uint != 0 {
+    if opt & (if 1i32 != 0 { (1i32) << 5i32 } else { 0 }) as libc::c_uint != 0 {
       crate::libbb::verror_msg::bb_error_msg_and_die(
         b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
         b"/proc/mounts\x00" as *const u8 as *const libc::c_char,
@@ -139,7 +139,7 @@ pub unsafe extern "C" fn umount_main(
   }
   // If we're not umounting all, we need at least one argument.
   // Note: "-t FSTYPE" does not imply -a.
-  if opt & (if 1i32 != 0 { (1i32) << 5i32 } else { 0i32 }) as libc::c_uint == 0 {
+  if opt & (if 1i32 != 0 { (1i32) << 5i32 } else { 0 }) as libc::c_uint == 0 {
     if (*argv.offset(0)).is_null() {
       crate::libbb::appletlib::bb_show_usage();
     }
@@ -156,7 +156,7 @@ pub unsafe extern "C" fn umount_main(
       path = crate::libbb::xfuncs_printf::xstrdup((*m).dir)
     } else {
       // For umount -a, end of mtab means time to exit.
-      if opt & (if 1i32 != 0 { (1i32) << 5i32 } else { 0i32 }) as libc::c_uint != 0 {
+      if opt & (if 1i32 != 0 { (1i32) << 5i32 } else { 0 }) as libc::c_uint != 0 {
         break;
       }
       // Use command line argument (and look it up in mtab list)
@@ -168,7 +168,7 @@ pub unsafe extern "C" fn umount_main(
       if !path.is_null() {
         m = mtl;
         while !m.is_null() {
-          if strcmp(path, (*m).dir) == 0i32 || strcmp(path, (*m).device) == 0i32 {
+          if strcmp(path, (*m).dir) == 0 || strcmp(path, (*m).device) == 0 {
             break;
           }
           m = (*m).next
@@ -238,8 +238,8 @@ pub unsafe extern "C" fn umount_main(
           break;
         }
         // NB: if m is non-NULL, path is non-NULL as well
-        if opt & (if 1i32 != 0 { (1i32) << 5i32 } else { 0i32 }) as libc::c_uint != 0
-          || strcmp(path, (*m).device) == 0i32
+        if opt & (if 1i32 != 0 { (1i32) << 5i32 } else { 0 }) as libc::c_uint != 0
+          || strcmp(path, (*m).device) == 0
         {
           break;
         }

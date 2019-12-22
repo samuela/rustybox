@@ -223,7 +223,7 @@ unsafe extern "C" fn get_cpu_statistics(mut sc: *mut stats_cpu_t) {
   fp = crate::libbb::wfopen::xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);
   memset(
     sc as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<stats_cpu_t>() as libc::c_ulong,
   );
   while !fgets_unlocked(
@@ -268,7 +268,7 @@ unsafe extern "C" fn get_cpu_statistics(mut sc: *mut stats_cpu_t) {
 #[inline(always)]
 unsafe extern "C" fn get_interval(mut old: cputime_t, mut new: cputime_t) -> cputime_t {
   let mut itv: cputime_t = new.wrapping_sub(old);
-  return if itv == 0i32 as libc::c_ulonglong {
+  return if itv == 0 as libc::c_ulonglong {
     1i32 as libc::c_ulonglong
   } else {
     itv
@@ -282,7 +282,7 @@ unsafe extern "C" fn get_interval(mut old: cputime_t, mut new: cputime_t) -> cpu
 #[inline(always)]
 unsafe extern "C" fn overflow_safe_sub(mut prev: cputime_t, mut curr: cputime_t) -> cputime_t {
   let mut v: cputime_t = curr.wrapping_sub(prev);
-  if (v as icputime_t) < 0i32 as libc::c_longlong && prev <= 0xffffffffu32 as libc::c_ulonglong {
+  if (v as icputime_t) < 0 as libc::c_longlong && prev <= 0xffffffffu32 as libc::c_ulonglong {
     /* kernel uses 32bit value for the counter? */
     /* Add 33th bit set to 1 to curr, compensating for the overflow */
     /* double shift defeats "warning: left shift count >= width of type" */
@@ -401,14 +401,14 @@ unsafe extern "C" fn is_partition(mut dev: *const libc::c_char) -> libc::c_int {
   return (*dev.offset(0) as libc::c_int - 's' as i32
     | *dev.offset(1) as libc::c_int - 'd' as i32
     | *dev.offset(2) as libc::c_int - 'a' as i32
-    == 0i32
+    == 0
     && (*dev.offset(3) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32)
     as libc::c_int;
 }
 unsafe extern "C" fn stats_dev_find_or_new(mut dev_name: *const libc::c_char) -> *mut stats_dev_t {
   let mut curr: *mut *mut stats_dev_t = &mut (*ptr_to_globals).stats_dev_list;
   while !(*curr).is_null() {
-    if strcmp((**curr).dname.as_mut_ptr(), dev_name) == 0i32 {
+    if strcmp((**curr).dname.as_mut_ptr(), dev_name) == 0 {
       return *curr;
     }
     curr = &mut (**curr).next
@@ -478,8 +478,8 @@ unsafe extern "C" fn do_disk_statistics(mut itv: cputime_t) {
     }
     if !((*ptr_to_globals).dev_name_list.is_null()
       && (*ptr_to_globals).show_all == 0
-      && (*curr_data).rd_ops == 0i32 as libc::c_ulong
-      && (*curr_data).wr_ops == 0i32 as libc::c_ulong)
+      && (*curr_data).rd_ops == 0 as libc::c_ulong
+      && (*curr_data).wr_ops == 0 as libc::c_ulong)
     {
       /* Print current statistics */
       print_stats_dev_struct(stats_dev, itv);
@@ -523,14 +523,14 @@ pub unsafe extern "C" fn iostat_main(
   (*ptr_to_globals).unit.div = 1i32 as libc::c_uint;
   memset(
     &mut stats_data as *mut [stats_cpu_t; 2] as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<[stats_cpu_t; 2]>() as libc::c_ulong,
   );
   /* Get number of clock ticks per sec */
   (*ptr_to_globals).clk_tck = crate::libbb::sysconf::bb_clk_tck();
   /* Determine number of CPUs */
   (*ptr_to_globals).total_cpus = crate::libbb::get_cpu_count::get_cpu_count();
-  if (*ptr_to_globals).total_cpus == 0i32 as libc::c_uint {
+  if (*ptr_to_globals).total_cpus == 0 as libc::c_uint {
     (*ptr_to_globals).total_cpus = 1i32 as libc::c_uint
   }
   /* Parse and process arguments */
@@ -548,7 +548,7 @@ pub unsafe extern "C" fn iostat_main(
   while !(*argv).is_null()
     && !((**argv.offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32)
   {
-    if strcmp(*argv, b"ALL\x00" as *const u8 as *const libc::c_char) != 0i32 {
+    if strcmp(*argv, b"ALL\x00" as *const u8 as *const libc::c_char) != 0 {
       /* If not ALL, save device name */
       let mut dev_name: *mut libc::c_char = crate::libbb::skip_whitespace::skip_dev_pfx(*argv);
       if crate::libbb::llist::llist_find_str((*ptr_to_globals).dev_name_list, dev_name).is_null() {
@@ -562,12 +562,12 @@ pub unsafe extern "C" fn iostat_main(
     }
     argv = argv.offset(1)
   }
-  interval = 0i32 as libc::c_uint;
+  interval = 0 as libc::c_uint;
   count = 1i32;
   if !(*argv).is_null() {
     /* Get interval */
     interval = crate::libbb::xatonum::xatoi_positive(*argv) as libc::c_uint;
-    count = if interval != 0i32 as libc::c_uint {
+    count = if interval != 0 as libc::c_uint {
       -1i32
     } else {
       1i32
@@ -589,7 +589,7 @@ pub unsafe extern "C" fn iostat_main(
   get_localtime(&mut (*ptr_to_globals).tmtime);
   /* Display header */
   print_header();
-  current_stats = 0i32 as smallint;
+  current_stats = 0 as smallint;
   loop
   /* Main loop */
   {
@@ -631,9 +631,9 @@ pub unsafe extern "C" fn iostat_main(
       dev_report(stats.itv);
     }
     crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
-    if count > 0i32 {
+    if count > 0 {
       count -= 1;
-      if count == 0i32 {
+      if count == 0 {
         break;
       }
     }
@@ -641,5 +641,5 @@ pub unsafe extern "C" fn iostat_main(
     current_stats = (current_stats as libc::c_int ^ 1i32) as smallint;
     sleep(interval);
   }
-  return 0i32;
+  return 0;
 }

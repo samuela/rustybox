@@ -418,7 +418,7 @@ pub unsafe extern "C" fn in_ether(
   ptr = (*sap).sa_data.as_mut_ptr();
   i = 6i32;
   loop {
-    val = 0i32 as libc::c_uchar;
+    val = 0 as libc::c_uchar;
     j = val as libc::c_int;
     loop {
       c = *bufp as libc::c_uchar;

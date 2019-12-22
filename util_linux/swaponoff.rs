@@ -60,8 +60,8 @@ pub const OPT_a: C2RustUnnamed = 1;
 // pub const OPTBIT_a: C2RustUnnamed = 0;
 
 unsafe extern "C" fn swap_enable_disable(mut device: *mut libc::c_char) -> libc::c_int {
-  let mut err: libc::c_int = 0i32;
-  let mut quiet: libc::c_int = 0i32;
+  let mut err: libc::c_int = 0;
+  let mut quiet: libc::c_int = 0;
   crate::util_linux::volume_id::get_devname::resolve_mount_spec(&mut device);
   if *applet_name.offset(5) as libc::c_int == 'f' as i32 {
     err = swapoff(device);
@@ -92,14 +92,14 @@ unsafe extern "C" fn swap_enable_disable(mut device: *mut libc::c_char) -> libc:
     }
     /* Don't complain if file does not exist with -e option */
     if err != 0 && option_mask32 & OPT_e as libc::c_int as libc::c_uint != 0 && *bb_errno == 2i32 {
-      err = 0i32
+      err = 0
     }
   }
   if err != 0 && quiet == 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg(device);
     return 1i32;
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn set_discard_flag(mut s: *mut libc::c_char) {
   /* Unset the flag first to allow fstab options to override */
@@ -118,10 +118,10 @@ unsafe extern "C" fn set_discard_flag(mut s: *mut libc::c_char) {
   }
   /* For fstab parsing: remove other appended options */
   *strchrnul(s, ',' as i32) = '\u{0}' as i32 as libc::c_char;
-  if strcmp(s, b"once\x00" as *const u8 as *const libc::c_char) == 0i32 {
+  if strcmp(s, b"once\x00" as *const u8 as *const libc::c_char) == 0 {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).flags |= 0x20000i32
   }
-  if strcmp(s, b"pages\x00" as *const u8 as *const libc::c_char) == 0i32 {
+  if strcmp(s, b"pages\x00" as *const u8 as *const libc::c_char) == 0 {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).flags |= 0x40000i32
   };
 }
@@ -146,7 +146,7 @@ unsafe extern "C" fn set_priority_flag(mut s: *mut libc::c_char) {
 }
 unsafe extern "C" fn do_em_all_in_fstab() -> libc::c_int {
   let mut m: *mut mntent = std::ptr::null_mut();
-  let mut err: libc::c_int = 0i32;
+  let mut err: libc::c_int = 0;
   let mut f: *mut FILE =
     crate::libbb::wfopen::xfopen_for_read(b"/etc/fstab\x00" as *const u8 as *const libc::c_char);
   loop {
@@ -157,7 +157,7 @@ unsafe extern "C" fn do_em_all_in_fstab() -> libc::c_int {
     if strcmp(
       (*m).mnt_type,
       b"swap\x00" as *const u8 as *const libc::c_char,
-    ) == 0i32
+    ) == 0
     {
       /* swapon -a should ignore entries with noauto,
        * but swapoff -a should process them
@@ -190,7 +190,7 @@ unsafe extern "C" fn do_em_all_in_fstab() -> libc::c_int {
 }
 unsafe extern "C" fn do_all_in_proc_swaps() -> libc::c_int {
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut err: libc::c_int = 0i32;
+  let mut err: libc::c_int = 0;
   let mut f: *mut FILE =
     crate::libbb::wfopen::fopen_for_read(b"/proc/swaps\x00" as *const u8 as *const libc::c_char);
   /* Don't complain if missing */
@@ -216,7 +216,7 @@ pub unsafe extern "C" fn swap_on_off_main(
 ) -> libc::c_int {
   let mut prio: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut discard: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut ret: libc::c_int = 0i32;
+  let mut ret: libc::c_int = 0;
   crate::libbb::getopt32::getopt32(
     argv,
     if *applet_name.offset(5) as libc::c_int == 'f' as i32 {

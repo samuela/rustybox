@@ -404,13 +404,13 @@ unsafe extern "C" fn print_queuelen(mut name: *mut libc::c_char) {
     },
   };
   let mut s: libc::c_int = 0;
-  s = socket(2i32, SOCK_STREAM as libc::c_int, 0i32);
-  if s < 0i32 {
+  s = socket(2i32, SOCK_STREAM as libc::c_int, 0);
+  if s < 0 {
     return;
   }
   memset(
     &mut ifr as *mut ifreq as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<ifreq>() as libc::c_ulong,
   );
   crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), name);
@@ -419,7 +419,7 @@ unsafe extern "C" fn print_queuelen(mut name: *mut libc::c_char) {
     0x8942i32 as libc::c_uint,
     &mut ifr as *mut ifreq as *mut libc::c_void,
     b"SIOCGIFTXQLEN\x00" as *const u8 as *const libc::c_char,
-  ) < 0i32
+  ) < 0
   {
     close(s);
     return;
@@ -446,7 +446,7 @@ unsafe extern "C" fn print_linkinfo(mut n: *const nlmsghdr) -> libc::c_int {
   if (*n).nlmsg_type as libc::c_int != RTM_NEWLINK as libc::c_int
     && (*n).nlmsg_type as libc::c_int != RTM_DELLINK as libc::c_int
   {
-    return 0i32;
+    return 0;
   }
   len = (len as libc::c_ulong).wrapping_sub(
     (::std::mem::size_of::<ifinfomsg>() as libc::c_ulong).wrapping_add(
@@ -457,18 +457,18 @@ unsafe extern "C" fn print_linkinfo(mut n: *const nlmsghdr) -> libc::c_int {
         as libc::c_ulong,
     ),
   ) as libc::c_int as libc::c_int;
-  if len < 0i32 {
+  if len < 0 {
     return -1i32;
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).ifindex != 0
     && (*ifi).ifi_index != (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).ifindex
   {
-    return 0i32;
+    return 0;
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).up as libc::c_int != 0
     && (*ifi).ifi_flags & IFF_UP as libc::c_int as libc::c_uint == 0
   {
-    return 0i32;
+    return 0;
   }
   //memset(tb, 0, sizeof(tb)); - parse_rtattr does this
   crate::networking::libiproute::libnetlink::parse_rtattr(
@@ -502,10 +502,10 @@ unsafe extern "C" fn print_linkinfo(mut n: *const nlmsghdr) -> libc::c_int {
           & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
           .wrapping_add(0i32 as libc::c_ulong) as isize,
       ) as *mut libc::c_void as *const libc::c_char,
-      0i32,
+      0,
     ) != 0
   {
-    return 0i32;
+    return 0;
   }
   if (*n).nlmsg_type as libc::c_int == RTM_DELLINK as libc::c_int {
     printf(b"Deleted \x00" as *const u8 as *const libc::c_char);
@@ -521,7 +521,7 @@ unsafe extern "C" fn print_linkinfo(mut n: *const nlmsghdr) -> libc::c_int {
         .wrapping_add(0i32 as libc::c_ulong) as isize,
     ) as *mut libc::c_void as *mut libc::c_char,
   );
-  let mut m_flag: libc::c_uint = 0i32 as libc::c_uint;
+  let mut m_flag: libc::c_uint = 0 as libc::c_uint;
   if !tb[IFLA_LINK as libc::c_int as usize].is_null() {
     let mut iflink: libc::c_int = *((tb[IFLA_LINK as libc::c_int as usize] as *mut libc::c_char)
       .offset(
@@ -531,7 +531,7 @@ unsafe extern "C" fn print_linkinfo(mut n: *const nlmsghdr) -> libc::c_int {
           & !4u32.wrapping_sub(1i32 as libc::c_uint) as libc::c_ulong)
           .wrapping_add(0i32 as libc::c_ulong) as isize,
       ) as *mut libc::c_void as *mut libc::c_int);
-    if iflink == 0i32 {
+    if iflink == 0 {
       printf(b"@NONE: \x00" as *const u8 as *const libc::c_char);
     } else {
       printf(
@@ -665,22 +665,22 @@ unsafe extern "C" fn print_linkinfo(mut n: *const nlmsghdr) -> libc::c_int {
   }
   crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   /*fflush_all();*/
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn flush_update() -> libc::c_int {
   if crate::networking::libiproute::libnetlink::rtnl_send_check(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).rth,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushb as *const libc::c_void,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp,
-  ) < 0i32
+  ) < 0
   {
     crate::libbb::perror_msg::bb_simple_perror_msg(
       b"can\'t send flush request\x00" as *const u8 as *const libc::c_char,
     );
     return -1i32;
   }
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp = 0i32;
-  return 0i32;
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp = 0;
+  return 0;
 }
 unsafe extern "C" fn print_addrinfo(
   mut _who: *const sockaddr_nl,
@@ -699,7 +699,7 @@ unsafe extern "C" fn print_addrinfo(
   if (*n).nlmsg_type as libc::c_int != RTM_NEWADDR as libc::c_int
     && (*n).nlmsg_type as libc::c_int != RTM_DELADDR as libc::c_int
   {
-    return 0i32;
+    return 0;
   }
   len = (len as libc::c_ulong).wrapping_sub(
     (::std::mem::size_of::<ifaddrmsg>() as libc::c_ulong).wrapping_add(
@@ -710,7 +710,7 @@ unsafe extern "C" fn print_addrinfo(
         as libc::c_ulong,
     ),
   ) as libc::c_int as libc::c_int;
-  if len < 0i32 {
+  if len < 0 {
     crate::libbb::verror_msg::bb_error_msg(
       b"wrong nlmsg len %d\x00" as *const u8 as *const libc::c_char,
       len,
@@ -722,7 +722,7 @@ unsafe extern "C" fn print_addrinfo(
     .is_null()
     && (*n).nlmsg_type as libc::c_int != RTM_NEWADDR as libc::c_int
   {
-    return 0i32;
+    return 0;
   }
   //memset(rta_tb, 0, sizeof(rta_tb)); - parse_rtattr does this
   crate::networking::libiproute::libnetlink::parse_rtattr(
@@ -754,19 +754,19 @@ unsafe extern "C" fn print_addrinfo(
     && (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).ifindex as libc::c_uint
       != (*ifa).ifa_index
   {
-    return 0i32;
+    return 0;
   }
   if ((*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scope ^ (*ifa).ifa_scope as libc::c_int)
     & (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scopemask
     != 0
   {
-    return 0i32;
+    return 0;
   }
   if ((*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flags ^ (*ifa).ifa_flags as libc::c_int)
     & (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flagmask
     != 0
   {
-    return 0i32;
+    return 0;
   }
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
     .label
@@ -788,10 +788,10 @@ unsafe extern "C" fn print_addrinfo(
     if fnmatch(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).label,
       label,
-      0i32,
-    ) != 0i32
+      0,
+    ) != 0
     {
-      return 0i32;
+      return 0;
     }
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
@@ -808,7 +808,7 @@ unsafe extern "C" fn print_addrinfo(
       };
       memset(
         &mut dst as *mut inet_prefix as *mut libc::c_void,
-        0i32,
+        0,
         ::std::mem::size_of::<inet_prefix>() as libc::c_ulong,
       );
       dst.family = (*ifa).ifa_family;
@@ -838,7 +838,7 @@ unsafe extern "C" fn print_addrinfo(
           .bitlen as libc::c_int,
       ) != 0
       {
-        return 0i32;
+        return 0;
       }
     }
   }
@@ -882,7 +882,7 @@ unsafe extern "C" fn print_addrinfo(
       as libc::c_long
       as libc::c_int;
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed = 1i32 as smallint;
-    return 0i32;
+    return 0;
   }
   if (*n).nlmsg_type as libc::c_int == RTM_DELADDR as libc::c_int {
     printf(b"Deleted \x00" as *const u8 as *const libc::c_char);
@@ -935,7 +935,7 @@ unsafe extern "C" fn print_addrinfo(
             .wrapping_add(0i32 as libc::c_ulong) as isize,
         ) as *mut libc::c_void,
         4i32 as libc::c_ulong,
-      ) == 0i32
+      ) == 0
     {
       printf(
         b"/%d \x00" as *const u8 as *const libc::c_char,
@@ -1073,7 +1073,7 @@ unsafe extern "C" fn print_addrinfo(
   }
   crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   /*fflush_all();*/
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn print_selected_addrinfo(
   mut ifindex: libc::c_int,
@@ -1111,7 +1111,7 @@ unsafe extern "C" fn print_selected_addrinfo(
     }
     ainfo = (*ainfo).next
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn store_nlmsg(
   mut who: *const sockaddr_nl,
@@ -1137,12 +1137,12 @@ unsafe extern "C" fn store_nlmsg(
   }
   *lp = h;
   crate::networking::libiproute::ll_map::ll_remember_index(who, n, 0 as *mut libc::c_void);
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn ipaddr_reset_filter(mut _oneline: libc::c_int) {
   memset(
     bb_common_bufsiz1.as_mut_ptr() as *mut filter_t as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<filter_t>() as libc::c_ulong,
   );
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).oneline = _oneline as smallint;
@@ -1164,7 +1164,7 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
   let mut filter_dev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   ipaddr_reset_filter(oneline as libc::c_int);
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).showqueue = 1i32 as smallint;
-  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family as libc::c_int == 0i32 {
+  if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family as libc::c_int == 0 {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family = preferred_family
   }
   if flush != 0 {
@@ -1183,7 +1183,7 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
   while !(*argv).is_null() {
     let key: smalluint =
       crate::libbb::compare_string_array::index_in_strings(option.as_ptr(), *argv) as smalluint;
-    if key as libc::c_int == 0i32 {
+    if key as libc::c_int == 0 {
       /* to */
       argv = crate::networking::libiproute::utils::next_arg(argv);
       crate::networking::libiproute::utils::get_prefix(
@@ -1191,7 +1191,7 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
         *argv,
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family as libc::c_int,
       );
-      if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family as libc::c_int == 0i32 {
+      if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family as libc::c_int == 0 {
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family =
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t))
             .pfx
@@ -1199,18 +1199,18 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
       }
     } else if key as libc::c_int == 1i32 {
       /* scope */
-      let mut scope: u32 = 0i32 as u32;
+      let mut scope: u32 = 0 as u32;
       argv = crate::networking::libiproute::utils::next_arg(argv);
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scopemask = -1i32;
       if crate::networking::libiproute::rt_names::rtnl_rtscope_a2n(&mut scope, *argv) != 0 {
-        if strcmp(*argv, b"all\x00" as *const u8 as *const libc::c_char) != 0i32 {
+        if strcmp(*argv, b"all\x00" as *const u8 as *const libc::c_char) != 0 {
           crate::networking::libiproute::utils::invarg_1_to_2(
             *argv,
             b"scope\x00" as *const u8 as *const libc::c_char,
           );
         }
         scope = RT_SCOPE_NOWHERE as libc::c_int as u32;
-        (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scopemask = 0i32
+        (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scopemask = 0
       }
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).scope = scope as libc::c_int
     } else if key as libc::c_int == 2i32 {
@@ -1262,7 +1262,7 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
     let mut flushb: [libc::c_char; 3584] = [0; 3584];
     let ref mut fresh2 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushb;
     *fresh2 = flushb.as_mut_ptr();
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp = 0i32;
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushp = 0;
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushe =
       ::std::mem::size_of::<[libc::c_char; 3584]>() as libc::c_ulong as libc::c_int;
     let ref mut fresh3 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).rth;
@@ -1273,7 +1273,7 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family as libc::c_int,
         RTM_GETADDR as libc::c_int,
       );
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed = 0i32 as smallint;
+      (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed = 0 as smallint;
       crate::networking::libiproute::libnetlink::xrtnl_dump_filter(
         &mut rth,
         Some(
@@ -1286,10 +1286,10 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
         ),
         0 as *mut libc::c_void,
       );
-      if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed as libc::c_int == 0i32 {
-        return 0i32;
+      if (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed as libc::c_int == 0 {
+        return 0;
       }
-      if flush_update() < 0i32 {
+      if flush_update() < 0 {
         return 1i32;
       }
     }
@@ -1323,7 +1323,7 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
       if l.is_null() {
         break;
       }
-      let mut ok: libc::c_int = 0i32;
+      let mut ok: libc::c_int = 0;
       let mut ifi: *mut ifinfomsg = (&mut (*l).h as *mut nlmsghdr as *mut libc::c_char).offset(
         (0i32
           + ((::std::mem::size_of::<nlmsghdr>() as libc::c_ulong)
@@ -1411,7 +1411,7 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
                   };
                   memset(
                     &mut dst as *mut inet_prefix as *mut libc::c_void,
-                    0i32,
+                    0,
                     ::std::mem::size_of::<inet_prefix>() as libc::c_ulong,
                   );
                   dst.family = (*ifa).ifa_family;
@@ -1474,8 +1474,8 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
                       if fnmatch(
                         (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).label,
                         label,
-                        0i32,
-                      ) != 0i32
+                        0,
+                      ) != 0
                       {
                         current_block_93 = 2310077433060450808;
                       } else {
@@ -1512,7 +1512,7 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
   while !l.is_null() {
     if oneline as libc::c_int != 0
       && (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).family as libc::c_int != 17i32
-      || print_linkinfo(&mut (*l).h) == 0i32
+      || print_linkinfo(&mut (*l).h) == 0
     {
       let mut ifi_0: *mut ifinfomsg = (&mut (*l).h as *mut nlmsghdr as *mut libc::c_char).offset(
         (0i32
@@ -1528,7 +1528,7 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
     }
     l = (*l).next
   }
-  return 0i32;
+  return 0;
 }
 unsafe extern "C" fn default_scope(mut lcl: *mut inet_prefix) -> libc::c_int {
   if (*lcl).family as libc::c_int == 2i32 {
@@ -1538,7 +1538,7 @@ unsafe extern "C" fn default_scope(mut lcl: *mut inet_prefix) -> libc::c_int {
       return RT_SCOPE_HOST as libc::c_int;
     }
   }
-  return 0i32;
+  return 0;
 }
 /* Return value becomes exitcode. It's okay to not return at all */
 unsafe extern "C" fn ipaddr_modify(
@@ -1558,14 +1558,14 @@ unsafe extern "C" fn ipaddr_modify(
   let mut l: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut lcl: inet_prefix = std::mem::zeroed();
   let mut peer: inet_prefix = std::mem::zeroed();
-  let mut local_len: libc::c_int = 0i32;
-  let mut peer_len: libc::c_int = 0i32;
-  let mut brd_len: libc::c_int = 0i32;
-  let mut any_len: libc::c_int = 0i32;
-  let mut scoped: bool = 0i32 != 0;
+  let mut local_len: libc::c_int = 0;
+  let mut peer_len: libc::c_int = 0;
+  let mut brd_len: libc::c_int = 0;
+  let mut any_len: libc::c_int = 0;
+  let mut scoped: bool = 0 != 0;
   memset(
     &mut req as *mut C2RustUnnamed_5 as *mut libc::c_void,
-    0i32,
+    0,
     ::std::mem::size_of::<C2RustUnnamed_5>() as libc::c_ulong,
   );
   req.n.nlmsg_len = (::std::mem::size_of::<ifaddrmsg>() as libc::c_ulong).wrapping_add(
@@ -1582,7 +1582,7 @@ unsafe extern "C" fn ipaddr_modify(
     let mut arg: libc::c_uint =
       crate::libbb::compare_string_array::index_in_strings(option.as_ptr(), *argv) as libc::c_uint;
     /* if search fails, "local" is assumed */
-    if arg as libc::c_int >= 0i32 {
+    if arg as libc::c_int >= 0 {
       argv = crate::networking::libiproute::utils::next_arg(argv)
     }
     if arg <= 1i32 as libc::c_uint {
@@ -1596,7 +1596,7 @@ unsafe extern "C" fn ipaddr_modify(
         req.ifa.ifa_family as libc::c_int,
       );
       peer_len = peer.bytelen as libc::c_int;
-      if req.ifa.ifa_family as libc::c_int == 0i32 {
+      if req.ifa.ifa_family as libc::c_int == 0 {
         req.ifa.ifa_family = peer.family
       }
       crate::networking::libiproute::libnetlink::addattr_l(
@@ -1634,7 +1634,7 @@ unsafe extern "C" fn ipaddr_modify(
           *argv,
           req.ifa.ifa_family as libc::c_int,
         );
-        if req.ifa.ifa_family as libc::c_int == 0i32 {
+        if req.ifa.ifa_family as libc::c_int == 0 {
           req.ifa.ifa_family = addr.family
         }
         crate::networking::libiproute::libnetlink::addattr_l(
@@ -1670,7 +1670,7 @@ unsafe extern "C" fn ipaddr_modify(
         *argv,
         req.ifa.ifa_family as libc::c_int,
       );
-      if req.ifa.ifa_family as libc::c_int == 0i32 {
+      if req.ifa.ifa_family as libc::c_int == 0 {
         req.ifa.ifa_family = addr_0.family
       }
       crate::networking::libiproute::libnetlink::addattr_l(
@@ -1683,7 +1683,7 @@ unsafe extern "C" fn ipaddr_modify(
       any_len = addr_0.bytelen as libc::c_int
     } else if arg == 5i32 as libc::c_uint {
       /* scope */
-      let mut scope: u32 = 0i32 as u32;
+      let mut scope: u32 = 0 as u32;
       if crate::networking::libiproute::rt_names::rtnl_rtscope_a2n(&mut scope, *argv) != 0 {
         crate::networking::libiproute::utils::invarg_1_to_2(
           *argv,
@@ -1718,7 +1718,7 @@ unsafe extern "C" fn ipaddr_modify(
         *argv,
         req.ifa.ifa_family as libc::c_int,
       );
-      if req.ifa.ifa_family as libc::c_int == 0i32 {
+      if req.ifa.ifa_family as libc::c_int == 0 {
         req.ifa.ifa_family = lcl.family
       }
       crate::networking::libiproute::libnetlink::addattr_l(
@@ -1745,7 +1745,7 @@ unsafe extern "C" fn ipaddr_modify(
       l,
     );
   }
-  if peer_len == 0i32 && local_len != 0 && cmd != RTM_DELADDR as libc::c_int {
+  if peer_len == 0 && local_len != 0 && cmd != RTM_DELADDR as libc::c_int {
     peer = lcl;
     crate::networking::libiproute::libnetlink::addattr_l(
       &mut req.n,
@@ -1755,10 +1755,10 @@ unsafe extern "C" fn ipaddr_modify(
       lcl.bytelen as libc::c_int,
     );
   }
-  if req.ifa.ifa_prefixlen as libc::c_int == 0i32 {
+  if req.ifa.ifa_prefixlen as libc::c_int == 0 {
     req.ifa.ifa_prefixlen = lcl.bitlen as __u8
   }
-  if brd_len < 0i32 && cmd != RTM_DELADDR as libc::c_int {
+  if brd_len < 0 && cmd != RTM_DELADDR as libc::c_int {
     let mut brd: inet_prefix = inet_prefix {
       family: 0,
       bytelen: 0,
@@ -1833,11 +1833,11 @@ unsafe extern "C" fn ipaddr_modify(
   crate::networking::libiproute::ll_map::ll_init_map(&mut rth);
   req.ifa.ifa_index = crate::networking::libiproute::ll_map::xll_name_to_index(d) as u32;
   if crate::networking::libiproute::libnetlink::rtnl_talk(&mut rth, &mut req.n, 0 as *mut nlmsghdr)
-    < 0i32
+    < 0
   {
     return 2i32;
   }
-  return 0i32;
+  return 0;
 }
 
 //int FAST_FUNC print_neigh(struct sockaddr_nl *who, struct nlmsghdr *n, void *arg);
@@ -1854,7 +1854,7 @@ pub unsafe extern "C" fn do_ipaddr(mut argv: *mut *mut libc::c_char) -> libc::c_
   let mut cmd: libc::c_int = 2i32;
   if !(*argv).is_null() {
     cmd = crate::libbb::compare_string_array::index_in_substrings(commands.as_ptr(), *argv);
-    if cmd < 0i32 {
+    if cmd < 0 {
       crate::networking::libiproute::utils::invarg_1_to_2(*argv, applet_name);
     }
     argv = argv.offset(1);
@@ -1865,14 +1865,14 @@ pub unsafe extern "C" fn do_ipaddr(mut argv: *mut *mut libc::c_char) -> libc::c_
         } else {
           RTM_NEWADDR as libc::c_int
         },
-        if cmd == 0i32 {
+        if cmd == 0 {
           (0x400i32) | 0x200i32
         } else if cmd == 1i32 || cmd == 2i32 {
           0x100i32
         } else if cmd == 3i32 {
           (0x400i32) | 0x100i32
         } else {
-          0i32
+          0
         },
         argv,
       );
