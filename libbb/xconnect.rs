@@ -709,7 +709,7 @@ unsafe extern "C" fn str2sockaddr(
   let mut result: *mut addrinfo = std::ptr::null_mut();
   let mut used_res: *mut addrinfo = std::ptr::null_mut();
   let mut org_host: *const libc::c_char = host;
-  let mut cp: *const libc::c_char = 0 as *const libc::c_char;
+  let mut cp: *const libc::c_char = std::ptr::null();
   let mut hint: addrinfo = std::mem::zeroed();
   if 0i32 != 0
     && !crate::libbb::compare_string_array::is_prefixed_with(
@@ -757,7 +757,7 @@ unsafe extern "C" fn str2sockaddr(
     cp = strrchr(host, ':' as i32);
     if 1i32 != 0 && !cp.is_null() && strchr(host, ':' as i32) != cp as *mut libc::c_char {
       /* There is more than one ':' (e.g. "::1") */
-      cp = 0 as *const libc::c_char
+      cp = std::ptr::null()
       /* it's not a port spec */
     }
   }

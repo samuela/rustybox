@@ -262,7 +262,7 @@ unsafe extern "C" fn re_wrap() {
   let vla = (w + 1i32) as usize;
   let mut linebuf: Vec<libc::c_char> = ::std::vec::from_elem(0, vla);
   let mut old_flines: *mut *const libc::c_char = (*ptr_to_globals).flines;
-  let mut s: *const libc::c_char = 0 as *const libc::c_char;
+  let mut s: *const libc::c_char = std::ptr::null();
   let mut new_flines: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if option_mask32 & FLAG_N as libc::c_int as libc::c_uint != 0 {
@@ -738,7 +738,7 @@ unsafe extern "C" fn m_status_print() {
 }
 /* Print the status line */
 unsafe extern "C" fn status_print() {
-  let mut p: *const libc::c_char = 0 as *const libc::c_char;
+  let mut p: *const libc::c_char = std::ptr::null();
   if (*ptr_to_globals).less_gets_pos >= 0i32 {
     /* don't touch statusline while input is done! */
     return;

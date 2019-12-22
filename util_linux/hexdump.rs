@@ -196,7 +196,7 @@ pub unsafe extern "C" fn hexdump_main(
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut current_block: u64;
   let mut dumper: *mut dumper_t = crate::libbb::dump::alloc_dumper();
-  let mut p: *const libc::c_char = 0 as *const libc::c_char;
+  let mut p: *const libc::c_char = std::ptr::null();
   let mut ch: libc::c_int = 0;
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut rdump: smallint = 0i32 as smallint;

@@ -191,8 +191,8 @@ pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c
   let mut val_len: libc::c_uint = 0;
   let mut mftr: *mut master_file_table_record = std::ptr::null_mut();
   let mut ns: *mut ntfs_super_block = std::ptr::null_mut();
-  let mut buf: *const u8 = 0 as *const u8;
-  let mut val: *const u8 = 0 as *const u8;
+  let mut buf: *const u8 = std::ptr::null();
+  let mut val: *const u8 = std::ptr::null();
   ns = crate::util_linux::volume_id::util::volume_id_get_buffer(id, 0i32 as u64, 0x200i32 as size_t)
     as *mut ntfs_super_block;
   if ns.is_null() {

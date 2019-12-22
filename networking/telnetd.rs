@@ -414,7 +414,7 @@ unsafe extern "C" fn safe_write_double_iac(
   mut buf: *const libc::c_char,
   mut count: size_t,
 ) -> size_t {
-  let mut IACptr: *const libc::c_char = 0 as *const libc::c_char;
+  let mut IACptr: *const libc::c_char = std::ptr::null();
   let mut wr: size_t = 0;
   let mut rc: size_t = 0;
   let mut total: size_t = 0;
@@ -602,7 +602,7 @@ unsafe extern "C" fn make_new_session(mut sock: libc::c_int) -> *mut tsession {
   );
   /* Exec shell / login / whatever */
   login_argv[0] = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).loginpath;
-  login_argv[1] = 0 as *const libc::c_char;
+  login_argv[1] = std::ptr::null();
   /* exec busybox applet (if PREFER_APPLETS=y), if that fails,
    * exec external program.
    * NB: sock is either 0 or has CLOEXEC set on it.

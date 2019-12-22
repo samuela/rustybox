@@ -347,7 +347,7 @@ unsafe extern "C" fn generate_output(
           normalize(optarg),
         );
       } else {
-        let mut charptr: *const libc::c_char = 0 as *const libc::c_char;
+        let mut charptr: *const libc::c_char = std::ptr::null();
         printf(b" -%c\x00" as *const u8 as *const libc::c_char, opt);
         charptr = strchr(optstr, opt);
         if !charptr.is_null() && {
@@ -480,7 +480,7 @@ pub unsafe extern "C" fn getopt_main(
   let mut optstr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_uint = 0;
-  let mut compatible: *const libc::c_char = 0 as *const libc::c_char;
+  let mut compatible: *const libc::c_char = std::ptr::null();
   let mut s_arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut long_options: *mut option = std::ptr::null_mut();
   let mut l_arg: *mut llist_t = std::ptr::null_mut();

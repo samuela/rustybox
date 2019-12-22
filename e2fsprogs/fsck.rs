@@ -484,7 +484,7 @@ unsafe extern "C" fn execute(
 unsafe extern "C" fn fsck_device(mut fs: *mut fs_info)
 /*, int interactive */
 {
-  let mut type_0: *const libc::c_char = 0 as *const libc::c_char;
+  let mut type_0: *const libc::c_char = std::ptr::null();
   if strcmp(
     (*fs).type_0,
     b"auto\x00" as *const u8 as *const libc::c_char,
@@ -958,7 +958,7 @@ pub unsafe extern "C" fn fsck_main(
   let mut status: libc::c_int = 0;
   /*int interactive;*/
   let mut fs: *mut fs_info = std::ptr::null_mut();
-  let mut fstab: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fstab: *const libc::c_char = std::ptr::null();
   let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut devices: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut num_devices: libc::c_int = 0;

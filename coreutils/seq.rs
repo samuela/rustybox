@@ -54,7 +54,7 @@ pub unsafe extern "C" fn seq_main(
   let mut n: libc::c_uint = 0;
   let mut width: libc::c_uint = 0;
   let mut frac_part: libc::c_uint = 0;
-  let mut sep: *const libc::c_char = 0 as *const libc::c_char;
+  let mut sep: *const libc::c_char = std::ptr::null();
   let mut opt_s: *const libc::c_char = b"\n\x00" as *const u8 as *const libc::c_char;
   let mut opt: libc::c_uint = 0;
   opt = crate::libbb::getopt32::getopt32(

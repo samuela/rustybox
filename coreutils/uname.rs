@@ -96,8 +96,8 @@ pub unsafe extern "C" fn uname_main(
     puts(uname_info.name.machine.as_mut_ptr());
   } else {
     /* "uname" */
-    let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
-    let mut delta: *const libc::c_ushort = 0 as *const libc::c_ushort;
+    let mut fmt: *const libc::c_char = std::ptr::null();
+    let mut delta: *const libc::c_ushort = std::ptr::null();
     strcpy(uname_info.processor.as_mut_ptr(), unknown_str);
     strcpy(uname_info.platform.as_mut_ptr(), unknown_str);
     strcpy(

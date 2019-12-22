@@ -124,7 +124,7 @@ pub unsafe extern "C" fn volume_id_probe_linux_swap(mut id: *mut volume_id) -> l
 /*,u64 off*/ {
   let mut current_block: u64;
   let mut sw: *mut swap_header_v1_2 = std::ptr::null_mut();
-  let mut buf: *const u8 = 0 as *const u8;
+  let mut buf: *const u8 = std::ptr::null();
   let mut page: libc::c_uint = 0;
   /* the swap signature is at the end of the PAGE_SIZE */
   page = 0x1000i32 as libc::c_uint;

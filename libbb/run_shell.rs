@@ -499,7 +499,7 @@ pub unsafe extern "C" fn run_shell(
     )
   }
   let ref mut fresh2 = *args.offset(1);
-  *fresh2 = 0 as *const libc::c_char;
+  *fresh2 = std::ptr::null();
   if !additional_args.is_null() {
     let mut cnt: libc::c_int = 1i32;
     loop {

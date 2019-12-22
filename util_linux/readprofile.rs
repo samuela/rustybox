@@ -91,8 +91,8 @@ pub unsafe extern "C" fn readprofile_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut map: *mut FILE = std::ptr::null_mut(); /* current and next address */
-  let mut mapFile: *const libc::c_char = 0 as *const libc::c_char; /* current and next name */
-  let mut proFile: *const libc::c_char = 0 as *const libc::c_char;
+  let mut mapFile: *const libc::c_char = std::ptr::null(); /* current and next name */
+  let mut proFile: *const libc::c_char = std::ptr::null();
   let mut indx: libc::c_ulong = 0;
   let mut len: size_t = 0;
   let mut add0: u64 = 0;

@@ -627,7 +627,7 @@ unsafe extern "C" fn count_dirs(mut dn: *mut *mut dnode, mut which: libc::c_int)
   all = 0i32 as libc::c_uint;
   dirs = all;
   while !(*dn).is_null() {
-    let mut name: *const libc::c_char = 0 as *const libc::c_char;
+    let mut name: *const libc::c_char = std::ptr::null();
     all = all.wrapping_add(1);
     if (**dn).dn_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
       name = (**dn).name;
@@ -692,7 +692,7 @@ unsafe extern "C" fn splitdnarray(
   d = 0i32 as libc::c_uint; /* assume sort by name */
   while !(*dn).is_null() {
     if (**dn).dn_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
-      let mut name: *const libc::c_char = 0 as *const libc::c_char;
+      let mut name: *const libc::c_char = std::ptr::null();
       if !(which == SPLIT_FILE as libc::c_int) {
         name = (**dn).name;
         if which & SPLIT_DIR as libc::c_int != 0

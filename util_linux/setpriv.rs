@@ -225,7 +225,7 @@ unsafe extern "C" fn dump() -> libc::c_int {
       inheritable: 0,
     }; 2],
   }; /* never fails in Linux */
-  let mut fmt: *const libc::c_char = 0 as *const libc::c_char; /* never fails in Linux */
+  let mut fmt: *const libc::c_char = std::ptr::null(); /* never fails in Linux */
   let mut ruid: uid_t = 0; /* never fails in Linux */
   let mut euid: uid_t = 0;
   let mut suid: uid_t = 0;

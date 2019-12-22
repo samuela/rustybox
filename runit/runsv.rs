@@ -452,10 +452,10 @@ unsafe extern "C" fn startservice(mut s: *mut svdir) {
     //if (WIFSIGNALED(s->wstat)) {
     arg[2] = crate::libbb::xfuncs::utoa(((*s).wstat & 0x7fi32) as libc::c_uint);
     //}
-    arg[3] = 0 as *const libc::c_char
+    arg[3] = std::ptr::null()
   } else {
     arg[0] = b"./run\x00" as *const u8 as *const libc::c_char; /* should never happen */
-    arg[1] = 0 as *const libc::c_char;
+    arg[1] = std::ptr::null();
     custom(s, 'u' as i32 as libc::c_char);
   }
   if (*s).pid != 0i32 {

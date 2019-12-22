@@ -171,9 +171,9 @@ pub unsafe extern "C" fn script_main(
     ws_ypixel: 0,
   };
   let mut timing_fp: *mut FILE = std::ptr::null_mut();
-  let mut str_t: *const libc::c_char = 0 as *const libc::c_char;
+  let mut str_t: *const libc::c_char = std::ptr::null();
   let mut fname: *const libc::c_char = b"typescript\x00" as *const u8 as *const libc::c_char;
-  let mut shell: *const libc::c_char = 0 as *const libc::c_char;
+  let mut shell: *const libc::c_char = std::ptr::null();
   let mut shell_opt: [libc::c_char; 3] =
     *::std::mem::transmute::<&[u8; 3], &mut [libc::c_char; 3]>(b"-i\x00");
   let mut shell_arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

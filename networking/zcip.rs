@@ -389,7 +389,7 @@ unsafe extern "C" fn run(
   mut nip: u32,
 ) -> libc::c_int {
   let mut status: libc::c_int = 0; /* for gcc */
-  let mut addr: *const libc::c_char = 0 as *const libc::c_char;
+  let mut addr: *const libc::c_char = std::ptr::null();
   addr = addr;
   let mut fmt: *const libc::c_char =
     (b"%s %s %s\x00" as *const u8 as *const libc::c_char).offset(3);

@@ -79,8 +79,8 @@ pub unsafe extern "C" fn tail_main(
 ) -> libc::c_int {
   let mut count: libc::c_uint = 10i32 as libc::c_uint;
   let mut sleep_period: libc::c_uint = 1i32 as libc::c_uint;
-  let mut str_c: *const libc::c_char = 0 as *const libc::c_char;
-  let mut str_n: *const libc::c_char = 0 as *const libc::c_char;
+  let mut str_c: *const libc::c_char = std::ptr::null();
+  let mut str_n: *const libc::c_char = std::ptr::null();
   let mut tailbuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tailbufsize: size_t = 0;
   let mut header_threshhold: libc::c_uint = 1i32 as libc::c_uint;
@@ -88,7 +88,7 @@ pub unsafe extern "C" fn tail_main(
   let mut i: libc::c_int = 0;
   let mut opt: libc::c_int = 0;
   let mut fds: *mut libc::c_int = std::ptr::null_mut();
-  let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fmt: *const libc::c_char = std::ptr::null();
   let mut prev_fd: libc::c_int = 0;
   /* Allow legacy syntax of an initial numeric option without -n. */
   if !(*argv.offset(1)).is_null()
@@ -370,7 +370,7 @@ pub unsafe extern "C" fn tail_main(
   prev_fd = *fds.offset((i - 1i32) as isize);
   tailbuf = crate::libbb::xfuncs_printf::xrealloc(tailbuf as *mut libc::c_void, 8192i32 as size_t)
     as *mut libc::c_char;
-  fmt = 0 as *const libc::c_char;
+  fmt = std::ptr::null();
   if opt & 0x1i32 != 0 {
     loop {
       sleep(sleep_period);
@@ -434,7 +434,7 @@ pub unsafe extern "C" fn tail_main(
             }
             if !fmt.is_null() && fd_1 != prev_fd {
               tail_xprint_header(fmt, filename);
-              fmt = 0 as *const libc::c_char;
+              fmt = std::ptr::null();
               prev_fd = fd_1
             }
             crate::libbb::xfuncs_printf::xwrite(

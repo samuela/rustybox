@@ -204,7 +204,7 @@ unsafe extern "C" fn tftp_progress_done() {
     let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .pmt
       .curfile;
-    *fresh0 = 0 as *const libc::c_char
+    *fresh0 = std::ptr::null()
   };
 }
 unsafe extern "C" fn tftp_blksize_check(
@@ -1000,8 +1000,8 @@ pub unsafe extern "C" fn tftp_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut peer_lsa: *mut len_and_sockaddr = std::ptr::null_mut();
-  let mut local_file: *const libc::c_char = 0 as *const libc::c_char;
-  let mut remote_file: *const libc::c_char = 0 as *const libc::c_char;
+  let mut local_file: *const libc::c_char = std::ptr::null();
+  let mut remote_file: *const libc::c_char = std::ptr::null();
   let mut blksize_str: *const libc::c_char = b"512\x00" as *const u8 as *const libc::c_char;
   let mut blksize: libc::c_int = 0;
   let mut result: libc::c_int = 0;
@@ -1126,7 +1126,7 @@ pub unsafe extern "C" fn tftpd_main(
   let mut user_opt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut local_file: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   local_file = local_file;
-  let mut error_msg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut error_msg: *const libc::c_char = std::ptr::null();
   let mut opt: libc::c_int = 0;
   let mut result: libc::c_int = 0;
   let mut opcode: libc::c_int = 0;

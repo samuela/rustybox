@@ -1137,14 +1137,14 @@ pub unsafe extern "C" fn ifplugd_main(
   let mut current_block: u64;
   let mut iface_status: libc::c_int = 0;
   let mut delay_time: libc::c_int = 0;
-  let mut iface_status_str: *const libc::c_char = 0 as *const libc::c_char;
+  let mut iface_status_str: *const libc::c_char = std::ptr::null();
   let mut netlink_pollfd: [pollfd; 1] = [pollfd {
     fd: 0,
     events: 0,
     revents: 0,
   }; 1];
   let mut opts: libc::c_uint = 0;
-  let mut api_mode_found: *const libc::c_char = 0 as *const libc::c_char;
+  let mut api_mode_found: *const libc::c_char = std::ptr::null();
   let mut pidfile_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pid_from_pidfile: pid_t = 0;
   let ref mut fresh0 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)

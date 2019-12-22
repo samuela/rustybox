@@ -116,11 +116,11 @@ pub unsafe extern "C" fn wc_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut fp: *mut FILE = std::ptr::null_mut();
-  let mut s: *const libc::c_char = 0 as *const libc::c_char;
+  let mut s: *const libc::c_char = std::ptr::null();
   let mut u: libc::c_uint = 0;
   let mut linepos: libc::c_uint = 0;
   let mut in_word: smallint = 0;
-  let mut arg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut arg: *const libc::c_char = std::ptr::null();
   let mut start_fmt: *const libc::c_char =
     (b" %9llu\x00" as *const u8 as *const libc::c_char).offset(1);
   let mut fname_fmt: *const libc::c_char = b" %s\n\x00" as *const u8 as *const libc::c_char;
@@ -163,7 +163,7 @@ pub unsafe extern "C" fn wc_main(
     arg = *fresh0;
     if !arg.is_null() {
       fp = std::ptr::null_mut();
-      s = 0 as *const libc::c_char;
+      s = std::ptr::null();
       u = 0;
       linepos = 0;
       in_word = 0;

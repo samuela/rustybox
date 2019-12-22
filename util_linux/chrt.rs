@@ -107,7 +107,7 @@ pub unsafe extern "C" fn chrt_main(
   let mut pid_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut priority: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   priority = priority;
-  let mut current_new: *const libc::c_char = 0 as *const libc::c_char;
+  let mut current_new: *const libc::c_char = std::ptr::null();
   let mut policy: libc::c_int = 2i32;
   opt = crate::libbb::getopt32::getopt32(
     argv,

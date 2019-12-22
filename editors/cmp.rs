@@ -78,13 +78,13 @@ pub unsafe extern "C" fn cmp_main(
   let mut fp1: *mut FILE = std::ptr::null_mut(); /* Hopefully won't overflow... */
   let mut fp2: *mut FILE = std::ptr::null_mut(); /* missing file results in exitcode 2 */
   let mut outfile: *mut FILE = stdout; /* -s suppresses open error messages */
-  let mut filename1: *const libc::c_char = 0 as *const libc::c_char;
+  let mut filename1: *const libc::c_char = std::ptr::null();
   let mut filename2: *const libc::c_char = b"-\x00" as *const u8 as *const libc::c_char;
   let mut skip1: off_t = 0i32 as off_t;
   let mut skip2: off_t = 0i32 as off_t;
   let mut char_pos: off_t = 0i32 as off_t;
   let mut line_pos: libc::c_int = 1i32;
-  let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fmt: *const libc::c_char = std::ptr::null();
   let mut c1: libc::c_int = 0;
   let mut c2: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;

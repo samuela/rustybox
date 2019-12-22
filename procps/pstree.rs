@@ -213,8 +213,8 @@ unsafe extern "C" fn add_proc(
   (*this).parent = parent;
 }
 unsafe extern "C" fn tree_equal(mut a: *const PROC, mut b: *const PROC) -> libc::c_int {
-  let mut walk_a: *const CHILD = 0 as *const CHILD;
-  let mut walk_b: *const CHILD = 0 as *const CHILD;
+  let mut walk_a: *const CHILD = std::ptr::null();
+  let mut walk_b: *const CHILD = std::ptr::null();
   if strcmp((*a).comm.as_ptr(), (*b).comm.as_ptr()) != 0i32 {
     return 0i32;
   }
@@ -233,7 +233,7 @@ unsafe extern "C" fn tree_equal(mut a: *const PROC, mut b: *const PROC) -> libc:
   return !(!walk_a.is_null() || !walk_b.is_null()) as libc::c_int;
 }
 unsafe extern "C" fn out_args(mut mystr: *const libc::c_char) -> libc::c_int {
-  let mut here: *const libc::c_char = 0 as *const libc::c_char;
+  let mut here: *const libc::c_char = std::ptr::null();
   let mut strcount: libc::c_int = 0i32;
   let mut tmpstr: [libc::c_char; 5] = [0; 5];
   here = mystr;
@@ -385,7 +385,7 @@ unsafe extern "C" fn dump_tree(
   }
 }
 unsafe extern "C" fn dump_by_user(mut current: *mut PROC, mut uid: uid_t) {
-  let mut walk: *const CHILD = 0 as *const CHILD;
+  let mut walk: *const CHILD = std::ptr::null();
   if current.is_null() {
     return;
   }

@@ -1142,7 +1142,7 @@ static mut keywords: [config_keyword; 18] = [
 #[inline(never)]
 unsafe extern "C" fn read_config(mut file: *const libc::c_char) {
   let mut parser: *mut parser_t = std::ptr::null_mut();
-  let mut k: *const config_keyword = 0 as *const config_keyword;
+  let mut k: *const config_keyword = std::ptr::null();
   let mut i: libc::c_uint = 0;
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   i = 0i32 as libc::c_uint;
@@ -1487,7 +1487,7 @@ unsafe extern "C" fn send_packet_to_client(
   mut dhcp_pkt: *mut dhcp_packet,
   mut force_broadcast: libc::c_int,
 ) {
-  let mut chaddr: *const u8 = 0 as *const u8;
+  let mut chaddr: *const u8 = std::ptr::null();
   let mut ciaddr: u32 = 0;
   // Was:
   //if (force_broadcast) { /* broadcast */ }
@@ -1739,7 +1739,7 @@ unsafe extern "C" fn send_offer(
   /* Else: */
   if static_lease_nip == 0 {
     /* We have no static lease for client's chaddr */
-    let mut p_host_name: *const libc::c_char = 0 as *const libc::c_char;
+    let mut p_host_name: *const libc::c_char = std::ptr::null();
     if !lease.is_null() {
       /* We have a dynamic lease for client's chaddr.
        * Reuse its IP (even if lease is expired).
@@ -1899,7 +1899,7 @@ unsafe extern "C" fn send_ACK(mut oldpacket: *mut dhcp_packet, mut yiaddr: u32) 
     options: [0; 388],
   };
   let mut lease_time_sec: u32 = 0;
-  let mut p_host_name: *const libc::c_char = 0 as *const libc::c_char;
+  let mut p_host_name: *const libc::c_char = std::ptr::null();
   init_packet(&mut packet, oldpacket, 5i32 as libc::c_char);
   packet.yiaddr = yiaddr;
   lease_time_sec = select_lease_time(oldpacket);

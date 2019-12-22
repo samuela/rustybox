@@ -774,7 +774,7 @@ unsafe extern "C" fn complete_username(mut ud: *const libc::c_char) -> libc::c_u
 }
 unsafe extern "C" fn path_parse(mut p: *mut *mut *mut libc::c_char) -> libc::c_int {
   let mut npth: libc::c_int = 0;
-  let mut pth: *const libc::c_char = 0 as *const libc::c_char;
+  let mut pth: *const libc::c_char = std::ptr::null();
   let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut res: *mut *mut libc::c_char = std::ptr::null_mut();
   if (*(*lineedit_ptr_to_statics).state).flags & WITH_PATH_LOOKUP as libc::c_int != 0 {
@@ -843,7 +843,7 @@ unsafe extern "C" fn complete_cmd_dir_file(
   let mut npaths: libc::c_int = 0;
   let mut i: libc::c_int = 0;
   let mut pf_len: libc::c_uint = 0;
-  let mut pfind: *const libc::c_char = 0 as *const libc::c_char;
+  let mut pfind: *const libc::c_char = std::ptr::null();
   let mut dirbuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   npaths = 1i32;
   path1[0] = b".\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
@@ -1854,7 +1854,7 @@ unsafe extern "C" fn parse_and_put_prompt(mut prmt_ptr: *const libc::c_char) {
     prmt_ptr = prmt_ptr.offset(1);
     c = *fresh19;
     if c as libc::c_int == '\\' as i32 {
-      let mut cp: *const libc::c_char = 0 as *const libc::c_char;
+      let mut cp: *const libc::c_char = std::ptr::null();
       let mut l: libc::c_int = 0;
       /* if */
       /*
@@ -3166,11 +3166,11 @@ unsafe extern "C" fn reverse_i_search(mut timeout: libc::c_int) -> i32 {
   let mut match_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut match_buf: [libc::c_char; 128] = [0; 128];
   let mut read_key_buffer: [libc::c_char; 16] = [0; 16];
-  let mut matched_history_line: *const libc::c_char = 0 as *const libc::c_char;
-  let mut saved_prompt: *const libc::c_char = 0 as *const libc::c_char;
+  let mut matched_history_line: *const libc::c_char = std::ptr::null();
+  let mut saved_prompt: *const libc::c_char = std::ptr::null();
   let mut saved_prmt_len: libc::c_uint = 0;
   let mut ic: i32 = 0;
-  matched_history_line = 0 as *const libc::c_char;
+  matched_history_line = std::ptr::null();
   read_key_buffer[0] = 0i32 as libc::c_char;
   match_buf[0] = '\u{0}' as i32 as libc::c_char;
   /* Save and replace the prompt */

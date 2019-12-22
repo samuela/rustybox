@@ -96,9 +96,9 @@ pub unsafe extern "C" fn su_main(
   let mut opt_username: *const libc::c_char = b"root\x00" as *const u8 as *const libc::c_char;
   let mut pw: *mut passwd = std::ptr::null_mut();
   let mut cur_uid: uid_t = getuid();
-  let mut tty: *const libc::c_char = 0 as *const libc::c_char;
+  let mut tty: *const libc::c_char = std::ptr::null();
   let mut user_buf: [libc::c_char; 64] = [0; 64];
-  let mut old_user: *const libc::c_char = 0 as *const libc::c_char;
+  let mut old_user: *const libc::c_char = std::ptr::null();
   let mut r: libc::c_int = 0;
   /* Note: we don't use "'+': stop at first non-option" idiom here.
    * For su, "SCRIPT ARGS" or "-c CMD ARGS" do not stop option parsing:

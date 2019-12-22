@@ -306,7 +306,7 @@ pub unsafe extern "C" fn ipcrm_main(
           semget(key, 0i32, 0i32)
         };
         if id < 0i32 {
-          let mut errmsg: *const libc::c_char = 0 as *const libc::c_char;
+          let mut errmsg: *const libc::c_char = std::ptr::null();
           error += 1;
           match *bb_errno {
             13 => errmsg = b"permission denied for\x00" as *const u8 as *const libc::c_char,
@@ -337,7 +337,7 @@ pub unsafe extern "C" fn ipcrm_main(
     if !(result != 0) {
       continue;
     }
-    let mut errmsg_0: *const libc::c_char = 0 as *const libc::c_char;
+    let mut errmsg_0: *const libc::c_char = std::ptr::null();
     let what_0: *const libc::c_char = if iskey != 0 {
       b"key\x00" as *const u8 as *const libc::c_char
     } else {

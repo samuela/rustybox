@@ -659,7 +659,7 @@ unsafe extern "C" fn scan_ip_mask(
 unsafe extern "C" fn parse_conf(mut path: *const libc::c_char, mut flag: libc::c_int) {
   /* internally used extra flag state */
   let mut f: *mut FILE = std::ptr::null_mut();
-  let mut filename: *const libc::c_char = 0 as *const libc::c_char;
+  let mut filename: *const libc::c_char = std::ptr::null();
   let mut buf: [libc::c_char; 160] = [0; 160];
   /* discard old rules */
   free_Htaccess_IP_list(&mut (*ptr_to_globals).ip_a_d);
@@ -1133,8 +1133,8 @@ unsafe extern "C" fn send_headers(mut responseNum: libc::c_uint) {
   let mut date_str: [libc::c_char; 40] = [0; 40]; /* using a bit larger buffer to paranoia reasons */
   let mut tm: tm = std::mem::zeroed();
   let mut responseString: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
-  let mut infoString: *const libc::c_char = 0 as *const libc::c_char;
-  let mut error_page: *const libc::c_char = 0 as *const libc::c_char;
+  let mut infoString: *const libc::c_char = std::ptr::null();
+  let mut error_page: *const libc::c_char = std::ptr::null();
   let mut len: libc::c_uint = 0;
   let mut i: libc::c_uint = 0;
   let mut timer: time_t = time(0 as *mut time_t);
@@ -1933,10 +1933,10 @@ unsafe extern "C" fn send_file_and_exit(mut url: *const libc::c_char, mut what: 
     /* unpopular */
     /* compiler adds another "\0" here */
     let mut table: *const libc::c_char = suffixTable.as_ptr();
-    let mut table_next: *const libc::c_char = 0 as *const libc::c_char;
+    let mut table_next: *const libc::c_char = std::ptr::null();
     while *table != 0 {
-      let mut try_suffix: *const libc::c_char = 0 as *const libc::c_char;
-      let mut mime_type: *const libc::c_char = 0 as *const libc::c_char;
+      let mut try_suffix: *const libc::c_char = std::ptr::null();
+      let mut mime_type: *const libc::c_char = std::ptr::null();
       mime_type = table.offset(strlen(table) as isize).offset(1);
       table_next = mime_type.offset(strlen(mime_type) as isize).offset(1);
       try_suffix = strstr(table, suffix);
@@ -2111,10 +2111,10 @@ unsafe extern "C" fn check_user_passwd(
   let mut encrypted: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* for */
   let mut current_block: u64;
   let mut cur: *mut Htaccess = std::ptr::null_mut();
-  let mut prev: *const libc::c_char = 0 as *const libc::c_char;
+  let mut prev: *const libc::c_char = std::ptr::null();
   cur = (*ptr_to_globals).g_auth;
   while !cur.is_null() {
-    let mut dir_prefix: *const libc::c_char = 0 as *const libc::c_char;
+    let mut dir_prefix: *const libc::c_char = std::ptr::null();
     let mut len: size_t = 0;
     let mut r: libc::c_int = 0;
     dir_prefix = (*cur).before_colon.as_mut_ptr();
@@ -2131,7 +2131,7 @@ unsafe extern "C" fn check_user_passwd(
         /* Path match found */
         prev = dir_prefix;
         let mut colon_after_user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-        let mut passwd: *const libc::c_char = 0 as *const libc::c_char;
+        let mut passwd: *const libc::c_char = std::ptr::null();
         let mut sp_buf: [libc::c_char; 256] = [0; 256];
         colon_after_user = strchr(user_and_passwd, ':' as i32);
         if colon_after_user.is_null() {
@@ -2284,7 +2284,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
   let mut remote_ip: libc::c_uint = 0;
   let mut total_headers_len: libc::c_uint = 0;
   static mut request_HEAD: [libc::c_char; 5] = [72, 69, 65, 68, 0];
-  let mut prequest: *const libc::c_char = 0 as *const libc::c_char;
+  let mut prequest: *const libc::c_char = std::ptr::null();
   let mut length: libc::c_ulong = 0i32 as libc::c_ulong;
   let mut cgi_type: CGI_type = CGI_NONE;
   let mut authorized: smallint = -1i32 as smallint;
@@ -2961,10 +2961,10 @@ pub unsafe extern "C" fn httpd_main(
   server_socket = server_socket;
   let mut opt: libc::c_uint = 0;
   let mut url_for_decode: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut url_for_encode: *const libc::c_char = 0 as *const libc::c_char;
-  let mut s_ugid: *const libc::c_char = 0 as *const libc::c_char;
+  let mut url_for_encode: *const libc::c_char = std::ptr::null();
+  let mut s_ugid: *const libc::c_char = std::ptr::null();
   let mut ugid: bb_uidgid_t = bb_uidgid_t { uid: 0, gid: 0 };
-  let mut pass: *const libc::c_char = 0 as *const libc::c_char;
+  let mut pass: *const libc::c_char = std::ptr::null();
   let ref mut fresh28 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);

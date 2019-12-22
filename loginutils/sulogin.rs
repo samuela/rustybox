@@ -53,7 +53,7 @@ pub unsafe extern "C" fn sulogin_main(
 ) -> libc::c_int {
   let mut timeout: libc::c_int = 0i32;
   let mut pwd: *mut passwd = std::ptr::null_mut();
-  let mut shell: *const libc::c_char = 0 as *const libc::c_char;
+  let mut shell: *const libc::c_char = std::ptr::null();
   /* Note: sulogin is not a suid app. It is meant to be run by init
    * for single user / emergency mode. init starts it as root.
    * Normal users (potentially malicious ones) can only run it under

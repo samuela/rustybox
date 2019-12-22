@@ -1302,7 +1302,7 @@ pub unsafe extern "C" fn read_cmdline(
     (col - 1i32) as size_t,
   ) as libc::c_int;
   if sz > 0i32 {
-    let mut base: *const libc::c_char = 0 as *const libc::c_char;
+    let mut base: *const libc::c_char = std::ptr::null();
     let mut comm_len: libc::c_int = 0;
     *buf.offset(sz as isize) = '\u{0}' as i32 as libc::c_char;
     loop {

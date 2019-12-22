@@ -298,7 +298,7 @@ unsafe extern "C" fn find_action(
   mut ev: *mut input_event,
   mut buf: *const libc::c_char,
 ) -> *const libc::c_char {
-  let mut action: *const libc::c_char = 0 as *const libc::c_char;
+  let mut action: *const libc::c_char = std::ptr::null();
   let mut i: libc::c_int = 0;
   // map event
   i = 0i32;
@@ -555,7 +555,7 @@ pub unsafe extern "C" fn acpid_main(
     let mut current_block_47: u64;
     i = 0i32;
     while i < nfd {
-      let mut event: *const libc::c_char = 0 as *const libc::c_char;
+      let mut event: *const libc::c_char = std::ptr::null();
       if (*pfd.offset(i as isize)).revents as libc::c_int & 0x1i32 == 0 {
         if !((*pfd.offset(i as isize)).revents as libc::c_int == 0i32) {
           /* Likely POLLERR, POLLHUP, POLLNVAL.
@@ -571,7 +571,7 @@ pub unsafe extern "C" fn acpid_main(
         }
       /* do poll() again */
       } else {
-        event = 0 as *const libc::c_char;
+        event = std::ptr::null();
         if option_mask32 & OPT_e as libc::c_int as libc::c_uint != 0 {
           let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           let mut len: libc::c_int = 0;

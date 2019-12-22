@@ -52,8 +52,8 @@ pub unsafe extern "C" fn ttysize_main(
   if (*argv.offset(1)).is_null() {
     printf(b"%u %u\x00" as *const u8 as *const libc::c_char, w, h);
   } else {
-    let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
-    let mut arg: *const libc::c_char = 0 as *const libc::c_char;
+    let mut fmt: *const libc::c_char = std::ptr::null();
+    let mut arg: *const libc::c_char = std::ptr::null();
     fmt = (b"%u %u\x00" as *const u8 as *const libc::c_char).offset(3);
     loop {
       argv = argv.offset(1);

@@ -174,8 +174,8 @@ pub unsafe extern "C" fn id_main(
   let mut opt: libc::c_uint = 0;
   let mut i: libc::c_int = 0;
   let mut status: libc::c_int = 0i32;
-  let mut prefix: *const libc::c_char = 0 as *const libc::c_char;
-  let mut username: *const libc::c_char = 0 as *const libc::c_char;
+  let mut prefix: *const libc::c_char = std::ptr::null();
+  let mut username: *const libc::c_char = std::ptr::null();
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(0) as libc::c_int == 'g' as i32) {
     /* TODO: coreutils groups prepend "USER : " prefix,
      * and accept many usernames. Example:

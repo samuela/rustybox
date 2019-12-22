@@ -14,9 +14,9 @@ use crate::archival::libarchive::bb_archive::archive_handle_t;
 pub unsafe extern "C" fn filter_accept_reject_list(
   mut archive_handle: *mut archive_handle_t,
 ) -> libc::c_char {
-  let mut key: *const libc::c_char = 0 as *const libc::c_char;
-  let mut reject_entry: *const llist_t = 0 as *const llist_t;
-  let mut accept_entry: *const llist_t = 0 as *const llist_t;
+  let mut key: *const libc::c_char = std::ptr::null();
+  let mut reject_entry: *const llist_t = std::ptr::null();
+  let mut accept_entry: *const llist_t = std::ptr::null();
   key = (*(*archive_handle).file_header).name;
   /* If the key is in a reject list fail */
   reject_entry =

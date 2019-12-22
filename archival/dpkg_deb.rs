@@ -22,7 +22,7 @@ pub unsafe extern "C" fn dpkg_deb_main(
   let mut tar_archive: *mut archive_handle_t = std::ptr::null_mut();
   let mut control_tar_llist: *mut llist_t = std::ptr::null_mut();
   let mut opt: libc::c_uint = 0;
-  let mut extract_dir: *const libc::c_char = 0 as *const libc::c_char;
+  let mut extract_dir: *const libc::c_char = std::ptr::null();
   /* Setup the tar archive handle */
   tar_archive = crate::archival::libarchive::init_handle::init_handle();
   /* Setup an ar archive handle that refers to the gzip sub archive */

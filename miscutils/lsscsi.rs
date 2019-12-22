@@ -76,11 +76,11 @@ pub unsafe extern "C" fn lsscsi_main(
     let mut buf: [libc::c_char; 256] = [0; 256];
     let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut bufsize: libc::c_uint = 0;
-    let mut vendor: *const libc::c_char = 0 as *const libc::c_char;
-    let mut type_str: *const libc::c_char = 0 as *const libc::c_char;
-    let mut type_name: *const libc::c_char = 0 as *const libc::c_char;
-    let mut model: *const libc::c_char = 0 as *const libc::c_char;
-    let mut rev: *const libc::c_char = 0 as *const libc::c_char;
+    let mut vendor: *const libc::c_char = std::ptr::null();
+    let mut type_str: *const libc::c_char = std::ptr::null();
+    let mut type_name: *const libc::c_char = std::ptr::null();
+    let mut model: *const libc::c_char = std::ptr::null();
+    let mut rev: *const libc::c_char = std::ptr::null();
     let mut type_0: libc::c_uint = 0;
     if !(((*de).d_name[0] as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32) {
       continue;

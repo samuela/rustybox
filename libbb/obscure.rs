@@ -106,7 +106,7 @@ unsafe extern "C" fn obscure_msg(
   let mut mixed: libc::c_uint = 0;
   let mut c: libc::c_uint = 0;
   let mut i: libc::c_uint = 0;
-  let mut p: *const libc::c_char = 0 as *const libc::c_char;
+  let mut p: *const libc::c_char = std::ptr::null();
   let mut hostname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* size */
   if new_p.is_null() || {
@@ -654,7 +654,7 @@ pub unsafe extern "C" fn obscure(
   mut newval: *const libc::c_char,
   mut pw: *const passwd,
 ) -> libc::c_int {
-  let mut msg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut msg: *const libc::c_char = std::ptr::null();
   msg = obscure_msg(old, newval, pw);
   if !msg.is_null() {
     printf(

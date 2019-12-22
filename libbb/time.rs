@@ -87,7 +87,7 @@ pub unsafe extern "C" fn parse_datestr(mut date_str: *const libc::c_char, mut pt
   let mut last_colon: *const libc::c_char = strrchr(date_str, ':' as i32);
   if !last_colon.is_null() {
     /* Parse input and assign appropriately to ptm */
-    let mut endp: *const libc::c_char = 0 as *const libc::c_char;
+    let mut endp: *const libc::c_char = std::ptr::null();
     /* HH:MM */
     if !(sscanf(
       date_str,

@@ -49,7 +49,7 @@ pub struct uuidCache_s {
 }
 
 use crate::util_linux::volume_id::volume_id::volume_id;
-static mut uuidCache: *mut uuidCache_s = 0 as *const uuidCache_s as *mut uuidCache_s;
+static mut uuidCache: *mut uuidCache_s = std::ptr::null();
 /* Returns !0 on error.
  * Otherwise, returns malloc'ed strings for label and uuid
  * (and they can't be NULL, although they can be "").
@@ -228,7 +228,7 @@ pub unsafe extern "C" fn add_to_uuid_cache(mut device: *const libc::c_char) -> l
   uuid = uuid;
   let mut label: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   label = label;
-  let mut type_0: *const libc::c_char = 0 as *const libc::c_char;
+  let mut type_0: *const libc::c_char = std::ptr::null();
   type_0 = type_0;
   let mut fd: libc::c_int = 0;
   fd = open(device, 0i32);

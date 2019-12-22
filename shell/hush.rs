@@ -1850,7 +1850,7 @@ unsafe extern "C" fn get_cwd(mut force: libc::c_int) -> *const libc::c_char {
     /* xrealloc_getcwd_or_warn(arg) calls free(arg),
      * we must not try to free(bb_msg_unknown) */
     if (*ptr_to_globals).cwd == bb_msg_unknown.as_ptr() {
-      (*ptr_to_globals).cwd = 0 as *const libc::c_char
+      (*ptr_to_globals).cwd = std::ptr::null()
     }
     (*ptr_to_globals).cwd =
       crate::libbb::xgetcwd::xrealloc_getcwd_or_warn((*ptr_to_globals).cwd as *mut libc::c_char);
@@ -1915,7 +1915,7 @@ unsafe extern "C" fn get_local_var_value(mut name: *const libc::c_char) -> *cons
   if strcmp(name, b"LINENO\x00" as *const u8 as *const libc::c_char) == 0i32 {
     return crate::libbb::xfuncs::utoa((*ptr_to_globals).execute_lineno);
   }
-  let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fmt: *const libc::c_char = std::ptr::null();
   if strcmp(
     name,
     b"EPOCHSECONDS\x00" as *const u8 as *const libc::c_char,
@@ -2291,7 +2291,7 @@ unsafe extern "C" fn reinit_unicode_for_hush() {
  * It exercises a lot of corner cases.
  */
 unsafe extern "C" fn setup_prompt_string() -> *const libc::c_char {
-  let mut prompt_str: *const libc::c_char = 0 as *const libc::c_char;
+  let mut prompt_str: *const libc::c_char = std::ptr::null();
   prompt_str = get_local_var_value(if (*ptr_to_globals).promptmode as libc::c_int == 0i32 {
     b"PS1\x00" as *const u8 as *const libc::c_char
   } else {
@@ -2304,7 +2304,7 @@ unsafe extern "C" fn setup_prompt_string() -> *const libc::c_char {
 }
 unsafe extern "C" fn get_user_input(mut i: *mut in_str) -> libc::c_int {
   let mut r: libc::c_int = 0;
-  let mut prompt_str: *const libc::c_char = 0 as *const libc::c_char;
+  let mut prompt_str: *const libc::c_char = std::ptr::null();
   prompt_str = setup_prompt_string();
   loop {
     reinit_unicode_for_hush();
@@ -2340,7 +2340,7 @@ unsafe extern "C" fn get_user_input(mut i: *mut in_str) -> libc::c_int {
   }
   if r < 0i32 {
     /* EOF/error detected */
-    (*i).p = 0 as *const libc::c_char;
+    (*i).p = std::ptr::null();
     r = -1i32;
     (*i).peek_buf[0] = r;
     return r;
@@ -2890,10 +2890,10 @@ unsafe extern "C" fn glob_brace(
 ) -> libc::c_int {
   let mut current_block: u64;
   let mut new_pattern_buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut begin: *const libc::c_char = 0 as *const libc::c_char;
-  let mut next: *const libc::c_char = 0 as *const libc::c_char;
-  let mut rest: *const libc::c_char = 0 as *const libc::c_char;
-  let mut p: *const libc::c_char = 0 as *const libc::c_char;
+  let mut begin: *const libc::c_char = std::ptr::null();
+  let mut next: *const libc::c_char = std::ptr::null();
+  let mut rest: *const libc::c_char = std::ptr::null();
+  let mut p: *const libc::c_char = std::ptr::null();
   let mut rest_len: size_t = 0;
   begin = pattern;
   loop {
@@ -3459,7 +3459,7 @@ unsafe extern "C" fn match_reserved_word(mut word: *mut o_string) -> *const rese
       init
     },
   ];
-  let mut r: *const reserved_combo = 0 as *const reserved_combo;
+  let mut r: *const reserved_combo = std::ptr::null();
   r = reserved_list.as_ptr();
   while r
     < reserved_list.as_ptr().offset(
@@ -3487,7 +3487,7 @@ unsafe extern "C" fn reserved_word(mut ctx: *mut parse_context) -> *const reserv
     }; /* NULL */
     init
   };
-  let mut r: *const reserved_combo = 0 as *const reserved_combo;
+  let mut r: *const reserved_combo = std::ptr::null();
   if (*ctx).word.has_quoted_part != 0 {
     return 0 as *const reserved_combo;
   }
@@ -3608,7 +3608,7 @@ unsafe extern "C" fn done_word(mut ctx: *mut parse_context) -> libc::c_int {
       && (*ctx).ctx_res_w as libc::c_int != RES_IN as libc::c_int
       && (*ctx).ctx_res_w as libc::c_int != RES_CASE as libc::c_int
     {
-      let mut reserved: *const reserved_combo = 0 as *const reserved_combo;
+      let mut reserved: *const reserved_combo = std::ptr::null();
       reserved = reserved_word(ctx);
       if !reserved.is_null() {
         /* fall through */
@@ -6147,8 +6147,8 @@ unsafe extern "C" fn parse_stream(
   's_38: loop
   /* not ""(... */
   {
-    let mut is_blank: *const libc::c_char = 0 as *const libc::c_char;
-    let mut is_special: *const libc::c_char = 0 as *const libc::c_char;
+    let mut is_blank: *const libc::c_char = std::ptr::null();
+    let mut is_special: *const libc::c_char = std::ptr::null();
     let mut ch: libc::c_int = 0;
     let mut next: libc::c_int = 0;
     let mut redir_fd: libc::c_int = 0;
@@ -7026,7 +7026,7 @@ unsafe extern "C" fn encode_then_expand_string(mut str: *const libc::c_char) -> 
     };
     init
   };
-  let mut cp: *const libc::c_char = 0 as *const libc::c_char;
+  let mut cp: *const libc::c_char = std::ptr::null();
   cp = str;
   loop {
     if *cp == 0 {
@@ -7511,7 +7511,7 @@ unsafe extern "C" fn expand_one_var(
   mut pp: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64; /* for compiler */
-  let mut val: *const libc::c_char = 0 as *const libc::c_char; /* points to expansion operator */
+  let mut val: *const libc::c_char = std::ptr::null(); /* points to expansion operator */
   let mut to_be_freed: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* for compiler */
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* replace trailing SPECIAL_VAR_SYMBOL */
   let mut var: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -7522,7 +7522,7 @@ unsafe extern "C" fn expand_one_var(
   let mut exp_word: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   exp_word = exp_word;
   let mut arg0: libc::c_char = 0;
-  val = 0 as *const libc::c_char;
+  val = std::ptr::null();
   to_be_freed = std::ptr::null_mut::<libc::c_char>();
   p = *pp;
   *p = '\u{0}' as i32 as libc::c_char;
@@ -7799,7 +7799,7 @@ unsafe extern "C" fn expand_one_var(
        */
       let mut beg: arith_t = 0;
       let mut len: arith_t = 0;
-      let mut errmsg: *const libc::c_char = 0 as *const libc::c_char;
+      let mut errmsg: *const libc::c_char = std::ptr::null();
       beg = expand_and_evaluate_arith(exp_word, &mut errmsg);
       if !errmsg.is_null() {
         current_block = 17565683642146649389;
@@ -7854,7 +7854,7 @@ unsafe extern "C" fn expand_one_var(
       }
       match current_block {
         18009804086567542307 => {}
-        _ => val = 0 as *const libc::c_char,
+        _ => val = std::ptr::null(),
       }
     /* not (HUSH_SUBSTR_EXPANSION && FEATURE_SH_MATH) */
     } else {
@@ -7919,7 +7919,7 @@ unsafe extern "C" fn expand_one_var(
           /* ${var+word} - use alternative value */
           /* ${var-word} - use default value */
           n = encode_then_append_var_plusminus(output, n, exp_word, arg0 as libc::c_int & 0x80i32);
-          val = 0 as *const libc::c_char
+          val = std::ptr::null()
         } else {
           /* ${var?word} - indicate error if unset */
           /* ${var=word} - assign and use default value */
@@ -7961,7 +7961,7 @@ unsafe extern "C" fn expand_one_var(
                 b"$%s: cannot assign in this way\x00" as *const u8 as *const libc::c_char,
                 var,
               );
-              val = 0 as *const libc::c_char
+              val = std::ptr::null()
             } else {
               let mut new_var: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
                 b"%s=%s\x00" as *const u8 as *const libc::c_char,
@@ -8395,7 +8395,7 @@ unsafe extern "C" fn parse_and_run_stream(mut inp: *mut in_str, mut end_trigger:
           ch = i_getch(inp)
         }
         /* Force prompt */
-        (*inp).p = 0 as *const libc::c_char;
+        (*inp).p = std::ptr::null();
         /* This stream isn't empty */
         empty = 0i32 != 0
       } else {
@@ -9256,7 +9256,7 @@ unsafe extern "C" fn execvp_or_die(mut argv: *mut *mut libc::c_char) -> ! {
 }
 unsafe extern "C" fn x_mode_print_optionally_squoted(mut str: *const libc::c_char) {
   let mut len: libc::c_uint = 0;
-  let mut cp: *const libc::c_char = 0 as *const libc::c_char;
+  let mut cp: *const libc::c_char = std::ptr::null();
   cp = str;
   /* the set of chars which-cause-string-to-be-squoted mimics bash */
   /* test a char with: bash -c 'set -x; echo "CH"' */
@@ -9356,11 +9356,11 @@ unsafe extern "C" fn pseudo_exec_argv(
   mut assignment_cnt: libc::c_int,
   mut argv_expanded: *mut *mut libc::c_char,
 ) -> ! {
-  let mut x: *const built_in_command = 0 as *const built_in_command;
+  let mut x: *const built_in_command = std::ptr::null();
   let mut sv_shadowed: *mut *mut variable = std::ptr::null_mut();
   let mut new_env: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut opt_vV: libc::c_char = 0i32 as libc::c_char;
-  let mut funcp: *const function = 0 as *const function;
+  let mut funcp: *const function = std::ptr::null();
   new_env = expand_assignments(argv, assignment_cnt);
   dump_cmd_in_x_mode(new_env);
   if (*argv.offset(assignment_cnt as isize)).is_null() {
@@ -9908,7 +9908,7 @@ unsafe extern "C" fn redirect_and_varexp_helper(
 unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
   let mut i: libc::c_uint = 0;
   let mut current_block: u64;
-  static mut null_ptr: *const libc::c_char = 0 as *const libc::c_char;
+  static mut null_ptr: *const libc::c_char = std::ptr::null();
   let mut cmd_no: libc::c_int = 0;
   let mut next_infd: libc::c_int = 0;
   let mut command: *mut command = std::ptr::null_mut();
@@ -10007,8 +10007,8 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
     } else {
       &null_ptr as *const *const libc::c_char as *mut *mut libc::c_char
     };
-    let mut x: *const built_in_command = 0 as *const built_in_command;
-    let mut funcp_0: *const function = 0 as *const function;
+    let mut x: *const built_in_command = std::ptr::null();
+    let mut funcp_0: *const function = std::ptr::null();
     let mut sv_shadowed: *mut *mut variable = std::ptr::null_mut();
     let mut old_vars: *mut variable = std::ptr::null_mut();
     (*ptr_to_globals).execute_lineno = (*command).lineno;
@@ -10039,7 +10039,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
         sv_shadowed = (*ptr_to_globals).shadowed_vars_pp;
         /* Check if argv[0] matches any functions (this goes before bltins) */
         funcp_0 = find_function(*argv_expanded.offset(0));
-        x = 0 as *const built_in_command;
+        x = std::ptr::null();
         if funcp_0.is_null() {
           x = find_builtin(*argv_expanded.offset(0))
         }
@@ -11085,7 +11085,7 @@ pub unsafe extern "C" fn hush_main(
         (*ptr_to_globals).global_argc = argc - optind;
         if builtin_argc != 0 {
           /* -c 'builtin' [BARGV...] "" ARG0 [ARG1...] */
-          let mut x: *const built_in_command = 0 as *const built_in_command;
+          let mut x: *const built_in_command = std::ptr::null();
           install_special_sighandlers();
           x = find_builtin(optarg);
           if !x.is_null() {
@@ -11361,7 +11361,7 @@ unsafe extern "C" fn builtin_printf(mut argv: *mut *mut libc::c_char) -> libc::c
   );
 }
 unsafe extern "C" fn builtin_help(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
-  let mut x: *const built_in_command = 0 as *const built_in_command;
+  let mut x: *const built_in_command = std::ptr::null();
   printf(b"Built-in commands:\n------------------\n\x00" as *const u8 as *const libc::c_char);
   x = bltins1.as_ptr();
   while x
@@ -11405,7 +11405,7 @@ unsafe extern "C" fn skip_dash_dash(mut argv: *mut *mut libc::c_char) -> *mut *m
 /* memset(&G.sa, 0, sizeof(G.sa)); */
 /* Function prototypes for builtins */
 unsafe extern "C" fn builtin_cd(mut argv: *mut *mut libc::c_char) -> libc::c_int {
-  let mut newdir: *const libc::c_char = 0 as *const libc::c_char;
+  let mut newdir: *const libc::c_char = std::ptr::null();
   argv = skip_dash_dash(argv);
   newdir = *argv.offset(0);
   if newdir.is_null() {
@@ -11547,7 +11547,7 @@ unsafe extern "C" fn builtin_type(mut argv: *mut *mut libc::c_char) -> libc::c_i
     if (*argv).is_null() {
       break;
     }
-    let mut type_0: *const libc::c_char = 0 as *const libc::c_char;
+    let mut type_0: *const libc::c_char = std::ptr::null();
     let mut path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /*else if (find_alias(*argv))
     type = "an alias";*/
@@ -11603,7 +11603,7 @@ unsafe extern "C" fn builtin_type(mut argv: *mut *mut libc::c_char) -> libc::c_i
  *   try: sleep 1 & read x; echo $x
  */
 unsafe extern "C" fn builtin_read(mut argv: *mut *mut libc::c_char) -> libc::c_int {
-  let mut r: *const libc::c_char = 0 as *const libc::c_char;
+  let mut r: *const libc::c_char = std::ptr::null();
   let mut params: builtin_read_params = builtin_read_params {
     read_flags: 0,
     setvar: None,
@@ -11702,7 +11702,7 @@ unsafe extern "C" fn builtin_umask(mut argv: *mut *mut libc::c_char) -> libc::c_
   /* rc != 0 - success */
 }
 unsafe extern "C" fn print_escaped(mut s: *const libc::c_char) {
-  let mut p: *const libc::c_char = 0 as *const libc::c_char;
+  let mut p: *const libc::c_char = std::ptr::null();
   let mut current_block: u64;
   if *s as libc::c_int == '\'' as i32 {
     current_block = 11958006367478214059;
@@ -12170,9 +12170,9 @@ unsafe extern "C" fn builtin_getopts(mut argv: *mut *mut libc::c_char) -> libc::
   "Whenever the shell is invoked, OPTIND shall be initialized to 1"
   */
   let mut cbuf: [libc::c_char; 2] = [0; 2]; /* for error messages in getopt() */
-  let mut cp: *const libc::c_char = 0 as *const libc::c_char;
-  let mut optstring: *const libc::c_char = 0 as *const libc::c_char;
-  let mut var: *const libc::c_char = 0 as *const libc::c_char;
+  let mut cp: *const libc::c_char = std::ptr::null();
+  let mut optstring: *const libc::c_char = std::ptr::null();
+  let mut var: *const libc::c_char = std::ptr::null();
   let mut c: libc::c_int = 0;
   let mut n: libc::c_int = 0;
   let mut exitcode: libc::c_int = 0;
@@ -12514,7 +12514,7 @@ unsafe extern "C" fn parse_jobspec(mut str: *const libc::c_char) -> *mut pipe {
 }
 unsafe extern "C" fn builtin_jobs(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut job: *mut pipe = std::ptr::null_mut();
-  let mut status_string: *const libc::c_char = 0 as *const libc::c_char;
+  let mut status_string: *const libc::c_char = std::ptr::null();
   checkjobs(0 as *mut pipe, 0i32);
   job = (*ptr_to_globals).job_list;
   while !job.is_null() {
@@ -12975,7 +12975,7 @@ unsafe extern "C" fn builtin_times(mut _argv: *mut *mut libc::c_char) -> libc::c
     24u64 as u8,
     0i32 as u8,
   ];
-  let mut p: *const u8 = 0 as *const u8;
+  let mut p: *const u8 = std::ptr::null();
   let mut clk_tck: libc::c_uint = 0;
   let mut buf: tms = tms {
     tms_utime: 0,

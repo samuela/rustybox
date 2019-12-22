@@ -4,7 +4,7 @@ use libc;
 pub unsafe extern "C" fn bb_process_escape_sequence(
   mut ptr: *mut *const libc::c_char,
 ) -> libc::c_char {
-  let mut q: *const libc::c_char = 0 as *const libc::c_char;
+  let mut q: *const libc::c_char = std::ptr::null();
   let mut num_digits: libc::c_uint = 0;
   let mut n: libc::c_uint = 0;
   let mut base: libc::c_uint = 0;

@@ -71,7 +71,7 @@ pub unsafe extern "C" fn chpasswd_main(
 ) -> libc::c_int {
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* dies if there is no such user */
   let mut algo: *const libc::c_char = b"des\x00" as *const u8 as *const libc::c_char;
-  let mut root: *const libc::c_char = 0 as *const libc::c_char;
+  let mut root: *const libc::c_char = std::ptr::null();
   let mut opt: libc::c_int = 0;
   if getuid() != 0i32 as libc::c_uint {
     crate::libbb::verror_msg::bb_simple_error_msg_and_die(bb_msg_perm_denied_are_you_root.as_ptr());

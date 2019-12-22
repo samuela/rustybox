@@ -764,7 +764,7 @@ unsafe extern "C" fn quit() -> ! {
   exit(0i32);
 }
 unsafe extern "C" fn bc_verror_msg(mut fmt: *const libc::c_char, mut p: ::std::ffi::VaList) {
-  let mut sv: *const libc::c_char = 0 as *const libc::c_char;
+  let mut sv: *const libc::c_char = std::ptr::null();
   sv = sv;
   if !(*ptr_to_globals).prs.lex_filename.is_null() {
     sv = applet_name;
@@ -3141,7 +3141,7 @@ unsafe extern "C" fn xc_num_strValid(mut val: *const libc::c_char) -> bool {
 unsafe extern "C" fn bc_num_parseDecimal(mut n: *mut BcNum, mut val: *const libc::c_char) {
   let mut len: size_t = 0; // +1 for e.g. "A" converting into 10
   let mut i: size_t = 0;
-  let mut ptr: *const libc::c_char = 0 as *const libc::c_char;
+  let mut ptr: *const libc::c_char = std::ptr::null();
   len = strlen(val);
   if len == 0i32 as libc::c_ulong {
     return;
@@ -3547,7 +3547,7 @@ unsafe extern "C" fn zxc_lex_number(mut last: libc::c_char) -> BcStatus {
 unsafe extern "C" fn xc_lex_name() {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut i: size_t = 0;
-  let mut buf: *const libc::c_char = 0 as *const libc::c_char;
+  let mut buf: *const libc::c_char = std::ptr::null();
   (*p).lex = XC_LEX_NAME as libc::c_int as smallint;
   // Since names can't cross lines with \<newline>,
   // we depend on the fact that whole line is in the buffer
@@ -8323,7 +8323,7 @@ unsafe extern "C" fn zxc_vm_execute_FILE(
     // It should say "'return' not in a function"
     // but should not exit.
   }
-  (*ptr_to_globals).prs.lex_filename = 0 as *const libc::c_char;
+  (*ptr_to_globals).prs.lex_filename = std::ptr::null();
   return s;
 }
 unsafe extern "C" fn zxc_vm_file(mut file: *const libc::c_char) -> BcStatus {
@@ -8410,7 +8410,7 @@ unsafe extern "C" fn bc_vm_envArgs() {
       &const_int_0 as *const libc::c_int as *const libc::c_void,
     );
   } else {
-    static mut nullptr: *mut libc::c_char = 0 as *const libc::c_char as *mut libc::c_char;
+    static mut nullptr: *mut libc::c_char = std::ptr::null();
     bc_vec_push(
       &mut v,
       &nullptr as *const *mut libc::c_char as *const libc::c_void,

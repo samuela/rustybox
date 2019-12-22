@@ -146,8 +146,8 @@ unsafe extern "C" fn findString(
   mut offset: libc::c_int,
 ) -> libc::c_int {
   let mut left: libc::c_int = 0;
-  let mut cp: *const libc::c_char = 0 as *const libc::c_char;
-  let mut ncp: *const libc::c_char = 0 as *const libc::c_char;
+  let mut cp: *const libc::c_char = std::ptr::null();
+  let mut ncp: *const libc::c_char = std::ptr::null();
   cp = &*(*lp).data.as_ptr().offset(offset as isize) as *const libc::c_char;
   left = (*lp).len - offset - len;
   while left >= 0i32 {
@@ -187,7 +187,7 @@ unsafe extern "C" fn searchLines(
   mut num1: libc::c_int,
   mut num2: libc::c_int,
 ) -> libc::c_int {
-  let mut lp: *const LINE = 0 as *const LINE;
+  let mut lp: *const LINE = std::ptr::null();
   let mut len: libc::c_int = 0;
   if bad_nums(
     num1,
@@ -611,8 +611,8 @@ unsafe extern "C" fn printLines(
   mut num2: libc::c_int,
   mut expandFlag: libc::c_int,
 ) -> libc::c_int {
-  let mut lp: *const LINE = 0 as *const LINE;
-  let mut cp: *const libc::c_char = 0 as *const libc::c_char;
+  let mut lp: *const LINE = std::ptr::null();
+  let mut cp: *const libc::c_char = std::ptr::null();
   let mut ch: libc::c_int = 0;
   let mut count: libc::c_int = 0;
   if bad_nums(num1, num2, b"print\x00" as *const u8 as *const libc::c_char) != 0 {
@@ -933,7 +933,7 @@ unsafe extern "C" fn subCommand(
 unsafe extern "C" fn doCommands() {
   while 1i32 != 0 {
     let mut buf: [libc::c_char; 1023] = [0; 1023];
-    let mut cp: *const libc::c_char = 0 as *const libc::c_char;
+    let mut cp: *const libc::c_char = std::ptr::null();
     let mut len: libc::c_int = 0;
     let mut n: libc::c_int = 0;
     let mut num1: libc::c_int = 0;

@@ -898,7 +898,7 @@ unsafe extern "C" fn fill_envp(mut packet: *mut dhcp_packet) -> *mut *mut libc::
   let mut i: libc::c_int = 0;
   let mut envp: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut curr: *mut *mut libc::c_char = std::ptr::null_mut();
-  let mut opt_name: *const libc::c_char = 0 as *const libc::c_char;
+  let mut opt_name: *const libc::c_char = std::ptr::null();
   let mut temp: *mut u8 = std::ptr::null_mut();
   let mut overload: u8 = 0i32 as u8;
   let mut found_opts: [libc::c_uint; 8] = [0; 8];
@@ -2336,10 +2336,10 @@ pub unsafe extern "C" fn udhcpc_main(
 ) -> libc::c_int {
   let mut current_block: u64; /* for compiler */
   let mut message: *mut u8 = std::ptr::null_mut(); /* for compiler */
-  let mut str_V: *const libc::c_char = 0 as *const libc::c_char; /* must be signed */
-  let mut str_h: *const libc::c_char = 0 as *const libc::c_char;
-  let mut str_F: *const libc::c_char = 0 as *const libc::c_char;
-  let mut str_r: *const libc::c_char = 0 as *const libc::c_char;
+  let mut str_V: *const libc::c_char = std::ptr::null(); /* must be signed */
+  let mut str_h: *const libc::c_char = std::ptr::null();
+  let mut str_F: *const libc::c_char = std::ptr::null();
+  let mut str_r: *const libc::c_char = std::ptr::null();
   let mut str_a: *const libc::c_char = b"2000\x00" as *const u8 as *const libc::c_char;
   let mut clientid_mac_ptr: *mut libc::c_void = std::ptr::null_mut();
   let mut list_O: *mut llist_t = std::ptr::null_mut();

@@ -226,7 +226,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
   /* char buffer instead of bona-fide struct avoids aliasing warning */
   let mut rt_buf: [libc::c_char; 120] = [0; 120];
   let rt: *mut rtentry = rt_buf.as_mut_ptr() as *mut libc::c_void as *mut rtentry;
-  let mut netmask: *const libc::c_char = 0 as *const libc::c_char;
+  let mut netmask: *const libc::c_char = std::ptr::null();
   let mut skfd: libc::c_int = 0;
   let mut isnet: libc::c_int = 0;
   let mut xflag: libc::c_int = 0;
@@ -483,7 +483,7 @@ unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut
   let mut rt: in6_rtmsg = std::mem::zeroed();
   let mut prefix_len: libc::c_int = 0;
   let mut skfd: libc::c_int = 0;
-  let mut devname: *const libc::c_char = 0 as *const libc::c_char;
+  let mut devname: *const libc::c_char = std::ptr::null();
   /* We know args isn't NULL from the check in route_main. */
   let fresh7 = args; /* Yes... const to non is ok. */
   args = args.offset(1);
@@ -531,7 +531,7 @@ unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut
     0x1i32
   } as u32;
   rt.rtmsg_metric = 1i32 as u32;
-  devname = 0 as *const libc::c_char;
+  devname = std::ptr::null();
   while !(*args).is_null() {
     let mut k: libc::c_int = kw_lookup(tbl_ipvx.as_ptr(), &mut args);
     let mut args_m1: *const libc::c_char = *args.offset(-1i32 as isize);

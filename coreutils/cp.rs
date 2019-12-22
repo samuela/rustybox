@@ -103,8 +103,8 @@ pub unsafe extern "C" fn cp_main(
   let mut current_block: u64;
   let mut source_stat: stat = std::mem::zeroed();
   let mut dest_stat: stat = std::mem::zeroed();
-  let mut last: *const libc::c_char = 0 as *const libc::c_char;
-  let mut dest: *const libc::c_char = 0 as *const libc::c_char;
+  let mut last: *const libc::c_char = std::ptr::null();
+  let mut dest: *const libc::c_char = std::ptr::null();
   let mut s_flags: libc::c_int = 0;
   let mut d_flags: libc::c_int = 0;
   let mut flags: libc::c_int = 0;

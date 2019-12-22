@@ -170,7 +170,7 @@ pub unsafe extern "C" fn df_main(
     f_namemax: 0,
     __f_spare: [0; 6],
   };
-  let mut disp_units_hdr: *const libc::c_char = 0 as *const libc::c_char;
+  let mut disp_units_hdr: *const libc::c_char = std::ptr::null();
   let mut chp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   opt = crate::libbb::getopt32::getopt32(
     argv,
@@ -274,9 +274,9 @@ pub unsafe extern "C" fn df_main(
   }
   let mut current_block_76: u64;
   loop {
-    let mut device: *const libc::c_char = 0 as *const libc::c_char;
-    let mut mount_point: *const libc::c_char = 0 as *const libc::c_char;
-    let mut fs_type: *const libc::c_char = 0 as *const libc::c_char;
+    let mut device: *const libc::c_char = std::ptr::null();
+    let mut mount_point: *const libc::c_char = std::ptr::null();
+    let mut fs_type: *const libc::c_char = std::ptr::null();
     if !mount_table.is_null() {
       mount_entry = getmntent(mount_table);
       if mount_entry.is_null() {

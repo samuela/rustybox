@@ -140,10 +140,10 @@ pub unsafe extern "C" fn nbdclient_main(
   let mut nofork: bool = false;
   let mut opt_d: bool = false;
   let mut opt_p: bool = false;
-  let mut host: *const libc::c_char = 0 as *const libc::c_char;
-  let mut port: *const libc::c_char = 0 as *const libc::c_char;
-  let mut device: *const libc::c_char = 0 as *const libc::c_char;
-  let mut name: *const libc::c_char = 0 as *const libc::c_char;
+  let mut host: *const libc::c_char = std::ptr::null();
+  let mut port: *const libc::c_char = std::ptr::null();
+  let mut device: *const libc::c_char = std::ptr::null();
+  let mut name: *const libc::c_char = std::ptr::null();
   let mut blksize: libc::c_uint = 0;
   let mut size_blocks: libc::c_uint = 0;
   let mut timeout: libc::c_uint = 0;

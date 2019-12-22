@@ -200,12 +200,12 @@ pub unsafe extern "C" fn shell_builtin_read(
   let mut delim: libc::c_char = 0;
   let mut tty: termios = std::mem::zeroed();
   let mut old_tty: termios = std::mem::zeroed();
-  let mut retval: *const libc::c_char = 0 as *const libc::c_char;
+  let mut retval: *const libc::c_char = std::ptr::null();
   let mut bufpos: libc::c_int = 0;
   let mut startword: libc::c_int = 0;
   let mut backslash: smallint = 0;
   let mut argv: *mut *mut libc::c_char = std::ptr::null_mut();
-  let mut ifs: *const libc::c_char = 0 as *const libc::c_char;
+  let mut ifs: *const libc::c_char = std::ptr::null();
   let mut read_flags: libc::c_int = 0;
   err = 0i32 as libc::c_uint;
   *bb_errno = err as libc::c_int;
@@ -353,7 +353,7 @@ pub unsafe extern "C" fn shell_builtin_read(
      * Ignoring, it's harmless. */
     tcsetattr(pfd[0].fd, 0i32, &mut tty);
   }
-  retval = 0 as *const libc::c_char;
+  retval = std::ptr::null();
   startword = 1i32;
   backslash = 0i32 as smallint;
   if !(*params).opt_t.is_null() {

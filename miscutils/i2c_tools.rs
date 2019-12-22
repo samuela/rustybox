@@ -446,7 +446,7 @@ unsafe extern "C" fn check_read_funcs(
   mut pec: libc::c_int,
 ) {
   let mut funcs: libc::c_ulong = 0;
-  let mut err: *const libc::c_char = 0 as *const libc::c_char;
+  let mut err: *const libc::c_char = std::ptr::null();
   get_funcs_matrix(fd, &mut funcs);
   match mode {
     1 => {
@@ -492,7 +492,7 @@ unsafe extern "C" fn check_write_funcs(
   mut pec: libc::c_int,
 ) {
   let mut funcs: libc::c_ulong = 0;
-  let mut err: *const libc::c_char = 0 as *const libc::c_char;
+  let mut err: *const libc::c_char = std::ptr::null();
   get_funcs_matrix(fd, &mut funcs);
   match mode {
     1 => {

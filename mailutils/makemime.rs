@@ -218,7 +218,7 @@ pub unsafe extern "C" fn makemime_main(
 ) -> libc::c_int {
   let mut opt_headers: *mut llist_t = std::ptr::null_mut();
   let mut l: *mut llist_t = std::ptr::null_mut();
-  let mut opt_output: *const libc::c_char = 0 as *const libc::c_char;
+  let mut opt_output: *const libc::c_char = std::ptr::null();
   let mut content_type: *const libc::c_char =
     b"application/octet-stream\x00" as *const u8 as *const libc::c_char;
   let ref mut fresh0 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)

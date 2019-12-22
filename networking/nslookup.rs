@@ -492,10 +492,10 @@ unsafe extern "C" fn parse_reply(mut msg: *const libc::c_uchar, mut len: size_t)
   let mut i: libc::c_int = 0;
   let mut n: libc::c_int = 0;
   let mut rdlen: libc::c_int = 0;
-  let mut format: *const libc::c_char = 0 as *const libc::c_char;
+  let mut format: *const libc::c_char = std::ptr::null();
   let mut astr: [libc::c_char; 46] = [0; 46];
   let mut dname: [libc::c_char; 1025] = [0; 1025];
-  let mut cp: *const libc::c_uchar = 0 as *const libc::c_uchar;
+  let mut cp: *const libc::c_uchar = std::ptr::null();
   header = msg as *mut HEADER;
   if (*header).aa() == 0 {
     printf(b"Non-authoritative answer:\n\x00" as *const u8 as *const libc::c_char);

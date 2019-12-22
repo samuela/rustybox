@@ -38,18 +38,18 @@ unsafe extern "C" fn do_compress(
   mut wrkmem: *mut libc::c_void,
 ) -> libc::c_uint {
   let mut current_block: u64;
-  let mut ip: *const u8 = 0 as *const u8;
+  let mut ip: *const u8 = std::ptr::null();
   let mut op: *mut u8 = std::ptr::null_mut();
   let in_end: *const u8 = in_0.offset(in_len as isize);
   let ip_end: *const u8 = in_0.offset(in_len as isize).offset(-8).offset(-5);
-  let mut ii: *const u8 = 0 as *const u8;
+  let mut ii: *const u8 = std::ptr::null();
   let dict: *mut *const libc::c_void = wrkmem as *mut *const libc::c_void;
   op = out;
   ip = in_0;
   ii = ip;
   ip = ip.offset(4);
   loop {
-    let mut m_pos: *const u8 = 0 as *const u8;
+    let mut m_pos: *const u8 = std::ptr::null();
     let mut m_off: libc::c_uint = 0;
     let mut m_len: libc::c_uint = 0;
     let mut dindex: libc::c_uint = 0;

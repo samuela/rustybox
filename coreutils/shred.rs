@@ -85,7 +85,7 @@ pub unsafe extern "C" fn shred_main(
   }
   loop {
     let mut sb: stat = std::mem::zeroed();
-    let mut fname: *const libc::c_char = 0 as *const libc::c_char;
+    let mut fname: *const libc::c_char = std::ptr::null();
     let mut i: libc::c_uint = 0;
     let mut fd: libc::c_int = 0;
     let fresh0 = argv;

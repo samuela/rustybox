@@ -68,13 +68,13 @@ pub unsafe extern "C" fn uniq_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut input_filename: *const libc::c_char = 0 as *const libc::c_char; /* == 0 */
+  let mut input_filename: *const libc::c_char = std::ptr::null(); /* == 0 */
   let mut skip_fields: libc::c_uint = 0;
   let mut skip_chars: libc::c_uint = 0;
   let mut max_chars: libc::c_uint = 0;
   let mut opt: libc::c_uint = 0;
   let mut cur_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut cur_compare: *const libc::c_char = 0 as *const libc::c_char;
+  let mut cur_compare: *const libc::c_char = std::ptr::null();
   skip_chars = 0i32 as libc::c_uint;
   skip_fields = skip_chars;
   max_chars = 2147483647i32 as libc::c_uint;
@@ -88,7 +88,7 @@ pub unsafe extern "C" fn uniq_main(
   argv = argv.offset(optind as isize);
   input_filename = *argv.offset(0);
   if !input_filename.is_null() {
-    let mut output: *const libc::c_char = 0 as *const libc::c_char;
+    let mut output: *const libc::c_char = std::ptr::null();
     if *input_filename.offset(0) as libc::c_int != '-' as i32
       || *input_filename.offset(1) as libc::c_int != 0
     {
@@ -118,7 +118,7 @@ pub unsafe extern "C" fn uniq_main(
     let mut i: libc::c_uint = 0;
     let mut dups: libc::c_ulong = 0;
     let mut old_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    let mut old_compare: *const libc::c_char = 0 as *const libc::c_char;
+    let mut old_compare: *const libc::c_char = std::ptr::null();
     old_line = cur_line;
     old_compare = cur_compare;
     dups = 0i32 as libc::c_ulong;

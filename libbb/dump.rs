@@ -135,7 +135,7 @@ unsafe extern "C" fn bb_dump_size(mut fs: *mut FS) -> libc::c_int {
   let mut bcnt: libc::c_int = 0;
   let mut cur_size: libc::c_int = 0;
   let mut fmt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut p: *const libc::c_char = 0 as *const libc::c_char;
+  let mut p: *const libc::c_char = std::ptr::null();
   let mut prec: libc::c_int = 0;
   /* figure out the data block size needed for each format unit */
   cur_size = 0i32;
@@ -205,7 +205,7 @@ unsafe extern "C" fn bb_dump_size(mut fs: *mut FS) -> libc::c_int {
 }
 #[inline(never)]
 unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
-  let mut e: *const libc::c_char = 0 as *const libc::c_char;
+  let mut e: *const libc::c_char = std::ptr::null();
   let mut current_block: u64;
   let mut fu: *mut FU = std::ptr::null_mut();
   fu = (*fs).nextfu;
@@ -223,8 +223,8 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
     fmtp = (*fu).fmt;
     while *fmtp != 0 {
       let mut len: libc::c_uint = 0;
-      let mut prec: *const libc::c_char = 0 as *const libc::c_char;
-      let mut byte_count_str: *const libc::c_char = 0 as *const libc::c_char;
+      let mut prec: *const libc::c_char = std::ptr::null();
+      let mut byte_count_str: *const libc::c_char = std::ptr::null();
       /* DBU:[dvae@cray.com] zalloc so that forward ptrs start out NULL */
       pr = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<PR>() as libc::c_ulong)
         as *mut PR;
@@ -243,7 +243,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
          * get precision for %s -- if have a byte count, don't
          * need it.
          */
-        prec = 0 as *const libc::c_char;
+        prec = std::ptr::null();
         if (*fu).bcnt != 0 {
           loop
           /* skip to conversion character */
@@ -287,7 +287,7 @@ unsafe extern "C" fn rewrite(mut dumper: *mut priv_dumper_t, mut fs: *mut FS) {
         } else {
           if *p1 as libc::c_int == 'l' as i32 {
             /* %ld etc */
-            e = 0 as *const libc::c_char; /* "diouxX"? */
+            e = std::ptr::null(); /* "diouxX"? */
             p2 = p2.offset(1);
             p1 = p1.offset(1);
             current_block = 525212256790890415;
@@ -1207,11 +1207,11 @@ pub unsafe extern "C" fn bb_dump_dump(
 }
 #[no_mangle]
 pub unsafe extern "C" fn bb_dump_add(mut pub_dumper: *mut dumper_t, mut fmt: *const libc::c_char) {
-  let mut p: *const libc::c_char = 0 as *const libc::c_char;
+  let mut p: *const libc::c_char = std::ptr::null();
   let mut tfs: *mut FS = std::ptr::null_mut();
   let mut tfu: *mut FU = std::ptr::null_mut();
   let mut nextfupp: *mut *mut FU = std::ptr::null_mut();
-  let mut savep: *const libc::c_char = 0 as *const libc::c_char;
+  let mut savep: *const libc::c_char = std::ptr::null();
   /* start new linked list of format units */
   tfs =
     crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<FS>() as libc::c_ulong) as *mut FS; /*DBU:[dave@cray.com] start out NULL */

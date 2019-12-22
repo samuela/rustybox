@@ -717,7 +717,7 @@ pub unsafe extern "C" fn rpm_main(
   }
   loop {
     let mut rpm_fd: libc::c_int = 0;
-    let mut source_rpm: *const libc::c_char = 0 as *const libc::c_char;
+    let mut source_rpm: *const libc::c_char = std::ptr::null();
     rpm_fd = rpm_gettags(*argv);
     source_rpm = rpm_getstr0(1044i32);
     if func & rpm_install as libc::c_int != 0 {
@@ -756,7 +756,7 @@ pub unsafe extern "C" fn rpm_main(
         let mut bdate_time: time_t = 0;
         let mut bdate_ptm: *mut tm = std::ptr::null_mut();
         let mut bdatestring: [libc::c_char; 50] = [0; 50];
-        let mut p: *const libc::c_char = 0 as *const libc::c_char;
+        let mut p: *const libc::c_char = std::ptr::null();
         printf(
           b"%-12s: %s\n\x00" as *const u8 as *const libc::c_char,
           b"Name\x00" as *const u8 as *const libc::c_char,
@@ -947,7 +947,7 @@ pub unsafe extern "C" fn rpm2cpio_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut str: *const libc::c_char = 0 as *const libc::c_char;
+  let mut str: *const libc::c_char = std::ptr::null();
   let mut rpm_fd: libc::c_int = 0;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pagesize = getpagesize() as libc::c_uint;
   rpm_fd = rpm_gettags(*argv.offset(1));

@@ -621,9 +621,9 @@ unsafe extern "C" fn check_operator(mut s: *const libc::c_char) -> token {
   return ops_table[n as usize].op_num as token;
 }
 unsafe extern "C" fn binop() -> libc::c_int {
-  let mut opnd1: *const libc::c_char = 0 as *const libc::c_char;
-  let mut opnd2: *const libc::c_char = 0 as *const libc::c_char;
-  let mut op: *const operator_t = 0 as *const operator_t;
+  let mut opnd1: *const libc::c_char = std::ptr::null();
+  let mut opnd2: *const libc::c_char = std::ptr::null();
+  let mut op: *const operator_t = std::ptr::null();
   let mut val1: number_t = 0;
   let mut val2: number_t = 0;
   opnd1 = *(*test_ptr_to_statics).args;
@@ -881,7 +881,7 @@ unsafe extern "C" fn oexpr(mut n: token) -> number_t {
 }
 unsafe extern "C" fn primary(mut n: token) -> number_t {
   let mut res: number_t = 0;
-  let mut args0_op: *const operator_t = 0 as *const operator_t;
+  let mut args0_op: *const operator_t = std::ptr::null();
   if n as libc::c_uint == EOI as libc::c_int as libc::c_uint {
     syntax(
       0 as *const libc::c_char,
@@ -1339,7 +1339,7 @@ pub unsafe extern "C" fn test_main(
 ) -> libc::c_int {
   let mut current_block: u64; /* assuming "[[" */
   let mut res: libc::c_int = 0;
-  let mut arg0: *const libc::c_char = 0 as *const libc::c_char;
+  let mut arg0: *const libc::c_char = std::ptr::null();
   arg0 = crate::libbb::get_last_path_component::bb_basename(*argv.offset(0));
   if (1i32 != 0 || 1i32 != 0 || 1i32 != 0 || 1i32 != 0)
     && *arg0.offset(0) as libc::c_int == '[' as i32

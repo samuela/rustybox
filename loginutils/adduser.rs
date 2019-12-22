@@ -183,7 +183,7 @@ pub unsafe extern "C" fn adduser_main(
     pw_dir: std::ptr::null_mut::<libc::c_char>(),
     pw_shell: std::ptr::null_mut::<libc::c_char>(),
   };
-  let mut usegroup: *const libc::c_char = 0 as *const libc::c_char;
+  let mut usegroup: *const libc::c_char = std::ptr::null();
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opts: libc::c_uint = 0;
   let mut uid: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

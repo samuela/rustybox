@@ -74,8 +74,8 @@ unsafe extern "C" fn show_entry(mut ut: *mut utmpx, mut state: libc::c_int, mut 
   let mut duration: [libc::c_char; 23] = [0; 23];
   let mut login_time: [libc::c_char; 17] = [0; 17];
   let mut logout_time: [libc::c_char; 8] = [0; 8];
-  let mut logout_str: *const libc::c_char = 0 as *const libc::c_char;
-  let mut duration_str: *const libc::c_char = 0 as *const libc::c_char;
+  let mut logout_str: *const libc::c_char = std::ptr::null();
+  let mut duration_str: *const libc::c_char = std::ptr::null();
   let mut tmp: time_t = 0;
   /* manpages say ut_tv.tv_sec *is* time_t,
    * but some systems have it wrong */

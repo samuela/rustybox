@@ -103,9 +103,9 @@ pub unsafe extern "C" fn install_main(
   let mut gid: gid_t = 0;
   let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut last: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut gid_str: *const libc::c_char = 0 as *const libc::c_char;
-  let mut uid_str: *const libc::c_char = 0 as *const libc::c_char;
-  let mut mode_str: *const libc::c_char = 0 as *const libc::c_char;
+  let mut gid_str: *const libc::c_char = std::ptr::null();
+  let mut uid_str: *const libc::c_char = std::ptr::null();
+  let mut mode_str: *const libc::c_char = std::ptr::null();
   let mut mkdir_flags: libc::c_int = FILEUTILS_RECUR as libc::c_int;
   let mut copy_flags: libc::c_int =
     FILEUTILS_DEREFERENCE as libc::c_int | FILEUTILS_FORCE as libc::c_int;

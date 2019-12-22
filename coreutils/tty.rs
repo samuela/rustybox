@@ -42,7 +42,7 @@ pub unsafe extern "C" fn tty_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut s: *const libc::c_char = 0 as *const libc::c_char; /* Note: No longer relevant in SUSv3. */
+  let mut s: *const libc::c_char = std::ptr::null(); /* Note: No longer relevant in SUSv3. */
   let mut silent: libc::c_int = 0; /* SUSv3 requires > 1 for error. */
   let mut retval: libc::c_int = 0;
   xfunc_error_retval = 2i32 as u8;

@@ -128,8 +128,8 @@ pub unsafe extern "C" fn tunctl_main(
   let mut fd: libc::c_int = 0;
   let mut opt_name: *const libc::c_char = b"tap%d\x00" as *const u8 as *const libc::c_char;
   let mut opt_device: *const libc::c_char = b"/dev/net/tun\x00" as *const u8 as *const libc::c_char;
-  let mut opt_user: *const libc::c_char = 0 as *const libc::c_char;
-  let mut opt_group: *const libc::c_char = 0 as *const libc::c_char;
+  let mut opt_user: *const libc::c_char = std::ptr::null();
+  let mut opt_group: *const libc::c_char = std::ptr::null();
   let mut user: libc::c_long = -1i32 as libc::c_long;
   let mut group: libc::c_long = -1i32 as libc::c_long;
   let mut opts: libc::c_uint = 0;

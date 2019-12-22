@@ -414,7 +414,7 @@ static mut aftypes: [*const aftype; 4] = unsafe {
 /* Check our protocol family table for this family. */
 #[no_mangle]
 pub unsafe extern "C" fn get_aftype(mut name: *const libc::c_char) -> *const aftype {
-  let mut afp: *const *const aftype = 0 as *const *const aftype;
+  let mut afp: *const *const aftype = std::ptr::null();
   afp = aftypes.as_ptr();
   while !(*afp).is_null() {
     if strcmp((**afp).name, name) == 0i32 {
@@ -426,7 +426,7 @@ pub unsafe extern "C" fn get_aftype(mut name: *const libc::c_char) -> *const aft
 }
 /* Check our protocol family table for this family. */
 unsafe extern "C" fn get_afntype(mut af: libc::c_int) -> *const aftype {
-  let mut afp: *const *const aftype = 0 as *const *const aftype;
+  let mut afp: *const *const aftype = std::ptr::null();
   afp = aftypes.as_ptr();
   while !(*afp).is_null() {
     if (**afp).af == af {
@@ -756,7 +756,7 @@ unsafe extern "C" fn if_fetch(mut ife: *mut interface) -> libc::c_int {
 }
 unsafe extern "C" fn do_if_fetch(mut ife: *mut interface) -> libc::c_int {
   if if_fetch(ife) < 0i32 {
-    let mut errmsg: *const libc::c_char = 0 as *const libc::c_char;
+    let mut errmsg: *const libc::c_char = std::ptr::null();
     if *bb_errno == 19i32 {
       /* Give better error message for this case. */
       errmsg = b"Device not found\x00" as *const u8 as *const libc::c_char
@@ -900,7 +900,7 @@ static mut if_port_text: [*const libc::c_char; 8] = [
 /* Check our hardware type table for this type. */
 #[no_mangle]
 pub unsafe extern "C" fn get_hwtype(mut name: *const libc::c_char) -> *const hwtype {
-  let mut hwp: *const *const hwtype = 0 as *const *const hwtype;
+  let mut hwp: *const *const hwtype = std::ptr::null();
   hwp = hwtypes.as_ptr();
   while !(*hwp).is_null() {
     if strcmp((**hwp).name, name) == 0i32 {
@@ -913,7 +913,7 @@ pub unsafe extern "C" fn get_hwtype(mut name: *const libc::c_char) -> *const hwt
 /* Check our hardware type table for this type. */
 #[no_mangle]
 pub unsafe extern "C" fn get_hwntype(mut type_0: libc::c_int) -> *const hwtype {
-  let mut hwp: *const *const hwtype = 0 as *const *const hwtype;
+  let mut hwp: *const *const hwtype = std::ptr::null();
   hwp = hwtypes.as_ptr();
   while !(*hwp).is_null() {
     if (**hwp).type_0 == type_0 {
@@ -942,7 +942,7 @@ unsafe extern "C" fn hw_null_address(
 static mut TRext: [libc::c_char; 15] = [0, 0, 0, 75, 105, 0, 77, 105, 0, 71, 105, 0, 84, 105, 0];
 unsafe extern "C" fn print_bytes_scaled(mut ull: libc::c_ulonglong, mut end: *const libc::c_char) {
   let mut int_part: libc::c_ulonglong = 0;
-  let mut ext: *const libc::c_char = 0 as *const libc::c_char;
+  let mut ext: *const libc::c_char = std::ptr::null();
   let mut frac_part: libc::c_uint = 0;
   let mut i: libc::c_int = 0;
   frac_part = 0i32 as libc::c_uint;
@@ -1062,8 +1062,8 @@ unsafe extern "C" fn ife_print6(mut ptr: *mut interface) {
   fclose(f);
 }
 unsafe extern "C" fn ife_print(mut ptr: *mut interface) {
-  let mut ap: *const aftype = 0 as *const aftype;
-  let mut hw: *const hwtype = 0 as *const hwtype;
+  let mut ap: *const aftype = std::ptr::null();
+  let mut hw: *const hwtype = std::ptr::null();
   let mut hf: libc::c_int = 0;
   let mut can_compress: libc::c_int = 0i32;
   ap = get_afntype((*ptr).addr.sa_family as libc::c_int);

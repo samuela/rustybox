@@ -772,7 +772,7 @@ unsafe extern "C" fn print_addrinfo(
     .label
     .is_null()
   {
-    let mut label: *const libc::c_char = 0 as *const libc::c_char;
+    let mut label: *const libc::c_char = std::ptr::null();
     if !rta_tb[IFA_LABEL as libc::c_int as usize].is_null() {
       label = (rta_tb[IFA_LABEL as libc::c_int as usize] as *mut libc::c_char).offset(
         ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
@@ -1456,7 +1456,7 @@ pub unsafe extern "C" fn ipaddr_list_or_flush(
                       .label
                       .is_null()
                     {
-                      let mut label: *const libc::c_char = 0 as *const libc::c_char;
+                      let mut label: *const libc::c_char = std::ptr::null();
                       if !tb[IFA_LABEL as libc::c_int as usize].is_null() {
                         label = (tb[IFA_LABEL as libc::c_int as usize] as *mut libc::c_char).offset(
                           ((::std::mem::size_of::<rtattr>() as libc::c_ulong)

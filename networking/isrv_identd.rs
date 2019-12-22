@@ -197,7 +197,7 @@ pub unsafe extern "C" fn fakeidentd_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut bind_address: *const libc::c_char = 0 as *const libc::c_char;
+  let mut bind_address: *const libc::c_char = std::ptr::null();
   let mut opt: libc::c_uint = 0;
   let mut fd: libc::c_int = 0;
   opt = crate::libbb::getopt32::getopt32(

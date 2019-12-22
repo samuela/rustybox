@@ -874,8 +874,8 @@ unsafe extern "C" fn des_init(
   let mut inbit: libc::c_int = 0;
   let mut obit: libc::c_int = 0;
   let mut p: u32 = 0;
-  let mut bits28: *const u32 = 0 as *const u32;
-  let mut bits24: *const u32 = 0 as *const u32;
+  let mut bits28: *const u32 = std::ptr::null();
+  let mut bits24: *const u32 = std::ptr::null();
   if ctx.is_null() {
     ctx = xmalloc(::std::mem::size_of::<des_ctx>() as libc::c_ulong) as *mut des_ctx
   }
@@ -1905,8 +1905,8 @@ unsafe extern "C" fn sha_crypt(
  */
 /* Other advanced crypt ids (TODO?): */
 /* $2$ or $2a$: Blowfish */
-static mut des_cctx: *mut const_des_ctx = 0 as *const const_des_ctx as *mut const_des_ctx;
-static mut des_ctx: *mut des_ctx = 0 as *const des_ctx as *mut des_ctx;
+static mut des_cctx: *mut const_des_ctx = std::ptr::null();
+static mut des_ctx: *mut des_ctx = std::ptr::null();
 /* my_crypt returns malloc'ed data */
 unsafe extern "C" fn my_crypt(
   mut key: *const libc::c_char,

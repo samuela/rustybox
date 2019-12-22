@@ -138,7 +138,7 @@ unsafe extern "C" fn scan_proc_net_or_maps(
   let mut tmp_port: libc::c_uint = 0;
   let mut retval: smallint = 0;
   let mut statbuf: stat = std::mem::zeroed();
-  let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fmt: *const libc::c_char = std::ptr::null();
   let mut fag: *mut libc::c_void = std::ptr::null_mut();
   let mut sag: *mut libc::c_void = std::ptr::null_mut();
   f = crate::libbb::wfopen::fopen_for_read(path);

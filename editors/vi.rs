@@ -3356,7 +3356,7 @@ unsafe extern "C" fn find_range(
 //---------------------------------------------------------------------
 //----- Execute a Vi Command -----------------------------------
 unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
-  let mut msg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut msg: *const libc::c_char = std::ptr::null();
   let mut current_block: u64;
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut q: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -4795,7 +4795,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                   // search rest of text[] starting at next char
                                   // if search fails return orignal "p" not the "p+1" address
                                   {
-                                    msg = 0 as *const libc::c_char; // assume FORWARD search
+                                    msg = std::ptr::null(); // assume FORWARD search
                                     current_block = 7392824444931029276; // now search for pattern
                                   }
                                   7392824444931029276 => {
@@ -4818,7 +4818,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       // no pattern found between "dot" and "end"- continue at top
                                       p = (*ptr_to_globals).text;
@@ -5956,7 +5956,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -5979,7 +5979,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -7115,7 +7115,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -7138,7 +7138,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -8274,7 +8274,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -8297,7 +8297,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -9433,7 +9433,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -9456,7 +9456,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -10592,7 +10592,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -10615,7 +10615,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -11751,7 +11751,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -11774,7 +11774,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -12910,7 +12910,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -12933,7 +12933,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -14069,7 +14069,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -14092,7 +14092,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -15228,7 +15228,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -15251,7 +15251,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -16387,7 +16387,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -16410,7 +16410,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -17546,7 +17546,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -17569,7 +17569,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -18705,7 +18705,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -18728,7 +18728,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -19864,7 +19864,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -19887,7 +19887,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -21023,7 +21023,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -21046,7 +21046,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -22182,7 +22182,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -22205,7 +22205,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -23341,7 +23341,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -23364,7 +23364,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -24500,7 +24500,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -24523,7 +24523,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -25659,7 +25659,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -25682,7 +25682,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -26818,7 +26818,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -26841,7 +26841,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -27977,7 +27977,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -28000,7 +28000,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -29136,7 +29136,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -29159,7 +29159,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -30295,7 +30295,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -30318,7 +30318,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -31454,7 +31454,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -31477,7 +31477,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -32613,7 +32613,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -32636,7 +32636,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -33772,7 +33772,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -33795,7 +33795,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -34931,7 +34931,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -34954,7 +34954,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -36090,7 +36090,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -36113,7 +36113,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -37249,7 +37249,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -37272,7 +37272,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -38408,7 +38408,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -38431,7 +38431,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -39567,7 +39567,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -39590,7 +39590,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -40726,7 +40726,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -40749,7 +40749,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -41885,7 +41885,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -41908,7 +41908,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -43044,7 +43044,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -43067,7 +43067,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -44203,7 +44203,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -44226,7 +44226,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -45362,7 +45362,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -45385,7 +45385,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -46521,7 +46521,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -46544,7 +46544,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -47680,7 +47680,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -47703,7 +47703,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -48839,7 +48839,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -48862,7 +48862,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -49998,7 +49998,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -50021,7 +50021,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -51157,7 +51157,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -51180,7 +51180,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -52316,7 +52316,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -52339,7 +52339,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -53475,7 +53475,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -53498,7 +53498,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -54634,7 +54634,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -54657,7 +54657,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -55793,7 +55793,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -55816,7 +55816,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -56952,7 +56952,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -56975,7 +56975,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -58111,7 +58111,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -58134,7 +58134,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -59270,7 +59270,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -59293,7 +59293,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -60429,7 +60429,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -60452,7 +60452,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -61588,7 +61588,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -61611,7 +61611,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -62747,7 +62747,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -62770,7 +62770,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -63906,7 +63906,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -63929,7 +63929,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -65065,7 +65065,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -65088,7 +65088,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -66224,7 +66224,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -66247,7 +66247,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -67383,7 +67383,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -67406,7 +67406,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -68542,7 +68542,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -68565,7 +68565,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -69701,7 +69701,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -69724,7 +69724,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -70863,7 +70863,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -70886,7 +70886,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -72022,7 +72022,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -72045,7 +72045,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -73181,7 +73181,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -73204,7 +73204,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -74340,7 +74340,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -74363,7 +74363,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -75499,7 +75499,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -75522,7 +75522,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -76661,7 +76661,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -76684,7 +76684,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -77820,7 +77820,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -77843,7 +77843,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -78979,7 +78979,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -79002,7 +79002,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -80138,7 +80138,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -80161,7 +80161,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -81297,7 +81297,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -81320,7 +81320,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -82456,7 +82456,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -82479,7 +82479,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -83615,7 +83615,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -83638,7 +83638,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -84774,7 +84774,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -84797,7 +84797,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -85933,7 +85933,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -85956,7 +85956,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -87092,7 +87092,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -87115,7 +87115,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -88251,7 +88251,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -88274,7 +88274,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -89410,7 +89410,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -89433,7 +89433,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -90569,7 +90569,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -90592,7 +90592,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -91728,7 +91728,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -91751,7 +91751,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -92887,7 +92887,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -92910,7 +92910,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -94046,7 +94046,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -94069,7 +94069,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -95205,7 +95205,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -95228,7 +95228,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -96364,7 +96364,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -96387,7 +96387,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {
@@ -97523,7 +97523,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                               loop {
                                 match current_block {
                                   16813369756331276724 => {
-                                    msg = 0 as *const libc::c_char;
+                                    msg = std::ptr::null();
                                     current_block = 7392824444931029276;
                                   }
                                   7392824444931029276 => {
@@ -97546,7 +97546,7 @@ unsafe extern "C" fn do_cmd(mut c: libc::c_int) {
                                     );
                                     if !q.is_null() {
                                       (*ptr_to_globals).dot = q;
-                                      msg = 0 as *const libc::c_char
+                                      msg = std::ptr::null()
                                     } else {
                                       p = (*ptr_to_globals).text;
                                       if dir == BACK as libc::c_int {

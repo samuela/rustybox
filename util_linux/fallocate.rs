@@ -87,7 +87,7 @@ pub unsafe extern "C" fn fallocate_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut str_l: *const libc::c_char = 0 as *const libc::c_char;
+  let mut str_l: *const libc::c_char = std::ptr::null();
   let mut str_o: *const libc::c_char = b"0\x00" as *const u8 as *const libc::c_char;
   let mut ofs: off_t = 0;
   let mut len: off_t = 0;

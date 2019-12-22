@@ -419,7 +419,7 @@ unsafe extern "C" fn huft_build(
   let mut i: libc::c_uint = 0; /* values in order of bit length. last v[] is never used */
   let mut j: libc::c_uint = 0; /* bits decoded stack */
   let mut k: libc::c_int = 0; /* bits decoded */
-  let mut p: *const libc::c_uint = 0 as *const libc::c_uint; /* bit offsets, then code stack */
+  let mut p: *const libc::c_uint = std::ptr::null(); /* bit offsets, then code stack */
   let mut q: *mut huft_t = std::ptr::null_mut(); /* pointer into x */
   let mut r: huft_t = huft_t {
     e: 0,

@@ -225,7 +225,7 @@ pub unsafe extern "C" fn head_main(
   let mut count_bytes: bool = 0i32 != 0;
   let mut negative_N: bool = 0i32 != 0;
   let mut fp: *mut FILE = std::ptr::null_mut();
-  let mut fmt: *const libc::c_char = 0 as *const libc::c_char;
+  let mut fmt: *const libc::c_char = std::ptr::null();
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;
   let mut retval: libc::c_int = 0i32;

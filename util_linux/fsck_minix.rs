@@ -347,7 +347,7 @@ unsafe extern "C" fn check_mount() {
  * or a bad zone-number).
  */
 unsafe extern "C" fn check_zone_nr2(mut nr: *mut u32, mut corrected: *mut smallint) -> libc::c_int {
-  let mut msg: *const libc::c_char = 0 as *const libc::c_char;
+  let mut msg: *const libc::c_char = std::ptr::null();
   if *nr == 0 {
     return 0i32;
   }

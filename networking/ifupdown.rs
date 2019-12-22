@@ -1248,7 +1248,7 @@ unsafe extern "C" fn read_interfaces(
       )
       .is_null()
       {
-        let mut dirpath: *const libc::c_char = 0 as *const libc::c_char;
+        let mut dirpath: *const libc::c_char = std::ptr::null();
         let mut dir: *mut DIR = std::ptr::null_mut();
         let mut entry: *mut dirent = std::ptr::null_mut();
         dirpath = next_word(&mut rest_of_line);

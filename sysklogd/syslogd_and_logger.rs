@@ -892,7 +892,7 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
     loop
     /* iterate through selectors: "kern.info;kern.!err;..." */
     {
-      let mut code: *const CODE = 0 as *const CODE; /* "kern.!err" */
+      let mut code: *const CODE = std::ptr::null(); /* "kern.!err" */
       let mut next_selector: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* "kern.=err" */
       let mut negated_prio: u8 = 0; /* bitmap of enabled facilities */
       let mut single_prio: u8 = 0; /* bitmap of enabled priorities */
@@ -1417,8 +1417,8 @@ unsafe extern "C" fn log_locally(
   };
 }
 unsafe extern "C" fn parse_fac_prio_20(mut pri: libc::c_int, mut res20: *mut libc::c_char) {
-  let mut c_pri: *const CODE = 0 as *const CODE;
-  let mut c_fac: *const CODE = 0 as *const CODE;
+  let mut c_pri: *const CODE = std::ptr::null();
+  let mut c_fac: *const CODE = std::ptr::null();
   c_fac = find_by_val((pri & 0x3f8i32) >> 3i32 << 3i32, bb_facilitynames);
   if !c_fac.is_null() {
     c_pri = find_by_val(pri & 0x7i32, bb_prioritynames);
@@ -1957,7 +1957,7 @@ pub unsafe extern "C" fn syslogd_main(
  * Original copyright notice is retained at the end of this file.
  */
 unsafe extern "C" fn decode(mut name: *mut libc::c_char, mut codetab: *const CODE) -> libc::c_int {
-  let mut c: *const CODE = 0 as *const CODE;
+  let mut c: *const CODE = std::ptr::null();
   if (*name as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
     return atoi(name);
   }

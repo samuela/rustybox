@@ -566,7 +566,7 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
   let mut nn: u32 = 0;
   let mut oo: u32 = 0;
   let mut bbbig: u64 = 0;
-  let mut strng: *const libc::c_char = 0 as *const libc::c_char;
+  let mut strng: *const libc::c_char = std::ptr::null();
   /* check if we recognize the device type */
   crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   if *val.offset(0) as libc::c_int & 0x8000i32 == 0 {
@@ -2685,7 +2685,7 @@ unsafe extern "C" fn process_dev(mut devname: *mut libc::c_char) {
     }
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).get_powermode != 0 {
-    let mut state: *const libc::c_char = 0 as *const libc::c_char;
+    let mut state: *const libc::c_char = std::ptr::null();
     args[0] = 0xe5i32 as libc::c_uchar;
     if ioctl_alt_func(
       0x31fi32,

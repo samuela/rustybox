@@ -963,7 +963,7 @@ unsafe extern "C" fn run_shutdown_and_kill_processes() {
  */
 /* The SIGPWR/SIGUSR[12]/SIGTERM handler */
 unsafe extern "C" fn halt_reboot_pwoff(mut sig: libc::c_int) -> ! {
-  let mut m: *const libc::c_char = 0 as *const libc::c_char;
+  let mut m: *const libc::c_char = std::ptr::null();
   let mut rb: libc::c_uint = 0;
   /* We may call run() and it unmasks signals,
    * including the one masked inside this signal handler.

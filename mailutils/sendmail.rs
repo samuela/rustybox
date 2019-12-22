@@ -321,7 +321,7 @@ pub unsafe extern "C" fn sendmail_main(
   // connect to server
   // connection helper ordered? ->
   if (*ptr_to_globals).opts & OPT_H as libc::c_int as libc::c_uint != 0 {
-    let mut delay: *const libc::c_char = 0 as *const libc::c_char;
+    let mut delay: *const libc::c_char = std::ptr::null();
     let mut args: [*const libc::c_char; 4] = [
       b"sh\x00" as *const u8 as *const libc::c_char,
       b"-c\x00" as *const u8 as *const libc::c_char,
@@ -580,7 +580,7 @@ pub unsafe extern "C" fn sendmail_main(
         //if (MAX_HEADERS && ++nheaders >= MAX_HEADERS)
         //	goto bail;
         if has_to == 0 {
-          let mut hdr: *const libc::c_char = 0 as *const libc::c_char;
+          let mut hdr: *const libc::c_char = std::ptr::null();
           if check_hdr != 0 && !(*argv.offset(1)).is_null() {
             hdr = b"To: %s,\x00" as *const u8 as *const libc::c_char
           } else if check_hdr != 0 {

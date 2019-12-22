@@ -302,7 +302,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
     block_count: 0,
   }; 8];
   let mut hfs: *mut hfs_mdb = std::ptr::null_mut();
-  let mut buf: *const u8 = 0 as *const u8;
+  let mut buf: *const u8 = std::ptr::null();
   buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     off.wrapping_add(0x400i32 as libc::c_ulong),

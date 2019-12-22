@@ -141,8 +141,8 @@ pub unsafe extern "C" fn slattach_main(
   };
   let mut proto: *const libc::c_char = b"cslip\x00" as *const u8 as *const libc::c_char;
   /* 8 */
-  let mut extcmd: *const libc::c_char = 0 as *const libc::c_char; /* Command to execute after hangup */
-  let mut baud_str: *const libc::c_char = 0 as *const libc::c_char; /* for compiler */
+  let mut extcmd: *const libc::c_char = std::ptr::null(); /* Command to execute after hangup */
+  let mut baud_str: *const libc::c_char = std::ptr::null(); /* for compiler */
   let mut baud_code: libc::c_int = 0;
   baud_code = baud_code;
   /* Parse command line options */

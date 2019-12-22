@@ -231,7 +231,7 @@ pub unsafe extern "C" fn hwclock_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut rtcname: *const libc::c_char = 0 as *const libc::c_char;
+  let mut rtcname: *const libc::c_char = std::ptr::null();
   let mut opt: libc::c_uint = 0;
   let mut utc: libc::c_int = 0;
   static mut hwclock_longopts: [libc::c_char; 60] = [

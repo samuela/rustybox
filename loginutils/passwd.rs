@@ -188,7 +188,7 @@ pub unsafe extern "C" fn passwd_main(
   let mut opt: libc::c_uint = 0;
   let mut rc: libc::c_int = 0;
   let mut opt_a: *const libc::c_char = b"des\x00" as *const u8 as *const libc::c_char;
-  let mut filename: *const libc::c_char = 0 as *const libc::c_char;
+  let mut filename: *const libc::c_char = std::ptr::null();
   let mut myname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut newp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

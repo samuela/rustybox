@@ -1498,7 +1498,7 @@ unsafe extern "C" fn check_deps(
   while i < 10007i32 {
     let mut status_num_0: libc::c_int = 0i32;
     let mut number_of_alternatives: libc::c_int = 0i32;
-    let mut root_of_alternatives: *const edge_t = 0 as *const edge_t;
+    let mut root_of_alternatives: *const edge_t = std::ptr::null();
     let mut package_node_0: *const common_node_t = (*ptr_to_globals).package_hashtable[i as usize];
     /* If the package node does not exist then this
      * package is a virtual one. In which case there are
@@ -1538,7 +1538,7 @@ unsafe extern "C" fn check_deps(
               if number_of_alternatives == 0i32 {
                 /* not in the middle of an EDGE_OR_ list */
                 number_of_alternatives = 1i32;
-                root_of_alternatives = 0 as *const edge_t
+                root_of_alternatives = std::ptr::null()
               }
               package_num_1 = search_package_hashtable(
                 (*package_edge_0).name(),
@@ -1853,9 +1853,9 @@ unsafe extern "C" fn list_packages(mut pattern: *const libc::c_char) {
   i = 0i32; /* status string */
   while i < 8191i32 + 1i32 {
     if !(*ptr_to_globals).status_hashtable[i as usize].is_null() {
-      let mut stat_str: *const libc::c_char = 0 as *const libc::c_char; /* package name */
-      let mut name_str: *const libc::c_char = 0 as *const libc::c_char; /* version */
-      let mut vers_str: *const libc::c_char = 0 as *const libc::c_char; /* status abbreviations */
+      let mut stat_str: *const libc::c_char = std::ptr::null(); /* package name */
+      let mut name_str: *const libc::c_char = std::ptr::null(); /* version */
+      let mut vers_str: *const libc::c_char = std::ptr::null(); /* status abbreviations */
       let mut s1: libc::c_char = 0; /* space count */
       let mut s2: libc::c_char = 0;
       let mut spccnt: libc::c_int = 0;

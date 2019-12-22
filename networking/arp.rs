@@ -341,7 +341,7 @@ unsafe extern "C" fn arp_getdevhw(mut ifname: *mut libc::c_char, mut sa: *mut so
       },
     },
   };
-  let mut xhw: *const hwtype = 0 as *const hwtype;
+  let mut xhw: *const hwtype = std::ptr::null();
   crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);
   crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
     sockfd as libc::c_int,
@@ -544,7 +544,7 @@ unsafe extern "C" fn arp_disp(
   static mut arp_masks: [libc::c_int; 3] = [0x4i32, 0x8i32, 0x10i32];
   static mut arp_labels: [libc::c_char; 16] =
     [80, 69, 82, 77, 0, 80, 85, 80, 0, 84, 82, 65, 73, 76, 0, 0];
-  let mut xhw: *const hwtype = 0 as *const hwtype;
+  let mut xhw: *const hwtype = std::ptr::null();
   xhw = crate::networking::interface::get_hwntype(type_0);
   if xhw.is_null() {
     xhw = crate::networking::interface::get_hwtype(b"ether\x00" as *const u8 as *const libc::c_char)
@@ -581,8 +581,8 @@ unsafe extern "C" fn arp_disp(
 /* Display the contents of the ARP cache in the kernel. */
 /* Called only from main, once */
 unsafe extern "C" fn arp_show(mut name: *mut libc::c_char) -> libc::c_int {
-  let mut host: *const libc::c_char = 0 as *const libc::c_char;
-  let mut hostname: *const libc::c_char = 0 as *const libc::c_char;
+  let mut host: *const libc::c_char = std::ptr::null();
+  let mut hostname: *const libc::c_char = std::ptr::null();
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut sa: sockaddr = sockaddr {
     sa_family: 0,
@@ -598,7 +598,7 @@ unsafe extern "C" fn arp_show(mut name: *mut libc::c_char) -> libc::c_int {
   let mut mask: [libc::c_char; 128] = [0; 128];
   let mut line: [libc::c_char; 128] = [0; 128];
   let mut dev: [libc::c_char; 128] = [0; 128];
-  host = 0 as *const libc::c_char;
+  host = std::ptr::null();
   if !name.is_null() {
     /* Resolve the host name. */
     if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).ap)
@@ -736,8 +736,8 @@ pub unsafe extern "C" fn arp_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut hw_type: *const libc::c_char = 0 as *const libc::c_char;
-  let mut protocol: *const libc::c_char = 0 as *const libc::c_char;
+  let mut hw_type: *const libc::c_char = std::ptr::null();
+  let mut protocol: *const libc::c_char = std::ptr::null();
   let mut opts: libc::c_uint = 0;
   let ref mut fresh5 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device;
   *fresh5 = b"\x00" as *const u8 as *const libc::c_char;

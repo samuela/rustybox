@@ -287,8 +287,8 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
   let mut D: u32 = (*ctx).hash[3];
   /* 2 or 3 */
   /* MD5_SMALL == 0 or 1 */
-  let mut pc: *const u32 = 0 as *const u32;
-  let mut pp: *const libc::c_char = 0 as *const libc::c_char;
+  let mut pc: *const u32 = std::ptr::null();
+  let mut pp: *const libc::c_char = std::ptr::null();
   let mut i: libc::c_int = 0;
   /* First round: using the given function, the context and a constant
   the next context is computed.  Because the algorithm's processing

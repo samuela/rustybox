@@ -171,7 +171,7 @@ pub unsafe extern "C" fn logread_main(
   {
     let mut shbuf_size: libc::c_uint = 0; /* for gcc */
     let mut shbuf_tail: libc::c_uint = 0; /* for gcc */
-    let mut shbuf_data: *const libc::c_char = 0 as *const libc::c_char;
+    let mut shbuf_data: *const libc::c_char = std::ptr::null();
     let mut i: libc::c_int = 0;
     let mut len_first_part: libc::c_int = 0;
     let mut len_total: libc::c_int = 0;
