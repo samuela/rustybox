@@ -1,5 +1,4 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-use crate::librb::in6_addr;
 use crate::librb::len_and_sockaddr;
 use crate::librb::size_t;
 use c2rust_asm_casts;

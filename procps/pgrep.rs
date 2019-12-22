@@ -1,7 +1,6 @@
 use crate::librb::size_t;
 use libc::pid_t;
 use crate::librb::procps_status_t;
-use c2rust_bitfields;
 use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::free;
@@ -57,7 +56,7 @@ pub const PSSCAN_SID: C2RustUnnamed = 8;
 pub const PSSCAN_PGID: C2RustUnnamed = 4;
 pub const PSSCAN_PPID: C2RustUnnamed = 2;
 pub const PSSCAN_PID: C2RustUnnamed = 1;
-use crate::librb::reg_syntax_t;
+
 
 use crate::librb::re_pattern_buffer;
 pub type regex_t = re_pattern_buffer;

@@ -170,7 +170,7 @@ pub type in_port_t = u16;
 
 use libc::sockaddr_in;
 
-use libc::in_addr;
+
 pub type in_addr_t = u32;
 
 #[repr(C)]

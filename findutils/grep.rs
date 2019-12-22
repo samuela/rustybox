@@ -1,6 +1,5 @@
 use crate::libbb::appletlib::applet_name;
 use crate::librb::re_pattern_buffer;
-use c2rust_bitfields;
 use libc;
 use libc::fclose;
 use libc::free;

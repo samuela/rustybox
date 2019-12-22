@@ -1,7 +1,6 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::re_pattern_buffer;
-use c2rust_bitfields;
 use libc;
 use libc::access;
 use libc::closedir;

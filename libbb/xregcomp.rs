@@ -1,7 +1,6 @@
 use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::re_pattern_buffer;
 use crate::librb::size_t;
-use c2rust_bitfields;
 use libc;
 extern "C" {
 

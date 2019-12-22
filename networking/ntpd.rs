@@ -206,7 +206,7 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
+
 use libc::sockaddr;
 pub type C2RustUnnamed = libc::c_uint;
 pub const MSG_CMSG_CLOEXEC: C2RustUnnamed = 1073741824;
@@ -234,7 +234,7 @@ pub const MSG_OOB: C2RustUnnamed = 1;
 
 use libc::sockaddr_in6;
 
-use crate::librb::in6_addr;
+
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -247,7 +247,7 @@ pub type in_port_t = u16;
 
 use libc::sockaddr_in;
 
-use libc::in_addr;
+
 pub type in_addr_t = u32;
 
 #[repr(C)]

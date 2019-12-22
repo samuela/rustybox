@@ -7,7 +7,7 @@ extern "C" {
 
 }
 
-use crate::librb::size_t;
+
 /* Failure to allocate requested memory */
 /* Failure on sanity/limit tests */
 pub type uint64 = u64;

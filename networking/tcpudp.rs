@@ -12,7 +12,6 @@ use libc::free;
 use libc::getpid;
 use libc::pid_t;
 use libc::putenv;
-use libc::sa_family_t;
 use libc::sockaddr;
 use libc::sockaddr_in;
 use libc::sockaddr_in6;
@@ -126,7 +125,7 @@ pub union __SOCKADDR_ARG {
   pub __sockaddr_x25__: *mut sockaddr_x25,
 }
 
-use crate::librb::in6_addr;
+
 
 #[repr(C)]
 #[derive(Copy, Clone)]

@@ -466,9 +466,9 @@ pub struct hmac_precomputed {
   pub hashed_key_xor_ipad: md5sha_ctx_t,
   pub hashed_key_xor_opad: md5sha_ctx_t,
 }
-use crate::librb::sha1_ctx_t;
+
 pub const SHA_INSIZE: C2RustUnnamed = 64;
-use crate::librb::sha256_ctx_t;
+
 
 #[repr(C)]
 #[derive(Copy, Clone)]

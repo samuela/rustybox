@@ -1,7 +1,6 @@
 use crate::librb::smallint;
 use libc::pid_t;
 use libc::uid_t;
-use libc::DIR;
 use crate::librb::procps_status_t;use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
 use libc::putchar_unlocked;

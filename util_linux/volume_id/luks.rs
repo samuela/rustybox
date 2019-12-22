@@ -1,4 +1,3 @@
-use crate::librb::size_t;
 use crate::util_linux::volume_id::volume_id::volume_id;
 use libc;
 extern "C" {

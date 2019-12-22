@@ -9,7 +9,6 @@ use libc::close;
 use libc::nlmsghdr;
 use libc::sa_family_t;
 use libc::sockaddr;
-use libc::sockaddr_nl;
 use libc::strcmp;
 extern "C" {
   #[no_mangle]

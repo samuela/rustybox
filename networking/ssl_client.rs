@@ -1,11 +1,11 @@
+use crate::librb::tls_state;
 use libc;
 extern "C" {
   pub type tls_handshake_data;
 }
 
-use crate::librb::tls_aes;
 
-use crate::librb::tls_state;
+
 pub type tls_state_t = tls_state;
 #[inline]
 unsafe extern "C" fn new_tls_state() -> *mut tls_state_t {
