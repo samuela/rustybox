@@ -593,11 +593,7 @@ pub unsafe extern "C" fn iostat_main(
   loop
   /* Main loop */
   {
-    let mut stats: stats_cpu_pair_t = stats_cpu_pair_t {
-      prev: 0 as *mut stats_cpu_t,
-      curr: 0 as *mut stats_cpu_t,
-      itv: 0,
-    };
+    let mut stats: stats_cpu_pair_t = std::mem::zeroed();
     stats.prev = &mut *stats_data
       .as_mut_ptr()
       .offset((current_stats as libc::c_int ^ 1i32) as isize) as *mut stats_cpu_t;

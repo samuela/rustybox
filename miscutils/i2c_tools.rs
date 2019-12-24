@@ -1,5 +1,4 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
 use libc;
 use libc::close;
 use libc::fclose;
@@ -155,7 +154,7 @@ unsafe extern "C" fn i2c_smbus_access(
     read_write: 0,
     command: 0,
     size: 0,
-    data: 0 as *mut i2c_smbus_data,
+    data: std::ptr::null_mut(),
   };
   args.read_write = read_write as __u8;
   args.command = cmd;
@@ -177,13 +176,7 @@ unsafe extern "C" fn i2c_smbus_read_byte(mut fd: libc::c_int) -> i32 {
   return data.byte as i32;
 }
 unsafe extern "C" fn i2c_smbus_write_byte(mut fd: libc::c_int, mut val: u8) -> i32 {
-  return i2c_smbus_access(
-    fd,
-    0 as libc::c_char,
-    val,
-    1i32,
-    0 as *mut i2c_smbus_data,
-  );
+  return i2c_smbus_access(fd, 0 as libc::c_char, val, 1i32, 0 as *mut i2c_smbus_data);
 }
 unsafe extern "C" fn i2c_smbus_read_byte_data(mut fd: libc::c_int, mut cmd: u8) -> i32 {
   let mut data: i2c_smbus_data = i2c_smbus_data { byte: 0 };
@@ -1798,16 +1791,8 @@ pub unsafe extern "C" fn i2ctransfer_main(
   let mut nmsgs: libc::c_int = 0;
   let mut nmsgs_sent: libc::c_int = 0;
   let mut i: libc::c_int = 0;
-  let mut msgs: [i2c_msg; 42] = [i2c_msg {
-    addr: 0,
-    flags: 0,
-    len: 0,
-    buf: 0 as *mut __u8,
-  }; 42];
-  let mut rdwr: i2c_rdwr_ioctl_data = i2c_rdwr_ioctl_data {
-    msgs: 0 as *mut i2c_msg,
-    nmsgs: 0,
-  };
+  let mut msgs: [i2c_msg; 42] = [std::mem::zeroed(); 42];
+  let mut rdwr: i2c_rdwr_ioctl_data = std::mem::zeroed();
   memset(
     msgs.as_mut_ptr() as *mut libc::c_void,
     0,
@@ -1863,8 +1848,7 @@ pub unsafe extern "C" fn i2ctransfer_main(
       0xffffi32 as libc::c_uint,
     );
     if !end.is_null() {
-      bus_addr =
-        crate::libbb::xatonum::xstrtou_range(end.offset(1), 0, first, last) as libc::c_int;
+      bus_addr = crate::libbb::xatonum::xstrtou_range(end.offset(1), 0, first, last) as libc::c_int;
       i2c_set_slave_addr(
         fd,
         bus_addr,

@@ -144,11 +144,7 @@ pub unsafe extern "C" fn nandwrite_main(
     oobsize: 0,
     padding: 0,
   };
-  let mut oob: mtd_oob_buf = mtd_oob_buf {
-    start: 0,
-    length: 0,
-    ptr: 0 as *mut libc::c_uchar,
-  };
+  let mut oob: mtd_oob_buf = std::mem::zeroed();
   let mut filebuf: *mut libc::c_uchar = std::ptr::null_mut();
   let mut opt_s: *const libc::c_char = b"0\x00" as *const u8 as *const libc::c_char;
   let mut opt_f: *const libc::c_char = b"-\x00" as *const u8 as *const libc::c_char;
@@ -406,11 +402,8 @@ pub unsafe extern "C" fn nandwrite_main(
   }
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(4) as libc::c_int != 'd' as i32) && cnt != 0 {
     /* We filled entire MTD, but did we reach EOF on input? */
-    if crate::libbb::read::full_read(
-      0,
-      filebuf as *mut libc::c_void,
-      meminfo_writesize as size_t,
-    ) != 0
+    if crate::libbb::read::full_read(0, filebuf as *mut libc::c_void, meminfo_writesize as size_t)
+      != 0
     {
       /* no */
       crate::libbb::verror_msg::bb_simple_error_msg_and_die(

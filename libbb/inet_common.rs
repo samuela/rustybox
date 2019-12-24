@@ -221,16 +221,7 @@ pub unsafe extern "C" fn INET6_resolve(
   mut name: *const libc::c_char,
   mut sin6: *mut sockaddr_in6,
 ) -> libc::c_int {
-  let mut req: addrinfo = addrinfo {
-    ai_flags: 0,
-    ai_family: 0,
-    ai_socktype: 0,
-    ai_protocol: 0,
-    ai_addrlen: 0,
-    ai_addr: 0 as *mut sockaddr,
-    ai_canonname: std::ptr::null_mut::<libc::c_char>(),
-    ai_next: 0 as *mut addrinfo,
-  };
+  let mut req: addrinfo = std::mem::zeroed();
   let mut ai: *mut addrinfo = std::ptr::null_mut();
   let mut s: libc::c_int = 0;
   memset(

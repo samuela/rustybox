@@ -1293,10 +1293,7 @@ pub unsafe extern "C" fn display_interfaces(mut ifname: *mut libc::c_char) -> li
   let mut current_block: u64;
   let mut ife: *mut interface = std::ptr::null_mut();
   let mut res: libc::c_int = 0;
-  let mut ilist: iface_list = iface_list {
-    int_list: 0 as *mut interface,
-    int_last: 0 as *mut interface,
-  };
+  let mut ilist: iface_list = std::mem::zeroed();
   ilist.int_list = std::ptr::null_mut();
   ilist.int_last = std::ptr::null_mut();
   if_readlist(

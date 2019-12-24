@@ -1435,7 +1435,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
   let vla = size as usize;
   let mut point: Vec<point_t> = ::std::vec::from_elem(
     point_t {
-      p: 0 as *mut peer_t,
+      p: std::ptr::null_mut(),
       type_0: 0,
       edge: 0.,
       opt_rd: 0.,
@@ -1451,7 +1451,7 @@ unsafe extern "C" fn select_and_cluster() -> *mut peer_t {
   let vla_0 = size as usize;
   let mut survivor: Vec<survivor_t> = ::std::vec::from_elem(
     survivor_t {
-      p: 0 as *mut peer_t,
+      p: std::ptr::null_mut(),
       metric: 0.,
     },
     vla_0,
@@ -3070,7 +3070,7 @@ pub unsafe extern "C" fn ntpd_main(
     rootdisp: 0.,
     last_script_run: 0.,
     script_name: std::ptr::null_mut::<libc::c_char>(),
-    ntp_peers: 0 as *mut llist_t,
+    ntp_peers: std::ptr::null_mut(),
     listen_fd: 0,
     if_name: std::ptr::null_mut::<libc::c_char>(),
     verbose: 0,
@@ -3083,7 +3083,7 @@ pub unsafe extern "C" fn ntpd_main(
     polladj_count: 0,
     FREQHOLD_cnt: 0,
     kernel_freq_drift: 0,
-    last_update_peer: 0 as *mut peer_t,
+    last_update_peer: std::ptr::null_mut(),
     last_update_offset: 0.,
     last_update_recv_time: 0.,
     discipline_jitter: 0.,

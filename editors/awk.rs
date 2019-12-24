@@ -893,7 +893,7 @@ unsafe extern "C" fn nextchar(mut s: *mut *mut libc::c_char) -> libc::c_char {
    * s = "abc\"def"
    * we must treat \" as "
    */
-  
+
   if c as libc::c_int == '\\' as i32 && *s == pps {
     /* unrecognized \z? */
     c = **s;
@@ -1500,19 +1500,7 @@ unsafe extern "C" fn condition() -> *mut node {
 /* parse expression terminated by given argument, return ptr
  * to built subtree. Terminator is eaten by parse_expr */
 unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
-  let mut sn: node = node {
-    info: 0,
-    lineno: 0,
-    l: C2RustUnnamed_3 {
-      n: 0 as *mut node_s,
-    },
-    r: C2RustUnnamed_2 {
-      n: 0 as *mut node_s,
-    },
-    a: C2RustUnnamed_1 {
-      n: 0 as *mut node_s,
-    },
-  };
+  let mut sn: node = std::mem::zeroed();
   let mut cn: *mut node = &mut sn;
   let mut vn: *mut node = std::ptr::null_mut();
   let mut glptr: *mut node = std::ptr::null_mut();
@@ -2897,17 +2885,7 @@ unsafe extern "C" fn awk_sub(
   let mut resbufsize: libc::c_int = 0;
   let mut regexec_flags: libc::c_int = 0;
   let mut pmatch: [regmatch_t; 10] = [regmatch_t { rm_so: 0, rm_eo: 0 }; 10];
-  let mut sreg: regex_t = regex_t {
-    buffer: 0 as *mut libc::c_uchar,
-    allocated: 0,
-    used: 0,
-    syntax: 0,
-    fastmap: std::ptr::null_mut::<libc::c_char>(),
-    translate: 0 as *mut libc::c_uchar,
-    re_nsub: 0,
-    can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [0; 1],
-    c2rust_padding: [0; 7],
-  };
+  let mut sreg: regex_t = std::mem::zeroed();
   let mut regex: *mut regex_t = std::ptr::null_mut();
   resbuf = std::ptr::null_mut::<libc::c_char>();
   residx = 0;
@@ -3077,17 +3055,7 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
   let mut av: [*mut var; 4] = [0 as *mut var; 4];
   let mut as_0: [*const libc::c_char; 4] = [0 as *const libc::c_char; 4];
   let mut pmatch: [regmatch_t; 2] = [regmatch_t { rm_so: 0, rm_eo: 0 }; 2];
-  let mut sreg: regex_t = regex_t {
-    buffer: 0 as *mut libc::c_uchar,
-    allocated: 0,
-    used: 0,
-    syntax: 0,
-    fastmap: std::ptr::null_mut::<libc::c_char>(),
-    translate: 0 as *mut libc::c_uchar,
-    re_nsub: 0,
-    can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [0; 1],
-    c2rust_padding: [0; 7],
-  };
+  let mut sreg: regex_t = std::mem::zeroed();
   let mut re: *mut regex_t = std::ptr::null_mut();
   let mut spl: *mut node = std::ptr::null_mut();
   let mut isr: u32 = 0;
@@ -3350,15 +3318,9 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
   } /* for compiler */
   v1 = nvalloc(2i32);
   while !op.is_null() {
-    let mut L: C2RustUnnamed_10 = C2RustUnnamed_10 {
-      v: 0 as *mut var,
-      s: 0 as *const libc::c_char,
-    };
+    let mut L: C2RustUnnamed_10 = std::mem::zeroed();
     L = L;
-    let mut R: C2RustUnnamed_9 = C2RustUnnamed_9 {
-      v: 0 as *mut var,
-      s: 0 as *const libc::c_char,
-    };
+    let mut R: C2RustUnnamed_9 = std::mem::zeroed();
     R = R;
     let mut L_d: libc::c_double = 0.;
     L_d = L_d;

@@ -1041,12 +1041,7 @@ unsafe extern "C" fn pstm_div_2d(
   let mut rr: pstm_digit = 0;
   let mut res: int32 = 0;
   let mut x: libc::c_int = 0;
-  let mut t: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: 0 as *mut pstm_digit,
-  };
+  let mut t: pstm_int = std::mem::zeroed();
   /* if the shift count is <= 0 then we do no work */
   if b <= 0 {
     pstm_copy(a, c);
@@ -1193,36 +1188,11 @@ unsafe extern "C" fn pstm_div(
   mut d: *mut pstm_int,
 ) -> int32 {
   let mut current_block: u64; //bbox: was int16
-  let mut q: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: 0 as *mut pstm_digit,
-  };
-  let mut x: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: 0 as *mut pstm_digit,
-  };
-  let mut y: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: 0 as *mut pstm_digit,
-  };
-  let mut t1: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: 0 as *mut pstm_digit,
-  };
-  let mut t2: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: 0 as *mut pstm_digit,
-  };
+  let mut q: pstm_int = std::mem::zeroed();
+  let mut x: pstm_int = std::mem::zeroed();
+  let mut y: pstm_int = std::mem::zeroed();
+  let mut t1: pstm_int = std::mem::zeroed();
+  let mut t2: pstm_int = std::mem::zeroed();
   let mut res: int32 = 0;
   let mut n: libc::c_int = 0;
   let mut t: libc::c_int = 0;
@@ -1506,12 +1476,7 @@ unsafe extern "C" fn pstm_div(
   the pstm_int pointers around
 */
 unsafe extern "C" fn pstm_exch(mut a: *mut pstm_int, mut b: *mut pstm_int) {
-  let mut t: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: 0 as *mut pstm_digit,
-  };
+  let mut t: pstm_int = std::mem::zeroed();
   t = *a;
   *a = *b;
   *b = t;
@@ -1525,12 +1490,7 @@ unsafe extern "C" fn pstm_mod(
   mut b: *mut pstm_int,
   mut c: *mut pstm_int,
 ) -> int32 {
-  let mut t: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: 0 as *mut pstm_digit,
-  };
+  let mut t: pstm_int = std::mem::zeroed();
   let mut err: int32 = 0;
   /*
     Smart-size
@@ -1566,12 +1526,7 @@ pub unsafe extern "C" fn pstm_mulmod(
 ) -> int32 {
   let mut res: int32 = 0; //bbox: was int16
   let mut size: libc::c_int = 0;
-  let mut tmp: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: 0 as *mut pstm_digit,
-  };
+  let mut tmp: pstm_int = std::mem::zeroed();
   /*
     Smart-size pstm_inits.  d is an output that is influenced by this local 't'
     so don't shrink 'd' if it wants to becuase this will lead to an pstm_grow
@@ -1614,18 +1569,8 @@ pub unsafe extern "C" fn pstm_exptmod(
   mut Y: *mut pstm_int,
 ) -> int32 {
   let mut current_block: u64; /* Keep this winsize based: (1 << max_winsize) */
-  let mut M: [pstm_int; 32] = [pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: 0 as *mut pstm_digit,
-  }; 32]; //bbox: was int16
-  let mut res: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: 0 as *mut pstm_digit,
-  };
+  let mut M: [pstm_int; 32] = [std::mem::zeroed(); 32]; //bbox: was int16
+  let mut res: pstm_int = std::mem::zeroed();
   let mut buf: pstm_digit = 0;
   let mut mp: pstm_digit = 0;
   let mut paD: *mut pstm_digit = std::ptr::null_mut();
@@ -2194,15 +2139,7 @@ pub unsafe extern "C" fn pstm_to_unsigned_bin(
 ) -> int32 {
   let mut res: int32 = 0; //bbox: was int16
   let mut x: libc::c_int = 0;
-  let mut t: pstm_int = {
-    let mut init = pstm_int {
-      used: 0,
-      alloc: 0,
-      sign: 0,
-      dp: 0 as *mut pstm_digit,
-    };
-    init
-  };
+  let mut t: pstm_int = std::mem::zeroed();
   pstm_init_copy(&mut t, a, 0);
   res = 0;
   if res != 0 {

@@ -75,12 +75,7 @@ unsafe extern "C" fn xgroup_study(mut g: *mut group) {
 }
 /* append a new user to the passwd file */
 unsafe extern "C" fn new_group(mut group: *mut libc::c_char, mut gid: gid_t) {
-  let mut gr: group = group {
-    gr_name: std::ptr::null_mut::<libc::c_char>(),
-    gr_passwd: std::ptr::null_mut::<libc::c_char>(),
-    gr_gid: 0,
-    gr_mem: 0 as *mut *mut libc::c_char,
-  };
+  let mut gr: group = std::mem::zeroed();
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* make sure gid and group haven't already been allocated */
   gr.gr_gid = gid;

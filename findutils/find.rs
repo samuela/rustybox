@@ -1030,12 +1030,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
     0, 45, 109, 105, 110, 100, 101, 112, 116, 104, 0, 45, 109, 97, 120, 100, 101, 112, 116, 104, 0,
     0,
   ];
-  let mut ppl: pp_locals = pp_locals {
-    appp: 0 as *mut *mut *mut action,
-    cur_group: 0,
-    cur_action: 0,
-    invert_flag: false,
-  };
+  let mut ppl: pp_locals = std::mem::zeroed();
   ppl.cur_group = 0 as libc::c_uint;
   ppl.cur_action = 0 as libc::c_uint;
   ppl.invert_flag = 0 != 0;

@@ -69,30 +69,7 @@ unsafe extern "C" fn eject_scsi(mut dev: *const libc::c_char) {
   let mut i: libc::c_uint = 0;
   let mut sense_buffer: [libc::c_uchar; 32] = [0; 32];
   let mut inqBuff: [libc::c_uchar; 2] = [0; 2];
-  let mut io_hdr: sg_io_hdr_t = sg_io_hdr_t {
-    interface_id: 0,
-    dxfer_direction: 0,
-    cmd_len: 0,
-    mx_sb_len: 0,
-    iovec_count: 0,
-    dxfer_len: 0,
-    dxferp: 0 as *mut libc::c_void,
-    cmdp: 0 as *mut libc::c_uchar,
-    sbp: 0 as *mut libc::c_uchar,
-    timeout: 0,
-    flags: 0,
-    pack_id: 0,
-    usr_ptr: 0 as *mut libc::c_void,
-    status: 0,
-    masked_status: 0,
-    msg_status: 0,
-    sb_len_wr: 0,
-    host_status: 0,
-    driver_status: 0,
-    resid: 0,
-    duration: 0,
-    info: 0,
-  };
+  let mut io_hdr: sg_io_hdr_t = std::mem::zeroed();
   if ioctl(
     3i32,
     0x2282i32 as libc::c_ulong,

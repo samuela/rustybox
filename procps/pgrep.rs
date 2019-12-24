@@ -176,20 +176,7 @@ pub unsafe extern "C" fn pgrep_main(
   let mut cmd_last: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut proc_0: *mut procps_status_t = std::ptr::null_mut();
   /* These are initialized to 0 */
-  let mut Z: C2RustUnnamed_1 = C2RustUnnamed_1 {
-    re_buffer: regex_t {
-      buffer: 0 as *mut libc::c_uchar,
-      allocated: 0,
-      used: 0,
-      syntax: 0,
-      fastmap: std::ptr::null_mut::<libc::c_char>(),
-      translate: 0 as *mut libc::c_uchar,
-      re_nsub: 0,
-      can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [0; 1],
-      c2rust_padding: [0; 7],
-    },
-    re_match: [regmatch_t { rm_so: 0, rm_eo: 0 }; 1],
-  };
+  let mut Z: C2RustUnnamed_1 = std::mem::zeroed();
   memset(
     &mut Z as *mut C2RustUnnamed_1 as *mut libc::c_void,
     0,
@@ -236,8 +223,7 @@ pub unsafe extern "C" fn pgrep_main(
     scan_mask |= PSSCAN_ARGVN as libc::c_int
   }
   /* One pattern is required, if no -s and no -P */
-  if sid2match & ppid2match < 0 && ((*argv.offset(0)).is_null() || !(*argv.offset(1)).is_null())
-  {
+  if sid2match & ppid2match < 0 && ((*argv.offset(0)).is_null() || !(*argv.offset(1)).is_null()) {
     crate::libbb::appletlib::bb_show_usage();
   }
   if !(*argv.offset(0)).is_null() {

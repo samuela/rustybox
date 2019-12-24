@@ -738,10 +738,7 @@ unsafe extern "C" fn create_J(
 unsafe extern "C" fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_char) -> bool {
   let mut nlen: [libc::c_int; 2] = [0; 2];
   let mut ix: [*mut off_t; 2] = [0 as *mut off_t; 2];
-  let mut ft: [FILE_and_pos_t; 2] = [FILE_and_pos_t {
-    ft_fp: 0 as *mut FILE,
-    ft_pos: 0,
-  }; 2];
+  let mut ft: [FILE_and_pos_t; 2] = [std::mem::zeroed(); 2];
   let mut vec: *mut vec_t = std::ptr::null_mut();
   let mut i: libc::c_int = 1i32;
   let mut j: libc::c_int = 0;
@@ -1117,12 +1114,7 @@ unsafe extern "C" fn skip_dir(
   return 1i32;
 }
 unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const libc::c_char) {
-  let mut list: [dlist; 2] = [dlist {
-    len: 0,
-    s: 0,
-    e: 0,
-    dl: 0 as *mut *mut libc::c_char,
-  }; 2];
+  let mut list: [dlist; 2] = [std::mem::zeroed(); 2];
   let mut i: libc::c_int = 0;
   memset(
     &mut list as *mut [dlist; 2] as *mut libc::c_void,

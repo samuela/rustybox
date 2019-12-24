@@ -189,14 +189,7 @@ unsafe extern "C" fn do_loadfont(
     i += 1
   }
   /* KDFONTOP */
-  let mut cfo: console_font_op = console_font_op {
-    op: 0,
-    flags: 0,
-    width: 0,
-    height: 0,
-    charcount: 0,
-    data: 0 as *mut libc::c_uchar,
-  };
+  let mut cfo: console_font_op = std::mem::zeroed();
   cfo.op = 0 as libc::c_uint;
   cfo.flags = 0 as libc::c_uint;
   cfo.width = width as libc::c_uint;
@@ -247,10 +240,7 @@ unsafe extern "C" fn do_loadtable(
     advised_hashstep: 0,
     advised_hashlevel: 0,
   }; /* more than enough */
-  let mut ud: unimapdesc = unimapdesc {
-    entry_ct: 0,
-    entries: 0 as *mut unipair,
-  }; /* PSF2 */
+  let mut ud: unimapdesc = std::mem::zeroed(); /* PSF2 */
   let mut up: *mut unipair = std::ptr::null_mut();
   let mut ct: libc::c_int = 0;
   let mut maxct: libc::c_int = 0;
@@ -303,9 +293,7 @@ unsafe extern "C" fn do_loadtable(
               maxct = 1i32
             }
             loop {
-              if tailsz <= 0
-                || (*inbuf as libc::c_int) < 0x80i32
-                || *inbuf as libc::c_int > 0xbfi32
+              if tailsz <= 0 || (*inbuf as libc::c_int) < 0x80i32 || *inbuf as libc::c_int > 0xbfi32
               {
                 crate::libbb::verror_msg::bb_simple_error_msg_and_die(
                   b"illegal UTF-8 character\x00" as *const u8 as *const libc::c_char,

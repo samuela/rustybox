@@ -2389,14 +2389,7 @@ pub unsafe extern "C" fn unpack_xz_stream(
   mut xstate: *mut transformer_state_t,
 ) -> libc::c_longlong {
   let mut xz_result: xz_ret = XZ_OK; /* else: let xz code read & check it */
-  let mut iobuf: xz_buf = xz_buf {
-    in_0: 0 as *const u8,
-    in_pos: 0,
-    in_size: 0,
-    out: 0 as *mut u8,
-    out_pos: 0,
-    out_size: 0,
-  };
+  let mut iobuf: xz_buf = std::mem::zeroed();
   let mut state: *mut xz_dec = std::ptr::null_mut();
   let mut membuf: *mut libc::c_uchar = std::ptr::null_mut();
   let mut total: libc::c_longlong = 0 as libc::c_longlong;

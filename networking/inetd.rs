@@ -1715,7 +1715,7 @@ pub unsafe extern "C" fn inetd_main(
               accepted_fd = accept(
                 (*sep).se_fd,
                 __SOCKADDR_ARG {
-                  __sockaddr__: 0 as *mut libc::c_void as *mut sockaddr,
+                  __sockaddr__: std::ptr::null_mut(),
                 },
                 0 as *mut socklen_t,
               );

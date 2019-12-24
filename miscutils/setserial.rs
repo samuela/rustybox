@@ -332,26 +332,7 @@ unsafe extern "C" fn serial_get(mut device: *const libc::c_char, mut mode: print
   let mut uart: *const libc::c_char = std::ptr::null();
   let mut prefix: *const libc::c_char = std::ptr::null();
   let mut postfix: *const libc::c_char = std::ptr::null();
-  let mut serinfo: serial_struct = serial_struct {
-    type_0: 0,
-    line: 0,
-    port: 0,
-    irq: 0,
-    flags: 0,
-    xmit_fifo_size: 0,
-    custom_divisor: 0,
-    baud_base: 0,
-    close_delay: 0,
-    io_type: 0,
-    reserved_char: [0; 1],
-    hub6: 0,
-    closing_wait: 0,
-    closing_wait2: 0,
-    iomem_base: 0 as *mut libc::c_uchar,
-    iomem_reg_shift: 0,
-    port_high: 0,
-    iomap_base: 0,
-  };
+  let mut serinfo: serial_struct = std::mem::zeroed();
   fd = serial_open(
     device,
     mode as libc::c_uint == PRINT_SUMMARY as libc::c_int as libc::c_uint,
@@ -437,26 +418,7 @@ unsafe extern "C" fn find_cmd(mut cmd: *const libc::c_char) -> libc::c_int {
   return idx;
 }
 unsafe extern "C" fn serial_set(mut arg: *mut *mut libc::c_char, mut opts: libc::c_int) {
-  let mut serinfo: serial_struct = serial_struct {
-    type_0: 0,
-    line: 0,
-    port: 0,
-    irq: 0,
-    flags: 0,
-    xmit_fifo_size: 0,
-    custom_divisor: 0,
-    baud_base: 0,
-    close_delay: 0,
-    io_type: 0,
-    reserved_char: [0; 1],
-    hub6: 0,
-    closing_wait: 0,
-    closing_wait2: 0,
-    iomem_base: 0 as *mut libc::c_uchar,
-    iomem_reg_shift: 0,
-    port_high: 0,
-    iomap_base: 0,
-  };
+  let mut serinfo: serial_struct = std::mem::zeroed();
   let mut fd: libc::c_int = 0;
   fd = serial_open(*arg, 0 != 0);
   if fd < 0 {

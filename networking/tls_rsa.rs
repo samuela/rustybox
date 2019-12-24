@@ -110,24 +110,9 @@ unsafe extern "C" fn psRsaCrypt(
   mut type_0: int32,
 ) -> int32 {
   let mut current_block: u64;
-  let mut tmp: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: 0 as *mut pstm_digit,
-  };
-  let mut tmpa: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: 0 as *mut pstm_digit,
-  };
-  let mut tmpb: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: 0 as *mut pstm_digit,
-  };
+  let mut tmp: pstm_int = std::mem::zeroed();
+  let mut tmpa: pstm_int = std::mem::zeroed();
+  let mut tmpb: pstm_int = std::mem::zeroed();
   let mut res: int32 = 0;
   let mut x: uint32 = 0;
   //bbox
@@ -162,8 +147,7 @@ unsafe extern "C" fn psRsaCrypt(
   } else {
     if type_0 == 0x2i32 {
       if (*key).optimized != 0 {
-        if crate::networking::tls_pstm::pstm_init_size(&mut tmpa, (*key).p.alloc as uint32) != 0
-        {
+        if crate::networking::tls_pstm::pstm_init_size(&mut tmpa, (*key).p.alloc as uint32) != 0 {
           res = -1i32;
           current_block = 6275814254496255747;
         } else if crate::networking::tls_pstm::pstm_init_size(&mut tmpb, (*key).q.alloc as uint32)

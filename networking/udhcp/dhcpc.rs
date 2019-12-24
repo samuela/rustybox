@@ -1721,19 +1721,8 @@ unsafe extern "C" fn udhcp_recv_raw_packet(
   };
   let mut check: u16 = 0;
   let mut cmsgbuf: [libc::c_uchar; 36] = [0; 36];
-  let mut iov: iovec = iovec {
-    iov_base: 0 as *mut libc::c_void,
-    iov_len: 0,
-  };
-  let mut msg: msghdr = msghdr {
-    msg_name: 0 as *mut libc::c_void,
-    msg_namelen: 0,
-    msg_iov: 0 as *mut iovec,
-    msg_iovlen: 0,
-    msg_control: 0 as *mut libc::c_void,
-    msg_controllen: 0,
-    msg_flags: 0,
-  };
+  let mut iov: iovec = std::mem::zeroed();
+  let mut msg: msghdr = std::mem::zeroed();
   let mut cmsg: *mut cmsghdr = std::ptr::null_mut();
   /* used to use just safe_read(fd, &packet, sizeof(packet))
    * but we need to check for TP_STATUS_CSUMNOTREADY :(
@@ -1910,11 +1899,7 @@ unsafe extern "C" fn udhcp_recv_raw_packet(
   match current_block {
     13763002826403452995 => {
       /* verify UDP checksum. IP header has to be modified for this */
-      memset(
-        &mut packet.ip as *mut iphdr as *mut libc::c_void,
-        0,
-        9u64,
-      );
+      memset(&mut packet.ip as *mut iphdr as *mut libc::c_void, 0, 9);
       /* ip.xx fields which are not memset: protocol, check, saddr, daddr */
       packet.ip.tot_len = packet.udp.c2rust_unnamed.c2rust_unnamed_0.len; /* yes, this is needed */
       check = packet.udp.c2rust_unnamed.c2rust_unnamed_0.check;

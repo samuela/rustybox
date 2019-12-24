@@ -375,16 +375,7 @@ unsafe extern "C" fn vgetopt32(
   let mut flags: libc::c_uint = 0 as libc::c_uint;
   let mut requires: libc::c_uint = 0 as libc::c_uint;
   let mut len: libc::c_uint = 0;
-  let mut complementary: [t_complementary; 33] = [t_complementary {
-    opt_char: 0,
-    param_type: 0,
-    switch_on: 0,
-    switch_off: 0,
-    incongruously: 0,
-    requires: 0,
-    optarg: 0 as *mut *mut libc::c_void,
-    counter: 0 as *mut libc::c_int,
-  }; 33];
+  let mut complementary: [t_complementary; 33] = [std::mem::zeroed(); 33];
   let mut dont_die_flag: libc::c_char = 0;
   let mut c: libc::c_int = 0;
   let mut s: *const libc::c_uchar = std::ptr::null();
