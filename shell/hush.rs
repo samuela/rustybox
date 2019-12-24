@@ -1515,7 +1515,7 @@ unsafe extern "C" fn hfopen(mut name: *const libc::c_char) -> *mut HFILE {
   if !name.is_null() {
     fd = open(name, 0 | 0o2000000i32);
     if fd < 0 {
-      return 0 as *mut HFILE;
+      return std::ptr::null_mut();
     }
     if 0o2000000i32 == 0 {
       /* ancient libc */
@@ -1882,7 +1882,7 @@ unsafe extern "C" fn get_ptr_to_local_var(
     }
     pp = &mut (*cur).next
   }
-  return 0 as *mut *mut variable;
+  return std::ptr::null_mut();
 }
 unsafe extern "C" fn get_local_var_value(mut name: *const libc::c_char) -> *const libc::c_char {
   let mut vpp: *mut *mut variable = std::ptr::null_mut();
@@ -12488,7 +12488,7 @@ unsafe extern "C" fn parse_jobspec(mut str: *const libc::c_char) -> *mut pipe {
         b"bad argument \'%s\'\x00" as *const u8 as *const libc::c_char,
         str,
       );
-      return 0 as *mut pipe;
+      return std::ptr::null_mut();
     }
     /* It is "%%", "%+" or "%" - current job */
     jobnum = (*ptr_to_globals).last_jobid;
@@ -12496,7 +12496,7 @@ unsafe extern "C" fn parse_jobspec(mut str: *const libc::c_char) -> *mut pipe {
       crate::libbb::verror_msg::bb_simple_error_msg(
         b"no current job\x00" as *const u8 as *const libc::c_char,
       );
-      return 0 as *mut pipe;
+      return std::ptr::null_mut();
     }
   }
   pi = (*ptr_to_globals).job_list;
@@ -12510,7 +12510,7 @@ unsafe extern "C" fn parse_jobspec(mut str: *const libc::c_char) -> *mut pipe {
     b"%u: no such job\x00" as *const u8 as *const libc::c_char,
     jobnum,
   );
-  return 0 as *mut pipe;
+  return std::ptr::null_mut();
 }
 unsafe extern "C" fn builtin_jobs(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut job: *mut pipe = std::ptr::null_mut();

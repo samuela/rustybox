@@ -17,7 +17,7 @@ use libc;
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 #[no_mangle]
-pub static mut global_crc32_table: *mut u32 = std::ptr::null();
+pub static mut global_crc32_table: *mut u32 = std::ptr::null_mut();
 #[no_mangle]
 pub unsafe extern "C" fn crc32_filltable(
   mut crc_table: *mut u32,

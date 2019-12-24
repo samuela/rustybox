@@ -178,8 +178,8 @@ pub unsafe extern "C" fn crypt_make_pw_salt(
     if *algo.offset(0) as libc::c_int | 0x20i32 == 's' as i32 {
       /* sha */
       *salt.offset(1) = ('5' as i32
-        + (strcasecmp(algo, b"sha512\x00" as *const u8 as *const libc::c_char) == 0)
-          as libc::c_int) as libc::c_char;
+        + (strcasecmp(algo, b"sha512\x00" as *const u8 as *const libc::c_char) == 0) as libc::c_int)
+        as libc::c_char;
       len = 16i32 / 2i32
     }
   }
@@ -1885,16 +1885,8 @@ unsafe extern "C" fn sha_crypt(
     0,
     ::std::mem::size_of::<C2RustUnnamed>() as libc::c_ulong,
   ); /* [alt]_ctx and XXX_result buffers */
-  memset(
-    key_data as *mut libc::c_void,
-    0,
-    key_len as libc::c_ulong,
-  ); /* also p_bytes */
-  memset(
-    salt_data as *mut libc::c_void,
-    0,
-    salt_len as libc::c_ulong,
-  ); /* also s_bytes */
+  memset(key_data as *mut libc::c_void, 0, key_len as libc::c_ulong); /* also p_bytes */
+  memset(salt_data as *mut libc::c_void, 0, salt_len as libc::c_ulong); /* also s_bytes */
   free(key_data as *mut libc::c_void);
   free(salt_data as *mut libc::c_void);
   return result;
@@ -1905,8 +1897,8 @@ unsafe extern "C" fn sha_crypt(
  */
 /* Other advanced crypt ids (TODO?): */
 /* $2$ or $2a$: Blowfish */
-static mut des_cctx: *mut const_des_ctx = std::ptr::null();
-static mut des_ctx: *mut des_ctx = std::ptr::null();
+static mut des_cctx: *mut const_des_ctx = std::ptr::null_mut();
+static mut des_ctx: *mut des_ctx = std::ptr::null_mut();
 /* my_crypt returns malloc'ed data */
 unsafe extern "C" fn my_crypt(
   mut key: *const libc::c_char,

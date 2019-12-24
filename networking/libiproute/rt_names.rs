@@ -96,7 +96,7 @@ unsafe extern "C" fn rtnl_a2n(
   *id = i;
   return 0;
 }
-static mut rtnl_rtprot_tab: *mut rtnl_tab_t = std::ptr::null();
+static mut rtnl_rtprot_tab: *mut rtnl_tab_t = std::ptr::null_mut();
 unsafe extern "C" fn rtnl_rtprot_initialize() {
   static mut init_tab: [*const libc::c_char; 13] = [
     b"none\x00" as *const u8 as *const libc::c_char,
@@ -138,7 +138,7 @@ pub unsafe extern "C" fn rtnl_rtprot_a2n(
   rtnl_rtprot_initialize();
   return rtnl_a2n(rtnl_rtprot_tab, id, arg, 0);
 }
-static mut rtnl_rtscope_tab: *mut rtnl_tab_t = std::ptr::null();
+static mut rtnl_rtscope_tab: *mut rtnl_tab_t = std::ptr::null_mut();
 unsafe extern "C" fn rtnl_rtscope_initialize() {
   if !rtnl_rtscope_tab.is_null() {
     return;
@@ -175,7 +175,7 @@ pub unsafe extern "C" fn rtnl_rtscope_a2n(
   rtnl_rtscope_initialize();
   return rtnl_a2n(rtnl_rtscope_tab, id, arg, 0);
 }
-static mut rtnl_rtrealm_tab: *mut rtnl_tab_t = std::ptr::null();
+static mut rtnl_rtrealm_tab: *mut rtnl_tab_t = std::ptr::null_mut();
 unsafe extern "C" fn rtnl_rtrealm_initialize() {
   if !rtnl_rtrealm_tab.is_null() {
     return;
@@ -208,7 +208,7 @@ pub unsafe extern "C" fn rtnl_rtrealm_n2a(mut id: libc::c_int) -> *const libc::c
   }
   return crate::libbb::xfuncs::itoa(id);
 }
-static mut rtnl_rtdsfield_tab: *mut rtnl_tab_t = std::ptr::null();
+static mut rtnl_rtdsfield_tab: *mut rtnl_tab_t = std::ptr::null_mut();
 unsafe extern "C" fn rtnl_rtdsfield_initialize() {
   if !rtnl_rtdsfield_tab.is_null() {
     return;
@@ -241,7 +241,7 @@ pub unsafe extern "C" fn rtnl_dsfield_a2n(
   rtnl_rtdsfield_initialize();
   return rtnl_a2n(rtnl_rtdsfield_tab, id, arg, 16i32);
 }
-static mut rtnl_rttable_tab: *mut rtnl_tab_t = std::ptr::null();
+static mut rtnl_rttable_tab: *mut rtnl_tab_t = std::ptr::null_mut();
 unsafe extern "C" fn rtnl_rttable_initialize() {
   if !rtnl_rttable_tab.is_null() {
     return;

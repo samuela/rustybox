@@ -8410,7 +8410,7 @@ unsafe extern "C" fn bc_vm_envArgs() {
       &const_int_0 as *const libc::c_int as *const libc::c_void,
     );
   } else {
-    static mut nullptr: *mut libc::c_char = std::ptr::null();
+    static mut nullptr: *mut libc::c_char = std::ptr::null_mut();
     bc_vec_push(
       &mut v,
       &nullptr as *const *mut libc::c_char as *const libc::c_void,

@@ -107,7 +107,7 @@ unsafe extern "C" fn findLine(mut num: libc::c_int) -> *mut LINE {
       b"line number %d does not exist\x00" as *const u8 as *const libc::c_char,
       num,
     );
-    return 0 as *mut LINE;
+    return std::ptr::null_mut();
   }
   if (*ptr_to_globals).curNum <= 0 {
     (*ptr_to_globals).curNum = 1i32;

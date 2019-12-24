@@ -514,14 +514,14 @@ unsafe extern "C" fn d6_find_option(
   while len_m4 >= 0 {
     /* Next option's len is too big? */
     if *option.offset(3) as libc::c_int > len_m4 {
-      return 0 as *mut libc::c_void;
+      return std::ptr::null_mut();
     } /* yes. bogus packet! */
     /* So far we treat any opts with code >255
      * or len >255 as bogus, and stop at once.
      * This simplifies big-endian handling.
      */
     if *option.offset(0) as libc::c_int != 0 || *option.offset(2) as libc::c_int != 0 {
-      return 0 as *mut libc::c_void;
+      return std::ptr::null_mut();
     }
     /* Option seems to be valid */
     /* Does its code match? */
@@ -531,7 +531,7 @@ unsafe extern "C" fn d6_find_option(
     len_m4 -= *option.offset(3) as libc::c_int + 4i32;
     option = option.offset((*option.offset(3) as libc::c_int + 4i32) as isize)
   }
-  return 0 as *mut libc::c_void;
+  return std::ptr::null_mut();
 }
 unsafe extern "C" fn d6_copy_option(
   mut option: *mut u8,

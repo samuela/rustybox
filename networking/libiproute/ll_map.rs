@@ -173,7 +173,7 @@ pub struct idxmap {
   pub addr: [libc::c_uchar; 8],
   pub name: [libc::c_char; 16],
 }
-static mut idxmap: *mut *mut idxmap = std::ptr::null();
+static mut idxmap: *mut *mut idxmap = std::ptr::null_mut();
 /* treat as *idxmap[16] */
 unsafe extern "C" fn find_by_index(mut idx: libc::c_int) -> *mut idxmap {
   let mut im: *mut idxmap = std::ptr::null_mut();
@@ -186,7 +186,7 @@ unsafe extern "C" fn find_by_index(mut idx: libc::c_int) -> *mut idxmap {
       im = (*im).next
     }
   }
-  return 0 as *mut idxmap;
+  return std::ptr::null_mut();
 }
 
 #[no_mangle]

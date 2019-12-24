@@ -207,7 +207,7 @@ static mut sort_opt_str: [libc::c_char; 37] = [
   107, 58, 42, 116, 58, 0, 111, 45, 45, 111, 58, 116, 45, 45, 116, 0,
 ];
 static mut key_separator: libc::c_char = 0;
-static mut key_list: *mut sort_key = std::ptr::null();
+static mut key_list: *mut sort_key = std::ptr::null_mut();
 /* Numeric sort */
 /* Sort using strtod() */
 /* Sort date */

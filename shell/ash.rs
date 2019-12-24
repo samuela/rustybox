@@ -1262,7 +1262,7 @@ static mut basepf: parsefile = parsefile {
   unget: 0,
 };
 static mut g_parsefile: *mut parsefile = unsafe { &basepf as *const parsefile as *mut parsefile };
-static mut commandname: *mut libc::c_char = std::ptr::null();
+static mut commandname: *mut libc::c_char = std::ptr::null_mut();
 unsafe extern "C" fn ash_vmsg(mut msg: *const libc::c_char, mut ap: ::std::ffi::VaList) {
   fprintf(
     stderr,
@@ -1669,9 +1669,9 @@ unsafe extern "C" fn maybe_single_quote(mut s: *const libc::c_char) -> *const li
     _ => return s,
   };
 }
-static mut argptr: *mut *mut libc::c_char = std::ptr::null();
-static mut optionarg: *mut libc::c_char = std::ptr::null();
-static mut optptr: *mut libc::c_char = std::ptr::null();
+static mut argptr: *mut *mut libc::c_char = std::ptr::null_mut();
+static mut optionarg: *mut libc::c_char = std::ptr::null_mut();
+static mut optptr: *mut libc::c_char = std::ptr::null_mut();
 unsafe extern "C" fn nextopt(mut optstring: *const libc::c_char) -> libc::c_int {
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut q: *const libc::c_char = std::ptr::null();
@@ -2238,7 +2238,7 @@ unsafe extern "C" fn path_advance(
 }
 static mut doprompt: smallint = 0;
 static mut needprompt: smallint = 0;
-static mut line_input_state: *mut line_input_t = std::ptr::null();
+static mut line_input_state: *mut line_input_t = std::ptr::null_mut();
 static mut cmdedit_prompt: *const libc::c_char = std::ptr::null();
 unsafe extern "C" fn putprompt(mut s: *const libc::c_char) {
   free(cmdedit_prompt as *mut libc::c_char as *mut libc::c_void);
@@ -2624,7 +2624,7 @@ unsafe extern "C" fn SIT(mut c: libc::c_int, mut syntax: libc::c_int) -> libc::c
   }
   return S_I_T[indx as usize] as libc::c_int >> syntax * 4i32 & 0xfi32;
 }
-static mut atab: *mut *mut alias = std::ptr::null();
+static mut atab: *mut *mut alias = std::ptr::null_mut();
 unsafe extern "C" fn __lookupalias(mut name: *const libc::c_char) -> *mut *mut alias {
   let mut hashval: libc::c_uint = 0;
   let mut app: *mut *mut alias = std::ptr::null_mut();
@@ -2653,7 +2653,7 @@ unsafe extern "C" fn lookupalias(
 ) -> *mut alias {
   let mut ap: *mut alias = *__lookupalias(name);
   if check != 0 && !ap.is_null() && (*ap).flag & 1i32 != 0 {
-    return 0 as *mut alias;
+    return std::ptr::null_mut();
   }
   return ap;
 }
@@ -2947,9 +2947,9 @@ unsafe extern "C" fn setsignal(mut signo: libc::c_int) {
 }
 static mut initialpgrp: libc::c_int = 0;
 static mut ttyfd: libc::c_int = -1i32;
-static mut jobtab: *mut job = std::ptr::null();
+static mut jobtab: *mut job = std::ptr::null_mut();
 static mut njobs: libc::c_uint = 0;
-static mut curjob: *mut job = std::ptr::null();
+static mut curjob: *mut job = std::ptr::null_mut();
 static mut jobless: libc::c_int = 0;
 unsafe extern "C" fn set_curjob(mut jp: *mut job, mut mode: libc::c_uint) {
   let mut jp1: *mut job = std::ptr::null_mut();
@@ -3985,7 +3985,7 @@ unsafe extern "C" fn makejob(mut nprocs: libc::c_int) -> *mut job {
   }
   return jp;
 }
-static mut cmdnextc: *mut libc::c_char = std::ptr::null();
+static mut cmdnextc: *mut libc::c_char = std::ptr::null_mut();
 unsafe extern "C" fn cmdputs(mut s: *const libc::c_char) {
   let mut current_block: u64;
   static mut vstype: [[libc::c_char; 3]; 16] = [
@@ -5183,9 +5183,9 @@ unsafe extern "C" fn substr_atoi(mut s: *const libc::c_char) -> libc::c_int {
   return t as libc::c_int;
 }
 /* output of current string */
-static mut expdest: *mut libc::c_char = std::ptr::null();
+static mut expdest: *mut libc::c_char = std::ptr::null_mut();
 /* list of back quote expressions */
-static mut argbackq: *mut nodelist = std::ptr::null();
+static mut argbackq: *mut nodelist = std::ptr::null_mut();
 /* first struct in list of ifs regions */
 static mut ifsfirst: ifsregion = ifsregion {
   next: 0 as *const ifsregion as *mut ifsregion,
@@ -5194,7 +5194,7 @@ static mut ifsfirst: ifsregion = ifsregion {
   nulonly: 0,
 };
 /* last struct in list */
-static mut ifslastp: *mut ifsregion = std::ptr::null();
+static mut ifslastp: *mut ifsregion = std::ptr::null_mut();
 /* holds expanded arg list */
 static mut exparg: arglist = arglist {
   list: 0 as *const strlist as *mut strlist,
@@ -7476,7 +7476,7 @@ unsafe extern "C" fn casematch(mut pattern: *mut node, mut val: *mut libc::c_cha
   popstackmark(&mut smark);
   return result;
 }
-static mut cmdtable: *mut *mut tblentry = std::ptr::null();
+static mut cmdtable: *mut *mut tblentry = std::ptr::null_mut();
 static mut builtinloc: libc::c_int = -1i32;
 /* index in path of %builtin, or -1 */
 unsafe extern "C" fn tryexec(
@@ -7659,7 +7659,7 @@ unsafe extern "C" fn clearcmdentry(mut firstchange: libc::c_int) {
  *
  * Interrupts must be off if called with add != 0.
  */
-static mut lastcmdentry: *mut *mut tblentry = std::ptr::null();
+static mut lastcmdentry: *mut *mut tblentry = std::ptr::null_mut();
 unsafe extern "C" fn cmdlookup(
   mut name: *const libc::c_char,
   mut add: libc::c_int,
@@ -8060,7 +8060,7 @@ unsafe extern "C" fn parse_command_args(
     argv = argv.offset(1);
     cp = *argv;
     if cp.is_null() {
-      return 0 as *mut *mut libc::c_char;
+      return std::ptr::null_mut();
     }
     let fresh62 = cp;
     cp = cp.offset(1);
@@ -8076,7 +8076,7 @@ unsafe extern "C" fn parse_command_args(
     if c as libc::c_int == '-' as i32 && *cp == 0 {
       argv = argv.offset(1);
       if (*argv).is_null() {
-        return 0 as *mut *mut libc::c_char;
+        return std::ptr::null_mut();
       }
       break;
     } else {
@@ -8089,7 +8089,7 @@ unsafe extern "C" fn parse_command_args(
           }
           _ => {
             /* run 'typecmd' for other options */
-            return 0 as *mut *mut libc::c_char;
+            return std::ptr::null_mut();
           }
         }
         let fresh64 = cp;
@@ -8139,9 +8139,9 @@ unsafe extern "C" fn commandcmd(
 }
 /*static int funcblocksize;     // size of structures in function */
 /*static int funcstringsize;    // size of strings in node */
-static mut funcblock: *mut libc::c_void = std::ptr::null();
+static mut funcblock: *mut libc::c_void = std::ptr::null_mut();
 /* block to allocate function from */
-static mut funcstring_end: *mut libc::c_char = std::ptr::null();
+static mut funcstring_end: *mut libc::c_char = std::ptr::null_mut();
 /* end of block to allocate strings from */
 // Initialized in run_static_initializers
 static mut nodesize: [u8; 27] = [0; 27];
@@ -8270,7 +8270,7 @@ unsafe extern "C" fn copynodelist(mut lp: *mut nodelist) -> *mut nodelist {
 unsafe extern "C" fn copynode(mut n: *mut node) -> *mut node {
   let mut new: *mut node = std::ptr::null_mut();
   if n.is_null() {
-    return 0 as *mut node;
+    return std::ptr::null_mut();
   }
   new = funcblock as *mut node;
   funcblock = (funcblock as *mut libc::c_char)
@@ -8905,7 +8905,7 @@ unsafe extern "C" fn optschanged() {
   (*ash_ptr_to_globals_misc).optlist[14] = 0 as libc::c_char;
   /* forcibly keep the option off */
 }
-static mut localvar_stack: *mut localvar_list = std::ptr::null();
+static mut localvar_stack: *mut localvar_list = std::ptr::null_mut();
 /*
  * Called after a function returns.
  * Interrupts must be off.
@@ -11373,13 +11373,13 @@ static mut quoteflag: smallint = 0;
 /* set if (part of) last token was quoted */
 static mut lasttoken: token_id_t = 0;
 /* last token read (integer id Txxx) */
-static mut heredoclist: *mut heredoc = std::ptr::null();
+static mut heredoclist: *mut heredoc = std::ptr::null_mut();
 /* list of here documents to read */
-static mut wordtext: *mut libc::c_char = std::ptr::null();
+static mut wordtext: *mut libc::c_char = std::ptr::null_mut();
 /* text of last word returned by readtoken */
-static mut backquotelist: *mut nodelist = std::ptr::null();
-static mut redirnode: *mut node = std::ptr::null();
-static mut heredoc: *mut heredoc = std::ptr::null();
+static mut backquotelist: *mut nodelist = std::ptr::null_mut();
+static mut redirnode: *mut node = std::ptr::null_mut();
+static mut heredoc: *mut heredoc = std::ptr::null_mut();
 unsafe extern "C" fn tokname(
   mut buf: *mut libc::c_char,
   mut tok: libc::c_int,

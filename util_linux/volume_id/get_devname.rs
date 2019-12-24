@@ -49,7 +49,7 @@ pub struct uuidCache_s {
 }
 
 use crate::util_linux::volume_id::volume_id::volume_id;
-static mut uuidCache: *mut uuidCache_s = std::ptr::null();
+static mut uuidCache: *mut uuidCache_s = std::ptr::null_mut();
 /* Returns !0 on error.
  * Otherwise, returns malloc'ed strings for label and uuid
  * (and they can't be NULL, although they can be "").

@@ -2263,7 +2263,7 @@ unsafe extern "C" fn find_proxy_entry(mut url: *const libc::c_char) -> *mut Htac
     }
     p = (*p).next
   }
-  return 0 as *mut Htaccess_Proxy;
+  return std::ptr::null_mut();
 }
 /*
  * Handle timeouts

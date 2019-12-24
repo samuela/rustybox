@@ -60,7 +60,7 @@ pub struct suid_config_t {
   pub m_applet: libc::c_int,
   pub m_mode: mode_t,
 }
-static mut suid_config: *mut suid_config_t = std::ptr::null();
+static mut suid_config: *mut suid_config_t = std::ptr::null_mut();
 static mut suid_cfg_readable: bool = false;
 
 #[no_mangle]

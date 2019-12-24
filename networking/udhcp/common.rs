@@ -659,10 +659,10 @@ pub unsafe extern "C" fn udhcp_get_option(
     crate::libbb::verror_msg::bb_simple_error_msg(
       b"bad packet, malformed option field\x00" as *const u8 as *const libc::c_char,
     );
-    return 0 as *mut u8;
+    return std::ptr::null_mut();
   }
   /* log3 because udhcpc uses it a lot - very noisy */
-  return 0 as *mut u8;
+  return std::ptr::null_mut();
 }
 #[no_mangle]
 pub unsafe extern "C" fn udhcp_get_option32(
@@ -762,7 +762,7 @@ pub unsafe extern "C" fn udhcp_find_option(
   if !opt_list.is_null() && *(*opt_list).data.offset(0) as libc::c_int == code as libc::c_int {
     return opt_list;
   }
-  return 0 as *mut option_set;
+  return std::ptr::null_mut();
 }
 /* Parse string to IP in network order */
 #[no_mangle]

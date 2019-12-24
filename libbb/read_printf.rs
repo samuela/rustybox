@@ -317,7 +317,7 @@ pub unsafe extern "C" fn xmalloc_read_with_initial_buf(
     if rd_size as ssize_t == -1i32 as ssize_t {
       /* error */
       free(buf as *mut libc::c_void);
-      return 0 as *mut libc::c_void;
+      return std::ptr::null_mut();
     }
     total = (total as libc::c_ulong).wrapping_add(rd_size) as size_t as size_t;
     if rd_size < size {
@@ -367,7 +367,7 @@ pub unsafe extern "C" fn xmalloc_open_read_close(
   let mut fd: libc::c_int = 0;
   fd = open(filename, 0);
   if fd < 0 {
-    return 0 as *mut libc::c_void;
+    return std::ptr::null_mut();
   }
   buf = xmalloc_read(fd, maxsz_p) as *mut libc::c_char;
   close(fd);

@@ -116,7 +116,7 @@ unsafe extern "C" fn get_attr_volume_id(
     }
     dir = dir.offset(1)
   }
-  return 0 as *mut u8;
+  return std::ptr::null_mut();
 }
 /*
  * volume_id - reads filesystem label and uuid

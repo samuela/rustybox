@@ -155,7 +155,7 @@ static mut const_sp_db: const_passdb = const_passdb {
   numfields: 0,
   size_of: 0,
 };
-static mut ptr_to_statics: *mut statics = std::ptr::null();
+static mut ptr_to_statics: *mut statics = std::ptr::null_mut();
 unsafe extern "C" fn get_S() -> *mut statics {
   if ptr_to_statics.is_null() {
     ptr_to_statics =
@@ -420,7 +420,7 @@ unsafe extern "C" fn massage_data_for_non_r_func(
   mut buf: *mut libc::c_char,
 ) -> *mut libc::c_void {
   if buf.is_null() {
-    return 0 as *mut libc::c_void;
+    return std::ptr::null_mut();
   }
   free((*db).malloced as *mut libc::c_void);
   /* We enlarge buf and move string data up, freeing space
@@ -542,7 +542,7 @@ unsafe extern "C" fn getXXent(mut db_idx: uintptr_t) -> *mut libc::c_void {
   if (*db).fp.is_null() {
     (*db).fp = crate::libbb::wfopen::fopen_for_read((*db).filename);
     if (*db).fp.is_null() {
-      return 0 as *mut libc::c_void;
+      return std::ptr::null_mut();
     }
     crate::libbb::xfuncs::close_on_exec_on(fileno_unlocked((*db).fp));
   }

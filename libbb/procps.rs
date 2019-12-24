@@ -1,19 +1,27 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::skip_whitespace::skip_whitespace;
+use crate::librb::size_t;
 use libc;
 use libc::close;
 use libc::closedir;
+use libc::dirent;
 use libc::fclose;
 use libc::free;
+use libc::gid_t;
 use libc::open;
 use libc::opendir;
+use libc::pid_t;
 use libc::readdir;
 use libc::sprintf;
 use libc::sscanf;
+use libc::ssize_t;
+use libc::stat;
 use libc::strchr;
 use libc::strcmp;
 use libc::strcpy;
 use libc::strrchr;
+use libc::uid_t;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -51,16 +59,6 @@ extern "C" {
   #[no_mangle]
   fn getpagesize() -> libc::c_int;
 }
-
-use crate::librb::size_t;
-use libc::dirent;
-use libc::gid_t;
-use libc::pid_t;
-use libc::ssize_t;
-use libc::stat;
-use libc::uid_t;
-use libc::DIR;
-use libc::FILE;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -498,7 +496,7 @@ pub unsafe extern "C" fn procps_scan(
         entry = readdir((*sp).dir);
         if entry.is_null() {
           free_procps_scan(sp);
-          return 0 as *mut procps_status_t;
+          return std::ptr::null_mut();
         }
       }
       _ => {}

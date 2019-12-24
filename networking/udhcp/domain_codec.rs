@@ -157,7 +157,7 @@ unsafe extern "C" fn convert_dname(mut src: *const libc::c_char) -> *mut u8 {
         || c as libc::c_int == '.' as i32 && *src as libc::c_int == '.' as i32
       {
         free(res as *mut libc::c_void);
-        return 0 as *mut u8;
+        return std::ptr::null_mut();
       }
       *lenptr = len as u8;
       if c as libc::c_int == '\u{0}' as i32 || *src as libc::c_int == '\u{0}' as i32 {
@@ -179,7 +179,7 @@ unsafe extern "C" fn convert_dname(mut src: *const libc::c_char) -> *mut u8 {
   if dst.wrapping_offset_from(res) as libc::c_long >= 255i32 as libc::c_long {
     /* dname too long? abort */
     free(res as *mut libc::c_void);
-    return 0 as *mut u8;
+    return std::ptr::null_mut();
   }
   *dst = 0 as u8;
   return res;
@@ -358,7 +358,7 @@ pub unsafe extern "C" fn dname_enc(
   dname = convert_dname(src);
   if dname.is_null() {
     *retlen = 0;
-    return 0 as *mut u8;
+    return std::ptr::null_mut();
   }
   d = dname;
   while *d != 0 {

@@ -959,7 +959,7 @@ unsafe extern "C" fn get_inode_common(mut nr: libc::c_uint, mut i_mode: u16) {
 unsafe extern "C" fn get_inode(mut nr: libc::c_uint) -> *mut minix1_inode {
   let mut inode: *mut minix1_inode = std::ptr::null_mut();
   if nr == 0 || nr > (*ptr_to_globals).u.Super.s_ninodes as libc::c_uint {
-    return 0 as *mut minix1_inode;
+    return std::ptr::null_mut();
   }
   inode = ((*ptr_to_globals).inode_buffer as *mut minix1_inode)
     .offset(-1)
@@ -971,7 +971,7 @@ unsafe extern "C" fn get_inode(mut nr: libc::c_uint) -> *mut minix1_inode {
 unsafe extern "C" fn get_inode2(mut nr: libc::c_uint) -> *mut minix2_inode {
   let mut inode: *mut minix2_inode = std::ptr::null_mut();
   if nr == 0 || nr > (*ptr_to_globals).u.Super.s_ninodes as libc::c_uint {
-    return 0 as *mut minix2_inode;
+    return std::ptr::null_mut();
   }
   inode = ((*ptr_to_globals).inode_buffer as *mut minix2_inode)
     .offset(-1)

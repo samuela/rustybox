@@ -82,7 +82,7 @@ unsafe extern "C" fn hash_file(
   let mut hash_algo: libc::c_char = 0;
   src_fd = crate::libbb::wfopen_input::open_or_warn_stdin(filename);
   if src_fd < 0 {
-    return 0 as *mut u8;
+    return std::ptr::null_mut();
   }
   hash_algo = *applet_name.offset(3);
   /* figure specific hash algorithms */
