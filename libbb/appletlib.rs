@@ -63,9 +63,6 @@ static mut suid_config: *mut suid_config_t = std::ptr::null_mut();
 static mut suid_cfg_readable: bool = false;
 
 #[no_mangle]
-pub static mut applet_numbers: [u16; 1] = [218i32 as u16];
-
-#[no_mangle]
 pub unsafe extern "C" fn string_array_len(argv: *mut *mut libc::c_char) -> libc::c_uint {
   let mut start: *mut *mut libc::c_char = argv;
   let mut current: *mut *mut libc::c_char = argv;
