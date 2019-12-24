@@ -8,7 +8,6 @@ use crate::libpwdgrp::pwd_grp::bb_internal_getgrgid;
 use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use crate::librb::bb_uidgid_t;
 use crate::librb::smallint;
-use crate::shell::ash::ash_main;
 use libc;
 use libc::gid_t;
 use libc::group;
@@ -516,32 +515,6 @@ fn install_links(
   }
 }
 
-// Originally:
-// int scripted_main(int argc UNUSED_PARAM, char **argv)
-// {
-//   int script = find_script_by_name(applet_name);
-//   if (script >= 0)
-// #if ENABLE_ASH || ENABLE_SH_IS_ASH || ENABLE_BASH_IS_ASH
-//     exit(ash_main(-script - 1, argv));
-// #elif ENABLE_HUSH || ENABLE_SH_IS_HUSH || ENABLE_BASH_IS_HUSH
-//     exit(hush_main(-script - 1, argv));
-// #else
-//     return 1;
-// #endif
-//   return 0;
-// }
-#[no_mangle]
-pub unsafe extern "C" fn scripted_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
-  let exitcode = match find_script_by_name(&ptr_to_str(applet_name)) {
-    Some(script) => ash_main(-(script as i32) - 1, argv),
-    None => 0,
-  };
-  ::std::process::exit(exitcode)
-}
-
 unsafe fn print_rustybox_help() {
   /* -1 prevent last comma to be in the very last pos */
   let output_width = crate::libbb::xfuncs::get_terminal_width(2) - 1;
@@ -745,10 +718,6 @@ unsafe fn usage(app_name: &str) -> Option<&'static str> {
   // linear search over usage_array but sort would require another alloc and
   // this whole setup will hopefully change soon anyways.
   applets.iter().find(|x| x.name == app_name).map(|x| x.usage)
-}
-unsafe fn find_script_by_name(name: &str) -> Option<usize> {
-  find_applet_by_name(name)
-    .and_then(|applet_no| applet_numbers.iter().position(|&i| i as usize == applet_no))
 }
 unsafe fn find_applet_by_name(name: &str) -> Option<usize> {
   // TODO: we could do a binary search here, but we should add a test that

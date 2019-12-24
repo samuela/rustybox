@@ -995,10 +995,6 @@ extern "C" {
   #[no_mangle]
   fn script_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
 
-  // Defined in appletlib.rs for some reason.
-  #[no_mangle]
-  fn scripted_main(_argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
   #[no_mangle]
   fn scriptreplay_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
 
@@ -3502,17 +3498,6 @@ lazy_static! {
       noexec: true,
       nofork: false,
       usage: std::include_str!("../usage/nohup"),
-    });
-    #[cfg(feature = "nologin")]
-    appy_mcappface.push(bb_applet {
-      name: "nologin",
-      main: "scripted",
-      entrypoint: scripted_main,
-      install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
-      noexec: false,
-      nofork: false,
-      usage: std::include_str!("../usage/nologin"),
     });
     #[cfg(feature = "nproc")]
     appy_mcappface.push(bb_applet {
