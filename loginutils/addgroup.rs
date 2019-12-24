@@ -7,9 +7,6 @@ use libc::strcmp;
 extern "C" {
 
   #[no_mangle]
-  fn exit(_: libc::c_int) -> !;
-
-  #[no_mangle]
   static mut optind: libc::c_int;
 
   /* Search for an entry with a matching group ID.  */
@@ -93,7 +90,7 @@ unsafe extern "C" fn new_group(mut group: *mut libc::c_char, mut gid: gid_t) {
     0 as *const libc::c_char,
   ) < 0
   {
-    exit(1i32);
+    libc::exit(1i32);
   }
   /* /etc/gshadow fields:
    * 1. Group name.
