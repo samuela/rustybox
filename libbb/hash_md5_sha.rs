@@ -653,7 +653,7 @@ unsafe extern "C" fn sha1_process_block64(mut ctx: *mut sha1_ctx_t) {
       c = rotl32(b, 30i32 as libc::c_uint);
       b = a;
       a = work;
-      cnt = cnt + 1i32 & 15i32;
+      cnt += 1i32 & 15i32;
       j -= 1;
       if !(j >= 0) {
         break;

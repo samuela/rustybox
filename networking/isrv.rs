@@ -201,7 +201,7 @@ pub unsafe extern "C" fn isrv_register_fd(
     ) as *mut libc::c_short;
     while n < fd {
       let fresh0 = n;
-      n = n + 1;
+      n += 1;
       *(*state).fd2peer.offset(fresh0 as isize) = -1i32 as libc::c_short
     }
   }

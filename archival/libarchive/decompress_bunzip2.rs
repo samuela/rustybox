@@ -197,7 +197,7 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
       loop {
         if inner_map & (1i32 << 15i32) as libc::c_uint != 0 {
           let fresh1 = symTotal;
-          symTotal = symTotal + 1;
+          symTotal += 1;
           symToByte[fresh1 as usize] = i as u8
         }
         inner_map <<= 1i32;
@@ -351,7 +351,7 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
       while k < symCount {
         if length[k as usize] as libc::c_int == i {
           let fresh4 = pp;
-          pp = pp + 1;
+          pp += 1;
           (*hufGroup).permute[fresh4 as usize] = k
         }
         k += 1
@@ -422,7 +422,7 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
       return -5i32;
     }
     let fresh5 = selector;
-    selector = selector + 1;
+    selector += 1;
     ngrp = *selectors.offset(fresh5 as isize);
     if ngrp as libc::c_int >= groupCount {
       return -5i32;
