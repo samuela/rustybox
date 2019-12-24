@@ -1,19 +1,6 @@
 use libc;
 use libc::ioctl;
 use libc::printf;
-extern "C" {
-
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-}
 
 use crate::librb::size_t;
 pub type C2RustUnnamed = libc::c_uint;
@@ -27,8 +14,9 @@ pub const ARG_U64: C2RustUnnamed = 3;
 pub const ARG_ULONG: C2RustUnnamed = 2;
 pub const ARG_INT: C2RustUnnamed = 1;
 pub const ARG_NONE: C2RustUnnamed = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub i: libc::c_int,
   pub lu: libc::c_ulong,
@@ -141,12 +129,13 @@ static mut bdcmd_flags: [u8; 11] = [
 ];
 unsafe extern "C" fn find_cmd(mut s: *const libc::c_char) -> libc::c_uint {
   if *s.offset(0) as libc::c_int == '-' as i32 && *s.offset(1) as libc::c_int == '-' as i32 {
-    let mut n: libc::c_int = index_in_strings(bdcmd_names.as_ptr(), s.offset(2));
+    let mut n: libc::c_int =
+      crate::libbb::compare_string_array::index_in_strings(bdcmd_names.as_ptr(), s.offset(2));
     if n >= 0 {
       return n as libc::c_uint;
     }
   }
-  bb_show_usage();
+  crate::libbb::appletlib::bb_show_usage();
 }
 #[no_mangle]
 pub unsafe extern "C" fn blockdev_main(
@@ -161,7 +150,7 @@ pub unsafe extern "C" fn blockdev_main(
   argv = argv.offset(1);
   if (*argv.offset(0)).is_null() || (*argv.offset(1)).is_null() {
     /* must have at least 2 args */
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   bdcmd = find_cmd(*argv);
   /* setrw translates to BLKROSET(0), most other ioctls don't care... */
@@ -170,13 +159,13 @@ pub unsafe extern "C" fn blockdev_main(
   if bdcmd == 5i32 as libc::c_uint {
     /* ...setbsz is BLKBSZSET(bytes) */
     argv = argv.offset(1);
-    u64 = xatoi_positive(*argv) as u64
+    u64 = crate::libbb::xatonum::xatoi_positive(*argv) as u64
   }
   argv = argv.offset(1);
   if (*argv.offset(0)).is_null() || !(*argv.offset(1)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
-  fd = xopen(*argv.offset(0), 0);
+  fd = crate::libbb::xfuncs_printf::xopen(*argv.offset(0), 0);
   ioctl_val_on_stack.u64_0 = u64;
   flags = bdcmd_flags[bdcmd as usize] as libc::c_uint;
   if ioctl(
@@ -185,7 +174,7 @@ pub unsafe extern "C" fn blockdev_main(
     &mut ioctl_val_on_stack.u64_0 as *mut u64,
   ) == -1i32
   {
-    bb_simple_perror_msg_and_die(*argv);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(*argv);
   }
   /* Fetch it into register(s) */
   u64 = ioctl_val_on_stack.u64_0;

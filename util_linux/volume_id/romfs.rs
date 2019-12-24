@@ -4,27 +4,12 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
+
 }
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+
+use crate::util_linux::volume_id::volume_id::volume_id;
 /*
  * volume_id - reads filesystem label and uuid
  *
@@ -49,8 +34,9 @@ pub struct volume_id {
 //config:	default y
 //config:	depends on VOLUMEID
 //kbuild:lib-$(CONFIG_FEATURE_VOLUMEID_ROMFS) += romfs.o
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct romfs_super {
   pub magic: [u8; 8],
   pub size: u32,
@@ -141,7 +127,8 @@ pub struct romfs_super {
 pub unsafe extern "C" fn volume_id_probe_romfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut rfs: *mut romfs_super = std::ptr::null_mut();
-  rfs = volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t) as *mut romfs_super;
+  rfs = crate::util_linux::volume_id::util::volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t)
+    as *mut romfs_super;
   if rfs.is_null() {
     return -1i32;
   }
@@ -154,7 +141,11 @@ pub unsafe extern "C" fn volume_id_probe_romfs(mut id: *mut volume_id) -> libc::
     let mut len: size_t = strlen((*rfs).name.as_mut_ptr() as *mut libc::c_char);
     if len != 0 {
       //			volume_id_set_label_raw(id, rfs->name, len);
-      volume_id_set_label_string(id, (*rfs).name.as_mut_ptr(), len);
+      crate::util_linux::volume_id::util::volume_id_set_label_string(
+        id,
+        (*rfs).name.as_mut_ptr(),
+        len,
+      );
     }
     //		volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
     (*id).type_0 = b"romfs\x00" as *const u8 as *const libc::c_char;

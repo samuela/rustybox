@@ -96,55 +96,12 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn bb_getgroups(ngroups: *mut libc::c_int, group_array: *mut gid_t) -> *mut gid_t;
-
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn cap_name_to_number(cap: *const libc::c_char) -> libc::c_uint;
-
-  #[no_mangle]
-  fn printf_cap(pfx: *const libc::c_char, cap_no: libc::c_uint);
-
-  #[no_mangle]
-  fn getcaps(caps: *mut libc::c_void);
 }
 
 pub type u32 = libc::c_uint;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __user_cap_header_struct {
   pub version: u32,
   pub pid: libc::c_int,
@@ -152,8 +109,8 @@ pub struct __user_cap_header_struct {
 
 pub type cap_user_header_t = *mut __user_cap_header_struct;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __user_cap_data_struct {
   pub effective: u32,
   pub permitted: u32,
@@ -175,8 +132,8 @@ pub const OPT_DUMP: C2RustUnnamed = 1;
 // pub const OPTBIT_INH: C2RustUnnamed = 1;
 // pub const OPTBIT_DUMP: C2RustUnnamed = 0;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct caps {
   pub header: __user_cap_header_struct,
   pub u32s: libc::c_uint,
@@ -186,14 +143,14 @@ unsafe extern "C" fn parse_cap(mut cap: *const libc::c_char) -> libc::c_uint {
   match *cap.offset(0) as libc::c_int {
     45 | 43 => {}
     _ => {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"invalid capability \'%s\'\x00" as *const u8 as *const libc::c_char,
         cap,
       );
     }
   }
   cap = cap.offset(1);
-  return cap_name_to_number(cap);
+  return crate::libbb::capability::cap_name_to_number(cap);
 }
 unsafe extern "C" fn set_inh_caps(mut capstring: *mut libc::c_char) {
   let mut caps: caps = caps {
@@ -205,13 +162,13 @@ unsafe extern "C" fn set_inh_caps(mut capstring: *mut libc::c_char) {
       inheritable: 0,
     }; 2],
   };
-  getcaps(&mut caps as *mut caps as *mut libc::c_void);
+  crate::libbb::capability::getcaps(&mut caps as *mut caps as *mut libc::c_void);
   capstring = strtok(capstring, b",\x00" as *const u8 as *const libc::c_char);
   while !capstring.is_null() {
     let mut cap: libc::c_uint = 0;
     cap = parse_cap(capstring);
     if cap >> 5i32 >= caps.u32s {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"invalid capability \'%s\'\x00" as *const u8 as *const libc::c_char,
         capstring,
       );
@@ -229,7 +186,9 @@ unsafe extern "C" fn set_inh_caps(mut capstring: *mut libc::c_char) {
     )
   }
   if capset(&mut caps.header, caps.data.as_mut_ptr()) != 0 {
-    bb_simple_perror_msg_and_die(b"capset\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"capset\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 unsafe extern "C" fn set_ambient_caps(mut string: *mut libc::c_char) {
@@ -240,10 +199,14 @@ unsafe extern "C" fn set_ambient_caps(mut string: *mut libc::c_char) {
     idx = parse_cap(cap);
     if *cap.offset(0) as libc::c_int == '+' as i32 {
       if prctl(47i32, 2i32, idx, 0, 0) < 0 {
-        bb_simple_perror_msg(b"cap_ambient_raise\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg(
+          b"cap_ambient_raise\x00" as *const u8 as *const libc::c_char,
+        );
       }
     } else if prctl(47i32, 3i32, idx, 0, 0) < 0 {
-      bb_simple_perror_msg(b"cap_ambient_lower\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg(
+        b"cap_ambient_lower\x00" as *const u8 as *const libc::c_char,
+      );
     }
     cap = strtok(
       std::ptr::null_mut::<libc::c_char>(),
@@ -276,10 +239,10 @@ unsafe extern "C" fn dump() -> libc::c_int {
   getresuid(&mut ruid, &mut euid, &mut suid);
   getresgid(&mut rgid, &mut egid, &mut sgid);
   ngids = 0;
-  gids = bb_getgroups(&mut ngids, 0 as *mut gid_t);
+  gids = crate::libbb::bb_getgroups::bb_getgroups(&mut ngids, 0 as *mut gid_t);
   nnp = prctl(39i32, 0, 0, 0, 0);
   if nnp < 0 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"prctl: %s\x00" as *const u8 as *const libc::c_char,
       b"GET_NO_NEW_PRIVS\x00" as *const u8 as *const libc::c_char,
     );
@@ -304,7 +267,7 @@ unsafe extern "C" fn dump() -> libc::c_int {
     b"\nno_new_privs: %d\n\x00" as *const u8 as *const libc::c_char,
     nnp,
   );
-  getcaps(&mut caps as *mut caps as *mut libc::c_void);
+  crate::libbb::capability::getcaps(&mut caps as *mut caps as *mut libc::c_void);
   printf(b"Inheritable capabilities: \x00" as *const u8 as *const libc::c_char);
   fmt = b"\x00" as *const u8 as *const libc::c_char;
   i = 0;
@@ -317,12 +280,12 @@ unsafe extern "C" fn dump() -> libc::c_int {
         caps.u32s,
         i,
       );
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"unsupported capability\x00" as *const u8 as *const libc::c_char,
       );
     }
     if caps.data[idx as usize].inheritable & (1i32 << (i & 31i32)) as libc::c_uint != 0 {
-      printf_cap(fmt, i as libc::c_uint);
+      crate::libbb::capability::printf_cap(fmt, i as libc::c_uint);
       fmt = b",\x00" as *const u8 as *const libc::c_char
     }
     i += 1
@@ -336,13 +299,13 @@ unsafe extern "C" fn dump() -> libc::c_int {
   while i >= 0 && i <= 37i32 {
     let mut ret: libc::c_int = prctl(47i32, 1i32, i as libc::c_ulong, 0u64, 0u64);
     if ret < 0 {
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"prctl: %s\x00" as *const u8 as *const libc::c_char,
         b"CAP_AMBIENT_IS_SET\x00" as *const u8 as *const libc::c_char,
       );
     }
     if ret != 0 {
-      printf_cap(fmt, i as libc::c_uint);
+      crate::libbb::capability::printf_cap(fmt, i as libc::c_uint);
       fmt = b",\x00" as *const u8 as *const libc::c_char
     }
     i += 1
@@ -358,13 +321,13 @@ unsafe extern "C" fn dump() -> libc::c_int {
   while i >= 0 && i <= 37i32 {
     let mut ret_0: libc::c_int = prctl(23i32, i as libc::c_ulong, 0u64, 0u64, 0u64);
     if ret_0 < 0 {
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"prctl: %s\x00" as *const u8 as *const libc::c_char,
         b"CAPBSET_READ\x00" as *const u8 as *const libc::c_char,
       );
     }
     if ret_0 != 0 {
-      printf_cap(fmt, i as libc::c_uint);
+      crate::libbb::capability::printf_cap(fmt, i as libc::c_uint);
       fmt = b",\x00" as *const u8 as *const libc::c_char
     }
     i += 1
@@ -372,7 +335,7 @@ unsafe extern "C" fn dump() -> libc::c_int {
   if *fmt.offset(0) == 0 {
     printf(b"[none]\x00" as *const u8 as *const libc::c_char);
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   return 0;
 }
 /* FEATURE_SETPRIV_DUMP */
@@ -389,7 +352,7 @@ pub unsafe extern "C" fn setpriv_main(
   let mut opts: libc::c_int = 0;
   let mut inh_caps: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ambient_caps: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  opts = getopt32long(
+  opts = crate::libbb::getopt32::getopt32long(
     argv,
     b"+d\xfe:\xfd:\x00" as *const u8 as *const libc::c_char,
     setpriv_longopts.as_ptr(),
@@ -399,13 +362,13 @@ pub unsafe extern "C" fn setpriv_main(
   argv = argv.offset(optind as isize);
   if opts & OPT_DUMP as libc::c_int != 0 {
     if !(*argv.offset(0)).is_null() || opts - OPT_DUMP as libc::c_int != 0 {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     return dump();
   }
   if opts & OPT_NNP as libc::c_int != 0 {
     if prctl(38i32, 1i32, 0, 0, 0) != 0 {
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"prctl: %s\x00" as *const u8 as *const libc::c_char,
         b"SET_NO_NEW_PRIVS\x00" as *const u8 as *const libc::c_char,
       );
@@ -418,7 +381,7 @@ pub unsafe extern "C" fn setpriv_main(
     set_ambient_caps(ambient_caps);
   }
   if (*argv.offset(0)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
-  BB_EXECVP_or_die(argv);
+  crate::libbb::executable::BB_EXECVP_or_die(argv);
 }

@@ -1,9 +1,11 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-use crate::librb::size_t;
-
+use crate::librb::socklen_t;
 use libc;
 use libc::close;
 use libc::ptrdiff_t;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::suseconds_t;
 use libc::time_t;
 use libc::timeval;
@@ -34,30 +36,19 @@ extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn monotonic_sec() -> libc::c_uint;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
 pub type __socklen_t = libc::c_uint;
-pub type socklen_t = __socklen_t;
 pub type __fd_mask = libc::c_long;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fd_set {
   pub fds_bits: [__fd_mask; 16],
 }
-use libc::sa_family_t;
-use libc::sockaddr;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __SOCKADDR_ARG {
   pub __sockaddr__: *mut sockaddr,
   pub __sockaddr_at__: *mut sockaddr_at,
@@ -73,41 +64,15 @@ pub union __SOCKADDR_ARG {
   pub __sockaddr_un__: *mut sockaddr_un,
   pub __sockaddr_x25__: *mut sockaddr_x25,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
 pub type in_addr_t = u32;
 
 /*
@@ -119,8 +84,9 @@ pub type in_addr_t = u32;
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 /* opaque structure */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct isrv_state_t {
   pub fd2peer: *mut libc::c_short,
   pub param_tbl: *mut *mut libc::c_void,
@@ -228,7 +194,7 @@ pub unsafe extern "C" fn isrv_register_fd(
   if (*state).fd_count <= fd {
     n = (*state).fd_count;
     (*state).fd_count = fd + 1i32;
-    (*state).fd2peer = xrealloc(
+    (*state).fd2peer = crate::libbb::xfuncs_printf::xrealloc(
       (*state).fd2peer as *mut libc::c_void,
       ((*state).fd_count as libc::c_ulong)
         .wrapping_mul(::std::mem::size_of::<libc::c_short>() as libc::c_ulong),
@@ -259,7 +225,7 @@ pub unsafe extern "C" fn isrv_close_fd(mut state: *mut isrv_state_t, mut fd: lib
       }
     }
     (*state).fd_count = fd + 1i32;
-    (*state).fd2peer = xrealloc(
+    (*state).fd2peer = crate::libbb::xfuncs_printf::xrealloc(
       (*state).fd2peer as *mut libc::c_void,
       ((*state).fd_count as libc::c_ulong)
         .wrapping_mul(::std::mem::size_of::<libc::c_short>() as libc::c_ulong),
@@ -279,7 +245,7 @@ pub unsafe extern "C" fn isrv_register_peer(
   let fresh1 = (*state).peer_count;
   (*state).peer_count = (*state).peer_count + 1;
   n = fresh1;
-  (*state).param_tbl = xrealloc(
+  (*state).param_tbl = crate::libbb::xfuncs_printf::xrealloc(
     (*state).param_tbl as *mut libc::c_void,
     ((*state).peer_count as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<*mut libc::c_void>() as libc::c_ulong),
@@ -287,7 +253,7 @@ pub unsafe extern "C" fn isrv_register_peer(
   let ref mut fresh2 = *(*state).param_tbl.offset(n as isize);
   *fresh2 = param;
   if (*state).timeout != 0 {
-    (*state).timeo_tbl = xrealloc(
+    (*state).timeo_tbl = crate::libbb::xfuncs_printf::xrealloc(
       (*state).timeo_tbl as *mut libc::c_void,
       ((*state).peer_count as libc::c_ulong)
         .wrapping_mul(::std::mem::size_of::<time_t>() as libc::c_ulong),
@@ -332,13 +298,13 @@ unsafe extern "C" fn remove_peer(mut state: *mut isrv_state_t, mut peer: libc::c
       );
     }
   }
-  (*state).param_tbl = xrealloc(
+  (*state).param_tbl = crate::libbb::xfuncs_printf::xrealloc(
     (*state).param_tbl as *mut libc::c_void,
     ((*state).peer_count as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<*mut libc::c_void>() as libc::c_ulong),
   ) as *mut *mut libc::c_void;
   if (*state).timeout != 0 {
-    (*state).timeo_tbl = xrealloc(
+    (*state).timeo_tbl = crate::libbb::xfuncs_printf::xrealloc(
       (*state).timeo_tbl as *mut libc::c_void,
       ((*state).peer_count as libc::c_ulong)
         .wrapping_mul(::std::mem::size_of::<time_t>() as libc::c_ulong),
@@ -373,7 +339,9 @@ unsafe extern "C" fn handle_accept(mut state: *mut isrv_state_t, mut fd: libc::c
     /* Most probably someone gave us wrong fd type
      * (for example, non-socket). Don't want
      * to loop forever. */
-    bb_simple_perror_msg_and_die(b"accept\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"accept\x00" as *const u8 as *const libc::c_char,
+    );
   }
   n = (*state).new_peer.expect("non-null function pointer")(state, newfd);
   if n != 0 {
@@ -439,7 +407,7 @@ unsafe extern "C" fn handle_fd_set(
           /* this peer is gone */
           remove_peer(state, peer); /* all words are zero */
         } else if (*state).timeout != 0 {
-          *(*state).timeo_tbl.offset(peer as isize) = monotonic_sec() as time_t
+          *(*state).timeo_tbl.offset(peer as isize) = crate::libbb::time::monotonic_sec() as time_t
         }
       }
     } else {
@@ -480,8 +448,9 @@ pub unsafe extern "C" fn isrv_run(
   mut timeout: libc::c_int,
   mut linger_timeout: libc::c_int,
 ) {
-  let mut state: *mut isrv_state_t =
-    xzalloc(::std::mem::size_of::<isrv_state_t>() as libc::c_ulong) as *mut isrv_state_t;
+  let mut state: *mut isrv_state_t = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<
+    isrv_state_t,
+  >() as libc::c_ulong) as *mut isrv_state_t;
   (*state).new_peer = new_peer;
   (*state).timeout = timeout;
   /* register "peer" #0 - it will accept new connections */
@@ -524,14 +493,16 @@ pub unsafe extern "C" fn isrv_run(
     );
     if n < 0 {
       if *bb_errno != 4i32 {
-        bb_simple_perror_msg(b"select\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg(
+          b"select\x00" as *const u8 as *const libc::c_char,
+        );
       }
     } else {
       if n == 0 && linger_timeout != 0 && (*state).peer_count <= 1i32 {
         break;
       }
       if timeout != 0 {
-        let mut t: time_t = monotonic_sec() as time_t;
+        let mut t: time_t = crate::libbb::time::monotonic_sec() as time_t;
         if t != (*state).curtime {
           (*state).curtime = t;
           handle_timeout(state, do_timeout);

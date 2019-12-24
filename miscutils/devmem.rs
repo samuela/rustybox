@@ -20,33 +20,18 @@ extern "C" {
   #[no_mangle]
   fn munmap(__addr: *mut libc::c_void, __len: size_t) -> libc::c_int;
 
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xatou(str: *const libc::c_char) -> libc::c_uint;
-  /* Non-aborting kind of convertors: bb_strto[u][l]l */
-  /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
-   * errno = EINVAL if value was not '\0' terminated, but otherwise ok
-   *    Return value is still valid, caller should just check whether end[0]
-   *    is a valid terminating char for particular case. OTOH, if caller
-   *    requires '\0' terminated input, [s]he can just check errno == 0.
-   * errno = ERANGE if value had alphanumeric terminating char ("1234abcg").
-   * errno = ERANGE if value is out of range, missing, etc.
-   * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
-   *    return value is all-ones in this case.
-   */
-  #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+/* Non-aborting kind of convertors: bb_strto[u][l]l */
+/* On exit: errno = 0 only if there was non-empty, '\0' terminated value
+ * errno = EINVAL if value was not '\0' terminated, but otherwise ok
+ *    Return value is still valid, caller should just check whether end[0]
+ *    is a valid terminating char for particular case. OTOH, if caller
+ *    requires '\0' terminated input, [s]he can just check errno == 0.
+ * errno = ERANGE if value had alphanumeric terminating char ("1234abcg").
+ * errno = ERANGE if value is out of range, missing, etc.
+ * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
+ *    return value is all-ones in this case.
+ */
+
 }
 
 use crate::librb::size_t;
@@ -100,17 +85,18 @@ pub unsafe extern "C" fn devmem_main(
   // Let's try this and see how users react.
   /* ADDRESS */
   if (*argv.offset(1)).is_null() {
-    bb_show_usage(); /* allows hex, oct etc */
+    crate::libbb::appletlib::bb_show_usage(); /* allows hex, oct etc */
   }
   *bb_errno = 0;
-  target = bb_strtoull(*argv.offset(1), 0 as *mut *mut libc::c_char, 0) as off_t;
+  target = crate::libbb::bb_strtonum::bb_strtoull(*argv.offset(1), 0 as *mut *mut libc::c_char, 0)
+    as off_t;
   /* WIDTH */
   if !(*argv.offset(2)).is_null() {
     if (*(*argv.offset(2)).offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int
       <= 9i32
       || *(*argv.offset(2)).offset(1) as libc::c_int != 0
     {
-      width = xatou(*argv.offset(2))
+      width = crate::libbb::xatonum::xatou(*argv.offset(2))
     } else {
       static mut bhwl: [libc::c_char; 5] = [98, 104, 119, 108, 0]; /* argv[2] == NULL */
       width = strchrnul(
@@ -122,16 +108,18 @@ pub unsafe extern "C" fn devmem_main(
     }
     /* VALUE */
     if !(*argv.offset(3)).is_null() {
-      writeval = bb_strtoull(*argv.offset(3), 0 as *mut *mut libc::c_char, 0) as u64
+      writeval =
+        crate::libbb::bb_strtonum::bb_strtoull(*argv.offset(3), 0 as *mut *mut libc::c_char, 0)
+          as u64
     }
   } else {
     /* make argv[3] to be a valid thing to fetch */
     argv = argv.offset(-1)
   } /* one of bb_strtouXX failed */
   if *bb_errno != 0 {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
-  fd = xopen(
+  fd = crate::libbb::xfuncs_printf::xopen(
     b"/dev/mem\x00" as *const u8 as *const libc::c_char,
     if !(*argv.offset(3)).is_null() {
       (0o2i32) | 0o4010000i32
@@ -160,7 +148,9 @@ pub unsafe extern "C" fn devmem_main(
     target & !(page_size.wrapping_sub(1i32 as libc::c_uint) as off_t),
   );
   if map_base == -1i32 as *mut libc::c_void {
-    bb_simple_perror_msg_and_die(b"mmap\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"mmap\x00" as *const u8 as *const libc::c_char,
+    );
   }
   //	printf("Memory mapped at address %p.\n", map_base);
   virt_addr = (map_base as *mut libc::c_char).offset(offset_in_page as isize) as *mut libc::c_void;
@@ -171,7 +161,9 @@ pub unsafe extern "C" fn devmem_main(
       32 => read_result = *(virt_addr as *mut u32) as u64,
       64 => read_result = *(virt_addr as *mut u64),
       _ => {
-        bb_simple_error_msg_and_die(b"bad width\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+          b"bad width\x00" as *const u8 as *const libc::c_char,
+        );
       }
     }
     //		printf("Value at address 0x%"OFF_FMT"X (%p): 0x%llX\n",
@@ -190,7 +182,9 @@ pub unsafe extern "C" fn devmem_main(
       32 => ::std::ptr::write_volatile(virt_addr as *mut u32, writeval as u32),
       64 => ::std::ptr::write_volatile(virt_addr as *mut u64, writeval),
       _ => {
-        bb_simple_error_msg_and_die(b"bad width\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+          b"bad width\x00" as *const u8 as *const libc::c_char,
+        );
       }
     }
     //		printf("Written 0x%llX; readback 0x%llX\n",

@@ -1,30 +1,8 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off: u64, len: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
-
-  #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
-}
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+
+use crate::util_linux::volume_id::volume_id::volume_id;
 
 pub type uuid_format = libc::c_uint;
 // pub const UUID_DCE_STRING: uuid_format = 3;
@@ -32,8 +10,8 @@ pub const UUID_DCE: uuid_format = 2;
 // pub const UUID_NTFS: uuid_format = 1;
 // pub const UUID_DOS: uuid_format = 0;
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct nilfs2_super_block {
   pub s_rev_level: u32,
   pub s_minor_rev_level: u16,
@@ -155,7 +133,7 @@ pub unsafe extern "C" fn volume_id_probe_nilfs(mut id: *mut volume_id) -> libc::
 /*,u64 off*/ {
   let mut sb: *mut nilfs2_super_block = std::ptr::null_mut();
   // Primary super block
-  sb = volume_id_get_buffer(
+  sb = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     0x400i32 as u64,
     ::std::mem::size_of::<nilfs2_super_block>() as libc::c_ulong,
@@ -168,12 +146,12 @@ pub unsafe extern "C" fn volume_id_probe_nilfs(mut id: *mut volume_id) -> libc::
   }
   // The secondary superblock is not always used, so ignore it for now.
   // When used it is at 4K from the end of the partition (sb->s_dev_size - NILFS_SB2_OFFSET).
-  volume_id_set_label_string(
+  crate::util_linux::volume_id::util::volume_id_set_label_string(
     id,
     (*sb).s_volume_name.as_mut_ptr(),
     if 80i32 < 64i32 { 80i32 } else { 64i32 } as size_t,
   );
-  volume_id_set_uuid(id, (*sb).s_uuid.as_mut_ptr(), UUID_DCE);
+  crate::util_linux::volume_id::util::volume_id_set_uuid(id, (*sb).s_uuid.as_mut_ptr(), UUID_DCE);
   if (*sb).s_rev_level == 2i32 as libc::c_uint {
     (*id).type_0 = b"nilfs2\x00" as *const u8 as *const libc::c_char
   }

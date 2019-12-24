@@ -10,17 +10,15 @@ extern "C" {
     __n: libc::c_int,
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
 }
 
 use libc::FILE;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub mem_unit: libc::c_uint,
   pub unit_steps: u8,
@@ -32,8 +30,9 @@ pub type __u16 = libc::c_ushort;
 pub type u32 = libc::c_uint;
 pub type __kernel_long_t = libc::c_long;
 pub type __kernel_ulong_t = libc::c_ulong;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sysinfo {
   pub uptime: __kernel_long_t,
   pub loads: [__kernel_ulong_t; 3],
@@ -61,7 +60,8 @@ unsafe extern "C" fn parse_meminfo(mut g: *mut globals) -> libc::c_uint {
   let mut buf: [libc::c_char; 60] = [0; 60]; /* actual lines we expect are ~30 chars or less */
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut seen_cached_and_available_and_reclaimable: libc::c_int = 0;
-  fp = xfopen_for_read(b"/proc/meminfo\x00" as *const u8 as *const libc::c_char);
+  fp =
+    crate::libbb::wfopen::xfopen_for_read(b"/proc/meminfo\x00" as *const u8 as *const libc::c_char);
   (*g).reclaimable_kb = 0 as libc::c_ulong;
   (*g).available_kb = (*g).reclaimable_kb;
   (*g).cached_kb = (*g).available_kb;
@@ -158,7 +158,7 @@ pub unsafe extern "C" fn free_main(
         G.unit_steps = 30i32 as u8
       }
       _ => {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
     }
   }

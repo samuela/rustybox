@@ -21,42 +21,12 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn monotonic_us() -> libc::c_ulonglong;
-
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn sha512_end(ctx: *mut sha512_ctx_t, resbuf: *mut libc::c_void) -> libc::c_uint;
-  #[no_mangle]
-  fn sha512_hash(ctx: *mut sha512_ctx_t, buffer: *const libc::c_void, len: size_t);
-  #[no_mangle]
-  fn sha512_begin(ctx: *mut sha512_ctx_t);
-  #[no_mangle]
-  fn sha1_end(ctx: *mut sha1_ctx_t, resbuf: *mut libc::c_void) -> libc::c_uint;
-  #[no_mangle]
-  fn md5_hash(ctx: *mut md5_ctx_t, buffer: *const libc::c_void, len: size_t);
-  #[no_mangle]
-  fn sha256_begin(ctx: *mut sha256_ctx_t);
-  #[no_mangle]
-  fn md5_end(ctx: *mut md5_ctx_t, resbuf: *mut libc::c_void) -> libc::c_uint;
-  #[no_mangle]
-  fn md5_begin(ctx: *mut md5_ctx_t);
 }
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct des_ctx {
   pub const_ctx: *const const_des_ctx,
   pub saltbits: u32,
@@ -77,23 +47,26 @@ pub struct des_ctx {
 /* Static stuff that stays resident and doesn't change after
  * being initialized, and therefore doesn't need to be made
  * reentrant. */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct const_des_ctx {
   pub final_perm: [u8; 64],
   pub m_sbox: [[u8; 4096]; 4],
   /* 5 times */
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed {
   pub alt_result: [libc::c_uchar; 64],
   pub temp_result: [libc::c_uchar; 64],
   pub ctx: C2RustUnnamed_1,
   pub alt_ctx: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub x: sha256_ctx_t,
   pub y: sha512_ctx_t,
@@ -101,8 +74,9 @@ pub union C2RustUnnamed_0 {
 use crate::librb::md5_ctx_t;
 use crate::librb::sha256_ctx_t;
 use crate::librb::sha512_ctx_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub x: sha256_ctx_t,
   pub y: sha512_ctx_t,
@@ -141,8 +115,8 @@ pub unsafe extern "C" fn crypt_make_salt(
 ) -> libc::c_int
 /*, int x */ {
   /* was: x += ... */
-  let mut x: libc::c_uint =
-    (getpid() as libc::c_ulonglong).wrapping_add(monotonic_us()) as libc::c_uint;
+  let mut x: libc::c_uint = (getpid() as libc::c_ulonglong)
+    .wrapping_add(crate::libbb::time::monotonic_us()) as libc::c_uint;
   loop {
     /* x = (x*1664525 + 1013904223) % 2^32 generator is lame
      * (low-order bit is not "random", etc...),
@@ -1071,7 +1045,7 @@ unsafe extern "C" fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_c
       let fresh7;
       let fresh8 = __x;
       asm!("bswap $0" : "=r" (fresh7) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
     }
     __v
@@ -1089,8 +1063,7 @@ unsafe extern "C" fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_c
       let fresh10;
       let fresh11 = __x;
       asm!("bswap $0" : "=r" (fresh10) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11))
-                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
     }
     __v
@@ -1348,11 +1321,11 @@ unsafe extern "C" fn md5_crypt(
     sl += 1
   }
   /* Hash. the password first, since that is what is most unknown */
-  md5_begin(&mut ctx);
+  crate::libbb::hash_md5_sha::md5_begin(&mut ctx);
   pw_len = strlen(pw as *mut libc::c_char) as libc::c_int;
-  md5_hash(&mut ctx, pw as *const libc::c_void, pw_len as size_t);
+  crate::libbb::hash_md5_sha::md5_hash(&mut ctx, pw as *const libc::c_void, pw_len as size_t);
   /* Then the salt including "$1$" */
-  md5_hash(&mut ctx, salt as *const libc::c_void, sl as size_t);
+  crate::libbb::hash_md5_sha::md5_hash(&mut ctx, salt as *const libc::c_void, sl as size_t);
   /* Copy salt to result; skip "$1$" */
   memcpy(
     result as *mut libc::c_void,
@@ -1363,14 +1336,14 @@ unsafe extern "C" fn md5_crypt(
   salt = salt.offset(3);
   sl -= 3i32;
   /* Then just as many characters of the MD5(pw, salt, pw) */
-  md5_begin(&mut ctx1);
-  md5_hash(&mut ctx1, pw as *const libc::c_void, pw_len as size_t);
-  md5_hash(&mut ctx1, salt as *const libc::c_void, sl as size_t);
-  md5_hash(&mut ctx1, pw as *const libc::c_void, pw_len as size_t);
-  md5_end(&mut ctx1, final_0.as_mut_ptr() as *mut libc::c_void);
+  crate::libbb::hash_md5_sha::md5_begin(&mut ctx1);
+  crate::libbb::hash_md5_sha::md5_hash(&mut ctx1, pw as *const libc::c_void, pw_len as size_t);
+  crate::libbb::hash_md5_sha::md5_hash(&mut ctx1, salt as *const libc::c_void, sl as size_t);
+  crate::libbb::hash_md5_sha::md5_hash(&mut ctx1, pw as *const libc::c_void, pw_len as size_t);
+  crate::libbb::hash_md5_sha::md5_end(&mut ctx1, final_0.as_mut_ptr() as *mut libc::c_void);
   pl = pw_len;
   while pl > 0 {
-    md5_hash(
+    crate::libbb::hash_md5_sha::md5_hash(
       &mut ctx,
       final_0.as_mut_ptr() as *const libc::c_void,
       if pl > 16i32 { 16i32 } else { pl } as size_t,
@@ -1385,7 +1358,7 @@ unsafe extern "C" fn md5_crypt(
   );
   i = pw_len;
   while i != 0 {
-    md5_hash(
+    crate::libbb::hash_md5_sha::md5_hash(
       &mut ctx,
       if i & 1i32 != 0 {
         final_0.as_mut_ptr()
@@ -1396,39 +1369,39 @@ unsafe extern "C" fn md5_crypt(
     );
     i >>= 1i32
   }
-  md5_end(&mut ctx, final_0.as_mut_ptr() as *mut libc::c_void);
+  crate::libbb::hash_md5_sha::md5_end(&mut ctx, final_0.as_mut_ptr() as *mut libc::c_void);
   /* And now, just to make sure things don't run too fast.
    * On a 60 Mhz Pentium this takes 34 msec, so you would
    * need 30 seconds to build a 1000 entry dictionary...
    */
   i = 0; /* 12 bytes max (sl is up to 8 bytes) */
   while i < 1000i32 {
-    md5_begin(&mut ctx1);
+    crate::libbb::hash_md5_sha::md5_begin(&mut ctx1);
     if i & 1i32 != 0 {
-      md5_hash(&mut ctx1, pw as *const libc::c_void, pw_len as size_t);
+      crate::libbb::hash_md5_sha::md5_hash(&mut ctx1, pw as *const libc::c_void, pw_len as size_t);
     } else {
-      md5_hash(
+      crate::libbb::hash_md5_sha::md5_hash(
         &mut ctx1,
         final_0.as_mut_ptr() as *const libc::c_void,
         16i32 as size_t,
       );
     }
     if i % 3i32 != 0 {
-      md5_hash(&mut ctx1, salt as *const libc::c_void, sl as size_t);
+      crate::libbb::hash_md5_sha::md5_hash(&mut ctx1, salt as *const libc::c_void, sl as size_t);
     }
     if i % 7i32 != 0 {
-      md5_hash(&mut ctx1, pw as *const libc::c_void, pw_len as size_t);
+      crate::libbb::hash_md5_sha::md5_hash(&mut ctx1, pw as *const libc::c_void, pw_len as size_t);
     }
     if i & 1i32 != 0 {
-      md5_hash(
+      crate::libbb::hash_md5_sha::md5_hash(
         &mut ctx1,
         final_0.as_mut_ptr() as *const libc::c_void,
         16i32 as size_t,
       );
     } else {
-      md5_hash(&mut ctx1, pw as *const libc::c_void, pw_len as size_t);
+      crate::libbb::hash_md5_sha::md5_hash(&mut ctx1, pw as *const libc::c_void, pw_len as size_t);
     }
-    md5_end(&mut ctx1, final_0.as_mut_ptr() as *mut libc::c_void);
+    crate::libbb::hash_md5_sha::md5_end(&mut ctx1, final_0.as_mut_ptr() as *mut libc::c_void);
     i += 1
   }
   p = result.offset(sl as isize).offset(4);
@@ -1509,7 +1482,7 @@ unsafe extern "C" fn sha_crypt(
     _32or64 *= 2i32; /*64*/
     cnt = cnt.wrapping_add(43i32 as libc::c_uint)
   } /* will provide NUL terminator */
-  resptr = xzalloc(cnt as size_t) as *mut libc::c_char;
+  resptr = crate::libbb::xfuncs_printf::xzalloc(cnt as size_t) as *mut libc::c_char;
   result = resptr;
   let fresh17 = resptr;
   resptr = resptr.offset(1);
@@ -1525,7 +1498,7 @@ unsafe extern "C" fn sha_crypt(
   if strncmp(salt_data, str_rounds.as_ptr(), 7i32 as libc::c_ulong) == 0 {
     /* 7 == strlen("rounds=") */
     let mut endp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    cnt = bb_strtou(salt_data.offset(7), &mut endp, 10i32);
+    cnt = crate::libbb::bb_strtonum::bb_strtou(salt_data.offset(7), &mut endp, 10i32);
     if *endp as libc::c_int == '$' as i32 {
       salt_data = endp.offset(1);
       rounds = cnt;
@@ -1546,7 +1519,7 @@ unsafe extern "C" fn sha_crypt(
   }
   /* xstrdup assures suitable alignment; also we will use it
   as a scratch space later. */
-  salt_data = xstrndup(salt_data, salt_len as libc::c_int);
+  salt_data = crate::libbb::xfuncs_printf::xstrndup(salt_data, salt_len as libc::c_int);
   /* add "salt$" to result */
   strcpy(resptr, salt_data);
   resptr = resptr.offset(salt_len as isize);
@@ -1555,7 +1528,7 @@ unsafe extern "C" fn sha_crypt(
   *fresh20 = '$' as i32 as libc::c_char;
   /* key data doesn't need much processing */
   key_len = strlen(key_data) as libc::c_uint;
-  key_data = xstrdup(key_data);
+  key_data = crate::libbb::xfuncs_printf::xstrdup(key_data);
   /* Which flavor of SHAnnn ops to use? */
   sha_begin = ::std::mem::transmute::<
     *mut libc::c_void,
@@ -1564,7 +1537,7 @@ unsafe extern "C" fn sha_crypt(
     Option<unsafe extern "C" fn(_: *mut sha256_ctx_t) -> ()>,
     *mut libc::c_void,
   >(Some(
-    sha256_begin as unsafe extern "C" fn(_: *mut sha256_ctx_t) -> (),
+    crate::libbb::hash_md5_sha::sha256_begin as unsafe extern "C" fn(_: *mut sha256_ctx_t) -> (),
   )));
   sha_hash = ::std::mem::transmute::<
     *mut libc::c_void,
@@ -1573,7 +1546,8 @@ unsafe extern "C" fn sha_crypt(
     Option<unsafe extern "C" fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> ()>,
     *mut libc::c_void,
   >(Some(
-    md5_hash as unsafe extern "C" fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> (),
+    crate::libbb::hash_md5_sha::md5_hash
+      as unsafe extern "C" fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> (),
   )));
   sha_end = ::std::mem::transmute::<
     *mut libc::c_void,
@@ -1582,7 +1556,8 @@ unsafe extern "C" fn sha_crypt(
     Option<unsafe extern "C" fn(_: *mut sha1_ctx_t, _: *mut libc::c_void) -> libc::c_uint>,
     *mut libc::c_void,
   >(Some(
-    sha1_end as unsafe extern "C" fn(_: *mut sha1_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
+    crate::libbb::hash_md5_sha::sha1_end
+      as unsafe extern "C" fn(_: *mut sha1_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
   )));
   if _32or64 != 32i32 {
     sha_begin = ::std::mem::transmute::<
@@ -1592,7 +1567,7 @@ unsafe extern "C" fn sha_crypt(
       Option<unsafe extern "C" fn(_: *mut sha512_ctx_t) -> ()>,
       *mut libc::c_void,
     >(Some(
-      sha512_begin as unsafe extern "C" fn(_: *mut sha512_ctx_t) -> (),
+      crate::libbb::hash_md5_sha::sha512_begin as unsafe extern "C" fn(_: *mut sha512_ctx_t) -> (),
     )));
     sha_hash = ::std::mem::transmute::<
       *mut libc::c_void,
@@ -1601,7 +1576,7 @@ unsafe extern "C" fn sha_crypt(
       Option<unsafe extern "C" fn(_: *mut sha512_ctx_t, _: *const libc::c_void, _: size_t) -> ()>,
       *mut libc::c_void,
     >(Some(
-      sha512_hash
+      crate::libbb::hash_md5_sha::sha512_hash
         as unsafe extern "C" fn(_: *mut sha512_ctx_t, _: *const libc::c_void, _: size_t) -> (),
     )));
     sha_end = ::std::mem::transmute::<
@@ -1611,7 +1586,7 @@ unsafe extern "C" fn sha_crypt(
       Option<unsafe extern "C" fn(_: *mut sha512_ctx_t, _: *mut libc::c_void) -> libc::c_uint>,
       *mut libc::c_void,
     >(Some(
-      sha512_end
+      crate::libbb::hash_md5_sha::sha512_end
         as unsafe extern "C" fn(_: *mut sha512_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
     )))
   }
@@ -1922,8 +1897,8 @@ unsafe extern "C" fn sha_crypt(
  */
 /* Other advanced crypt ids (TODO?): */
 /* $2$ or $2a$: Blowfish */
-static mut des_cctx: *mut const_des_ctx = 0 as *const const_des_ctx as *mut const_des_ctx;
-static mut des_ctx: *mut des_ctx = 0 as *const des_ctx as *mut des_ctx;
+static mut des_cctx: *mut const_des_ctx = std::ptr::null_mut();
+static mut des_ctx: *mut des_ctx = std::ptr::null_mut();
 /* my_crypt returns malloc'ed data */
 unsafe extern "C" fn my_crypt(
   mut key: *const libc::c_char,
@@ -1936,7 +1911,7 @@ unsafe extern "C" fn my_crypt(
   {
     if *salt.offset(1) as libc::c_int == '1' as i32 {
       return md5_crypt(
-        xzalloc(36i32 as size_t) as *mut libc::c_char,
+        crate::libbb::xfuncs_printf::xzalloc(36i32 as size_t) as *mut libc::c_char,
         key as *mut libc::c_uchar,
         salt as *mut libc::c_uchar,
       );
@@ -1952,7 +1927,7 @@ unsafe extern "C" fn my_crypt(
   des_ctx = des_init(des_ctx, des_cctx);
   return des_crypt(
     des_ctx,
-    xzalloc(21i32 as size_t) as *mut libc::c_char,
+    crate::libbb::xfuncs_printf::xzalloc(21i32 as size_t) as *mut libc::c_char,
     key as *mut libc::c_uchar,
     salt as *mut libc::c_uchar,
   );

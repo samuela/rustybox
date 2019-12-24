@@ -12,14 +12,6 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
 }
 
 use crate::librb::size_t;
@@ -65,7 +57,7 @@ pub unsafe extern "C" fn seq_main(
   let mut sep: *const libc::c_char = std::ptr::null();
   let mut opt_s: *const libc::c_char = b"\n\x00" as *const u8 as *const libc::c_char;
   let mut opt: libc::c_uint = 0;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"+ws:\x00" as *const u8 as *const libc::c_char,
     &mut opt_s as *mut *const libc::c_char,
@@ -111,7 +103,7 @@ pub unsafe extern "C" fn seq_main(
       }
       _ => {}
     }
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* Last checked to be compatible with: coreutils-6.10 */
   width = 0 as libc::c_uint;
@@ -170,7 +162,7 @@ pub unsafe extern "C" fn seq_main(
   }
   if n != 0 {
     /* if while loop executed at least once */
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   }
-  return fflush_all();
+  return crate::libbb::xfuncs_printf::fflush_all();
 }

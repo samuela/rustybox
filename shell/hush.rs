@@ -39,7 +39,8 @@ use libc::timeval;
 use libc::umask;
 use libc::FILE;
 extern "C" {
-
+  #[no_mangle]
+  fn sigaction(__sig: libc::c_int, __act: *const sigaction, __oact: *mut sigaction) -> libc::c_int;
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
 
@@ -118,8 +119,6 @@ extern "C" {
 
   #[no_mangle]
   fn sigsuspend(__set: *const sigset_t) -> libc::c_int;
-  #[no_mangle]
-  fn sigaction(__sig: libc::c_int, __act: *const sigaction, __oact: *mut sigaction) -> libc::c_int;
 
   #[no_mangle]
   fn unsetenv(__name: *const libc::c_char) -> libc::c_int;
@@ -160,159 +159,21 @@ extern "C" {
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmemdup(s: *const libc::c_void, n: libc::c_int) -> *mut libc::c_void;
-  #[no_mangle]
-  fn endofname(name: *const libc::c_char) -> *const libc::c_char;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn ndelay_on(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn ndelay_off(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn close_on_exec_on(fd: libc::c_int);
-  #[no_mangle]
-  fn xdup2(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xrealloc_getcwd_or_warn(cwd: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn kill_myself_with_sig(sig: libc::c_int) -> !;
-  #[no_mangle]
-  fn sigprocmask_allsigs(how: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn sigprocmask2(how: libc::c_int, set: *mut sigset_t) -> libc::c_int;
-  #[no_mangle]
-  fn bb_unsetenv(key: *const libc::c_char);
-  #[no_mangle]
-  fn open_or_warn(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xpipe(filedes: *mut libc::c_int);
-  #[no_mangle]
-  fn string_array_len(argv: *mut *mut libc::c_char) -> libc::c_uint;
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn bb_clk_tck() -> libc::c_uint;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn xfdopen_for_read(fd: libc::c_int) -> *mut FILE;
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatoi(str: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn find_executable(
-    filename: *const libc::c_char,
-    PATHp: *mut *mut libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfork() -> pid_t;
-  #[no_mangle]
-  fn safe_waitpid(pid: pid_t, wstat: *mut libc::c_int, options: libc::c_int) -> pid_t;
-  #[no_mangle]
   fn run_nofork_applet(applet_no: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
   fn find_applet_by_name(name: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   static mut xfunc_error_retval: u8;
   #[no_mangle]
   static mut die_func: Option<unsafe extern "C" fn() -> ()>;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_verror_msg(s: *const libc::c_char, p: ::std::ffi::VaList, strerr: *const libc::c_char);
-  #[no_mangle]
-  fn bb_die_memory_exhausted() -> !;
-  #[no_mangle]
-  fn get_signame(number: libc::c_int) -> *const libc::c_char;
-  #[no_mangle]
-  fn bb_parse_mode(s: *const libc::c_char, cur_mode: libc::c_uint) -> libc::c_int;
-  #[no_mangle]
-  fn test_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static bb_msg_unknown: [libc::c_char; 0];
-  #[no_mangle]
-  fn printf_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn echo_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn get_signum(name: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn kill_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn show_history(st: *const line_input_t);
-  #[no_mangle]
-  fn new_line_input_t(flags: libc::c_int) -> *mut line_input_t;
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn size_from_HISTFILESIZE(hp: *const libc::c_char) -> libc::c_uint;
+
   #[no_mangle]
   static bb_banner: [libc::c_char; 0];
-  #[no_mangle]
-  fn read_line_input(
-    st: *mut line_input_t,
-    prompt: *const libc::c_char,
-    command: *mut libc::c_char,
-    maxsize: libc::c_int,
-  ) -> libc::c_int;
+
   /* NB: (bb_hexdigits_upcase[i] | 0x20) -> lowercase hex digit */
   /* Busybox mount uses either /proc/mounts or /etc/mtab to
    * get the list of currently mounted filesystems */
@@ -332,8 +193,6 @@ extern "C" {
   #[no_mangle]
   static bb_PATH_root_path: [libc::c_char; 0];
   /* Number of unicode chars. Falls back to strlen() on invalid unicode */
-  #[no_mangle]
-  fn unicode_strlen(string: *const libc::c_char) -> size_t;
 
   /*
    * Adapted from ash applet code
@@ -354,30 +213,18 @@ extern "C" {
    */
   #[no_mangle]
   static defifsvar: [libc::c_char; 0];
-  //TODO? do not provide bashisms if not asked for:
-  //#if !ENABLE_HUSH_BASH_COMPAT && !ENABLE_ASH_BASH_COMPAT
-  //#define shell_builtin_read(setvar,argv,ifs,read_flags,n,p,t,u,d)
-  //	shell_builtin_read(setvar,argv,ifs,read_flags)
-  //#endif
-  #[no_mangle]
-  fn shell_builtin_read(params: *mut builtin_read_params) -> *const libc::c_char;
-  #[no_mangle]
-  fn shell_builtin_ulimit(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn arith(state: *mut arith_state_t, expr: *const libc::c_char) -> arith_t;
-  #[no_mangle]
-  fn scan_and_match(
-    string: *mut libc::c_char,
-    pattern: *const libc::c_char,
-    flags: libc::c_uint,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn next_random(rnd: *mut random_t) -> u32;
+//TODO? do not provide bashisms if not asked for:
+//#if !ENABLE_HUSH_BASH_COMPAT && !ENABLE_ASH_BASH_COMPAT
+//#define shell_builtin_read(setvar,argv,ifs,read_flags,n,p,t,u,d)
+//	shell_builtin_read(setvar,argv,ifs,read_flags)
+//#endif
+
 }
 
 pub type __builtin_va_list = [__va_list_tag; 1];
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __va_list_tag {
   pub gp_offset: libc::c_uint,
   pub fp_offset: libc::c_uint,
@@ -393,8 +240,8 @@ pub type arith_t = libc::c_longlong;
 pub type smalluint = libc::c_uchar;
 pub type uintptr_t = libc::c_ulong;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct glob_t {
   pub gl_pathc: __size_t,
   pub gl_pathv: *mut *mut libc::c_char,
@@ -407,16 +254,18 @@ pub struct glob_t {
   pub gl_stat: Option<unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int>,
 }
 use libc::dirent;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct tms {
   pub tms_utime: clock_t,
   pub tms_stime: clock_t,
   pub tms_cutime: clock_t,
   pub tms_cstime: clock_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct utsname {
   pub sysname: [libc::c_char; 65],
   pub nodename: [libc::c_char; 65],
@@ -437,8 +286,8 @@ pub struct utsname {
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct timezone {
   pub tz_minuteswest: libc::c_int,
   pub tz_dsttime: libc::c_int,
@@ -500,8 +349,9 @@ pub struct timezone {
  *	implementation will return the offset of first char that does not match
  *	the regex (in C locale): ^[a-zA-Z_][a-zA-Z_0-9]*
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub interactive_fd: libc::c_int,
   pub line_input_state: *mut line_input_t,
@@ -556,8 +406,9 @@ pub struct globals {
   pub epoch_buf: [libc::c_char; 35],
   pub user_input_buf: [libc::c_char; 1024],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct o_string {
   pub data: *mut libc::c_char,
   pub length: libc::c_int,
@@ -567,8 +418,9 @@ pub struct o_string {
   pub has_empty_slot: smallint,
   pub ended_in_ifs: smallint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct HFILE {
   pub cur: *mut libc::c_char,
   pub end: *mut libc::c_char,
@@ -577,16 +429,18 @@ pub struct HFILE {
   pub fd: libc::c_int,
   pub buf: [libc::c_char; 1024],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct function {
   pub next: *mut function,
   pub name: *mut libc::c_char,
   pub parent_cmd: *mut command,
   pub body: *mut pipe,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct pipe {
   pub next: *mut pipe,
   pub num_cmds: libc::c_int,
@@ -600,8 +454,9 @@ pub struct pipe {
   pub pi_inverted: smallint,
   pub res_word: smallint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct command {
   pub pid: pid_t,
   pub assignment_cnt: libc::c_uint,
@@ -613,8 +468,9 @@ pub struct command {
   pub argv: *mut *mut libc::c_char,
   pub redirects: *mut redir_struct,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct redir_struct {
   pub next: *mut redir_struct,
   pub rd_filename: *mut libc::c_char,
@@ -622,8 +478,9 @@ pub struct redir_struct {
   pub rd_dup: libc::c_int,
   pub rd_type: smallint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct variable {
   pub next: *mut variable,
   pub varstr: *mut libc::c_char,
@@ -632,37 +489,22 @@ pub struct variable {
   pub flg_export: smallint,
   pub flg_read_only: smallint,
 }
-#[derive(Copy, Clone)]
+
+use crate::shell::random::random_t;
+
+use crate::librb::line_input_t;
+
 #[repr(C)]
-pub struct random_t {
-  pub galois_LFSR: i32,
-  pub LCG: u32,
-  pub xs64_x: u32,
-  pub xs64_y: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct line_input_t {
-  pub flags: libc::c_int,
-  pub timeout: libc::c_int,
-  pub path_lookup: *const libc::c_char,
-  pub cnt_history: libc::c_int,
-  pub cur_history: libc::c_int,
-  pub max_history: libc::c_int,
-  pub cnt_history_in_file: libc::c_uint,
-  pub hist_file: *const libc::c_char,
-  pub history: [*mut libc::c_char; 256],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub struct in_str {
   pub p: *const libc::c_char,
   pub peek_buf: [libc::c_int; 2],
   pub last_char: libc::c_int,
   pub file: *mut HFILE,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct squirrel {
   pub orig_fd: libc::c_int,
   pub moved_to: libc::c_int,
@@ -672,8 +514,9 @@ pub struct squirrel {
 /* If a reserved word is found and processed, parse context is modified
  * and 1 is returned.
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct reserved_combo {
   pub literal: [libc::c_char; 6],
   pub res: libc::c_uchar,
@@ -686,8 +529,9 @@ pub struct reserved_combo {
  * in the parent shell process.  If forked, of course they cannot.
  * For example, 'unset foo | whatever' will parse and run, but foo will
  * still be set at the end. */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct built_in_command {
   pub b_cmd: *const libc::c_char,
   pub b_function: Option<unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int>,
@@ -705,8 +549,9 @@ pub const PIPE_BG: pipe_style = 3;
 pub const BC_BREAK: C2RustUnnamed_17 = 1;
 pub const SPECIAL_JOBSTOP_SIGS: C2RustUnnamed_19 = 7340032;
 pub const SPECIAL_INTERACTIVE_SIGS: C2RustUnnamed_19 = 32774;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct save_arg_t {
   pub sv_argv0: *mut libc::c_char,
   pub sv_g_argv: *mut *mut libc::c_char,
@@ -717,30 +562,13 @@ pub const OPT_O_XTRACE: C2RustUnnamed_18 = 3;
 pub const OPT_O_NOEXEC: C2RustUnnamed_18 = 1;
 /* "OPTIND=1" */
 /* Builtins */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct builtin_read_params {
-  pub read_flags: libc::c_int,
-  pub setvar: Option<unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> ()>,
-  pub argv: *mut *mut libc::c_char,
-  pub ifs: *const libc::c_char,
-  pub opt_n: *const libc::c_char,
-  pub opt_p: *const libc::c_char,
-  pub opt_t: *const libc::c_char,
-  pub opt_u: *const libc::c_char,
-  pub opt_d: *const libc::c_char,
-}
+
+use crate::shell::shell_common::builtin_read_params;
 pub const EXP_FLAG_ESC_GLOB_CHARS: C2RustUnnamed_15 = 1;
 pub const EXP_FLAG_GLOB: C2RustUnnamed_15 = 2;
 pub const EXP_FLAG_SINGLEWORD: C2RustUnnamed_15 = 128;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct arith_state_t {
-  pub errmsg: *const libc::c_char,
-  pub lookupvar: arith_var_lookup_t,
-  pub setvar: arith_var_set_t,
-  pub list_of_recursed_names: *mut libc::c_void,
-}
+
+use crate::shell::math::arith_state_t;
 pub type arith_var_set_t =
   Option<unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> ()>;
 pub type arith_var_lookup_t =
@@ -751,8 +579,9 @@ pub const SCAN_MOVE_FROM_LEFT: C2RustUnnamed_13 = 1;
 pub const SCAN_MATCH_RIGHT_HALF: C2RustUnnamed_13 = 8;
 pub const REDIRFD_TO_FILE: redir_type = -1;
 pub const REDIRFD_CLOSE: redir_type = -3;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_10 {
   pub mode: libc::c_int,
   pub default_fd: libc::c_schar,
@@ -773,8 +602,9 @@ pub const PIPE_OR: pipe_style = 2;
 pub const PIPE_SEQ: pipe_style = 0;
 pub const RES_XXXX: C2RustUnnamed_14 = 17;
 pub const RES_NONE: C2RustUnnamed_14 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct parse_context {
   pub list_head: *mut pipe,
   pub pipe: *mut pipe,
@@ -1346,7 +1176,8 @@ static mut bltins1: [built_in_command; 31] = {
       let mut init = built_in_command {
         b_cmd: b"ulimit\x00" as *const u8 as *const libc::c_char,
         b_function: Some(
-          shell_builtin_ulimit as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int,
+          crate::shell::shell_common::shell_builtin_ulimit
+            as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int,
         ),
         b_descr: b"Control resource limits\x00" as *const u8 as *const libc::c_char,
       };
@@ -1464,35 +1295,37 @@ unsafe extern "C" fn die_if_script() {
       /* sometines it's 2, not 1 (bash compat) */
       xfunc_error_retval = (*ptr_to_globals).last_exitcode
     }
-    xfunc_die();
+    crate::libbb::xfunc_die::xfunc_die();
   };
 }
 unsafe extern "C" fn msg_and_die_if_script(mut fmt: *const libc::c_char, mut args: ...) {
   let mut p: ::std::ffi::VaListImpl;
   p = args.clone();
-  bb_verror_msg(fmt, p.as_va_list(), 0 as *const libc::c_char);
+  crate::libbb::verror_msg::bb_verror_msg(fmt, p.as_va_list(), 0 as *const libc::c_char);
   die_if_script();
 }
 unsafe extern "C" fn syntax_error(mut msg: *const libc::c_char) {
   if !msg.is_null() {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"syntax error: %s\x00" as *const u8 as *const libc::c_char,
       msg,
     );
   } else {
-    bb_simple_error_msg(b"syntax error\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg(
+      b"syntax error\x00" as *const u8 as *const libc::c_char,
+    );
   }
   die_if_script();
 }
 unsafe extern "C" fn syntax_error_at(mut msg: *const libc::c_char) {
-  bb_error_msg(
+  crate::libbb::verror_msg::bb_error_msg(
     b"syntax error at \'%s\'\x00" as *const u8 as *const libc::c_char,
     msg,
   );
   die_if_script();
 }
 unsafe extern "C" fn syntax_error_unterm_str(mut s: *const libc::c_char) {
-  bb_error_msg(
+  crate::libbb::verror_msg::bb_error_msg(
     b"syntax error: unterminated %s\x00" as *const u8 as *const libc::c_char,
     s,
   );
@@ -1507,7 +1340,7 @@ unsafe extern "C" fn syntax_error_unexpected_ch(mut ch: libc::c_int) {
   let mut msg: [libc::c_char; 2] = [0; 2];
   msg[0] = ch as libc::c_char;
   msg[1] = '\u{0}' as i32 as libc::c_char;
-  bb_error_msg(
+  crate::libbb::verror_msg::bb_error_msg(
     b"syntax error: unexpected %s\x00" as *const u8 as *const libc::c_char,
     if ch == -1i32 {
       b"EOF\x00" as *const u8 as *const libc::c_char
@@ -1578,7 +1411,7 @@ unsafe extern "C" fn add_strings_to_strings(
     count2 = count2.wrapping_add(1);
     v = v.offset(1)
   }
-  v = xrealloc(
+  v = crate::libbb::xfuncs_printf::xrealloc(
     strings as *mut libc::c_void,
     (count1
       .wrapping_add(count2)
@@ -1595,7 +1428,7 @@ unsafe extern "C" fn add_strings_to_strings(
     }
     let ref mut fresh6 = *v.offset(count1.wrapping_add(i as libc::c_uint) as isize);
     *fresh6 = if need_to_dup != 0 {
-      xstrdup(*add.offset(i as isize))
+      crate::libbb::xfuncs_printf::xstrdup(*add.offset(i as isize))
     } else {
       *add.offset(i as isize)
     }
@@ -1663,7 +1496,7 @@ unsafe extern "C" fn xdup_CLOEXEC_and_close(
       if *bb_errno == 9i32 {
         return fd;
       }
-      xfunc_die();
+      crate::libbb::xfunc_die::xfunc_die();
     } else {
       if 1030i32 == 0 {
         /* if old libc (w/o F_DUPFD_CLOEXEC) */
@@ -1686,7 +1519,7 @@ unsafe extern "C" fn hfopen(mut name: *const libc::c_char) -> *mut HFILE {
     }
     if 0o2000000i32 == 0 {
       /* ancient libc */
-      close_on_exec_on(fd);
+      crate::libbb::xfuncs::close_on_exec_on(fd);
     }
   }
   fp = xmalloc(::std::mem::size_of::<HFILE>() as libc::c_ulong) as *mut HFILE;
@@ -1722,13 +1555,15 @@ unsafe extern "C" fn refill_HFILE_and_getc(mut fp: *mut HFILE) -> libc::c_int {
   }
   /* Try to buffer more input */
   (*fp).cur = (*fp).buf.as_mut_ptr();
-  n = safe_read(
+  n = crate::libbb::read::safe_read(
     (*fp).fd,
     (*fp).buf.as_mut_ptr() as *mut libc::c_void,
     ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong,
   ) as libc::c_int;
   if n < 0 {
-    bb_simple_perror_msg(b"read error\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg(
+      b"read error\x00" as *const u8 as *const libc::c_char,
+    );
     n = 0
   }
   (*fp).end = (*fp).buf.as_mut_ptr().offset(n as isize);
@@ -1798,8 +1633,9 @@ unsafe extern "C" fn save_and_replace_G_args(
   *fresh9 = *(*ptr_to_globals).global_argv.offset(0);
   (*ptr_to_globals).global_argv = argv;
   (*ptr_to_globals).global_args_malloced = 0 as smalluint;
-  (*ptr_to_globals).global_argc =
-    (1i32 as libc::c_uint).wrapping_add(string_array_len(argv.offset(1))) as libc::c_int;
+  (*ptr_to_globals).global_argc = (1i32 as libc::c_uint)
+    .wrapping_add(crate::libbb::appletlib::string_array_len(argv.offset(1)))
+    as libc::c_int;
 }
 unsafe extern "C" fn restore_G_args(mut sv: *mut save_arg_t, mut argv: *mut *mut libc::c_char) {
   if (*ptr_to_globals).global_args_malloced != 0 {
@@ -1862,7 +1698,7 @@ unsafe extern "C" fn restore_ttypgrp_and__exit() -> ! {
  * If set as die_func(), this makes xfunc_die() exit via _exit(), not exit():
  */
 unsafe extern "C" fn fflush_and__exit() -> ! {
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   _exit(xfunc_error_retval as libc::c_int);
 }
 /* After [v]fork, in child: do not restore tty pgrp on xfunc death */
@@ -1880,7 +1716,7 @@ unsafe extern "C" fn sigexit(mut sig: libc::c_int) -> ! {
     /* Disable all signals: job control, SIGPIPE, etc.
      * Mostly paranoid measure, to prevent infinite SIGTTOU.
      */
-    sigprocmask_allsigs(0i32);
+    crate::libbb::signals::sigprocmask_allsigs(0i32);
     tcsetpgrp(
       (*ptr_to_globals).interactive_fd,
       (*ptr_to_globals).saved_tty_pgrp,
@@ -1890,7 +1726,7 @@ unsafe extern "C" fn sigexit(mut sig: libc::c_int) -> ! {
   if sig <= 0 {
     _exit(-sig);
   }
-  kill_myself_with_sig(sig);
+  crate::libbb::signals::kill_myself_with_sig(sig);
   /* does not return */
 }
 unsafe extern "C" fn pick_sighandler(mut sig: libc::c_uint) -> sighandler_t {
@@ -1922,7 +1758,7 @@ unsafe extern "C" fn pick_sighandler(mut sig: libc::c_uint) -> sighandler_t {
 }
 /* Restores tty foreground process group, and exits. */
 unsafe extern "C" fn hush_exit(mut exitcode: libc::c_int) -> ! {
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   if (*ptr_to_globals).exiting as libc::c_int <= 0
     && !(*ptr_to_globals).traps.is_null()
     && !(*(*ptr_to_globals).traps.offset(0)).is_null()
@@ -1930,7 +1766,7 @@ unsafe extern "C" fn hush_exit(mut exitcode: libc::c_int) -> ! {
   {
     let mut argv: [*mut libc::c_char; 3] = [0 as *mut libc::c_char; 3];
     /* argv[0] is unused */
-    argv[1] = xstrdup(*(*ptr_to_globals).traps.offset(0)); /* copy, since EXIT trap handler may modify G_traps[0] */
+    argv[1] = crate::libbb::xfuncs_printf::xstrdup(*(*ptr_to_globals).traps.offset(0)); /* copy, since EXIT trap handler may modify G_traps[0] */
     argv[2] = std::ptr::null_mut::<libc::c_char>(); /* prevent EXIT trap recursion */
     (*ptr_to_globals).exiting = 1i32 as smallint;
     /* Note: G_traps[0] is not cleared!
@@ -1938,7 +1774,7 @@ unsafe extern "C" fn hush_exit(mut exitcode: libc::c_int) -> ! {
      * in the handler */
     builtin_eval(argv.as_mut_ptr());
   }
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   sigexit(-(exitcode & 0xffi32));
 }
 //TODO: return a mask of ALL handled sigs?
@@ -1967,7 +1803,8 @@ unsafe extern "C" fn check_and_run_traps() -> libc::c_int {
         let mut save_rcode: smalluint = 0;
         let mut argv: [*mut libc::c_char; 3] = [0 as *mut libc::c_char; 3];
         /* argv[0] is unused */
-        argv[1] = xstrdup(*(*ptr_to_globals).traps.offset(sig as isize));
+        argv[1] =
+          crate::libbb::xfuncs_printf::xstrdup(*(*ptr_to_globals).traps.offset(sig as isize));
         /* why strdup? trap can modify itself: trap 'trap "echo oops" INT' INT */
         argv[2] = std::ptr::null_mut::<libc::c_char>();
         save_rcode = (*ptr_to_globals).last_exitcode;
@@ -2015,7 +1852,8 @@ unsafe extern "C" fn get_cwd(mut force: libc::c_int) -> *const libc::c_char {
     if (*ptr_to_globals).cwd == bb_msg_unknown.as_ptr() {
       (*ptr_to_globals).cwd = std::ptr::null()
     }
-    (*ptr_to_globals).cwd = xrealloc_getcwd_or_warn((*ptr_to_globals).cwd as *mut libc::c_char);
+    (*ptr_to_globals).cwd =
+      crate::libbb::xgetcwd::xrealloc_getcwd_or_warn((*ptr_to_globals).cwd as *mut libc::c_char);
     if (*ptr_to_globals).cwd.is_null() {
       (*ptr_to_globals).cwd = bb_msg_unknown.as_ptr()
     }
@@ -2066,14 +1904,16 @@ unsafe extern "C" fn get_local_var_value(mut name: *const libc::c_char) -> *cons
     return (**vpp).varstr.offset(len as isize).offset(1);
   }
   if strcmp(name, b"PPID\x00" as *const u8 as *const libc::c_char) == 0 {
-    return utoa((*ptr_to_globals).root_ppid as libc::c_uint);
+    return crate::libbb::xfuncs::utoa((*ptr_to_globals).root_ppid as libc::c_uint);
   }
   // bash compat: UID? EUID?
   if strcmp(name, b"RANDOM\x00" as *const u8 as *const libc::c_char) == 0 {
-    return utoa(next_random(&mut (*ptr_to_globals).random_gen));
+    return crate::libbb::xfuncs::utoa(crate::shell::random::next_random(
+      &mut (*ptr_to_globals).random_gen,
+    ));
   } /* including '=' */
   if strcmp(name, b"LINENO\x00" as *const u8 as *const libc::c_char) == 0 {
-    return utoa((*ptr_to_globals).execute_lineno);
+    return crate::libbb::xfuncs::utoa((*ptr_to_globals).execute_lineno);
   }
   let mut fmt: *const libc::c_char = std::ptr::null();
   if strcmp(
@@ -2135,7 +1975,9 @@ unsafe extern "C" fn set_local_var(
   let mut local_lvl: libc::c_uint = flags >> 3i32;
   eq_sign = strchr(str, '=' as i32);
   if 1i32 != 0 && eq_sign.is_null() {
-    bb_simple_error_msg_and_die(b"BUG in setvar\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"BUG in setvar\x00" as *const u8 as *const libc::c_char,
+    );
   }
   name_len = (eq_sign.wrapping_offset_from(str) as libc::c_long + 1) as libc::c_int;
   cur_pp = &mut (*ptr_to_globals).top_var;
@@ -2150,7 +1992,7 @@ unsafe extern "C" fn set_local_var(
     } else {
       /* We found an existing var with this name */
       if (*cur).flg_read_only != 0 {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"%s: readonly variable\x00" as *const u8 as *const libc::c_char,
           str,
         );
@@ -2234,7 +2076,8 @@ unsafe extern "C" fn set_local_var(
     10930818133215224067 =>
     /* Not found or shadowed - create new variable struct */
     {
-      cur = xzalloc(::std::mem::size_of::<variable>() as libc::c_ulong) as *mut variable;
+      cur = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<variable>() as libc::c_ulong)
+        as *mut variable;
       (*cur).var_nest_level = local_lvl as u16;
       (*cur).next = *cur_pp;
       *cur_pp = cur;
@@ -2272,14 +2115,17 @@ unsafe extern "C" fn set_local_var_from_halves(
   mut name: *const libc::c_char,
   mut val: *const libc::c_char,
 ) {
-  let mut var: *mut libc::c_char =
-    xasprintf(b"%s=%s\x00" as *const u8 as *const libc::c_char, name, val);
+  let mut var: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
+    b"%s=%s\x00" as *const u8 as *const libc::c_char,
+    name,
+    val,
+  );
   set_local_var(var, 0 as libc::c_uint);
 }
 /* Used at startup and after each cd */
 unsafe extern "C" fn set_pwd_var(mut flag: libc::c_uint) {
   set_local_var(
-    xasprintf(
+    crate::libbb::xfuncs_printf::xasprintf(
       b"PWD=%s\x00" as *const u8 as *const libc::c_char,
       get_cwd(1i32),
     ),
@@ -2302,14 +2148,14 @@ unsafe extern "C" fn unset_local_var_len(
       && *(*cur).varstr.offset(name_len as isize) as libc::c_int == '=' as i32
     {
       if (*cur).flg_read_only != 0 {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"%s: readonly variable\x00" as *const u8 as *const libc::c_char,
           name,
         );
         return 1i32;
       }
       *cur_pp = (*cur).next;
-      bb_unsetenv((*cur).varstr);
+      crate::libbb::xfuncs_printf::bb_unsetenv((*cur).varstr);
       if (*cur).max_len == 0 {
         free((*cur).varstr as *mut libc::c_void);
       }
@@ -2359,7 +2205,9 @@ unsafe extern "C" fn set_vars_and_save_old(mut strings: *mut *mut libc::c_char) 
     let mut eq: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     eq = strchr(*s, '=' as i32);
     if 1i32 != 0 && eq.is_null() {
-      bb_simple_error_msg_and_die(b"BUG in varexp4\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"BUG in varexp4\x00" as *const u8 as *const libc::c_char,
+      );
     }
     var_pp = get_ptr_to_local_var(
       *s,
@@ -2369,7 +2217,7 @@ unsafe extern "C" fn set_vars_and_save_old(mut strings: *mut *mut libc::c_char) 
       var_p = *var_pp;
       if (*var_p).flg_read_only != 0 {
         let mut p: *mut *mut libc::c_char = std::ptr::null_mut();
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"%s: readonly variable\x00" as *const u8 as *const libc::c_char,
           *s,
         );
@@ -2462,12 +2310,12 @@ unsafe extern "C" fn get_user_input(mut i: *mut in_str) -> libc::c_int {
     reinit_unicode_for_hush();
     if (*ptr_to_globals).flag_SIGINT != 0 {
       /* There was ^C'ed, make it look prettier: */
-      bb_putchar('\n' as i32);
+      crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
       (*ptr_to_globals).flag_SIGINT = 0 as smallint
     }
     /* buglet: SIGINT will not make new prompt to appear _at once_,
      * only after <Enter>. (^C works immediately) */
-    r = read_line_input(
+    r = crate::libbb::lineedit::read_line_input(
       (*ptr_to_globals).line_input_state,
       prompt_str,
       (*ptr_to_globals).user_input_buf.as_mut_ptr(),
@@ -2703,7 +2551,7 @@ unsafe extern "C" fn o_grow_by(mut o: *mut o_string, mut len: libc::c_int) {
           .wrapping_mul(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong)
           .wrapping_sub(1i32 as libc::c_ulong),
     ) as libc::c_int as libc::c_int;
-    (*o).data = xrealloc(
+    (*o).data = crate::libbb::xfuncs_printf::xrealloc(
       (*o).data as *mut libc::c_void,
       (1i32 + (*o).maxlen) as size_t,
     ) as *mut libc::c_char
@@ -2768,7 +2616,7 @@ unsafe extern "C" fn x_mode_flush() {
   }
   if (*ptr_to_globals).x_mode_fd > 0 {
     *(*ptr_to_globals).x_mode_buf.data.offset(len as isize) = '\n' as i32 as libc::c_char;
-    full_write(
+    crate::libbb::full_write::full_write(
       (*ptr_to_globals).x_mode_fd,
       (*ptr_to_globals).x_mode_buf.data as *const libc::c_void,
       (len + 1i32) as size_t,
@@ -2897,7 +2745,7 @@ unsafe extern "C" fn o_save_ptr_helper(mut o: *mut o_string, mut n: libc::c_int)
         (0x10i32 as libc::c_ulong)
           .wrapping_mul(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong),
       ) as libc::c_int as libc::c_int;
-      (*o).data = xrealloc(
+      (*o).data = crate::libbb::xfuncs_printf::xrealloc(
         (*o).data as *mut libc::c_void,
         ((*o).maxlen + 1i32) as size_t,
       ) as *mut libc::c_char;
@@ -3166,11 +3014,11 @@ unsafe extern "C" fn glob_brace(
       return o_save_ptr_helper(o, n);
     }
     if gr == 1i32 {
-      bb_die_memory_exhausted();
+      crate::libbb::xfuncs_printf::bb_die_memory_exhausted();
     }
     /* GLOB_ABORTED? Only happens with GLOB_ERR flag,
      * but we didn't specify it. Paranoia again. */
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"glob error %d on \'%s\'\x00" as *const u8 as *const libc::c_char,
       gr,
       pattern,
@@ -3206,7 +3054,7 @@ unsafe extern "C" fn perform_glob(mut o: *mut o_string, mut n: libc::c_int) -> l
       unbackslash(pattern).wrapping_offset_from((*o).data) as libc::c_long as libc::c_int;
     return o_save_ptr_helper(o, n);
   }
-  copy = xstrdup(pattern);
+  copy = crate::libbb::xfuncs_printf::xstrdup(pattern);
   /* "forget" pattern in o */
   (*o).length = pattern.wrapping_offset_from((*o).data) as libc::c_long as libc::c_int;
   n = glob_brace(copy, o, n);
@@ -3307,7 +3155,8 @@ unsafe extern "C" fn free_pipe_list(mut pi: *mut pipe) {
 /* debug_print_tree */
 unsafe extern "C" fn new_pipe() -> *mut pipe {
   let mut pi: *mut pipe = std::ptr::null_mut();
-  pi = xzalloc(::std::mem::size_of::<pipe>() as libc::c_ulong) as *mut pipe;
+  pi = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<pipe>() as libc::c_ulong)
+    as *mut pipe;
   /*pi->res_word = RES_NONE; - RES_NONE is 0 anyway */
   return pi;
 }
@@ -3337,7 +3186,7 @@ unsafe extern "C" fn done_command(mut ctx: *mut parse_context) -> libc::c_int {
     2979737022853876585 => {
       /* Only real trickiness here is that the uncommitted
        * command structure is not counted in pi->num_cmds. */
-      (*pi).cmds = xrealloc(
+      (*pi).cmds = crate::libbb::xfuncs_printf::xrealloc(
         (*pi).cmds as *mut libc::c_void,
         (::std::mem::size_of::<command>() as libc::c_ulong)
           .wrapping_mul(((*pi).num_cmds + 1i32) as libc::c_ulong),
@@ -3392,10 +3241,13 @@ unsafe extern "C" fn done_pipe(mut ctx: *mut parse_context, mut type_0: pipe_sty
       9580372470263790445 => {}
       _ => {
         (*pi).followup = PIPE_SEQ as libc::c_int as smallint;
-        pi = xzalloc(::std::mem::size_of::<pipe>() as libc::c_ulong) as *mut pipe;
+        pi = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<pipe>() as libc::c_ulong)
+          as *mut pipe;
         (*pi).followup = PIPE_BG as libc::c_int as smallint;
         (*pi).num_cmds = 1i32;
-        (*pi).cmds = xzalloc(::std::mem::size_of::<command>() as libc::c_ulong) as *mut command;
+        (*pi).cmds =
+          crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<command>() as libc::c_ulong)
+            as *mut command;
         command = &mut *(*pi).cmds.offset(0) as *mut command;
         if 0 != 0 {
           /* "if xzalloc didn't do that already" */
@@ -3660,7 +3512,7 @@ unsafe extern "C" fn reserved_word(mut ctx: *mut parse_context) -> *const reserv
   }
   if (*r).flag & FLAG_START as libc::c_int != 0 {
     let mut old: *mut parse_context = std::ptr::null_mut();
-    old = xmemdup(
+    old = crate::libbb::xfuncs_printf::xmemdup(
       ctx as *const libc::c_void,
       ::std::mem::size_of::<parse_context>() as libc::c_ulong as libc::c_int,
     ) as *mut parse_context;
@@ -3726,7 +3578,7 @@ unsafe extern "C" fn done_word(mut ctx: *mut parse_context) -> libc::c_int {
     // <<EOF$t
     // <<EOF$((1))
     // <<EOF`true`  [this case also makes heredoc "quoted", a-la <<"EOF". Probably bash-4.3.43 bug]
-    (*(*ctx).pending_redirect).rd_filename = xstrdup((*ctx).word.data);
+    (*(*ctx).pending_redirect).rd_filename = crate::libbb::xfuncs_printf::xstrdup((*ctx).word.data);
     /* Cater for >\file case:
      * >\a creates file a; >\\a, >"\a", >"\\a" create file \a
      * Same with heredocs:
@@ -3816,11 +3668,15 @@ unsafe extern "C" fn done_word(mut ctx: *mut parse_context) -> libc::c_int {
       }
       (*ctx).is_assignment = MAYBE_ASSIGNMENT as libc::c_int as smallint
     }
-    (*command).argv = add_string_to_strings((*command).argv, xstrdup((*ctx).word.data))
+    (*command).argv = add_string_to_strings(
+      (*command).argv,
+      crate::libbb::xfuncs_printf::xstrdup((*ctx).word.data),
+    )
   }
   if (*ctx).ctx_res_w as libc::c_int == RES_FOR as libc::c_int {
     if (*ctx).word.has_quoted_part as libc::c_int != 0
-      || *endofname(*(*command).argv.offset(0)).offset(0) as libc::c_int != '\u{0}' as i32
+      || *crate::libbb::endofname::endofname(*(*command).argv.offset(0)).offset(0) as libc::c_int
+        != '\u{0}' as i32
     {
       /* bash says just "not a valid identifier" */
       syntax_error(b"not a valid identifier in for\x00" as *const u8 as *const libc::c_char);
@@ -3873,7 +3729,9 @@ unsafe extern "C" fn parse_redir_right_fd(mut input: *mut in_str) -> libc::c_int
     return d;
   }
   //TODO: this is the place to catch ">&file" bashism (redirect both fd 1 and 2)
-  bb_simple_error_msg(b"ambiguous redirect\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::verror_msg::bb_simple_error_msg(
+    b"ambiguous redirect\x00" as *const u8 as *const libc::c_char,
+  );
   return REDIRFD_SYNTAX_ERR as libc::c_int;
 }
 /* Return code is 0 normal, 1 if a syntax error is detected
@@ -3925,7 +3783,9 @@ unsafe extern "C" fn parse_redirect(
     }
     redirp = &mut (*redir).next
   }
-  redir = xzalloc(::std::mem::size_of::<redir_struct>() as libc::c_ulong) as *mut redir_struct;
+  redir =
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<redir_struct>() as libc::c_ulong)
+      as *mut redir_struct;
   *redirp = redir;
   /* redir->next = NULL; */
   /* redir->rd_filename = NULL; */
@@ -3971,7 +3831,8 @@ unsafe extern "C" fn redirect_opt_num(mut o: *mut o_string) -> libc::c_int {
   if (*o).data.is_null() {
     return -1i32;
   }
-  num = bb_strtou((*o).data, 0 as *mut *mut libc::c_char, 10i32) as libc::c_int;
+  num = crate::libbb::bb_strtonum::bb_strtou((*o).data, 0 as *mut *mut libc::c_char, 10i32)
+    as libc::c_int;
   if *bb_errno != 0 || num < 0 {
     return -1i32;
   }
@@ -4005,7 +3866,7 @@ unsafe extern "C" fn fetch_till_str(
    * xxx
    * EOF
    */
-  heredoc.data = xzalloc(1i32 as size_t) as *mut libc::c_char; /* start as "", not as NULL */
+  heredoc.data = crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t) as *mut libc::c_char; /* start as "", not as NULL */
   loop {
     past_EOL = heredoc.length as libc::c_uint;
     loop
@@ -4222,7 +4083,8 @@ unsafe extern "C" fn parse_group(
   /* Convert "f() (cmds)" to "f() {(cmds)}" */
   if (*command).cmd_type as libc::c_int == 3i32 && endch == ')' as i32 {
     let mut cmd2: *mut command = std::ptr::null_mut();
-    cmd2 = xzalloc(::std::mem::size_of::<command>() as libc::c_ulong) as *mut command;
+    cmd2 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<command>() as libc::c_ulong)
+      as *mut command;
     (*cmd2).cmd_type = 1i32 as smallint;
     (*cmd2).group = pipe_list;
     pipe_list = new_pipe();
@@ -6276,7 +6138,7 @@ unsafe extern "C" fn parse_stream(
   /* If very first arg is "" or '', ctx.word.data may end up NULL.
    * Preventing this:
    */
-  ctx.word.data = xzalloc(1i32 as size_t) as *mut libc::c_char; /* start as "", not as NULL */
+  ctx.word.data = crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t) as *mut libc::c_char; /* start as "", not as NULL */
   /* We used to separate words on $IFS here. This was wrong.
    * $IFS is used only for word splitting when $var is expanded,
    * here we should use blank chars as separators, not $IFS
@@ -6899,7 +6761,7 @@ unsafe extern "C" fn parse_stream(
                                         current_block = 7912797836817091754;
                                     }
                                     _ => {
-                                        bb_error_msg_and_die(b"BUG: unexpected %c\x00"
+                                        crate::libbb::verror_msg::bb_error_msg_and_die(b"BUG: unexpected %c\x00"
                                                                  as *const u8
                                                                  as
                                                                  *const libc::c_char,
@@ -6979,7 +6841,8 @@ unsafe extern "C" fn parse_stream(
             if (ctx.is_assignment as libc::c_int == MAYBE_ASSIGNMENT as libc::c_int
               || ctx.is_assignment as libc::c_int == WORD_IS_KEYWORD as libc::c_int)
               && ch == '=' as i32
-              && *endofname(ctx.word.data).offset(0) as libc::c_int == '=' as i32
+              && *crate::libbb::endofname::endofname(ctx.word.data).offset(0) as libc::c_int
+                == '=' as i32
             {
               ctx.is_assignment = DEFINITELY_ASSIGNMENT as libc::c_int as smallint
             }
@@ -7265,7 +7128,7 @@ unsafe extern "C" fn encode_then_expand_vararg(
     return std::ptr::null_mut::<libc::c_char>();
   } /* start as "", not as NULL */
   setup_string_in_str(&mut input, str);
-  dest.data = xzalloc(1i32 as size_t) as *mut libc::c_char;
+  dest.data = crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t) as *mut libc::c_char;
   exp_str = std::ptr::null_mut::<libc::c_char>();
   /* error */
   loop
@@ -7524,7 +7387,7 @@ unsafe extern "C" fn expand_and_evaluate_arith(
   );
   //math_state.endofname = endofname;
   exp_str = encode_then_expand_string(arg);
-  res = arith(
+  res = crate::shell::math::arith(
     &mut math_state,
     if !exp_str.is_null() { exp_str } else { arg },
   );
@@ -7544,7 +7407,7 @@ unsafe extern "C" fn strstr_pattern(
   mut size: *mut libc::c_int,
 ) -> *mut libc::c_char {
   loop {
-    let mut end: *mut libc::c_char = scan_and_match(
+    let mut end: *mut libc::c_char = crate::shell::r#match::scan_and_match(
       val,
       pattern,
       (SCAN_MOVE_FROM_RIGHT as libc::c_int + SCAN_MATCH_LEFT_HALF as libc::c_int) as libc::c_uint,
@@ -7584,7 +7447,7 @@ unsafe extern "C" fn replace_pattern(
     if s.is_null() {
       break;
     }
-    result = xrealloc(
+    result = crate::libbb::xfuncs_printf::xrealloc(
       result as *mut libc::c_void,
       (res_len as libc::c_long
         + s.wrapping_offset_from(val) as libc::c_long
@@ -7608,7 +7471,7 @@ unsafe extern "C" fn replace_pattern(
     }
   }
   if *val as libc::c_int != 0 && !result.is_null() {
-    result = xrealloc(
+    result = crate::libbb::xfuncs_printf::xrealloc(
       result as *mut libc::c_void,
       (res_len as libc::c_ulong)
         .wrapping_add(strlen(val))
@@ -7737,7 +7600,7 @@ unsafe extern "C" fn expand_one_var(
   /* Look up the variable in question */
   if (*var.offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
     /* parse_dollar should have vetted var for us */
-    let mut nn: libc::c_int = xatoi_positive(var);
+    let mut nn: libc::c_int = crate::libbb::xatonum::xatoi_positive(var);
     if nn < (*ptr_to_globals).global_argc {
       val = *(*ptr_to_globals).global_argv.offset(nn as isize)
     }
@@ -7745,23 +7608,23 @@ unsafe extern "C" fn expand_one_var(
     match *var.offset(0) as libc::c_int {
       36 => {
         /* pid */
-        val = utoa((*ptr_to_globals).root_pid as libc::c_uint)
+        val = crate::libbb::xfuncs::utoa((*ptr_to_globals).root_pid as libc::c_uint)
       }
       33 => {
         /* bg pid */
         val = if (*ptr_to_globals).last_bg_pid != 0 {
-          utoa((*ptr_to_globals).last_bg_pid as libc::c_uint)
+          crate::libbb::xfuncs::utoa((*ptr_to_globals).last_bg_pid as libc::c_uint)
         } else {
           b"\x00" as *const u8 as *const libc::c_char
         }
       }
       63 => {
         /* exitcode */
-        val = utoa((*ptr_to_globals).last_exitcode as libc::c_uint)
+        val = crate::libbb::xfuncs::utoa((*ptr_to_globals).last_exitcode as libc::c_uint)
       }
       35 => {
         /* argc */
-        val = utoa(if (*ptr_to_globals).global_argc != 0 {
+        val = crate::libbb::xfuncs::utoa(if (*ptr_to_globals).global_argc != 0 {
           ((*ptr_to_globals).global_argc) - 1i32
         } else {
           0
@@ -7810,8 +7673,8 @@ unsafe extern "C" fn expand_one_var(
   /* Handle any expansions */
   if exp_op as libc::c_int == 'L' as i32 {
     reinit_unicode_for_hush(); /* if (exp_op) */
-    val = utoa(if !val.is_null() {
-      unicode_strlen(val)
+    val = crate::libbb::xfuncs::utoa(if !val.is_null() {
+      crate::libbb::unicode::unicode_strlen(val)
     } else {
       0 as libc::c_ulong
     } as libc::c_uint)
@@ -7850,7 +7713,7 @@ unsafe extern "C" fn expand_one_var(
          * scan_and_match momentarily stores NULs there.
          */
         t = val as *mut libc::c_char;
-        loc = scan_and_match(t, exp_word, scan_flags);
+        loc = crate::shell::r#match::scan_and_match(t, exp_word, scan_flags);
         free(exp_exp_word as *mut libc::c_void);
         if !loc.is_null() {
           /* match was found */
@@ -7860,7 +7723,7 @@ unsafe extern "C" fn expand_one_var(
           } else {
             /* take right part */
             /* %[%] */
-            to_be_freed = xstrndup(
+            to_be_freed = crate::libbb::xfuncs_printf::xstrndup(
               val,
               loc.wrapping_offset_from(val) as libc::c_long as libc::c_int,
             );
@@ -7892,7 +7755,7 @@ unsafe extern "C" fn expand_one_var(
         let mut t_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         pattern = encode_then_expand_vararg(exp_word, 1i32, 0);
         if pattern.is_null() {
-          pattern = xstrdup(exp_word)
+          pattern = crate::libbb::xfuncs_printf::xstrdup(exp_word)
         }
         let fresh28 = p;
         p = p.offset(1);
@@ -7982,7 +7845,8 @@ unsafe extern "C" fn expand_one_var(
             if len >= 2147483647i32 as libc::c_longlong {
               len = 2147483647i32 as arith_t
             }
-            to_be_freed = xstrndup(val.offset(beg as isize), len as libc::c_int);
+            to_be_freed =
+              crate::libbb::xfuncs_printf::xstrndup(val.offset(beg as isize), len as libc::c_int);
             val = to_be_freed;
             current_block = 18009804086567542307;
           }
@@ -8099,8 +7963,11 @@ unsafe extern "C" fn expand_one_var(
               );
               val = std::ptr::null()
             } else {
-              let mut new_var: *mut libc::c_char =
-                xasprintf(b"%s=%s\x00" as *const u8 as *const libc::c_char, var, val);
+              let mut new_var: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
+                b"%s=%s\x00" as *const u8 as *const libc::c_char,
+                var,
+                val,
+              );
               set_local_var(new_var, 0 as libc::c_uint);
             }
           }
@@ -8175,7 +8042,7 @@ unsafe extern "C" fn expand_vars_to_list(
             while !(*(*ptr_to_globals).global_argv.offset(i as isize)).is_null() {
               n = expand_on_ifs(output, n, *(*ptr_to_globals).global_argv.offset(i as isize));
               let fresh31 = i;
-              i += 1;
+              i = i + 1;
               if *(*(*ptr_to_globals).global_argv.offset(fresh31 as isize)).offset(0) as libc::c_int
                 != 0
                 && !(*(*ptr_to_globals).global_argv.offset(i as isize)).is_null()
@@ -8371,7 +8238,7 @@ unsafe extern "C" fn expand_string_to_string(
    */
   if strchr(str, 3i32).is_null() && strchr(str, '\\' as i32).is_null() {
     //TODO: Can use on strings with \ too, just unbackslash() them?
-    return xstrdup(str);
+    return crate::libbb::xfuncs_printf::xstrdup(str);
   }
   argv[0] = str as *mut libc::c_char;
   argv[1] = std::ptr::null_mut::<libc::c_char>();
@@ -8386,10 +8253,12 @@ unsafe extern "C" fn expand_string_to_string(
     *(list as *mut libc::c_char).offset(0) = '\u{0}' as i32 as libc::c_char
   } else {
     if !(*list.offset(1)).is_null() {
-      bb_simple_error_msg_and_die(b"BUG in varexp2\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"BUG in varexp2\x00" as *const u8 as *const libc::c_char,
+      );
     }
     /* actually, just move string 2*sizeof(char*) bytes back */
-    overlapping_strcpy(list as *mut libc::c_char, *list.offset(0));
+    crate::libbb::safe_strncpy::overlapping_strcpy(list as *mut libc::c_char, *list.offset(0));
     if do_unbackslash != 0 {
       unbackslash(list as *mut libc::c_char);
     }
@@ -8575,14 +8444,16 @@ unsafe extern "C" fn generate_stream_from_string(
 ) -> libc::c_int {
   let mut pid: pid_t = 0;
   let mut channel: [libc::c_int; 2] = [0; 2];
-  xpipe(channel.as_mut_ptr());
+  crate::libbb::xfuncs_printf::xpipe(channel.as_mut_ptr());
   pid = if 1i32 != 0 {
-    xfork()
+    crate::libbb::xfuncs_printf::xfork()
   } else {
     ({
       let mut bb__xvfork_pid: pid_t = vfork();
       if bb__xvfork_pid < 0 {
-        bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"vfork\x00" as *const u8 as *const libc::c_char,
+        );
       }
       bb__xvfork_pid
     })
@@ -8597,12 +8468,12 @@ unsafe extern "C" fn generate_stream_from_string(
      * 'command execution'.
      * SUSv3 says ctrl-Z should be ignored, ctrl-C should not.
      */
-    bb_signals(
+    crate::libbb::signals::bb_signals(
       0 + (1i32 << 20i32) + (1i32 << 21i32) + (1i32 << 22i32),
       ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
     ); /* NB: close _first_, then move fd! */
     close(channel[0]);
-    xmove_fd(channel[1], 1i32);
+    crate::libbb::xfuncs_printf::xmove_fd(channel[1], 1i32);
     /* Awful hack for `trap` or $(trap).
      *
      * http://www.opengroup.org/onlinepubs/009695399/utilities/trap.html
@@ -8638,13 +8509,17 @@ unsafe extern "C" fn generate_stream_from_string(
      * Our solution: ONLY bare $(trap) or `trap` is special.
      */
     s = skip_whitespace(s); /* important */
-    if !is_prefixed_with(s, b"trap\x00" as *const u8 as *const libc::c_char).is_null()
+    if !crate::libbb::compare_string_array::is_prefixed_with(
+      s,
+      b"trap\x00" as *const u8 as *const libc::c_char,
+    )
+    .is_null()
       && *skip_whitespace(s.offset(4)).offset(0) as libc::c_int == '\u{0}' as i32
     {
       static mut argv: [*const libc::c_char; 2] =
         [0 as *const libc::c_char, 0 as *const libc::c_char];
       builtin_trap(argv.as_ptr() as *mut *mut libc::c_char);
-      fflush_all();
+      crate::libbb::xfuncs_printf::fflush_all();
       _exit(0i32);
     }
     /* Prevent it from trying to handle ctrl-z etc */
@@ -8677,7 +8552,7 @@ unsafe extern "C" fn process_command_subs(
   let mut status: libc::c_int = 0;
   let mut ch: libc::c_int = 0;
   let mut eol_cnt: libc::c_int = 0;
-  fp = xfdopen_for_read(generate_stream_from_string(s, &mut pid));
+  fp = crate::libbb::wfopen::xfdopen_for_read(generate_stream_from_string(s, &mut pid));
   /* Now send results of command back into original context */
   eol_cnt = 0;
   loop {
@@ -8702,7 +8577,7 @@ unsafe extern "C" fn process_command_subs(
   /* We need to extract exitcode. Test case
    * "true; echo `sleep 1; false` $?"
    * should print 1 */
-  safe_waitpid(pid, &mut status, 0);
+  crate::libbb::xfuncs::safe_waitpid(pid, &mut status, 0);
   return (status & 0xff00i32) >> 8i32;
 }
 /* ENABLE_HUSH_TICK */
@@ -8723,11 +8598,11 @@ unsafe extern "C" fn setup_heredoc(mut redir: *mut redir_struct) {
   }
   len = strlen(heredoc) as libc::c_int;
   close((*redir).rd_fd);
-  xpipe(&mut pair.rd);
-  xmove_fd(pair.rd, (*redir).rd_fd);
+  crate::libbb::xfuncs_printf::xpipe(&mut pair.rd);
+  crate::libbb::xfuncs_printf::xmove_fd(pair.rd, (*redir).rd_fd);
   /* Try writing without forking. Newer kernels have
    * dynamically growing pipes. Must use non-blocking write! */
-  ndelay_on(pair.wr);
+  crate::libbb::xfuncs::ndelay_on(pair.wr);
   loop {
     written = write(pair.wr, heredoc as *const libc::c_void, len as size_t) as libc::c_int;
     if written <= 0 {
@@ -8741,7 +8616,7 @@ unsafe extern "C" fn setup_heredoc(mut redir: *mut redir_struct) {
     }
     heredoc = heredoc.offset(written as isize)
   }
-  ndelay_off(pair.wr);
+  crate::libbb::xfuncs::ndelay_off(pair.wr);
   /* Okay, pipe buffer was not big enough */
   /* Note: we must not create a stray child (bastard? :)
    * for the unsuspecting parent process. Child creates a grandchild
@@ -8750,7 +8625,9 @@ unsafe extern "C" fn setup_heredoc(mut redir: *mut redir_struct) {
   pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
     if bb__xvfork_pid < 0 {
-      bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"vfork\x00" as *const u8 as *const libc::c_char,
+      );
     }
     bb__xvfork_pid
   };
@@ -8761,12 +8638,14 @@ unsafe extern "C" fn setup_heredoc(mut redir: *mut redir_struct) {
       Option<unsafe extern "C" fn() -> ()>,
     >(Some(fflush_and__exit as unsafe extern "C" fn() -> !));
     pid = if 1i32 != 0 {
-      xfork()
+      crate::libbb::xfuncs_printf::xfork()
     } else {
       ({
         let mut bb__xvfork_pid: pid_t = vfork();
         if bb__xvfork_pid < 0 {
-          bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+            b"vfork\x00" as *const u8 as *const libc::c_char,
+          );
         }
         bb__xvfork_pid
       })
@@ -8776,7 +8655,7 @@ unsafe extern "C" fn setup_heredoc(mut redir: *mut redir_struct) {
     }
     /* grandchild */
     close((*redir).rd_fd); /* read side of the pipe */
-    full_write(pair.wr, heredoc as *const libc::c_void, len as size_t); /* may loop or block */
+    crate::libbb::full_write::full_write(pair.wr, heredoc as *const libc::c_void, len as size_t); /* may loop or block */
     _exit(0i32);
   }
   /* parent */
@@ -8797,7 +8676,7 @@ unsafe extern "C" fn append_squirrel(
   mut orig: libc::c_int,
   mut moved: libc::c_int,
 ) -> *mut squirrel {
-  sq = xrealloc(
+  sq = crate::libbb::xfuncs_printf::xrealloc(
     sq as *mut libc::c_void,
     ((i + 2i32) as libc::c_ulong).wrapping_mul(::std::mem::size_of::<squirrel>() as libc::c_ulong),
   ) as *mut squirrel; /* end marker */
@@ -8822,7 +8701,7 @@ unsafe extern "C" fn add_squirrel(
           dup_CLOEXEC((*sq.offset(i as isize)).moved_to, avoid_fd);
         if (*sq.offset(i as isize)).moved_to < 0 {
           /* what? */
-          xfunc_die();
+          crate::libbb::xfunc_die::xfunc_die();
         }
         return sq;
       }
@@ -8836,7 +8715,7 @@ unsafe extern "C" fn add_squirrel(
   /* If this fd is open, we move and remember it; if it's closed, moved_to = -1 */
   moved_to = dup_CLOEXEC(fd, avoid_fd);
   if moved_to < 0 && *bb_errno != 9i32 {
-    xfunc_die();
+    crate::libbb::xfunc_die::xfunc_die();
   }
   return append_squirrel(sq, i, fd, moved_to);
 }
@@ -8942,7 +8821,7 @@ unsafe extern "C" fn restore_redirects(mut sq: *mut squirrel) {
     while (*sq.offset(i as isize)).orig_fd >= 0 {
       if (*sq.offset(i as isize)).moved_to >= 0 {
         /* We simply die on error */
-        xmove_fd(
+        crate::libbb::xfuncs_printf::xmove_fd(
           (*sq.offset(i as isize)).moved_to,
           (*sq.offset(i as isize)).orig_fd,
         );
@@ -9016,7 +8895,7 @@ unsafe extern "C" fn setup_redirects(
             EXP_FLAG_ESC_GLOB_CHARS as libc::c_int,
             1i32,
           );
-          newfd = open_or_warn(p, mode);
+          newfd = crate::libbb::xfuncs_printf::open_or_warn(p, mode);
           free(p as *mut libc::c_void);
           if newfd < 0 {
             /* Error message from open_or_warn can be lost
@@ -9077,7 +8956,7 @@ unsafe extern "C" fn setup_redirects(
                 newfd = -1i32
                 /* same effect as code above */
               }
-              xdup2(newfd, (*redir).rd_fd);
+              crate::libbb::xfuncs_printf::xdup2(newfd, (*redir).rd_fd);
               if (*redir).rd_dup == REDIRFD_TO_FILE as libc::c_int {
                 /* else: "rd_fd > rd_dup" */
                 /* "rd_fd > FILE" */
@@ -9104,7 +8983,7 @@ unsafe extern "C" fn find_in_path(mut arg: *const libc::c_char) -> *mut libc::c_
     let mut sz: libc::c_int = end.wrapping_offset_from(PATH) as libc::c_long as libc::c_int;
     free(ret as *mut libc::c_void);
     if sz != 0 {
-      ret = xasprintf(
+      ret = crate::libbb::xfuncs_printf::xasprintf(
         b"%.*s/%s\x00" as *const u8 as *const libc::c_char,
         sz,
         PATH,
@@ -9113,7 +8992,7 @@ unsafe extern "C" fn find_in_path(mut arg: *const libc::c_char) -> *mut libc::c_
     } else {
       /* We have xxx::yyyy in $PATH,
        * it means "use current dir" */
-      ret = xstrdup(arg)
+      ret = crate::libbb::xfuncs_printf::xstrdup(arg)
     }
     if access(ret, 0) == 0 {
       break;
@@ -9180,7 +9059,7 @@ unsafe extern "C" fn remove_nested_vars() {
     } else {
       /* Unexport */
       if (*cur).flg_export != 0 {
-        bb_unsetenv((*cur).varstr);
+        crate::libbb::xfuncs_printf::bb_unsetenv((*cur).varstr);
       }
       /* Remove from global list */
       *cur_pp = (*cur).next;
@@ -9201,7 +9080,7 @@ unsafe extern "C" fn enter_var_nest_level() {
    * not too long after 2^16 recursions anyway.
    */
   if (*ptr_to_globals).var_nest_level > 0xff00i32 as libc::c_uint {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"fatal recursion (depth %u)\x00" as *const u8 as *const libc::c_char,
       (*ptr_to_globals).var_nest_level,
     );
@@ -9210,7 +9089,9 @@ unsafe extern "C" fn enter_var_nest_level() {
 unsafe extern "C" fn leave_var_nest_level() {
   (*ptr_to_globals).var_nest_level = (*ptr_to_globals).var_nest_level.wrapping_sub(1);
   if 1i32 != 0 && ((*ptr_to_globals).var_nest_level as libc::c_int) < 0 {
-    bb_simple_error_msg_and_die(b"BUG: nesting underflow\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"BUG: nesting underflow\x00" as *const u8 as *const libc::c_char,
+    );
   }
   remove_nested_vars();
 }
@@ -9254,7 +9135,9 @@ unsafe extern "C" fn new_function(mut name: *mut libc::c_char) -> *mut function 
       (*cmd).group = (*funcp).body
     }
   } else {
-    *funcpp = xzalloc(::std::mem::size_of::<function>() as libc::c_ulong) as *mut function;
+    *funcpp =
+      crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<function>() as libc::c_ulong)
+        as *mut function;
     funcp = *funcpp
     /*funcp->next = NULL;*/
   }
@@ -9285,7 +9168,8 @@ unsafe extern "C" fn exec_function(
   let ref mut fresh36 = *argv.offset(0);
   *fresh36 = *(*ptr_to_globals).global_argv.offset(0);
   (*ptr_to_globals).global_argv = argv;
-  n = (1i32 as libc::c_uint).wrapping_add(string_array_len(argv.offset(1))) as libc::c_int;
+  n = (1i32 as libc::c_uint).wrapping_add(crate::libbb::appletlib::string_array_len(argv.offset(1)))
+    as libc::c_int;
   (*ptr_to_globals).global_argc = n;
   // Example when we are here: "cmd | func"
   // func will run with saved-redirect fds open.
@@ -9306,7 +9190,7 @@ unsafe extern "C" fn exec_function(
   (*ptr_to_globals).func_nest_level = (*ptr_to_globals).func_nest_level.wrapping_add(1);
   /* On MMU, funcp->body is always non-NULL */
   n = run_list((*funcp).body);
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   _exit(n);
 }
 unsafe extern "C" fn run_function(
@@ -9342,10 +9226,10 @@ unsafe extern "C" fn exec_builtin(
   mut argv: *mut *mut libc::c_char,
 ) -> ! {
   let mut rcode: libc::c_int = 0;
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   //?	close_saved_fds_and_FILE_fds();
   rcode = (*x).b_function.expect("non-null function pointer")(argv);
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   _exit(rcode);
 }
 unsafe extern "C" fn execvp_or_die(mut argv: *mut *mut libc::c_char) -> ! {
@@ -9364,7 +9248,7 @@ unsafe extern "C" fn execvp_or_die(mut argv: *mut *mut libc::c_char) -> ! {
   if *bb_errno == 2i32 {
     e = 127i32
   }
-  bb_perror_msg(
+  crate::libbb::perror_msg::bb_perror_msg(
     b"can\'t execute \'%s\'\x00" as *const u8 as *const libc::c_char,
     *argv.offset(0),
   );
@@ -9438,7 +9322,7 @@ unsafe extern "C" fn if_command_vV_print_and_exit(
   if explanation.is_null() {
     let mut path: *mut libc::c_char = getenv(b"PATH\x00" as *const u8 as *const libc::c_char);
     /* -v PROG prints "/path/to/PROG" */
-    to_free = find_executable(cmd, &mut path); /* path == NULL is ok */
+    to_free = crate::libbb::executable::find_executable(cmd, &mut path); /* path == NULL is ok */
     explanation = to_free; /* PROG was not found */
     if explanation.is_null() {
       _exit(1i32);
@@ -9457,7 +9341,7 @@ unsafe extern "C" fn if_command_vV_print_and_exit(
     explanation,
   );
   free(to_free as *mut libc::c_void);
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   _exit(0i32);
 }
 /* Called after [v]fork() in run_pipe, or from builtin_exec.
@@ -9531,7 +9415,7 @@ unsafe extern "C" fn pseudo_exec_argv(
           }
           118 | 86 => opt_vV = *p,
           _ => {
-            bb_error_msg_and_die(
+            crate::libbb::verror_msg::bb_error_msg_and_die(
               b"%s: %s: invalid option\x00" as *const u8 as *const libc::c_char,
               b"command\x00" as *const u8 as *const libc::c_char,
               *argv.offset(0),
@@ -9622,7 +9506,7 @@ unsafe extern "C" fn get_cmdtext(mut pi: *mut pipe) -> *const libc::c_char {
   }
   argv = (*(*pi).cmds.offset(0)).argv;
   if argv.is_null() {
-    (*pi).cmdtext = xzalloc(1i32 as size_t) as *mut libc::c_char;
+    (*pi).cmdtext = crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t) as *mut libc::c_char;
     return (*pi).cmdtext;
   }
   len = 0;
@@ -9695,13 +9579,13 @@ unsafe extern "C" fn insert_job_into_table(mut pi: *mut pipe) {
   }
   (*pi).jobid = (i + 1i32) as libc::c_uint;
   /* Create a new job struct at the end */
-  *jobp = xmemdup(
+  *jobp = crate::libbb::xfuncs_printf::xmemdup(
     pi as *const libc::c_void,
     ::std::mem::size_of::<pipe>() as libc::c_ulong as libc::c_int,
   ) as *mut pipe;
   job = *jobp;
   (*job).next = std::ptr::null_mut();
-  (*job).cmds = xzalloc(
+  (*job).cmds = crate::libbb::xfuncs_printf::xzalloc(
     (::std::mem::size_of::<command>() as libc::c_ulong)
       .wrapping_mul((*pi).num_cmds as libc::c_ulong),
   ) as *mut command;
@@ -9712,7 +9596,7 @@ unsafe extern "C" fn insert_job_into_table(mut pi: *mut pipe) {
     i += 1
     /* all other fields are not used and stay zero */
   }
-  (*job).cmdtext = xstrdup(get_cmdtext(pi));
+  (*job).cmdtext = crate::libbb::xfuncs_printf::xstrdup(get_cmdtext(pi));
   if (*ptr_to_globals).interactive_fd != 0 {
     printf(
       b"[%u] %u %s\n\x00" as *const u8 as *const libc::c_char,
@@ -9793,7 +9677,7 @@ unsafe extern "C" fn process_wait_result(
             puts(if sig == 2i32 || sig == 13i32 {
               b"\x00" as *const u8 as *const libc::c_char
             } else {
-              get_signame(sig)
+              crate::libbb::u_signal_names::get_signame(sig)
             });
           }
           /* TODO: if (WCOREDUMP(status)) + " (core dumped)"; */
@@ -9931,7 +9815,9 @@ unsafe extern "C" fn checkjobs(mut fg_pipe: *mut pipe, mut waitfor_pid: pid_t) -
     childpid = waitpid(-1i32, &mut status, attributes);
     if childpid <= 0 {
       if childpid != 0 && *bb_errno != 10i32 {
-        bb_simple_perror_msg(b"waitpid\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg(
+          b"waitpid\x00" as *const u8 as *const libc::c_char,
+        );
       }
       /* ECHILD (no children), or 0 (no change in children status) */
       rcode = childpid;
@@ -10046,7 +9932,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
       let mut d: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* can overestimate */
       let mut len: libc::c_int =
         p.wrapping_offset_from((*ptr_to_globals).ifs) as libc::c_long as libc::c_int;
-      p = skip_non_whitespace(p);
+      p = crate::libbb::skip_whitespace::skip_non_whitespace(p);
       (*ptr_to_globals).ifs_whitespace = xmalloc(
         (len as libc::c_ulong)
           .wrapping_add(strlen(p))
@@ -10199,10 +10085,10 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
                  * after "local" completes.
                  */
                 (*ptr_to_globals).shadowed_vars_pp = sv_shadowed;
-                fflush_all();
+                crate::libbb::xfuncs_printf::fflush_all();
                 rcode =
                   (*x).b_function.expect("non-null function pointer")(argv_expanded) & 0xffi32;
-                fflush_all();
+                crate::libbb::xfuncs_printf::fflush_all();
               } else {
                 rcode = run_function(funcp_0, argv_expanded) & 0xffi32;
                 /*
@@ -10365,7 +10251,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
     pipefds.rd = 0;
     pipefds.wr = 1i32;
     if cmd_no < (*pi).num_cmds {
-      xpipe(&mut pipefds.rd);
+      crate::libbb::xfuncs_printf::xpipe(&mut pipefds.rd);
     }
     (*ptr_to_globals).execute_lineno = (*command).lineno;
     (*command).pid = if 1i32 != 0 { fork() } else { vfork() };
@@ -10401,12 +10287,12 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
          * should have its stdin /dev/null'ed */
         close(0i32);
         if open(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0) != 0 {
-          xopen(b"/\x00" as *const u8 as *const libc::c_char, 0);
+          crate::libbb::xfuncs_printf::xopen(b"/\x00" as *const u8 as *const libc::c_char, 0);
         }
       } else {
-        xmove_fd(next_infd, 0);
+        crate::libbb::xfuncs_printf::xmove_fd(next_infd, 0);
       }
-      xmove_fd(pipefds.wr, 1i32);
+      crate::libbb::xfuncs_printf::xmove_fd(pipefds.wr, 1i32);
       if pipefds.rd > 1i32 {
         close(pipefds.rd);
       }
@@ -10442,7 +10328,7 @@ unsafe extern "C" fn run_pipe(mut pi: *mut pipe) -> libc::c_int {
     if (*command).pid < 0 {
       /* [v]fork failed */
       /* Clearly indicate, was it fork or vfork */
-      bb_simple_perror_msg(if 1i32 != 0 {
+      crate::libbb::perror_msg::bb_simple_perror_msg(if 1i32 != 0 {
         (b"vfork\x00" as *const u8 as *const libc::c_char).offset(1)
       } else {
         b"vfork\x00" as *const u8 as *const libc::c_char
@@ -10625,7 +10511,7 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
                 let fresh40 = for_lcur;
                 for_lcur = for_lcur.offset(1);
                 set_local_var(
-                  xasprintf(
+                  crate::libbb::xfuncs_printf::xasprintf(
                     b"%s=%s\x00" as *const u8 as *const libc::c_char,
                     *(*(*pi).cmds.offset(0)).argv.offset(0),
                     *fresh40,
@@ -10898,14 +10784,14 @@ unsafe extern "C" fn install_sighandlers(mut mask: libc::c_uint) {
       /* oops... restore back to IGN, and record this fact */
       install_sighandler(sig as libc::c_int, old_handler);
       if (*ptr_to_globals).traps.is_null() {
-        (*ptr_to_globals).traps = xzalloc(
+        (*ptr_to_globals).traps = crate::libbb::xfuncs_printf::xzalloc(
           (::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong)
             .wrapping_mul((64i32 + 1i32) as libc::c_ulong),
         ) as *mut *mut libc::c_char
       }
       free(*(*ptr_to_globals).traps.offset(sig as isize) as *mut libc::c_void);
       let ref mut fresh41 = *(*ptr_to_globals).traps.offset(sig as isize);
-      *fresh41 = xzalloc(1i32 as size_t) as *mut libc::c_char
+      *fresh41 = crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t) as *mut libc::c_char
       /* == xstrdup(""); */
     }
   }
@@ -10999,7 +10885,7 @@ unsafe extern "C" fn set_mode(
         }
         current_block_13 = 11584701595673473500;
       } else {
-        idx = index_in_strings(o_opt_strings.as_ptr(), o_opt);
+        idx = crate::libbb::compare_string_array::index_in_strings(o_opt_strings.as_ptr(), o_opt);
         if idx >= 0 {
           (*ptr_to_globals).o_opt[idx as usize] = state as libc::c_char;
           current_block_13 = 11584701595673473500;
@@ -11036,7 +10922,8 @@ pub unsafe extern "C" fn hush_main(
   let ref mut fresh42 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
-  *fresh42 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh42 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   sigfillset(&mut (*ptr_to_globals).sa.sa_mask);
   (*ptr_to_globals).sa.sa_flags = 0x10000000i32;
@@ -11046,12 +10933,14 @@ pub unsafe extern "C" fn hush_main(
   }
   /* Deal with HUSH_VERSION */
   unsetenv(b"HUSH_VERSION\x00" as *const u8 as *const libc::c_char); /* in case it exists in initial env */
-  shell_ver = xzalloc(::std::mem::size_of::<variable>() as libc::c_ulong) as *mut variable;
+  shell_ver =
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<variable>() as libc::c_ulong)
+      as *mut variable;
   (*shell_ver).flg_export = 1i32 as smallint;
   (*shell_ver).flg_read_only = 1i32 as smallint;
   /* Code which handles ${var<op>...} needs writable values for all variables,
    * therefore we xstrdup: */
-  (*shell_ver).varstr = xstrdup(hush_version_str.as_ptr());
+  (*shell_ver).varstr = crate::libbb::xfuncs_printf::xstrdup(hush_version_str.as_ptr());
   /* Create shell local variables from the values
    * currently living in the environment */
   (*ptr_to_globals).top_var = shell_ver;
@@ -11063,7 +10952,8 @@ pub unsafe extern "C" fn hush_main(
       if !value.is_null() {
         /* paranoia */
         (*cur_var).next =
-          xzalloc(::std::mem::size_of::<variable>() as libc::c_ulong) as *mut variable;
+          crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<variable>() as libc::c_ulong)
+            as *mut variable;
         cur_var = (*cur_var).next;
         (*cur_var).varstr = *e;
         (*cur_var).max_len = strlen(*e) as libc::c_int;
@@ -11206,7 +11096,7 @@ pub unsafe extern "C" fn hush_main(
               (*ptr_to_globals).global_argv.offset(builtin_argc as isize); /* replace "" */
             let ref mut fresh43 = *(*ptr_to_globals).global_argv.offset(-1i32 as isize); /* else -c 'script' ARG0 [ARG1...]: $0 is ARG0 */
             *fresh43 = std::ptr::null_mut::<libc::c_char>();
-            fflush_all();
+            crate::libbb::xfuncs_printf::fflush_all();
             (*ptr_to_globals).last_exitcode = (*x).b_function.expect("non-null function pointer")(
               argv.offset(optind as isize).offset(-1),
             ) as smalluint
@@ -11247,7 +11137,7 @@ pub unsafe extern "C" fn hush_main(
       }
       _ => {}
     }
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   match current_block {
     10007731352114176167 => {
@@ -11291,7 +11181,9 @@ pub unsafe extern "C" fn hush_main(
         xfunc_error_retval = 127i32 as u8;
         input_0 = hfopen(*(*ptr_to_globals).global_argv.offset(0));
         if input_0.is_null() {
-          bb_simple_perror_msg_and_die(*(*ptr_to_globals).global_argv.offset(0));
+          crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+            *(*ptr_to_globals).global_argv.offset(0),
+          );
         }
         xfunc_error_retval = 1i32 as u8;
         install_special_sighandlers();
@@ -11330,7 +11222,7 @@ pub unsafe extern "C" fn hush_main(
           }
         }
         if (*ptr_to_globals).interactive_fd != 0 {
-          close_on_exec_on((*ptr_to_globals).interactive_fd);
+          crate::libbb::xfuncs::close_on_exec_on((*ptr_to_globals).interactive_fd);
           if (*ptr_to_globals).saved_tty_pgrp != 0 {
             loop
             /* If we were run as 'hush &', sleep until we are
@@ -11365,16 +11257,20 @@ pub unsafe extern "C" fn hush_main(
           >(Some(
             restore_ttypgrp_and__exit as unsafe extern "C" fn() -> !,
           ));
-          (*ptr_to_globals).line_input_state = new_line_input_t(FOR_SHELL as libc::c_int);
+          (*ptr_to_globals).line_input_state =
+            crate::libbb::lineedit::new_line_input_t(FOR_SHELL as libc::c_int);
           let mut hp: *const libc::c_char =
             get_local_var_value(b"HISTFILE\x00" as *const u8 as *const libc::c_char);
           if hp.is_null() {
             hp = get_local_var_value(b"HOME\x00" as *const u8 as *const libc::c_char);
             if !hp.is_null() {
-              hp = concat_path_file(hp, b".hush_history\x00" as *const u8 as *const libc::c_char)
+              hp = crate::libbb::concat_path_file::concat_path_file(
+                hp,
+                b".hush_history\x00" as *const u8 as *const libc::c_char,
+              )
             }
           } else {
-            hp = xstrdup(hp)
+            hp = crate::libbb::xfuncs_printf::xstrdup(hp)
           }
           if !hp.is_null() {
             (*(*ptr_to_globals).line_input_state).hist_file = hp
@@ -11382,7 +11278,7 @@ pub unsafe extern "C" fn hush_main(
           }
           hp = get_local_var_value(b"HISTFILESIZE\x00" as *const u8 as *const libc::c_char);
           (*(*ptr_to_globals).line_input_state).max_history =
-            size_from_HISTFILESIZE(hp) as libc::c_int
+            crate::libbb::lineedit::size_from_HISTFILESIZE(hp) as libc::c_int
         } else {
           install_special_sighandlers();
         }
@@ -11433,14 +11329,15 @@ unsafe extern "C" fn run_applet_main(
     unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
   >,
 ) -> libc::c_int {
-  let mut argc: libc::c_int = string_array_len(argv) as libc::c_int;
+  let mut argc: libc::c_int = crate::libbb::appletlib::string_array_len(argv) as libc::c_int;
   return applet_main_func.expect("non-null function pointer")(argc, argv);
 }
 unsafe extern "C" fn builtin_test(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   return run_applet_main(
     argv,
     Some(
-      test_main as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      crate::coreutils::test::test_main
+        as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
     ),
   );
 }
@@ -11448,7 +11345,8 @@ unsafe extern "C" fn builtin_echo(mut argv: *mut *mut libc::c_char) -> libc::c_i
   return run_applet_main(
     argv,
     Some(
-      echo_main as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      crate::coreutils::echo::echo_main
+        as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
     ),
   );
 }
@@ -11456,7 +11354,8 @@ unsafe extern "C" fn builtin_printf(mut argv: *mut *mut libc::c_char) -> libc::c
   return run_applet_main(
     argv,
     Some(
-      printf_main as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+      crate::coreutils::printf::printf_main
+        as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
     ),
   );
 }
@@ -11484,7 +11383,7 @@ unsafe extern "C" fn builtin_help(mut _argv: *mut *mut libc::c_char) -> libc::c_
 }
 unsafe extern "C" fn builtin_history(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   if !(*ptr_to_globals).line_input_state.is_null() {
-    show_history((*ptr_to_globals).line_input_state);
+    crate::libbb::lineedit::show_history((*ptr_to_globals).line_input_state);
   }
   return 0;
 }
@@ -11523,7 +11422,10 @@ unsafe extern "C" fn builtin_cd(mut argv: *mut *mut libc::c_char) -> libc::c_int
   }
   if chdir(newdir) != 0 {
     /* Mimic bash message exactly */
-    bb_perror_msg(b"cd: %s\x00" as *const u8 as *const libc::c_char, newdir);
+    crate::libbb::perror_msg::bb_perror_msg(
+      b"cd: %s\x00" as *const u8 as *const libc::c_char,
+      newdir,
+    );
     return 1i32;
   }
   /* Read current dir (get_cwd(1) is inside) and set PWD.
@@ -11634,7 +11536,7 @@ unsafe extern "C" fn builtin_exit(mut argv: *mut *mut libc::c_char) -> libc::c_i
   /* mimic bash: exit 123abc == exit 255 + error msg */
   xfunc_error_retval = 255i32 as u8;
   /* bash: exit -2 == exit 254, no error msg */
-  hush_exit(xatoi(*argv.offset(0)) & 0xffi32);
+  hush_exit(crate::libbb::xatonum::xatoi(*argv.offset(0)) & 0xffi32);
 }
 /* http://www.opengroup.org/onlinepubs/9699919799/utilities/type.html */
 unsafe extern "C" fn builtin_type(mut argv: *mut *mut libc::c_char) -> libc::c_int {
@@ -11657,7 +11559,7 @@ unsafe extern "C" fn builtin_type(mut argv: *mut *mut libc::c_char) -> libc::c_i
       if !path.is_null() {
         type_0 = path
       } else {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"type: %s: not found\x00" as *const u8 as *const libc::c_char,
           *argv,
         );
@@ -11720,7 +11622,7 @@ unsafe extern "C" fn builtin_read(mut argv: *mut *mut libc::c_char) -> libc::c_i
   /* "!": do not abort on errors.
    * Option string must start with "sr" to match BUILTIN_READ_xxx
    */
-  params.read_flags = getopt32(
+  params.read_flags = crate::libbb::getopt32::getopt32(
     argv,
     b"!srn:p:t:u:d:\x00" as *const u8 as *const libc::c_char,
     &mut params.opt_n as *mut *const libc::c_char,
@@ -11740,7 +11642,7 @@ unsafe extern "C" fn builtin_read(mut argv: *mut *mut libc::c_char) -> libc::c_i
   );
   params.ifs = get_local_var_value(b"IFS\x00" as *const u8 as *const libc::c_char);
   loop {
-    r = shell_builtin_read(&mut params);
+    r = crate::shell::shell_common::shell_builtin_read(&mut params);
     if !(r as uintptr_t == 1i32 as libc::c_ulong && *bb_errno == 4i32) {
       break;
     }
@@ -11750,7 +11652,7 @@ unsafe extern "C" fn builtin_read(mut argv: *mut *mut libc::c_char) -> libc::c_i
     }
   }
   if r as uintptr_t > 1i32 as libc::c_ulong {
-    bb_simple_error_msg(r);
+    crate::libbb::verror_msg::bb_simple_error_msg(r);
     r = 1i32 as uintptr_t as *mut libc::c_char
   }
   return r as uintptr_t as libc::c_int;
@@ -11770,7 +11672,7 @@ unsafe extern "C" fn builtin_umask(mut argv: *mut *mut libc::c_char) -> libc::c_
     {
       mask ^= 0o777i32 as libc::c_uint
     }
-    mask = bb_parse_mode(*argv.offset(0), mask) as mode_t;
+    mask = crate::libbb::parse_mode::bb_parse_mode(*argv.offset(0), mask) as mode_t;
     if !((*(*argv.offset(0)).offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int
       <= 9i32)
     {
@@ -11782,7 +11684,7 @@ unsafe extern "C" fn builtin_umask(mut argv: *mut *mut libc::c_char) -> libc::c_
        * bash: umask: 'q': invalid symbolic mode operator
        * bash: umask: 999: octal number out of range
        */
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"%s: invalid mode \'%s\'\x00" as *const u8 as *const libc::c_char,
         b"umask\x00" as *const u8 as *const libc::c_char,
         *argv.offset(0),
@@ -11849,7 +11751,7 @@ unsafe extern "C" fn helper_export_local(
   let mut current_block_24: u64;
   loop {
     let mut name: *mut libc::c_char = *argv;
-    let mut name_end: *const libc::c_char = endofname(name);
+    let mut name_end: *const libc::c_char = crate::libbb::endofname::endofname(name);
     if *name_end as libc::c_int == '\u{0}' as i32 {
       let mut var: *mut variable = std::ptr::null_mut();
       let mut vpp: *mut *mut variable = std::ptr::null_mut();
@@ -11927,7 +11829,10 @@ unsafe extern "C" fn helper_export_local(
                      * bash remembers NAME and disallows its creation
                      * in the future.
                      */
-                    name = xasprintf(b"%s=\x00" as *const u8 as *const libc::c_char, name);
+                    name = crate::libbb::xfuncs_printf::xasprintf(
+                      b"%s=\x00" as *const u8 as *const libc::c_char,
+                      name,
+                    );
                     current_block_24 = 15597372965620363352;
                   }
                 }
@@ -11938,7 +11843,7 @@ unsafe extern "C" fn helper_export_local(
       }
     } else {
       if *name_end as libc::c_int != '=' as i32 {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"\'%s\': bad variable name\x00" as *const u8 as *const libc::c_char,
           name,
         );
@@ -11946,7 +11851,7 @@ unsafe extern "C" fn helper_export_local(
         return 1i32;
       }
       /* (Un)exporting/making local NAME=VALUE */
-      name = xstrdup(name);
+      name = crate::libbb::xfuncs_printf::xstrdup(name);
       /* Testcase: export PS1='\w \$ ' */
       unbackslash(name);
       current_block_24 = 15597372965620363352;
@@ -11970,7 +11875,8 @@ unsafe extern "C" fn helper_export_local(
 unsafe extern "C" fn builtin_export(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opt_unexport: libc::c_uint = 0;
   /* "!": do not abort on errors */
-  opt_unexport = getopt32(argv, b"!n\x00" as *const u8 as *const libc::c_char);
+  opt_unexport =
+    crate::libbb::getopt32::getopt32(argv, b"!n\x00" as *const u8 as *const libc::c_char);
   if opt_unexport == -1i32 as u32 {
     return 1i32;
   }
@@ -12014,7 +11920,7 @@ unsafe extern "C" fn builtin_export(mut argv: *mut *mut libc::c_char) -> libc::c
 }
 unsafe extern "C" fn builtin_local(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   if (*ptr_to_globals).func_nest_level == 0 as libc::c_uint {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"%s: not in a function\x00" as *const u8 as *const libc::c_char,
       *argv.offset(0),
     );
@@ -12062,12 +11968,14 @@ unsafe extern "C" fn builtin_unset(mut argv: *mut *mut libc::c_char) -> libc::c_
   let mut opts: libc::c_uint = 0;
   /* "!": do not abort on errors */
   /* "+": stop at 1st non-option */
-  opts = getopt32(argv, b"!+vf\x00" as *const u8 as *const libc::c_char);
+  opts = crate::libbb::getopt32::getopt32(argv, b"!+vf\x00" as *const u8 as *const libc::c_char);
   if opts == -1i32 as libc::c_uint {
     return 1i32;
   }
   if opts == 3i32 as libc::c_uint {
-    bb_simple_error_msg(b"unset: -v and -f are exclusive\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg(
+      b"unset: -v and -f are exclusive\x00" as *const u8 as *const libc::c_char,
+    );
     return 1i32;
   }
   argv = argv.offset(optind as isize);
@@ -12144,7 +12052,7 @@ unsafe extern "C" fn builtin_set(mut argv: *mut *mut libc::c_char) -> libc::c_in
           *argv.offset(1),
         ) != 0
         {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"%s: %s: invalid option\x00" as *const u8 as *const libc::c_char,
             b"set\x00" as *const u8 as *const libc::c_char,
             arg,
@@ -12188,7 +12096,7 @@ unsafe extern "C" fn builtin_set(mut argv: *mut *mut libc::c_char) -> libc::c_in
     *fresh48 = std::ptr::null_mut::<libc::c_char>()
   } else {
     (*ptr_to_globals).global_args_malloced = 1i32 as smalluint;
-    pp = xzalloc(
+    pp = crate::libbb::xfuncs_printf::xzalloc(
       (::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong)
         .wrapping_mul(2i32 as libc::c_ulong),
     ) as *mut *mut libc::c_char;
@@ -12199,18 +12107,20 @@ unsafe extern "C" fn builtin_set(mut argv: *mut *mut libc::c_char) -> libc::c_in
   /* This realloc's G.global_argv */
   pp = add_strings_to_strings(g_argv, argv, 1i32);
   (*ptr_to_globals).global_argv = pp;
-  (*ptr_to_globals).global_argc =
-    (1i32 as libc::c_uint).wrapping_add(string_array_len(pp.offset(1))) as libc::c_int;
+  (*ptr_to_globals).global_argc = (1i32 as libc::c_uint)
+    .wrapping_add(crate::libbb::appletlib::string_array_len(pp.offset(1)))
+    as libc::c_int;
   return 0;
 }
 unsafe extern "C" fn builtin_shift(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut n: libc::c_int = 1i32;
   argv = skip_dash_dash(argv);
   if !(*argv.offset(0)).is_null() {
-    n = bb_strtou(*argv.offset(0), 0 as *mut *mut libc::c_char, 10i32) as libc::c_int;
+    n = crate::libbb::bb_strtonum::bb_strtou(*argv.offset(0), 0 as *mut *mut libc::c_char, 10i32)
+      as libc::c_int;
     if *bb_errno != 0 || n < 0 {
       /* shared string with ash.c */
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"Illegal number: %s\x00" as *const u8 as *const libc::c_char,
         *argv.offset(0),
       );
@@ -12228,7 +12138,7 @@ unsafe extern "C" fn builtin_shift(mut argv: *mut *mut libc::c_char) -> libc::c_
       let mut m: libc::c_int = 1i32;
       while m <= n {
         let fresh50 = m;
-        m += 1;
+        m = m + 1;
         free(*(*ptr_to_globals).global_argv.offset(fresh50 as isize) as *mut libc::c_void);
       }
     }
@@ -12274,7 +12184,7 @@ unsafe extern "C" fn builtin_getopts(mut argv: *mut *mut libc::c_char) -> libc::
     var = *argv;
     var.is_null()
   } {
-    bb_simple_error_msg(
+    crate::libbb::verror_msg::bb_simple_error_msg(
       b"usage: getopts OPTSTRING VAR [ARGS]\x00" as *const u8 as *const libc::c_char,
     );
     return 1i32;
@@ -12331,7 +12241,7 @@ unsafe extern "C" fn builtin_getopts(mut argv: *mut *mut libc::c_char) -> libc::
    */
   optind = 0;
   count = 0 as libc::c_uint;
-  n = string_array_len(argv) as libc::c_int;
+  n = crate::libbb::appletlib::string_array_len(argv) as libc::c_int;
   loop {
     optarg = std::ptr::null_mut::<libc::c_char>();
     opterr = if count < (*ptr_to_globals).getopt_count {
@@ -12351,7 +12261,7 @@ unsafe extern "C" fn builtin_getopts(mut argv: *mut *mut libc::c_char) -> libc::
   /* Set OPTIND. Prevent resetting of the magic counter! */
   set_local_var_from_halves(
     b"OPTIND\x00" as *const u8 as *const libc::c_char,
-    utoa(optind as libc::c_uint),
+    crate::libbb::xfuncs::utoa(optind as libc::c_uint),
   ); /* "next time, give me N+1'th result" */
   (*ptr_to_globals).getopt_count = count; /* just in case */
   optind = 0;
@@ -12413,14 +12323,17 @@ unsafe extern "C" fn builtin_source(mut argv: *mut *mut libc::c_char) -> libc::c
       filename = arg_path
     } else if 0 == 0 {
       *bb_errno = 2i32;
-      bb_simple_perror_msg(filename);
+      crate::libbb::perror_msg::bb_simple_perror_msg(filename);
       return 1i32;
     }
   }
   input = hfopen(filename);
   free(arg_path as *mut libc::c_void);
   if input.is_null() {
-    bb_perror_msg(b"%s\x00" as *const u8 as *const libc::c_char, filename);
+    crate::libbb::perror_msg::bb_perror_msg(
+      b"%s\x00" as *const u8 as *const libc::c_char,
+      filename,
+    );
     /* POSIX: non-interactive shell should abort here,
      * not merely fail. So far no one complained :)
      */
@@ -12450,7 +12363,7 @@ unsafe extern "C" fn builtin_trap(mut argv: *mut *mut libc::c_char) -> libc::c_i
   let mut sig: libc::c_int = 0;
   let mut new_cmd: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if (*ptr_to_globals).traps.is_null() {
-    (*ptr_to_globals).traps = xzalloc(
+    (*ptr_to_globals).traps = crate::libbb::xfuncs_printf::xzalloc(
       (::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong)
         .wrapping_mul((64i32 + 1i32) as libc::c_ulong),
     ) as *mut *mut libc::c_char
@@ -12470,7 +12383,7 @@ unsafe extern "C" fn builtin_trap(mut argv: *mut *mut libc::c_char) -> libc::c_i
          * We are printing short names: */
         printf(
           b" %s\n\x00" as *const u8 as *const libc::c_char,
-          get_signame(i),
+          crate::libbb::u_signal_names::get_signame(i),
         );
       }
       i += 1
@@ -12480,13 +12393,16 @@ unsafe extern "C" fn builtin_trap(mut argv: *mut *mut libc::c_char) -> libc::c_i
   }
   new_cmd = std::ptr::null_mut::<libc::c_char>();
   /* If first arg is a number: reset all specified signals */
-  sig = bb_strtou(*argv, 0 as *mut *mut libc::c_char, 10i32) as libc::c_int;
+  sig =
+    crate::libbb::bb_strtonum::bb_strtou(*argv, 0 as *mut *mut libc::c_char, 10i32) as libc::c_int;
   if *bb_errno == 0 {
     ret = 0;
   } else {
     if (*argv.offset(1)).is_null() {
       /* no second arg */
-      bb_simple_error_msg(b"trap: invalid arguments\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg(
+        b"trap: invalid arguments\x00" as *const u8 as *const libc::c_char,
+      );
       return 1i32;
     }
     /* First arg is "-": reset all specified to default */
@@ -12522,18 +12438,18 @@ unsafe extern "C" fn builtin_trap(mut argv: *mut *mut libc::c_char) -> libc::c_i
     let mut handler: sighandler_t = None;
     let fresh53 = argv;
     argv = argv.offset(1);
-    sig = get_signum(*fresh53);
+    sig = crate::libbb::u_signal_names::get_signum(*fresh53);
     if sig < 0 {
       ret = 1i32;
       /* Mimic bash message exactly */
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"trap: %s: invalid signal specification\x00" as *const u8 as *const libc::c_char,
         *argv.offset(-1i32 as isize),
       );
     } else {
       free(*(*ptr_to_globals).traps.offset(sig as isize) as *mut libc::c_void);
       let ref mut fresh54 = *(*ptr_to_globals).traps.offset(sig as isize);
-      *fresh54 = xstrdup(new_cmd);
+      *fresh54 = crate::libbb::xfuncs_printf::xstrdup(new_cmd);
       /* There is no signal for 0 (EXIT) */
       if sig == 0 {
         continue;
@@ -12567,7 +12483,7 @@ unsafe extern "C" fn parse_jobspec(mut str: *const libc::c_char) -> *mut pipe {
         && *str.offset(1) as libc::c_int != '+' as i32
         && *str.offset(1) as libc::c_int != '\u{0}' as i32
     {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"bad argument \'%s\'\x00" as *const u8 as *const libc::c_char,
         str,
       );
@@ -12576,7 +12492,9 @@ unsafe extern "C" fn parse_jobspec(mut str: *const libc::c_char) -> *mut pipe {
     /* It is "%%", "%+" or "%" - current job */
     jobnum = (*ptr_to_globals).last_jobid;
     if jobnum == 0 as libc::c_uint {
-      bb_simple_error_msg(b"no current job\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg(
+        b"no current job\x00" as *const u8 as *const libc::c_char,
+      );
       return std::ptr::null_mut();
     }
   }
@@ -12587,7 +12505,7 @@ unsafe extern "C" fn parse_jobspec(mut str: *const libc::c_char) -> *mut pipe {
     }
     pi = (*pi).next
   }
-  bb_error_msg(
+  crate::libbb::verror_msg::bb_error_msg(
     b"%u: no such job\x00" as *const u8 as *const libc::c_char,
     jobnum,
   );
@@ -12640,7 +12558,7 @@ unsafe extern "C" fn builtin_fg_bg(mut argv: *mut *mut libc::c_char) -> libc::c_
     match current_block {
       7536034456381975812 => {}
       _ => {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"%s: no current job\x00" as *const u8 as *const libc::c_char,
           *argv.offset(0),
         );
@@ -12673,7 +12591,9 @@ unsafe extern "C" fn builtin_fg_bg(mut argv: *mut *mut libc::c_char) -> libc::c_
       delete_finished_job(pi);
       return 0;
     }
-    bb_simple_perror_msg(b"kill (SIGCONT)\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg(
+      b"kill (SIGCONT)\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if *(*argv.offset(0)).offset(0) as libc::c_int == 'f' as i32 {
     remove_job_from_table(pi);
@@ -12780,7 +12700,8 @@ unsafe extern "C" fn builtin_kill(mut argv: *mut *mut libc::c_char) -> libc::c_i
     ret = run_applet_main(
       argv,
       Some(
-        kill_main as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
+        crate::procps::kill::kill_main
+          as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
       ),
     )
   }
@@ -12807,7 +12728,7 @@ unsafe extern "C" fn wait_for_child_or_signal(
        * and get stuck in sigsuspend...
        */
       sigfillset(&mut oldset); /* block all signals, remember old set */
-      sigprocmask2(2i32, &mut oldset);
+      crate::libbb::signals::sigprocmask2(2i32, &mut oldset);
       if !(sigisemptyset(&mut (*ptr_to_globals).pending_set) == 0) {
         /*errno = 0; - checkjobs does this */
         /* Can't pass waitfor_pipe into checkjobs(): it won't be interruptible */
@@ -12892,7 +12813,8 @@ unsafe extern "C" fn builtin_wait(mut argv: *mut *mut libc::c_char) -> libc::c_i
     return wait_for_child_or_signal(0 as *mut pipe, 0);
   } /* bash compat for bad jobspecs */
   loop {
-    let mut pid: pid_t = bb_strtou(*argv, 0 as *mut *mut libc::c_char, 10i32) as pid_t;
+    let mut pid: pid_t =
+      crate::libbb::bb_strtonum::bb_strtou(*argv, 0 as *mut *mut libc::c_char, 10i32) as pid_t;
     if *bb_errno != 0 || pid <= 0 {
       if *(*argv.offset(0)).offset(0) as libc::c_int == '%' as i32 {
         let mut wait_pipe: *mut pipe = std::ptr::null_mut();
@@ -12909,7 +12831,7 @@ unsafe extern "C" fn builtin_wait(mut argv: *mut *mut libc::c_char) -> libc::c_i
         }
       } else {
         /* mimic bash message */
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"wait: \'%s\': not a pid or valid job spec\x00" as *const u8 as *const libc::c_char,
           *argv,
         );
@@ -12933,14 +12855,17 @@ unsafe extern "C" fn builtin_wait(mut argv: *mut *mut libc::c_char) -> libc::c_i
             ret = (*ptr_to_globals).last_bg_pid_exitcode as libc::c_int
           } else {
             /* Example: "wait 1". mimic bash message */
-            bb_error_msg(
+            crate::libbb::verror_msg::bb_error_msg(
               b"wait: pid %d is not a child of this shell\x00" as *const u8 as *const libc::c_char,
               pid,
             );
           }
         } else {
           /* ??? */
-          bb_perror_msg(b"wait %s\x00" as *const u8 as *const libc::c_char, *argv);
+          crate::libbb::perror_msg::bb_perror_msg(
+            b"wait %s\x00" as *const u8 as *const libc::c_char,
+            *argv,
+          );
         }
       } else if ret == 0 {
         /* Yes, and it still runs */
@@ -12968,9 +12893,9 @@ unsafe extern "C" fn parse_numeric_argv1(
   mut def_min: libc::c_uint,
 ) -> libc::c_uint {
   if !(*argv.offset(1)).is_null() {
-    def = bb_strtou(*argv.offset(1), 0 as *mut *mut libc::c_char, 10i32);
+    def = crate::libbb::bb_strtonum::bb_strtou(*argv.offset(1), 0 as *mut *mut libc::c_char, 10i32);
     if *bb_errno != 0 || def < def_min || !(*argv.offset(2)).is_null() {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"%s: bad arguments\x00" as *const u8 as *const libc::c_char,
         *argv.offset(0),
       );
@@ -12984,7 +12909,7 @@ unsafe extern "C" fn parse_numeric_argv1(
 unsafe extern "C" fn builtin_break(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut depth: libc::c_uint = 0;
   if (*ptr_to_globals).depth_of_loop == 0 as libc::c_uint {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"%s: only meaningful in a loop\x00" as *const u8 as *const libc::c_char,
       *argv.offset(0),
     );
@@ -13015,7 +12940,7 @@ unsafe extern "C" fn builtin_continue(mut argv: *mut *mut libc::c_char) -> libc:
 unsafe extern "C" fn builtin_return(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut rc: libc::c_int = 0;
   if (*ptr_to_globals).flag_return_in_progress as libc::c_int != -1i32 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"%s: not in a function or sourced script\x00" as *const u8 as *const libc::c_char,
       *argv.offset(0),
     );
@@ -13057,7 +12982,7 @@ unsafe extern "C" fn builtin_times(mut _argv: *mut *mut libc::c_char) -> libc::c
     tms_cutime: 0,
     tms_cstime: 0,
   };
-  clk_tck = bb_clk_tck();
+  clk_tck = crate::libbb::sysconf::bb_clk_tck();
   times(&mut buf);
   p = times_tbl.as_ptr();
   loop {

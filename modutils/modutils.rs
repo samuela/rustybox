@@ -21,24 +21,12 @@ extern "C" {
   #[no_mangle]
   fn munmap(__addr: *mut libc::c_void, __len: size_t) -> libc::c_int;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_open_zipped_read_close(
-    fname: *const libc::c_char,
-    maxsz_p: *mut size_t,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
 }
 use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct module_entry {
   pub next: *mut module_entry,
   pub name: *mut libc::c_char,
@@ -53,8 +41,9 @@ pub struct module_entry {
   pub dnext: *mut module_entry,
   pub dprev: *mut module_entry,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct module_db {
   pub buckets: [*mut module_entry; 256],
 }
@@ -94,8 +83,9 @@ unsafe extern "C" fn helper_get_module(
   if create == 0 {
     return std::ptr::null_mut();
   }
-  e = xzalloc(::std::mem::size_of::<module_entry>() as libc::c_ulong) as *mut module_entry;
-  (*e).modname = xstrdup(modname.as_mut_ptr());
+  e = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<module_entry>() as libc::c_ulong)
+    as *mut module_entry;
+  (*e).modname = crate::libbb::xfuncs_printf::xstrdup(modname.as_mut_ptr());
   (*e).next = (*db).buckets[hash as usize];
   (*db).buckets[hash as usize] = e;
   (*e).dprev = e;
@@ -163,7 +153,10 @@ pub unsafe extern "C" fn string_to_llist(
     if *tok.offset(0) as libc::c_int == '\u{0}' as i32 {
       continue;
     }
-    llist_add_to_end(llist, xstrdup(tok) as *mut libc::c_void);
+    crate::libbb::llist::llist_add_to_end(
+      llist,
+      crate::libbb::xfuncs_printf::xstrdup(tok) as *mut libc::c_void,
+    );
     len = (len as libc::c_ulong).wrapping_add(strlen(tok)) as libc::c_int as libc::c_int
   }
   return len;
@@ -201,7 +194,7 @@ pub unsafe extern "C" fn filename2modname(
   }
   *modname.offset(i as isize) = '\u{0}' as i32 as libc::c_char;
   if modname == local_modname.as_mut_ptr() {
-    return xstrdup(modname);
+    return crate::libbb::xfuncs_printf::xstrdup(modname);
   }
   return modname;
 }
@@ -212,7 +205,7 @@ pub unsafe extern "C" fn parse_cmdline_module_options(
 ) -> *mut libc::c_char {
   let mut options: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut optlen: libc::c_int = 0;
-  options = xzalloc(1i32 as size_t) as *mut libc::c_char;
+  options = crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t) as *mut libc::c_char;
   optlen = 0;
   loop {
     argv = argv.offset(1);
@@ -223,7 +216,7 @@ pub unsafe extern "C" fn parse_cmdline_module_options(
     let mut var: *const libc::c_char = std::ptr::null();
     let mut val: *const libc::c_char = std::ptr::null();
     var = *argv;
-    options = xrealloc(
+    options = crate::libbb::xfuncs_printf::xrealloc(
       options as *mut libc::c_void,
       ((optlen + 2i32) as libc::c_ulong)
         .wrapping_add(strlen(var))
@@ -297,7 +290,10 @@ pub unsafe extern "C" fn bb_init_module(
     mmaped = 1i32 != 0
   } else {
     *bb_errno = 12i32;
-    image = xmalloc_open_zipped_read_close(filename, &mut image_size) as *mut libc::c_char;
+    image = crate::archival::libarchive::open_transformer::xmalloc_open_zipped_read_close(
+      filename,
+      &mut image_size,
+    ) as *mut libc::c_char;
     if image.is_null() {
       return -*bb_errno;
     }

@@ -6,37 +6,8 @@ use libc::passwd;
 extern "C" {
 
   /* Read an entry from the password-file stream, opening it if necessary.  */
-  #[no_mangle]
-  fn bb_internal_getpwent() -> *mut passwd;
+
   /* Search for an entry with a matching group name.  */
-  #[no_mangle]
-  fn bb_internal_getgrnam(__name: *const libc::c_char) -> *mut group;
-  #[no_mangle]
-  fn remove_file(path: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xgetpwnam(name: *const libc::c_char) -> *mut passwd;
-  #[no_mangle]
-  fn xgetgrnam(name: *const libc::c_char) -> *mut group;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn update_passwd(
-    filename: *const libc::c_char,
-    username: *const libc::c_char,
-    data: *const libc::c_char,
-    member: *const libc::c_char,
-  ) -> libc::c_int;
 
   #[no_mangle]
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
@@ -122,7 +93,7 @@ pub unsafe extern "C" fn deluser_main(
     as libc::c_int;
   let mut opt_delhome: libc::c_int = 0;
   if do_deluser != 0 {
-    opt_delhome = getopt32long(
+    opt_delhome = crate::libbb::getopt32::getopt32long(
       argv,
       b"\x00" as *const u8 as *const libc::c_char,
       b"remove-home\x00\x00\xff\x00" as *const u8 as *const libc::c_char,
@@ -131,7 +102,7 @@ pub unsafe extern "C" fn deluser_main(
     argc -= opt_delhome
   }
   if geteuid() != 0 as libc::c_uint {
-    bb_simple_error_msg_and_die(bb_msg_perm_denied_are_you_root.as_ptr());
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(bb_msg_perm_denied_are_you_root.as_ptr());
   }
   name = *argv.offset(1);
   member = std::ptr::null_mut::<libc::c_char>();
@@ -163,11 +134,11 @@ pub unsafe extern "C" fn deluser_main(
       if do_deluser != 0 {
         /* "deluser USER" */
         let mut pw: *mut passwd = std::ptr::null_mut(); /* bail out if USER is wrong */
-        pw = xgetpwnam(name);
+        pw = crate::libbb::bb_pwd::xgetpwnam(name);
         pfile = b"/etc/passwd\x00" as *const u8 as *const libc::c_char;
         sfile = b"/etc/shadow\x00" as *const u8 as *const libc::c_char;
         if opt_delhome != 0 {
-          remove_file((*pw).pw_dir, FILEUTILS_RECUR as libc::c_int);
+          crate::libbb::remove_file::remove_file((*pw).pw_dir, FILEUTILS_RECUR as libc::c_int);
         }
         current_block_45 = 15090052786889560393;
       } else {
@@ -180,12 +151,12 @@ pub unsafe extern "C" fn deluser_main(
             /* "delgroup GROUP" or "delgroup USER GROUP" */
             if do_deluser < 0 {
               /* delgroup after deluser? */
-              gr = bb_internal_getgrnam(name);
+              gr = crate::libpwdgrp::pwd_grp::bb_internal_getgrnam(name);
               if gr.is_null() {
                 return 0;
               }
             } else {
-              gr = xgetgrnam(name)
+              gr = crate::libbb::bb_pwd::xgetgrnam(name)
               /* bail out if GROUP is wrong */
             }
             if member.is_null() {
@@ -194,12 +165,12 @@ pub unsafe extern "C" fn deluser_main(
               loop
               /* Check if the group is in use */
               {
-                pw_0 = bb_internal_getpwent();
+                pw_0 = crate::libpwdgrp::pwd_grp::bb_internal_getpwent();
                 if pw_0.is_null() {
                   break;
                 }
                 if (*pw_0).pw_gid == (*gr).gr_gid {
-                  bb_error_msg_and_die(
+                  crate::libbb::verror_msg::bb_error_msg_and_die(
                     b"\'%s\' still has \'%s\' as their primary group!\x00" as *const u8
                       as *const libc::c_char,
                     (*pw_0).pw_name,
@@ -216,7 +187,13 @@ pub unsafe extern "C" fn deluser_main(
             loop
             /* Modify pfile, then sfile */
             {
-              if update_passwd(pfile, name, 0 as *const libc::c_char, member) == -1i32 {
+              if crate::libbb::update_passwd::update_passwd(
+                pfile,
+                name,
+                0 as *const libc::c_char,
+                member,
+              ) == -1i32
+              {
                 return 1i32;
               }
               pfile = sfile;
@@ -229,7 +206,7 @@ pub unsafe extern "C" fn deluser_main(
               break;
             }
             /* Delete user from all groups */
-            if update_passwd(
+            if crate::libbb::update_passwd::update_passwd(
               b"/etc/group\x00" as *const u8 as *const libc::c_char,
               0 as *const libc::c_char,
               0 as *const libc::c_char,
@@ -254,5 +231,5 @@ pub unsafe extern "C" fn deluser_main(
     }
   }
   /* Reached only if number of command line args is wrong */
-  bb_show_usage();
+  crate::libbb::appletlib::bb_show_usage();
 }

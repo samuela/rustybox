@@ -9,22 +9,8 @@ extern "C" {
   fn getpriority(__which: __priority_which_t, __who: id_t) -> libc::c_int;
   #[no_mangle]
   fn setpriority(__which: __priority_which_t, __who: id_t, __prio: libc::c_int) -> libc::c_int;
-  /* Search for an entry with a matching username.  */
+/* Search for an entry with a matching username.  */
 
-  #[no_mangle]
-  fn xatoi_range(str: *const libc::c_char, l: libc::c_int, u: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
 }
 
 pub type __id_t = libc::c_uint;
@@ -103,10 +89,11 @@ pub unsafe extern "C" fn renice_main(
   }
   if arg.is_null() {
     /* No args?  Then show usage. */
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* Get the priority adjustment (absolute or relative). */
-  adjustment = xatoi_range(arg, (-2147483647i32 - 1i32) / 2i32, 2147483647i32 / 2i32);
+  adjustment =
+    crate::libbb::xatonum::xatoi_range(arg, (-2147483647i32 - 1i32) / 2i32, 2147483647i32 / 2i32);
   loop {
     argv = argv.offset(1);
     arg = *argv;
@@ -139,7 +126,7 @@ pub unsafe extern "C" fn renice_main(
       /* NB: use of getpwnam makes it risky to be NOFORK, switch to getpwnam_r? */
       p_0 = bb_internal_getpwnam(arg);
       if p_0.is_null() {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"unknown user %s\x00" as *const u8 as *const libc::c_char,
           arg,
         );
@@ -149,9 +136,9 @@ pub unsafe extern "C" fn renice_main(
         current_block = 11385396242402735691;
       }
     } else {
-      who = bb_strtou(arg, 0 as *mut *mut libc::c_char, 10i32);
+      who = crate::libbb::bb_strtonum::bb_strtou(arg, 0 as *mut *mut libc::c_char, 10i32);
       if *bb_errno != 0 {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"invalid number \'%s\'\x00" as *const u8 as *const libc::c_char,
           arg,
         );
@@ -169,7 +156,7 @@ pub unsafe extern "C" fn renice_main(
           *bb_errno = 0;
           old_priority = getpriority(which as __priority_which_t, who);
           if *bb_errno != 0 {
-            bb_perror_msg(Xetpriority_msg.as_ptr(), 'g' as i32);
+            crate::libbb::perror_msg::bb_perror_msg(Xetpriority_msg.as_ptr(), 'g' as i32);
             current_block = 46536466264865791;
           } else {
             new_priority = old_priority + adjustment;
@@ -185,7 +172,7 @@ pub unsafe extern "C" fn renice_main(
             if setpriority(which as __priority_which_t, who, new_priority) == 0 {
               continue;
             }
-            bb_perror_msg(Xetpriority_msg.as_ptr(), 's' as i32);
+            crate::libbb::perror_msg::bb_perror_msg(Xetpriority_msg.as_ptr(), 's' as i32);
           }
         }
       }

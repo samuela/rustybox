@@ -1,7 +1,5 @@
 use crate::archival::libarchive::bb_archive::file_header_t;
-use crate::libbb::llist::llist_t;
 use crate::librb::size_t;
-
 use libc;
 use libc::off64_t;
 use libc::off_t;
@@ -21,27 +19,6 @@ extern "C" {
   #[no_mangle]
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
 
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xread_char(fd: libc::c_int) -> libc::c_uchar;
-
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn data_skip(archive_handle: *mut archive_handle_t);
-
-  #[no_mangle]
-  fn create_links_from_list(list: *mut llist_t);
 }
 
 use crate::archival::libarchive::bb_archive::archive_handle_t;
@@ -49,8 +26,9 @@ use crate::archival::libarchive::bb_archive::archive_handle_t;
  * busybox ar archive data structures
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ar_header {
   pub name: [libc::c_char; 16],
   pub date: [libc::c_char; 12],
@@ -60,8 +38,9 @@ pub struct ar_header {
   pub size: [libc::c_char; 10],
   pub magic: [libc::c_char; 2],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub raw: [libc::c_char; 60],
   pub formatted: ar_header,
@@ -85,9 +64,11 @@ unsafe extern "C" fn read_num(
   *str.offset(len as isize) = 0 as libc::c_char;
   /* This code works because
    * on misformatted numbers bb_strtou returns all-ones */
-  err = bb_strtou(str, 0 as *mut *mut libc::c_char, base) as libc::c_int;
+  err = crate::libbb::bb_strtonum::bb_strtou(str, 0 as *mut *mut libc::c_char, base) as libc::c_int;
   if err == -1i32 {
-    bb_simple_error_msg_and_die(b"invalid ar header\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"invalid ar header\x00" as *const u8 as *const libc::c_char,
+    );
   }
   return err as libc::c_uint;
 }
@@ -116,14 +97,16 @@ pub unsafe extern "C" fn get_header_ar(mut archive_handle: *mut archive_handle_t
       &mut *ar.raw.as_mut_ptr().offset(1) as *mut libc::c_char as *const libc::c_void,
       59i32 as libc::c_ulong,
     );
-    ar.raw[59] = xread_char((*archive_handle).src_fd) as libc::c_char;
+    ar.raw[59] = crate::libbb::read_printf::xread_char((*archive_handle).src_fd) as libc::c_char;
     (*archive_handle).offset += 1
   }
   (*archive_handle).offset += 60i32 as libc::c_long;
   if ar.formatted.magic[0] as libc::c_int != '`' as i32
     || ar.formatted.magic[1] as libc::c_int != '\n' as i32
   {
-    bb_simple_error_msg_and_die(b"invalid ar header\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"invalid ar header\x00" as *const u8 as *const libc::c_char,
+    );
   }
   /*
    * Note that the fields MUST be read in reverse order as
@@ -140,12 +123,12 @@ pub unsafe extern "C" fn get_header_ar(mut archive_handle: *mut archive_handle_t
   if ar.formatted.name[0] as libc::c_int == '/' as i32 {
     if ar.formatted.name[1] as libc::c_int == ' ' as i32 {
       /* This is the index of symbols in the file for compilers */
-      data_skip(archive_handle);
+      crate::archival::libarchive::data_skip::data_skip(archive_handle);
       (*archive_handle).offset += size as libc::c_long;
       return get_header_ar(archive_handle);
       /* Return next header */
     }
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"long filenames not supported\x00" as *const u8 as *const libc::c_char,
     );
   }
@@ -174,7 +157,7 @@ pub unsafe extern "C" fn get_header_ar(mut archive_handle: *mut archive_handle_t
     ::std::mem::size_of::<[libc::c_char; 12]>() as libc::c_ulong as libc::c_int,
   ) as time_t;
   /* short filenames */
-  (*typed).name = xstrndup(ar.formatted.name.as_mut_ptr(), 16i32);
+  (*typed).name = crate::libbb::xfuncs_printf::xstrndup(ar.formatted.name.as_mut_ptr(), 16i32);
   *(*typed)
     .name
     .offset(strcspn((*typed).name, b" /\x00" as *const u8 as *const libc::c_char) as isize) =
@@ -192,14 +175,16 @@ pub unsafe extern "C" fn get_header_ar(mut archive_handle: *mut archive_handle_t
         .expect("non-null function pointer")(sa) as libc::c_int
         == 0
       {}
-      create_links_from_list((*sa).link_placeholders);
+      crate::archival::libarchive::unsafe_symlink_target::create_links_from_list(
+        (*sa).link_placeholders,
+      );
     } else {
       (*archive_handle)
         .action_data
         .expect("non-null function pointer")(archive_handle);
     }
   } else {
-    data_skip(archive_handle);
+    crate::archival::libarchive::data_skip::data_skip(archive_handle);
   }
   (*archive_handle).offset += (*typed).size;
   /* Set the file pointer to the correct spot, we may have been reading a compressed file */

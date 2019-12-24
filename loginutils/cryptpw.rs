@@ -2,6 +2,7 @@ use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::isatty;
 use libc::puts;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -10,37 +11,8 @@ extern "C" {
   #[no_mangle]
   static mut stdin: *mut FILE;
 
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_ask_noecho_stdin(prompt: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn pw_encrypt(
-    clear: *const libc::c_char,
-    salt: *const libc::c_char,
-    cleanup: libc::c_int,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn crypt_make_pw_salt(p: *mut libc::c_char, algo: *const libc::c_char) -> *mut libc::c_char;
 }
 
-use crate::librb::size_t;
-use libc::FILE;
 /*
  * cryptpw.c - output a crypt(3)ed password to stdout.
  *
@@ -144,7 +116,7 @@ pub unsafe extern "C" fn cryptpw_main(
   opt_m = b"des\x00" as *const u8 as *const libc::c_char;
   opt_S = std::ptr::null();
   /* at most two non-option arguments; -P NUM */
-  getopt32long(
+  crate::libbb::getopt32::getopt32long(
     argv,
     b"^sP:+S:m:a:\x00?2\x00" as *const u8 as *const libc::c_char,
     mkpasswd_longopts.as_ptr(),
@@ -158,10 +130,10 @@ pub unsafe extern "C" fn cryptpw_main(
   if !(*argv.offset(0)).is_null() && opt_S.is_null() {
     opt_S = *argv.offset(1)
   }
-  salt_ptr = crypt_make_pw_salt(salt.as_mut_ptr(), opt_m);
+  salt_ptr = crate::libbb::pw_encrypt::crypt_make_pw_salt(salt.as_mut_ptr(), opt_m);
   if !opt_S.is_null() {
     /* put user's data after the "$N$" prefix */
-    safe_strncpy(
+    crate::libbb::safe_strncpy::safe_strncpy(
       salt_ptr,
       opt_S,
       (::std::mem::size_of::<[libc::c_char; 38]>() as libc::c_ulong).wrapping_sub(
@@ -170,21 +142,27 @@ pub unsafe extern "C" fn cryptpw_main(
       ),
     );
   }
-  xmove_fd(fd, 0);
+  crate::libbb::xfuncs_printf::xmove_fd(fd, 0);
   password = *argv.offset(0);
   if password.is_null() {
     /* Only mkpasswd, and only from tty, prompts.
      * Otherwise it is a plain read. */
     password =
       if 1i32 != 0 && *applet_name.offset(0) as libc::c_int == 'm' as i32 && isatty(0i32) != 0 {
-        bb_ask_noecho_stdin(b"Password: \x00" as *const u8 as *const libc::c_char)
+        crate::libbb::bb_askpass::bb_ask_noecho_stdin(
+          b"Password: \x00" as *const u8 as *const libc::c_char,
+        )
       } else {
-        xmalloc_fgetline(stdin)
+        crate::libbb::get_line_from_file::xmalloc_fgetline(stdin)
       }
     /* may still be NULL on EOF/error */
   }
   if !password.is_null() {
-    puts(pw_encrypt(password, salt.as_mut_ptr(), 1i32));
+    puts(crate::libbb::pw_encrypt::pw_encrypt(
+      password,
+      salt.as_mut_ptr(),
+      1i32,
+    ));
   }
   return 0;
 }

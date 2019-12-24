@@ -1,13 +1,8 @@
 use libc;
 use libc::getpid;
-extern "C" {
 
-  #[no_mangle]
-  fn monotonic_us() -> libc::c_ulonglong;
-}
-
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct random_t {
   pub galois_LFSR: i32,
   pub LCG: u32,
@@ -38,7 +33,7 @@ pub unsafe extern "C" fn next_random(mut rnd: *mut random_t) -> u32 {
      */
     (*rnd).xs64_x = getpid() as u32;
     (*rnd).galois_LFSR = (*rnd).xs64_x as i32;
-    (*rnd).xs64_y = monotonic_us() as u32;
+    (*rnd).xs64_y = crate::libbb::time::monotonic_us() as u32;
     (*rnd).LCG = (*rnd).xs64_y
   }
   /* LCG: period of 2^32, but quite weak:

@@ -12,11 +12,10 @@ extern "C" {
    * modified definition without "attribute (format)"
    * instead of including libbb.h */
   //#include "libbb.h"
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char);
+
 }
 /* suppress gcc "no previous prototype" warning */
 #[no_mangle]
 pub unsafe extern "C" fn bb_perror_nomsg_and_die() {
-  bb_simple_perror_msg_and_die(0 as *const libc::c_char);
+  crate::libbb::perror_msg::bb_simple_perror_msg_and_die(0 as *const libc::c_char);
 }

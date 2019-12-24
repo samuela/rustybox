@@ -5,7 +5,6 @@ use libc;
 use libc::free;
 use libc::group;
 use libc::lstat;
-use libc::mode_t;
 use libc::passwd;
 use libc::printf;
 use libc::puts;
@@ -15,7 +14,6 @@ use libc::statfs;
 use libc::strchr;
 use libc::time_t;
 use libc::tm;
-use libc::uid_t;
 use libc::FILE;
 extern "C" {
 
@@ -53,26 +51,12 @@ extern "C" {
   fn localtime(_: *const time_t) -> *mut tm;
 
   /* Search for an entry with a matching user ID.  */
-  #[no_mangle]
-  fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;
+
   /* Search for an entry with a matching group ID.  */
 
   #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_mode_string(mode: mode_t) -> *const libc::c_char;
-  #[no_mangle]
-  fn xmalloc_readlink_or_warn(path: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -325,7 +309,7 @@ unsafe extern "C" fn human_fstype(mut f_type: u32) -> *const libc::c_char {
     }
     i += 1
   }
-  return nth_string(humanname.as_ptr(), i);
+  return crate::libbb::compare_string_array::nth_string(humanname.as_ptr(), i);
 }
 
 /* "man statfs" says that statfsbuf->f_fsid is a mess */
@@ -353,7 +337,7 @@ unsafe extern "C" fn get_f_fsid(mut statfsbuf: *const statfs) -> libc::c_ulonglo
 unsafe extern "C" fn strcatc(mut str: *mut libc::c_char, mut c: libc::c_char) {
   let mut len: libc::c_int = strlen(str) as libc::c_int;
   let fresh1 = len;
-  len += 1;
+  len = len + 1;
   *str.offset(fresh1 as isize) = c;
   *str.offset(len as isize) = '\u{0}' as i32 as libc::c_char;
 }
@@ -421,7 +405,8 @@ unsafe extern "C" fn print_stat(
   } else if m as libc::c_int == 'N' as i32 {
     strcatc(pformat, 's' as i32 as libc::c_char);
     if (*statbuf).st_mode & 0o170000i32 as libc::c_uint == 0o120000i32 as libc::c_uint {
-      let mut linkname: *mut libc::c_char = xmalloc_readlink_or_warn(filename);
+      let mut linkname: *mut libc::c_char =
+        crate::libbb::xreadlink::xmalloc_readlink_or_warn(filename);
       if linkname.is_null() {
         return;
       }
@@ -457,7 +442,10 @@ unsafe extern "C" fn print_stat(
         as libc::c_ulong,
     );
   } else if m as libc::c_int == 'A' as i32 {
-    printfs(pformat, bb_mode_string((*statbuf).st_mode));
+    printfs(
+      pformat,
+      crate::libbb::mode_string::bb_mode_string((*statbuf).st_mode),
+    );
   } else if m as libc::c_int == 'f' as i32 {
     strcat(pformat, b"lx\x00" as *const u8 as *const libc::c_char);
     printf(pformat, (*statbuf).st_mode as libc::c_ulong);
@@ -470,7 +458,7 @@ unsafe extern "C" fn print_stat(
     strcat(pformat, b"lu\x00" as *const u8 as *const libc::c_char);
     printf(pformat, (*statbuf).st_uid as libc::c_ulong);
   } else if m as libc::c_int == 'U' as i32 {
-    pw_ent = bb_internal_getpwuid((*statbuf).st_uid);
+    pw_ent = crate::libpwdgrp::pwd_grp::bb_internal_getpwuid((*statbuf).st_uid);
     printfs(
       pformat,
       if !pw_ent.is_null() {
@@ -586,7 +574,7 @@ unsafe extern "C" fn print_it(
   mut data: *const libc::c_void,
 ) {
   /* Create a working copy of the format string */
-  let mut format: *mut libc::c_char = xstrdup(masterformat);
+  let mut format: *mut libc::c_char = crate::libbb::xfuncs_printf::xstrdup(masterformat);
   /* Add 2 to accommodate our conversion of the stat '%s' format string
    * to the printf '%llu' one.  */
   let mut dest: *mut libc::c_char = xmalloc(
@@ -639,7 +627,7 @@ unsafe extern "C" fn print_it(
         14977033353768631501 =>
         /* fall through */
         {
-          bb_putchar('%' as i32);
+          crate::libbb::xfuncs_printf::bb_putchar('%' as i32);
         }
         _ => {}
       }
@@ -656,7 +644,7 @@ unsafe extern "C" fn do_statfs(
 ) -> bool {
   let mut statfsbuf: statfs = std::mem::zeroed();
   if statfs(filename, &mut statfsbuf) != 0 {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"can\'t read file system information for \'%s\'\x00" as *const u8 as *const libc::c_char,
       filename,
     );
@@ -704,7 +692,7 @@ unsafe extern "C" fn do_stat(
   .expect("non-null function pointer")(filename, &mut statbuf)
     != 0
   {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"can\'t stat \'%s\'\x00" as *const u8 as *const libc::c_char,
       filename,
     );
@@ -755,7 +743,7 @@ pub unsafe extern "C" fn stat_main(
   let mut statfunc: statfunc_ptr =
     Some(do_stat as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> bool);
   let mut opts: libc::c_uint = 0;
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^tLfc:\x00-1\x00" as *const u8 as *const libc::c_char,
     &mut format as *mut *mut libc::c_char,

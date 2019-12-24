@@ -1,3 +1,4 @@
+use crate::libbb::print_numbered_lines::number_state;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
@@ -6,32 +7,9 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn print_numbered_lines(ns: *mut number_state, filename: *const libc::c_char) -> libc::c_int;
+
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct number_state {
-  pub width: libc::c_uint,
-  pub start: libc::c_uint,
-  pub inc: libc::c_uint,
-  pub sep: *const libc::c_char,
-  pub empty_str: *const libc::c_char,
-  pub all: smallint,
-  pub nonempty: smallint,
-}
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_p: C2RustUnnamed = 1;
 
@@ -92,7 +70,7 @@ pub unsafe extern "C" fn nl_main(
   ns.start = 1i32 as libc::c_uint;
   ns.inc = 1i32 as libc::c_uint;
   ns.sep = b"\t\x00" as *const u8 as *const libc::c_char;
-  getopt32long(
+  crate::libbb::getopt32::getopt32long(
     argv,
     b"pw:+s:v:+i:+b:\x00" as *const u8 as *const libc::c_char,
     nl_longopts.as_ptr(),
@@ -104,7 +82,7 @@ pub unsafe extern "C" fn nl_main(
   );
   ns.all = (*opt_b.offset(0) as libc::c_int == 'a' as i32) as libc::c_int as smallint;
   ns.nonempty = (*opt_b.offset(0) as libc::c_int == 't' as i32) as libc::c_int as smallint;
-  ns.empty_str = xasprintf(
+  ns.empty_str = crate::libbb::xfuncs_printf::xasprintf(
     b"%*s\n\x00" as *const u8 as *const libc::c_char,
     ns.width
       .wrapping_add(strlen(ns.sep) as libc::c_int as libc::c_uint),
@@ -117,11 +95,11 @@ pub unsafe extern "C" fn nl_main(
   }
   exitcode = 0;
   loop {
-    exitcode |= print_numbered_lines(&mut ns, *argv);
+    exitcode |= crate::libbb::print_numbered_lines::print_numbered_lines(&mut ns, *argv);
     argv = argv.offset(1);
     if (*argv).is_null() {
       break;
     }
   }
-  fflush_stdout_and_exit(exitcode);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(exitcode);
 }

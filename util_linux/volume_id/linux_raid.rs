@@ -1,30 +1,13 @@
 use libc;
 extern "C" {
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
 
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 }
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+
+use crate::util_linux::volume_id::volume_id::volume_id;
 
 pub type uuid_format = libc::c_uint;
 // pub const UUID_DCE_STRING: uuid_format = 3;
@@ -56,8 +39,9 @@ pub const UUID_DCE: uuid_format = 2;
 //config:	default y
 //config:	depends on VOLUMEID
 //kbuild:lib-$(CONFIG_FEATURE_VOLUMEID_LINUXRAID) += linux_raid.o
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct mdp_super_block {
   pub md_magic: u32,
   pub major_version: u32,
@@ -139,8 +123,11 @@ pub unsafe extern "C" fn volume_id_probe_linux_raid(
     return -1i32;
   }
   sboff = (size & !(0x10000i32 - 1i32) as libc::c_ulong).wrapping_sub(0x10000i32 as libc::c_ulong);
-  mdp = volume_id_get_buffer(id, (0i32 as u64).wrapping_add(sboff), 0x800i32 as size_t)
-    as *mut mdp_super_block;
+  mdp = crate::util_linux::volume_id::util::volume_id_get_buffer(
+    id,
+    (0i32 as u64).wrapping_add(sboff),
+    0x800i32 as size_t,
+  ) as *mut mdp_super_block;
   if mdp.is_null() {
     return -1i32;
   }
@@ -153,7 +140,7 @@ pub unsafe extern "C" fn volume_id_probe_linux_raid(
     &mut (*mdp).set_uuid1 as *mut u32 as *const libc::c_void,
     12i32 as libc::c_ulong,
   );
-  volume_id_set_uuid(id, uuid.as_mut_ptr(), UUID_DCE);
+  crate::util_linux::volume_id::util::volume_id_set_uuid(id, uuid.as_mut_ptr(), UUID_DCE);
   //	snprintf(id->type_version, sizeof(id->type_version)-1, "%u.%u.%u",
   //		le32_to_cpu(mdp->major_version),
   //		le32_to_cpu(mdp->minor_version),

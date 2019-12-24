@@ -1,3 +1,4 @@
+use crate::libbb::parse_config::parser_t;
 use crate::libbb::skip_whitespace::skip_whitespace;
 use libc;
 use libc::access;
@@ -29,54 +30,15 @@ extern "C" {
    * xrealloc_vector(v, SHIFT, idx) *MUST* be called with consecutive IDXs -
    * skipping an index is a bad bug - it may miss a realloc!
    */
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xstat(pathname: *const libc::c_char, buf: *mut stat);
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
+
   /* Autodetects .gz etc */
-  #[no_mangle]
-  fn open_zipped(fname: *const libc::c_char, fail_if_not_compressed: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xmalloc_open_zipped_read_close(
-    fname: *const libc::c_char,
-    maxsz_p: *mut size_t,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   /* { "-", NULL } */
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn config_open2(
-    filename: *const libc::c_char,
-    fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
-  ) -> *mut parser_t;
+
   /* delims[0] is a comment char (use '\0' to disable), the rest are token delimiters */
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
-  #[no_mangle]
-  fn get_terminal_width(fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -115,22 +77,13 @@ pub const PARSE_GREEDY: C2RustUnnamed = 262144;
 // treat consecutive delimiters as one
 pub const PARSE_TRIM: C2RustUnnamed = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed = 65536;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
+
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub col: *const libc::c_char,
   pub tbl: *const libc::c_char,
@@ -171,12 +124,18 @@ unsafe extern "C" fn run_pipe(
      * man1/genhostid.1.gz: 203 bytes - smallest real manpage
      * man2/path_resolution.2.gz: 114 bytes - largest link
      */
-    xstat(man_filename, &mut sb);
+    crate::libbb::xfuncs_printf::xstat(man_filename, &mut sb);
     if !(sb.st_size > 300i32 as libc::c_long) {
-      line = xmalloc_open_zipped_read_close(man_filename, std::ptr::null_mut::<size_t>())
-        as *mut libc::c_char;
+      line = crate::archival::libarchive::open_transformer::xmalloc_open_zipped_read_close(
+        man_filename,
+        std::ptr::null_mut::<size_t>(),
+      ) as *mut libc::c_char;
       if line.is_null()
-        || is_prefixed_with(line, b".so \x00" as *const u8 as *const libc::c_char).is_null()
+        || crate::libbb::compare_string_array::is_prefixed_with(
+          line,
+          b".so \x00" as *const u8 as *const libc::c_char,
+        )
+        .is_null()
       {
         free(line as *mut libc::c_void);
       } else {
@@ -207,7 +166,7 @@ unsafe extern "C" fn run_pipe(
             _ => {
               /* Links do not have .gz extensions, even if manpage
                * is compressed */
-              man_filename = xasprintf(
+              man_filename = crate::libbb::xfuncs_printf::xasprintf(
                 b"%s/%s\x00" as *const u8 as *const libc::c_char,
                 man_filename,
                 linkname,
@@ -226,16 +185,16 @@ unsafe extern "C" fn run_pipe(
   }
   /* err on the safe side */
   close(0i32); /* guaranteed to use fd 0 (STDIN_FILENO) */
-  open_zipped(man_filename, 0);
+  crate::archival::libarchive::open_transformer::open_zipped(man_filename, 0);
   if man != 0 {
-    let mut w: libc::c_int = get_terminal_width(-1i32);
+    let mut w: libc::c_int = crate::libbb::xfuncs::get_terminal_width(-1i32);
     if w > 10i32 {
       w -= 2i32
     }
     /* "2>&1" is added so that nroff errors are shown in pager too.
      * Otherwise it may show just empty screen.
      */
-    cmd = xasprintf(
+    cmd = crate::libbb::xfuncs_printf::xasprintf(
       b"%s | %s -rLL=%un -rLT=%un 2>&1 | %s\x00" as *const u8 as *const libc::c_char,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tbl,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).nroff,
@@ -244,7 +203,9 @@ unsafe extern "C" fn run_pipe(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pager,
     )
   } else {
-    cmd = xstrdup((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pager)
+    cmd = crate::libbb::xfuncs_printf::xstrdup(
+      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pager,
+    )
   }
   system(cmd);
   free(cmd as *mut libc::c_void);
@@ -258,7 +219,7 @@ unsafe extern "C" fn show_manpage(
   mut level: libc::c_int,
 ) -> libc::c_int {
   /* We leak this allocation... */
-  let mut filename_with_zext: *mut libc::c_char = xasprintf(
+  let mut filename_with_zext: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
     b"%s.lzma\x00" as *const u8 as *const libc::c_char,
     man_filename,
   );
@@ -324,14 +285,14 @@ unsafe extern "C" fn add_MANPATH(
                 current_block_8 = 17216689946888361452;
               }
               _ => {
-                man_path_list = xrealloc_vector_helper(
+                man_path_list = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
                   man_path_list as *mut libc::c_void,
                   ((::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong) << 8i32)
                     .wrapping_add(4i32 as libc::c_ulong) as libc::c_uint,
                   *count_mp,
                 ) as *mut *mut libc::c_char;
                 let ref mut fresh0 = *man_path_list.offset(*count_mp as isize);
-                *fresh0 = xstrdup(path);
+                *fresh0 = crate::libbb::xfuncs_printf::xstrdup(path);
                 *count_mp += 1;
                 break;
               }
@@ -358,7 +319,7 @@ unsafe extern "C" fn if_redefined(
   mut key: *const libc::c_char,
   mut line: *const libc::c_char,
 ) -> *const libc::c_char {
-  if is_prefixed_with(line, key).is_null() {
+  if crate::libbb::compare_string_array::is_prefixed_with(line, key).is_null() {
     return var;
   }
   line = line.offset(strlen(key) as isize);
@@ -370,7 +331,7 @@ unsafe extern "C" fn if_redefined(
   {
     return var;
   }
-  return xstrdup(skip_whitespace(line));
+  return crate::libbb::xfuncs_printf::xstrdup(skip_whitespace(line));
 }
 #[no_mangle]
 pub unsafe extern "C" fn man_main(
@@ -396,9 +357,13 @@ pub unsafe extern "C" fn man_main(
   } else {
     b"more\x00" as *const u8 as *const libc::c_char
   };
-  opt = getopt32(argv, b"^+aw\x00-1\x00" as *const u8 as *const libc::c_char) as libc::c_int;
+  opt =
+    crate::libbb::getopt32::getopt32(argv, b"^+aw\x00-1\x00" as *const u8 as *const libc::c_char)
+      as libc::c_int;
   argv = argv.offset(optind as isize);
-  sec_list = xstrdup(b"0p:1:1p:2:3:3p:4:5:6:7:8:9\x00" as *const u8 as *const libc::c_char);
+  sec_list = crate::libbb::xfuncs_printf::xstrdup(
+    b"0p:1:1p:2:3:3p:4:5:6:7:8:9\x00" as *const u8 as *const libc::c_char,
+  );
   count_mp = 0;
   man_path_list = add_MANPATH(
     0 as *mut *mut libc::c_char,
@@ -408,23 +373,32 @@ pub unsafe extern "C" fn man_main(
   /* Parse man.conf[ig] or man_db.conf */
   /* man version 1.6f uses man.config */
   /* man-db implementation of man uses man_db.conf */
-  parser = config_open2(
+  parser = crate::libbb::parse_config::config_open2(
     b"/etc/man.config\x00" as *const u8 as *const libc::c_char,
-    Some(fopen_for_read as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE),
+    Some(
+      crate::libbb::wfopen::fopen_for_read
+        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+    ),
   );
   if parser.is_null() {
-    parser = config_open2(
+    parser = crate::libbb::parse_config::config_open2(
       b"/etc/man.conf\x00" as *const u8 as *const libc::c_char,
-      Some(fopen_for_read as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE),
+      Some(
+        crate::libbb::wfopen::fopen_for_read
+          as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+      ),
     )
   }
   if parser.is_null() {
-    parser = config_open2(
+    parser = crate::libbb::parse_config::config_open2(
       b"/etc/man_db.conf\x00" as *const u8 as *const libc::c_char,
-      Some(fopen_for_read as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE),
+      Some(
+        crate::libbb::wfopen::fopen_for_read
+          as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+      ),
     )
   }
-  while config_read(
+  while crate::libbb::parse_config::config_read(
     parser,
     token.as_mut_ptr(),
     (PARSE_NORMAL as libc::c_int | (0i32 & 0xffi32) << 8i32 | 2i32 & 0xffi32) as libc::c_uint,
@@ -472,10 +446,10 @@ pub unsafe extern "C" fn man_main(
     }
     if strcmp(b"MANSECT\x00" as *const u8 as *const libc::c_char, token[0]) == 0 {
       free(sec_list as *mut libc::c_void);
-      sec_list = xstrdup(token[1])
+      sec_list = crate::libbb::xfuncs_printf::xstrdup(token[1])
     }
   }
-  config_close(parser);
+  crate::libbb::parse_config::config_close(parser);
   if man_path_list.is_null() {
     static mut mpl: [*const libc::c_char; 3] = [
       b"/usr/man\x00" as *const u8 as *const libc::c_char,
@@ -498,7 +472,7 @@ pub unsafe extern "C" fn man_main(
   if isatty(1i32) == 0 {
     putenv(b"GROFF_NO_SGR=1\x00" as *const u8 as *const libc::c_char as *mut libc::c_char);
     let ref mut fresh10 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pager;
-    *fresh10 = xasprintf(
+    *fresh10 = crate::libbb::xfuncs_printf::xasprintf(
       b"%s -b -p -x\x00" as *const u8 as *const libc::c_char,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).col,
     )
@@ -517,7 +491,7 @@ pub unsafe extern "C" fn man_main(
       cur_mp = 0;
       's_267: loop {
         let fresh11 = cur_mp;
-        cur_mp += 1;
+        cur_mp = cur_mp + 1;
         cur_path = *man_path_list.offset(fresh11 as isize);
         if cur_path.is_null() {
           current_block_61 = 13839692391726842101;
@@ -536,7 +510,7 @@ pub unsafe extern "C" fn man_main(
           /* Search for cat, then man page */
           while cat0man1 < 2i32 {
             let mut found_here: libc::c_int = 0;
-            man_filename = xasprintf(
+            man_filename = crate::libbb::xfuncs_printf::xasprintf(
               b"%s/%s%.*s/%s.%.*s\x00" as *const u8 as *const libc::c_char,
               cur_path,
               (b"cat\x00man\x00" as *const u8 as *const libc::c_char)
@@ -569,7 +543,7 @@ pub unsafe extern "C" fn man_main(
     match current_block_61 {
       13839692391726842101 => {
         if found == 0 {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"no manual entry for \'%s\'\x00" as *const u8 as *const libc::c_char,
             *argv,
           );

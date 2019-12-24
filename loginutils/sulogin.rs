@@ -12,32 +12,9 @@ extern "C" {
   static mut optind: libc::c_int;
 
   /* Search for an entry with a matching user ID.  */
-  #[no_mangle]
-  fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_info_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_do_delay(seconds: libc::c_int);
-  #[no_mangle]
-  fn run_shell(
-    shell: *const libc::c_char,
-    loginshell: libc::c_int,
-    args: *mut *const libc::c_char,
-  ) -> !;
-  #[no_mangle]
-  fn ask_and_check_password_extended(
-    pw: *const passwd,
-    timeout: libc::c_int,
-    prompt: *const libc::c_char,
-  ) -> libc::c_int;
 
 }
 
@@ -86,7 +63,7 @@ pub unsafe extern "C" fn sulogin_main(
    */
   logmode = LOGMODE_BOTH as libc::c_int as smallint;
   openlog(applet_name, 0, 4i32 << 3i32);
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     b"t:+\x00" as *const u8 as *const libc::c_char,
     &mut timeout as *mut libc::c_int,
@@ -95,19 +72,19 @@ pub unsafe extern "C" fn sulogin_main(
   if !(*argv.offset(0)).is_null() {
     close(0i32);
     close(1i32);
-    dup(xopen(*argv.offset(0), 0o2i32));
+    dup(crate::libbb::xfuncs_printf::xopen(*argv.offset(0), 0o2i32));
     close(2i32);
     dup(0i32);
   }
-  pwd = bb_internal_getpwuid(0i32 as uid_t);
+  pwd = crate::libpwdgrp::pwd_grp::bb_internal_getpwuid(0i32 as uid_t);
   if pwd.is_null() {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"no password entry for root\x00" as *const u8 as *const libc::c_char,
     );
   }
   loop {
     let mut r: libc::c_int = 0;
-    r = ask_and_check_password_extended(
+    r = crate::libbb::correct_password::ask_and_check_password_extended(
       pwd,
       timeout,
       b"Give root password for system maintenance\n(or type Control-D for normal startup):\x00"
@@ -115,16 +92,20 @@ pub unsafe extern "C" fn sulogin_main(
     );
     if r < 0 {
       /* ^D, ^C, timeout, or read error */
-      bb_simple_info_msg(b"normal startup\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_info_msg(
+        b"normal startup\x00" as *const u8 as *const libc::c_char,
+      );
       return 0;
     }
     if r > 0 {
       break;
     }
-    bb_do_delay(3i32);
-    bb_simple_info_msg(b"Login incorrect\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::bb_do_delay::bb_do_delay(3i32);
+    crate::libbb::verror_msg::bb_simple_info_msg(
+      b"Login incorrect\x00" as *const u8 as *const libc::c_char,
+    );
   }
-  bb_simple_info_msg(
+  crate::libbb::verror_msg::bb_simple_info_msg(
     b"starting shell for system maintenance\x00" as *const u8 as *const libc::c_char,
   );
   shell = getenv(b"SUSHELL\x00" as *const u8 as *const libc::c_char);
@@ -135,5 +116,5 @@ pub unsafe extern "C" fn sulogin_main(
     shell = (*pwd).pw_shell
   }
   /* Exec login shell with no additional parameters. Never returns. */
-  run_shell(shell, 1i32, 0 as *mut *const libc::c_char);
+  crate::libbb::run_shell::run_shell(shell, 1i32, 0 as *mut *const libc::c_char);
 }

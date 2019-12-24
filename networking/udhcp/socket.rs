@@ -13,39 +13,7 @@ extern "C" {
 
   #[no_mangle]
   fn inet_ntoa(__in: in_addr) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xbind(sockfd: libc::c_int, my_addr: *mut sockaddr, addrlen: socklen_t);
-  #[no_mangle]
-  fn setsockopt_reuseaddr(fd: libc::c_int);
-  #[no_mangle]
-  fn setsockopt_broadcast(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn setsockopt_bindtodevice(fd: libc::c_int, iface: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_info_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn ioctl_or_perror(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    fmt: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_ioctl_or_warn(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
+
   #[no_mangle]
   static mut dhcp_verbose: libc::c_uint;
 }
@@ -53,7 +21,7 @@ extern "C" {
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
 
-pub type socklen_t = __socklen_t;
+use crate::librb::socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -67,19 +35,10 @@ pub const SOCK_STREAM: __socket_type = 1;
 use libc::sa_family_t;
 use libc::sockaddr;
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
+use libc::sockaddr_in;
+
+use libc::in_addr;
 pub type in_addr_t = u32;
 pub type C2RustUnnamed = libc::c_uint;
 pub const IPPROTO_MAX: C2RustUnnamed = 256;
@@ -108,8 +67,9 @@ pub const IPPROTO_IPIP: C2RustUnnamed = 4;
 pub const IPPROTO_IGMP: C2RustUnnamed = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed = 1;
 pub const IPPROTO_IP: C2RustUnnamed = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub ifru_addr: sockaddr,
   pub ifru_dstaddr: sockaddr,
@@ -124,8 +84,9 @@ pub union C2RustUnnamed_0 {
   pub ifru_newname: [libc::c_char; 16],
   pub ifru_data: __caddr_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifmap {
   pub mem_start: libc::c_ulong,
   pub mem_end: libc::c_ulong,
@@ -134,14 +95,16 @@ pub struct ifmap {
   pub dma: libc::c_uchar,
   pub port: libc::c_uchar,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifreq {
   pub ifr_ifrn: C2RustUnnamed_1,
   pub ifr_ifru: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub ifrn_name: [libc::c_char; 16],
 }
@@ -186,11 +149,12 @@ pub unsafe extern "C" fn udhcp_read_interface(
     0,
     ::std::mem::size_of::<ifreq>() as libc::c_ulong,
   );
-  fd = xsocket(2i32, SOCK_RAW as libc::c_int, IPPROTO_RAW as libc::c_int);
+  fd =
+    crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_RAW as libc::c_int, IPPROTO_RAW as libc::c_int);
   (*ifr).ifr_ifru.ifru_addr.sa_family = 2i32 as sa_family_t;
-  strncpy_IFNAMSIZ((*ifr).ifr_ifrn.ifrn_name.as_mut_ptr(), interface);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ((*ifr).ifr_ifrn.ifrn_name.as_mut_ptr(), interface);
   if !nip.is_null() {
-    if ioctl_or_perror(
+    if crate::libbb::xfuncs_printf::ioctl_or_perror(
       fd,
       0x8915i32 as libc::c_uint,
       ifr as *mut libc::c_void,
@@ -204,14 +168,14 @@ pub unsafe extern "C" fn udhcp_read_interface(
     our_ip = &mut (*ifr).ifr_ifru.ifru_addr as *mut sockaddr as *mut sockaddr_in;
     *nip = (*our_ip).sin_addr.s_addr;
     if dhcp_verbose >= 1i32 as libc::c_uint {
-      bb_info_msg(
+      crate::libbb::verror_msg::bb_info_msg(
         b"IP %s\x00" as *const u8 as *const libc::c_char,
         inet_ntoa((*our_ip).sin_addr),
       );
     }
   }
   if !ifindex.is_null() {
-    if bb_ioctl_or_warn(
+    if crate::libbb::xfuncs_printf::bb_ioctl_or_warn(
       fd,
       0x8933i32 as libc::c_uint,
       ifr as *mut libc::c_void,
@@ -222,7 +186,7 @@ pub unsafe extern "C" fn udhcp_read_interface(
       return -1i32;
     }
     if dhcp_verbose >= 2i32 as libc::c_uint {
-      bb_info_msg(
+      crate::libbb::verror_msg::bb_info_msg(
         b"ifindex %d\x00" as *const u8 as *const libc::c_char,
         (*ifr).ifr_ifru.ifru_ivalue,
       );
@@ -230,7 +194,7 @@ pub unsafe extern "C" fn udhcp_read_interface(
     *ifindex = (*ifr).ifr_ifru.ifru_ivalue
   }
   if !mac.is_null() {
-    if bb_ioctl_or_warn(
+    if crate::libbb::xfuncs_printf::bb_ioctl_or_warn(
       fd,
       0x8927i32 as libc::c_uint,
       ifr as *mut libc::c_void,
@@ -246,7 +210,7 @@ pub unsafe extern "C" fn udhcp_read_interface(
       6i32 as libc::c_ulong,
     );
     if dhcp_verbose >= 2i32 as libc::c_uint {
-      bb_info_msg(
+      crate::libbb::verror_msg::bb_info_msg(
         b"MAC %02x:%02x:%02x:%02x:%02x:%02x\x00" as *const u8 as *const libc::c_char,
         *mac.offset(0) as libc::c_int,
         *mac.offset(1) as libc::c_int,
@@ -422,24 +386,30 @@ pub unsafe extern "C" fn udhcp_listen_socket(
   };
   let mut colon: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if dhcp_verbose >= 1i32 as libc::c_uint {
-    bb_info_msg(
+    crate::libbb::verror_msg::bb_info_msg(
       b"opening listen socket on *:%d %s\x00" as *const u8 as *const libc::c_char,
       port,
       inf,
     );
   }
-  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, IPPROTO_UDP as libc::c_int);
-  setsockopt_reuseaddr(fd);
-  if setsockopt_broadcast(fd) == -1i32 {
-    bb_simple_perror_msg_and_die(b"SO_BROADCAST\x00" as *const u8 as *const libc::c_char);
+  fd = crate::libbb::xfuncs_printf::xsocket(
+    2i32,
+    SOCK_DGRAM as libc::c_int,
+    IPPROTO_UDP as libc::c_int,
+  );
+  crate::libbb::xconnect::setsockopt_reuseaddr(fd);
+  if crate::libbb::xconnect::setsockopt_broadcast(fd) == -1i32 {
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"SO_BROADCAST\x00" as *const u8 as *const libc::c_char,
+    );
   }
   /* SO_BINDTODEVICE doesn't work on ethernet aliases (ethN:M) */
   colon = strrchr(inf, ':' as i32); /* warning is already printed */
   if !colon.is_null() {
     *colon = '\u{0}' as i32 as libc::c_char
   }
-  if setsockopt_bindtodevice(fd, inf) != 0 {
-    xfunc_die();
+  if crate::libbb::xconnect::setsockopt_bindtodevice(fd, inf) != 0 {
+    crate::libbb::xfunc_die::xfunc_die();
   }
   if !colon.is_null() {
     *colon = ':' as i32 as libc::c_char
@@ -461,14 +431,13 @@ pub unsafe extern "C" fn udhcp_listen_socket(
       let fresh1;
       let fresh2 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
   };
   /* addr.sin_addr.s_addr = ip; - all-zeros is INADDR_ANY */
-  xbind(
+  crate::libbb::xfuncs_printf::xbind(
     fd,
     &mut addr as *mut sockaddr_in as *mut sockaddr,
     ::std::mem::size_of::<sockaddr_in>() as libc::c_ulong as socklen_t,

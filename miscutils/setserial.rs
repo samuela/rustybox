@@ -14,28 +14,13 @@ extern "C" {
   static bb_msg_requires_arg: [libc::c_char; 0];
 
   #[no_mangle]
-  fn device_open(device: *const libc::c_char, mode: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_strtoll(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_longlong;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
-  #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 }
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct serial_struct {
   pub type_0: libc::c_int,
   pub line: libc::c_int,
@@ -95,7 +80,7 @@ unsafe extern "C" fn bb_strtol(
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_long {
-  return bb_strtoll(arg, endp, base) as libc::c_long;
+  return crate::libbb::bb_strtonum::bb_strtoll(arg, endp, base) as libc::c_long;
 }
 static mut serial_types: [libc::c_char; 132] = [
   117, 110, 107, 110, 111, 119, 110, 0, 56, 50, 53, 48, 0, 49, 54, 52, 53, 48, 0, 49, 54, 53, 53,
@@ -150,7 +135,7 @@ unsafe extern "C" fn uart_type(mut type_0: libc::c_int) -> *const libc::c_char {
   if type_0 > 19i32 {
     return b"undefined\x00" as *const u8 as *const libc::c_char;
   }
-  return nth_string(serial_types.as_ptr(), type_0);
+  return crate::libbb::compare_string_array::nth_string(serial_types.as_ptr(), type_0);
 }
 /* libbb candidate */
 unsafe extern "C" fn index_in_strings_case_insensitive(
@@ -185,7 +170,7 @@ unsafe extern "C" fn get_spd(mut flags: libc::c_int, mut mode: print_mode) -> *c
       idx = CMD_SPD_NORMAL as libc::c_int
     }
   }
-  return nth_string(commands.as_ptr(), idx);
+  return crate::libbb::compare_string_array::nth_string(commands.as_ptr(), idx);
 }
 unsafe extern "C" fn get_numeric(mut arg: *const libc::c_char) -> libc::c_int {
   return bb_strtol(arg, 0 as *mut *mut libc::c_char, 0) as libc::c_int;
@@ -202,7 +187,7 @@ unsafe extern "C" fn get_wait(mut arg: *const libc::c_char) -> libc::c_int {
 unsafe extern "C" fn get_uart(mut arg: *const libc::c_char) -> libc::c_int {
   let mut uart: libc::c_int = uart_id(arg);
   if uart < 0 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"illegal UART type: %s\x00" as *const u8 as *const libc::c_char,
       arg,
     );
@@ -211,9 +196,9 @@ unsafe extern "C" fn get_uart(mut arg: *const libc::c_char) -> libc::c_int {
 }
 unsafe extern "C" fn serial_open(mut dev: *const libc::c_char, mut quiet: bool) -> libc::c_int {
   let mut fd: libc::c_int = 0;
-  fd = device_open(dev, 0o2i32 | 0o4000i32);
+  fd = crate::libbb::device_open::device_open(dev, 0o2i32 | 0o4000i32);
   if fd < 0 && !quiet {
-    bb_simple_perror_msg(dev);
+    crate::libbb::perror_msg::bb_simple_perror_msg(dev);
   }
   return fd;
 }
@@ -270,7 +255,7 @@ unsafe extern "C" fn serial_ctl(
   }
   match current_block {
     183908852989203104 => {
-      bb_simple_perror_msg(err);
+      crate::libbb::perror_msg::bb_simple_perror_msg(err);
       if !(ops & 1i32 << 4i32 != 0) {
         exit(1i32);
       }
@@ -312,7 +297,10 @@ unsafe extern "C" fn print_serial_flags(
     if serial_flags & setbits[i as usize] as libc::c_int != 0
       && (mode as libc::c_uint > PRINT_SUMMARY as libc::c_int as libc::c_uint || !cmd_noprint(i))
     {
-      print_flag(&mut pr, nth_string(commands.as_ptr(), i));
+      print_flag(
+        &mut pr,
+        crate::libbb::compare_string_array::nth_string(commands.as_ptr(), i),
+      );
     }
     i += 1
   }
@@ -344,26 +332,7 @@ unsafe extern "C" fn serial_get(mut device: *const libc::c_char, mut mode: print
   let mut uart: *const libc::c_char = std::ptr::null();
   let mut prefix: *const libc::c_char = std::ptr::null();
   let mut postfix: *const libc::c_char = std::ptr::null();
-  let mut serinfo: serial_struct = serial_struct {
-    type_0: 0,
-    line: 0,
-    port: 0,
-    irq: 0,
-    flags: 0,
-    xmit_fifo_size: 0,
-    custom_divisor: 0,
-    baud_base: 0,
-    close_delay: 0,
-    io_type: 0,
-    reserved_char: [0; 1],
-    hub6: 0,
-    closing_wait: 0,
-    closing_wait2: 0,
-    iomem_base: std::ptr::null_mut(),
-    iomem_reg_shift: 0,
-    port_high: 0,
-    iomap_base: 0,
-  };
+  let mut serinfo: serial_struct = std::mem::zeroed();
   fd = serial_open(
     device,
     mode as libc::c_uint == PRINT_SUMMARY as libc::c_int as libc::c_uint,
@@ -441,7 +410,7 @@ unsafe extern "C" fn find_cmd(mut cmd: *const libc::c_char) -> libc::c_int {
   let mut idx: libc::c_int = 0;
   idx = index_in_strings_case_insensitive(commands.as_ptr(), cmd);
   if idx < 0 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"invalid flag: %s\x00" as *const u8 as *const libc::c_char,
       cmd,
     );
@@ -449,26 +418,7 @@ unsafe extern "C" fn find_cmd(mut cmd: *const libc::c_char) -> libc::c_int {
   return idx;
 }
 unsafe extern "C" fn serial_set(mut arg: *mut *mut libc::c_char, mut opts: libc::c_int) {
-  let mut serinfo: serial_struct = serial_struct {
-    type_0: 0,
-    line: 0,
-    port: 0,
-    irq: 0,
-    flags: 0,
-    xmit_fifo_size: 0,
-    custom_divisor: 0,
-    baud_base: 0,
-    close_delay: 0,
-    io_type: 0,
-    reserved_char: [0; 1],
-    hub6: 0,
-    closing_wait: 0,
-    closing_wait2: 0,
-    iomem_base: std::ptr::null_mut(),
-    iomem_reg_shift: 0,
-    port_high: 0,
-    iomap_base: 0,
-  };
+  let mut serinfo: serial_struct = std::mem::zeroed();
   let mut fd: libc::c_int = 0;
   fd = serial_open(*arg, 0 != 0);
   if fd < 0 {
@@ -493,11 +443,11 @@ unsafe extern "C" fn serial_set(mut arg: *mut *mut libc::c_char, mut opts: libc:
     if cmd_needs_arg(cmd) {
       arg = arg.offset(1);
       if (*arg).is_null() {
-        bb_error_msg_and_die(bb_msg_requires_arg.as_ptr(), word);
+        crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_requires_arg.as_ptr(), word);
       }
     }
     if invert != 0 && !cmd_is_flag(cmd) {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"can\'t invert %s\x00" as *const u8 as *const libc::c_char,
         word,
       );
@@ -569,7 +519,7 @@ pub unsafe extern "C" fn setserial_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut opts: libc::c_int = 0;
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^bGavzgq\x00-1:b-aG:G-ab:a-bG\x00" as *const u8 as *const libc::c_char,
   ) as libc::c_int;

@@ -18,56 +18,20 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn make_human_readable_str(
-    size: libc::c_ulonglong,
-    block_size: libc::c_ulong,
-    display_unit: libc::c_ulong,
-  ) -> *const libc::c_char;
-  #[no_mangle]
   static kmg_i_suffixes: [suffix_mult; 0];
-  #[no_mangle]
-  fn xatoull_range_sfx(
-    str: *const libc::c_char,
-    l: libc::c_ulonglong,
-    u: libc::c_ulonglong,
-    sfx: *const suffix_mult,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn find_mount_point(name: *const libc::c_char, subdir_too: libc::c_int) -> *mut mntent;
-  //UNUSED: unsigned FAST_FUNC unicode_padding_to_width(unsigned width, const char *src);
-  //UNUSED: char* FAST_FUNC unicode_conv_to_printable2(uni_stat_t *stats, const char *src, unsigned width, int flags);
-  #[no_mangle]
-  fn unicode_conv_to_printable(
-    stats: *mut uni_stat_t,
-    src: *const libc::c_char,
-  ) -> *mut libc::c_char;
+
+//UNUSED: unsigned FAST_FUNC unicode_padding_to_width(unsigned width, const char *src);
+//UNUSED: char* FAST_FUNC unicode_conv_to_printable2(uni_stat_t *stats, const char *src, unsigned width, int flags);
+
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct mntent {
-  pub mnt_fsname: *mut libc::c_char,
-  pub mnt_dir: *mut libc::c_char,
-  pub mnt_type: *mut libc::c_char,
-  pub mnt_opts: *mut libc::c_char,
-  pub mnt_freq: libc::c_int,
-  pub mnt_passno: libc::c_int,
-}
+use libc::mntent;
 
 pub type __fsblkcnt64_t = libc::c_ulong;
 pub type __fsfilcnt64_t = libc::c_ulong;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct statvfs {
   pub f_bsize: libc::c_ulong,
   pub f_frsize: libc::c_ulong,
@@ -83,19 +47,9 @@ pub struct statvfs {
   pub __f_spare: [libc::c_int; 6],
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct uni_stat_t {
-  pub byte_count: libc::c_uint,
-  pub unicode_count: libc::c_uint,
-  pub unicode_width: libc::c_uint,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct suffix_mult {
-  pub suffix: [libc::c_char; 4],
-  pub mult: libc::c_uint,
-}
+use crate::librb::uni_stat_t;
+
+use crate::librb::suffix_mult;
 pub const OPT_POSIX: C2RustUnnamed = 2;
 pub const OPT_FSTYPE: C2RustUnnamed = 4;
 pub const OPT_INODE: C2RustUnnamed = 16;
@@ -112,8 +66,12 @@ unsafe extern "C" fn xatoul_range_sfx(
   mut u: libc::c_ulong,
   mut sfx: *const suffix_mult,
 ) -> libc::c_ulong {
-  return xatoull_range_sfx(str, l as libc::c_ulonglong, u as libc::c_ulonglong, sfx)
-    as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull_range_sfx(
+    str,
+    l as libc::c_ulonglong,
+    u as libc::c_ulonglong,
+    sfx,
+  ) as libc::c_ulong;
 }
 
 /*
@@ -214,7 +172,7 @@ pub unsafe extern "C" fn df_main(
   };
   let mut disp_units_hdr: *const libc::c_char = std::ptr::null();
   let mut chp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^kPTaiB:hm\x00k-mB:m-Bk:B-km\x00" as *const u8 as *const libc::c_char,
     &mut chp as *mut *mut libc::c_char,
@@ -277,9 +235,9 @@ pub unsafe extern "C" fn df_main(
     disp_units_hdr = b"   Inodes\x00" as *const u8 as *const libc::c_char
   }
   if disp_units_hdr.is_null() {
-    disp_units_hdr = xasprintf(
+    disp_units_hdr = crate::libbb::xfuncs_printf::xasprintf(
       b"%s-blocks\x00" as *const u8 as *const libc::c_char,
-      make_human_readable_str(
+      crate::libbb::human_readable::make_human_readable_str(
         df_disp_hr as libc::c_ulonglong,
         0 as libc::c_ulong,
         (opt & OPT_POSIX as libc::c_int as libc::c_uint != 0) as libc::c_int as libc::c_ulong,
@@ -309,7 +267,9 @@ pub unsafe extern "C" fn df_main(
       b"r\x00" as *const u8 as *const libc::c_char,
     );
     if mount_table.is_null() {
-      bb_simple_perror_msg_and_die(b"/proc/mounts\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"/proc/mounts\x00" as *const u8 as *const libc::c_char,
+      );
     }
   }
   let mut current_block_76: u64;
@@ -332,9 +292,9 @@ pub unsafe extern "C" fn df_main(
       if mount_point.is_null() {
         break;
       }
-      mount_entry = find_mount_point(mount_point, 1i32);
+      mount_entry = crate::libbb::find_mount_point::find_mount_point(mount_point, 1i32);
       if mount_entry.is_null() {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"%s: can\'t find mount point\x00" as *const u8 as *const libc::c_char,
           mount_point,
         );
@@ -353,7 +313,7 @@ pub unsafe extern "C" fn df_main(
         mount_point = (*mount_entry).mnt_dir;
         fs_type = (*mount_entry).mnt_type;
         if statvfs(mount_point, &mut s) != 0 {
-          bb_simple_perror_msg(mount_point);
+          crate::libbb::perror_msg::bb_simple_perror_msg(mount_point);
         } else {
           /* Some uclibc versions were seen to lose f_frsize
            * (kernel does return it, but then uclibc does not copy it)
@@ -397,7 +357,8 @@ pub unsafe extern "C" fn df_main(
               unicode_count: 0,
               unicode_width: 0,
             };
-            let mut uni_dev: *mut libc::c_char = unicode_conv_to_printable(&mut uni_stat, device);
+            let mut uni_dev: *mut libc::c_char =
+              crate::libbb::unicode::unicode_conv_to_printable(&mut uni_stat, device);
             if uni_stat.unicode_width > 20i32 as libc::c_uint
               && opt & OPT_POSIX as libc::c_int as libc::c_uint == 0
             {
@@ -417,7 +378,7 @@ pub unsafe extern "C" fn df_main(
             free(uni_dev as *mut libc::c_void);
             if opt & OPT_FSTYPE as libc::c_int as libc::c_uint != 0 {
               let mut uni_type: *mut libc::c_char =
-                unicode_conv_to_printable(&mut uni_stat, fs_type);
+                crate::libbb::unicode::unicode_conv_to_printable(&mut uni_stat, fs_type);
               if uni_stat.unicode_width > 10i32 as libc::c_uint
                 && opt & OPT_POSIX as libc::c_int as libc::c_uint == 0
               {
@@ -438,11 +399,15 @@ pub unsafe extern "C" fn df_main(
             }
             printf(
               b" %9s \x00" as *const u8 as *const libc::c_char,
-              make_human_readable_str(s.f_blocks as libc::c_ulonglong, s.f_frsize, df_disp_hr),
+              crate::libbb::human_readable::make_human_readable_str(
+                s.f_blocks as libc::c_ulonglong,
+                s.f_frsize,
+                df_disp_hr,
+              ),
             );
             printf(
               (b" %9s \x00" as *const u8 as *const libc::c_char).offset(1),
-              make_human_readable_str(
+              crate::libbb::human_readable::make_human_readable_str(
                 s.f_blocks.wrapping_sub(s.f_bfree) as libc::c_ulonglong,
                 s.f_frsize,
                 df_disp_hr,
@@ -450,7 +415,11 @@ pub unsafe extern "C" fn df_main(
             );
             printf(
               b"%9s %3u%% %s\n\x00" as *const u8 as *const libc::c_char,
-              make_human_readable_str(s.f_bavail as libc::c_ulonglong, s.f_frsize, df_disp_hr),
+              crate::libbb::human_readable::make_human_readable_str(
+                s.f_bavail as libc::c_ulonglong,
+                s.f_frsize,
+                df_disp_hr,
+              ),
               blocks_percent_used,
               mount_point,
             );

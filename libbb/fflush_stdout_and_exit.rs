@@ -127,8 +127,7 @@ extern "C" {
   /* start_stop_daemon and udhcpc are special - they want
    * to create pidfiles regardless of FEATURE_PIDFILE */
   /* True only if we created pidfile which is *file*, not /dev/null etc */
-  #[no_mangle]
-  fn xfunc_die() -> !;
+
   /* We need to export XXX_main from libbusybox
    * only if we build "individual" binaries
    */
@@ -312,8 +311,7 @@ extern "C" {
   /* "BusyBox vN.N.N (timestamp or extra_version)" */
   #[no_mangle]
   static bb_msg_standard_output: [libc::c_char; 0];
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   static mut xfunc_error_retval: u8;
 }
@@ -332,9 +330,9 @@ extern "C" {
 pub unsafe extern "C" fn fflush_stdout_and_exit(mut retval: libc::c_int) -> ! {
   xfunc_error_retval = retval as u8;
   if fflush(stdout) != 0 {
-    bb_simple_perror_msg_and_die(bb_msg_standard_output.as_ptr());
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(bb_msg_standard_output.as_ptr());
   }
   /* In case we are in NOFORK applet. Do not exit() directly,
    * but use xfunc_die() */
-  xfunc_die();
+  crate::libbb::xfunc_die::xfunc_die();
 }

@@ -3,31 +3,11 @@ extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off: u64, len: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
-
-  #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
 }
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+
+use crate::util_linux::volume_id::volume_id::volume_id;
 
 pub type uuid_format = libc::c_uint;
 // pub const UUID_DCE_STRING: uuid_format = 3;
@@ -35,8 +15,8 @@ pub type uuid_format = libc::c_uint;
 // pub const UUID_NTFS: uuid_format = 1;
 pub const UUID_DOS: uuid_format = 0;
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct fat32_super_block {
   pub fat32_length: u32,
   pub flags: u16,
@@ -53,15 +33,15 @@ pub struct fat32_super_block {
   pub pmagic: [u8; 2],
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub fat: fat_super_block,
   pub fat32: fat32_super_block,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct fat_super_block {
   pub unknown: [u8; 3],
   pub serno: [u8; 4],
@@ -71,8 +51,8 @@ pub struct fat_super_block {
   pub pmagic: [u8; 2],
 }
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct vfat_super_block {
   pub boot_jump: [u8; 3],
   pub sysid: [u8; 8],
@@ -91,8 +71,8 @@ pub struct vfat_super_block {
   pub type_0: C2RustUnnamed,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct vfat_dir_entry {
   pub name: [u8; 11],
   pub attr: u8,
@@ -220,7 +200,8 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
   let mut label: *mut u8 = std::ptr::null_mut();
   let mut next_cluster: u32 = 0;
   let mut maxloop: libc::c_int = 0;
-  vs = volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t) as *mut vfat_super_block;
+  vs = crate::util_linux::volume_id::util::volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t)
+    as *mut vfat_super_block;
   if vs.is_null() {
     return -1i32;
   }
@@ -364,8 +345,11 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
         .wrapping_add(next_off_sct)
         .wrapping_mul(sector_size_bytes as libc::c_ulong);
       /* get cluster */
-      buf = volume_id_get_buffer(id, (0i32 as u64).wrapping_add(next_off), buf_size as size_t)
-        as *mut u8;
+      buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
+        id,
+        (0i32 as u64).wrapping_add(next_off),
+        buf_size as size_t,
+      ) as *mut u8;
       if buf.is_null() {
         current_block = 7641562720398393250;
         break;
@@ -386,7 +370,7 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
           (next_cluster as libc::c_ulong)
             .wrapping_mul(::std::mem::size_of::<u32>() as libc::c_ulong),
         );
-      buf = volume_id_get_buffer(
+      buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
         id,
         (0i32 as u64).wrapping_add(fat_entry_off),
         buf_size as size_t,
@@ -407,7 +391,11 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
       _ => {
         // TODO: why was this translated this way?
         // (maxloop) == 0;
-        vs = volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t) as *mut vfat_super_block;
+        vs = crate::util_linux::volume_id::util::volume_id_get_buffer(
+          id,
+          0 as u64,
+          0x200i32 as size_t,
+        ) as *mut vfat_super_block;
         if vs.is_null() {
           return -1i32;
         }
@@ -419,7 +407,11 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
           ) != 0
         {
           //		volume_id_set_label_raw(id, label, 11);
-          volume_id_set_label_string(id, label, 11i32 as size_t);
+          crate::util_linux::volume_id::util::volume_id_set_label_string(
+            id,
+            label,
+            11i32 as size_t,
+          );
         } else if memcmp(
           (*vs).type_0.fat32.label.as_mut_ptr() as *const libc::c_void,
           b"NO NAME    \x00" as *const u8 as *const libc::c_char as *const libc::c_void,
@@ -427,9 +419,17 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
         ) != 0
         {
           //		volume_id_set_label_raw(id, vs->type.fat32.label, 11);
-          volume_id_set_label_string(id, (*vs).type_0.fat32.label.as_mut_ptr(), 11i32 as size_t);
+          crate::util_linux::volume_id::util::volume_id_set_label_string(
+            id,
+            (*vs).type_0.fat32.label.as_mut_ptr(),
+            11i32 as size_t,
+          );
         }
-        volume_id_set_uuid(id, (*vs).type_0.fat32.serno.as_mut_ptr(), UUID_DOS);
+        crate::util_linux::volume_id::util::volume_id_set_uuid(
+          id,
+          (*vs).type_0.fat32.serno.as_mut_ptr(),
+          UUID_DOS,
+        );
       }
     }
   } else {
@@ -439,14 +439,16 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
       .wrapping_mul(sector_size_bytes as libc::c_uint) as u64;
     buf_size = (dir_entries as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<vfat_dir_entry>() as libc::c_ulong) as u32;
-    buf = volume_id_get_buffer(
+    buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
       id,
       (0i32 as u64).wrapping_add(root_start_off),
       buf_size as size_t,
     ) as *mut u8;
     if !buf.is_null() {
       label = get_attr_volume_id(buf as *mut vfat_dir_entry, dir_entries as libc::c_int);
-      vs = volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t) as *mut vfat_super_block;
+      vs =
+        crate::util_linux::volume_id::util::volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t)
+          as *mut vfat_super_block;
       if vs.is_null() {
         return -1i32;
       }
@@ -458,7 +460,7 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
         ) != 0
       {
         //		volume_id_set_label_raw(id, label, 11);
-        volume_id_set_label_string(id, label, 11i32 as size_t);
+        crate::util_linux::volume_id::util::volume_id_set_label_string(id, label, 11i32 as size_t);
       } else if memcmp(
         (*vs).type_0.fat.label.as_mut_ptr() as *const libc::c_void,
         b"NO NAME    \x00" as *const u8 as *const libc::c_char as *const libc::c_void,
@@ -466,9 +468,17 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
       ) != 0
       {
         //		volume_id_set_label_raw(id, vs->type.fat.label, 11);
-        volume_id_set_label_string(id, (*vs).type_0.fat.label.as_mut_ptr(), 11i32 as size_t);
+        crate::util_linux::volume_id::util::volume_id_set_label_string(
+          id,
+          (*vs).type_0.fat.label.as_mut_ptr(),
+          11i32 as size_t,
+        );
       }
-      volume_id_set_uuid(id, (*vs).type_0.fat.serno.as_mut_ptr(), UUID_DOS);
+      crate::util_linux::volume_id::util::volume_id_set_uuid(
+        id,
+        (*vs).type_0.fat.serno.as_mut_ptr(),
+        UUID_DOS,
+      );
     }
   }
   //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);

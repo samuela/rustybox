@@ -41,90 +41,15 @@ extern "C" {
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn strrstr(haystack: *const libc::c_char, needle: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn recursive_action(
-    fileName: *const libc::c_char,
-    flags: libc::c_uint,
-    fileAction_0: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    dirAction: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    userData: *mut libc::c_void,
-    depth: libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_get_last_path_component_nostrip(path: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn open_or_warn(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_open_read_close(
-    filename: *const libc::c_char,
-    maxsz_p: *mut size_t,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn xmalloc_open_zipped_read_close(
-    fname: *const libc::c_char,
-    maxsz_p: *mut size_t,
-  ) -> *mut libc::c_void;
+
   /* Reads and prints to stdout till eof, then closes FILE. Exits on error: */
-  #[no_mangle]
-  fn xprint_and_close_file(file: *mut FILE);
+
   /* Chops off '\n' from the end, unlike fgets: */
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xfdopen_for_write(fd: libc::c_int) -> *mut FILE;
+
   /* { "-", NULL } */
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 
   /* '*const' ptr makes gcc optimize code much better.
    * Magic prevents ptr_to_globals from going into rodata.
@@ -157,8 +82,9 @@ pub const ACTION_RECURSE: C2RustUnnamed = 1;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub modinfo: *mut module_info,
   pub module_load_options: *mut libc::c_char,
@@ -170,16 +96,18 @@ pub struct globals {
   pub stringbuf_size: libc::c_uint,
   pub stringbuf: *mut libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct module_info {
   pub pathname: *mut libc::c_char,
   pub aliases: *mut libc::c_char,
   pub deps: *mut libc::c_char,
   pub open_read_failed: smallint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct utsname {
   pub sysname: [libc::c_char; 65],
   pub nodename: [libc::c_char; 65],
@@ -201,7 +129,7 @@ pub unsafe extern "C" fn lsmod_main(
   mut _argc: libc::c_int,
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  xprint_and_close_file(xfopen_for_read(
+  crate::libbb::xfuncs_printf::xprint_and_close_file(crate::libbb::wfopen::xfopen_for_read(
     b"/proc/modules\x00" as *const u8 as *const libc::c_char,
   ));
   return 0;
@@ -221,7 +149,7 @@ unsafe extern "C" fn append(mut s: *const libc::c_char) {
       .stringbuf_idx
       .wrapping_add(len)
       .wrapping_add(127i32 as libc::c_uint);
-    (*ptr_to_globals).stringbuf = xrealloc(
+    (*ptr_to_globals).stringbuf = crate::libbb::xfuncs_printf::xrealloc(
       (*ptr_to_globals).stringbuf as *mut libc::c_void,
       (*ptr_to_globals).stringbuf_size as size_t,
     ) as *mut libc::c_char
@@ -251,7 +179,7 @@ unsafe extern "C" fn reset_stringbuf() {
   (*ptr_to_globals).stringbuf_idx = 0 as libc::c_uint;
 }
 unsafe extern "C" fn copy_stringbuf() -> *mut libc::c_char {
-  let mut copy: *mut libc::c_char = xzalloc(
+  let mut copy: *mut libc::c_char = crate::libbb::xfuncs_printf::xzalloc(
     (*ptr_to_globals)
       .stringbuf_idx
       .wrapping_add(1i32 as libc::c_uint) as size_t,
@@ -285,7 +213,7 @@ unsafe extern "C" fn find_keyword(
     if ptr.is_null() {
       break;
     }
-    after_word = is_prefixed_with(ptr, word);
+    after_word = crate::libbb::compare_string_array::is_prefixed_with(ptr, word);
     if !after_word.is_null() {
       return after_word;
     }
@@ -341,7 +269,7 @@ unsafe extern "C" fn pathname_matches_modname(
   let mut r: libc::c_int = 0;
   let mut name: [libc::c_char; 64] = [0; 64];
   filename2modname(
-    bb_get_last_path_component_nostrip(pathname),
+    crate::libbb::get_last_path_component::bb_get_last_path_component_nostrip(pathname),
     name.as_mut_ptr(),
   );
   r = (strcmp(name.as_mut_ptr(), modname) == 0) as libc::c_int;
@@ -413,7 +341,9 @@ unsafe extern "C" fn load_module(
     close(fd);
   }
   if r != 0 {
-    module_image = xmalloc_open_zipped_read_close(fname, &mut len) as *mut libc::c_char;
+    module_image = crate::archival::libarchive::open_transformer::xmalloc_open_zipped_read_close(
+      fname, &mut len,
+    ) as *mut libc::c_char;
     r = (module_image.is_null() || syscall(175i32 as libc::c_long, module_image, len, options) != 0)
       as libc::c_int;
     free(module_image as *mut libc::c_void);
@@ -434,7 +364,9 @@ unsafe extern "C" fn parse_module(
   /* Read (possibly compressed) module */
   *bb_errno = 0; /* 64 Mb at most */
   len = (64i32 * 1024i32 * 1024i32) as size_t;
-  module_image = xmalloc_open_zipped_read_close(pathname, &mut len) as *mut libc::c_char;
+  module_image = crate::archival::libarchive::open_transformer::xmalloc_open_zipped_read_close(
+    pathname, &mut len,
+  ) as *mut libc::c_char;
   /* module_image == NULL is ok here, find_keyword handles it */
   //TODO: optimize redundant module body reads
   /* "alias1 symbol:sym1 alias2 symbol:sym2" */
@@ -546,22 +478,23 @@ unsafe extern "C" fn fileAction(
   let mut is_remove: bool = 1i32 != 0 && 1i32 + 1i32 + 1i32 + 1i32 == 1i32
     || (1i32 != 0 || 1i32 != 0) && option_mask32 & OPT_r as libc::c_int as libc::c_uint != 0;
   pathname = pathname.offset(2);
-  fname = bb_get_last_path_component_nostrip(pathname);
-  if strrstr(fname, b".ko\x00" as *const u8 as *const libc::c_char).is_null() {
+  fname = crate::libbb::get_last_path_component::bb_get_last_path_component_nostrip(pathname);
+  if crate::libbb::strrstr::strrstr(fname, b".ko\x00" as *const u8 as *const libc::c_char).is_null()
+  {
     return 1i32;
     /* not a module, continue search */
   }
   let fresh1 = (*ptr_to_globals).module_count;
   (*ptr_to_globals).module_count = (*ptr_to_globals).module_count.wrapping_add(1);
   cur = fresh1 as libc::c_int;
-  (*ptr_to_globals).modinfo = xrealloc_vector_helper(
+  (*ptr_to_globals).modinfo = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
     (*ptr_to_globals).modinfo as *mut libc::c_void,
     ((::std::mem::size_of::<module_info>() as libc::c_ulong) << 8i32)
       .wrapping_add(12i32 as libc::c_ulong) as libc::c_uint,
     cur,
   ) as *mut module_info;
   let ref mut fresh2 = (*(*ptr_to_globals).modinfo.offset(cur as isize)).pathname;
-  *fresh2 = xstrdup(pathname);
+  *fresh2 = crate::libbb::xfuncs_printf::xstrdup(pathname);
   /*modinfo[cur].aliases = NULL; - xrealloc_vector did it */
   /*modinfo[cur+1].pathname = NULL;*/
   if pathname_matches_modname(fname, modname_to_match as *const libc::c_char) == 0 {
@@ -588,7 +521,8 @@ unsafe extern "C" fn fileAction(
 }
 unsafe extern "C" fn load_dep_bb() -> libc::c_int {
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut fp: *mut FILE = fopen_for_read(b"modules.dep.bb\x00" as *const u8 as *const libc::c_char);
+  let mut fp: *mut FILE =
+    crate::libbb::wfopen::fopen_for_read(b"modules.dep.bb\x00" as *const u8 as *const libc::c_char);
   if fp.is_null() {
     return 0;
   }
@@ -609,7 +543,7 @@ unsafe extern "C" fn load_dep_bb() -> libc::c_int {
     ::std::mem::size_of::<module_info>() as libc::c_ulong,
   );
   loop {
-    line = xmalloc_fgetline(fp);
+    line = crate::libbb::get_line_from_file::xmalloc_fgetline(fp);
     if line.is_null() {
       break;
     }
@@ -623,7 +557,7 @@ unsafe extern "C" fn load_dep_bb() -> libc::c_int {
       let fresh3 = (*ptr_to_globals).module_count;
       (*ptr_to_globals).module_count = (*ptr_to_globals).module_count.wrapping_add(1);
       cur = fresh3 as libc::c_int;
-      (*ptr_to_globals).modinfo = xrealloc_vector_helper(
+      (*ptr_to_globals).modinfo = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
         (*ptr_to_globals).modinfo as *mut libc::c_void,
         ((::std::mem::size_of::<module_info>() as libc::c_ulong) << 8i32)
           .wrapping_add(12i32 as libc::c_ulong) as libc::c_uint,
@@ -639,12 +573,12 @@ unsafe extern "C" fn load_dep_bb() -> libc::c_int {
       }
       let ref mut fresh6 = (*(*ptr_to_globals).modinfo.offset(cur as isize)).aliases;
       *fresh6 = space;
-      linebuf = xmalloc_fgetline(fp);
+      linebuf = crate::libbb::get_line_from_file::xmalloc_fgetline(fp);
       let ref mut fresh7 = (*(*ptr_to_globals).modinfo.offset(cur as isize)).deps;
       *fresh7 = if !linebuf.is_null() {
         linebuf as *mut libc::c_void
       } else {
-        xzalloc(1i32 as size_t)
+        crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t)
       } as *mut libc::c_char;
       if *(*(*ptr_to_globals).modinfo.offset(cur as isize))
         .deps
@@ -652,10 +586,10 @@ unsafe extern "C" fn load_dep_bb() -> libc::c_int {
         != 0
       {
         /* deps are not "", so next line must be empty */
-        line = xmalloc_fgetline(fp);
+        line = crate::libbb::get_line_from_file::xmalloc_fgetline(fp);
         /* Refuse to work with damaged config file */
         if !line.is_null() && *line.offset(0) as libc::c_int != 0 {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"error in %s at \'%s\'\x00" as *const u8 as *const libc::c_char,
             b"modules.dep.bb\x00" as *const u8 as *const libc::c_char,
             line,
@@ -695,11 +629,11 @@ unsafe extern "C" fn start_dep_bb_writeout() -> libc::c_int {
           break;
         }
       }
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"deleting stale %s\x00" as *const u8 as *const libc::c_char,
         b"modules.dep.bb.new\x00" as *const u8 as *const libc::c_char,
       );
-      fd = open_or_warn(
+      fd = crate::libbb::xfuncs_printf::open_or_warn(
         b"modules.dep.bb.new\x00" as *const u8 as *const libc::c_char,
         0o1i32 | 0o100i32 | 0o1000i32,
       )
@@ -712,7 +646,7 @@ unsafe extern "C" fn write_out_dep_bb(mut fd: libc::c_int) {
   let mut i: libc::c_int = 0;
   let mut fp: *mut FILE = std::ptr::null_mut();
   /* We want good error reporting. fdprintf is not good enough. */
-  fp = xfdopen_for_write(fd);
+  fp = crate::libbb::wfopen::xfdopen_for_write(fd);
   i = 0;
   while !(*(*ptr_to_globals).modinfo.offset(i as isize))
     .pathname
@@ -775,7 +709,7 @@ unsafe extern "C" fn write_out_dep_bb(mut fd: libc::c_int) {
     14742036289623448043 =>
     /* | instead of || is intended */
     {
-      bb_perror_msg(
+      crate::libbb::perror_msg::bb_perror_msg(
         b"can\'t create \'%s\'\x00" as *const u8 as *const libc::c_char,
         b"modules.dep.bb\x00" as *const u8 as *const libc::c_char,
       );
@@ -812,7 +746,7 @@ unsafe extern "C" fn find_alias(mut alias: *const libc::c_char) -> *mut *mut mod
             (*(*ptr_to_globals).modinfo.offset(i as isize)).pathname,
           );
         }
-        infovec = xzalloc(
+        infovec = crate::libbb::xfuncs_printf::xzalloc(
           (2i32 as libc::c_ulong)
             .wrapping_mul(::std::mem::size_of::<*mut module_info>() as libc::c_ulong),
         ) as *mut *mut module_info;
@@ -862,14 +796,14 @@ unsafe extern "C" fn find_alias(mut alias: *const libc::c_char) -> *mut *mut mod
        * "pci:v000010DEd000000D9sv*sd*bc*sc*i*".
        * Plain strcmp() won't catch that */
       if fnmatch(s, alias, 0) == 0 {
-        infovec = xrealloc_vector_helper(
+        infovec = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
           infovec as *mut libc::c_void,
           ((::std::mem::size_of::<*mut module_info>() as libc::c_ulong) << 8i32)
             .wrapping_add(1i32 as libc::c_ulong) as libc::c_uint,
           infoidx,
         ) as *mut *mut module_info;
         let fresh9 = infoidx;
-        infoidx += 1;
+        infoidx = infoidx + 1;
         let ref mut fresh10 = *infovec.offset(fresh9 as isize);
         *fresh10 = &mut *(*ptr_to_globals).modinfo.offset(i as isize) as *mut module_info;
         break;
@@ -893,12 +827,14 @@ unsafe extern "C" fn already_loaded(mut name: *const libc::c_char) -> libc::c_in
   let mut fp: *mut FILE = std::ptr::null_mut();
   ret = 5i32 * 2i32;
   'c_11409: loop {
-    fp = fopen_for_read(b"/proc/modules\x00" as *const u8 as *const libc::c_char);
+    fp = crate::libbb::wfopen::fopen_for_read(
+      b"/proc/modules\x00" as *const u8 as *const libc::c_char,
+    );
     if fp.is_null() {
       return 0;
     }
     loop {
-      line = xmalloc_fgetline(fp);
+      line = crate::libbb::get_line_from_file::xmalloc_fgetline(fp);
       if line.is_null() {
         break 'c_11409;
       }
@@ -908,7 +844,7 @@ unsafe extern "C" fn already_loaded(mut name: *const libc::c_char) -> libc::c_in
       //pcspkr 12718 0 - Live 0xffffffffa017e000
       //snd_timer 28690 2 snd_seq,snd_pcm, Live 0xffffffffa025e000
       //i915 801405 2 - Live 0xffffffffa0096000
-      after_name = is_prefixed_with(line, name);
+      after_name = crate::libbb::compare_string_array::is_prefixed_with(line, name);
       if after_name.is_null() || *after_name as libc::c_int != ' ' as i32 {
         free(line as *mut libc::c_void);
       } else {
@@ -948,7 +884,7 @@ unsafe extern "C" fn rmmod(mut filename: *const libc::c_char) -> libc::c_int {
     0o4000i32 | 0o200i32,
   ) as libc::c_int;
   if r != 0 && option_mask32 & OPT_q as libc::c_int as libc::c_uint == 0 {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"remove \'%s\'\x00" as *const u8 as *const libc::c_char,
       modname.as_mut_ptr(),
     );
@@ -996,12 +932,14 @@ unsafe extern "C" fn process_module(
   }
   options = std::ptr::null_mut::<libc::c_char>();
   if !is_remove {
-    let mut opt_filename: *mut libc::c_char = xasprintf(
+    let mut opt_filename: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
       b"/etc/modules/%s\x00" as *const u8 as *const libc::c_char,
       name,
     );
-    options =
-      xmalloc_open_read_close(opt_filename, std::ptr::null_mut::<size_t>()) as *mut libc::c_char;
+    options = crate::libbb::read_printf::xmalloc_open_read_close(
+      opt_filename,
+      std::ptr::null_mut::<size_t>(),
+    ) as *mut libc::c_char;
     if !options.is_null() {
       replace(
         options,
@@ -1012,7 +950,7 @@ unsafe extern "C" fn process_module(
     if !cmdline_options.is_null() {
       /* NB: cmdline_options always have one leading ' '
        * (see main()), we remove it here */
-      let mut op: *mut libc::c_char = xasprintf(
+      let mut op: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
         if !options.is_null() {
           b"%s %s\x00" as *const u8 as *const libc::c_char
         } else {
@@ -1033,7 +971,7 @@ unsafe extern "C" fn process_module(
      * on success.
      */
     (*ptr_to_globals).module_found_idx = -1i32;
-    recursive_action(
+    crate::libbb::recursive_action::recursive_action(
       b".\x00" as *const u8 as *const libc::c_char,
       ACTION_RECURSE as libc::c_int as libc::c_uint,
       Some(
@@ -1051,7 +989,7 @@ unsafe extern "C" fn process_module(
     );
     /* Module was not found, or load failed, or is_remove */
     if (*ptr_to_globals).module_found_idx >= 0 {
-      infovec = xzalloc(
+      infovec = crate::libbb::xfuncs_printf::xzalloc(
         (2i32 as libc::c_ulong)
           .wrapping_mul(::std::mem::size_of::<*mut module_info>() as libc::c_ulong),
       ) as *mut *mut module_info; /* search for alias, not a plain module name */
@@ -1074,7 +1012,7 @@ unsafe extern "C" fn process_module(
           || *applet_name.offset(0) as libc::c_int == 'd' as i32))
     {
       /* it wasn't rmmod or depmod */
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"module \'%s\' not found\x00" as *const u8 as *const libc::c_char,
         name,
       );
@@ -1095,13 +1033,17 @@ unsafe extern "C" fn process_module(
       infoidx = 0;
       loop {
         let fresh12 = infoidx;
-        infoidx += 1;
+        infoidx = infoidx + 1;
         info = *infovec.offset(fresh12 as isize);
         if info.is_null() {
           current_block = 2989495919056355252;
           break;
         }
-        let mut r: libc::c_int = rmmod(bb_get_last_path_component_nostrip((*info).pathname));
+        let mut r: libc::c_int = rmmod(
+          crate::libbb::get_last_path_component::bb_get_last_path_component_nostrip(
+            (*info).pathname,
+          ),
+        );
         if r != 0 {
           current_block = 13810939424077242397;
           break;
@@ -1122,7 +1064,7 @@ unsafe extern "C" fn process_module(
         infoidx = 0;
         loop {
           let fresh13 = infoidx;
-          infoidx += 1;
+          infoidx = infoidx + 1;
           info = *infovec.offset(fresh13 as isize);
           if info.is_null() {
             break;
@@ -1156,7 +1098,7 @@ unsafe extern "C" fn process_module(
             *bb_errno = 0;
             if load_module((*info).pathname, options) != 0 {
               if 17i32 != *bb_errno {
-                bb_error_msg(
+                crate::libbb::verror_msg::bb_error_msg(
                   b"\'%s\': %s\x00" as *const u8 as *const libc::c_char,
                   (*info).pathname,
                   moderror(*bb_errno),
@@ -1265,11 +1207,13 @@ pub unsafe extern "C" fn modprobe_main(
   let ref mut fresh14 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
-  *fresh14 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh14 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   /* Prevent ugly corner cases with no modules at all */
   (*ptr_to_globals).modinfo =
-    xzalloc(::std::mem::size_of::<module_info>() as libc::c_ulong) as *mut module_info;
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<module_info>() as libc::c_ulong)
+      as *mut module_info;
   if 1i32 + 1i32 + 1i32 + 1i32 == 2i32 && 1i32 != 0 && 1i32 != 0
     || 1i32 != 0
       && (1i32 + 1i32 + 1i32 + 1i32 == 1i32 || *applet_name.offset(0) as libc::c_int == 'd' as i32)
@@ -1277,7 +1221,7 @@ pub unsafe extern "C" fn modprobe_main(
       && (1i32 + 1i32 + 1i32 + 1i32 == 1i32 || *applet_name.offset(0) as libc::c_int == 'm' as i32)
   {
     /* Goto modules directory */
-    xchdir(b"/lib/modules\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::xfuncs_printf::xchdir(b"/lib/modules\x00" as *const u8 as *const libc::c_char);
     uname(&mut uts);
     /* never fails */
   }
@@ -1306,7 +1250,7 @@ pub unsafe extern "C" fn modprobe_main(
      * -h: help (well duh)
      * module1.o module2.o parameters (just ignored for now)
      */
-    getopt32(
+    crate::libbb::getopt32::getopt32(
       argv,
       b"naAeF:qru\x00" as *const u8 as *const libc::c_char,
       0 as *mut libc::c_void,
@@ -1314,7 +1258,7 @@ pub unsafe extern "C" fn modprobe_main(
     argv = argv.offset(optind as isize);
     /* if (argv[0] && argv[1]) bb_show_usage(); */
     /* Goto $VERSION directory */
-    xchdir(if !(*argv.offset(0)).is_null() {
+    crate::libbb::xfuncs_printf::xchdir(if !(*argv.offset(0)).is_null() {
       *argv.offset(0)
     } else {
       uts.release.as_mut_ptr()
@@ -1330,7 +1274,7 @@ pub unsafe extern "C" fn modprobe_main(
   /* modprobe, insmod, rmmod require at least one argument */
   /* only -q (quiet) and -r (rmmod),
    * the rest are accepted and ignored (compat) */
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     b"^qrfsvwb\x00-1\x00" as *const u8 as *const libc::c_char,
   );
@@ -1339,7 +1283,7 @@ pub unsafe extern "C" fn modprobe_main(
     && (1i32 + 1i32 + 1i32 + 1i32 == 1i32 || *applet_name.offset(0) as libc::c_int == 'm' as i32)
   {
     /* Goto $VERSION directory */
-    xchdir(uts.release.as_mut_ptr());
+    crate::libbb::xfuncs_printf::xchdir(uts.release.as_mut_ptr());
   }
   /* are we rmmod? -> simulate modprobe -r, but don't bother the flag if
    * there're no other applets here */
@@ -1360,7 +1304,7 @@ pub unsafe extern "C" fn modprobe_main(
       }
       /* Enclose options in quotes */
       let mut s: *mut libc::c_char = options;
-      options = xasprintf(
+      options = crate::libbb::xfuncs_printf::xasprintf(
         b"%s \"%s\"\x00" as *const u8 as *const libc::c_char,
         if !s.is_null() {
           s
@@ -1386,9 +1330,11 @@ pub unsafe extern "C" fn modprobe_main(
           .wrapping_mul(8i32 as libc::c_ulong)
           .wrapping_sub(1i32 as libc::c_ulong))
     } as size_t;
-    map = xmalloc_open_zipped_read_close(*argv, &mut len);
+    map = crate::archival::libarchive::open_transformer::xmalloc_open_zipped_read_close(
+      *argv, &mut len,
+    );
     if map.is_null() {
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"can\'t read \'%s\'\x00" as *const u8 as *const libc::c_char,
         *argv,
       );
@@ -1404,7 +1350,7 @@ pub unsafe extern "C" fn modprobe_main(
       },
     ) != 0
     {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"can\'t insert \'%s\': %s\x00" as *const u8 as *const libc::c_char,
         *argv,
         moderror(*bb_errno),

@@ -15,14 +15,6 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn endofname(name: *const libc::c_char) -> *const libc::c_char;
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
 }
 /* math.h - interface to shell math "library" -- this allows shells to share
  *          the implementation of arithmetic $((...)) expansions.
@@ -86,16 +78,18 @@ pub type arith_var_lookup_t =
   Option<unsafe extern "C" fn(_: *const libc::c_char) -> *const libc::c_char>;
 pub type arith_var_set_t =
   Option<unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> ()>;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct arith_state_t {
   pub errmsg: *const libc::c_char,
   pub lookupvar: arith_var_lookup_t,
   pub setvar: arith_var_set_t,
   pub list_of_recursed_names: *mut libc::c_void,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct var_or_num_t {
   pub val: arith_t,
   pub second_val: arith_t,
@@ -217,8 +211,9 @@ pub struct var_or_num_t {
  */
 //#define endofname (math_state->endofname)
 pub type operator = libc::c_uchar;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct remembered_name {
   pub next: *mut remembered_name,
   pub var: *const libc::c_char,
@@ -790,13 +785,13 @@ unsafe extern "C" fn evaluate_string(
         break;
       }
     } else {
-      p = endofname(expr);
+      p = crate::libbb::endofname::endofname(expr);
       if p != expr {
         /* Name */
         var_name_size = (p.wrapping_offset_from(expr) as libc::c_long + 1) as size_t; /* +1 for NUL */
         let mut fresh3 = ::std::vec::from_elem(0, var_name_size as usize);
         (*numstackptr).var = fresh3.as_mut_ptr() as *mut libc::c_char;
-        safe_strncpy((*numstackptr).var, expr, var_name_size);
+        crate::libbb::safe_strncpy::safe_strncpy((*numstackptr).var, expr, var_name_size);
         expr = p
       } else if (arithval as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
         /* Number */

@@ -1,35 +1,9 @@
 use crate::librb::size_t;
+use crate::librb::spwd;
 use libc;
 use libc::free;
 use libc::passwd;
 use libc::strcmp;
-extern "C" {
-
-  /* All function names below should be remapped by #defines above
-   * in order to not collide with libc names. */
-  #[no_mangle]
-  fn bb_internal_getspnam_r(
-    __name: *const libc::c_char,
-    __result_buf: *mut spwd,
-    __buffer: *mut libc::c_char,
-    __buflen: size_t,
-    __result: *mut *mut spwd,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_ask_noecho(
-    fd: libc::c_int,
-    timeout: libc::c_int,
-    prompt: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn nuke_str(str: *mut libc::c_char);
-  #[no_mangle]
-  fn pw_encrypt(
-    clear: *const libc::c_char,
-    salt: *const libc::c_char,
-    cleanup: libc::c_int,
-  ) -> *mut libc::c_char;
-}
 
 /* Copyright (C) 1996, 1997, 1998, 1999 Free Software Foundation, Inc.
 This file is part of the GNU C Library.
@@ -50,20 +24,7 @@ Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 02111-1307 USA.  */
 /* Declaration of types and functions for shadow password suite */
 /* Structure of the password file */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct spwd {
-  pub sp_namp: *mut libc::c_char,
-  pub sp_pwdp: *mut libc::c_char,
-  pub sp_lstchg: libc::c_long,
-  pub sp_min: libc::c_long,
-  pub sp_max: libc::c_long,
-  pub sp_warn: libc::c_long,
-  pub sp_inact: libc::c_long,
-  pub sp_expire: libc::c_long,
-  pub sp_flag: libc::c_ulong,
-  /* Reserved */
-}
+
 /* Retrieve encrypted password string for pw.
  * If pw == NULL, return a string which fails password check against any
  * password.
@@ -81,22 +42,12 @@ unsafe extern "C" fn get_passwd(
   if (*pass.offset(0) as libc::c_int == 'x' as i32 || *pass.offset(0) as libc::c_int == '*' as i32)
     && *pass.offset(1) == 0
   {
-    let mut spw: spwd = spwd {
-      sp_namp: std::ptr::null_mut::<libc::c_char>(),
-      sp_pwdp: std::ptr::null_mut::<libc::c_char>(),
-      sp_lstchg: 0,
-      sp_min: 0,
-      sp_max: 0,
-      sp_warn: 0,
-      sp_inact: 0,
-      sp_expire: 0,
-      sp_flag: 0,
-    };
+    let mut spw: spwd = std::mem::zeroed();
     let mut r: libc::c_int = 0;
     /* getspnam_r may return 0 yet set result to NULL.
      * At least glibc 2.4 does this. Be extra paranoid here. */
     let mut result: *mut spwd = std::ptr::null_mut();
-    r = bb_internal_getspnam_r(
+    r = crate::libpwdgrp::pwd_grp::bb_internal_getspnam_r(
       (*pw).pw_name,
       &mut spw,
       buffer,
@@ -131,7 +82,7 @@ pub unsafe extern "C" fn check_password(
     /* empty password field? */
     return 2i32;
   }
-  encrypted = pw_encrypt(plaintext, pw_pass, 1i32);
+  encrypted = crate::libbb::pw_encrypt::pw_encrypt(plaintext, pw_pass, 1i32);
   r = (strcmp(encrypted, pw_pass) == 0) as libc::c_int;
   free(encrypted as *mut libc::c_void);
   return r;
@@ -159,13 +110,13 @@ pub unsafe extern "C" fn ask_and_check_password_extended(
     /* empty password field? */
     return 2i32;
   }
-  plaintext = bb_ask_noecho(0i32, timeout, prompt);
+  plaintext = crate::libbb::bb_askpass::bb_ask_noecho(0i32, timeout, prompt);
   if plaintext.is_null() {
     /* EOF (such as ^D) or error (such as ^C) or timeout */
     return -1i32;
   }
   r = check_password(pw, plaintext);
-  nuke_str(plaintext);
+  crate::libbb::nuke_str::nuke_str(plaintext);
   return r;
 }
 

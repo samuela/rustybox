@@ -43,38 +43,8 @@ extern "C" {
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
-  fn monotonic_sec() -> libc::c_uint;
-
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
   static mut bb_got_signal: smallint;
-  #[no_mangle]
-  fn record_signo(signo: libc::c_int);
-  #[no_mangle]
-  fn bb_unsetenv_and_free(key: *mut libc::c_char);
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn create_and_bind_to_netlink(
-    proto: libc::c_int,
-    grp: libc::c_int,
-    rcvbuf: libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn open_read_close(
-    filename: *const libc::c_char,
-    buf: *mut libc::c_void,
-    maxsz: size_t,
-  ) -> ssize_t;
+
   /* Non-aborting kind of convertors: bb_strto[u][l]l */
   /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
    * errno = EINVAL if value was not '\0' terminated, but otherwise ok
@@ -86,40 +56,13 @@ extern "C" {
    * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
    *    return value is all-ones in this case.
    */
-  #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn spawn_and_wait(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
+
   #[no_mangle]
   static mut wrote_pidfile: smallint;
-  #[no_mangle]
-  fn write_pidfile(path: *const libc::c_char);
+
   #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_info_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_info_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   static mut option_mask32: u32;
 
@@ -187,8 +130,9 @@ pub const LOGMODE_BOTH: C2RustUnnamed_1 = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed_1 = 2;
 pub const LOGMODE_STDIO: C2RustUnnamed_1 = 1;
 pub const LOGMODE_NONE: C2RustUnnamed_1 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub iface_last_status: smallint,
   pub iface_prev_status: smallint,
@@ -207,29 +151,33 @@ pub type __s16 = libc::c_short;
 pub type __u16 = libc::c_ushort;
 pub type __s32 = libc::c_int;
 pub type u32 = libc::c_uint;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sync_serial_settings {
   pub clock_rate: libc::c_uint,
   pub clock_type: libc::c_uint,
   pub loopback: libc::c_ushort,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct te1_settings {
   pub clock_rate: libc::c_uint,
   pub clock_type: libc::c_uint,
   pub loopback: libc::c_ushort,
   pub slot_map: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct raw_hdlc_proto {
   pub encoding: libc::c_ushort,
   pub parity: libc::c_ushort,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fr_proto {
   pub t391: libc::c_uint,
   pub t392: libc::c_uint,
@@ -239,19 +187,22 @@ pub struct fr_proto {
   pub lmi: libc::c_ushort,
   pub dce: libc::c_ushort,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fr_proto_pvc {
   pub dlci: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fr_proto_pvc_info {
   pub dlci: libc::c_uint,
   pub master: [libc::c_char; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct cisco_proto {
   pub interval: libc::c_uint,
   pub timeout: libc::c_uint,
@@ -276,8 +227,9 @@ pub const IFF_LOOPBACK: net_device_flags = 8;
 pub const IFF_DEBUG: net_device_flags = 4;
 pub const IFF_BROADCAST: net_device_flags = 2;
 pub const IFF_UP: net_device_flags = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifmap {
   pub mem_start: libc::c_ulong,
   pub mem_end: libc::c_ulong,
@@ -286,15 +238,17 @@ pub struct ifmap {
   pub dma: libc::c_uchar,
   pub port: libc::c_uchar,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct if_settings {
   pub type_0: libc::c_uint,
   pub size: libc::c_uint,
   pub ifs_ifsu: C2RustUnnamed_2,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_2 {
   pub raw_hdlc: *mut raw_hdlc_proto,
   pub cisco: *mut cisco_proto,
@@ -304,14 +258,16 @@ pub union C2RustUnnamed_2 {
   pub sync: *mut sync_serial_settings,
   pub te1: *mut te1_settings,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifreq {
   pub ifr_ifrn: C2RustUnnamed_4,
   pub ifr_ifru: C2RustUnnamed_3,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_3 {
   pub ifru_addr: sockaddr,
   pub ifru_dstaddr: sockaddr,
@@ -327,34 +283,30 @@ pub union C2RustUnnamed_3 {
   pub ifru_data: *mut libc::c_void,
   pub ifru_settings: if_settings,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_4 {
   pub ifrn_name: [libc::c_char; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ethtool_value {
   pub cmd: u32,
   pub data: u32,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct mii_ioctl_data {
   pub phy_id: __u16,
   pub reg_num: __u16,
   pub val_in: __u16,
   pub val_out: __u16,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct nlmsghdr {
-  pub nlmsg_len: u32,
-  pub nlmsg_type: __u16,
-  pub nlmsg_flags: __u16,
-  pub nlmsg_seq: u32,
-  pub nlmsg_pid: u32,
-}
+
+use libc::nlmsghdr;
 pub type C2RustUnnamed_5 = libc::c_uint;
 pub const __IFLA_MAX: C2RustUnnamed_5 = 50;
 pub const IFLA_NEW_IFINDEX: C2RustUnnamed_5 = 49;
@@ -462,14 +414,11 @@ pub const RTM_GETLINK: C2RustUnnamed_6 = 18;
 pub const RTM_DELLINK: C2RustUnnamed_6 = 17;
 pub const RTM_NEWLINK: C2RustUnnamed_6 = 16;
 pub const RTM_BASE: C2RustUnnamed_6 = 16;
-#[derive(Copy, Clone)]
+
+use crate::librb::rtattr;
+
 #[repr(C)]
-pub struct rtattr {
-  pub rta_len: libc::c_ushort,
-  pub rta_type: libc::c_ushort,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct ifinfomsg {
   pub ifi_family: libc::c_uchar,
   pub __ifi_pad: libc::c_uchar,
@@ -478,39 +427,44 @@ pub struct ifinfomsg {
   pub ifi_flags: libc::c_uint,
   pub ifi_change: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct iw_param {
   pub value: __s32,
   pub fixed: __u8,
   pub disabled: __u8,
   pub flags: __u16,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct iw_point {
   pub pointer: *mut libc::c_void,
   pub length: __u16,
   pub flags: __u16,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct iw_freq {
   pub m: __s32,
   pub e: __s16,
   pub i: __u8,
   pub flags: __u8,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct iw_quality {
   pub qual: __u8,
   pub level: __u8,
   pub noise: __u8,
   pub updated: __u8,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union iwreq_data {
   pub name: [libc::c_char; 16],
   pub essid: iw_point,
@@ -531,14 +485,16 @@ pub union iwreq_data {
   pub param: iw_param,
   pub data: iw_point,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct iwreq {
   pub ifr_ifrn: C2RustUnnamed_7,
   pub u: iwreq_data,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_7 {
   pub ifrn_name: [libc::c_char; 16],
 }
@@ -582,8 +538,9 @@ pub const API_PRIVATE: C2RustUnnamed_11 = 2;
 pub const API_MII: C2RustUnnamed_11 = 1;
 // api mode
 pub const API_ETHTOOL: C2RustUnnamed_11 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_12 {
   pub name: *const libc::c_char,
   pub func: Option<unsafe extern "C" fn() -> smallint>,
@@ -596,7 +553,7 @@ unsafe extern "C" fn bb_strtoul(
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_ulong {
-  return bb_strtoull(arg, endp, base) as libc::c_ulong;
+  return crate::libbb::bb_strtonum::bb_strtoull(arg, endp, base) as libc::c_ulong;
 }
 #[inline(always)]
 unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
@@ -609,7 +566,7 @@ unsafe extern "C" fn set_ifreq_to_ifname(mut ifreq: *mut ifreq) {
     0,
     ::std::mem::size_of::<ifreq>() as libc::c_ulong,
   );
-  strncpy_IFNAMSIZ(
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(
     (*ifreq).ifr_ifrn.ifrn_name.as_mut_ptr(),
     (*ptr_to_globals).iface,
   );
@@ -621,7 +578,10 @@ unsafe extern "C" fn network_ioctl(
 ) -> libc::c_int {
   let mut r: libc::c_int = ioctl(ioctl_fd as libc::c_int, request as libc::c_ulong, data);
   if r < 0 && !errmsg.is_null() {
-    bb_perror_msg(b"%s failed\x00" as *const u8 as *const libc::c_char, errmsg);
+    crate::libbb::perror_msg::bb_perror_msg(
+      b"%s failed\x00" as *const u8 as *const libc::c_char,
+      errmsg,
+    );
   }
   return r;
 }
@@ -762,7 +722,7 @@ unsafe extern "C" fn detect_link_wlan() -> smallint {
     0,
     ::std::mem::size_of::<iwreq>() as libc::c_ulong,
   );
-  strncpy_IFNAMSIZ(
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(
     iwrequest.ifr_ifrn.ifrn_name.as_mut_ptr(),
     (*ptr_to_globals).iface,
   );
@@ -843,7 +803,7 @@ unsafe extern "C" fn run_script(mut action: *const libc::c_char) -> libc::c_int 
   let mut env_CURRENT: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut argv: [*mut libc::c_char; 5] = [0 as *mut libc::c_char; 5];
   let mut r: libc::c_int = 0;
-  bb_info_msg(
+  crate::libbb::verror_msg::bb_info_msg(
     b"executing \'%s %s %s\'\x00" as *const u8 as *const libc::c_char,
     (*ptr_to_globals).script_name,
     (*ptr_to_globals).iface,
@@ -854,23 +814,23 @@ unsafe extern "C" fn run_script(mut action: *const libc::c_char) -> libc::c_int 
   argv[2] = action as *mut libc::c_char;
   argv[3] = (*ptr_to_globals).extra_arg as *mut libc::c_char;
   argv[4] = std::ptr::null_mut::<libc::c_char>();
-  env_PREVIOUS = xasprintf(
+  env_PREVIOUS = crate::libbb::xfuncs_printf::xasprintf(
     b"%s=%s\x00" as *const u8 as *const libc::c_char,
     b"IFPLUGD_PREVIOUS\x00" as *const u8 as *const libc::c_char,
     strstatus((*ptr_to_globals).iface_prev_status as libc::c_int),
   );
   putenv(env_PREVIOUS);
-  env_CURRENT = xasprintf(
+  env_CURRENT = crate::libbb::xfuncs_printf::xasprintf(
     b"%s=%s\x00" as *const u8 as *const libc::c_char,
     b"IFPLUGD_CURRENT\x00" as *const u8 as *const libc::c_char,
     strstatus((*ptr_to_globals).iface_last_status as libc::c_int),
   );
   putenv(env_CURRENT);
   /* r < 0 - can't exec, 0 <= r < 0x180 - exited, >=0x180 - killed by sig (r-0x180) */
-  r = spawn_and_wait(argv.as_mut_ptr());
-  bb_unsetenv_and_free(env_PREVIOUS);
-  bb_unsetenv_and_free(env_CURRENT);
-  bb_info_msg(
+  r = crate::libbb::vfork_daemon_rexec::spawn_and_wait(argv.as_mut_ptr());
+  crate::libbb::xfuncs_printf::bb_unsetenv_and_free(env_PREVIOUS);
+  crate::libbb::xfuncs_printf::bb_unsetenv_and_free(env_CURRENT);
+  crate::libbb::verror_msg::bb_info_msg(
     b"exit code: %d\x00" as *const u8 as *const libc::c_char,
     r & 0xffi32,
   );
@@ -907,7 +867,9 @@ unsafe extern "C" fn up_iface() {
     ifrequest.ifr_ifru.ifru_flags =
       (ifrequest.ifr_ifru.ifru_flags as libc::c_int | IFF_UP as libc::c_int) as libc::c_short;
     /* Let user know we mess up with interface */
-    bb_simple_info_msg(b"upping interface\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_info_msg(
+      b"upping interface\x00" as *const u8 as *const libc::c_char,
+    );
     if network_ioctl(
       0x8914i32,
       &mut ifrequest as *mut ifreq as *mut libc::c_void,
@@ -915,7 +877,7 @@ unsafe extern "C" fn up_iface() {
     ) < 0
     {
       if *bb_errno != 19i32 && *bb_errno != 99i32 {
-        xfunc_die();
+        crate::libbb::xfunc_die::xfunc_die();
       }
       (*ptr_to_globals).iface_exists = 0 as smallint;
       return;
@@ -965,7 +927,7 @@ unsafe extern "C" fn detect_link() -> smallint {
       logmode = sv_logmode;
       if status as libc::c_int != IFSTATUS_ERR as libc::c_int {
         (*ptr_to_globals).api_method_num = i as smallint;
-        bb_info_msg(
+        crate::libbb::verror_msg::bb_info_msg(
           b"using %s detection mode\x00" as *const u8 as *const libc::c_char,
           method_table[i as usize].name,
         );
@@ -985,7 +947,9 @@ unsafe extern "C" fn detect_link() -> smallint {
     } else if option_mask32 & FLAG_IGNORE_FAIL_POSITIVE as libc::c_int as libc::c_uint != 0 {
       status = IFSTATUS_UP as libc::c_int as smallint
     } else if *(*ptr_to_globals).api_mode.offset(0) as libc::c_int == 'a' as i32 {
-      bb_simple_error_msg(b"can\'t detect link status\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg(
+        b"can\'t detect link status\x00" as *const u8 as *const libc::c_char,
+      );
     }
   }
   if status as libc::c_int != (*ptr_to_globals).iface_last_status as libc::c_int {
@@ -1020,7 +984,9 @@ unsafe extern "C" fn check_existence_through_netlink() -> libc::c_int {
       if *bb_errno == 4i32 {
         continue;
       }
-      bb_simple_perror_msg(b"netlink: recv\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg(
+        b"netlink: recv\x00" as *const u8 as *const libc::c_char,
+      );
       return -1i32;
     } else {
       mhdr = replybuf as *mut nlmsghdr;
@@ -1030,7 +996,7 @@ unsafe extern "C" fn check_existence_through_netlink() -> libc::c_int {
             >= ::std::mem::size_of::<nlmsghdr>() as libc::c_ulong
           && (*mhdr).nlmsg_len <= bytes as u32)
         {
-          bb_simple_error_msg(
+          crate::libbb::verror_msg::bb_simple_error_msg(
             b"netlink packet too small or truncated\x00" as *const u8 as *const libc::c_char,
           );
           return -1i32;
@@ -1049,7 +1015,7 @@ unsafe extern "C" fn check_existence_through_netlink() -> libc::c_int {
                 as libc::c_int as libc::c_ulong,
             )
           {
-            bb_simple_error_msg(
+            crate::libbb::verror_msg::bb_simple_error_msg(
               b"netlink packet too small or truncated\x00" as *const u8 as *const libc::c_char,
             );
             return -1i32;
@@ -1151,7 +1117,7 @@ unsafe extern "C" fn check_existence_through_netlink() -> libc::c_int {
 unsafe extern "C" fn read_pid(mut filename: *const libc::c_char) -> pid_t {
   let mut len: libc::c_int = 0;
   let mut buf: [libc::c_char; 128] = [0; 128];
-  len = open_read_close(
+  len = crate::libbb::read::open_read_close(
     filename,
     buf.as_mut_ptr() as *mut libc::c_void,
     127i32 as size_t,
@@ -1183,7 +1149,8 @@ pub unsafe extern "C" fn ifplugd_main(
   let mut pid_from_pidfile: pid_t = 0;
   let ref mut fresh0 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh0 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh0 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).iface_last_status = -1i32 as smallint;
   (*ptr_to_globals).iface_exists = 1i32 as smallint;
@@ -1193,7 +1160,7 @@ pub unsafe extern "C" fn ifplugd_main(
   (*ptr_to_globals).api_mode = b"a\x00" as *const u8 as *const libc::c_char;
   (*ptr_to_globals).script_name =
     b"/etc/ifplugd/ifplugd.action\x00" as *const u8 as *const libc::c_char;
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"+ansfFi:r:It:+u:+d:+m:pqlx:Mk\x00" as *const u8 as *const libc::c_char,
     &mut (*ptr_to_globals).iface as *mut *const libc::c_char,
@@ -1207,11 +1174,11 @@ pub unsafe extern "C" fn ifplugd_main(
   (*ptr_to_globals).poll_time = (*ptr_to_globals)
     .poll_time
     .wrapping_mul(1000i32 as libc::c_uint);
-  applet_name = xasprintf(
+  applet_name = crate::libbb::xfuncs_printf::xasprintf(
     b"ifplugd(%s)\x00" as *const u8 as *const libc::c_char,
     (*ptr_to_globals).iface,
   );
-  pidfile_name = xasprintf(
+  pidfile_name = crate::libbb::xfuncs_printf::xasprintf(
     b"/var/run/ifplugd.%s.pid\x00" as *const u8 as *const libc::c_char,
     (*ptr_to_globals).iface,
   );
@@ -1224,14 +1191,16 @@ pub unsafe extern "C" fn ifplugd_main(
     return 0;
   }
   if pid_from_pidfile > 0 && kill(pid_from_pidfile, 0) == 0 {
-    bb_simple_error_msg_and_die(b"daemon already running\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"daemon already running\x00" as *const u8 as *const libc::c_char,
+    );
   }
   api_mode_found = strchr(
     api_modes.as_ptr(),
     *(*ptr_to_globals).api_mode.offset(0) as libc::c_int,
   );
   if api_mode_found.is_null() {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"unknown API mode \'%s\'\x00" as *const u8 as *const libc::c_char,
       (*ptr_to_globals).api_mode,
     );
@@ -1239,27 +1208,28 @@ pub unsafe extern "C" fn ifplugd_main(
   (*ptr_to_globals).api_method_num =
     api_mode_found.wrapping_offset_from(api_modes.as_ptr()) as libc::c_long as smallint;
   if opts & FLAG_NO_DAEMON as libc::c_int as libc::c_uint == 0 {
-    bb_daemonize_or_rexec(DAEMON_CHDIR_ROOT as libc::c_int);
+    crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(DAEMON_CHDIR_ROOT as libc::c_int);
   }
-  xmove_fd(
-    xsocket(2i32, SOCK_DGRAM as libc::c_int, 0),
+  crate::libbb::xfuncs_printf::xmove_fd(
+    crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0),
     ioctl_fd as libc::c_int,
   );
   if opts & FLAG_MONITOR as libc::c_int as libc::c_uint != 0 {
-    let mut fd: libc::c_int = create_and_bind_to_netlink(0i32, 1i32, 0 as libc::c_uint);
-    xmove_fd(fd, netlink_fd as libc::c_int);
+    let mut fd: libc::c_int =
+      crate::libbb::xconnect::create_and_bind_to_netlink(0i32, 1i32, 0 as libc::c_uint);
+    crate::libbb::xfuncs_printf::xmove_fd(fd, netlink_fd as libc::c_int);
   }
-  write_pidfile(pidfile_name);
+  crate::libbb::pidfile::write_pidfile(pidfile_name);
   /* this can't be moved before socket creation */
   if opts & FLAG_NO_SYSLOG as libc::c_int as libc::c_uint == 0 {
     openlog(applet_name, 0, 3i32 << 3i32);
     logmode = (logmode as libc::c_int | LOGMODE_SYSLOG as libc::c_int) as smallint
   }
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     0 | 1i32 << 2i32 | 1i32 << 15i32 | 1i32 << 3i32 | 1i32 << 1i32,
-    Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
-  bb_info_msg(
+  crate::libbb::verror_msg::bb_info_msg(
     b"started: %s\x00" as *const u8 as *const libc::c_char,
     bb_banner.as_ptr(),
   );
@@ -1287,7 +1257,7 @@ pub unsafe extern "C" fn ifplugd_main(
   if !(iface_status == IFSTATUS_ERR as libc::c_int) {
     iface_status_str = strstatus(iface_status);
     if opts & FLAG_MONITOR as libc::c_int as libc::c_uint != 0 {
-      bb_info_msg(
+      crate::libbb::verror_msg::bb_info_msg(
         b"interface %s\x00" as *const u8 as *const libc::c_char,
         if (*ptr_to_globals).iface_exists as libc::c_int != 0 {
           b"exists\x00" as *const u8 as *const libc::c_char
@@ -1299,7 +1269,7 @@ pub unsafe extern "C" fn ifplugd_main(
     /* else we assume it always exists, but don't mislead user
      * by potentially lying that it really exists */
     if (*ptr_to_globals).iface_exists != 0 {
-      bb_info_msg(
+      crate::libbb::verror_msg::bb_info_msg(
         b"link is %s\x00" as *const u8 as *const libc::c_char,
         iface_status_str,
       );
@@ -1353,7 +1323,9 @@ pub unsafe extern "C" fn ifplugd_main(
             if *bb_errno == 4i32 {
               continue;
             }
-            bb_simple_perror_msg(b"poll\x00" as *const u8 as *const libc::c_char);
+            crate::libbb::perror_msg::bb_simple_perror_msg(
+              b"poll\x00" as *const u8 as *const libc::c_char,
+            );
             current_block = 8614729751013307988;
             break;
           } else {
@@ -1368,7 +1340,7 @@ pub unsafe extern "C" fn ifplugd_main(
                 break;
               }
               if iface_exists_old != (*ptr_to_globals).iface_exists as libc::c_int {
-                bb_info_msg(
+                crate::libbb::verror_msg::bb_info_msg(
                   b"interface %sappeared\x00" as *const u8 as *const libc::c_char,
                   if (*ptr_to_globals).iface_exists as libc::c_int != 0 {
                     b"\x00" as *const u8 as *const libc::c_char
@@ -1393,7 +1365,7 @@ pub unsafe extern "C" fn ifplugd_main(
             }
             iface_status_str = strstatus(iface_status);
             if iface_status_old != iface_status {
-              bb_info_msg(
+              crate::libbb::verror_msg::bb_info_msg(
                 b"link is %s\x00" as *const u8 as *const libc::c_char,
                 iface_status_str,
               );
@@ -1402,7 +1374,7 @@ pub unsafe extern "C" fn ifplugd_main(
                  * we ran script. don't run the script: */
                 delay_time = 0
               } else {
-                delay_time = monotonic_sec() as libc::c_int;
+                delay_time = crate::libbb::time::monotonic_sec() as libc::c_int;
                 if iface_status == IFSTATUS_UP as libc::c_int {
                   delay_time = (delay_time as libc::c_uint).wrapping_add((*ptr_to_globals).delay_up)
                     as libc::c_int as libc::c_int
@@ -1416,7 +1388,9 @@ pub unsafe extern "C" fn ifplugd_main(
               }
             }
             if !(delay_time != 0
-              && monotonic_sec().wrapping_sub(delay_time as libc::c_uint) as libc::c_int >= 0)
+              && crate::libbb::time::monotonic_sec().wrapping_sub(delay_time as libc::c_uint)
+                as libc::c_int
+                >= 0)
             {
               continue;
             }
@@ -1456,5 +1430,7 @@ pub unsafe extern "C" fn ifplugd_main(
   if wrote_pidfile != 0 {
     unlink(pidfile_name);
   }
-  bb_simple_error_msg_and_die(b"exiting\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+    b"exiting\x00" as *const u8 as *const libc::c_char,
+  );
 }

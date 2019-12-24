@@ -1,6 +1,5 @@
-use crate::librb::size_t;
-
 use crate::libbb::appletlib::applet_name;
+use crate::librb::size_t;
 use libc;
 use libc::close;
 use libc::free;
@@ -13,7 +12,6 @@ use libc::ssize_t;
 use libc::stat;
 use libc::strchr;
 use libc::strcpy;
-use libc::uid_t;
 use libc::unlink;
 extern "C" {
 
@@ -26,47 +24,6 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
-  #[no_mangle]
-  fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn bb_copyfd_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t) -> off_t;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn xmkstemp(template: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn create_and_connect_stream_or_die(peer: *const libc::c_char, port: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn safe_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn safe_gethostname() -> *mut libc::c_char;
-  #[no_mangle]
-  fn xuid2uname(uid: uid_t) -> *mut libc::c_char;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 
   #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
@@ -150,17 +107,17 @@ unsafe extern "C" fn get_response_or_say_and_die(
   let mut sz: ssize_t = 0;
   let mut buf: [libc::c_char; 128] = [0; 128];
   buf[0] = ' ' as i32 as libc::c_char;
-  sz = safe_read(fd, buf.as_mut_ptr() as *mut libc::c_void, 1i32 as size_t);
+  sz = crate::libbb::read::safe_read(fd, buf.as_mut_ptr() as *mut libc::c_void, 1i32 as size_t);
   if '\u{0}' as i32 != buf[0] as libc::c_int {
     // request has failed
     // try to make sure last char is '\n', but do not add
     // superfluous one
-    sz = full_read(
+    sz = crate::libbb::read::full_read(
       fd,
       buf.as_mut_ptr().offset(1) as *mut libc::c_void,
       126i32 as size_t,
     );
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"error while %s%s\x00" as *const u8 as *const libc::c_char,
       errmsg,
       if sz > 0 {
@@ -175,13 +132,13 @@ unsafe extern "C" fn get_response_or_say_and_die(
         sz += 1; // printer class, max 32 char
         buf[sz as usize] = '\n' as i32 as libc::c_char
       } // name of printer queue
-      safe_write(
+      crate::libbb::safe_write::safe_write(
         2i32,
         buf.as_mut_ptr() as *const libc::c_void,
         (sz + 1) as size_t,
       ); // server[:port] of printer queue
     }
-    xfunc_die();
+    crate::libbb::xfunc_die::xfunc_die();
   };
 }
 #[no_mangle]
@@ -196,7 +153,7 @@ pub unsafe extern "C" fn lpqr_main(
   let mut server: *const libc::c_char = b"localhost\x00" as *const u8 as *const libc::c_char;
   let mut hostname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   // N.B. IMHO getenv("USER") can be way easily spoofed!
-  let mut user: *const libc::c_char = xuid2uname(getuid());
+  let mut user: *const libc::c_char = crate::libbb::bb_pwd::xuid2uname(getuid());
   let mut job: libc::c_uint = 0;
   let mut opts: libc::c_uint = 0;
   let mut fd: libc::c_int = 0;
@@ -206,7 +163,7 @@ pub unsafe extern "C" fn lpqr_main(
   }
   // parse options
   // TODO: set opt_complementary: s,d,f are mutually exclusive
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     if 'r' as i32 == *applet_name.offset(2) as libc::c_int {
       b"P:U:VhC:J:m\x00" as *const u8 as *const libc::c_char
@@ -227,7 +184,7 @@ pub unsafe extern "C" fn lpqr_main(
     server = s.offset(1)
   }
   // do connect
-  fd = create_and_connect_stream_or_die(server, 515i32);
+  fd = crate::libbb::xconnect::create_and_connect_stream_or_die(server, 515i32);
   //
   // LPQ ------------------------
   //
@@ -251,7 +208,7 @@ pub unsafe extern "C" fn lpqr_main(
         argv = argv.offset(1);
         dprintf(fd, b" %s\x00" as *const u8 as *const libc::c_char, *fresh0);
       }
-      bb_putchar('\n' as i32);
+      crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
       current_block_20 = 17788412896529399552;
     // dump current jobs status
     // N.B. periodical polling should be achieved
@@ -273,7 +230,7 @@ pub unsafe extern "C" fn lpqr_main(
           cmd as libc::c_int,
           queue,
         );
-        bb_copyfd_eof(fd, 1i32);
+        crate::libbb::copyfd::bb_copyfd_eof(fd, 1i32);
       }
       _ => {}
     }
@@ -283,10 +240,12 @@ pub unsafe extern "C" fn lpqr_main(
   // LPR ------------------------
   //
   if opts & LPR_V as libc::c_int as libc::c_uint != 0 {
-    bb_simple_error_msg(b"connected to server\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg(
+      b"connected to server\x00" as *const u8 as *const libc::c_char,
+    );
   }
   job = (getpid() % 1000i32) as libc::c_uint;
-  hostname = safe_gethostname();
+  hostname = crate::libbb::safe_gethostname::safe_gethostname();
   // no files given on command line? -> use stdin
   if (*argv).is_null() {
     argv = argv.offset(-1);
@@ -313,12 +272,12 @@ pub unsafe extern "C" fn lpqr_main(
         tempfile.as_mut_ptr(),
         b"/tmp/lprXXXXXX\x00" as *const u8 as *const libc::c_char,
       ); /* paranoia: fstat may theoretically fail */
-      dfd = xmkstemp(tempfile.as_mut_ptr());
-      bb_copyfd_eof(0i32, dfd);
-      xlseek(dfd, 0 as off_t, 0);
+      dfd = crate::libbb::xfuncs_printf::xmkstemp(tempfile.as_mut_ptr());
+      crate::libbb::copyfd::bb_copyfd_eof(0i32, dfd);
+      crate::libbb::xfuncs_printf::xlseek(dfd, 0 as off_t, 0);
       *argv = bb_msg_standard_input.as_ptr() as *mut libc::c_char
     } else {
-      dfd = xopen(*argv, 0)
+      dfd = crate::libbb::xfuncs_printf::xopen(*argv, 0)
     }
     st.st_size = 0 as off_t;
     fstat(dfd, &mut st);
@@ -326,20 +285,22 @@ pub unsafe extern "C" fn lpqr_main(
      * Standard lpr works around it by refusing to send such jobs:
      */
     if st.st_size == 0 {
-      bb_simple_error_msg(b"nothing to print\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg(
+        b"nothing to print\x00" as *const u8 as *const libc::c_char,
+      );
     } else {
       /* "The name ... should start with ASCII "cfA",
        * followed by a three digit job number, followed
        * by the host name which has constructed the file."
        * We supply 'c' or 'd' as needed for control/data file. */
-      remote_filename = xasprintf(
+      remote_filename = crate::libbb::xfuncs_printf::xasprintf(
         b"fA%03u%s\x00" as *const u8 as *const libc::c_char,
         job,
         hostname,
       );
       // create control file
       // TODO: all lines but 2 last are constants! How we can use this fact?
-      controlfile = xasprintf(
+      controlfile = crate::libbb::xfuncs_printf::xasprintf(
         b"H%.32s\nP%.32s\nC%.32s\nJ%.99s\nL%.32s\nM%.32s\nld%.31s\n\x00" as *const u8
           as *const libc::c_char,
         hostname,
@@ -370,14 +331,16 @@ pub unsafe extern "C" fn lpqr_main(
           break;
         }
         if *c.offset(1) as libc::c_int != 0 && *c.offset(2) as libc::c_int == '\n' as i32 {
-          overlapping_strcpy(c, c.offset(2));
+          crate::libbb::safe_strncpy::overlapping_strcpy(c, c.offset(2));
         } else {
           c = c.offset(1)
         }
       }
       // send control file
       if opts & LPR_V as libc::c_int as libc::c_uint != 0 {
-        bb_simple_error_msg(b"sending control file\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg(
+          b"sending control file\x00" as *const u8 as *const libc::c_char,
+        );
       }
       /* "Acknowledgement processing must occur as usual
        * after the command is sent." */
@@ -397,7 +360,7 @@ pub unsafe extern "C" fn lpqr_main(
        * an indication that the file being sent is complete.
        * A second level of acknowledgement processing
        * must occur at this point." */
-      full_write(
+      crate::libbb::full_write::full_write(
         fd,
         controlfile as *const libc::c_void,
         cflen.wrapping_add(1i32 as libc::c_uint) as size_t,
@@ -408,7 +371,9 @@ pub unsafe extern "C" fn lpqr_main(
       );
       // send data file, with name "dfaXXX"
       if opts & LPR_V as libc::c_int as libc::c_uint != 0 {
-        bb_simple_error_msg(b"sending data file\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg(
+          b"sending data file\x00" as *const u8 as *const libc::c_char,
+        );
       }
       dprintf(
         fd,
@@ -420,9 +385,9 @@ pub unsafe extern "C" fn lpqr_main(
         fd,
         b"sending data file\x00" as *const u8 as *const libc::c_char,
       );
-      if bb_copyfd_size(dfd, fd, st.st_size) != st.st_size {
+      if crate::libbb::copyfd::bb_copyfd_size(dfd, fd, st.st_size) != st.st_size {
         // We're screwed. We sent less bytes than we advertised.
-        bb_simple_error_msg_and_die(
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
           b"local file changed size?!\x00" as *const u8 as *const libc::c_char,
         ); // send ACK
       }
@@ -445,7 +410,9 @@ pub unsafe extern "C" fn lpqr_main(
       free(controlfile as *mut libc::c_void);
       // say job accepted
       if opts & LPR_V as libc::c_int as libc::c_uint != 0 {
-        bb_simple_error_msg(b"job accepted\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg(
+          b"job accepted\x00" as *const u8 as *const libc::c_char,
+        );
       }
       // next, please!
       job = job

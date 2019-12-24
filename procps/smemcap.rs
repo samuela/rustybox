@@ -1,39 +1,29 @@
+use crate::librb::size_t;
 use libc;
 use libc::close;
+use libc::dirent;
 use libc::free;
 use libc::fstat;
+use libc::mode_t;
+use libc::off_t;
 use libc::open;
 use libc::readdir;
 use libc::sprintf;
+use libc::stat;
 use libc::strcpy;
+use libc::DIR;
 extern "C" {
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xopendir(path: *const libc::c_char) -> *mut DIR;
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  // NB: will return short read on error, not -1,
-  // if some data was read before error occurred
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
+// NB: will return short read on error, not -1,
+// if some data was read before error occurred
+
 }
 
-use crate::librb::size_t;
-use libc::dirent;
-use libc::mode_t;
-use libc::off_t;
-use libc::ssize_t;
-use libc::stat;
-use libc::DIR;
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct tar_header_t {
   pub name: [libc::c_char; 100],
   pub mode: [libc::c_char; 8],
@@ -69,8 +59,9 @@ pub struct tar_header_t {
 //config:	a memory usage statistic tool.
 //applet:IF_SMEMCAP(APPLET(smemcap, BB_DIR_USR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_SMEMCAP) += smemcap.o
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fileblock {
   pub next: *mut fileblock,
   pub data: [libc::c_char; 512],
@@ -155,7 +146,7 @@ unsafe extern "C" fn writeheader(
     b"%06o\x00" as *const u8 as *const libc::c_char,
     sum,
   );
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     1i32,
     &mut header as *mut tar_header_t as *const libc::c_void,
     512i32 as size_t,
@@ -176,10 +167,11 @@ unsafe extern "C" fn archivefile(mut path: *const libc::c_char) {
     return;
   }
   loop {
-    cur = xzalloc(::std::mem::size_of::<fileblock>() as libc::c_ulong) as *mut fileblock;
+    cur = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<fileblock>() as libc::c_ulong)
+      as *mut fileblock;
     *prev = cur;
     prev = &mut (*cur).next;
-    r = full_read(
+    r = crate::libbb::read::full_read(
       fd,
       (*cur).data.as_mut_ptr() as *mut libc::c_void,
       512i32 as size_t,
@@ -199,7 +191,7 @@ unsafe extern "C" fn archivefile(mut path: *const libc::c_char) {
   /* dump file contents */
   cur = start;
   while size as libc::c_int > 0 {
-    xwrite(
+    crate::libbb::xfuncs_printf::xwrite(
       1i32,
       (*cur).data.as_mut_ptr() as *const libc::c_void,
       512i32 as size_t,
@@ -230,8 +222,8 @@ pub unsafe extern "C" fn smemcap_main(
 ) -> libc::c_int {
   let mut d: *mut DIR = std::ptr::null_mut();
   let mut de: *mut dirent = std::ptr::null_mut();
-  xchdir(b"/proc\x00" as *const u8 as *const libc::c_char);
-  d = xopendir(b".\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::xfuncs_printf::xchdir(b"/proc\x00" as *const u8 as *const libc::c_char);
+  d = crate::libbb::xfuncs_printf::xopendir(b".\x00" as *const u8 as *const libc::c_char);
   archivefile(b"meminfo\x00" as *const u8 as *const libc::c_char);
   archivefile(b"version\x00" as *const u8 as *const libc::c_char);
   loop {

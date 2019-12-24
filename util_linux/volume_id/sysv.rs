@@ -2,30 +2,13 @@ use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
-}
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
-#[derive(Copy, Clone)]
+
+use crate::util_linux::volume_id::volume_id::volume_id;
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct xenix_super {
   pub s_isize: u16,
   pub s_fsize: u32,
@@ -72,8 +55,9 @@ pub struct xenix_super {
 //config:	default y
 //config:	depends on VOLUMEID
 //kbuild:lib-$(CONFIG_FEATURE_VOLUMEID_SYSV) += sysv.o
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct sysv_super {
   pub s_isize: u16,
   pub s_pad0: u16,
@@ -195,7 +179,7 @@ pub unsafe extern "C" fn volume_id_probe_sysv(mut id: *mut volume_id) -> libc::c
       current_block = 7746791466490516765;
       break;
     }
-    vs = volume_id_get_buffer(
+    vs = crate::util_linux::volume_id::util::volume_id_get_buffer(
       id,
       (0i32 as u64).wrapping_add(boff.wrapping_mul(0x1i32 as libc::c_uint) as libc::c_ulong),
       0x200i32 as size_t,
@@ -218,15 +202,18 @@ pub unsafe extern "C" fn volume_id_probe_sysv(mut id: *mut volume_id) -> libc::c
             let fresh1;
             let fresh2 = __x;
             asm!("bswap $0" : "=r" (fresh1) : "0"
-                                 (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2))
-                                 :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
           }
           __v
         })
     {
       //			volume_id_set_label_raw(id, vs->s_fname, 6);
-      volume_id_set_label_string(id, (*vs).s_fname.as_mut_ptr(), 6i32 as size_t);
+      crate::util_linux::volume_id::util::volume_id_set_label_string(
+        id,
+        (*vs).s_fname.as_mut_ptr(),
+        6i32 as size_t,
+      );
       (*id).type_0 = b"sysv\x00" as *const u8 as *const libc::c_char;
       current_block = 8260290716299312918;
       break;
@@ -242,7 +229,7 @@ pub unsafe extern "C" fn volume_id_probe_sysv(mut id: *mut volume_id) -> libc::c
           current_block = 12124785117276362961;
           break;
         }
-        xs = volume_id_get_buffer(
+        xs = crate::util_linux::volume_id::util::volume_id_get_buffer(
           id,
           (0i32 as u64).wrapping_add(boff.wrapping_add(0x18i32 as libc::c_uint) as libc::c_ulong),
           0x200i32 as size_t,
@@ -265,15 +252,18 @@ pub unsafe extern "C" fn volume_id_probe_sysv(mut id: *mut volume_id) -> libc::c
                 let fresh4;
                 let fresh5 = __x;
                 asm!("bswap $0" : "=r" (fresh4) : "0"
-                                         (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                                         :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
                 c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
               }
               __v
             })
         {
           //			volume_id_set_label_raw(id, xs->s_fname, 6);
-          volume_id_set_label_string(id, (*xs).s_fname.as_mut_ptr(), 6i32 as size_t);
+          crate::util_linux::volume_id::util::volume_id_set_label_string(
+            id,
+            (*xs).s_fname.as_mut_ptr(),
+            6i32 as size_t,
+          );
           (*id).type_0 = b"xenix\x00" as *const u8 as *const libc::c_char;
           current_block = 8260290716299312918;
           break;

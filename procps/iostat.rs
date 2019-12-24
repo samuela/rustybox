@@ -38,38 +38,8 @@ extern "C" {
   fn localtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
 
   #[no_mangle]
-  fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn skip_dev_pfx(tty_name: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_clk_tck() -> libc::c_uint;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
-  #[no_mangle]
-  fn llist_free(
-    elm: *mut llist_t,
-    freeit: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
-  );
-  #[no_mangle]
-  fn llist_find_str(first: *mut llist_t, str: *const libc::c_char) -> *mut llist_t;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn starts_with_cpu(str: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn get_cpu_count() -> libc::c_uint;
+
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
 }
@@ -80,8 +50,9 @@ use crate::librb::smallint;
 use libc::time_t;
 use libc::tm;
 use libc::FILE;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub show_all: smallint,
   pub total_cpus: libc::c_uint,
@@ -91,31 +62,35 @@ pub struct globals {
   pub tmtime: tm,
   pub unit: C2RustUnnamed,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed {
   pub str_0: *const libc::c_char,
   pub div: libc::c_uint,
 }
 pub type stats_dev_t = stats_dev;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct stats_dev {
   pub next: *mut stats_dev,
   pub dname: [libc::c_char; 13],
   pub prev_data: stats_dev_data_t,
   pub curr_data: stats_dev_data_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct stats_dev_data_t {
   pub rd_sectors: libc::c_ulonglong,
   pub wr_sectors: libc::c_ulonglong,
   pub rd_ops: libc::c_ulong,
   pub wr_ops: libc::c_ulong,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct utsname {
   pub sysname: [libc::c_char; 65],
   pub nodename: [libc::c_char; 65],
@@ -139,13 +114,15 @@ pub const STATS_CPU_IDLE: C2RustUnnamed_0 = 3;
 pub const STATS_CPU_SYSTEM: C2RustUnnamed_0 = 2;
 pub const STATS_CPU_NICE: C2RustUnnamed_0 = 1;
 pub const STATS_CPU_USER: C2RustUnnamed_0 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct stats_cpu_t {
   pub vector: [cputime_t; 11],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct stats_cpu_pair_t {
   pub prev: *mut stats_cpu_t,
   pub curr: *mut stats_cpu_t,
@@ -216,7 +193,8 @@ unsafe extern "C" fn get_smp_uptime() -> cputime_t {
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut sec: libc::c_ulong = 0;
   let mut dec: libc::c_ulong = 0;
-  fp = xfopen_for_read(b"/proc/uptime\x00" as *const u8 as *const libc::c_char);
+  fp =
+    crate::libbb::wfopen::xfopen_for_read(b"/proc/uptime\x00" as *const u8 as *const libc::c_char);
   if fscanf(
     fp,
     b"%lu.%lu\x00" as *const u8 as *const libc::c_char,
@@ -224,7 +202,7 @@ unsafe extern "C" fn get_smp_uptime() -> cputime_t {
     &mut dec as *mut libc::c_ulong,
   ) != 2i32
   {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"can\'t read \'%s\'\x00" as *const u8 as *const libc::c_char,
       b"/proc/uptime\x00" as *const u8 as *const libc::c_char,
     );
@@ -242,7 +220,7 @@ unsafe extern "C" fn get_smp_uptime() -> cputime_t {
 unsafe extern "C" fn get_cpu_statistics(mut sc: *mut stats_cpu_t) {
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 1024] = [0; 1024];
-  fp = xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);
+  fp = crate::libbb::wfopen::xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);
   memset(
     sc as *mut libc::c_void,
     0,
@@ -258,7 +236,9 @@ unsafe extern "C" fn get_cpu_statistics(mut sc: *mut stats_cpu_t) {
     let mut i: libc::c_int = 0;
     let mut ibuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     /* Does the line start with "cpu "? */
-    if starts_with_cpu(buf.as_mut_ptr()) == 0 || buf[3] as libc::c_int != ' ' as i32 {
+    if crate::libbb::get_cpu_count::starts_with_cpu(buf.as_mut_ptr()) == 0
+      || buf[3] as libc::c_int != ' ' as i32
+    {
       continue;
     }
     ibuf = buf.as_mut_ptr().offset(4);
@@ -275,7 +255,7 @@ unsafe extern "C" fn get_cpu_statistics(mut sc: *mut stats_cpu_t) {
           ((*sc).vector[GLOBAL_UPTIME as libc::c_int as usize] as libc::c_ulonglong)
             .wrapping_add((*sc).vector[i as usize]) as cputime_t as cputime_t
       }
-      ibuf = skip_non_whitespace(ibuf);
+      ibuf = crate::libbb::skip_whitespace::skip_non_whitespace(ibuf);
       i += 1
     }
     break;
@@ -433,7 +413,8 @@ unsafe extern "C" fn stats_dev_find_or_new(mut dev_name: *const libc::c_char) ->
     }
     curr = &mut (**curr).next
   }
-  *curr = xzalloc(::std::mem::size_of::<stats_dev_t>() as libc::c_ulong) as *mut stats_dev_t;
+  *curr = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<stats_dev_t>() as libc::c_ulong)
+    as *mut stats_dev_t;
   strncpy(
     (**curr).dname.as_mut_ptr(),
     dev_name,
@@ -451,7 +432,9 @@ unsafe extern "C" fn do_disk_statistics(mut itv: cputime_t) {
   let mut stats_dev: *mut stats_dev_t = std::ptr::null_mut();
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut rc: libc::c_int = 0;
-  fp = xfopen_for_read(b"/proc/diskstats\x00" as *const u8 as *const libc::c_char);
+  fp = crate::libbb::wfopen::xfopen_for_read(
+    b"/proc/diskstats\x00" as *const u8 as *const libc::c_char,
+  );
   /* Read and possibly print stats from /proc/diskstats */
   while !fgets_unlocked(
     buf.as_mut_ptr(),
@@ -467,7 +450,9 @@ unsafe extern "C" fn do_disk_statistics(mut itv: cputime_t) {
     );
     if !(*ptr_to_globals).dev_name_list.is_null() {
       /* Is device name in list? */
-      if llist_find_str((*ptr_to_globals).dev_name_list, dev_name.as_mut_ptr()).is_null() {
+      if crate::libbb::llist::llist_find_str((*ptr_to_globals).dev_name_list, dev_name.as_mut_ptr())
+        .is_null()
+      {
         continue;
       }
     } else if is_partition(dev_name.as_mut_ptr()) != 0 {
@@ -531,7 +516,8 @@ pub unsafe extern "C" fn iostat_main(
   let mut current_stats: smallint = 0;
   let ref mut fresh0 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh0 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh0 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).unit.str_0 = b"Blk\x00" as *const u8 as *const libc::c_char;
   (*ptr_to_globals).unit.div = 1i32 as libc::c_uint;
@@ -541,15 +527,15 @@ pub unsafe extern "C" fn iostat_main(
     ::std::mem::size_of::<[stats_cpu_t; 2]>() as libc::c_ulong,
   );
   /* Get number of clock ticks per sec */
-  (*ptr_to_globals).clk_tck = bb_clk_tck();
+  (*ptr_to_globals).clk_tck = crate::libbb::sysconf::bb_clk_tck();
   /* Determine number of CPUs */
-  (*ptr_to_globals).total_cpus = get_cpu_count();
+  (*ptr_to_globals).total_cpus = crate::libbb::get_cpu_count::get_cpu_count();
   if (*ptr_to_globals).total_cpus == 0 as libc::c_uint {
     (*ptr_to_globals).total_cpus = 1i32 as libc::c_uint
   }
   /* Parse and process arguments */
   /* -k and -m are mutually exclusive */
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^cdtzkm\x00k--m:m--k\x00" as *const u8 as *const libc::c_char,
   ) as libc::c_int;
@@ -564,9 +550,9 @@ pub unsafe extern "C" fn iostat_main(
   {
     if strcmp(*argv, b"ALL\x00" as *const u8 as *const libc::c_char) != 0 {
       /* If not ALL, save device name */
-      let mut dev_name: *mut libc::c_char = skip_dev_pfx(*argv);
-      if llist_find_str((*ptr_to_globals).dev_name_list, dev_name).is_null() {
-        llist_add_to(
+      let mut dev_name: *mut libc::c_char = crate::libbb::skip_whitespace::skip_dev_pfx(*argv);
+      if crate::libbb::llist::llist_find_str((*ptr_to_globals).dev_name_list, dev_name).is_null() {
+        crate::libbb::llist::llist_add_to(
           &mut (*ptr_to_globals).dev_name_list,
           dev_name as *mut libc::c_void,
         );
@@ -580,7 +566,7 @@ pub unsafe extern "C" fn iostat_main(
   count = 1i32;
   if !(*argv).is_null() {
     /* Get interval */
-    interval = xatoi_positive(*argv) as libc::c_uint;
+    interval = crate::libbb::xatonum::xatoi_positive(*argv) as libc::c_uint;
     count = if interval != 0 as libc::c_uint {
       -1i32
     } else {
@@ -589,7 +575,7 @@ pub unsafe extern "C" fn iostat_main(
     argv = argv.offset(1);
     if !(*argv).is_null() {
       /* Get count value */
-      count = xatoi_positive(*argv)
+      count = crate::libbb::xatonum::xatoi_positive(*argv)
     }
   }
   if opt & OPT_m as libc::c_int != 0 {
@@ -607,11 +593,7 @@ pub unsafe extern "C" fn iostat_main(
   loop
   /* Main loop */
   {
-    let mut stats: stats_cpu_pair_t = stats_cpu_pair_t {
-      prev: std::ptr::null_mut(),
-      curr: std::ptr::null_mut(),
-      itv: 0,
-    };
+    let mut stats: stats_cpu_pair_t = std::mem::zeroed();
     stats.prev = &mut *stats_data
       .as_mut_ptr()
       .offset((current_stats as libc::c_int ^ 1i32) as isize) as *mut stats_cpu_t;
@@ -632,7 +614,7 @@ pub unsafe extern "C" fn iostat_main(
       cpu_report(&mut stats);
       if opt & OPT_d as libc::c_int != 0 {
         /* Separate outputs by a newline */
-        bb_putchar('\n' as i32);
+        crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
       }
     }
     if opt & OPT_d as libc::c_int != 0 {
@@ -644,7 +626,7 @@ pub unsafe extern "C" fn iostat_main(
       }
       dev_report(stats.itv);
     }
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     if count > 0 {
       count -= 1;
       if count == 0 {

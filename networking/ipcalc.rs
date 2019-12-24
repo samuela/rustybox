@@ -17,50 +17,19 @@ extern "C" {
   fn inet_ntoa(__in: in_addr) -> *mut libc::c_char;
   #[no_mangle]
   fn inet_aton(__cp: *const libc::c_char, __inp: *mut in_addr) -> libc::c_int;
-  #[no_mangle]
-  fn str_tolower(str: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatoull_range(
-    str: *const libc::c_char,
-    l: libc::c_ulonglong,
-    u: libc::c_ulonglong,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
+
   #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_herror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
 }
 
 pub type __socklen_t = libc::c_uint;
 use crate::librb::smallint;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
+use libc::in_addr;
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct hostent {
-  pub h_name: *mut libc::c_char,
-  pub h_aliases: *mut *mut libc::c_char,
-  pub h_addrtype: libc::c_int,
-  pub h_length: libc::c_int,
-  pub h_addr_list: *mut *mut libc::c_char,
-}
+
+use libc::hostent;
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;
@@ -72,7 +41,8 @@ unsafe extern "C" fn xatoul_range(
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
 ) -> libc::c_ulong {
-  return xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong)
+    as libc::c_ulong;
 }
 
 /*
@@ -136,7 +106,7 @@ unsafe extern "C" fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
       let fresh1;
       let fresh2 = __x;
       asm!("bswap $0" : "=r" (fresh1) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
@@ -155,8 +125,7 @@ unsafe extern "C" fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
         let fresh4;
         let fresh5 = __x;
         asm!("bswap $0" : "=r" (fresh4) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                             :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
       }
       __v
@@ -175,8 +144,7 @@ unsafe extern "C" fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
         let fresh7;
         let fresh8 = __x;
         asm!("bswap $0" : "=r" (fresh7) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8))
-                             :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
       }
       __v
@@ -195,8 +163,7 @@ unsafe extern "C" fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
         let fresh10;
         let fresh11 = __x;
         asm!("bswap $0" : "=r" (fresh10) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11))
-                             :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
       }
       __v
@@ -221,8 +188,7 @@ unsafe extern "C" fn get_prefix(mut netmask: libc::c_ulong) -> libc::c_int {
       let fresh13;
       let fresh14 = __x;
       asm!("bswap $0" : "=r" (fresh13) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14))
-                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
     }
     __v
@@ -255,7 +221,7 @@ pub unsafe extern "C" fn ipcalc_main(
    * (which in turn is just a typedef to u32)
    * are essentially the same type. A few macros for less verbosity: */
   let mut ipstr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* suppress error_msg() output */
-  opt = getopt32long(
+  opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"^mbnphs\x00-1:?2\x00" as *const u8 as *const libc::c_char,
     ipcalc_longopts.as_ptr(),
@@ -269,7 +235,7 @@ pub unsafe extern "C" fn ipcalc_main(
     /* if no options at all or
      * (no broadcast,network,prefix) and (two args)... */
     if opt == 0 || !(*argv.offset(1)).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
   }
   ipstr = *argv.offset(0);
@@ -304,8 +270,7 @@ pub unsafe extern "C" fn ipcalc_main(
             let fresh17;
             let fresh18 = __x;
             asm!("bswap $0" : "=r" (fresh17) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh16, fresh18))
-                                  :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh16, fresh18)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh16, fresh18, fresh17);
           }
           __v
@@ -320,19 +285,19 @@ pub unsafe extern "C" fn ipcalc_main(
     }
   }
   if inet_aton(ipstr, &mut s_ipaddr) == 0 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"bad IP address: %s\x00" as *const u8 as *const libc::c_char,
       *argv.offset(0),
     );
   }
   if !(*argv.offset(1)).is_null() {
     if 1i32 != 0 && have_netmask as libc::c_int != 0 {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"use prefix or netmask, not both\x00" as *const u8 as *const libc::c_char,
       );
     }
     if inet_aton(*argv.offset(1), &mut s_netmask) == 0 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"bad netmask: %s\x00" as *const u8 as *const libc::c_char,
         *argv.offset(1),
       );
@@ -374,12 +339,12 @@ pub unsafe extern "C" fn ipcalc_main(
       2i32,
     );
     if hostinfo.is_null() {
-      bb_herror_msg_and_die(
+      crate::libbb::herror_msg::bb_herror_msg_and_die(
         b"can\'t find hostname for %s\x00" as *const u8 as *const libc::c_char,
         *argv.offset(0),
       );
     }
-    str_tolower((*hostinfo).h_name);
+    crate::libbb::str_tolower::str_tolower((*hostinfo).h_name);
     printf(
       b"HOSTNAME=%s\n\x00" as *const u8 as *const libc::c_char,
       (*hostinfo).h_name,

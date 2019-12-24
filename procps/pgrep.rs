@@ -1,11 +1,12 @@
-use c2rust_bitfields;
-use c2rust_bitfields::BitfieldStruct;
-
 use crate::libbb::appletlib::applet_name;
+use crate::librb::procps_status_t;
+use crate::librb::re_pattern_buffer;
+use crate::librb::size_t;
 use libc;
 use libc::free;
 use libc::getpid;
 use libc::kill;
+use libc::pid_t;
 use libc::printf;
 extern "C" {
 
@@ -18,20 +19,9 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn get_signum(name: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn print_signames();
-  #[no_mangle]
-  fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
 
   #[no_mangle]
   fn regexec(
@@ -41,62 +31,9 @@ extern "C" {
     __pmatch: *mut regmatch_t,
     __eflags: libc::c_int,
   ) -> libc::c_int;
-  #[no_mangle]
-  fn xregcomp(preg: *mut regex_t, regex: *const libc::c_char, cflags: libc::c_int);
+
 }
 
-use crate::librb::size_t;
-use libc::pid_t;
-use libc::DIR;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct smaprec {
-  pub mapped_rw: libc::c_ulong,
-  pub mapped_ro: libc::c_ulong,
-  pub shared_clean: libc::c_ulong,
-  pub shared_dirty: libc::c_ulong,
-  pub private_clean: libc::c_ulong,
-  pub private_dirty: libc::c_ulong,
-  pub stack: libc::c_ulong,
-  pub smap_pss: libc::c_ulong,
-  pub smap_swap: libc::c_ulong,
-  pub smap_size: libc::c_ulong,
-  pub smap_start: libc::c_ulonglong,
-  pub smap_mode: [libc::c_char; 5],
-  pub smap_name: *mut libc::c_char,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct procps_status_t {
-  pub dir: *mut DIR,
-  pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: u8,
-  pub shift_pages_to_kb: u8,
-  pub argv_len: u16,
-  pub argv0: *mut libc::c_char,
-  pub exe: *mut libc::c_char,
-  pub main_thread_pid: libc::c_uint,
-  pub vsz: libc::c_ulong,
-  pub rss: libc::c_ulong,
-  pub stime: libc::c_ulong,
-  pub utime: libc::c_ulong,
-  pub start_time: libc::c_ulong,
-  pub pid: libc::c_uint,
-  pub ppid: libc::c_uint,
-  pub pgid: libc::c_uint,
-  pub sid: libc::c_uint,
-  pub uid: libc::c_uint,
-  pub gid: libc::c_uint,
-  pub ruid: libc::c_uint,
-  pub rgid: libc::c_uint,
-  pub niceness: libc::c_int,
-  pub tty_major: libc::c_uint,
-  pub tty_minor: libc::c_uint,
-  pub smaps: smaprec,
-  pub state: [libc::c_char; 4],
-  pub comm: [libc::c_char; 16],
-  pub last_seen_on_cpu: libc::c_int,
-}
 pub type C2RustUnnamed = libc::c_uint;
 pub const PSSCAN_TASKS: C2RustUnnamed = 4194304;
 pub const PSSCAN_RUIDGID: C2RustUnnamed = 2097152;
@@ -120,32 +57,12 @@ pub const PSSCAN_SID: C2RustUnnamed = 8;
 pub const PSSCAN_PGID: C2RustUnnamed = 4;
 pub const PSSCAN_PPID: C2RustUnnamed = 2;
 pub const PSSCAN_PID: C2RustUnnamed = 1;
-pub type reg_syntax_t = libc::c_ulong;
-#[derive(Copy, Clone, BitfieldStruct)]
-#[repr(C)]
-pub struct re_pattern_buffer {
-  pub buffer: *mut libc::c_uchar,
-  pub allocated: libc::c_ulong,
-  pub used: libc::c_ulong,
-  pub syntax: reg_syntax_t,
-  pub fastmap: *mut libc::c_char,
-  pub translate: *mut libc::c_uchar,
-  pub re_nsub: size_t,
-  #[bitfield(name = "can_be_null", ty = "libc::c_uint", bits = "0..=0")]
-  #[bitfield(name = "regs_allocated", ty = "libc::c_uint", bits = "1..=2")]
-  #[bitfield(name = "fastmap_accurate", ty = "libc::c_uint", bits = "3..=3")]
-  #[bitfield(name = "no_sub", ty = "libc::c_uint", bits = "4..=4")]
-  #[bitfield(name = "not_bol", ty = "libc::c_uint", bits = "5..=5")]
-  #[bitfield(name = "not_eol", ty = "libc::c_uint", bits = "6..=6")]
-  #[bitfield(name = "newline_anchor", ty = "libc::c_uint", bits = "7..=7")]
-  pub can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [u8; 1],
-  #[bitfield(padding)]
-  pub c2rust_padding: [u8; 7],
-}
+
 pub type regex_t = re_pattern_buffer;
 pub type regoff_t = libc::c_int;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct regmatch_t {
   pub rm_so: regoff_t,
   pub rm_eo: regoff_t,
@@ -217,8 +134,9 @@ pub const OPTBIT_A: C2RustUnnamed_0 = 2;
 pub const OPTBIT_L: C2RustUnnamed_0 = 1;
 /* "vlafxons:+P:+" */
 pub const OPTBIT_V: C2RustUnnamed_0 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_1 {
   pub re_buffer: regex_t,
   pub re_match: [regmatch_t; 1],
@@ -258,20 +176,7 @@ pub unsafe extern "C" fn pgrep_main(
   let mut cmd_last: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut proc_0: *mut procps_status_t = std::ptr::null_mut();
   /* These are initialized to 0 */
-  let mut Z: C2RustUnnamed_1 = C2RustUnnamed_1 {
-    re_buffer: regex_t {
-      buffer: std::ptr::null_mut(),
-      allocated: 0,
-      used: 0,
-      syntax: 0,
-      fastmap: std::ptr::null_mut::<libc::c_char>(),
-      translate: std::ptr::null_mut(),
-      re_nsub: 0,
-      can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [0; 1],
-      c2rust_padding: [0; 7],
-    },
-    re_match: [regmatch_t { rm_so: 0, rm_eo: 0 }; 1],
-  };
+  let mut Z: C2RustUnnamed_1 = std::mem::zeroed();
   memset(
     &mut Z as *mut C2RustUnnamed_1 as *mut libc::c_void,
     0,
@@ -284,7 +189,8 @@ pub unsafe extern "C" fn pgrep_main(
     && !(*argv.offset(1)).is_null()
     && *(*argv.offset(1)).offset(0) as libc::c_int == '-' as i32
   {
-    let mut temp: libc::c_int = get_signum((*argv.offset(1)).offset(1));
+    let mut temp: libc::c_int =
+      crate::libbb::u_signal_names::get_signum((*argv.offset(1)).offset(1));
     if temp != -1i32 {
       signo = temp;
       argv = argv.offset(1)
@@ -293,7 +199,7 @@ pub unsafe extern "C" fn pgrep_main(
   /* Parse remaining options */
   ppid2match = -1i32;
   sid2match = -1i32;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"vlafxons:+P:+\x00" as *const u8 as *const libc::c_char,
     &mut sid2match as *mut libc::c_int,
@@ -305,7 +211,7 @@ pub unsafe extern "C" fn pgrep_main(
     && opt & (1i32 << OPTBIT_L as libc::c_int) as libc::c_uint != 0
   {
     /* -l: print the whole signal list */
-    print_signames();
+    crate::libbb::u_signal_names::print_signames();
     return 0;
   }
   pid = getpid() as libc::c_uint;
@@ -318,10 +224,10 @@ pub unsafe extern "C" fn pgrep_main(
   }
   /* One pattern is required, if no -s and no -P */
   if sid2match & ppid2match < 0 && ((*argv.offset(0)).is_null() || !(*argv.offset(1)).is_null()) {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   if !(*argv.offset(0)).is_null() {
-    xregcomp(
+    crate::libbb::xregcomp::xregcomp(
       &mut Z.re_buffer,
       *argv.offset(0),
       if opt & (1i32 << OPTBIT_X as libc::c_int) as libc::c_uint != 0 {
@@ -335,7 +241,7 @@ pub unsafe extern "C" fn pgrep_main(
   cmd_last = std::ptr::null_mut::<libc::c_char>();
   proc_0 = std::ptr::null_mut();
   loop {
-    proc_0 = procps_scan(proc_0, scan_mask);
+    proc_0 = crate::libbb::procps::procps_scan(proc_0, scan_mask);
     if proc_0.is_null() {
       break;
     }
@@ -432,7 +338,7 @@ pub unsafe extern "C" fn pgrep_main(
     matched_pid = (*proc_0).pid as libc::c_int;
     if opt & (1i32 << OPTBIT_N as libc::c_int) as libc::c_uint != 0 {
       free(cmd_last as *mut libc::c_void);
-      cmd_last = xstrdup(cmd)
+      cmd_last = crate::libbb::xfuncs_printf::xstrdup(cmd)
     } else {
       if cmdlen >= 0 {
         *cmd.offset(cmdlen as isize) = '\u{0}' as i32 as libc::c_char

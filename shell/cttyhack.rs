@@ -1,4 +1,3 @@
-use crate::librb::size_t;
 use libc;
 use libc::close;
 use libc::dup2;
@@ -6,24 +5,8 @@ use libc::ioctl;
 use libc::open;
 use libc::puts;
 use libc::sprintf;
-use libc::ssize_t;
 use libc::strcpy;
 use libc::strrchr;
-extern "C" {
-
-  #[no_mangle]
-  fn open_or_warn(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  #[no_mangle]
-  fn open_read_close(
-    filename: *const libc::c_char,
-    buf: *mut libc::c_void,
-    maxsz: size_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-}
 
 /*
  * Copyright (c) 2007 Denys Vlasenko <vda.linux@googlemail.com>
@@ -86,8 +69,9 @@ extern "C" {
 //usage:     "\nStarting interactive shell from boot shell script:"
 //usage:     "\n	setsid cttyhack sh"
 /* From <linux/vt.h> */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct vt_stat {
   pub v_active: libc::c_ushort,
   pub v_signal: libc::c_ushort,
@@ -98,8 +82,9 @@ pub type C2RustUnnamed = libc::c_uint;
 pub const VT_GETSTATE: C2RustUnnamed = 22019;
 /* get global vt state info */
 /* From <linux/serial.h> */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct serial_struct {
   pub type_0: libc::c_int,
   pub line: libc::c_int,
@@ -121,8 +106,9 @@ pub struct serial_struct {
   pub iomap_base: libc::c_ulong,
   pub reserved: [libc::c_int; 1],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub vt: vt_stat,
   pub sr: serial_struct,
@@ -158,7 +144,7 @@ pub unsafe extern "C" fn cttyhack_main(
      * which is not always the case.
      * Therefore, we use this method first:
      */
-    let mut s: libc::c_int = open_read_close(
+    let mut s: libc::c_int = crate::libbb::read::open_read_close(
       b"/sys/class/tty/console/active\x00" as *const u8 as *const libc::c_char,
       console.as_mut_ptr().offset(5) as *mut libc::c_void,
       (::std::mem::size_of::<[libc::c_char; 28]>() as libc::c_ulong)
@@ -175,7 +161,10 @@ pub unsafe extern "C" fn cttyhack_main(
        */
       last = strrchr(console.as_mut_ptr().offset(5), ' ' as i32);
       if !last.is_null() {
-        overlapping_strcpy(console.as_mut_ptr().offset(5), last.offset(1));
+        crate::libbb::safe_strncpy::overlapping_strcpy(
+          console.as_mut_ptr().offset(5),
+          last.offset(1),
+        );
       }
     } else if ioctl(
       0,
@@ -215,7 +204,7 @@ pub unsafe extern "C" fn cttyhack_main(
     return 0;
   }
   if fd < 0 {
-    fd = open_or_warn(console.as_mut_ptr(), 0o2i32);
+    fd = crate::libbb::xfuncs_printf::open_or_warn(console.as_mut_ptr(), 0o2i32);
     if fd < 0 {
       current_block = 5769750084105306570;
     } else {
@@ -242,5 +231,5 @@ pub unsafe extern "C" fn cttyhack_main(
     }
     _ => {}
   }
-  BB_EXECVP_or_die(argv);
+  crate::libbb::executable::BB_EXECVP_or_die(argv);
 }

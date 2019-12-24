@@ -56,39 +56,8 @@ extern "C" {
   fn localtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_clk_tck() -> libc::c_uint;
-  #[no_mangle]
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn starts_with_cpu(str: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn get_cpu_count() -> libc::c_uint;
+
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
 }
@@ -99,8 +68,9 @@ use crate::librb::smallint;
 use libc::time_t;
 use libc::tm;
 use libc::FILE;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub interval: libc::c_int,
   pub count: libc::c_int,
@@ -120,20 +90,23 @@ pub struct globals {
   pub st_softirqcpu: [*mut stats_irqcpu; 3],
   pub timestamp: [tm; 3],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct stats_irqcpu {
   pub interrupts: libc::c_uint,
   pub irq_name: [libc::c_char; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct stats_irq {
   pub irq_nr: data_t,
 }
 pub type data_t = libc::c_ulonglong;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct stats_cpu {
   pub cpu_user: data_t,
   pub cpu_nice: data_t,
@@ -145,8 +118,9 @@ pub struct stats_cpu {
   pub cpu_softirq: data_t,
   pub cpu_guest: data_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct utsname {
   pub sysname: [libc::c_char; 65],
   pub nodename: [libc::c_char; 65],
@@ -282,7 +256,7 @@ unsafe extern "C" fn write_irqcpu_stats(
     }
     j += 1
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   cpu = 1i32;
   while cpu as libc::c_uint <= (*ptr_to_globals).cpu_nr {
     /* Check if we want stats about this CPU */
@@ -350,7 +324,7 @@ unsafe extern "C" fn write_irqcpu_stats(
         }
         j += 1
       }
-      bb_putchar('\n' as i32);
+      crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     }
     cpu += 1
   }
@@ -665,7 +639,7 @@ unsafe extern "C" fn get_cpu_statistics(
 ) {
   let mut fp: *mut FILE = std::ptr::null_mut(); /* not "cpu" */
   let mut buf: [libc::c_char; 1024] = [0; 1024]; /* for "cpu " case */
-  fp = xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);
+  fp = crate::libbb::wfopen::xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);
   while !fgets_unlocked(
     buf.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
@@ -676,7 +650,7 @@ unsafe extern "C" fn get_cpu_statistics(
     let mut sum: data_t = 0;
     let mut cpu_number: libc::c_uint = 0;
     let mut cp: *mut stats_cpu = std::ptr::null_mut();
-    if starts_with_cpu(buf.as_mut_ptr()) == 0 {
+    if crate::libbb::get_cpu_count::starts_with_cpu(buf.as_mut_ptr()) == 0 {
       continue;
     }
     cp = cpu;
@@ -746,7 +720,7 @@ unsafe extern "C" fn get_cpu_statistics(
 unsafe extern "C" fn get_irqs_from_stat(mut irq: *mut stats_irq) {
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 1024] = [0; 1024];
-  fp = xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);
+  fp = crate::libbb::wfopen::xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);
   while !fgets_unlocked(
     buf.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 1024]>() as libc::c_ulong as libc::c_int,
@@ -755,7 +729,7 @@ unsafe extern "C" fn get_irqs_from_stat(mut irq: *mut stats_irq) {
   .is_null()
   {
     //bb_error_msg("/proc/stat:'%s'", buf);
-    if !is_prefixed_with(
+    if !crate::libbb::compare_string_array::is_prefixed_with(
       buf.as_mut_ptr(),
       b"intr \x00" as *const u8 as *const libc::c_char,
     )
@@ -802,7 +776,7 @@ unsafe extern "C" fn get_irqs_from_interrupts(
   //		G.st_irq[current][cpu].irq_nr = 0;
   //		//bb_error_msg("G.st_irq[%u][%u].irq_nr=0", current, cpu);
   //	}
-  fp = fopen_for_read(fname);
+  fp = crate::libbb::wfopen::fopen_for_read(fname);
   if fp.is_null() {
     return;
   }
@@ -822,7 +796,7 @@ unsafe extern "C" fn get_irqs_from_interrupts(
       }
       cpu = strtoul(cp.offset(3), &mut next, 10i32) as libc::c_uint;
       let fresh0 = iindex;
-      iindex += 1;
+      iindex = iindex + 1;
       *cpu_index.as_mut_ptr().offset(fresh0 as isize) = cpu as libc::c_int
     }
     if iindex != 0 {
@@ -848,7 +822,11 @@ unsafe extern "C" fn get_irqs_from_interrupts(
       len = (::std::mem::size_of::<[libc::c_char; 16]>() as libc::c_ulong)
         .wrapping_sub(1i32 as libc::c_ulong) as libc::c_int
     }
-    safe_strncpy((*ic).irq_name.as_mut_ptr(), buf, (len + 1i32) as size_t);
+    crate::libbb::safe_strncpy::safe_strncpy(
+      (*ic).irq_name.as_mut_ptr(),
+      buf,
+      (len + 1i32) as size_t,
+    );
     //bb_error_msg("%s: irq%d:'%s' buf:'%s'", fname, irq, ic->irq_name, buf);
     cp_0 = cp_0.offset(1);
     cpu = 0 as libc::c_uint;
@@ -892,7 +870,8 @@ unsafe extern "C" fn get_uptime(mut uptime: *mut data_t) {
   let mut buf: [libc::c_char; 52] = [0; 52];
   let mut uptime_sec: libc::c_ulong = 0;
   let mut decimal: libc::c_ulong = 0;
-  fp = xfopen_for_read(b"/proc/uptime\x00" as *const u8 as *const libc::c_char);
+  fp =
+    crate::libbb::wfopen::xfopen_for_read(b"/proc/uptime\x00" as *const u8 as *const libc::c_char);
   if !fgets_unlocked(
     buf.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 52]>() as libc::c_ulong as libc::c_int,
@@ -1112,18 +1091,18 @@ unsafe extern "C" fn alloc_struct(mut cpus: libc::c_int) {
   let mut i: libc::c_int = 0;
   i = 0;
   while i < 3i32 {
-    (*ptr_to_globals).st_cpu[i as usize] = xzalloc(
+    (*ptr_to_globals).st_cpu[i as usize] = crate::libbb::xfuncs_printf::xzalloc(
       (::std::mem::size_of::<stats_cpu>() as libc::c_ulong).wrapping_mul(cpus as libc::c_ulong),
     ) as *mut stats_cpu;
-    (*ptr_to_globals).st_irq[i as usize] = xzalloc(
+    (*ptr_to_globals).st_irq[i as usize] = crate::libbb::xfuncs_printf::xzalloc(
       (::std::mem::size_of::<stats_irq>() as libc::c_ulong).wrapping_mul(cpus as libc::c_ulong),
     ) as *mut stats_irq;
-    (*ptr_to_globals).st_irqcpu[i as usize] = xzalloc(
+    (*ptr_to_globals).st_irqcpu[i as usize] = crate::libbb::xfuncs_printf::xzalloc(
       (::std::mem::size_of::<stats_irqcpu>() as libc::c_ulong)
         .wrapping_mul(cpus as libc::c_ulong)
         .wrapping_mul((*ptr_to_globals).irqcpu_nr as libc::c_ulong),
     ) as *mut stats_irqcpu;
-    (*ptr_to_globals).st_softirqcpu[i as usize] = xzalloc(
+    (*ptr_to_globals).st_softirqcpu[i as usize] = crate::libbb::xfuncs_printf::xzalloc(
       (::std::mem::size_of::<stats_irqcpu>() as libc::c_ulong)
         .wrapping_mul(cpus as libc::c_ulong)
         .wrapping_mul((*ptr_to_globals).softirqcpu_nr as libc::c_ulong),
@@ -1132,7 +1111,8 @@ unsafe extern "C" fn alloc_struct(mut cpus: libc::c_int) {
   }
   (*ptr_to_globals).cpu_bitmap_len = ((cpus >> 3i32) + 1i32) as libc::c_uint;
   (*ptr_to_globals).cpu_bitmap =
-    xzalloc((*ptr_to_globals).cpu_bitmap_len as size_t) as *mut libc::c_uchar;
+    crate::libbb::xfuncs_printf::xzalloc((*ptr_to_globals).cpu_bitmap_len as size_t)
+      as *mut libc::c_uchar;
 }
 unsafe extern "C" fn print_header(mut t: *mut tm) {
   let mut cur_date: [libc::c_char; 16] = [0; 16];
@@ -1173,7 +1153,7 @@ unsafe extern "C" fn get_irqcpu_nr(
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut linelen: libc::c_uint = 0;
   let mut irq: libc::c_uint = 0;
-  fp = fopen_for_read(f);
+  fp = crate::libbb::wfopen::fopen_for_read(f);
   if fp.is_null() {
     /* No interrupts file */
     return 0;
@@ -1216,13 +1196,14 @@ pub unsafe extern "C" fn mpstat_main(
   setbuf(stdout, std::ptr::null_mut::<libc::c_char>());
   let ref mut fresh1 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh1 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh1 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).interval = -1i32;
   /* Get number of processors */
-  (*ptr_to_globals).cpu_nr = get_cpu_count();
+  (*ptr_to_globals).cpu_nr = crate::libbb::get_cpu_count::get_cpu_count();
   /* Get number of clock ticks per sec */
-  (*ptr_to_globals).hz = bb_clk_tck();
+  (*ptr_to_globals).hz = crate::libbb::sysconf::bb_clk_tck();
   /* Calculate number of interrupts per processor */
   (*ptr_to_globals).irqcpu_nr = (get_irqcpu_nr(
     b"/proc/interrupts\x00" as *const u8 as *const libc::c_char,
@@ -1236,7 +1217,7 @@ pub unsafe extern "C" fn mpstat_main(
   /* Allocate space for structures. + 1 for global structure. */
   alloc_struct((*ptr_to_globals).cpu_nr.wrapping_add(1i32 as libc::c_uint) as libc::c_int);
   /* Parse and process arguments */
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"AI:P:u\x00" as *const u8 as *const libc::c_char,
     &mut opt_irq_fmt as *mut *mut libc::c_char,
@@ -1245,15 +1226,15 @@ pub unsafe extern "C" fn mpstat_main(
   argv = argv.offset(optind as isize);
   if !(*argv).is_null() {
     /* Get interval */
-    (*ptr_to_globals).interval = xatoi_positive(*argv);
+    (*ptr_to_globals).interval = crate::libbb::xatonum::xatoi_positive(*argv);
     (*ptr_to_globals).count = -1i32;
     argv = argv.offset(1);
     if !(*argv).is_null() {
       /* Get count value */
       if (*ptr_to_globals).interval == 0 {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
-      (*ptr_to_globals).count = xatoi_positive(*argv)
+      (*ptr_to_globals).count = crate::libbb::xatonum::xatoi_positive(*argv)
       //if (*++argv)
       //	bb_show_usage();
     }
@@ -1282,12 +1263,12 @@ pub unsafe extern "C" fn mpstat_main(
       (D_IRQ_SUM as libc::c_int + D_IRQ_CPU as libc::c_int + D_SOFTIRQS as libc::c_int)
         as libc::c_char,
     ];
-    i = index_in_strings(
+    i = crate::libbb::compare_string_array::index_in_strings(
       b"CPU\x00SUM\x00SCPU\x00ALL\x00\x00" as *const u8 as *const libc::c_char,
       opt_irq_fmt,
     );
     if i == -1i32 {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     (*ptr_to_globals).options |= v[i as usize] as libc::c_uint
   }
@@ -1309,9 +1290,9 @@ pub unsafe extern "C" fn mpstat_main(
         );
       } else {
         /* Get CPU number */
-        let mut n: libc::c_uint = xatoi_positive(t) as libc::c_uint;
+        let mut n: libc::c_uint = crate::libbb::xatonum::xatoi_positive(t) as libc::c_uint;
         if n >= (*ptr_to_globals).cpu_nr {
-          bb_simple_error_msg_and_die(
+          crate::libbb::verror_msg::bb_simple_error_msg_and_die(
             b"not that many processors\x00" as *const u8 as *const libc::c_char,
           );
         }

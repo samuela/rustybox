@@ -24,8 +24,7 @@ extern "C" {
   //usage:#define reset_full_usage "\n\n"
   //usage:       "Reset the screen"
   /* "Standard" version of this tool is in ncurses package */
-  #[no_mangle]
-  fn stty_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
+
 }
 
 #[no_mangle]
@@ -50,7 +49,7 @@ pub unsafe extern "C" fn reset_main(
     printf(b"\x1bc\x1b(B\x1b[m\x1b[J\x1b[?25h\x00" as *const u8 as *const libc::c_char);
     /* http://bugs.busybox.net/view.php?id=1414:
      * people want it to reset echo etc: */
-    return stty_main(2i32, args.as_ptr() as *mut *mut libc::c_char);
+    return crate::coreutils::stty::stty_main(2i32, args.as_ptr() as *mut *mut libc::c_char);
   }
   return 0;
 }

@@ -7,27 +7,8 @@ use libc::printf;
 extern "C" {
 
   #[no_mangle]
-  fn pidlist_reverse(pidList: *mut pid_t) -> *mut pid_t;
-  #[no_mangle]
-  fn find_pid_by_name(procName: *const libc::c_char) -> *mut pid_t;
-  #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatoull(str: *const libc::c_char) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn llist_free(
-    elm: *mut llist_t,
-    freeit: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
-  );
-  #[no_mangle]
-  fn llist_find_str(first: *mut llist_t, str: *const libc::c_char) -> *mut llist_t;
   #[no_mangle]
   fn getppid() -> pid_t;
 }
@@ -102,7 +83,7 @@ pub const OPTBIT_SINGLE: C2RustUnnamed = 0;
 
 #[inline(always)]
 unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
-  return xatoull(str) as libc::c_ulong; /* list of pids to omit */
+  return crate::libbb::xatonum::xatoull(str) as libc::c_ulong; /* list of pids to omit */
 }
 #[no_mangle]
 pub unsafe extern "C" fn pidof_main(
@@ -113,7 +94,7 @@ pub unsafe extern "C" fn pidof_main(
   let mut opt: libc::c_uint = 0;
   let mut omits: *mut llist_t = std::ptr::null_mut();
   /* do unconditional option parsing */
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"so:*\x00" as *const u8 as *const libc::c_char,
     &mut omits as *mut *mut llist_t,
@@ -121,12 +102,15 @@ pub unsafe extern "C" fn pidof_main(
   /* fill omit list.  */
   let mut omits_p: *mut llist_t = omits;
   loop {
-    omits_p = llist_find_str(omits_p, b"%PPID\x00" as *const u8 as *const libc::c_char);
+    omits_p = crate::libbb::llist::llist_find_str(
+      omits_p,
+      b"%PPID\x00" as *const u8 as *const libc::c_char,
+    );
     if omits_p.is_null() {
       break;
     }
     /* are we asked to exclude the parent's process ID?  */
-    (*omits_p).data = utoa(getppid() as libc::c_uint)
+    (*omits_p).data = crate::libbb::xfuncs::utoa(getppid() as libc::c_uint)
   }
   /* Looks like everything is set to go.  */
   argv = argv.offset(optind as isize);
@@ -134,7 +118,9 @@ pub unsafe extern "C" fn pidof_main(
     let mut pidList: *mut pid_t = std::ptr::null_mut();
     let mut pl: *mut pid_t = std::ptr::null_mut();
     /* reverse the pidlist like GNU pidof does.  */
-    pidList = pidlist_reverse(find_pid_by_name(*argv));
+    pidList = crate::libbb::find_pid_by_name::pidlist_reverse(
+      crate::libbb::find_pid_by_name::find_pid_by_name(*argv),
+    );
     let mut current_block_11: u64;
     pl = pidList;
     while *pl != 0 {
@@ -173,7 +159,7 @@ pub unsafe extern "C" fn pidof_main(
     argv = argv.offset(1)
   }
   if first == 0 {
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   }
   return first as libc::c_int;
   /* 1 (failure) - no processes found */

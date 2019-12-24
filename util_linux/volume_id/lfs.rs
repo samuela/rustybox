@@ -1,29 +1,15 @@
+use crate::util_linux::volume_id::volume_id::volume_id;
 use libc;
 extern "C" {
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off: u64, len: size_t) -> *mut libc::c_void;
+
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 }
 
-use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
 // The superblock is stored in the first metadata pair, i.e the first two blocks.
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct lfs_super_block {
   pub entry_type: u8,
   pub entry_len: u8,
@@ -111,7 +97,7 @@ pub unsafe extern "C" fn volume_id_probe_lfs(mut id: *mut volume_id) -> libc::c_
 /*,u64 off*/ {
   let mut sb: *mut lfs_super_block = std::ptr::null_mut();
   // Go for primary super block (ignore second sb)
-  sb = volume_id_get_buffer(
+  sb = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     0x10i32 as u64,
     ::std::mem::size_of::<lfs_super_block>() as libc::c_ulong,

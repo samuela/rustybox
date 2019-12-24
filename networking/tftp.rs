@@ -1,8 +1,11 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::len_and_sockaddr;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use crate::librb::socklen_t;
+use crate::librb::uoff_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
@@ -12,7 +15,12 @@ use libc::fstat;
 use libc::off_t;
 use libc::open;
 use libc::openlog;
+use libc::passwd;
+use libc::pollfd;
 use libc::ptrdiff_t;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::sprintf;
 use libc::ssize_t;
 use libc::stat;
@@ -59,58 +67,6 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xchroot(path: *const libc::c_char);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xbind(sockfd: libc::c_int, my_addr: *mut sockaddr, addrlen: socklen_t);
-  #[no_mangle]
-  fn xconnect(s: libc::c_int, s_addr: *const sockaddr, addrlen: socklen_t);
-  #[no_mangle]
-  fn xsendto(
-    s: libc::c_int,
-    buf: *const libc::c_void,
-    len: size_t,
-    to: *const sockaddr,
-    tolen: socklen_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn setsockopt_reuseaddr(fd: libc::c_int);
-  #[no_mangle]
-  fn bb_lookup_port(
-    port: *const libc::c_char,
-    protocol: *const libc::c_char,
-    default_port: libc::c_uint,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn get_sock_lsa(fd: libc::c_int) -> *mut len_and_sockaddr;
-  #[no_mangle]
-  fn xhost2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
-  #[no_mangle]
-  fn recv_from_to(
-    fd: libc::c_int,
-    buf: *mut libc::c_void,
-    len: size_t,
-    flags: libc::c_int,
-    from: *mut sockaddr,
-    to: *mut sockaddr,
-    sa_size: socklen_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn bb_putchar_stderr(ch: libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn safe_poll(ufds: *mut pollfd, nfds: nfds_t, timeout_ms: libc::c_int) -> libc::c_int;
   /* Non-aborting kind of convertors: bb_strto[u][l]l */
   /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
    * errno = EINVAL if value was not '\0' terminated, but otherwise ok
@@ -122,45 +78,12 @@ extern "C" {
    * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
    *    return value is all-ones in this case.
    */
-  #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn xgetpwnam(name: *const libc::c_char) -> *mut passwd;
+
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn change_identity(pw: *const passwd);
-  #[no_mangle]
-  fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
-  #[no_mangle]
-  fn bb_progress_init(p: *mut bb_progress_t, curfile: *const libc::c_char);
-  #[no_mangle]
-  fn bb_progress_update(
-    p: *mut bb_progress_t,
-    beg_range: uoff_t,
-    transferred: uoff_t,
-    totalsize: uoff_t,
-  ) -> libc::c_int;
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
@@ -168,7 +91,6 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-pub type socklen_t = __socklen_t;
 
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -180,10 +102,9 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __SOCKADDR_ARG {
   pub __sockaddr__: *mut sockaddr,
   pub __sockaddr_at__: *mut sockaddr_at,
@@ -199,54 +120,20 @@ pub union __SOCKADDR_ARG {
   pub __sockaddr_un__: *mut sockaddr_un,
   pub __sockaddr_x25__: *mut sockaddr_x25,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
 pub type in_addr_t = u32;
 pub type nfds_t = libc::c_ulong;
-use crate::librb::uoff_t;
-use libc::passwd;
-use libc::pollfd;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_0,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_0 {
   pub sa: sockaddr,
   pub sin: sockaddr_in,
@@ -260,20 +147,14 @@ pub const LOGMODE_BOTH: C2RustUnnamed_2 = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed_2 = 2;
 pub const LOGMODE_STDIO: C2RustUnnamed_2 = 1;
 pub const LOGMODE_NONE: C2RustUnnamed_2 = 0;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct bb_progress_t {
-  pub last_size: libc::c_uint,
-  pub last_update_sec: libc::c_uint,
-  pub last_change_sec: libc::c_uint,
-  pub start_sec: libc::c_uint,
-  pub curfile: *const libc::c_char,
-}
+
+use crate::librb::bb_progress_t;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub error_pkt: [u8; 36],
   pub pw: *mut passwd,
@@ -293,7 +174,7 @@ pub const TFTPD_OPT: C2RustUnnamed_3 = 128;
 pub const TFTP_OPT_PUT: C2RustUnnamed_3 = 2;
 pub const TFTP_OPT_GET: C2RustUnnamed_3 = 1;
 unsafe extern "C" fn tftp_progress_update() {
-  bb_progress_update(
+  crate::libbb::progress::bb_progress_update(
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pmt,
     0 as uoff_t,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pos as uoff_t,
@@ -301,7 +182,7 @@ unsafe extern "C" fn tftp_progress_update() {
   );
 }
 unsafe extern "C" fn tftp_progress_init() {
-  bb_progress_init(
+  crate::libbb::progress::bb_progress_init(
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pmt,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).file,
   );
@@ -314,7 +195,7 @@ unsafe extern "C" fn tftp_progress_done() {
     .is_null()
   {
     tftp_progress_update();
-    bb_putchar_stderr('\n' as i32 as libc::c_char);
+    crate::libbb::xfuncs::bb_putchar_stderr('\n' as i32 as libc::c_char);
     free(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .pmt
@@ -334,9 +215,10 @@ unsafe extern "C" fn tftp_blksize_check(
    * RFC2348 says between 8 and 65464,
    * but our implementation makes it impossible
    * to use blksizes smaller than 22 octets. */
-  let mut blksize: libc::c_uint = bb_strtou(blksize_str, 0 as *mut *mut libc::c_char, 10i32);
+  let mut blksize: libc::c_uint =
+    crate::libbb::bb_strtonum::bb_strtou(blksize_str, 0 as *mut *mut libc::c_char, 10i32);
   if *bb_errno != 0 || blksize < 24i32 as libc::c_uint || blksize > maxsize as libc::c_uint {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"bad blocksize \'%s\'\x00" as *const u8 as *const libc::c_char,
       blksize_str,
     );
@@ -426,12 +308,12 @@ unsafe extern "C" fn tftp_protocol(
    */
   let mut xbuf: *mut libc::c_char = xmalloc(io_bufsize as size_t) as *mut libc::c_char;
   let mut rbuf: *mut libc::c_char = xmalloc(io_bufsize as size_t) as *mut libc::c_char;
-  pfd[0].fd = xsocket(
+  pfd[0].fd = crate::libbb::xfuncs_printf::xsocket(
     (*peer_lsa).u.sa.sa_family as libc::c_int,
     SOCK_DGRAM as libc::c_int,
     0,
   );
-  setsockopt_reuseaddr(pfd[0].fd);
+  crate::libbb::xconnect::setsockopt_reuseaddr(pfd[0].fd);
   if 1i32 == 0 || !our_lsa.is_null() {
     /* tftpd */
     /* Create a socket which is:
@@ -440,8 +322,8 @@ unsafe extern "C" fn tftp_protocol(
      * This way we will answer from the IP:port peer
      * expects, will not get any other packets on
      * the socket, and also plain read/write will work. */
-    xbind(pfd[0].fd, &mut (*our_lsa).u.sa, (*our_lsa).len);
-    xconnect(pfd[0].fd, &mut (*peer_lsa).u.sa, (*peer_lsa).len);
+    crate::libbb::xfuncs_printf::xbind(pfd[0].fd, &mut (*our_lsa).u.sa, (*our_lsa).len);
+    crate::libbb::xconnect::xconnect(pfd[0].fd, &mut (*peer_lsa).u.sa, (*peer_lsa).len);
     /* Is there an error already? Send pkt and bail out */
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[3] as libc::c_int != 0
       || *((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -457,7 +339,9 @@ unsafe extern "C" fn tftp_protocol(
         .pw
         .is_null()
       {
-        change_identity((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pw);
+        crate::libbb::change_identity::change_identity(
+          (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pw,
+        );
         /* initgroups, setgid, setuid */
       }
       current_block = 15976848397966268834;
@@ -552,7 +436,7 @@ unsafe extern "C" fn tftp_protocol(
         if *local_file.offset(0) as libc::c_int != '-' as i32
           || *local_file.offset(1) as libc::c_int != 0
         {
-          local_fd = xopen(local_file, open_mode)
+          local_fd = crate::libbb::xfuncs_printf::xopen(local_file, open_mode)
         }
         /* Removing #if, or using if() statement instead of #if may lead to
          * "warning: null argument where non-null required": */
@@ -579,7 +463,7 @@ unsafe extern "C" fn tftp_protocol(
           .wrapping_add(::std::mem::size_of::<[libc::c_char; 6]>() as libc::c_ulong)
           >= io_bufsize as libc::c_ulong
         {
-          bb_simple_error_msg(
+          crate::libbb::verror_msg::bb_simple_error_msg(
             b"remote filename is too long\x00" as *const u8 as *const libc::c_char,
           );
           current_block = 4894395567674443800;
@@ -597,7 +481,7 @@ unsafe extern "C" fn tftp_protocol(
               (::std::mem::size_of::<off_t>() as libc::c_ulong).wrapping_mul(3i32 as libc::c_ulong),
             )
           {
-            bb_simple_error_msg(
+            crate::libbb::verror_msg::bb_simple_error_msg(
               b"remote filename is too long\x00" as *const u8 as *const libc::c_char,
             );
             current_block = 4894395567674443800;
@@ -683,10 +567,8 @@ unsafe extern "C" fn tftp_protocol(
                     let fresh1 = &mut __v;
                     let fresh2;
                     let fresh3 = __x;
-                    asm!("rorw $$8, ${0:w}" :
-                                                      "=r" (fresh2) : "0"
-                                                      (c2rust_asm_casts::AsmCast::cast_in(fresh1, fresh3))
-                                                      : "cc");
+                    asm!("rorw $$8, ${0:w}" : "=r" (fresh2) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh1, fresh3)) : "cc");
                     c2rust_asm_casts::AsmCast::cast_out(fresh1, fresh3, fresh2);
                   }
                   __v
@@ -699,8 +581,11 @@ unsafe extern "C" fn tftp_protocol(
                   continue;
                 }
                 opcode = 3i32 as u16;
-                len =
-                  full_read(local_fd, cp as *mut libc::c_void, blksize as size_t) as libc::c_int;
+                len = crate::libbb::read::full_read(
+                  local_fd,
+                  cp as *mut libc::c_void,
+                  blksize as size_t,
+                ) as libc::c_int;
                 if len < 0 {
                   current_block = 12367016239538502269;
                   break;
@@ -734,10 +619,8 @@ unsafe extern "C" fn tftp_protocol(
                     let fresh5 = &mut __v;
                     let fresh6;
                     let fresh7 = __x;
-                    asm!("rorw $$8, ${0:w}" :
-                                                      "=r" (fresh6) : "0"
-                                                      (c2rust_asm_casts::AsmCast::cast_in(fresh5, fresh7))
-                                                      : "cc");
+                    asm!("rorw $$8, ${0:w}" : "=r" (fresh6) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh5, fresh7)) : "cc");
                     c2rust_asm_casts::AsmCast::cast_out(fresh5, fresh7, fresh6);
                   }
                   __v
@@ -749,7 +632,7 @@ unsafe extern "C" fn tftp_protocol(
                 retries = 12i32; /* re-initialize */
                 waittime_ms = 100i32; /* resend last sent pkt */
                 'c_9340: loop {
-                  xsendto(
+                  crate::libbb::xfuncs_printf::xsendto(
                     pfd[0].fd,
                     xbuf as *const libc::c_void,
                     send_len as size_t,
@@ -774,7 +657,11 @@ unsafe extern "C" fn tftp_protocol(
                   /*pfd[0].fd = socket_fd;*/
                   {
                     pfd[0].events = 0x1i32 as libc::c_short;
-                    match safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, waittime_ms) {
+                    match crate::libbb::safe_poll::safe_poll(
+                      pfd.as_mut_ptr(),
+                      1i32 as nfds_t,
+                      waittime_ms,
+                    ) {
                       0 => {
                         retries -= 1;
                         if retries == 0 {
@@ -804,16 +691,22 @@ unsafe extern "C" fn tftp_protocol(
                            * but reply may come from different one.
                            * Remember and use this new port (and IP) */
                           if len >= 0 {
-                            xconnect(pfd[0].fd, &mut (*peer_lsa).u.sa, (*peer_lsa).len);
+                            crate::libbb::xconnect::xconnect(
+                              pfd[0].fd,
+                              &mut (*peer_lsa).u.sa,
+                              (*peer_lsa).len,
+                            );
                           }
                         } else {
                           /* tftpd, or not the very first packet:
                            * socket is connect()ed, can just read from it. */
                           /* Don't full_read()!
                            * This is not TCP, one read == one pkt! */
-                          len =
-                            safe_read(pfd[0].fd, rbuf as *mut libc::c_void, io_bufsize as size_t)
-                              as libc::c_int
+                          len = crate::libbb::read::safe_read(
+                            pfd[0].fd,
+                            rbuf as *mut libc::c_void,
+                            io_bufsize as size_t,
+                          ) as libc::c_int
                         }
                         if len < 0 {
                           current_block = 12367016239538502269;
@@ -832,15 +725,8 @@ unsafe extern "C" fn tftp_protocol(
                               let fresh8 = &mut __v;
                               let fresh9;
                               let fresh10 = __x;
-                              asm!("rorw $$8, ${0:w}"
-                                                                              :
-                                                                              "=r"
-                                                                              (fresh9)
-                                                                              :
-                                                                              "0"
-                                                                              (c2rust_asm_casts::AsmCast::cast_in(fresh8, fresh10))
-                                                                              :
-                                                                              "cc");
+                              asm!("rorw $$8, ${0:w}" : "=r" (fresh9) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh8, fresh10)) : "cc");
                               c2rust_asm_casts::AsmCast::cast_out(fresh8, fresh10, fresh9);
                             }
                             __v
@@ -856,15 +742,8 @@ unsafe extern "C" fn tftp_protocol(
                               let fresh11 = &mut __v;
                               let fresh12;
                               let fresh13 = __x;
-                              asm!("rorw $$8, ${0:w}"
-                                                                              :
-                                                                              "=r"
-                                                                              (fresh12)
-                                                                              :
-                                                                              "0"
-                                                                              (c2rust_asm_casts::AsmCast::cast_in(fresh11, fresh13))
-                                                                              :
-                                                                              "cc");
+                              asm!("rorw $$8, ${0:w}" : "=r" (fresh12) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh11, fresh13)) : "cc");
                               c2rust_asm_casts::AsmCast::cast_out(fresh11, fresh13, fresh12);
                             }
                             __v
@@ -889,9 +768,12 @@ unsafe extern "C" fn tftp_protocol(
                                 '\u{0}' as i32 as libc::c_char
                             /* paranoia */
                             } else if recv_blk as libc::c_int <= 8i32 {
-                              msg = nth_string(errcode_str.as_ptr(), recv_blk as libc::c_int)
+                              msg = crate::libbb::compare_string_array::nth_string(
+                                errcode_str.as_ptr(),
+                                recv_blk as libc::c_int,
+                              )
                             }
-                            bb_error_msg(
+                            crate::libbb::verror_msg::bb_error_msg(
                               b"server error: (%u) %s\x00" as *const u8 as *const libc::c_char,
                               recv_blk as libc::c_int,
                               msg,
@@ -922,7 +804,7 @@ unsafe extern "C" fn tftp_protocol(
                                  * must be ignored by the client and server
                                  * as if it were never requested." */
                                 if blksize != 512i32 {
-                                  bb_simple_error_msg(
+                                  crate::libbb::verror_msg::bb_simple_error_msg(
                                     b"falling back to blocksize 512\x00" as *const u8
                                       as *const libc::c_char,
                                   );
@@ -937,7 +819,7 @@ unsafe extern "C" fn tftp_protocol(
                               && opcode as libc::c_int == 3i32
                             {
                               if recv_blk as libc::c_int == block_nr as libc::c_int {
-                                sz = full_write(
+                                sz = crate::libbb::full_write::full_write(
                                   local_fd,
                                   &mut *rbuf.offset(4) as *mut libc::c_char as *const libc::c_void,
                                   (len - 4i32) as size_t,
@@ -991,7 +873,9 @@ unsafe extern "C" fn tftp_protocol(
                     }
                     _ => {
                       tftp_progress_done();
-                      bb_simple_error_msg(b"timeout\x00" as *const u8 as *const libc::c_char);
+                      crate::libbb::verror_msg::bb_simple_error_msg(
+                        b"timeout\x00" as *const u8 as *const libc::c_char,
+                      );
                       current_block = 4894395567674443800;
                       continue 's_871;
                       /* no err packet sent */
@@ -1043,7 +927,11 @@ unsafe extern "C" fn tftp_protocol(
                   );
                   if !res.is_null() {
                     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).size =
-                      bb_strtoull(res, 0 as *mut *mut libc::c_char, 10i32) as off_t;
+                      crate::libbb::bb_strtonum::bb_strtoull(
+                        res,
+                        0 as *mut *mut libc::c_char,
+                        10i32,
+                      ) as off_t;
                     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).size != 0 {
                       tftp_progress_init();
                     }
@@ -1082,7 +970,7 @@ unsafe extern "C" fn tftp_protocol(
     .offset(0)
     != 0
   {
-    bb_simple_error_msg(
+    crate::libbb::verror_msg::bb_simple_error_msg(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .error_pkt
         .as_mut_ptr()
@@ -1090,7 +978,7 @@ unsafe extern "C" fn tftp_protocol(
     );
   }
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).error_pkt[1] = 5i32 as u8;
-  xsendto(
+  crate::libbb::xfuncs_printf::xsendto(
     pfd[0].fd,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .error_pkt
@@ -1167,7 +1055,7 @@ pub unsafe extern "C" fn tftp_main(
     }
     i = i.wrapping_add(1)
   }
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^gpl:r:b:m:\x00g:p:g--p:p--g:\x00" as *const u8 as *const libc::c_char,
     &mut local_file as *mut *const libc::c_char,
@@ -1197,14 +1085,14 @@ pub unsafe extern "C" fn tftp_main(
   }
   /* Error if filename or host is not known */
   if remote_file.is_null() || (*argv.offset(0)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
-  port = bb_lookup_port(
+  port = crate::libbb::xconnect::bb_lookup_port(
     *argv.offset(1),
     b"udp\x00" as *const u8 as *const libc::c_char,
     69i32 as libc::c_uint,
   ) as libc::c_int;
-  peer_lsa = xhost2sockaddr(*argv.offset(0), port);
+  peer_lsa = crate::libbb::xconnect::xhost2sockaddr(*argv.offset(0), port);
   let ref mut fresh19 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).file;
   *fresh19 = remote_file;
   result = tftp_protocol(
@@ -1244,23 +1132,23 @@ pub unsafe extern "C" fn tftpd_main(
   let mut opcode: libc::c_int = 0;
   let mut blksize: libc::c_int = 512i32;
   let mut want_transfer_size: libc::c_int = 0;
-  our_lsa = get_sock_lsa(0i32);
+  our_lsa = crate::libbb::xconnect::get_sock_lsa(0i32);
   if our_lsa.is_null() {
     /* This is confusing:
      *bb_error_msg_and_die("stdin is not a socket");
      * Better: */
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
     /* Help text says that tftpd must be used as inetd service,
      * which is by far the most usual cause of get_sock_lsa
      * failure */
   }
-  peer_lsa =
-    xzalloc((LSA_LEN_SIZE as libc::c_int as libc::c_uint).wrapping_add((*our_lsa).len) as size_t)
-      as *mut len_and_sockaddr;
+  peer_lsa = crate::libbb::xfuncs_printf::xzalloc(
+    (LSA_LEN_SIZE as libc::c_int as libc::c_uint).wrapping_add((*our_lsa).len) as size_t,
+  ) as *mut len_and_sockaddr;
   (*peer_lsa).len = (*our_lsa).len;
   /* Shifting to not collide with TFTP_OPTs */
   option_mask32 = TFTPD_OPT as libc::c_int as libc::c_uint
-    | getopt32(
+    | crate::libbb::getopt32::getopt32(
       argv,
       b"rcu:l\x00" as *const u8 as *const libc::c_char,
       &mut user_opt as *mut *mut libc::c_char,
@@ -1274,12 +1162,12 @@ pub unsafe extern "C" fn tftpd_main(
   if opt & TFTPD_OPT_u as libc::c_int != 0 {
     /* Must be before xchroot */
     let ref mut fresh20 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pw;
-    *fresh20 = xgetpwnam(user_opt)
+    *fresh20 = crate::libbb::bb_pwd::xgetpwnam(user_opt)
   }
   if !(*argv.offset(0)).is_null() {
-    xchroot(*argv.offset(0));
+    crate::libbb::xfuncs_printf::xchroot(*argv.offset(0));
   }
-  result = recv_from_to(
+  result = crate::libbb::udp_io::recv_from_to(
     0,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .block_buf
@@ -1305,8 +1193,7 @@ pub unsafe extern "C" fn tftpd_main(
       let fresh22;
       let fresh23 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh22) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh21, fresh23, fresh22);
     }
     __v

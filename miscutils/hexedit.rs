@@ -33,61 +33,22 @@ extern "C" {
   fn munmap(__addr: *mut libc::c_void, __len: size_t) -> libc::c_int;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn kill_myself_with_sig(sig: libc::c_int) -> !;
-  #[no_mangle]
   static mut bb_got_signal: smallint;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
+
   #[no_mangle]
   static bb_hexdigits_upcase: [libc::c_char; 0];
-  /* Non-aborting kind of convertors: bb_strto[u][l]l */
-  /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
-   * errno = EINVAL if value was not '\0' terminated, but otherwise ok
-   *    Return value is still valid, caller should just check whether end[0]
-   *    is a valid terminating char for particular case. OTOH, if caller
-   *    requires '\0' terminated input, [s]he can just check errno == 0.
-   * errno = ERANGE if value had alphanumeric terminating char ("1234abcg").
-   * errno = ERANGE if value is out of range, missing, etc.
-   * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
-   *    return value is all-ones in this case.
-   */
-  #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn get_terminal_width_height(
-    fd: libc::c_int,
-    width: *mut libc::c_uint,
-    height: *mut libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
-  #[no_mangle]
-  fn set_termios_to_raw(fd: libc::c_int, oldterm: *mut termios, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn read_key(fd: libc::c_int, buffer: *mut libc::c_char, timeout: libc::c_int) -> int64_t;
-  #[no_mangle]
-  fn read_line_input(
-    st: *mut line_input_t,
-    prompt: *const libc::c_char,
-    command: *mut libc::c_char,
-    maxsize: libc::c_int,
-  ) -> libc::c_int;
+/* Non-aborting kind of convertors: bb_strto[u][l]l */
+/* On exit: errno = 0 only if there was non-empty, '\0' terminated value
+ * errno = EINVAL if value was not '\0' terminated, but otherwise ok
+ *    Return value is still valid, caller should just check whether end[0]
+ *    is a valid terminating char for particular case. OTOH, if caller
+ *    requires '\0' terminated input, [s]he can just check errno == 0.
+ * errno = ERANGE if value had alphanumeric terminating char ("1234abcg").
+ * errno = ERANGE if value is out of range, missing, etc.
+ * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
+ *    return value is all-ones in this case.
+ */
+
 }
 
 pub type __int64_t = libc::c_long;
@@ -124,21 +85,11 @@ pub const KEYCODE_LEFT: C2RustUnnamed_0 = -5;
 pub const KEYCODE_RIGHT: C2RustUnnamed_0 = -4;
 pub const KEYCODE_DOWN: C2RustUnnamed_0 = -3;
 pub const KEYCODE_UP: C2RustUnnamed_0 = -2;
-#[derive(Copy, Clone)]
+
+use crate::librb::line_input_t;
+
 #[repr(C)]
-pub struct line_input_t {
-  pub flags: libc::c_int,
-  pub timeout: libc::c_int,
-  pub path_lookup: *const libc::c_char,
-  pub cnt_history: libc::c_int,
-  pub cur_history: libc::c_int,
-  pub max_history: libc::c_int,
-  pub cnt_history_in_file: libc::c_uint,
-  pub hist_file: *const libc::c_char,
-  pub history: [*mut libc::c_char; 256],
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct globals {
   pub half: smallint,
   pub in_read_key: smallint,
@@ -159,9 +110,9 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
   return p as *mut libc::c_void;
 }
 unsafe extern "C" fn restore_term() {
-  tcsetattr_stdin_TCSANOW(&mut (*ptr_to_globals).orig_termios);
+  crate::libbb::xfuncs::tcsetattr_stdin_TCSANOW(&mut (*ptr_to_globals).orig_termios);
   printf(b"\x1b[?1049l\x00" as *const u8 as *const libc::c_char);
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
 }
 unsafe extern "C" fn sig_catcher(mut sig: libc::c_int) {
   if (*ptr_to_globals).in_read_key == 0 {
@@ -170,7 +121,7 @@ unsafe extern "C" fn sig_catcher(mut sig: libc::c_int) {
     return;
   }
   restore_term();
-  kill_myself_with_sig(sig);
+  crate::libbb::signals::kill_myself_with_sig(sig);
 }
 unsafe extern "C" fn format_line(
   mut hex: *mut libc::c_char,
@@ -318,7 +269,9 @@ unsafe extern "C" fn remap(mut cur_pos: libc::c_uint) -> libc::c_int {
   ) as *mut u8;
   if (*ptr_to_globals).baseaddr == -1i32 as *mut libc::c_void as *mut u8 {
     restore_term();
-    bb_simple_perror_msg_and_die(b"mmap\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"mmap\x00" as *const u8 as *const libc::c_char,
+    );
   }
   (*ptr_to_globals).current_byte = (*ptr_to_globals).baseaddr.offset(cur_pos as isize);
   (*ptr_to_globals).eof_byte = (*ptr_to_globals)
@@ -396,9 +349,14 @@ pub unsafe extern "C" fn hexedit_main(
 ) -> libc::c_int {
   let ref mut fresh9 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh9 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh9 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
-  get_terminal_width_height(-1i32, 0 as *mut libc::c_uint, &mut (*ptr_to_globals).height);
+  crate::libbb::xfuncs::get_terminal_width_height(
+    -1i32,
+    0 as *mut libc::c_uint,
+    &mut (*ptr_to_globals).height,
+  );
   /* reduce number of write() syscalls while PgUp/Down: fully buffered output */
   let mut sz: libc::c_uint = ((*ptr_to_globals).height | 0xfi32 as libc::c_uint)
     .wrapping_mul((8i32 + 1i32 + 3i32 * 16i32 + 16i32 + 1i32 + 1i32 + 13i32) as libc::c_uint);
@@ -408,18 +366,19 @@ pub unsafe extern "C" fn hexedit_main(
     0,
     sz as size_t,
   );
-  getopt32(argv, b"^\x00=1\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::getopt32::getopt32(argv, b"^\x00=1\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
-  (*ptr_to_globals).fd = xopen(*argv, 0o2i32);
-  (*ptr_to_globals).size = xlseek((*ptr_to_globals).fd, 0 as off_t, 2i32);
+  (*ptr_to_globals).fd = crate::libbb::xfuncs_printf::xopen(*argv, 0o2i32);
+  (*ptr_to_globals).size =
+    crate::libbb::xfuncs_printf::xlseek((*ptr_to_globals).fd, 0 as off_t, 2i32);
   /* TERMIOS_RAW_CRNL suppresses \n -> \r\n translation, helps with down-arrow */
   printf(b"\x1b[?1049h\x00" as *const u8 as *const libc::c_char);
-  set_termios_to_raw(
+  crate::libbb::xfuncs::set_termios_to_raw(
     0,
     &mut (*ptr_to_globals).orig_termios,
     1i32 << 1i32 | 1i32 << 2i32,
   );
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     BB_FATAL_SIGS as libc::c_int,
     Some(sig_catcher as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
@@ -438,10 +397,12 @@ pub unsafe extern "C" fn hexedit_main(
     let mut key: i32 = 0; /* for compiler */
     key = key; /* convert A-Z to a-z */
     let mut byte: u8 = 0;
-    fflush_all();
+    crate::libbb::xfuncs_printf::fflush_all();
     (*ptr_to_globals).in_read_key = 1i32 as smallint;
     if bb_got_signal == 0 {
-      key = read_key(0i32, (*ptr_to_globals).read_key_buffer.as_mut_ptr(), -1i32) as i32
+      key =
+        crate::libbb::read_key::read_key(0, (*ptr_to_globals).read_key_buffer.as_mut_ptr(), -1i32)
+          as i32
     }
     (*ptr_to_globals).in_read_key = 0 as smallint;
     if bb_got_signal != 0 {
@@ -519,7 +480,7 @@ pub unsafe extern "C" fn hexedit_main(
           let mut buf: [libc::c_char; 28] = [0; 28];
           /* ^C/EOF/error: fall through to exiting */
           printf(b"\x1b[999;1H\x1b[K\x00" as *const u8 as *const libc::c_char); /* go to last line */
-          if read_line_input(
+          if crate::libbb::lineedit::read_line_input(
             0 as *mut line_input_t,
             b"Go to (dec,0Xhex,0oct): \x00" as *const u8 as *const libc::c_char,
             buf.as_mut_ptr(),
@@ -528,7 +489,11 @@ pub unsafe extern "C" fn hexedit_main(
           {
             let mut t: off_t = 0;
             let mut cursor: libc::c_uint = 0;
-            t = bb_strtoull(buf.as_mut_ptr(), 0 as *mut *mut libc::c_char, 0) as off_t;
+            t = crate::libbb::bb_strtonum::bb_strtoull(
+              buf.as_mut_ptr(),
+              0 as *mut *mut libc::c_char,
+              0,
+            ) as off_t;
             if t >= (*ptr_to_globals).size {
               t = (*ptr_to_globals).size - 1
             }

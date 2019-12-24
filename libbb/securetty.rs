@@ -1,26 +1,7 @@
-use crate::librb::size_t;
+use crate::libbb::parse_config::parser_t;
 use libc;
 use libc::strcmp;
 use libc::FILE;
-extern "C" {
-
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn config_open2(
-    filename: *const libc::c_char,
-    fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
-  ) -> *mut parser_t;
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
-}
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;
@@ -32,17 +13,6 @@ pub const PARSE_MIN_DIE: C2RustUnnamed = 1048576;
 pub const PARSE_GREEDY: C2RustUnnamed = 262144;
 pub const PARSE_TRIM: C2RustUnnamed = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed = 65536;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
 
 /*
  * Busybox main internal header file
@@ -507,11 +477,14 @@ pub struct parser_t {
 pub unsafe extern "C" fn is_tty_secure(mut short_tty: *const libc::c_char) -> libc::c_int {
   let mut buf: *mut libc::c_char =
     b"/etc/securetty\x00" as *const u8 as *const libc::c_char as *mut libc::c_char; /* any non-NULL is ok */
-  let mut parser: *mut parser_t = config_open2(
+  let mut parser: *mut parser_t = crate::libbb::parse_config::config_open2(
     b"/etc/securetty\x00" as *const u8 as *const libc::c_char,
-    Some(fopen_for_read as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE),
+    Some(
+      crate::libbb::wfopen::fopen_for_read
+        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+    ),
   );
-  while config_read(
+  while crate::libbb::parse_config::config_read(
     parser,
     &mut buf,
     (PARSE_NORMAL as libc::c_int | (1i32 & 0xffi32) << 8i32 | 1i32 & 0xffi32) as libc::c_uint,
@@ -523,7 +496,7 @@ pub unsafe extern "C" fn is_tty_secure(mut short_tty: *const libc::c_char) -> li
     }
     buf = std::ptr::null_mut::<libc::c_char>()
   }
-  config_close(parser);
+  crate::libbb::parse_config::config_close(parser);
   /* buf != NULL here if config file was not found, empty
    * or line was found which equals short_tty.
    * In all these cases, we report "this tty is secure".

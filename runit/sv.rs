@@ -1,15 +1,20 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 use libc::chdir;
 use libc::close;
 use libc::getenv;
 use libc::open;
 use libc::printf;
+use libc::ssize_t;
+use libc::stat;
 use libc::strcmp;
 use libc::time;
+use libc::time_t;
+use libc::useconds_t;
 extern "C" {
 
   #[no_mangle]
@@ -40,47 +45,25 @@ extern "C" {
   /* We can just memorize it once - no multithreading in busybox :) */
 
   /* NB: can violate const-ness (similarly to strchr) */
-  #[no_mangle]
-  fn last_char_is(s: *const libc::c_char, c: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
+
   /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
    * But potentially slow, don't use in one-billion-times loops */
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xatou(str: *const libc::c_char) -> libc::c_uint;
+
   /* NOMMU friendy fork+exec: */
-  #[no_mangle]
-  fn spawn(argv: *mut *mut libc::c_char) -> pid_t;
-  #[no_mangle]
-  fn safe_waitpid(pid: pid_t, wstat: *mut libc::c_int, options: libc::c_int) -> pid_t;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   static mut xfunc_error_retval: u8;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::pid_t;
-use libc::ssize_t;
-use libc::stat;
-use libc::time_t;
-use libc::useconds_t;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub acts: *const libc::c_char,
   pub service: *mut *mut libc::c_char,
@@ -90,8 +73,9 @@ pub struct globals {
   pub svstatus: svstatus_t,
   pub islog: smallint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct svstatus_t {
   pub time_be64: u64,
   pub time_nsec_be32: u32,
@@ -103,7 +87,7 @@ pub struct svstatus_t {
 }
 /* need to zero out, svc calls sv() repeatedly */
 unsafe extern "C" fn fatal_cannot(mut m1: *const libc::c_char) -> ! {
-  bb_perror_msg(
+  crate::libbb::perror_msg::bb_perror_msg(
     b"fatal: can\'t %s\x00" as *const u8 as *const libc::c_char,
     m1,
   );
@@ -124,7 +108,7 @@ unsafe extern "C" fn out(mut p: *const libc::c_char, mut m1: *const libc::c_char
   if *bb_errno != 0 {
     printf(b": %m\x00" as *const u8 as *const libc::c_char);
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   /* will also flush the output */
 }
 unsafe extern "C" fn fail(mut m1: *const libc::c_char) {
@@ -203,7 +187,7 @@ unsafe extern "C" fn svstatus_print(mut m: *const libc::c_char) -> libc::c_uint 
   let mut timestamp: u64 = 0;
   if stat(b"down\x00" as *const u8 as *const libc::c_char, &mut s) == -1i32 {
     if *bb_errno != 2i32 {
-      bb_perror_msg(
+      crate::libbb::perror_msg::bb_perror_msg(
         b"warning: can\'t stat %s/down\x00" as *const u8 as *const libc::c_char,
         *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).service,
       );
@@ -233,7 +217,7 @@ unsafe extern "C" fn svstatus_print(mut m: *const libc::c_char) -> libc::c_uint 
       let fresh3;
       let fresh4 = __x;
       asm!("bswap ${0:q}" : "=r" (fresh3) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh2, fresh4)) :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh2, fresh4)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh2, fresh4, fresh3);
     }
     __v
@@ -319,13 +303,13 @@ unsafe extern "C" fn status(mut _unused: *const libc::c_char) -> libc::c_int {
       printf(b"; \x00" as *const u8 as *const libc::c_char);
       warn(b"can\'t change directory\x00" as *const u8 as *const libc::c_char);
     } else {
-      bb_putchar('\n' as i32);
+      crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     }
   } else {
     printf(b"; \x00" as *const u8 as *const libc::c_char);
     if svstatus_get() != 0 {
       r = svstatus_print(b"log\x00" as *const u8 as *const libc::c_char) as libc::c_int;
-      bb_putchar('\n' as i32);
+      crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     }
   }
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).islog = 0 as smallint;
@@ -340,7 +324,7 @@ unsafe extern "C" fn checkscript() -> libc::c_int {
     if *bb_errno == 2i32 {
       return 1i32;
     }
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"warning: can\'t stat %s/check\x00" as *const u8 as *const libc::c_char,
       *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).service,
     );
@@ -349,17 +333,17 @@ unsafe extern "C" fn checkscript() -> libc::c_int {
   /* if (!(s.st_mode & S_IXUSR)) return 1; */
   prog[0] = b"./check\x00" as *const u8 as *const libc::c_char as *mut libc::c_char; /* will also flush the output */
   prog[1] = std::ptr::null_mut::<libc::c_char>();
-  pid = spawn(prog.as_mut_ptr());
+  pid = crate::libbb::vfork_daemon_rexec::spawn(prog.as_mut_ptr());
   if pid <= 0 {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"warning: can\'t %s child %s/check\x00" as *const u8 as *const libc::c_char,
       b"run\x00" as *const u8 as *const libc::c_char,
       *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).service,
     );
     return 0;
   }
-  if safe_waitpid(pid, &mut w, 0) == -1i32 {
-    bb_perror_msg(
+  if crate::libbb::xfuncs::safe_waitpid(pid, &mut w, 0) == -1i32 {
+    crate::libbb::perror_msg::bb_perror_msg(
       b"warning: can\'t %s child %s/check\x00" as *const u8 as *const libc::c_char,
       b"wait for\x00" as *const u8 as *const libc::c_char,
       *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).service,
@@ -442,8 +426,7 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
               let fresh6;
               let fresh7 = __x;
               asm!("bswap ${0:q}" : "=r" (fresh6) : "0"
-                                      (c2rust_asm_casts::AsmCast::cast_in(fresh5, fresh7))
-                                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh5, fresh7)) :);
               c2rust_asm_casts::AsmCast::cast_out(fresh5, fresh7, fresh6);
             }
             __v
@@ -480,8 +463,7 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
             let fresh9;
             let fresh10 = __x;
             asm!("bswap ${0:q}" : "=r" (fresh9) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh8, fresh10))
-                                  :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh8, fresh10)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh8, fresh10, fresh9);
           }
           __v
@@ -522,7 +504,7 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
   }
   printf(b"ok: \x00" as *const u8 as *const libc::c_char);
   svstatus_print(*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).service);
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   return 1i32;
 }
 unsafe extern "C" fn control(mut a: *const libc::c_char) -> libc::c_int {
@@ -607,9 +589,9 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   }
   x = getenv(b"SVWAIT\x00" as *const u8 as *const libc::c_char);
   if !x.is_null() {
-    waitsec = xatou(x)
+    waitsec = crate::libbb::xatonum::xatou(x)
   }
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     b"^w:+v\x00vv\x00" as *const u8 as *const libc::c_char,
     &mut waitsec as *mut libc::c_uint,
@@ -620,7 +602,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   argv = argv.offset(1);
   action = *fresh11;
   if action.is_null() || (*argv).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tnow =
     (time(0 as *mut time_t) as libc::c_ulonglong).wrapping_add(0x400000000000000au64) as u64;
@@ -706,7 +688,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
         let ref mut fresh24 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).acts;
         *fresh24 = b"h\x00" as *const u8 as *const libc::c_char
       } else {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
       current_block_56 = 14294131666767243020;
     }
@@ -767,7 +749,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
       }
     }
     796904743902263619 => {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     _ => {}
   }
@@ -792,7 +774,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
     let mut current_block_63: u64;
     if *x.offset(0) as libc::c_int != '/' as i32
       && *x.offset(0) as libc::c_int != '.' as i32
-      && last_char_is(x, '/' as i32).is_null()
+      && crate::libbb::last_char_is::last_char_is(x, '/' as i32).is_null()
     {
       if chdir(varservice) == -1i32 {
         current_block_63 = 18071914750955744041;
@@ -889,7 +871,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
                     *fresh33 = (*fresh33).wrapping_add(1)
                   }
                   /* "dead" */
-                  bb_putchar('\n' as i32); /* will also flush the output */
+                  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32); /* will also flush the output */
                   if kll != 0 {
                     control(b"k\x00" as *const u8 as *const libc::c_char);
                   }
@@ -963,10 +945,10 @@ pub unsafe extern "C" fn svc_main(
   let mut optstring: *const libc::c_char = std::ptr::null();
   let mut opts: libc::c_uint = 0;
   optstring = b"udopchaitkx\x00" as *const u8 as *const libc::c_char;
-  opts = getopt32(argv, optstring);
+  opts = crate::libbb::getopt32::getopt32(argv, optstring);
   argv = argv.offset(optind as isize);
   if (*argv.offset(0)).is_null() || opts == 0 {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   argv = argv.offset(-2);
   if optind > 2i32 {
@@ -1013,7 +995,7 @@ pub unsafe extern "C" fn svok_main(
 ) -> libc::c_int {
   let mut dir: *const libc::c_char = *argv.offset(1);
   if dir.is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   xfunc_error_retval = 111i32 as u8;
   /*
@@ -1022,11 +1004,11 @@ pub unsafe extern "C" fn svok_main(
    */
   if *dir.offset(0) as libc::c_int != '/' as i32
     && *dir.offset(0) as libc::c_int != '.' as i32
-    && last_char_is(dir, '/' as i32).is_null()
+    && crate::libbb::last_char_is::last_char_is(dir, '/' as i32).is_null()
   {
-    xchdir(b"/var/service\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::xfuncs_printf::xchdir(b"/var/service\x00" as *const u8 as *const libc::c_char);
   }
-  xchdir(dir);
+  crate::libbb::xfuncs_printf::xchdir(dir);
   if open(
     b"supervise/ok\x00" as *const u8 as *const libc::c_char,
     0o1i32,
@@ -1035,7 +1017,7 @@ pub unsafe extern "C" fn svok_main(
     if *bb_errno == 2i32 || *bb_errno == 6i32 {
       return 100i32;
     }
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
       b"supervise/ok\x00" as *const u8 as *const libc::c_char,
     );

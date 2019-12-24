@@ -11,34 +11,7 @@ extern "C" {
   fn memchr(_: *const libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xopen_stdin(pathname: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-  #[no_mangle]
-  fn xatoull_range(
-    str: *const libc::c_char,
-    l: libc::c_ulonglong,
-    u: libc::c_ulonglong,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xatoull_sfx(str: *const libc::c_char, sfx: *const suffix_mult) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -46,12 +19,8 @@ extern "C" {
 use crate::librb::size_t;
 use libc::off_t;
 use libc::ssize_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct suffix_mult {
-  pub suffix: [libc::c_char; 4],
-  pub mult: libc::c_uint,
-}
+
+use crate::librb::suffix_mult;
 pub type C2RustUnnamed = libc::c_uint;
 pub const READ_BUFFER_SIZE: C2RustUnnamed = 1023;
 #[inline(always)]
@@ -60,7 +29,8 @@ unsafe extern "C" fn xatoul_range(
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
 ) -> libc::c_ulong {
-  return xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong)
+    as libc::c_ulong;
 }
 
 /*
@@ -176,7 +146,7 @@ pub unsafe extern "C" fn split_main(
   let mut bytes_read: ssize_t = 0;
   let mut to_write: ssize_t = 0;
   let mut src: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^l:b:a:+\x00?2\x00" as *const u8 as *const libc::c_char,
     &mut count_p as *mut *mut libc::c_char,
@@ -192,7 +162,7 @@ pub unsafe extern "C" fn split_main(
   }
   if opt & (1i32 << 1i32) as libc::c_uint != 0 {
     // FIXME: also needs XATOOFF
-    cnt = xatoull_sfx(count_p, split_suffixes.as_ptr()) as off_t
+    cnt = crate::libbb::xatonum::xatoull_sfx(count_p, split_suffixes.as_ptr()) as off_t
   }
   sfx = b"x\x00" as *const u8 as *const libc::c_char;
   argv = argv.offset(optind as isize);
@@ -201,25 +171,32 @@ pub unsafe extern "C" fn split_main(
     if !(*argv.offset(1)).is_null() {
       sfx = *argv.offset(1)
     }
-    fd = xopen_stdin(*argv.offset(0));
-    xmove_fd(fd, 0);
+    fd = crate::libbb::wfopen_input::xopen_stdin(*argv.offset(0));
+    crate::libbb::xfuncs_printf::xmove_fd(fd, 0);
   } else {
     let ref mut fresh0 = *argv.offset(0);
     *fresh0 = bb_msg_standard_input.as_ptr() as *mut libc::c_char
   }
   if (255i32 as libc::c_ulong) < strlen(sfx).wrapping_add(suffix_len as libc::c_ulong) {
-    bb_simple_error_msg_and_die(b"suffix too long\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"suffix too long\x00" as *const u8 as *const libc::c_char,
+    );
   }
   let mut char_p: *mut libc::c_char =
-    xzalloc(suffix_len.wrapping_add(1i32 as libc::c_uint) as size_t) as *mut libc::c_char;
+    crate::libbb::xfuncs_printf::xzalloc(suffix_len.wrapping_add(1i32 as libc::c_uint) as size_t)
+      as *mut libc::c_char;
   memset(
     char_p as *mut libc::c_void,
     'a' as i32,
     suffix_len as libc::c_ulong,
   );
-  pfx = xasprintf(b"%s%s\x00" as *const u8 as *const libc::c_char, sfx, char_p);
+  pfx = crate::libbb::xfuncs_printf::xasprintf(
+    b"%s%s\x00" as *const u8 as *const libc::c_char,
+    sfx,
+    char_p,
+  );
   loop {
-    bytes_read = safe_read(
+    bytes_read = crate::libbb::read::safe_read(
       0,
       bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
       READ_BUFFER_SIZE as libc::c_int as size_t,
@@ -228,17 +205,20 @@ pub unsafe extern "C" fn split_main(
       break;
     }
     if bytes_read < 0 {
-      bb_simple_perror_msg_and_die(*argv.offset(0));
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(*argv.offset(0));
     }
     src = bb_common_bufsiz1.as_mut_ptr();
     loop {
       if remaining == 0 {
         if pfx.is_null() {
-          bb_simple_error_msg_and_die(
+          crate::libbb::verror_msg::bb_simple_error_msg_and_die(
             b"suffixes exhausted\x00" as *const u8 as *const libc::c_char,
           );
         }
-        xmove_fd(xopen(pfx, 0o1i32 | 0o100i32 | 0o1000i32), 1i32);
+        crate::libbb::xfuncs_printf::xmove_fd(
+          crate::libbb::xfuncs_printf::xopen(pfx, 0o1i32 | 0o100i32 | 0o1000i32),
+          1i32,
+        );
         pfx = next_file(pfx, suffix_len);
         remaining = cnt
       }
@@ -266,7 +246,7 @@ pub unsafe extern "C" fn split_main(
           to_write = bytes_read
         }
       }
-      xwrite(1i32, src as *const libc::c_void, to_write as size_t);
+      crate::libbb::xfuncs_printf::xwrite(1i32, src as *const libc::c_void, to_write as size_t);
       bytes_read -= to_write;
       src = src.offset(to_write as isize);
       if !(bytes_read != 0) {

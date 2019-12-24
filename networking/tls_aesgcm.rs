@@ -7,10 +7,7 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xorbuf(buf: *mut libc::c_void, mask: *const libc::c_void, count: libc::c_uint);
-  #[no_mangle]
-  fn xorbuf_aligned_AES_BLOCK_SIZE(buf: *mut libc::c_void, mask: *const libc::c_void);
+
 }
 
 /*
@@ -47,7 +44,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
       let fresh1;
       let fresh2 = __x;
       asm!("bswap ${0:q}" : "=r" (fresh1) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
@@ -71,7 +68,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
       let fresh4;
       let fresh5 = __x;
       asm!("bswap ${0:q}" : "=r" (fresh4) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
     }
     __v
@@ -93,7 +90,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
       let fresh7;
       let fresh8 = __x;
       asm!("bswap ${0:q}" : "=r" (fresh7) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
     }
     __v
@@ -116,8 +113,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
       let fresh10;
       let fresh11 = __x;
       asm!("bswap ${0:q}" : "=r" (fresh10) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11))
-                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
     }
     __v
@@ -141,7 +137,7 @@ unsafe extern "C" fn GMULT(mut X: *mut byte, mut Y: *mut byte) {
     loop {
       // for every bit in Y[i], from msb to lsb
       if y & 0x80i32 as libc::c_uint != 0 {
-        xorbuf_aligned_AES_BLOCK_SIZE(
+        crate::networking::tls::xorbuf_aligned_AES_BLOCK_SIZE(
           Z.as_mut_ptr() as *mut libc::c_void,
           X as *const libc::c_void,
         );
@@ -215,7 +211,7 @@ pub unsafe extern "C" fn aesgcm_GHASH(
         break;
       }
       // c is not guaranteed to be aligned
-      xorbuf_aligned_AES_BLOCK_SIZE(
+      crate::networking::tls::xorbuf_aligned_AES_BLOCK_SIZE(
         x.as_mut_ptr() as *mut libc::c_void,
         c as *const libc::c_void,
       );
@@ -226,7 +222,7 @@ pub unsafe extern "C" fn aesgcm_GHASH(
       //XMEMSET(scratch, 0, AES_BLOCK_SIZE);
       //XMEMCPY(scratch, c, partial);
       //xorbuf(x, scratch, AES_BLOCK_SIZE);
-      xorbuf(
+      crate::networking::tls::xorbuf(
         x.as_mut_ptr() as *mut libc::c_void,
         c as *const libc::c_void,
         partial,
@@ -254,8 +250,7 @@ pub unsafe extern "C" fn aesgcm_GHASH(
       let fresh14;
       let fresh15 = __x;
       asm!("bswap $0" : "=r" (fresh14) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh13, fresh15))
-                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh13, fresh15)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh13, fresh15, fresh14);
     }
     __v
@@ -275,8 +270,7 @@ pub unsafe extern "C" fn aesgcm_GHASH(
       let fresh18;
       let fresh19 = __x;
       asm!("bswap $0" : "=r" (fresh18) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh17, fresh19))
-                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh17, fresh19)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh17, fresh19, fresh18);
     }
     __v

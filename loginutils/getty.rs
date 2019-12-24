@@ -67,79 +67,14 @@ extern "C" {
   fn tcgetsid(__fd: libc::c_int) -> pid_t;
 
   #[no_mangle]
-  fn skip_dev_pfx(tty_name: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn strcpy_and_process_escape_sequences(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn ndelay_off(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xdup2(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn signal_no_SA_RESTART_empty_mask(
-    sig: libc::c_int,
-    handler: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
-  );
-  #[no_mangle]
-  fn record_signo(signo: libc::c_int);
-  #[no_mangle]
-  fn xsetenv(key: *const libc::c_char, value: *const libc::c_char);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn full_write1_str(str: *const libc::c_char) -> ssize_t;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn update_utmp(
-    pid: pid_t,
-    new_type: libc::c_int,
-    tty_name: *const libc::c_char,
-    username: *const libc::c_char,
-    hostname: *const libc::c_char,
-  );
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   static mut msg_eol: *const libc::c_char;
   #[no_mangle]
   static mut logmode: smallint;
   #[no_mangle]
   static mut die_func: Option<unsafe extern "C" fn() -> ()>;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn tty_value_to_baud(value: libc::c_uint) -> speed_t;
-  #[no_mangle]
-  fn print_login_issue(issue_file: *const libc::c_char, tty: *const libc::c_char);
-  #[no_mangle]
-  fn print_login_prompt();
-  #[no_mangle]
-  fn xmalloc_ttyname(fd: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
 
 }
 
@@ -151,8 +86,8 @@ pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;
 pub const LOGMODE_STDIO: C2RustUnnamed = 1;
 pub const LOGMODE_NONE: C2RustUnnamed = 0;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub timeout: libc::c_uint,
   pub login: *const libc::c_char,
@@ -173,12 +108,13 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
 /* -n */
 /* convert speed string to speed code; return <= 0 on failure */
 unsafe extern "C" fn bcode(mut s: *const libc::c_char) -> libc::c_int {
-  let mut value: libc::c_int = bb_strtou(s, 0 as *mut *mut libc::c_char, 10i32) as libc::c_int; /* yes, int is intended! */
+  let mut value: libc::c_int =
+    crate::libbb::bb_strtonum::bb_strtou(s, 0 as *mut *mut libc::c_char, 10i32) as libc::c_int; /* yes, int is intended! */
   if value < 0 {
     /* bad terminating char, overflow, etc */
     return value;
   }
-  return tty_value_to_baud(value as libc::c_uint) as libc::c_int;
+  return crate::libbb::speed_table::tty_value_to_baud(value as libc::c_uint) as libc::c_int;
 }
 /* parse alternate baud rates */
 unsafe extern "C" fn parse_speeds(mut arg: *mut libc::c_char) {
@@ -191,12 +127,15 @@ unsafe extern "C" fn parse_speeds(mut arg: *mut libc::c_char) {
     }
     (*ptr_to_globals).speeds[(*ptr_to_globals).numspeed as usize] = bcode(cp);
     if (*ptr_to_globals).speeds[(*ptr_to_globals).numspeed as usize] < 0 {
-      bb_error_msg_and_die(b"bad speed: %s\x00" as *const u8 as *const libc::c_char, cp);
+      crate::libbb::verror_msg::bb_error_msg_and_die(
+        b"bad speed: %s\x00" as *const u8 as *const libc::c_char,
+        cp,
+      );
     }
     /* note: arg "0" turns into speed B0 */
     (*ptr_to_globals).numspeed += 1;
     if (*ptr_to_globals).numspeed > 10i32 {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"too many alternate speeds\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -206,7 +145,7 @@ unsafe extern "C" fn parse_speeds(mut arg: *mut libc::c_char) {
 unsafe extern "C" fn parse_args(mut argv: *mut *mut libc::c_char) {
   let mut ts: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut flags: libc::c_int = 0;
-  flags = getopt32(
+  flags = crate::libbb::getopt32::getopt32(
     argv,
     b"^I:LH:f:hil:mt:+wn\x00-2\x00" as *const u8 as *const libc::c_char,
     &mut (*ptr_to_globals).initstring as *mut *mut libc::c_char,
@@ -216,9 +155,13 @@ unsafe extern "C" fn parse_args(mut argv: *mut *mut libc::c_char) {
     &mut (*ptr_to_globals).timeout as *mut libc::c_uint,
   ) as libc::c_int;
   if flags & 1i32 << 0 != 0 {
-    (*ptr_to_globals).initstring = xstrdup((*ptr_to_globals).initstring);
+    (*ptr_to_globals).initstring =
+      crate::libbb::xfuncs_printf::xstrdup((*ptr_to_globals).initstring);
     /* decode \ddd octal codes into chars */
-    strcpy_and_process_escape_sequences((*ptr_to_globals).initstring, (*ptr_to_globals).initstring);
+    crate::libbb::process_escape_sequence::strcpy_and_process_escape_sequences(
+      (*ptr_to_globals).initstring,
+      (*ptr_to_globals).initstring,
+    );
   }
   argv = argv.offset(optind as isize);
   /* We loosen up a bit and accept both "baudrate tty" and "tty baudrate" */
@@ -234,7 +177,7 @@ unsafe extern "C" fn parse_args(mut argv: *mut *mut libc::c_char) {
   }
   parse_speeds(ts);
   if !(*argv.offset(2)).is_null() {
-    xsetenv(
+    crate::libbb::xfuncs_printf::xsetenv(
       b"TERM\x00" as *const u8 as *const libc::c_char,
       *argv.offset(2),
     );
@@ -247,14 +190,14 @@ unsafe extern "C" fn open_tty() {
     || *(*ptr_to_globals).tty_name.offset(1) as libc::c_int != 0
   {
     if *(*ptr_to_globals).tty_name.offset(0) as libc::c_int != '/' as i32 {
-      (*ptr_to_globals).tty_name = xasprintf(
+      (*ptr_to_globals).tty_name = crate::libbb::xfuncs_printf::xasprintf(
         b"/dev/%s\x00" as *const u8 as *const libc::c_char,
         (*ptr_to_globals).tty_name,
       )
     } /* will leak it */
     /* crw--w---- */
     close(0i32);
-    xopen((*ptr_to_globals).tty_name, 0o2i32 | 0o4000i32);
+    crate::libbb::xfuncs_printf::xopen((*ptr_to_globals).tty_name, 0o2i32 | 0o4000i32);
     fchown(0i32, 0 as uid_t, 0 as gid_t);
     fchmod(0i32, 0o620i32 as mode_t);
   } else {
@@ -268,24 +211,26 @@ unsafe extern "C" fn open_tty() {
      * Make sure it is open for read/write.
      */
     if fcntl(0i32, 3i32) & (0o2i32 | 0 | 0o1i32) != 0o2i32 {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"stdin is not open for read/write\x00" as *const u8 as *const libc::c_char,
       );
     }
     /* Try to get real tty name instead of "-" */
-    n = xmalloc_ttyname(0i32);
+    n = crate::libbb::xfuncs_printf::xmalloc_ttyname(0i32);
     if !n.is_null() {
       (*ptr_to_globals).tty_name = n
     }
   }
-  applet_name = xasprintf(
+  applet_name = crate::libbb::xfuncs_printf::xasprintf(
     b"getty: %s\x00" as *const u8 as *const libc::c_char,
-    skip_dev_pfx((*ptr_to_globals).tty_name),
+    crate::libbb::skip_whitespace::skip_dev_pfx((*ptr_to_globals).tty_name),
   );
 }
 unsafe extern "C" fn set_tty_attrs() {
-  if tcsetattr_stdin_TCSANOW(&mut (*ptr_to_globals).tty_attrs) < 0 {
-    bb_simple_perror_msg_and_die(b"tcsetattr\x00" as *const u8 as *const libc::c_char);
+  if crate::libbb::xfuncs::tcsetattr_stdin_TCSANOW(&mut (*ptr_to_globals).tty_attrs) < 0 {
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"tcsetattr\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 /* We manipulate tty_attrs this way:
@@ -302,9 +247,9 @@ unsafe extern "C" fn init_tty_attrs(mut speed: libc::c_int) {
    * They were losing hundreds of bytes of buffered output
    * on tcflush.
    */
-  signal_no_SA_RESTART_empty_mask(
+  crate::libbb::signals::signal_no_SA_RESTART_empty_mask(
     14i32,
-    Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   alarm(5i32 as libc::c_uint);
   tcdrain(0i32);
@@ -419,7 +364,7 @@ unsafe extern "C" fn finalize_tty_attrs() {
    */
   set_tty_attrs();
   /* Now the newline character should be properly written */
-  full_write(
+  crate::libbb::full_write::full_write(
     1i32,
     b"\n\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
     1i32 as size_t,
@@ -449,7 +394,7 @@ unsafe extern "C" fn auto_baud() {
    * try to extract the speed of the dial-in call.
    */
   sleep(1i32 as libc::c_uint);
-  nread = safe_read(
+  nread = crate::libbb::read::safe_read(
     0,
     (*ptr_to_globals).line_buf.as_mut_ptr() as *mut libc::c_void,
     (::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong)
@@ -494,9 +439,10 @@ unsafe extern "C" fn get_logname() -> *mut libc::c_char {
   /* Prompt for and read a login name */
   {
     if option_mask32 & (1i32 << 5i32) as libc::c_uint == 0 {
-      print_login_issue((*ptr_to_globals).issue, (*ptr_to_globals).tty_name); /* while logname is empty */
+      crate::libbb::login::print_login_issue((*ptr_to_globals).issue, (*ptr_to_globals).tty_name);
+      /* while logname is empty */
     }
-    print_login_prompt();
+    crate::libbb::login::print_login_prompt();
     /* Write issue file and prompt */
     /* Read name, watch for break, erase, kill, end-of-line */
     bp = (*ptr_to_globals).line_buf.as_mut_ptr(); /* end of get char loop */
@@ -514,7 +460,9 @@ unsafe extern "C" fn get_logname() -> *mut libc::c_char {
         if *bb_errno == 4i32 || *bb_errno == 5i32 {
           exit(0i32);
         }
-        bb_simple_perror_msg_and_die(b"read error\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"read error\x00" as *const u8 as *const libc::c_char,
+        );
       }
       match c as libc::c_int {
         13 | 10 => {
@@ -525,7 +473,7 @@ unsafe extern "C" fn get_logname() -> *mut libc::c_char {
         8 | 127 => {
           (*ptr_to_globals).tty_attrs.c_cc[2] = c as cc_t;
           if bp > (*ptr_to_globals).line_buf.as_mut_ptr() {
-            full_write(
+            crate::libbb::full_write::full_write(
               1i32,
               b"\x08 \x08\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
               3i32 as size_t,
@@ -536,7 +484,7 @@ unsafe extern "C" fn get_logname() -> *mut libc::c_char {
         }
         21 => {
           while bp > (*ptr_to_globals).line_buf.as_mut_ptr() {
-            full_write(
+            crate::libbb::full_write::full_write(
               1i32,
               b"\x08 \x08\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
               3i32 as size_t,
@@ -566,7 +514,7 @@ unsafe extern "C" fn get_logname() -> *mut libc::c_char {
             .wrapping_sub(1i32 as libc::c_ulong)
         {
           /* echo and store the character */
-          full_write(
+          crate::libbb::full_write::full_write(
             1i32,
             &mut c as *mut libc::c_char as *const libc::c_void,
             1i32 as size_t,
@@ -601,7 +549,8 @@ pub unsafe extern "C" fn getty_main(
   let mut logname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let ref mut fresh1 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh1 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh1 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).login = b"/bin/login\x00" as *const u8 as *const libc::c_char;
   (*ptr_to_globals).issue = b"/etc/issue\x00" as *const u8 as *const libc::c_char;
@@ -627,7 +576,9 @@ pub unsafe extern "C" fn getty_main(
       //	" sid %d pgid %d",
       //	pid, getppid(),
       //	getsid(0), getpgid(0));
-      bb_simple_perror_msg_and_die(b"setsid\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"setsid\x00" as *const u8 as *const libc::c_char,
+      );
       /*
        * When we can end up here?
        * Example: setsid() fails when run alone in interactive shell:
@@ -667,10 +618,13 @@ pub unsafe extern "C" fn getty_main(
     }
   }
   /* Close stdio, and stray descriptors, just in case */
-  n = xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0o2i32);
+  n = crate::libbb::xfuncs_printf::xopen(
+    b"/dev/null\x00" as *const u8 as *const libc::c_char,
+    0o2i32,
+  );
   /* dup2(n, 0); - no, we need to handle "getty - 9600" too */
-  xdup2(n, 1i32);
-  xdup2(n, 2i32);
+  crate::libbb::xfuncs_printf::xdup2(n, 1i32);
+  crate::libbb::xfuncs_printf::xdup2(n, 2i32);
   while n > 2i32 {
     let fresh2 = n;
     n = n - 1;
@@ -684,19 +638,23 @@ pub unsafe extern "C" fn getty_main(
   logmode = LOGMODE_BOTH as libc::c_int as smallint;
   /* Open the tty as standard input, if it is not "-" */
   open_tty();
-  ndelay_off(0i32);
-  xdup2(0i32, 1i32);
-  xdup2(0i32, 2i32);
+  crate::libbb::xfuncs::ndelay_off(0i32);
+  crate::libbb::xfuncs_printf::xdup2(0i32, 1i32);
+  crate::libbb::xfuncs_printf::xdup2(0i32, 2i32);
   /* Steal ctty if we don't have it yet */
   tsid = tcgetsid(0i32);
   if tsid < 0 || pid != tsid {
     if ioctl(0i32, 0x540ei32 as libc::c_ulong, 1) < 0 {
-      bb_simple_perror_msg_and_die(b"TIOCSCTTY\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"TIOCSCTTY\x00" as *const u8 as *const libc::c_char,
+      );
     }
   }
   /* Make ourself a foreground process group within our session */
   if tcsetpgrp(0i32, pid) < 0 {
-    bb_simple_perror_msg_and_die(b"tcsetpgrp\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"tcsetpgrp\x00" as *const u8 as *const libc::c_char,
+    );
   }
   /*
    * The following ioctl will fail if stdin is not a tty, but also when
@@ -707,10 +665,12 @@ pub unsafe extern "C" fn getty_main(
    * 5 seconds seems to be a good value.
    */
   if tcgetattr(0i32, &mut (*ptr_to_globals).tty_attrs) < 0 {
-    bb_simple_perror_msg_and_die(b"tcgetattr\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"tcgetattr\x00" as *const u8 as *const libc::c_char,
+    );
   }
   /* Update the utmp file. This tty is ours now! */
-  update_utmp(
+  crate::libbb::utmp::update_utmp(
     pid,
     6i32,
     (*ptr_to_globals).tty_name,
@@ -721,7 +681,7 @@ pub unsafe extern "C" fn getty_main(
   init_tty_attrs((*ptr_to_globals).speeds[0]);
   /* Write the modem init string and DON'T flush the buffers */
   if option_mask32 & (1i32 << 0) as libc::c_uint != 0 {
-    full_write1_str((*ptr_to_globals).initstring);
+    crate::libbb::xfuncs::full_write1_str((*ptr_to_globals).initstring);
   }
   /* Optionally detect the baud rate from the modem status message */
   if option_mask32 & (1i32 << 7i32) as libc::c_uint != 0 {
@@ -736,7 +696,7 @@ pub unsafe extern "C" fn getty_main(
   /* Optionally wait for CR or LF before writing /etc/issue */
   if option_mask32 & (1i32 << 9i32) as libc::c_uint != 0 {
     let mut ch: libc::c_char = 0;
-    while safe_read(
+    while crate::libbb::read::safe_read(
       0,
       &mut ch as *mut libc::c_char as *mut libc::c_void,
       1i32 as size_t,
@@ -782,7 +742,7 @@ pub unsafe extern "C" fn getty_main(
     logname,
     std::ptr::null_mut::<libc::c_char>(),
   );
-  bb_error_msg_and_die(
+  crate::libbb::verror_msg::bb_error_msg_and_die(
     b"can\'t execute \'%s\'\x00" as *const u8 as *const libc::c_char,
     (*ptr_to_globals).login,
   );

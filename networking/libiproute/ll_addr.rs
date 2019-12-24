@@ -1,3 +1,5 @@
+use crate::librb::socklen_t;
+use crate::networking::libiproute::utils::inet_prefix;
 use libc;
 use libc::sscanf;
 use libc::strchr;
@@ -20,24 +22,10 @@ extern "C" {
     __buf: *mut libc::c_char,
     __len: socklen_t,
   ) -> *const libc::c_char;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn get_addr_1(dst: *mut inet_prefix, arg: *mut libc::c_char, family: libc::c_int) -> libc::c_int;
+
 }
 
 pub type __socklen_t = libc::c_uint;
-
-pub type socklen_t = __socklen_t;
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct inet_prefix {
-  pub family: u8,
-  pub bytelen: u8,
-  pub bitlen: i16,
-  pub data: [u32; 4],
-}
 
 /*
  * This program is free software; you can redistribute it and/or
@@ -100,8 +88,8 @@ pub unsafe extern "C" fn ll_addr_a2n(
       bitlen: 0,
       data: [0; 4],
     };
-    if get_addr_1(&mut pfx, arg, 2i32) != 0 {
-      bb_error_msg(
+    if crate::networking::libiproute::utils::get_addr_1(&mut pfx, arg, 2i32) != 0 {
+      crate::libbb::verror_msg::bb_error_msg(
         b"\"%s\" is invalid lladdr\x00" as *const u8 as *const libc::c_char,
         arg,
       );
@@ -132,7 +120,7 @@ pub unsafe extern "C" fn ll_addr_a2n(
     ) != 1i32
       || (temp < 0 || temp > 255i32)
     {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"\"%s\" is invalid lladdr\x00" as *const u8 as *const libc::c_char,
         arg,
       );

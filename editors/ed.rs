@@ -43,64 +43,16 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn fputc_printable(ch: libc::c_int, file: *mut FILE);
-
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-
-  #[no_mangle]
-  fn read_line_input(
-    st: *mut line_input_t,
-    prompt: *const libc::c_char,
-    command: *mut libc::c_char,
-    maxsize: libc::c_int,
-  ) -> libc::c_int;
-
-  #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const PRINTABLE_META: C2RustUnnamed = 256;
-#[derive(Copy, Clone)]
+
+use crate::librb::line_input_t;
+
 #[repr(C)]
-pub struct line_input_t {
-  pub flags: libc::c_int,
-  pub timeout: libc::c_int,
-  pub path_lookup: *const libc::c_char,
-  pub cnt_history: libc::c_int,
-  pub cur_history: libc::c_int,
-  pub max_history: libc::c_int,
-  pub cnt_history_in_file: libc::c_uint,
-  pub hist_file: *const libc::c_char,
-  pub history: [*mut libc::c_char; 256],
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct globals {
   pub curNum: libc::c_int,
   pub lastNum: libc::c_int,
@@ -114,8 +66,9 @@ pub struct globals {
   pub dirty: smallint,
   pub marks: [libc::c_int; 26],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct LINE {
   pub next: *mut LINE,
   pub prev: *mut LINE,
@@ -135,7 +88,7 @@ unsafe extern "C" fn bad_nums(
   mut for_what: *const libc::c_char,
 ) -> libc::c_int {
   if num1 < 1i32 || num2 > (*ptr_to_globals).lastNum || num1 > num2 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"bad line range for %s\x00" as *const u8 as *const libc::c_char,
       for_what,
     );
@@ -150,7 +103,7 @@ unsafe extern "C" fn findLine(mut num: libc::c_int) -> *mut LINE {
   let mut lp: *mut LINE = std::ptr::null_mut();
   let mut lnum: libc::c_int = 0;
   if num < 1i32 || num > (*ptr_to_globals).lastNum {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"line number %d does not exist\x00" as *const u8 as *const libc::c_char,
       num,
     );
@@ -246,7 +199,9 @@ unsafe extern "C" fn searchLines(
   }
   if *str as libc::c_int == '\u{0}' as i32 {
     if *bb_common_bufsiz1.as_mut_ptr().offset(0) as libc::c_int == '\u{0}' as i32 {
-      bb_simple_error_msg(b"no previous search string\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg(
+        b"no previous search string\x00" as *const u8 as *const libc::c_char,
+      );
       return 0;
     }
     str = bb_common_bufsiz1.as_mut_ptr()
@@ -266,7 +221,7 @@ unsafe extern "C" fn searchLines(
     num1 += 1;
     lp = (*lp).next
   }
-  bb_error_msg(
+  crate::libbb::verror_msg::bb_error_msg(
     b"can\'t find string \"%s\"\x00" as *const u8 as *const libc::c_char,
     str,
   );
@@ -310,7 +265,9 @@ unsafe extern "C" fn getNum(
       39 => {
         cp = cp.offset(1);
         if (*cp as libc::c_int - 'a' as i32) as libc::c_uint >= 26i32 as libc::c_uint {
-          bb_simple_error_msg(b"bad mark name\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::verror_msg::bb_simple_error_msg(
+            b"bad mark name\x00" as *const u8 as *const libc::c_char,
+          );
           return std::ptr::null();
         }
         haveNum = 1i32 as smallint;
@@ -403,7 +360,9 @@ unsafe extern "C" fn insertLine(
   let mut newLp: *mut LINE = std::ptr::null_mut();
   let mut lp: *mut LINE = std::ptr::null_mut();
   if num < 1i32 || num > (*ptr_to_globals).lastNum + 1i32 {
-    bb_simple_error_msg(b"inserting at bad line number\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg(
+      b"inserting at bad line number\x00" as *const u8 as *const libc::c_char,
+    );
     return 0;
   }
   newLp = xmalloc(
@@ -449,7 +408,7 @@ unsafe extern "C" fn addLines(mut num: libc::c_int) {
      * 0  on ctrl-C,
      * >0 length of input string, including terminating '\n'
      */
-    len = read_line_input(
+    len = crate::libbb::lineedit::read_line_input(
       0 as *mut line_input_t,
       b"\x00" as *const u8 as *const libc::c_char,
       buf.as_mut_ptr(),
@@ -467,7 +426,7 @@ unsafe extern "C" fn addLines(mut num: libc::c_int) {
       return;
     }
     let fresh2 = num;
-    num += 1;
+    num = num + 1;
     if insertLine(fresh2, buf.as_mut_ptr(), len) == 0 {
       return;
     }
@@ -485,12 +444,14 @@ unsafe extern "C" fn readLines(mut file: *const libc::c_char, mut num: libc::c_i
   let mut charCount: libc::c_int = 0;
   let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if num < 1i32 || num > (*ptr_to_globals).lastNum + 1i32 {
-    bb_simple_error_msg(b"bad line for read\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg(
+      b"bad line for read\x00" as *const u8 as *const libc::c_char,
+    );
     return 0;
   }
   fd = open(file, 0);
   if fd < 0 {
-    bb_simple_perror_msg(file);
+    crate::libbb::perror_msg::bb_simple_perror_msg(file);
     return 0;
   }
   (*ptr_to_globals).bufPtr = (*ptr_to_globals).bufBase;
@@ -499,7 +460,7 @@ unsafe extern "C" fn readLines(mut file: *const libc::c_char, mut num: libc::c_i
   charCount = 0;
   cc = 0;
   printf(b"\"%s\", \x00" as *const u8 as *const libc::c_char, file);
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   loop {
     cp = memchr(
       (*ptr_to_globals).bufPtr as *const libc::c_void,
@@ -530,7 +491,7 @@ unsafe extern "C" fn readLines(mut file: *const libc::c_char, mut num: libc::c_i
       }
       if (*ptr_to_globals).bufUsed >= (*ptr_to_globals).bufSize {
         len = (*ptr_to_globals).bufSize * 3i32 / 2i32;
-        cp = xrealloc(
+        cp = crate::libbb::xfuncs_printf::xrealloc(
           (*ptr_to_globals).bufBase as *mut libc::c_void,
           len as size_t,
         ) as *mut libc::c_char;
@@ -540,7 +501,7 @@ unsafe extern "C" fn readLines(mut file: *const libc::c_char, mut num: libc::c_i
           .offset((*ptr_to_globals).bufUsed as isize);
         (*ptr_to_globals).bufSize = len
       }
-      cc = safe_read(
+      cc = crate::libbb::read::safe_read(
         fd,
         (*ptr_to_globals).bufPtr as *mut libc::c_void,
         ((*ptr_to_globals).bufSize - (*ptr_to_globals).bufUsed) as size_t,
@@ -553,7 +514,7 @@ unsafe extern "C" fn readLines(mut file: *const libc::c_char, mut num: libc::c_i
     }
   }
   if cc < 0 {
-    bb_simple_perror_msg(file);
+    crate::libbb::perror_msg::bb_simple_perror_msg(file);
     close(fd);
     return 0;
   }
@@ -598,11 +559,11 @@ unsafe extern "C" fn writeLines(
   charCount = 0;
   fd = creat(file, 0o666i32 as mode_t);
   if fd < 0 {
-    bb_simple_perror_msg(file);
+    crate::libbb::perror_msg::bb_simple_perror_msg(file);
     return 0;
   }
   printf(b"\"%s\", \x00" as *const u8 as *const libc::c_char, file);
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   lp = findLine(num1);
   if lp.is_null() {
     close(fd);
@@ -610,17 +571,17 @@ unsafe extern "C" fn writeLines(
   }
   loop {
     let fresh3 = num1;
-    num1 += 1;
+    num1 = num1 + 1;
     if !(fresh3 <= num2) {
       break;
     }
-    if full_write(
+    if crate::libbb::full_write::full_write(
       fd,
       (*lp).data.as_mut_ptr() as *const libc::c_void,
       (*lp).len as size_t,
     ) != (*lp).len as isize
     {
-      bb_simple_perror_msg(file);
+      crate::libbb::perror_msg::bb_simple_perror_msg(file);
       close(fd);
       return 0;
     }
@@ -629,7 +590,7 @@ unsafe extern "C" fn writeLines(
     lp = (*lp).next
   }
   if close(fd) < 0 {
-    bb_simple_perror_msg(file);
+    crate::libbb::perror_msg::bb_simple_perror_msg(file);
     return 0;
   }
   printf(
@@ -669,7 +630,7 @@ unsafe extern "C" fn printLines(
         (*lp).len as size_t,
       );
       let fresh4 = num1;
-      num1 += 1;
+      num1 = num1 + 1;
       setCurNum(fresh4);
       lp = (*lp).next
     } else {
@@ -691,11 +652,11 @@ unsafe extern "C" fn printLines(
         let fresh6 = cp;
         cp = cp.offset(1);
         ch = *fresh6 as libc::c_uchar as libc::c_int;
-        fputc_printable(ch | PRINTABLE_META as libc::c_int, stdout);
+        crate::libbb::printable::fputc_printable(ch | PRINTABLE_META as libc::c_int, stdout);
       }
       fputs_unlocked(b"$\n\x00" as *const u8 as *const libc::c_char, stdout);
       let fresh7 = num1;
-      num1 += 1;
+      num1 = num1 + 1;
       setCurNum(fresh7);
       lp = (*lp).next
     }
@@ -799,7 +760,9 @@ unsafe extern "C" fn subCommand(
   }) != 0
     || *cp as libc::c_int == '\u{0}' as i32
   {
-    bb_simple_error_msg(b"bad delimiter for substitute\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg(
+      b"bad delimiter for substitute\x00" as *const u8 as *const libc::c_char,
+    );
     return;
   }
   let fresh9 = cp;
@@ -808,7 +771,7 @@ unsafe extern "C" fn subCommand(
   oldStr = cp;
   cp = strchr(cp, delim);
   if cp.is_null() {
-    bb_simple_error_msg(
+    crate::libbb::verror_msg::bb_simple_error_msg(
       b"missing 2nd delimiter for substitute\x00" as *const u8 as *const libc::c_char,
     );
     return;
@@ -832,7 +795,7 @@ unsafe extern "C" fn subCommand(
       103 => globalFlag = 1i32,
       112 => printFlag = 1i32,
       _ => {
-        bb_simple_error_msg(
+        crate::libbb::verror_msg::bb_simple_error_msg(
           b"unknown option for substitute\x00" as *const u8 as *const libc::c_char,
         );
         return;
@@ -841,7 +804,9 @@ unsafe extern "C" fn subCommand(
   }
   if *oldStr as libc::c_int == '\u{0}' as i32 {
     if *bb_common_bufsiz1.as_mut_ptr().offset(0) as libc::c_int == '\u{0}' as i32 {
-      bb_simple_error_msg(b"no previous search string\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg(
+        b"no previous search string\x00" as *const u8 as *const libc::c_char,
+      );
       return;
     }
     oldStr = bb_common_bufsiz1.as_mut_ptr()
@@ -956,7 +921,7 @@ unsafe extern "C" fn subCommand(
     }
   }
   if didSub == 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"no substitutions found for \"%s\"\x00" as *const u8 as *const libc::c_char,
       oldStr,
     );
@@ -981,7 +946,7 @@ unsafe extern "C" fn doCommands() {
      * 0  on ctrl-C,
      * >0 length of input string, including terminating '\n'
      */
-    len = read_line_input(
+    len = crate::libbb::lineedit::read_line_input(
       0 as *mut line_input_t,
       b": \x00" as *const u8 as *const libc::c_char,
       buf.as_mut_ptr(),
@@ -1056,7 +1021,9 @@ unsafe extern "C" fn doCommands() {
       }
       102 => {
         if *cp as libc::c_int != '\u{0}' as i32 && *cp as libc::c_int != ' ' as i32 {
-          bb_simple_error_msg(b"bad file command\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::verror_msg::bb_simple_error_msg(
+            b"bad file command\x00" as *const u8 as *const libc::c_char,
+          );
         } else {
           cp = skip_whitespace(cp);
           if *cp as libc::c_int == '\u{0}' as i32 {
@@ -1070,7 +1037,7 @@ unsafe extern "C" fn doCommands() {
             }
           } else {
             free((*ptr_to_globals).fileName as *mut libc::c_void);
-            (*ptr_to_globals).fileName = xstrdup(cp)
+            (*ptr_to_globals).fileName = crate::libbb::xfuncs_printf::xstrdup(cp)
           }
         }
       }
@@ -1085,7 +1052,9 @@ unsafe extern "C" fn doCommands() {
         if (*cp as libc::c_int - 'a' as i32) as libc::c_uint >= 26i32 as libc::c_uint
           || *cp.offset(1) as libc::c_int != 0
         {
-          bb_simple_error_msg(b"bad mark name\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::verror_msg::bb_simple_error_msg(
+            b"bad mark name\x00" as *const u8 as *const libc::c_char,
+          );
         } else {
           (*ptr_to_globals).marks[(*cp as libc::c_int - 'a' as i32) as libc::c_uint as usize] = num2
         }
@@ -1099,12 +1068,14 @@ unsafe extern "C" fn doCommands() {
       113 => {
         cp = skip_whitespace(cp);
         if have1 as libc::c_int != 0 || *cp as libc::c_int != 0 {
-          bb_simple_error_msg(b"bad quit command\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::verror_msg::bb_simple_error_msg(
+            b"bad quit command\x00" as *const u8 as *const libc::c_char,
+          );
         } else {
           if (*ptr_to_globals).dirty == 0 {
             return;
           }
-          len = read_line_input(
+          len = crate::libbb::lineedit::read_line_input(
             0 as *mut line_input_t,
             b"Really quit? \x00" as *const u8 as *const libc::c_char,
             buf.as_mut_ptr(),
@@ -1123,18 +1094,22 @@ unsafe extern "C" fn doCommands() {
       }
       114 => {
         if *cp as libc::c_int != '\u{0}' as i32 && *cp as libc::c_int != ' ' as i32 {
-          bb_simple_error_msg(b"bad read command\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::verror_msg::bb_simple_error_msg(
+            b"bad read command\x00" as *const u8 as *const libc::c_char,
+          );
         } else {
           cp = skip_whitespace(cp);
           if *cp as libc::c_int == '\u{0}' as i32 {
-            bb_simple_error_msg(b"no file name\x00" as *const u8 as *const libc::c_char);
+            crate::libbb::verror_msg::bb_simple_error_msg(
+              b"no file name\x00" as *const u8 as *const libc::c_char,
+            );
           } else {
             if have1 == 0 {
               num1 = (*ptr_to_globals).lastNum
             }
             if !(readLines(cp, num1 + 1i32) != 0) {
               if (*ptr_to_globals).fileName.is_null() {
-                (*ptr_to_globals).fileName = xstrdup(cp)
+                (*ptr_to_globals).fileName = crate::libbb::xfuncs_printf::xstrdup(cp)
               }
             }
           }
@@ -1145,13 +1120,15 @@ unsafe extern "C" fn doCommands() {
       }
       119 => {
         if *cp as libc::c_int != '\u{0}' as i32 && *cp as libc::c_int != ' ' as i32 {
-          bb_simple_error_msg(b"bad write command\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::verror_msg::bb_simple_error_msg(
+            b"bad write command\x00" as *const u8 as *const libc::c_char,
+          );
         } else {
           cp = skip_whitespace(cp);
           if *cp as libc::c_int == '\u{0}' as i32 {
             cp = (*ptr_to_globals).fileName;
             if cp.is_null() {
-              bb_simple_error_msg(
+              crate::libbb::verror_msg::bb_simple_error_msg(
                 b"no file name specified\x00" as *const u8 as *const libc::c_char,
               );
               current_block_86 = 13505557363059842426;
@@ -1199,7 +1176,9 @@ unsafe extern "C" fn doCommands() {
       },
       46 => {
         if have1 != 0 {
-          bb_simple_error_msg(b"no arguments allowed\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::verror_msg::bb_simple_error_msg(
+            b"no arguments allowed\x00" as *const u8 as *const libc::c_char,
+          );
         } else {
           printLines((*ptr_to_globals).curNum, (*ptr_to_globals).curNum, 0);
         }
@@ -1220,7 +1199,9 @@ unsafe extern "C" fn doCommands() {
         }
       }
       _ => {
-        bb_simple_error_msg(b"unimplemented command\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg(
+          b"unimplemented command\x00" as *const u8 as *const libc::c_char,
+        );
       }
     }
   }
@@ -1233,7 +1214,8 @@ pub unsafe extern "C" fn ed_main(
   let ref mut fresh14 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
-  *fresh14 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh14 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).bufSize = INITBUF_SIZE as libc::c_int;
   (*ptr_to_globals).bufBase = xmalloc((*ptr_to_globals).bufSize as size_t) as *mut libc::c_char;
@@ -1241,7 +1223,7 @@ pub unsafe extern "C" fn ed_main(
   (*ptr_to_globals).lines.next = &mut (*ptr_to_globals).lines;
   (*ptr_to_globals).lines.prev = &mut (*ptr_to_globals).lines;
   if !(*argv.offset(1)).is_null() {
-    (*ptr_to_globals).fileName = xstrdup(*argv.offset(1));
+    (*ptr_to_globals).fileName = crate::libbb::xfuncs_printf::xstrdup(*argv.offset(1));
     if readLines((*ptr_to_globals).fileName, 1i32) == 0 {
       return 0;
     }

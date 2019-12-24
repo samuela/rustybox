@@ -17,22 +17,6 @@ extern "C" {
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
 
-  #[no_mangle]
-  fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn die_if_ferror(file: *mut FILE, msg: *const libc::c_char);
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
 }
 
 pub const OPT_c: C2RustUnnamed = 1;
@@ -94,7 +78,7 @@ pub unsafe extern "C" fn uniq_main(
   skip_chars = 0 as libc::c_uint;
   skip_fields = skip_chars;
   max_chars = 2147483647i32 as libc::c_uint;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"cduf:+s:+w:+i\x00" as *const u8 as *const libc::c_char,
     &mut skip_fields as *mut libc::c_uint,
@@ -109,19 +93,22 @@ pub unsafe extern "C" fn uniq_main(
       || *input_filename.offset(1) as libc::c_int != 0
     {
       close(0i32);
-      xopen(input_filename, 0);
+      crate::libbb::xfuncs_printf::xopen(input_filename, 0);
       /* fd will be 0 */
     }
     output = *argv.offset(1);
     if !output.is_null() {
       if !(*argv.offset(2)).is_null() {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
       if *output.offset(0) as libc::c_int != '-' as i32 || *output.offset(1) as libc::c_int != 0 {
         // Won't work with "uniq - FILE" and closed stdin:
         //close(STDOUT_FILENO);
         //xopen(output, O_WRONLY | O_CREAT | O_TRUNC);
-        xmove_fd(xopen(output, 0o1i32 | 0o100i32 | 0o1000i32), 1i32); /* prime the pump */
+        crate::libbb::xfuncs_printf::xmove_fd(
+          crate::libbb::xfuncs_printf::xopen(output, 0o1i32 | 0o100i32 | 0o1000i32),
+          1i32,
+        ); /* prime the pump */
       }
     }
   }
@@ -138,7 +125,7 @@ pub unsafe extern "C" fn uniq_main(
     loop
     /* gnu uniq ignores newlines */
     {
-      cur_line = xmalloc_fgetline(stdin);
+      cur_line = crate::libbb::get_line_from_file::xmalloc_fgetline(stdin);
       if cur_line.is_null() {
         break;
       }
@@ -146,7 +133,7 @@ pub unsafe extern "C" fn uniq_main(
       i = skip_fields;
       while i != 0 {
         cur_compare = skip_whitespace(cur_compare);
-        cur_compare = skip_non_whitespace(cur_compare);
+        cur_compare = crate::libbb::skip_whitespace::skip_non_whitespace(cur_compare);
         i = i.wrapping_sub(1)
       }
       i = skip_chars;
@@ -187,6 +174,6 @@ pub unsafe extern "C" fn uniq_main(
       break;
     }
   }
-  die_if_ferror(stdin, input_filename);
-  fflush_stdout_and_exit(0i32);
+  crate::libbb::xfuncs_printf::die_if_ferror(stdin, input_filename);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
 }

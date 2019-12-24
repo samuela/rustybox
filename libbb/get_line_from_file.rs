@@ -4,10 +4,7 @@ use libc::FILE;
 extern "C" {
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_die_memory_exhausted() -> !;
+
 }
 
 /*
@@ -35,9 +32,9 @@ pub unsafe extern "C" fn bb_get_chunk_from_file(
     /* grow the line buffer as necessary */
     if idx & 0xffi32 as libc::c_ulong == 0 {
       if idx == (-1i32 as size_t).wrapping_sub(0xffi32 as libc::c_ulong) {
-        bb_die_memory_exhausted();
+        crate::libbb::xfuncs_printf::bb_die_memory_exhausted();
       }
-      linebuf = xrealloc(
+      linebuf = crate::libbb::xfuncs_printf::xrealloc(
         linebuf as *mut libc::c_void,
         idx.wrapping_add(0x100i32 as libc::c_ulong),
       ) as *mut libc::c_char
@@ -62,7 +59,7 @@ pub unsafe extern "C" fn bb_get_chunk_from_file(
     //	free(linebuf);
     //	return NULL;
     //}
-    linebuf = xrealloc(
+    linebuf = crate::libbb::xfuncs_printf::xrealloc(
       linebuf as *mut libc::c_void,
       idx.wrapping_add(1i32 as libc::c_ulong),
     ) as *mut libc::c_char;

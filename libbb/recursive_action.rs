@@ -8,16 +8,6 @@ use libc::opendir;
 use libc::readdir;
 use libc::stat;
 use libc::DIR;
-extern "C" {
-
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn concat_subpath_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-}
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
@@ -322,7 +312,10 @@ pub unsafe extern "C" fn recursive_action(
             }
             let mut nextFile: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
             let mut s: libc::c_int = 0;
-            nextFile = concat_subpath_file(fileName, (*next).d_name.as_mut_ptr());
+            nextFile = crate::libbb::concat_subpath_file::concat_subpath_file(
+              fileName,
+              (*next).d_name.as_mut_ptr(),
+            );
             if nextFile.is_null() {
               continue;
             }
@@ -373,7 +366,7 @@ pub unsafe extern "C" fn recursive_action(
   /* (i.e. it doesn't silently return with exit code 1) */
   /* To trigger: "find -exec rm -rf {} \;" */
   if flags & ACTION_QUIET as libc::c_int as libc::c_uint == 0 {
-    bb_simple_perror_msg(fileName);
+    crate::libbb::perror_msg::bb_simple_perror_msg(fileName);
   }
   return 0;
 }

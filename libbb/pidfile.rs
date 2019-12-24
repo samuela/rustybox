@@ -5,7 +5,6 @@ use libc::close;
 use libc::fstat;
 use libc::getpid;
 use libc::open;
-use libc::ssize_t;
 use libc::stat;
 use libc::unlink;
 extern "C" {
@@ -18,14 +17,6 @@ extern "C" {
     _: ...
   ) -> libc::c_int;
 
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn utoa_to_buf(
-    n: libc::c_uint,
-    buf: *mut libc::c_char,
-    buflen: libc::c_uint,
-  ) -> *mut libc::c_char;
 }
 
 /*
@@ -58,13 +49,13 @@ pub unsafe extern "C" fn write_pidfile(mut path: *const libc::c_char) {
     as libc::c_int as smallint;
   if wrote_pidfile != 0 {
     /* few bytes larger, but doesn't use stdio */
-    end = utoa_to_buf(
+    end = crate::libbb::xfuncs::utoa_to_buf(
       getpid() as libc::c_uint,
       buf.as_mut_ptr(),
       ::std::mem::size_of::<[libc::c_char; 14]>() as libc::c_ulong as libc::c_uint,
     );
     *end = '\n' as i32 as libc::c_char;
-    full_write(
+    crate::libbb::full_write::full_write(
       pid_fd,
       buf.as_mut_ptr() as *const libc::c_void,
       (end.wrapping_offset_from(buf.as_mut_ptr()) as libc::c_long + 1) as size_t,

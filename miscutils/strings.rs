@@ -13,26 +13,10 @@ extern "C" {
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn fclose_if_not_stdin(file: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
+
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
+
 }
 
 use crate::librb::size_t;
@@ -55,7 +39,7 @@ pub unsafe extern "C" fn strings_main(
   /* default for -o */
   let mut radix: *const libc::c_char = b"o\x00" as *const u8 as *const libc::c_char;
   let mut radix_fmt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     b"afon:t:\x00" as *const u8 as *const libc::c_char,
     &mut n_arg as *mut *const libc::c_char,
@@ -64,24 +48,28 @@ pub unsafe extern "C" fn strings_main(
   /* -a is our default behaviour */
   /*argc -= optind;*/
   argv = argv.offset(optind as isize);
-  n = xatou_range(n_arg, 1i32 as libc::c_uint, 2147483647i32 as libc::c_uint) as libc::c_int;
-  string = xzalloc((n + 1i32) as size_t) as *mut libc::c_char;
+  n = crate::libbb::xatonum::xatou_range(n_arg, 1i32 as libc::c_uint, 2147483647i32 as libc::c_uint)
+    as libc::c_int;
+  string = crate::libbb::xfuncs_printf::xzalloc((n + 1i32) as size_t) as *mut libc::c_char;
   n -= 1;
   if *radix.offset(0) as libc::c_int != 'd' as i32
     && *radix.offset(0) as libc::c_int != 'o' as i32
     && *radix.offset(0) as libc::c_int != 'x' as i32
     || *radix.offset(1) as libc::c_int != 0
   {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
-  radix_fmt = xasprintf(b"%%7l%s \x00" as *const u8 as *const libc::c_char, radix);
+  radix_fmt = crate::libbb::xfuncs_printf::xasprintf(
+    b"%%7l%s \x00" as *const u8 as *const libc::c_char,
+    radix,
+  );
   if (*argv).is_null() {
     fmt = b"{%s}: \x00" as *const u8 as *const libc::c_char;
     argv = argv.offset(-1);
     *argv = bb_msg_standard_input.as_ptr() as *mut libc::c_char
   }
   loop {
-    file = fopen_or_warn_stdin(*argv);
+    file = crate::libbb::wfopen_input::fopen_or_warn_stdin(*argv);
     if file.is_null() {
       status = 1i32
     } else {
@@ -92,7 +80,7 @@ pub unsafe extern "C" fn strings_main(
         if (c - 0x20i32) as libc::c_uint <= (0x7ei32 - 0x20i32) as libc::c_uint || c == '\t' as i32
         {
           if count > n as libc::c_uint {
-            bb_putchar(c);
+            crate::libbb::xfuncs_printf::bb_putchar(c);
           } else {
             *string.offset(count as isize) = c as libc::c_char;
             if count == n as libc::c_uint {
@@ -108,7 +96,7 @@ pub unsafe extern "C" fn strings_main(
           }
         } else {
           if count > n as libc::c_uint {
-            bb_putchar('\n' as i32);
+            crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
           }
           count = 0 as libc::c_uint
         }
@@ -117,12 +105,12 @@ pub unsafe extern "C" fn strings_main(
           break;
         }
       }
-      fclose_if_not_stdin(file);
+      crate::libbb::fclose_nonstdin::fclose_if_not_stdin(file);
     }
     argv = argv.offset(1);
     if (*argv).is_null() {
       break;
     }
   }
-  fflush_stdout_and_exit(status);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(status);
 }

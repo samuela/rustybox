@@ -14,20 +14,6 @@ extern "C" {
   #[no_mangle]
   fn fdatasync(__fildes: libc::c_int) -> libc::c_int;
 
-  #[no_mangle]
-  fn bb_copyfd_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t) -> off_t;
-  #[no_mangle]
-  fn xunlink(pathname: *const libc::c_char);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn xclose(fd: libc::c_int);
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
 }
 
 pub const OPT_u: C2RustUnnamed = 2;
@@ -80,18 +66,20 @@ pub unsafe extern "C" fn shred_main(
   let mut zero_fd: libc::c_int = 0;
   let mut num_iter: libc::c_uint = 3i32 as libc::c_uint;
   let mut opt: libc::c_uint = 0;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"fuzn:+vx\x00" as *const u8 as *const libc::c_char,
     &mut num_iter as *mut libc::c_uint,
   );
   argv = argv.offset(optind as isize);
-  zero_fd = xopen(b"/dev/zero\x00" as *const u8 as *const libc::c_char, 0);
+  zero_fd =
+    crate::libbb::xfuncs_printf::xopen(b"/dev/zero\x00" as *const u8 as *const libc::c_char, 0);
   if num_iter != 0 as libc::c_uint {
-    rand_fd = xopen(b"/dev/urandom\x00" as *const u8 as *const libc::c_char, 0)
+    rand_fd =
+      crate::libbb::xfuncs_printf::xopen(b"/dev/urandom\x00" as *const u8 as *const libc::c_char, 0)
   }
   if (*argv).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   loop {
     let mut sb: stat = std::mem::zeroed();
@@ -112,26 +100,26 @@ pub unsafe extern "C" fn shred_main(
       }
     }
     if fd < 0 {
-      fd = xopen(fname, 0o1i32)
+      fd = crate::libbb::xfuncs_printf::xopen(fname, 0o1i32)
     }
     if fstat(fd, &mut sb) == 0 && sb.st_size > 0 {
       let mut size: off_t = sb.st_size;
       i = 0 as libc::c_uint;
       while i < num_iter {
-        bb_copyfd_size(rand_fd, fd, size);
+        crate::libbb::copyfd::bb_copyfd_size(rand_fd, fd, size);
         fdatasync(fd);
-        xlseek(fd, 0 as off_t, 0);
+        crate::libbb::xfuncs_printf::xlseek(fd, 0 as off_t, 0);
         i = i.wrapping_add(1)
       }
       if opt & OPT_z as libc::c_int as libc::c_uint != 0 {
-        bb_copyfd_size(zero_fd, fd, size);
+        crate::libbb::copyfd::bb_copyfd_size(zero_fd, fd, size);
         fdatasync(fd);
       }
       if opt & OPT_u as libc::c_int as libc::c_uint != 0 {
         ftruncate(fd, 0 as off64_t);
-        xunlink(fname);
+        crate::libbb::xfuncs_printf::xunlink(fname);
       }
-      xclose(fd);
+      crate::libbb::xfuncs_printf::xclose(fd);
     }
   }
   return 0;

@@ -15,38 +15,6 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-  #[no_mangle]
-  fn xstrtou(str: *const libc::c_char, b: libc::c_int) -> libc::c_uint;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 }
 
 pub type __loff_t = off64_t;
@@ -56,16 +24,16 @@ pub type u32 = libc::c_uint;
 pub type __u64 = libc::c_ulonglong;
 pub type __kernel_loff_t = libc::c_longlong;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct mtd_oob_buf {
   pub start: u32,
   pub length: u32,
   pub ptr: *mut libc::c_uchar,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct mtd_info_user {
   pub type_0: __u8,
   pub flags: u32,
@@ -96,13 +64,13 @@ unsafe extern "C" fn dump_bad(
   );
   count = 0 as libc::c_uint;
   while count < len {
-    xwrite(
+    crate::libbb::xfuncs_printf::xwrite(
       1i32,
       buf.as_mut_ptr() as *const libc::c_void,
       (*meminfo).writesize as size_t,
     );
     if oob != 0 {
-      xwrite(
+      crate::libbb::xfuncs_printf::xwrite(
         1i32,
         buf.as_mut_ptr() as *const libc::c_void,
         (*meminfo).oobsize as size_t,
@@ -120,7 +88,7 @@ unsafe extern "C" fn next_good_eraseblock(
     let mut offs: loff_t = 0;
     if block_offset >= (*meminfo).size {
       if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(4) as libc::c_int != 'd' as i32) {
-        bb_simple_error_msg_and_die(
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
           b"not enough space in MTD device\x00" as *const u8 as *const libc::c_char,
         );
       }
@@ -128,7 +96,7 @@ unsafe extern "C" fn next_good_eraseblock(
       /* let the caller exit */
     }
     offs = block_offset as loff_t;
-    if bb_xioctl(
+    if crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       ((1u32 << 0 + 8i32 + 8i32 + 14i32
         | (('M' as i32) << 0 + 8i32) as libc::c_uint
@@ -176,18 +144,14 @@ pub unsafe extern "C" fn nandwrite_main(
     oobsize: 0,
     padding: 0,
   };
-  let mut oob: mtd_oob_buf = mtd_oob_buf {
-    start: 0,
-    length: 0,
-    ptr: std::ptr::null_mut(),
-  };
+  let mut oob: mtd_oob_buf = std::mem::zeroed();
   let mut filebuf: *mut libc::c_uchar = std::ptr::null_mut();
   let mut opt_s: *const libc::c_char = b"0\x00" as *const u8 as *const libc::c_char;
   let mut opt_f: *const libc::c_char = b"-\x00" as *const u8 as *const libc::c_char;
   let mut opt_l: *const libc::c_char = std::ptr::null();
   let mut opt_bb: *const libc::c_char = std::ptr::null();
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(4) as libc::c_int == 'd' as i32) {
-    opts = getopt32long(
+    opts = crate::libbb::getopt32::getopt32long(
       argv,
       b"^ons:f:l:\x00=1\x00" as *const u8 as *const libc::c_char,
       b"bb\x00\x01\xff\x00" as *const u8 as *const libc::c_char,
@@ -197,7 +161,7 @@ pub unsafe extern "C" fn nandwrite_main(
       &mut opt_bb as *mut *const libc::c_char,
     )
   } else {
-    opts = getopt32(
+    opts = crate::libbb::getopt32::getopt32(
       argv,
       b"^pns:\x00-1:?2\x00" as *const u8 as *const libc::c_char,
       &mut opt_s as *mut *const libc::c_char,
@@ -211,7 +175,7 @@ pub unsafe extern "C" fn nandwrite_main(
     opt_f = *argv.offset(1)
   }
   if !(*opt_f.offset(0) as libc::c_int == '-' as i32 && *opt_f.offset(1) == 0) {
-    let mut tmp_fd: libc::c_int = xopen(
+    let mut tmp_fd: libc::c_int = crate::libbb::xfuncs_printf::xopen(
       opt_f,
       if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(4) as libc::c_int == 'd' as i32) {
         (0o1i32 | 0o1000i32) | 0o100i32
@@ -219,7 +183,7 @@ pub unsafe extern "C" fn nandwrite_main(
         0
       },
     );
-    xmove_fd(
+    crate::libbb::xfuncs_printf::xmove_fd(
       tmp_fd,
       if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(4) as libc::c_int == 'd' as i32) {
         1i32
@@ -228,7 +192,7 @@ pub unsafe extern "C" fn nandwrite_main(
       },
     );
   }
-  fd = xopen(
+  fd = crate::libbb::xfuncs_printf::xopen(
     *argv.offset(0),
     if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(4) as libc::c_int != 'd' as i32) {
       0o2i32
@@ -236,7 +200,7 @@ pub unsafe extern "C" fn nandwrite_main(
       0
     },
   );
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     ((2u32 << 0 + 8i32 + 8i32 + 14i32
       | (('M' as i32) << 0 + 8i32) as libc::c_uint
@@ -247,7 +211,7 @@ pub unsafe extern "C" fn nandwrite_main(
     b"MEMGETINFO\x00" as *const u8 as *const libc::c_char,
   );
   if opts & (1i32 << 1i32) as libc::c_uint != 0 {
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       0u32 << 0 + 8i32 + 8i32 + 14i32
         | (('M' as i32) << 0 + 8i32) as libc::c_uint
@@ -257,12 +221,12 @@ pub unsafe extern "C" fn nandwrite_main(
       b"MTDFILEMODE\x00" as *const u8 as *const libc::c_char,
     );
   }
-  mtdoffset = xstrtou(opt_s, 0);
+  mtdoffset = crate::libbb::xatonum::xstrtou(opt_s, 0);
   if 1i32 != 0
     && (1i32 == 0 || *applet_name.offset(4) as libc::c_int == 'd' as i32)
     && opts & (1i32 << 4i32) as libc::c_uint != 0
   {
-    let mut length: libc::c_uint = xstrtou(opt_l, 0);
+    let mut length: libc::c_uint = crate::libbb::xatonum::xstrtou(opt_l, 0);
     if length < meminfo.size.wrapping_sub(mtdoffset) {
       end_addr = mtdoffset.wrapping_add(length)
     }
@@ -276,13 +240,13 @@ pub unsafe extern "C" fn nandwrite_main(
     } else if strcmp(b"padbad\x00" as *const u8 as *const libc::c_char, opt_bb) == 0 {
       bb_method = (1i32 << 0) as libc::c_uint
     } else {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
   }
   /* Pull it into a CPU register (hopefully) - smaller code that way */
   meminfo_writesize = meminfo.writesize;
   if mtdoffset & meminfo_writesize.wrapping_sub(1i32 as libc::c_uint) != 0 {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"start address is not page aligned\x00" as *const u8 as *const libc::c_char,
     );
   }
@@ -375,9 +339,9 @@ pub unsafe extern "C" fn nandwrite_main(
         break;
       }
     }
-    xlseek(fd, mtdoffset as off_t, 0);
+    crate::libbb::xfuncs_printf::xlseek(fd, mtdoffset as off_t, 0);
     /* get some more data from input */
-    cnt = full_read(
+    cnt = crate::libbb::read::full_read(
       input_fd,
       filebuf as *mut libc::c_void,
       meminfo_writesize as size_t,
@@ -387,10 +351,12 @@ pub unsafe extern "C" fn nandwrite_main(
     }
     if cnt < meminfo_writesize as isize {
       if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(4) as libc::c_int == 'd' as i32) {
-        bb_simple_error_msg_and_die(b"short read\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+          b"short read\x00" as *const u8 as *const libc::c_char,
+        );
       }
       if opts & (1i32 << 0) as libc::c_uint == 0 {
-        bb_simple_error_msg_and_die(
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
           b"input size is not rounded up to page size, use -p to zero pad\x00" as *const u8
             as *const libc::c_char,
         );
@@ -402,7 +368,7 @@ pub unsafe extern "C" fn nandwrite_main(
         (meminfo_writesize as isize - cnt) as u64,
       );
     }
-    xwrite(
+    crate::libbb::xfuncs_printf::xwrite(
       output_fd,
       filebuf as *const libc::c_void,
       meminfo_writesize as size_t,
@@ -413,7 +379,7 @@ pub unsafe extern "C" fn nandwrite_main(
     {
       /* Dump OOB data */
       oob.start = mtdoffset;
-      bb_xioctl(
+      crate::libbb::xfuncs_printf::bb_xioctl(
         fd,
         (((2u32 | 1u32) << 0 + 8i32 + 8i32 + 14i32
           | (('M' as i32) << 0 + 8i32) as libc::c_uint
@@ -423,7 +389,7 @@ pub unsafe extern "C" fn nandwrite_main(
         &mut oob as *mut mtd_oob_buf as *mut libc::c_void,
         b"MEMREADOOB\x00" as *const u8 as *const libc::c_char,
       );
-      xwrite(
+      crate::libbb::xfuncs_printf::xwrite(
         output_fd,
         oobbuf as *const libc::c_void,
         meminfo.oobsize as size_t,
@@ -436,9 +402,11 @@ pub unsafe extern "C" fn nandwrite_main(
   }
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(4) as libc::c_int != 'd' as i32) && cnt != 0 {
     /* We filled entire MTD, but did we reach EOF on input? */
-    if full_read(0, filebuf as *mut libc::c_void, meminfo_writesize as size_t) != 0 {
+    if crate::libbb::read::full_read(0, filebuf as *mut libc::c_void, meminfo_writesize as size_t)
+      != 0
+    {
       /* no */
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"not enough space in MTD device\x00" as *const u8 as *const libc::c_char,
       );
     }

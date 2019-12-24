@@ -1,5 +1,6 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
+use crate::librb::socklen_t;
 use libc;
 use libc::chdir;
 use libc::close;
@@ -19,11 +20,15 @@ use libc::opendir;
 use libc::pid_t;
 use libc::putchar_unlocked;
 use libc::rename;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::ssize_t;
 use libc::stat;
 use libc::strchr;
 use libc::uid_t;
 use libc::unlink;
+use libc::DIR;
 extern "C" {
 
   pub type sockaddr_x25;
@@ -136,8 +141,6 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn monotonic_us() -> libc::c_ulonglong;
   /* must be directly before hash[] */
   /* always correctly aligned for uint64_t */
   /* TLS benefits from knowing that sha1 and sha256 share these. Give them "agnostic" names too */
@@ -154,40 +157,18 @@ extern "C" {
   /* "BusyBox vN.N.N (timestamp or extra_version)" */
   #[no_mangle]
   static bb_msg_memory_exhausted: [libc::c_char; 0];
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn kill_myself_with_sig(sig: libc::c_int) -> !;
+
   #[no_mangle]
   fn strerror(_: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
   #[no_mangle]
   static bb_msg_standard_output: [libc::c_char; 0];
-  #[no_mangle]
-  fn wait_for_exitstatus(pid: pid_t) -> libc::c_int;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_verror_msg(s: *const libc::c_char, p: ::std::ffi::VaList, strerr: *const libc::c_char);
+
 }
 pub type __builtin_va_list = [__va_list_tag; 1];
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __va_list_tag {
   pub gp_offset: libc::c_uint,
   pub fp_offset: libc::c_uint,
@@ -196,48 +177,20 @@ pub struct __va_list_tag {
 }
 
 pub type __socklen_t = libc::c_uint;
-pub type socklen_t = __socklen_t;
-use libc::sa_family_t;
-use libc::sockaddr;
-use libc::DIR;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr__: *const sockaddr,
   pub __sockaddr_at__: *const sockaddr_at,
@@ -281,7 +234,7 @@ pub type va_list = __builtin_va_list;
  * succeeded. */
 #[no_mangle]
 pub unsafe extern "C" fn bb_die_memory_exhausted() -> ! {
-  bb_simple_error_msg_and_die(bb_msg_memory_exhausted.as_ptr());
+  crate::libbb::verror_msg::bb_simple_error_msg_and_die(bb_msg_memory_exhausted.as_ptr());
 }
 /* dmalloc provides variants of these that do abort() on failure.
  * Since dmalloc's prototypes overwrite the impls here as they are
@@ -292,7 +245,7 @@ pub unsafe extern "C" fn bb_die_memory_exhausted() -> ! {
 pub unsafe extern "C" fn malloc_or_warn(mut size: size_t) -> *mut libc::c_void {
   let mut ptr: *mut libc::c_void = malloc(size);
   if ptr.is_null() && size != 0 as libc::c_ulong {
-    bb_simple_error_msg(bb_msg_memory_exhausted.as_ptr());
+    crate::libbb::verror_msg::bb_simple_error_msg(bb_msg_memory_exhausted.as_ptr());
   }
   return ptr;
 }
@@ -349,7 +302,9 @@ pub unsafe extern "C" fn xstrndup(
   let mut m: libc::c_int = 0;
   let mut t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if false && s.is_null() {
-    bb_simple_error_msg_and_die(b"xstrndup bug\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"xstrndup bug\x00" as *const u8 as *const libc::c_char,
+    );
   }
   /* We can just xmalloc(n+1) and strncpy into it, */
   /* but think about xstrndup("abc", 10000) wastage! */
@@ -387,7 +342,7 @@ pub unsafe extern "C" fn xfopen(
 ) -> *mut FILE {
   let mut fp: *mut FILE = fopen(path, mode);
   if fp.is_null() {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
       path,
     );
@@ -404,7 +359,7 @@ pub unsafe extern "C" fn xopen3(
   let mut ret: libc::c_int = 0;
   ret = open(pathname, flags, mode);
   if ret < 0 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
       pathname,
     );
@@ -429,7 +384,7 @@ pub unsafe extern "C" fn open3_or_warn(
   let mut ret: libc::c_int = 0;
   ret = open(pathname, flags, mode);
   if ret < 0 {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
       pathname,
     );
@@ -472,7 +427,7 @@ pub unsafe extern "C" fn xopen_as_uid_gid(
 #[no_mangle]
 pub unsafe extern "C" fn xunlink(mut pathname: *const libc::c_char) {
   if unlink(pathname) != 0 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t remove file \'%s\'\x00" as *const u8 as *const libc::c_char,
       pathname,
     );
@@ -484,7 +439,7 @@ pub unsafe extern "C" fn xrename(
   mut newpath: *const libc::c_char,
 ) {
   if rename(oldpath, newpath) != 0 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t move \'%s\' to \'%s\'\x00" as *const u8 as *const libc::c_char,
       oldpath,
       newpath,
@@ -498,7 +453,7 @@ pub unsafe extern "C" fn rename_or_warn(
 ) -> libc::c_int {
   let mut n: libc::c_int = rename(oldpath, newpath);
   if n != 0 {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"can\'t move \'%s\' to \'%s\'\x00" as *const u8 as *const libc::c_char,
       oldpath,
       newpath,
@@ -509,13 +464,15 @@ pub unsafe extern "C" fn rename_or_warn(
 #[no_mangle]
 pub unsafe extern "C" fn xpipe(mut filedes: *mut libc::c_int) {
   if pipe(filedes) != 0 {
-    bb_simple_perror_msg_and_die(b"can\'t create pipe\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"can\'t create pipe\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 #[no_mangle]
 pub unsafe extern "C" fn xdup2(mut from: libc::c_int, mut to: libc::c_int) {
   if dup2(from, to) != to {
-    bb_simple_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
       b"can\'t duplicate file descriptor\x00" as *const u8 as *const libc::c_char,
     );
   };
@@ -538,14 +495,14 @@ pub unsafe extern "C" fn xwrite(
   mut count: size_t,
 ) {
   if count != 0 {
-    let mut size: ssize_t = full_write(fd, buf, count);
+    let mut size: ssize_t = crate::libbb::full_write::full_write(fd, buf, count);
     if size as size_t != count {
       /*
        * Two cases: write error immediately;
        * or some writes succeeded, then we hit an error.
        * In either case, errno is set.
        */
-      bb_simple_perror_msg_and_die(if size >= 0 {
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(if size >= 0 {
         b"short write\x00" as *const u8 as *const libc::c_char
       } else {
         b"write error\x00" as *const u8 as *const libc::c_char
@@ -560,7 +517,9 @@ pub unsafe extern "C" fn xwrite_str(mut fd: libc::c_int, mut str: *const libc::c
 #[no_mangle]
 pub unsafe extern "C" fn xclose(mut fd: libc::c_int) {
   if close(fd) != 0 {
-    bb_simple_perror_msg_and_die(b"close failed\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"close failed\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 // Die with an error message if we can't lseek to the right spot.
@@ -572,7 +531,7 @@ pub unsafe extern "C" fn xlseek(
 ) -> off_t {
   let mut off: off_t = lseek(fd, offset, whence);
   if off == -1i32 as off_t {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"lseek(%lu, %d)\x00" as *const u8 as *const libc::c_char,
       offset,
       whence,
@@ -584,7 +543,7 @@ pub unsafe extern "C" fn xlseek(
 pub unsafe extern "C" fn xmkstemp(mut template: *mut libc::c_char) -> libc::c_int {
   let mut fd: libc::c_int = mkstemp(template);
   if fd < 0 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t create temp file \'%s\'\x00" as *const u8 as *const libc::c_char,
       template,
     );
@@ -596,7 +555,7 @@ pub unsafe extern "C" fn xmkstemp(mut template: *mut libc::c_char) -> libc::c_in
 pub unsafe extern "C" fn die_if_ferror(mut fp: *mut FILE, mut fn_0: *const libc::c_char) {
   if ferror_unlocked(fp) != 0 {
     /* ferror doesn't set useful errno */
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"%s: I/O error\x00" as *const u8 as *const libc::c_char,
       fn_0,
     );
@@ -621,8 +580,8 @@ pub unsafe extern "C" fn bb_putchar(mut ch: libc::c_int) -> libc::c_int {
 pub unsafe extern "C" fn xprint_and_close_file(mut file: *mut FILE) {
   fflush_all();
   // copyfd outputs error messages for us.
-  if bb_copyfd_eof(fileno_unlocked(file), 1i32) == -1i32 as libc::c_long {
-    xfunc_die();
+  if crate::libbb::copyfd::bb_copyfd_eof(fileno_unlocked(file), 1i32) == -1i32 as libc::c_long {
+    crate::libbb::xfunc_die::xfunc_die();
   }
   fclose(file);
 }
@@ -694,33 +653,41 @@ pub unsafe extern "C" fn bb_unsetenv_and_free(mut var: *mut libc::c_char) {
 #[no_mangle]
 pub unsafe extern "C" fn xsetgid(mut gid: gid_t) {
   if setgid(gid) != 0 {
-    bb_simple_perror_msg_and_die(b"setgid\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"setgid\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 // Die with an error message if we can't set uid.  (See xsetgid() for why.)
 #[no_mangle]
 pub unsafe extern "C" fn xsetuid(mut uid: uid_t) {
   if setuid(uid) != 0 {
-    bb_simple_perror_msg_and_die(b"setuid\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"setuid\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 #[no_mangle]
 pub unsafe extern "C" fn xsetegid(mut egid: gid_t) {
   if setegid(egid) != 0 {
-    bb_simple_perror_msg_and_die(b"setegid\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"setegid\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 #[no_mangle]
 pub unsafe extern "C" fn xseteuid(mut euid: uid_t) {
   if seteuid(euid) != 0 {
-    bb_simple_perror_msg_and_die(b"seteuid\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"seteuid\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 // Die if we can't chdir to a new path.
 #[no_mangle]
 pub unsafe extern "C" fn xchdir(mut path: *const libc::c_char) {
   if chdir(path) != 0 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t change directory to \'%s\'\x00" as *const u8 as *const libc::c_char,
       path,
     );
@@ -729,13 +696,15 @@ pub unsafe extern "C" fn xchdir(mut path: *const libc::c_char) {
 #[no_mangle]
 pub unsafe extern "C" fn xfchdir(mut fd: libc::c_int) {
   if fchdir(fd) != 0 {
-    bb_simple_perror_msg_and_die(b"fchdir\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"fchdir\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 #[no_mangle]
 pub unsafe extern "C" fn xchroot(mut path: *const libc::c_char) {
   if chroot(path) != 0 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t change root directory to \'%s\'\x00" as *const u8 as *const libc::c_char,
       path,
     );
@@ -748,7 +717,7 @@ pub unsafe extern "C" fn warn_opendir(mut path: *const libc::c_char) -> *mut DIR
   let mut dp: *mut DIR = std::ptr::null_mut();
   dp = opendir(path);
   if dp.is_null() {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
       path,
     );
@@ -761,7 +730,7 @@ pub unsafe extern "C" fn xopendir(mut path: *const libc::c_char) -> *mut DIR {
   let mut dp: *mut DIR = std::ptr::null_mut();
   dp = opendir(path);
   if dp.is_null() {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
       path,
     );
@@ -778,7 +747,9 @@ pub unsafe extern "C" fn xsocket(
   let mut r: libc::c_int = socket(domain, type_0, protocol);
   if r < 0 {
     /* Hijack vaguely related config option */
-    bb_simple_perror_msg_and_die(b"socket\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"socket\x00" as *const u8 as *const libc::c_char,
+    );
   }
   return r;
 }
@@ -797,14 +768,18 @@ pub unsafe extern "C" fn xbind(
     addrlen,
   ) != 0
   {
-    bb_simple_perror_msg_and_die(b"bind\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"bind\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 // Die with an error message if we can't listen for connections on a socket.
 #[no_mangle]
 pub unsafe extern "C" fn xlisten(mut s: libc::c_int, mut backlog: libc::c_int) {
   if listen(s, backlog) != 0 {
-    bb_simple_perror_msg_and_die(b"listen\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"listen\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 /* Die with an error message if sendto failed.
@@ -826,7 +801,9 @@ pub unsafe extern "C" fn xsendto(
     tolen,
   );
   if ret < 0 {
-    bb_simple_perror_msg_and_die(b"sendto\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"sendto\x00" as *const u8 as *const libc::c_char,
+    );
   }
   return ret;
 }
@@ -834,7 +811,7 @@ pub unsafe extern "C" fn xsendto(
 #[no_mangle]
 pub unsafe extern "C" fn xstat(mut name: *const libc::c_char, mut stat_buf: *mut stat) {
   if stat(name, stat_buf) != 0 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t stat \'%s\'\x00" as *const u8 as *const libc::c_char,
       name,
     );
@@ -851,13 +828,13 @@ pub unsafe extern "C" fn xfstat(
    * available, and caller may give e.g. "can't stat input file" string.
    */
   if fstat(fd, stat_buf) != 0 {
-    bb_simple_perror_msg_and_die(errmsg);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(errmsg);
   };
 }
 // selinux_or_die() - die if SELinux is disabled.
 #[no_mangle]
 pub unsafe extern "C" fn selinux_or_die() {
-  bb_simple_error_msg_and_die(
+  crate::libbb::verror_msg::bb_simple_error_msg_and_die(
     b"SELinux support is disabled\x00" as *const u8 as *const libc::c_char,
   );
 }
@@ -874,9 +851,9 @@ pub unsafe extern "C" fn ioctl_or_perror_and_die(
   ret = ioctl(fd, request as libc::c_ulong, argp);
   if ret < 0 {
     p = args.clone();
-    bb_verror_msg(fmt, p.as_va_list(), strerror(*bb_errno));
+    crate::libbb::verror_msg::bb_verror_msg(fmt, p.as_va_list(), strerror(*bb_errno));
     /* xfunc_die can actually longjmp, so be nice */
-    xfunc_die();
+    crate::libbb::xfunc_die::xfunc_die();
   }
   return ret;
 }
@@ -892,7 +869,7 @@ pub unsafe extern "C" fn ioctl_or_perror(
   let mut ret: libc::c_int = ioctl(fd, request as libc::c_ulong, argp);
   if ret < 0 {
     p = args.clone();
-    bb_verror_msg(fmt, p.as_va_list(), strerror(*bb_errno));
+    crate::libbb::verror_msg::bb_verror_msg(fmt, p.as_va_list(), strerror(*bb_errno));
   }
   return ret;
 }
@@ -906,7 +883,7 @@ pub unsafe extern "C" fn bb_ioctl_or_warn(
   let mut ret: libc::c_int = 0;
   ret = ioctl(fd, request as libc::c_ulong, argp);
   if ret < 0 {
-    bb_simple_perror_msg(ioctl_name);
+    crate::libbb::perror_msg::bb_simple_perror_msg(ioctl_name);
   }
   return ret;
 }
@@ -922,7 +899,7 @@ pub unsafe extern "C" fn bb_xioctl(
   let mut ret: libc::c_int = 0;
   ret = ioctl(fd, request as libc::c_ulong, argp);
   if ret < 0 {
-    bb_simple_perror_msg_and_die(ioctl_name);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(ioctl_name);
   }
   return ret;
 }
@@ -1142,7 +1119,7 @@ pub unsafe extern "C" fn generate_uuid(mut buf: *mut u8) {
   /* Paranoia. /dev/urandom may be missing.
    * rand() is guaranteed to generate at least [0, 2^15) range,
    * but lowest bits in some libc are not so "random".  */
-  srand(monotonic_us() as libc::c_uint); /* pulls in printf */
+  srand(crate::libbb::time::monotonic_us() as libc::c_uint); /* pulls in printf */
   pid = getpid();
   loop {
     i = 0;
@@ -1170,7 +1147,9 @@ pub unsafe extern "C" fn xfork() -> pid_t {
   pid = fork();
   if pid < 0 {
     /* wtf? */
-    bb_simple_perror_msg_and_die((b"vfork\x00" as *const u8 as *const libc::c_char).offset(1));
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      (b"vfork\x00" as *const u8 as *const libc::c_char).offset(1),
+    );
   }
   return pid;
 }
@@ -1490,15 +1469,17 @@ pub unsafe extern "C" fn xvfork_parent_waits_and_exits() {
   pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
     if bb__xvfork_pid < 0 {
-      bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"vfork\x00" as *const u8 as *const libc::c_char,
+      );
     }
     bb__xvfork_pid
   };
   if pid > 0 {
     /* Parent */
-    let mut exit_status: libc::c_int = wait_for_exitstatus(pid);
+    let mut exit_status: libc::c_int = crate::libbb::xfuncs::wait_for_exitstatus(pid);
     if ((exit_status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0 {
-      kill_myself_with_sig(exit_status & 0x7fi32);
+      crate::libbb::signals::kill_myself_with_sig(exit_status & 0x7fi32);
     }
     _exit((exit_status & 0xff00i32) >> 8i32);
   };

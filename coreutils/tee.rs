@@ -18,18 +18,7 @@ extern "C" {
   fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
   #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf_0: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn die_if_ferror(file: *mut FILE, msg: *const libc::c_char);
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn fopen_or_warn(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -97,7 +86,8 @@ pub unsafe extern "C" fn tee_main(
   let mut retval: libc::c_char = 0;
   //TODO: make unconditional
   let mut c: ssize_t = 0; /* 'a' must be 2nd */
-  retval = getopt32(argv, b"ia\x00" as *const u8 as *const libc::c_char) as libc::c_char; /* Since 'a' is the 2nd option... */
+  retval = crate::libbb::getopt32::getopt32(argv, b"ia\x00" as *const u8 as *const libc::c_char)
+    as libc::c_char; /* Since 'a' is the 2nd option... */
   argc -= optind;
   argv = argv.offset(optind as isize);
   mode = mode.offset((retval as libc::c_int & 2i32) as isize);
@@ -112,7 +102,7 @@ pub unsafe extern "C" fn tee_main(
    signal(SIGPIPE, SIG_IGN);
   */
   /* Allocate an array of FILE *'s, with one extra for a sentinel. */
-  files = xzalloc(
+  files = crate::libbb::xfuncs_printf::xzalloc(
     (::std::mem::size_of::<*mut FILE>() as libc::c_ulong)
       .wrapping_mul((argc + 2i32) as libc::c_ulong),
   ) as *mut *mut FILE; /* tee must not buffer output. */
@@ -135,7 +125,7 @@ pub unsafe extern "C" fn tee_main(
       {
         break;
       }
-      *fp = fopen_or_warn(*argv, mode);
+      *fp = crate::libbb::wfopen::fopen_or_warn(*argv, mode);
       if !(*fp).is_null() {
         break;
       }
@@ -149,7 +139,7 @@ pub unsafe extern "C" fn tee_main(
   loop
   /* names[0] will be filled later */
   {
-    c = safe_read(
+    c = crate::libbb::read::safe_read(
       0,
       bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
       COMMON_BUFSIZE as libc::c_int as size_t,
@@ -195,10 +185,10 @@ pub unsafe extern "C" fn tee_main(
     fp = fp.offset(1);
     let fresh5 = np;
     np = np.offset(1);
-    die_if_ferror(*fresh4, *fresh5);
+    crate::libbb::xfuncs_printf::die_if_ferror(*fresh4, *fresh5);
     if (*fp).is_null() {
       break;
     }
   }
-  fflush_stdout_and_exit(retval as libc::c_int);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(retval as libc::c_int);
 }

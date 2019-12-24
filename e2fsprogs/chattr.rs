@@ -7,20 +7,6 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn xatoull(str: *const libc::c_char) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn concat_subpath_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-
   /*
    * See README for additional information
    *
@@ -29,32 +15,11 @@ extern "C" {
    */
   /* Constants and structures */
   /* Iterate a function on each entry of a directory */
-  #[no_mangle]
-  fn iterate_on_dir(
-    dir_name: *const libc::c_char,
-    func: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut dirent,
-        _: *mut libc::c_void,
-      ) -> libc::c_int,
-    >,
-    private: *mut libc::c_void,
-  ) -> libc::c_int;
+
   /* Get/set a file version on an ext2 file system */
-  #[no_mangle]
-  fn fgetsetversion(
-    name: *const libc::c_char,
-    get_version: *mut libc::c_ulong,
-    set_version: libc::c_ulong,
-  ) -> libc::c_int;
+
   /* Get/set a file flags on an ext2 file system */
-  #[no_mangle]
-  fn fgetsetflags(
-    name: *const libc::c_char,
-    get_flags: *mut libc::c_ulong,
-    set_flags: libc::c_ulong,
-  ) -> libc::c_int;
+
   #[no_mangle]
   static e2attr_flags_value: [u32; 0];
   #[no_mangle]
@@ -64,8 +29,9 @@ extern "C" {
 use crate::librb::smallint;
 use libc::dirent;
 use libc::stat;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub version: libc::c_ulong,
   pub af: libc::c_ulong,
@@ -75,7 +41,7 @@ pub struct globals {
 }
 #[inline(always)]
 unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
-  return xatoull(str) as libc::c_ulong; /* if (opt == '=') */
+  return crate::libbb::xatonum::xatoull(str) as libc::c_ulong; /* if (opt == '=') */
 }
 unsafe extern "C" fn get_flag(mut c: libc::c_char) -> libc::c_ulong {
   let mut fp: *const libc::c_char =
@@ -86,7 +52,7 @@ unsafe extern "C" fn get_flag(mut c: libc::c_char) -> libc::c_ulong {
         as libc::c_long as isize,
     ) as libc::c_ulong;
   }
-  bb_show_usage();
+  crate::libbb::appletlib::bb_show_usage();
 }
 unsafe extern "C" fn decode_arg(
   mut argv: *mut *mut libc::c_char,
@@ -130,7 +96,7 @@ unsafe extern "C" fn decode_arg(
         if *arg as libc::c_int == 'v' as i32 {
           argv = argv.offset(1);
           if (*argv).is_null() {
-            bb_show_usage();
+            crate::libbb::appletlib::bb_show_usage();
           }
           (*gp).version = xatoul(*argv);
           (*gp).flags |= 8i32;
@@ -149,7 +115,8 @@ unsafe extern "C" fn chattr_dir_proc(
   mut de: *mut dirent,
   mut gp: *mut libc::c_void,
 ) -> libc::c_int {
-  let mut path: *mut libc::c_char = concat_subpath_file(dir_name, (*de).d_name.as_mut_ptr());
+  let mut path: *mut libc::c_char =
+    crate::libbb::concat_subpath_file::concat_subpath_file(dir_name, (*de).d_name.as_mut_ptr());
   /* path is NULL if de->d_name is "." or "..", else... */
   if !path.is_null() {
     change_attributes(path, gp as *mut globals);
@@ -162,7 +129,10 @@ unsafe extern "C" fn change_attributes(mut name: *const libc::c_char, mut gp: *m
   let mut fsflags: libc::c_ulong = 0;
   let mut st: stat = std::mem::zeroed();
   if lstat(name, &mut st) != 0 {
-    bb_perror_msg(b"stat %s\x00" as *const u8 as *const libc::c_char, name);
+    crate::libbb::perror_msg::bb_perror_msg(
+      b"stat %s\x00" as *const u8 as *const libc::c_char,
+      name,
+    );
     return;
   }
   if st.st_mode & 0o170000i32 as libc::c_uint == 0o120000i32 as libc::c_uint
@@ -181,8 +151,9 @@ unsafe extern "C" fn change_attributes(mut name: *const libc::c_char, mut gp: *m
     return;
   }
   if (*gp).flags & 8i32 != 0 {
-    if fgetsetversion(name, 0 as *mut libc::c_ulong, (*gp).version) != 0 {
-      bb_perror_msg(
+    if crate::e2fsprogs::e2fs_lib::fgetsetversion(name, 0 as *mut libc::c_ulong, (*gp).version) != 0
+    {
+      crate::libbb::perror_msg::bb_perror_msg(
         b"setting version on %s\x00" as *const u8 as *const libc::c_char,
         name,
       );
@@ -191,8 +162,8 @@ unsafe extern "C" fn change_attributes(mut name: *const libc::c_char, mut gp: *m
   if (*gp).flags & 4i32 != 0 {
     fsflags = (*gp).af;
     current_block = 12124785117276362961;
-  } else if fgetsetflags(name, &mut fsflags, 0 as libc::c_ulong) != 0 {
-    bb_perror_msg(
+  } else if crate::e2fsprogs::e2fs_lib::fgetsetflags(name, &mut fsflags, 0 as libc::c_ulong) != 0 {
+    crate::libbb::perror_msg::bb_perror_msg(
       b"reading flags on %s\x00" as *const u8 as *const libc::c_char,
       name,
     );
@@ -210,8 +181,8 @@ unsafe extern "C" fn change_attributes(mut name: *const libc::c_char, mut gp: *m
   }
   match current_block {
     12124785117276362961 => {
-      if fgetsetflags(name, 0 as *mut libc::c_ulong, fsflags) != 0 {
-        bb_perror_msg(
+      if crate::e2fsprogs::e2fs_lib::fgetsetflags(name, 0 as *mut libc::c_ulong, fsflags) != 0 {
+        crate::libbb::perror_msg::bb_perror_msg(
           b"setting flags on %s\x00" as *const u8 as *const libc::c_char,
           name,
         );
@@ -222,7 +193,7 @@ unsafe extern "C" fn change_attributes(mut name: *const libc::c_char, mut gp: *m
   if (*gp).recursive as libc::c_int != 0
     && st.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint
   {
-    iterate_on_dir(
+    crate::e2fsprogs::e2fs_lib::iterate_on_dir(
       name,
       Some(
         chattr_dir_proc
@@ -259,7 +230,7 @@ pub unsafe extern "C" fn chattr_main(
     argv = argv.offset(1);
     let mut arg: *mut libc::c_char = *argv;
     if arg.is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     if *arg.offset(0) as libc::c_int != '-' as i32
       && *arg.offset(0) as libc::c_int != '+' as i32
@@ -272,17 +243,17 @@ pub unsafe extern "C" fn chattr_main(
   /* note: on loop exit, remaining argv[] is never empty */
   /* run sanity checks on all the arguments given us */
   if g.flags & 4i32 != 0 && g.flags & (1i32 | 2i32) != 0 {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"= is incompatible with - and +\x00" as *const u8 as *const libc::c_char,
     );
   }
   if g.rf & g.af != 0 {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"can\'t set and unset a flag\x00" as *const u8 as *const libc::c_char,
     );
   }
   if g.flags == 0 {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"must use \'-v\', =, - or +\x00" as *const u8 as *const libc::c_char,
     );
   }

@@ -4,7 +4,6 @@ use libc;
 use libc::close;
 use libc::ioctl;
 use libc::open;
-use libc::pid_t;
 use libc::ptrdiff_t;
 use libc::setsid;
 use libc::sprintf;
@@ -15,39 +14,10 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn console_make_active(fd: libc::c_int, vt_num: libc::c_int);
-  #[no_mangle]
-  fn xdup2(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-  #[no_mangle]
-  fn safe_waitpid(pid: pid_t, wstat: *mut libc::c_int, options: libc::c_int) -> pid_t;
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn get_shell_name() -> *const libc::c_char;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct vt_stat {
   pub v_active: libc::c_ushort,
   pub v_signal: libc::c_ushort,
@@ -157,7 +127,9 @@ unsafe extern "C" fn get_vt_fd() -> libc::c_int {
   if fd >= 0 && not_vt_fd(fd) == 0 {
     return fd;
   }
-  bb_simple_error_msg_and_die(b"can\'t find open VT\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+    b"can\'t find open VT\x00" as *const u8 as *const libc::c_char,
+  );
 }
 unsafe extern "C" fn find_free_vtno() -> libc::c_int {
   let mut vtno: libc::c_int = 0;
@@ -171,7 +143,9 @@ unsafe extern "C" fn find_free_vtno() -> libc::c_int {
   ) != 0
     || vtno <= 0
   {
-    bb_simple_perror_msg_and_die(b"can\'t find open VT\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"can\'t find open VT\x00" as *const u8 as *const libc::c_char,
+    );
   }
   // Not really needed, grep for DAEMON_CLOSE_EXTRA_FDS
   //	if (fd > 2)
@@ -193,7 +167,7 @@ unsafe extern "C" fn vfork_child(mut argv: *mut *mut libc::c_char) {
     //bb_error_msg("our pgrp %d", getpgrp());
     //bb_error_msg("VT's sid %d", tcgetsid(0));
     //bb_error_msg("VT's pgrp %d", tcgetpgrp(0));
-    BB_EXECVP_or_die(argv);
+    crate::libbb::executable::BB_EXECVP_or_die(argv);
   };
 }
 #[no_mangle]
@@ -211,7 +185,7 @@ pub unsafe extern "C" fn openvt_main(
   let mut vtno: libc::c_int = 0;
   let mut flags: libc::c_int = 0;
   /* "+" - stop on first non-option */
-  flags = getopt32(
+  flags = crate::libbb::getopt32::getopt32(
     argv,
     b"+c:wslfv\x00" as *const u8 as *const libc::c_char,
     &mut str_c as *mut *mut libc::c_char,
@@ -219,7 +193,8 @@ pub unsafe extern "C" fn openvt_main(
   argv = argv.offset(optind as isize);
   if flags & OPT_c as libc::c_int != 0 {
     /* Check for illegal vt number: < 1 or > 63 */
-    vtno = xatou_range(str_c, 1i32 as libc::c_uint, 63i32 as libc::c_uint) as libc::c_int
+    vtno = crate::libbb::xatonum::xatou_range(str_c, 1i32 as libc::c_uint, 63i32 as libc::c_uint)
+      as libc::c_int
   } else {
     vtno = find_free_vtno()
   }
@@ -230,39 +205,39 @@ pub unsafe extern "C" fn openvt_main(
     vtno,
   );
   /* (Try to) clean up stray open fds above fd 2 */
-  bb_daemonize_or_rexec(
+  crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(
     DAEMON_CLOSE_EXTRA_FDS as libc::c_int | DAEMON_ONLY_SANITIZE as libc::c_int,
   );
   close(0i32);
   /*setsid(); - BAD IDEA: after we exit, child is SIGHUPed... */
-  xopen(vtname.as_mut_ptr(), 0o2i32);
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::xopen(vtname.as_mut_ptr(), 0o2i32);
+  crate::libbb::xfuncs_printf::bb_xioctl(
     0,
     0x5603i32 as libc::c_uint,
     &mut vtstat as *mut vt_stat as *mut libc::c_void,
     b"VT_GETSTATE\x00" as *const u8 as *const libc::c_char,
   );
   if flags & OPT_s as libc::c_int != 0 {
-    console_make_active(0i32, vtno);
+    crate::libbb::get_console::console_make_active(0i32, vtno);
   }
   if (*argv.offset(0)).is_null() {
     argv = argv.offset(-1);
     let ref mut fresh0 = *argv.offset(0);
-    *fresh0 = get_shell_name() as *mut libc::c_char
+    *fresh0 = crate::libbb::get_shell_name::get_shell_name() as *mut libc::c_char
     /*argv[1] = NULL; - already is */
   }
-  xdup2(0i32, 1i32);
-  xdup2(0i32, 2i32);
+  crate::libbb::xfuncs_printf::xdup2(0i32, 1i32);
+  crate::libbb::xfuncs_printf::xdup2(0i32, 2i32);
   vfork_child(argv);
   if flags & OPT_w as libc::c_int != 0 {
     /* We have only one child, wait for it */
-    safe_waitpid(-1i32, 0 as *mut libc::c_int, 0); /* loops on EINTR */
+    crate::libbb::xfuncs::safe_waitpid(-1i32, 0 as *mut libc::c_int, 0); /* loops on EINTR */
     if flags & OPT_s as libc::c_int != 0 {
-      console_make_active(0i32, vtstat.v_active as libc::c_int);
+      crate::libbb::get_console::console_make_active(0i32, vtstat.v_active as libc::c_int);
       // Compat: even with -c N (try to) disallocate:
       // # /usr/app/kbd-1.12/bin/openvt -f -c 9 -ws sleep 5
       // openvt: could not deallocate console 9
-      bb_xioctl(
+      crate::libbb::xfuncs_printf::bb_xioctl(
         0,
         0x5608i32 as libc::c_uint,
         vtno as ptrdiff_t as *mut libc::c_void,

@@ -1,16 +1,10 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-use crate::librb::size_t;
 use libc;
 use libc::gid_t;
 extern "C" {
   #[no_mangle]
   fn getgroups(__size: libc::c_int, __list: *mut gid_t) -> libc::c_int;
 
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
 #[no_mangle]
@@ -26,7 +20,7 @@ pub unsafe extern "C" fn bb_getgroups(
   loop {
     // FIXME: ash tries so hard to not die on OOM (when we are called from test),
     // and we spoil it with just one xrealloc here
-    group_array = xrealloc(
+    group_array = crate::libbb::xfuncs_printf::xrealloc(
       group_array as *mut libc::c_void,
       ((n + 1i32) as libc::c_ulong).wrapping_mul(::std::mem::size_of::<gid_t>() as libc::c_ulong),
     ) as *mut gid_t;
@@ -45,7 +39,9 @@ pub unsafe extern "C" fn bb_getgroups(
       n = getgroups(0i32, group_array)
     } else {
       /* Some other error (should never happen on Linux) */
-      bb_simple_perror_msg_and_die(b"getgroups\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"getgroups\x00" as *const u8 as *const libc::c_char,
+      );
     }
   }
   if !ngroups.is_null() {

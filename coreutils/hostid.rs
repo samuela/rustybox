@@ -4,10 +4,6 @@ extern "C" {
   #[no_mangle]
   fn gethostid() -> libc::c_long;
 
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
 }
 
 /*
@@ -37,12 +33,12 @@ pub unsafe extern "C" fn hostid_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   if !(*argv.offset(1)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* POSIX says gethostid returns a "32-bit identifier" */
   printf(
     b"%08x\n\x00" as *const u8 as *const libc::c_char,
     gethostid() as u32,
   );
-  return fflush_all();
+  return crate::libbb::xfuncs_printf::fflush_all();
 }

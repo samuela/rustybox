@@ -28,73 +28,41 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn inet_aton(__cp: *const libc::c_char, __inp: *mut in_addr) -> libc::c_int;
-  /* Some useful definitions */
-  /* Macros for min/max.  */
-  /* buffer allocation schemes */
-  /* glibc uses __errno_location() to get a ptr to errno */
-  /* We can just memorize it once - no multithreading in busybox :) */
+/* Some useful definitions */
+/* Macros for min/max.  */
+/* buffer allocation schemes */
+/* glibc uses __errno_location() to get a ptr to errno */
+/* We can just memorize it once - no multithreading in busybox :) */
 
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  /* This one doesn't append :PORTNUM */
-  #[no_mangle]
-  fn xmalloc_sockaddr2host_noport(sa: *const sockaddr) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_sockaddr2dotted_noport(sa: *const sockaddr) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
+/* This one doesn't append :PORTNUM */
+
 }
 
 pub type __socklen_t = libc::c_uint;
-pub type socklen_t = __socklen_t;
+use crate::librb::socklen_t;
 
-#[derive(Copy, Clone)]
+use libc::sockaddr_in6;
+
+use crate::librb::in6_addr;
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
+use libc::sockaddr_in;
+
+use libc::in_addr;
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
+
+use libc::hostent;
+
 #[repr(C)]
-pub struct hostent {
-  pub h_name: *mut libc::c_char,
-  pub h_aliases: *mut *mut libc::c_char,
-  pub h_addrtype: libc::c_int,
-  pub h_length: libc::c_int,
-  pub h_addr_list: *mut *mut libc::c_char,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct addrinfo {
   pub ai_flags: libc::c_int,
   pub ai_family: libc::c_int,
@@ -105,8 +73,9 @@ pub struct addrinfo {
   pub ai_canonname: *mut libc::c_char,
   pub ai_next: *mut addrinfo,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct addr {
   pub next: *mut addr,
   pub nip: u32,
@@ -191,7 +160,7 @@ pub unsafe extern "C" fn INET_rresolve(
   mut netmask: u32,
 ) -> *mut libc::c_char {
   /* addr-to-name cache */
-  static mut cache: *mut addr = 0 as *mut addr; /* no '+ 1', it's already accounted for */
+  static mut cache: *mut addr = std::ptr::null_mut(); /* no '+ 1', it's already accounted for */
   let mut pn: *mut addr = std::ptr::null_mut();
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut nip: u32 = 0;
@@ -202,29 +171,37 @@ pub unsafe extern "C" fn INET_rresolve(
   }
   nip = (*s_in).sin_addr.s_addr;
   if numeric & 0xfffi32 != 0 {
-    return xmalloc_sockaddr2dotted_noport(s_in as *mut libc::c_void as *const sockaddr);
+    return crate::libbb::xconnect::xmalloc_sockaddr2dotted_noport(
+      s_in as *mut libc::c_void as *const sockaddr,
+    );
   }
   if nip == 0 as in_addr_t {
     if numeric & 0x8000i32 != 0 {
-      return xstrdup(b"default\x00" as *const u8 as *const libc::c_char);
+      return crate::libbb::xfuncs_printf::xstrdup(
+        b"default\x00" as *const u8 as *const libc::c_char,
+      );
     }
-    return xstrdup(b"*\x00" as *const u8 as *const libc::c_char);
+    return crate::libbb::xfuncs_printf::xstrdup(b"*\x00" as *const u8 as *const libc::c_char);
   }
   is_host =
     (nip & !netmask != 0 as libc::c_uint || numeric & 0x4000i32 != 0) as libc::c_int as smallint;
   pn = cache;
   while !pn.is_null() {
     if (*pn).nip == nip && (*pn).is_host as libc::c_int == is_host as libc::c_int {
-      return xstrdup((*pn).name.as_mut_ptr());
+      return crate::libbb::xfuncs_printf::xstrdup((*pn).name.as_mut_ptr());
     }
     pn = (*pn).next
   }
   name = std::ptr::null_mut::<libc::c_char>();
   if is_host != 0 {
-    name = xmalloc_sockaddr2host_noport(s_in as *mut libc::c_void as *const sockaddr)
+    name = crate::libbb::xconnect::xmalloc_sockaddr2host_noport(
+      s_in as *mut libc::c_void as *const sockaddr,
+    )
   }
   if name.is_null() {
-    name = xmalloc_sockaddr2dotted_noport(s_in as *mut libc::c_void as *const sockaddr)
+    name = crate::libbb::xconnect::xmalloc_sockaddr2dotted_noport(
+      s_in as *mut libc::c_void as *const sockaddr,
+    )
   }
   pn = xmalloc((::std::mem::size_of::<addr>() as libc::c_ulong).wrapping_add(strlen(name)))
     as *mut addr;
@@ -244,16 +221,7 @@ pub unsafe extern "C" fn INET6_resolve(
   mut name: *const libc::c_char,
   mut sin6: *mut sockaddr_in6,
 ) -> libc::c_int {
-  let mut req: addrinfo = addrinfo {
-    ai_flags: 0,
-    ai_family: 0,
-    ai_socktype: 0,
-    ai_protocol: 0,
-    ai_addrlen: 0,
-    ai_addr: std::ptr::null_mut(),
-    ai_canonname: std::ptr::null_mut::<libc::c_char>(),
-    ai_next: std::ptr::null_mut(),
-  };
+  let mut req: addrinfo = std::mem::zeroed();
   let mut ai: *mut addrinfo = std::ptr::null_mut();
   let mut s: libc::c_int = 0;
   memset(
@@ -264,7 +232,7 @@ pub unsafe extern "C" fn INET6_resolve(
   req.ai_family = 10i32;
   s = getaddrinfo(name, 0 as *const libc::c_char, &mut req, &mut ai);
   if s != 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"getaddrinfo: %s: %d\x00" as *const u8 as *const libc::c_char,
       name,
       s,
@@ -289,10 +257,12 @@ pub unsafe extern "C" fn INET6_rresolve(
     return std::ptr::null_mut::<libc::c_char>();
   }
   if numeric & 0x7fffi32 != 0 {
-    return xmalloc_sockaddr2dotted_noport(sin6 as *mut libc::c_void as *const sockaddr);
+    return crate::libbb::xconnect::xmalloc_sockaddr2dotted_noport(
+      sin6 as *mut libc::c_void as *const sockaddr,
+    );
   }
   if ({
-    let mut __a: *const in6_addr = &mut (*sin6).sin6_addr as *mut in6_addr as *const in6_addr;
+    let mut __a: *const in6_addr = &mut (*sin6).sin6_addr as *mut libc::in6_addr as *const in6_addr;
     ((*__a).__in6_u.__u6_addr32[0] == 0 as libc::c_uint
       && (*__a).__in6_u.__u6_addr32[1] == 0 as libc::c_uint
       && (*__a).__in6_u.__u6_addr32[2] == 0 as libc::c_uint
@@ -300,10 +270,14 @@ pub unsafe extern "C" fn INET6_rresolve(
   }) != 0
   {
     if numeric & 0x8000i32 != 0 {
-      return xstrdup(b"default\x00" as *const u8 as *const libc::c_char);
+      return crate::libbb::xfuncs_printf::xstrdup(
+        b"default\x00" as *const u8 as *const libc::c_char,
+      );
     }
-    return xstrdup(b"*\x00" as *const u8 as *const libc::c_char);
+    return crate::libbb::xfuncs_printf::xstrdup(b"*\x00" as *const u8 as *const libc::c_char);
   }
-  return xmalloc_sockaddr2host_noport(sin6 as *mut libc::c_void as *const sockaddr);
+  return crate::libbb::xconnect::xmalloc_sockaddr2host_noport(
+    sin6 as *mut libc::c_void as *const sockaddr,
+  );
 }
 /* CONFIG_FEATURE_IPV6 */

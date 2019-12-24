@@ -43,81 +43,11 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
-  fn isqrt(N: libc::c_ulonglong) -> libc::c_ulong;
+  static mut option_mask32: u32;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn recursive_action(
-    fileName: *const libc::c_char,
-    flags: libc::c_uint,
-    fileAction: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    dirAction: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    userData: *mut libc::c_void,
-    depth: libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn xstat(pathname: *const libc::c_char, buf: *mut stat);
-  #[no_mangle]
-  fn open_or_warn(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn xmkstemp(template: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn fclose_if_not_stdin(file: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn qsort_string_vector(sv: *mut *mut libc::c_char, count: libc::c_uint);
-  #[no_mangle]
-  static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
-  #[no_mangle]
   static mut xfunc_error_retval: u8;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
+
   #[no_mangle]
   static ptr_to_globals: *mut globals;
   #[no_mangle]
@@ -139,8 +69,9 @@ pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed = 4;
 pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
 pub const ACTION_RECURSE: C2RustUnnamed = 1;
 use crate::libbb::llist::llist_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub exit_status: smallint,
   pub opt_U_context: libc::c_int,
@@ -173,8 +104,9 @@ pub const FLAG_i: C2RustUnnamed_2 = 3;
 pub const FLAG_d: C2RustUnnamed_2 = 2;
 pub const FLAG_b: C2RustUnnamed_2 = 1;
 pub const FLAG_a: C2RustUnnamed_2 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct FILE_and_pos_t {
   pub ft_fp: *mut FILE,
   pub ft_pos: off_t,
@@ -194,34 +126,39 @@ pub const TOK_EOL: C2RustUnnamed_3 = 2048;
 pub const TOK_EOF: C2RustUnnamed_3 = 1024;
 /* Public */
 pub const TOK_EMPTY: C2RustUnnamed_3 = 512;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct cand {
   pub x: libc::c_int,
   pub y: libc::c_int,
   pub pred: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct line {
   pub c2rust_unnamed: C2RustUnnamed_4,
   pub value: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_4 {
   pub serial: libc::c_uint,
   pub offset: off_t,
 }
 pub type vec_t = [C2RustUnnamed_5; 2];
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_5 {
   pub a: libc::c_int,
   pub b: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct dlist {
   pub len: size_t,
   pub s: libc::c_int,
@@ -340,7 +277,7 @@ unsafe extern "C" fn stone(
   mut J: *mut libc::c_int,
   mut pref: libc::c_int,
 ) {
-  let isq: libc::c_uint = isqrt(n as libc::c_ulonglong) as libc::c_uint;
+  let isq: libc::c_uint = crate::libbb::isqrt::isqrt(n as libc::c_ulonglong) as libc::c_uint;
   let bound: libc::c_uint = if option_mask32 & (1i32 << FLAG_d as libc::c_int) as libc::c_uint != 0
   {
     (2147483647i32 as libc::c_uint)
@@ -354,7 +291,7 @@ unsafe extern "C" fn stone(
   let mut clen: libc::c_int = 1i32;
   let mut clistlen: libc::c_int = 100i32;
   let mut k: libc::c_int = 0;
-  let mut clist: *mut cand = xzalloc(
+  let mut clist: *mut cand = crate::libbb::xfuncs_printf::xzalloc(
     (clistlen as libc::c_ulong).wrapping_mul(::std::mem::size_of::<cand>() as libc::c_ulong),
   ) as *mut cand;
   let mut cand: cand = cand {
@@ -363,7 +300,7 @@ unsafe extern "C" fn stone(
     pred: 0,
   };
   let mut q: *mut cand = std::ptr::null_mut();
-  let mut klist: *mut libc::c_int = xzalloc(
+  let mut klist: *mut libc::c_int = crate::libbb::xfuncs_printf::xzalloc(
     ((n + 2i32) as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<libc::c_int>() as libc::c_ulong),
   ) as *mut libc::c_int;
@@ -388,7 +325,7 @@ unsafe extern "C" fn stone(
           if !(l <= k && (*clist.offset(*klist.offset(l as isize) as isize)).y <= cand.y) {
             if clen == clistlen {
               clistlen = clistlen * 11i32 / 10i32;
-              clist = xrealloc(
+              clist = crate::libbb::xfuncs_printf::xrealloc(
                 clist as *mut libc::c_void,
                 (clistlen as libc::c_ulong)
                   .wrapping_mul(::std::mem::size_of::<cand>() as libc::c_ulong),
@@ -397,7 +334,7 @@ unsafe extern "C" fn stone(
             *clist.offset(clen as isize) = cand;
             tc = *klist.offset(l as isize);
             let fresh0 = clen;
-            clen += 1;
+            clen = clen + 1;
             *klist.offset(l as isize) = fresh0;
             if l <= k {
               cand.pred = tc;
@@ -439,11 +376,11 @@ unsafe extern "C" fn equiv(
   while i <= n && j <= m {
     if (*a.offset(i as isize)).value < (*b.offset(j as isize)).value {
       let fresh1 = i;
-      i += 1;
+      i = i + 1;
       (*a.offset(fresh1 as isize)).value = 0 as libc::c_uint
     } else if (*a.offset(i as isize)).value == (*b.offset(j as isize)).value {
       let fresh2 = i;
-      i += 1;
+      i = i + 1;
       (*a.offset(fresh2 as isize)).value = j as libc::c_uint
     } else {
       j += 1
@@ -451,7 +388,7 @@ unsafe extern "C" fn equiv(
   }
   while i <= n {
     let fresh3 = i;
-    i += 1;
+    i = i + 1;
     (*a.offset(fresh3 as isize)).value = 0 as libc::c_uint
   }
   (*b.offset((m + 1i32) as isize)).value = 0 as libc::c_uint;
@@ -620,7 +557,7 @@ unsafe extern "C" fn create_J(
         sz = sz
           .wrapping_mul(3i32 as libc::c_ulong)
           .wrapping_div(2i32 as libc::c_ulong);
-        nfile[i as usize] = xrealloc(
+        nfile[i as usize] = crate::libbb::xfuncs_printf::xrealloc(
           nfile[i as usize] as *mut libc::c_void,
           sz.wrapping_add(3i32 as libc::c_ulong)
             .wrapping_mul(::std::mem::size_of::<line>() as libc::c_ulong),
@@ -719,14 +656,14 @@ unsafe extern "C" fn create_J(
    */
   member = nfile[1] as *mut libc::c_int;
   equiv(sfile[0], slen[0], sfile[1], slen[1], member);
-  member = xrealloc(
+  member = crate::libbb::xfuncs_printf::xrealloc(
     member as *mut libc::c_void,
     ((slen[1] + 2i32) as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<libc::c_int>() as libc::c_ulong),
   ) as *mut libc::c_int;
   class = nfile[0] as *mut libc::c_int;
   unsort(sfile[0], slen[0], nfile[0] as *mut libc::c_int);
-  class = xrealloc(
+  class = crate::libbb::xfuncs_printf::xrealloc(
     class as *mut libc::c_void,
     ((slen[0] + 2i32) as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<libc::c_int>() as libc::c_ulong),
@@ -801,10 +738,7 @@ unsafe extern "C" fn create_J(
 unsafe extern "C" fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_char) -> bool {
   let mut nlen: [libc::c_int; 2] = [0; 2];
   let mut ix: [*mut off_t; 2] = [0 as *mut off_t; 2];
-  let mut ft: [FILE_and_pos_t; 2] = [FILE_and_pos_t {
-    ft_fp: std::ptr::null_mut(),
-    ft_pos: 0,
-  }; 2];
+  let mut ft: [FILE_and_pos_t; 2] = [std::mem::zeroed(); 2];
   let mut vec: *mut vec_t = std::ptr::null_mut();
   let mut i: libc::c_int = 1i32;
   let mut j: libc::c_int = 0;
@@ -864,7 +798,7 @@ unsafe extern "C" fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_ch
           j += 1
         }
         idx += 1;
-        vec = xrealloc_vector_helper(
+        vec = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
           vec as *mut libc::c_void,
           ((::std::mem::size_of::<vec_t>() as libc::c_ulong) << 8i32)
             .wrapping_add(6i32 as libc::c_ulong) as libc::c_uint,
@@ -1009,7 +943,7 @@ unsafe extern "C" fn diffreg(mut file: *mut *mut libc::c_char) -> libc::c_int {
       && *(*file.offset(i as isize)).offset(1) == 0)
     {
       if option_mask32 & (1i32 << FLAG_N as libc::c_int) as libc::c_uint == 0 {
-        fd = open_or_warn(*file.offset(i as isize), 0);
+        fd = crate::libbb::xfuncs_printf::open_or_warn(*file.offset(i as isize), 0);
         if fd == -1i32 {
           current_block = 15027506056153281688;
           break;
@@ -1018,7 +952,10 @@ unsafe extern "C" fn diffreg(mut file: *mut *mut libc::c_char) -> libc::c_int {
         /* -N: if some file does not exist compare it like empty */
         fd = open(*file.offset(i as isize), 0);
         if fd == -1i32 {
-          fd = xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0)
+          fd = crate::libbb::xfuncs_printf::xopen(
+            b"/dev/null\x00" as *const u8 as *const libc::c_char,
+            0,
+          )
         }
       }
     }
@@ -1028,16 +965,16 @@ unsafe extern "C" fn diffreg(mut file: *mut *mut libc::c_char) -> libc::c_int {
     if lseek(fd, 0 as off64_t, 0) == -1i32 as libc::c_long && *bb_errno == 29i32 {
       let mut name: [libc::c_char; 15] =
         *::std::mem::transmute::<&[u8; 15], &mut [libc::c_char; 15]>(b"/tmp/difXXXXXX\x00");
-      let mut fd_tmp: libc::c_int = xmkstemp(name.as_mut_ptr());
+      let mut fd_tmp: libc::c_int = crate::libbb::xfuncs_printf::xmkstemp(name.as_mut_ptr());
       unlink(name.as_mut_ptr());
-      if bb_copyfd_eof(fd, fd_tmp) < 0 {
-        xfunc_die();
+      if crate::libbb::copyfd::bb_copyfd_eof(fd, fd_tmp) < 0 {
+        crate::libbb::xfunc_die::xfunc_die();
       }
       if fd != 0 {
         close(fd);
       }
       fd = fd_tmp;
-      xlseek(fd, 0 as off_t, 0);
+      crate::libbb::xfuncs_printf::xlseek(fd, 0 as off_t, 0);
     }
     fp[i as usize] = fdopen(fd, b"r\x00" as *const u8 as *const libc::c_char);
     i += 1
@@ -1086,8 +1023,8 @@ unsafe extern "C" fn diffreg(mut file: *mut *mut libc::c_char) -> libc::c_int {
     }
     _ => {}
   }
-  fclose_if_not_stdin(fp[0]);
-  fclose_if_not_stdin(fp[1]);
+  crate::libbb::fclose_nonstdin::fclose_if_not_stdin(fp[0]);
+  crate::libbb::fclose_nonstdin::fclose_if_not_stdin(fp[1]);
   return status;
 }
 unsafe extern "C" fn print_status(mut status: libc::c_int, mut path: *mut *mut libc::c_char) {
@@ -1127,14 +1064,14 @@ unsafe extern "C" fn add_to_dirlist(
   while *file as libc::c_int == '/' as i32 {
     file = file.offset(1)
   }
-  (*l).dl = xrealloc_vector_helper(
+  (*l).dl = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
     (*l).dl as *mut libc::c_void,
     ((::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong) << 8i32)
       .wrapping_add(6i32 as libc::c_ulong) as libc::c_uint,
     (*l).e,
   ) as *mut *mut libc::c_char;
   let ref mut fresh10 = *(*l).dl.offset((*l).e as isize);
-  *fresh10 = xstrdup(file);
+  *fresh10 = crate::libbb::xfuncs_printf::xstrdup(file);
   (*l).e += 1;
   return 1i32;
 }
@@ -1161,7 +1098,7 @@ unsafe extern "C" fn skip_dir(
     if *filename.offset(0) != 0 {
       let mut osb: stat = std::mem::zeroed();
       let mut othername: *mut libc::c_char =
-        concat_path_file((*ptr_to_globals).other_dir, filename);
+        crate::libbb::concat_path_file::concat_path_file((*ptr_to_globals).other_dir, filename);
       let mut r: libc::c_int = stat(othername, &mut osb);
       free(othername as *mut libc::c_void);
       if r != 0 || !(osb.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint) {
@@ -1177,12 +1114,7 @@ unsafe extern "C" fn skip_dir(
   return 1i32;
 }
 unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const libc::c_char) {
-  let mut list: [dlist; 2] = [dlist {
-    len: 0,
-    s: 0,
-    e: 0,
-    dl: std::ptr::null_mut(),
-  }; 2];
+  let mut list: [dlist; 2] = [std::mem::zeroed(); 2];
   let mut i: libc::c_int = 0;
   memset(
     &mut list as *mut [dlist; 2] as *mut libc::c_void,
@@ -1198,7 +1130,7 @@ unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const 
      * Using list.len to specify its length,
      * add_to_dirlist will remove it. */
     list[i as usize].len = strlen(*p.offset(i as isize));
-    recursive_action(
+    crate::libbb::recursive_action::recursive_action(
       *p.offset(i as isize),
       (ACTION_RECURSE as libc::c_int | ACTION_FOLLOWLINKS as libc::c_int) as libc::c_uint,
       Some(
@@ -1227,7 +1159,10 @@ unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const 
      * We don't, so for us dotted files almost always are
      * first on the list.
      */
-    qsort_string_vector(list[i as usize].dl, list[i as usize].e as libc::c_uint);
+    crate::libbb::bb_qsort::qsort_string_vector(
+      list[i as usize].dl,
+      list[i as usize].e as libc::c_uint,
+    );
     /* If -S was set, find the starting point. */
     if !s_start.is_null() {
       while list[i as usize].s < list[i as usize].e
@@ -1285,14 +1220,18 @@ unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const 
       i = 0;
       while i < 2i32 {
         if pos == 0 || i == k {
-          fullpath[i as usize] = concat_path_file(*p.offset(i as isize), dp[i as usize]);
+          fullpath[i as usize] =
+            crate::libbb::concat_path_file::concat_path_file(*p.offset(i as isize), dp[i as usize]);
           path[i as usize] = fullpath[i as usize];
           stat(
             fullpath[i as usize],
             &mut *(*ptr_to_globals).stb.as_mut_ptr().offset(i as isize),
           );
         } else {
-          fullpath[i as usize] = concat_path_file(*p.offset(i as isize), dp[(1i32 - i) as usize]);
+          fullpath[i as usize] = crate::libbb::concat_path_file::concat_path_file(
+            *p.offset(i as isize),
+            dp[(1i32 - i) as usize],
+          );
           path[i as usize] =
             b"/dev/null\x00" as *const u8 as *const libc::c_char as *mut libc::c_char
         }
@@ -1402,11 +1341,12 @@ pub unsafe extern "C" fn diff_main(
   let ref mut fresh11 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
-  *fresh11 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh11 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).opt_U_context = 3i32;
   /* exactly 2 params; collect multiple -L <label>; -U N */
-  getopt32long(
+  crate::libbb::getopt32::getopt32long(
     argv,
     b"^abdiL:*NqrsS:tTU:+wupBE\x00=2\x00" as *const u8 as *const libc::c_char,
     diff_longopts.as_ptr(),
@@ -1417,7 +1357,7 @@ pub unsafe extern "C" fn diff_main(
   argv = argv.offset(optind as isize);
   while !L_arg.is_null() {
     (*ptr_to_globals).label[!(*ptr_to_globals).label[0].is_null() as libc::c_int as usize] =
-      llist_pop(&mut L_arg) as *mut libc::c_char
+      crate::libbb::llist::llist_pop(&mut L_arg) as *mut libc::c_char
   }
   /* Compat: "diff file name_which_doesnt_exist" exits with 2 */
   xfunc_error_retval = 2i32 as u8;
@@ -1437,13 +1377,13 @@ pub unsafe extern "C" fn diff_main(
         &mut *(*ptr_to_globals).stb.as_mut_ptr().offset(i as isize),
       ) != 0
       {
-        xstat(
+        crate::libbb::xfuncs_printf::xstat(
           b"/dev/null\x00" as *const u8 as *const libc::c_char,
           &mut *(*ptr_to_globals).stb.as_mut_ptr().offset(i as isize),
         );
       }
     } else {
-      xstat(
+      crate::libbb::xfuncs_printf::xstat(
         file[i as usize],
         &mut *(*ptr_to_globals).stb.as_mut_ptr().offset(i as isize),
       );
@@ -1457,7 +1397,7 @@ pub unsafe extern "C" fn diff_main(
       || (*ptr_to_globals).stb[1].st_mode & 0o170000i32 as libc::c_uint
         == 0o40000i32 as libc::c_uint)
   {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"can\'t compare stdin to a directory\x00" as *const u8 as *const libc::c_char,
     );
   }
@@ -1498,7 +1438,7 @@ pub unsafe extern "C" fn diff_main(
       (*ptr_to_globals).stb[1].st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint;
     if dirfile {
       let mut slash: *const libc::c_char = strrchr(file[!dir as libc::c_int as usize], '/' as i32);
-      file[dir as usize] = concat_path_file(
+      file[dir as usize] = crate::libbb::concat_path_file::concat_path_file(
         file[dir as usize],
         if !slash.is_null() {
           slash.offset(1)
@@ -1506,7 +1446,7 @@ pub unsafe extern "C" fn diff_main(
           file[!dir as libc::c_int as usize]
         },
       );
-      xstat(
+      crate::libbb::xfuncs_printf::xstat(
         file[dir as usize],
         &mut *(*ptr_to_globals).stb.as_mut_ptr().offset(dir as isize),
       );

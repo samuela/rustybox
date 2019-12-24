@@ -4,16 +4,7 @@ use libc::off64_t;
 use libc::off_t;
 use libc::ssize_t;
 extern "C" {
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn sendfile(
     __out_fd: libc::c_int,
@@ -92,7 +83,7 @@ unsafe extern "C" fn bb_full_fd_action(
       }
       match current_block_18 {
         4808432441040389987 => {
-          rd = safe_read(
+          rd = crate::libbb::read::safe_read(
             src_fd,
             buffer.as_mut_ptr() as *mut libc::c_void,
             if size > buffer_size as libc::c_int as libc::c_long {
@@ -102,7 +93,9 @@ unsafe extern "C" fn bb_full_fd_action(
             } as size_t,
           );
           if rd < 0 {
-            bb_simple_perror_msg(b"read error\x00" as *const u8 as *const libc::c_char);
+            crate::libbb::perror_msg::bb_simple_perror_msg(
+              b"read error\x00" as *const u8 as *const libc::c_char,
+            );
             break;
           }
         }
@@ -115,14 +108,16 @@ unsafe extern "C" fn bb_full_fd_action(
       } else {
         /* dst_fd == -1 is a fake, else... */
         if dst_fd >= 0 && sendfile_sz == 0 {
-          let mut wr: ssize_t = full_write(
+          let mut wr: ssize_t = crate::libbb::full_write::full_write(
             dst_fd,
             buffer.as_mut_ptr() as *const libc::c_void,
             rd as size_t,
           );
           if wr < rd {
             if !continue_on_write_error {
-              bb_simple_perror_msg(b"write error\x00" as *const u8 as *const libc::c_char);
+              crate::libbb::perror_msg::bb_simple_perror_msg(
+                b"write error\x00" as *const u8 as *const libc::c_char,
+              );
               break;
             } else {
               dst_fd = -1i32
@@ -173,10 +168,12 @@ pub unsafe extern "C" fn bb_copyfd_exact_size(
     return;
   }
   if sz != -1i32 as libc::c_long {
-    bb_simple_error_msg_and_die(b"short read\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"short read\x00" as *const u8 as *const libc::c_char,
+    );
   }
   /* if sz == -1, bb_copyfd_XX already complained */
-  xfunc_die();
+  crate::libbb::xfunc_die::xfunc_die();
 }
 
 /*

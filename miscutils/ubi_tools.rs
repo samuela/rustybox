@@ -1,8 +1,11 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
+use crate::librb::suffix_mult;
 use libc;
 use libc::sprintf;
 use libc::sscanf;
+use libc::stat;
 use libc::strcpy;
 extern "C" {
 
@@ -15,60 +18,11 @@ extern "C" {
   #[no_mangle]
   fn strnlen(__string: *const libc::c_char, __maxlen: size_t) -> size_t;
 
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xfstat(fd: libc::c_int, buf: *mut stat, errmsg: *const libc::c_char);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn open_read_close(
-    filename: *const libc::c_char,
-    buf: *mut libc::c_void,
-    maxsz: size_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-  #[no_mangle]
-  fn xatoull_sfx(str: *const libc::c_char, sfx: *const suffix_mult) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn ubi_devnum_from_devname(str: *const libc::c_char) -> libc::c_uint;
-  #[no_mangle]
-  fn ubi_get_volid_by_name(ubi_devnum: libc::c_uint, vol_name: *const libc::c_char) -> libc::c_int;
-
 }
 
 pub type __int64_t = libc::c_long;
 
 pub type int64_t = __int64_t;
-use crate::librb::size_t;
-use libc::ssize_t;
-use libc::stat;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct suffix_mult {
-  pub suffix: [libc::c_char; 4],
-  pub mult: libc::c_uint,
-}
 pub type __s8 = libc::c_schar;
 pub type __s16 = libc::c_short;
 pub type __s32 = libc::c_int;
@@ -76,8 +30,9 @@ pub type __s64 = libc::c_longlong;
 pub type C2RustUnnamed = libc::c_uint;
 pub const UBI_STATIC_VOLUME: C2RustUnnamed = 4;
 pub const UBI_DYNAMIC_VOLUME: C2RustUnnamed = 3;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ubi_attach_req {
   pub ubi_num: __s32,
   pub mtd_num: __s32,
@@ -85,8 +40,9 @@ pub struct ubi_attach_req {
   pub max_beb_per1024: __s16,
   pub padding: [__s8; 10],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct ubi_mkvol_req {
   pub vol_id: __s32,
   pub alignment: __s32,
@@ -97,14 +53,16 @@ pub struct ubi_mkvol_req {
   pub padding2: [__s8; 4],
   pub name: [libc::c_char; 128],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct ubi_rsvol_req {
   pub bytes: __s64,
   pub vol_id: __s32,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub attach_req: ubi_attach_req,
   pub mkvol_req: ubi_mkvol_req,
@@ -116,13 +74,13 @@ unsafe extern "C" fn get_num_from_file(
 ) -> libc::c_uint {
   let mut buf: [libc::c_char; 24] = [0; 24];
   let mut num: libc::c_ulonglong = 0;
-  if open_read_close(
+  if crate::libbb::read::open_read_close(
     path,
     buf.as_mut_ptr() as *mut libc::c_void,
     ::std::mem::size_of::<[libc::c_char; 24]>() as libc::c_ulong,
   ) < 0
   {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
       path,
     );
@@ -135,7 +93,7 @@ unsafe extern "C" fn get_num_from_file(
   ) != 1i32
     || num > max as libc::c_ulonglong
   {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"number in \'%s\' is malformed or too large\x00" as *const u8 as *const libc::c_char,
       path,
     ); /* for compiler */
@@ -213,7 +171,7 @@ pub unsafe extern "C" fn ubi_tools_main(
     && (0i32 + 1i32 + 1i32 + 1i32 + 1i32 + 1i32 + 1i32 == 1i32
       || *applet_name.offset(4) as libc::c_int == 'k' as i32)
   {
-    opts = getopt32(
+    opts = crate::libbb::getopt32::getopt32(
       argv,
       b"^md:+n:+N:s:a:+t:O:+\x00-1\x00" as *const u8 as *const libc::c_char,
       &mut dev_num as *mut libc::c_int,
@@ -228,14 +186,14 @@ pub unsafe extern "C" fn ubi_tools_main(
     && (0i32 + 1i32 + 1i32 + 1i32 + 1i32 + 1i32 + 1i32 == 1i32
       || *applet_name.offset(4) as libc::c_int == 'p' as i32)
   {
-    opts = getopt32(
+    opts = crate::libbb::getopt32::getopt32(
       argv,
       b"^s:at\x00-1\x00" as *const u8 as *const libc::c_char,
       &mut size_bytes_str as *mut *mut libc::c_char,
     );
     opts = opts.wrapping_mul((1i32 << 4i32) as libc::c_uint)
   } else {
-    opts = getopt32(
+    opts = crate::libbb::getopt32::getopt32(
       argv,
       b"^m:+d:+n:+N:s:a:+t:\x00-1\x00" as *const u8 as *const libc::c_char,
       &mut mtd_num as *mut libc::c_int,
@@ -248,13 +206,13 @@ pub unsafe extern "C" fn ubi_tools_main(
     )
   }
   if opts & (1i32 << 4i32) as libc::c_uint != 0 {
-    size_bytes = xatoull_sfx(size_bytes_str, size_suffixes.as_ptr())
+    size_bytes = crate::libbb::xatonum::xatoull_sfx(size_bytes_str, size_suffixes.as_ptr())
   }
   argv = argv.offset(optind as isize);
   let fresh0 = argv;
   argv = argv.offset(1);
   ubi_ctrl = *fresh0;
-  fd = xopen(ubi_ctrl, 0o2i32);
+  fd = crate::libbb::xfuncs_printf::xopen(ubi_ctrl, 0o2i32);
   /*just in case:*/
   //xfstat(fd, &st, ubi_ctrl);
   //if (!S_ISCHR(st.st_mode))
@@ -271,7 +229,7 @@ pub unsafe extern "C" fn ubi_tools_main(
       || *applet_name.offset(4) as libc::c_int == 't' as i32)
   {
     if opts & (1i32 << 0) as libc::c_uint == 0 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"%s device not specified\x00" as *const u8 as *const libc::c_char,
         b"MTD\x00" as *const u8 as *const libc::c_char,
       );
@@ -279,7 +237,7 @@ pub unsafe extern "C" fn ubi_tools_main(
     req_structs.attach_req.mtd_num = mtd_num;
     req_structs.attach_req.ubi_num = dev_num;
     req_structs.attach_req.vid_hdr_offset = vid_hdr_offset;
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       ((1u32 << 0 + 8i32 + 8i32 + 14i32
         | (('o' as i32) << 0 + 8i32) as libc::c_uint
@@ -294,7 +252,7 @@ pub unsafe extern "C" fn ubi_tools_main(
       || *applet_name.offset(4) as libc::c_int == 'e' as i32)
   {
     if opts & (1i32 << 1i32) as libc::c_uint == 0 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"%s device not specified\x00" as *const u8 as *const libc::c_char,
         b"UBI\x00" as *const u8 as *const libc::c_char,
       );
@@ -305,7 +263,7 @@ pub unsafe extern "C" fn ubi_tools_main(
     //usage:       "Detach MTD device from UBI\n"
     //usage:     "\n	-d UBI_NUM	UBI device number"
     /* FIXME? kernel expects i32* here: */
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       ((1u32 << 0 + 8i32 + 8i32 + 14i32
         | (('o' as i32) << 0 + 8i32) as libc::c_uint
@@ -324,7 +282,7 @@ pub unsafe extern "C" fn ubi_tools_main(
       let mut leb_size: libc::c_uint = 0;
       let mut num: libc::c_uint = 0;
       let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-      num = ubi_devnum_from_devname(ubi_ctrl);
+      num = crate::libbb::ubi::ubi_devnum_from_devname(ubi_ctrl);
       p = path
         .as_mut_ptr()
         .offset(::std::mem::size_of::<[libc::c_char; 19]>() as libc::c_ulong as isize)
@@ -370,10 +328,14 @@ pub unsafe extern "C" fn ubi_tools_main(
     //if (size_bytes <= 0)
     //	bb_error_msg_and_die("%s invalid maximum size calculated", "UBI");
     } else if opts & (1i32 << 4i32) as libc::c_uint == 0 {
-      bb_simple_error_msg_and_die(b"size not specified\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"size not specified\x00" as *const u8 as *const libc::c_char,
+      );
     }
     if opts & (1i32 << 3i32) as libc::c_uint == 0 {
-      bb_simple_error_msg_and_die(b"name not specified\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"name not specified\x00" as *const u8 as *const libc::c_char,
+      );
     }
     /* the structure is memset(0) above */
     req_structs.mkvol_req.vol_id = vol_id; /* signed int64_t */
@@ -387,14 +349,14 @@ pub unsafe extern "C" fn ubi_tools_main(
     /* strnlen avoids overflow of 16-bit field (paranoia) */
     req_structs.mkvol_req.name_len = strnlen(vol_name, (127i32 + 1i32) as size_t) as __s16;
     if req_structs.mkvol_req.name_len as libc::c_int > 127i32 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"volume name too long: \'%s\'\x00" as *const u8 as *const libc::c_char,
         vol_name,
       );
     }
     /* this is safe: .name[] is UBI_MAX_VOLUME_NAME+1 bytes */
     strcpy(req_structs.mkvol_req.name.as_mut_ptr(), vol_name);
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       ((1u32 << 0 + 8i32 + 8i32 + 14i32
         | (('o' as i32) << 0 + 8i32) as libc::c_uint
@@ -409,13 +371,13 @@ pub unsafe extern "C" fn ubi_tools_main(
       || *applet_name.offset(4) as libc::c_int == 'm' as i32)
   {
     if opts & (1i32 << 2i32 | 1i32 << 3i32) as libc::c_uint == 0 {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"volume id not specified\x00" as *const u8 as *const libc::c_char,
       );
     }
     if opts & (1i32 << 3i32) as libc::c_uint != 0 {
-      let mut num_0: libc::c_uint = ubi_devnum_from_devname(ubi_ctrl);
-      vol_id = ubi_get_volid_by_name(num_0, vol_name)
+      let mut num_0: libc::c_uint = crate::libbb::ubi::ubi_devnum_from_devname(ubi_ctrl);
+      vol_id = crate::libbb::ubi::ubi_get_volid_by_name(num_0, vol_name)
     }
     if ::std::mem::size_of::<libc::c_int>() as libc::c_ulong != 4i32 as libc::c_ulong {
       //usage:#define ubirmvol_trivial_usage
@@ -426,7 +388,7 @@ pub unsafe extern "C" fn ubi_tools_main(
       //usage:     "\n	-N VOLNAME	Volume name"
       /* kernel expects i32* in this ioctl */
       let mut t: i32 = vol_id;
-      bb_xioctl(
+      crate::libbb::xfuncs_printf::bb_xioctl(
         fd,
         ((1u32 << 0 + 8i32 + 8i32 + 14i32
           | (('o' as i32) << 0 + 8i32) as libc::c_uint
@@ -437,7 +399,7 @@ pub unsafe extern "C" fn ubi_tools_main(
         b"UBI_IOCRMVOL\x00" as *const u8 as *const libc::c_char,
       );
     } else {
-      bb_xioctl(
+      crate::libbb::xfuncs_printf::bb_xioctl(
         fd,
         ((1u32 << 0 + 8i32 + 8i32 + 14i32
           | (('o' as i32) << 0 + 8i32) as libc::c_uint
@@ -453,10 +415,12 @@ pub unsafe extern "C" fn ubi_tools_main(
       || *applet_name.offset(4) as libc::c_int == 's' as i32)
   {
     if opts & (1i32 << 4i32) as libc::c_uint == 0 {
-      bb_simple_error_msg_and_die(b"size not specified\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"size not specified\x00" as *const u8 as *const libc::c_char,
+      );
     }
     if opts & (1i32 << 2i32) as libc::c_uint == 0 {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"volume id not specified\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -468,7 +432,7 @@ pub unsafe extern "C" fn ubi_tools_main(
     //usage:     "\n	-s SIZE		Size in bytes"
     req_structs.rsvol_req.bytes = size_bytes as __s64; /* signed int64_t */
     req_structs.rsvol_req.vol_id = vol_id;
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       ((1u32 << 0 + 8i32 + 8i32 + 14i32
         | (('o' as i32) << 0 + 8i32) as libc::c_uint
@@ -493,7 +457,7 @@ pub unsafe extern "C" fn ubi_tools_main(
       /* truncate the volume by starting an update for size 0 */
       bytes64 = 0 as int64_t;
       /* this ioctl expects int64_t* parameter */
-      bb_xioctl(
+      crate::libbb::xfuncs_printf::bb_xioctl(
         fd,
         ((1u32 << 0 + 8i32 + 8i32 + 14i32
           | (('O' as i32) << 0 + 8i32) as libc::c_uint
@@ -517,7 +481,7 @@ pub unsafe extern "C" fn ubi_tools_main(
         &mut volnum as *mut libc::c_uint,
       ) != 2i32
       {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"UBI device name \'%s\' is not /dev/ubiN_M\x00" as *const u8 as *const libc::c_char,
           ubi_ctrl,
         );
@@ -536,20 +500,20 @@ pub unsafe extern "C" fn ubi_tools_main(
         (16i32 * 1024i32 * 1024i32) as libc::c_uint,
       );
       if (*argv).is_null() {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
       if *(*argv).offset(0) as libc::c_int != '-' as i32 || *(*argv).offset(1) as libc::c_int != 0 {
         /* mtd-utils supports "-" as stdin */
-        xmove_fd(xopen(*argv, 0), 0);
+        crate::libbb::xfuncs_printf::xmove_fd(crate::libbb::xfuncs_printf::xopen(*argv, 0), 0);
       }
       if opts & (1i32 << 4i32) as libc::c_uint == 0 {
         let mut st: stat = std::mem::zeroed();
-        xfstat(0i32, &mut st, *argv);
+        crate::libbb::xfuncs_printf::xfstat(0i32, &mut st, *argv);
         size_bytes = st.st_size as libc::c_ulonglong
       }
       bytes64 = size_bytes as int64_t;
       /* this ioctl expects signed int64_t* parameter */
-      bb_xioctl(
+      crate::libbb::xfuncs_printf::bb_xioctl(
         fd,
         ((1u32 << 0 + 8i32 + 8i32 + 14i32
           | (('O' as i32) << 0 + 8i32) as libc::c_uint
@@ -563,10 +527,11 @@ pub unsafe extern "C" fn ubi_tools_main(
       buf = xmalloc(leb_size_0 as size_t) as *mut libc::c_char;
       while size_bytes != 0 as libc::c_ulonglong {
         let mut len: libc::c_int =
-          full_read(0i32, buf as *mut libc::c_void, leb_size_0 as size_t) as libc::c_int;
+          crate::libbb::read::full_read(0i32, buf as *mut libc::c_void, leb_size_0 as size_t)
+            as libc::c_int;
         if len <= 0 {
           if len < 0 {
-            bb_perror_msg_and_die(
+            crate::libbb::perror_msg::bb_perror_msg_and_die(
               b"read error from \'%s\'\x00" as *const u8 as *const libc::c_char,
               *argv,
             );
@@ -577,7 +542,7 @@ pub unsafe extern "C" fn ubi_tools_main(
             /* for this case: "ubiupdatevol -s 1024000 $UBIDEV /dev/urandom" */
             len = size_bytes as libc::c_int
           }
-          xwrite(fd, buf as *const libc::c_void, len as size_t);
+          crate::libbb::xfuncs_printf::xwrite(fd, buf as *const libc::c_void, len as size_t);
           size_bytes = size_bytes.wrapping_sub(len as libc::c_ulonglong)
         }
       }

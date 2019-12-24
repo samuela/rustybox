@@ -2,19 +2,10 @@ use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::size_t;
 use libc;
 use libc::putchar_unlocked;
-use libc::ssize_t;
 extern "C" {
   #[no_mangle]
   fn klogctl(__type: libc::c_int, __bufp: *mut libc::c_char, __len: libc::c_int) -> libc::c_int;
 
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
 pub const OPT_r: C2RustUnnamed = 8;
@@ -84,7 +75,7 @@ pub unsafe extern "C" fn dmesg_main(
   let mut level: libc::c_int = 0; /* read ring buffer */
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opts: libc::c_uint = 0;
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"cs:+n:+r\x00" as *const u8 as *const libc::c_char,
     &mut len as *mut libc::c_int,
@@ -97,7 +88,9 @@ pub unsafe extern "C" fn dmesg_main(
       level as libc::c_long as libc::c_int,
     ) != 0
     {
-      bb_simple_perror_msg_and_die(b"klogctl\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"klogctl\x00" as *const u8 as *const libc::c_char,
+      );
     }
     return 0;
   }
@@ -117,7 +110,9 @@ pub unsafe extern "C" fn dmesg_main(
     len,
   );
   if len < 0 {
-    bb_simple_perror_msg_and_die(b"klogctl\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"klogctl\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if len == 0 {
     return 0;
@@ -131,14 +126,14 @@ pub unsafe extern "C" fn dmesg_main(
       if last == '\n' as i32 && *buf.offset(in_0 as isize) as libc::c_int == '<' as i32 {
         loop {
           let fresh0 = in_0;
-          in_0 += 1;
+          in_0 = in_0 + 1;
           if !(*buf.offset(fresh0 as isize) as libc::c_int != '>' as i32 && in_0 < len) {
             break;
           }
         }
       } else {
         let fresh1 = in_0;
-        in_0 += 1;
+        in_0 = in_0 + 1;
         last = *buf.offset(fresh1 as isize) as libc::c_int;
         putchar_unlocked(last);
       }
@@ -148,12 +143,12 @@ pub unsafe extern "C" fn dmesg_main(
     }
     /* Make sure we end with a newline */
     if last != '\n' as i32 {
-      bb_putchar('\n' as i32);
+      crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     }
   } else {
-    full_write(1i32, buf as *const libc::c_void, len as size_t);
+    crate::libbb::full_write::full_write(1i32, buf as *const libc::c_void, len as size_t);
     if *buf.offset((len - 1i32) as isize) as libc::c_int != '\n' as i32 {
-      bb_putchar('\n' as i32);
+      crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     }
   }
   return 0;

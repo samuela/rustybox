@@ -1,21 +1,12 @@
-use crate::librb::size_t;
 use libc;
 use libc::sprintf;
 use libc::sscanf;
-use libc::ssize_t;
 use libc::strcmp;
 extern "C" {
 
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn open_read_close(
-    filename: *const libc::c_char,
-    buf: *mut libc::c_void,
-    maxsz: size_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
 }
 
 #[no_mangle]
@@ -27,7 +18,7 @@ pub unsafe extern "C" fn ubi_devnum_from_devname(mut str: *const libc::c_char) -
     &mut ubi_devnum as *mut libc::c_uint,
   ) != 1i32
   {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"not an UBI device: \'%s\'\x00" as *const u8 as *const libc::c_char,
       str,
     );
@@ -601,7 +592,7 @@ pub unsafe extern "C" fn ubi_get_volid_by_name(
       ubi_devnum,
       i,
     );
-    if !(open_read_close(
+    if !(crate::libbb::read::open_read_close(
       fname.as_mut_ptr(),
       buf.as_mut_ptr() as *mut libc::c_void,
       ::std::mem::size_of::<[libc::c_char; 128]>() as libc::c_ulong,
@@ -615,7 +606,7 @@ pub unsafe extern "C" fn ubi_get_volid_by_name(
     }
     i = i.wrapping_add(1)
   }
-  bb_error_msg_and_die(
+  crate::libbb::verror_msg::bb_error_msg_and_die(
     b"volume \'%s\' not found\x00" as *const u8 as *const libc::c_char,
     vol_name,
   );

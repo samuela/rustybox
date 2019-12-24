@@ -4,12 +4,6 @@ use libc::off_t;
 extern "C" {
 
   #[no_mangle]
-  fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
-
-  #[no_mangle]
-  fn open_or_warn_stdin(pathname: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
   static bb_argv_dash: [*const libc::c_char; 0];
 }
 
@@ -22,10 +16,10 @@ pub unsafe extern "C" fn bb_cat(mut argv: *mut *mut libc::c_char) -> libc::c_int
   }
   let mut current_block_5: u64;
   loop {
-    fd = open_or_warn_stdin(*argv);
+    fd = crate::libbb::wfopen_input::open_or_warn_stdin(*argv);
     if fd >= 0 {
       /* This is not a xfunc - never exits */
-      let mut r: off_t = bb_copyfd_eof(fd, 1i32);
+      let mut r: off_t = crate::libbb::copyfd::bb_copyfd_eof(fd, 1i32);
       if fd != 0 {
         close(fd);
       }

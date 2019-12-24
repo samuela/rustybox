@@ -1,9 +1,5 @@
 use libc;
 extern "C" {
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_perror_nomsg_and_die() -> !;
 
   /*
    * pivot_root.c - Change root file system.  Based on util-linux 2.10s
@@ -42,12 +38,12 @@ pub unsafe extern "C" fn pivot_root_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   if argc != 3i32 {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* NOFORK applet. Hardly matters wrt performance, but code is trivial */
   if pivot_root(*argv.offset(1), *argv.offset(2)) < 0 {
     /* prints "pivot_root: <strerror text>" */
-    bb_perror_nomsg_and_die();
+    crate::libbb::perror_nomsg_and_die::bb_perror_nomsg_and_die();
   }
   return 0;
 }

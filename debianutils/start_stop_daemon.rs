@@ -48,64 +48,8 @@ extern "C" {
   fn setgroups(__n: size_t, __groups: *const gid_t) -> libc::c_int;
 
   #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xopendir(path: *const libc::c_char) -> *mut DIR;
-  #[no_mangle]
-  fn xmalloc_readlink(path: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xsetgid(gid: gid_t);
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn open_read_close(
-    filename: *const libc::c_char,
-    buf: *mut libc::c_void,
-    maxsz: size_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xatoi_range(str: *const libc::c_char, l: libc::c_int, u: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn xuname2uid(name: *const libc::c_char) -> libc::c_long;
-  #[no_mangle]
-  fn parse_chown_usergroup_or_die(u: *mut bb_uidgid_t, user_group: *mut libc::c_char);
-  #[no_mangle]
-  fn xgetpwuid(uid: uid_t) -> *mut passwd;
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn write_pidfile(path: *const libc::c_char);
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn get_signum(name: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn change_identity(pw: *const passwd);
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -128,8 +72,9 @@ pub const DAEMON_DEVNULL_STDIO: C2RustUnnamed = 2;
 pub const DAEMON_CHDIR_ROOT: C2RustUnnamed = 1;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const COMM_LEN: C2RustUnnamed_0 = 16;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub found_procs: *mut pid_list,
   pub userspec: *mut libc::c_char,
@@ -141,8 +86,9 @@ pub struct globals {
   pub user_id: libc::c_int,
   pub signal_nr: smallint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct pid_list {
   pub next: *mut pid_list,
   pub pid: pid_t,
@@ -178,7 +124,7 @@ unsafe extern "C" fn pid_is_exec(mut pid: pid_t) -> libc::c_int {
       pid as libc::c_uint,
     ) as isize)
     .offset(-3);
-  exelink = xmalloc_readlink(buf.as_mut_ptr());
+  exelink = crate::libbb::xreadlink::xmalloc_readlink(buf.as_mut_ptr());
   match_0 = (!exelink.is_null()
     && strcmp(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).execname,
@@ -189,7 +135,7 @@ unsafe extern "C" fn pid_is_exec(mut pid: pid_t) -> libc::c_int {
     return match_0;
   }
   strcpy(procname, b"cmdline\x00" as *const u8 as *const libc::c_char);
-  bytes = open_read_close(
+  bytes = crate::libbb::read::open_read_close(
     buf.as_mut_ptr(),
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).execname_cmpbuf as *mut libc::c_void,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).execname_sizeof as size_t,
@@ -215,7 +161,7 @@ unsafe extern "C" fn pid_is_name(mut pid: pid_t) -> libc::c_int {
     b"/proc/%u/stat\x00" as *const u8 as *const libc::c_char,
     pid as libc::c_uint,
   );
-  if open_read_close(
+  if crate::libbb::read::open_read_close(
     buf.as_mut_ptr(),
     buf.as_mut_ptr() as *mut libc::c_void,
     (::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong)
@@ -294,7 +240,9 @@ unsafe extern "C" fn check(mut pid: libc::c_int) {
 unsafe extern "C" fn do_pidfile() {
   let mut f: *mut FILE = std::ptr::null_mut();
   let mut pid: libc::c_uint = 0;
-  f = fopen_for_read((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pidfile);
+  f = crate::libbb::wfopen::fopen_for_read(
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pidfile,
+  );
   if !f.is_null() {
     if fscanf(
       f,
@@ -306,7 +254,7 @@ unsafe extern "C" fn do_pidfile() {
     }
     fclose(f);
   } else if *bb_errno != 2i32 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"open pidfile %s\x00" as *const u8 as *const libc::c_char,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pidfile,
     );
@@ -323,7 +271,7 @@ unsafe extern "C" fn do_procinit() {
     do_pidfile();
     return;
   }
-  procdir = xopendir(b"/proc\x00" as *const u8 as *const libc::c_char);
+  procdir = crate::libbb::xfuncs_printf::xopendir(b"/proc\x00" as *const u8 as *const libc::c_char);
   pid = 0;
   loop
   /* Stale entry, process has died after opendir */
@@ -338,7 +286,7 @@ unsafe extern "C" fn do_procinit() {
     if entry.is_null() {
       break;
     }
-    pid = bb_strtou(
+    pid = crate::libbb::bb_strtonum::bb_strtou(
       (*entry).d_name.as_mut_ptr(),
       0 as *mut *mut libc::c_char,
       10i32,
@@ -349,7 +297,7 @@ unsafe extern "C" fn do_procinit() {
   }
   closedir(procdir);
   if pid == 0 {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"nothing in /proc - not mounted?\x00" as *const u8 as *const libc::c_char,
     );
   };
@@ -377,7 +325,7 @@ unsafe extern "C" fn do_stop() -> libc::c_int {
     .pidfile
     .is_null()
   {
-    what = xasprintf(
+    what = crate::libbb::xfuncs_printf::xasprintf(
       b"process in pidfile \'%s\'\x00" as *const u8 as *const libc::c_char,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pidfile,
     )
@@ -385,12 +333,12 @@ unsafe extern "C" fn do_stop() -> libc::c_int {
     .userspec
     .is_null()
   {
-    what = xasprintf(
+    what = crate::libbb::xfuncs_printf::xasprintf(
       b"process(es) owned by \'%s\'\x00" as *const u8 as *const libc::c_char,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).userspec,
     )
   } else {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"internal error, please report\x00" as *const u8 as *const libc::c_char,
     );
   }
@@ -423,7 +371,7 @@ unsafe extern "C" fn do_stop() -> libc::c_int {
       {
         killed += 1
       } else {
-        bb_perror_msg(
+        crate::libbb::perror_msg::bb_perror_msg(
           b"warning: killing process %u\x00" as *const u8 as *const libc::c_char,
           (*p).pid as libc::c_uint,
         );
@@ -487,7 +435,7 @@ pub unsafe extern "C" fn start_stop_daemon_main(
   let mut opt_N: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).user_id = -1i32;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).signal_nr = 15i32 as smallint;
-  opt = getopt32long(
+  opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"^KSbqtma:n:s:u:c:x:p:ovN:R:\x00K:S:K--S:S--K:m?p:K?xpunq-v\x00" as *const u8
       as *const libc::c_char,
@@ -503,9 +451,10 @@ pub unsafe extern "C" fn start_stop_daemon_main(
     0 as *mut libc::c_void,
   );
   if opt & OPT_s as libc::c_int as libc::c_uint != 0 {
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).signal_nr = get_signum(signame) as smallint;
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).signal_nr =
+      crate::libbb::u_signal_names::get_signum(signame) as smallint;
     if ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).signal_nr as libc::c_int) < 0 {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
   }
   //argc -= optind;
@@ -536,7 +485,7 @@ pub unsafe extern "C" fn start_stop_daemon_main(
           .execname
           .is_null()
         {
-          bb_show_usage();
+          crate::libbb::appletlib::bb_show_usage();
         }
         argv = argv.offset(1)
       }
@@ -570,14 +519,16 @@ pub unsafe extern "C" fn start_stop_daemon_main(
     .userspec
     .is_null()
   {
-    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).user_id = bb_strtou(
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).userspec,
-      0 as *mut *mut libc::c_char,
-      10i32,
-    ) as libc::c_int;
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).user_id =
+      crate::libbb::bb_strtonum::bb_strtou(
+        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).userspec,
+        0 as *mut *mut libc::c_char,
+        10i32,
+      ) as libc::c_int;
     if *bb_errno != 0 {
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).user_id =
-        xuname2uid((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).userspec) as libc::c_int
+      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).user_id = crate::libbb::bb_pwd::xuname2uid(
+        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).userspec,
+      ) as libc::c_int
     }
   }
   /* Both start and stop need to know current processes */
@@ -618,7 +569,9 @@ pub unsafe extern "C" fn start_stop_daemon_main(
     let mut pid: pid_t = {
       let mut bb__xvfork_pid: pid_t = vfork();
       if bb__xvfork_pid < 0 {
-        bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"vfork\x00" as *const u8 as *const libc::c_char,
+        );
       }
       bb__xvfork_pid
     };
@@ -632,7 +585,7 @@ pub unsafe extern "C" fn start_stop_daemon_main(
     /* Child */
     setsid(); /* detach from controlling tty */
     /* Redirect stdio to /dev/null, close extra FDs */
-    bb_daemonize_or_rexec(
+    crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(
       DAEMON_DEVNULL_STDIO as libc::c_int + DAEMON_CLOSE_EXTRA_FDS as libc::c_int
         | DAEMON_ONLY_SANITIZE as libc::c_int,
     );
@@ -643,7 +596,9 @@ pub unsafe extern "C" fn start_stop_daemon_main(
     pid = {
       let mut bb__xvfork_pid: pid_t = vfork();
       if bb__xvfork_pid < 0 {
-        bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"vfork\x00" as *const u8 as *const libc::c_char,
+        );
       }
       bb__xvfork_pid
     };
@@ -653,14 +608,20 @@ pub unsafe extern "C" fn start_stop_daemon_main(
   }
   if opt & OPT_MAKEPID as libc::c_int as libc::c_uint != 0 {
     /* User wants _us_ to make the pidfile */
-    write_pidfile((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pidfile);
+    crate::libbb::pidfile::write_pidfile(
+      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pidfile,
+    );
   }
   if opt & OPT_NICELEVEL as libc::c_int as libc::c_uint != 0 {
     /* Set process priority (must be before OPT_c) */
     let mut prio: libc::c_int = getpriority(PRIO_PROCESS, 0 as id_t)
-      + xatoi_range(opt_N, (-2147483647i32 - 1i32) / 2i32, 2147483647i32 / 2i32);
+      + crate::libbb::xatonum::xatoi_range(
+        opt_N,
+        (-2147483647i32 - 1i32) / 2i32,
+        2147483647i32 / 2i32,
+      );
     if setpriority(PRIO_PROCESS, 0 as id_t, prio) < 0 {
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"setpriority(%d)\x00" as *const u8 as *const libc::c_char,
         prio,
       );
@@ -668,16 +629,16 @@ pub unsafe extern "C" fn start_stop_daemon_main(
   }
   if opt & OPT_c as libc::c_int as libc::c_uint != 0 {
     let mut ugid: bb_uidgid_t = bb_uidgid_t { uid: 0, gid: 0 };
-    parse_chown_usergroup_or_die(&mut ugid, chuid);
+    crate::libpwdgrp::uidgid_get::parse_chown_usergroup_or_die(&mut ugid, chuid);
     if ugid.uid != -1i64 as uid_t {
-      let mut pw: *mut passwd = xgetpwuid(ugid.uid);
+      let mut pw: *mut passwd = crate::libbb::bb_pwd::xgetpwuid(ugid.uid);
       if ugid.gid != -1i64 as gid_t {
         (*pw).pw_gid = ugid.gid
       }
       /* initgroups, setgid, setuid: */
-      change_identity(pw);
+      crate::libbb::change_identity::change_identity(pw);
     } else if ugid.gid != -1i64 as gid_t {
-      xsetgid(ugid.gid);
+      crate::libbb::xfuncs_printf::xsetgid(ugid.gid);
       setgroups(1i32 as size_t, &mut ugid.gid);
     }
   }
@@ -689,7 +650,7 @@ pub unsafe extern "C" fn start_stop_daemon_main(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).execname,
     argv as *const *mut libc::c_char,
   );
-  bb_perror_msg_and_die(
+  crate::libbb::perror_msg::bb_perror_msg_and_die(
     b"can\'t execute \'%s\'\x00" as *const u8 as *const libc::c_char,
     startas,
   );

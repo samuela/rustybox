@@ -7,12 +7,6 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-  #[no_mangle]
-  fn xfork() -> pid_t;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
 }
 
 /*
@@ -49,7 +43,8 @@ pub unsafe extern "C" fn setsid_main(
 ) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
   /* +: stop on first non-opt */
-  opt = getopt32(argv, b"^+c\x00-1\x00" as *const u8 as *const libc::c_char);
+  opt =
+    crate::libbb::getopt32::getopt32(argv, b"^+c\x00-1\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   /* setsid() is allowed only when we are not a process group leader.
    * Otherwise our PID serves as PGID of some existing process group
@@ -65,7 +60,7 @@ pub unsafe extern "C" fn setsid_main(
    * or if setsid is executed in backquotes (`setsid PROG`)...
    */
   if setsid() < 0 {
-    let mut pid: pid_t = xfork();
+    let mut pid: pid_t = crate::libbb::xfuncs_printf::xfork();
     if pid != 0 {
       /* parent */
       /* TODO:
@@ -85,5 +80,5 @@ pub unsafe extern "C" fn setsid_main(
     /* -c: set (with stealing) controlling tty */
     ioctl(0i32, 0x540ei32 as libc::c_ulong, 1i32);
   }
-  BB_EXECVP_or_die(argv);
+  crate::libbb::executable::BB_EXECVP_or_die(argv);
 }

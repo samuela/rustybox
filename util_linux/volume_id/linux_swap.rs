@@ -1,33 +1,13 @@
 use libc;
 extern "C" {
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
-
-  #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
 
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 }
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+
+use crate::util_linux::volume_id::volume_id::volume_id;
 
 pub type uuid_format = libc::c_uint;
 // pub const UUID_DCE_STRING: uuid_format = 3;
@@ -59,8 +39,9 @@ pub const UUID_DCE: uuid_format = 2;
 //config:	default y
 //config:	depends on VOLUMEID
 //kbuild:lib-$(CONFIG_FEATURE_VOLUMEID_LINUXSWAP) += linux_swap.o
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct swap_header_v1_2 {
   pub bootbits: [u8; 1024],
   pub version: u32,
@@ -152,7 +133,7 @@ pub unsafe extern "C" fn volume_id_probe_linux_swap(mut id: *mut volume_id) -> l
       current_block = 7976072742316086414;
       break;
     }
-    buf = volume_id_get_buffer(
+    buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
       id,
       (0i32 as u64)
         .wrapping_add(page as libc::c_ulong)
@@ -192,7 +173,7 @@ pub unsafe extern "C" fn volume_id_probe_linux_swap(mut id: *mut volume_id) -> l
         9i32 as libc::c_ulong,
       ) == 0
     {
-      sw = volume_id_get_buffer(
+      sw = crate::util_linux::volume_id::util::volume_id_get_buffer(
         id,
         0 as u64,
         ::std::mem::size_of::<swap_header_v1_2>() as libc::c_ulong,
@@ -203,8 +184,12 @@ pub unsafe extern "C" fn volume_id_probe_linux_swap(mut id: *mut volume_id) -> l
       //				id->type_version[0] = '2';
       //				id->type_version[1] = '\0';
       //				volume_id_set_label_raw(id, sw->volume_name, 16);
-      volume_id_set_label_string(id, (*sw).volume_name.as_mut_ptr(), 16i32 as size_t);
-      volume_id_set_uuid(id, (*sw).uuid.as_mut_ptr(), UUID_DCE);
+      crate::util_linux::volume_id::util::volume_id_set_label_string(
+        id,
+        (*sw).volume_name.as_mut_ptr(),
+        16i32 as size_t,
+      );
+      crate::util_linux::volume_id::util::volume_id_set_uuid(id, (*sw).uuid.as_mut_ptr(), UUID_DCE);
       current_block = 13807130624542804568;
       break;
     } else {

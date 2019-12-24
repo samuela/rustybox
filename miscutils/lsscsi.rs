@@ -1,6 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
-
 use libc;
 use libc::chdir;
 use libc::dirent;
@@ -9,29 +8,6 @@ use libc::readdir;
 use libc::ssize_t;
 use libc::strchr;
 use libc::DIR;
-extern "C" {
-
-  #[no_mangle]
-  fn trim(s: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xopendir(path: *const libc::c_char) -> *mut DIR;
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn open_read_close(
-    filename: *const libc::c_char,
-    buf: *mut libc::c_void,
-    maxsz: size_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
-}
 
 /*
  * lsscsi implementation for busybox
@@ -67,7 +43,7 @@ unsafe extern "C" fn get_line(
   if bufsize.wrapping_sub(2i32 as libc::c_uint) as libc::c_int <= 0 {
     return buf;
   }
-  sz = open_read_close(
+  sz = crate::libbb::read::open_read_close(
     filename,
     buf as *mut libc::c_void,
     bufsize.wrapping_sub(2i32 as libc::c_uint) as size_t,
@@ -76,7 +52,7 @@ unsafe extern "C" fn get_line(
     sz = 0
   }
   *buf.offset(sz as isize) = '\u{0}' as i32 as libc::c_char;
-  sz = trim(buf).wrapping_offset_from(buf) + 1;
+  sz = crate::libbb::trim::trim(buf).wrapping_offset_from(buf) + 1;
   bufsize -= sz as u32;
   buf = buf.offset(sz as isize);
   *buf.offset(0) = '\u{0}' as i32 as libc::c_char;
@@ -90,8 +66,8 @@ pub unsafe extern "C" fn lsscsi_main(
 ) -> libc::c_int {
   let mut de: *mut dirent = std::ptr::null_mut();
   let mut dir: *mut DIR = std::ptr::null_mut();
-  xchdir(scsi_dir.as_ptr());
-  dir = xopendir(b".\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::xfuncs_printf::xchdir(scsi_dir.as_ptr());
+  dir = crate::libbb::xfuncs_printf::xopendir(b".\x00" as *const u8 as *const libc::c_char);
   loop {
     de = readdir(dir);
     if de.is_null() {
@@ -144,12 +120,12 @@ pub unsafe extern "C" fn lsscsi_main(
       b"[%s]\t\x00" as *const u8 as *const libc::c_char,
       (*de).d_name.as_mut_ptr(),
     );
-    type_0 = bb_strtou(type_str, 0 as *mut *mut libc::c_char, 10i32);
+    type_0 = crate::libbb::bb_strtonum::bb_strtou(type_str, 0 as *mut *mut libc::c_char, 10i32);
     if *bb_errno != 0
       || type_0 >= 0x20i32 as libc::c_uint
       || {
         type_name =
-                       nth_string(b"disk\x00tape\x00printer\x00process\x00worm\x00\x00scanner\x00optical\x00mediumx\x00comms\x00\x00\x00storage\x00enclosu\x00sim dsk\x00opti rd\x00bridge\x00osd\x00adi\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00wlun\x00no dev\x00"
+                       crate::libbb::compare_string_array::nth_string(b"disk\x00tape\x00printer\x00process\x00worm\x00\x00scanner\x00optical\x00mediumx\x00comms\x00\x00\x00storage\x00enclosu\x00sim dsk\x00opti rd\x00bridge\x00osd\x00adi\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00wlun\x00no dev\x00"
                                       as *const u8 as *const libc::c_char,
                                   type_0 as libc::c_int);
         (*type_name.offset(0) as libc::c_int) == '\u{0}' as i32
@@ -169,7 +145,7 @@ pub unsafe extern "C" fn lsscsi_main(
     /* chdir("..") may not work as expected,
      * since we might have followed a symlink.
      */
-    xchdir(scsi_dir.as_ptr());
+    crate::libbb::xfuncs_printf::xchdir(scsi_dir.as_ptr());
   }
   return 0;
 }

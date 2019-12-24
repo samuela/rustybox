@@ -10,21 +10,8 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn xatoull_range(
-    str: *const libc::c_char,
-    l: libc::c_ulonglong,
-    u: libc::c_ulonglong,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  /* At least glibc has horrendously large inline for this, so wrap it */
-  #[no_mangle]
-  fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn getopt_mk_fifo_nod(argv: *mut *mut libc::c_char) -> mode_t;
+/* At least glibc has horrendously large inline for this, so wrap it */
+
 }
 
 #[inline(always)]
@@ -33,7 +20,8 @@ unsafe extern "C" fn xatoul_range(
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
 ) -> libc::c_ulong {
-  return xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong)
+    as libc::c_ulong;
 }
 
 /*
@@ -94,29 +82,29 @@ pub unsafe extern "C" fn mknod_main(
   let mut dev: libc::dev_t = 0;
   let mut type_0: *const libc::c_char = std::ptr::null();
   let mut arg: *const libc::c_char = std::ptr::null();
-  mode = getopt_mk_fifo_nod(argv);
+  mode = crate::coreutils::libcoreutils::getopt_mk_fifo_nod::getopt_mk_fifo_nod(argv);
   argv = argv.offset(optind as isize);
   //argc -= optind;
   if (*argv.offset(0)).is_null() || (*argv.offset(1)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   type_0 = strchr(
     modes_chars.as_ptr(),
     *(*argv.offset(1)).offset(0) as libc::c_int,
   );
   if type_0.is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   mode |= modes_cubp[*type_0.offset(4) as libc::c_int as usize];
   dev = 0 as libc::dev_t;
   arg = *argv.offset(2);
   if *type_0 as libc::c_int != 'p' as i32 {
     if (*argv.offset(2)).is_null() || (*argv.offset(3)).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     /* Autodetect what the system supports; these macros should
      * optimize out to two constants. */
-    dev = bb_makedev(
+    dev = crate::libbb::makedev::bb_makedev(
       xatoul_range(
         *argv.offset(2),
         0 as libc::c_ulong,
@@ -139,10 +127,10 @@ pub unsafe extern "C" fn mknod_main(
     arg = *argv.offset(4)
   }
   if !arg.is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   if mknod(*argv.offset(0), mode, dev) != 0 {
-    bb_simple_perror_msg_and_die(*argv.offset(0));
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(*argv.offset(0));
   }
   return 0;
 }

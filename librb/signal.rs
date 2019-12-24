@@ -7,8 +7,14 @@
 pub type __sighandler_t = Option<unsafe extern "C" fn(_: libc::c_int) -> ()>;
 
 // This is meaningfully different from libc::sigaction.
-#[derive(Copy, Clone)]
+
+extern "C" {
+  #[no_mangle]
+  fn sigaction(__sig: libc::c_int, __act: *const sigaction, __oact: *mut sigaction) -> libc::c_int;
+}
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sigaction {
   pub __sigaction_handler: SigactionHandler,
   pub sa_mask: libc::sigset_t,
@@ -16,8 +22,8 @@ pub struct sigaction {
   pub sa_restorer: Option<unsafe extern "C" fn() -> ()>,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union SigactionHandler {
   /* Used if SA_SIGINFO is not set. */
   pub sa_handler: __sighandler_t,

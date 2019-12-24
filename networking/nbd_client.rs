@@ -29,26 +29,6 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn setsockopt_1(fd: libc::c_int, level: libc::c_int, optname: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn create_and_connect_stream_or_die(peer: *const libc::c_char, port: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xread(fd: libc::c_int, buf: *mut libc::c_void, count: size_t);
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-  #[no_mangle]
-  fn xatou(str: *const libc::c_char) -> libc::c_uint;
-  #[no_mangle]
-  fn xatou16(numstr: *const libc::c_char) -> u16;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
   static const_int_0: libc::c_int;
   #[no_mangle]
   fn getopt_long_only(
@@ -89,37 +69,42 @@ pub const IPPROTO_IPIP: C2RustUnnamed = 4;
 pub const IPPROTO_IGMP: C2RustUnnamed = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed = 1;
 pub const IPPROTO_IP: C2RustUnnamed = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct option {
   pub name: *const libc::c_char,
   pub has_arg: libc::c_int,
   pub flag: *mut libc::c_int,
   pub val: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct new_nbd_header_t {
   pub devsize: u64,
   pub transmission_flags: u16,
   pub data: [libc::c_char; 124],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct nbd_opt_t {
   pub magic: u64,
   pub opt: u32,
   pub len: u32,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct old_nbd_header_t {
   pub devsize: u64,
   pub flags: u32,
   pub data: [libc::c_char; 124],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct nbd_header_t {
   pub magic1: u64,
   pub magic2: u64,
@@ -260,11 +245,11 @@ pub unsafe extern "C" fn nbdclient_main(
       }
       98 => {
         // -block-size
-        blksize = xatou(optarg)
+        blksize = crate::libbb::xatonum::xatou(optarg)
       }
       116 => {
         // -timeout
-        timeout = xatou(optarg)
+        timeout = crate::libbb::xatonum::xatou(optarg)
       }
       78 | 110 => {
         // -N
@@ -272,7 +257,7 @@ pub unsafe extern "C" fn nbdclient_main(
         name = optarg
       }
       _ => {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
     }
   }
@@ -280,7 +265,7 @@ pub unsafe extern "C" fn nbdclient_main(
   if opt_d {
     // -d
     if !(*argv.offset(0)).is_null() && (*argv.offset(1)).is_null() {
-      let mut nbd: libc::c_int = xopen(*argv.offset(0), 0o2i32);
+      let mut nbd: libc::c_int = crate::libbb::xfuncs_printf::xopen(*argv.offset(0), 0o2i32);
       ioctl(
         nbd,
         (0u32 << 0 + 8i32 + 8i32 + 14i32
@@ -297,14 +282,14 @@ pub unsafe extern "C" fn nbdclient_main(
       );
       return 0;
     }
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   // Allow only argv[] of: HOST [PORT] BLOCKDEV
   if (*argv.offset(0)).is_null()
     || (*argv.offset(1)).is_null()
     || !(*argv.offset(2)).is_null() && !(*argv.offset(3)).is_null()
   {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   host = *argv.offset(0);
   port = if !(*argv.offset(2)).is_null() {
@@ -326,12 +311,15 @@ pub unsafe extern "C" fn nbdclient_main(
     let mut proto_new: libc::c_int = 0;
     let mut data: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     // Make sure BLOCKDEV exists
-    nbd_0 = xopen(device, 0o2i32);
+    nbd_0 = crate::libbb::xfuncs_printf::xopen(device, 0o2i32);
     // Find and connect to server
-    sock = create_and_connect_stream_or_die(host, xatou16(port) as libc::c_int);
-    setsockopt_1(sock, IPPROTO_TCP as libc::c_int, 1i32);
+    sock = crate::libbb::xconnect::create_and_connect_stream_or_die(
+      host,
+      crate::libbb::xatonum::xatou16(port) as libc::c_int,
+    );
+    crate::libbb::xconnect::setsockopt_1(sock, IPPROTO_TCP as libc::c_int, 1i32);
     // Log on to the server
-    xread(
+    crate::libbb::read_printf::xread(
       sock,
       &mut nbd_header as *mut nbd_header_t as *mut libc::c_void,
       (8i32 + 8i32) as size_t,
@@ -342,7 +330,9 @@ pub unsafe extern "C" fn nbdclient_main(
       ::std::mem::size_of::<u64>() as libc::c_ulong,
     ) != 0
     {
-      bb_simple_error_msg_and_die(b"login failed\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"login failed\x00" as *const u8 as *const libc::c_char,
+      );
       // NBD_OPT_EXPORT_NAME
     }
     if memcmp(
@@ -360,10 +350,12 @@ pub unsafe extern "C" fn nbdclient_main(
     {
       proto_new = 1i32
     } else {
-      bb_simple_error_msg_and_die(b"login failed\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"login failed\x00" as *const u8 as *const libc::c_char,
+      );
     }
     if proto_new == 0 {
-      xread(
+      crate::libbb::read_printf::xread(
         sock,
         &mut old_nbd_header as *mut old_nbd_header_t as *mut libc::c_void,
         (::std::mem::size_of::<u64>() as libc::c_ulong)
@@ -387,8 +379,7 @@ pub unsafe extern "C" fn nbdclient_main(
           let fresh1;
           let fresh2 = __x;
           asm!("bswap ${0:q}" : "=r" (fresh1) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2))
-                              :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
         }
         __v
@@ -429,8 +420,7 @@ pub unsafe extern "C" fn nbdclient_main(
             let fresh4;
             let fresh5 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
-                                   (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                                   : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
           }
           __v
@@ -440,12 +430,12 @@ pub unsafe extern "C" fn nbdclient_main(
     } else {
       let mut namelen: libc::c_uint = 0;
       let mut handshake_flags: u16 = 0;
-      xread(
+      crate::libbb::read_printf::xread(
         sock,
         &mut handshake_flags as *mut u16 as *mut libc::c_void,
         ::std::mem::size_of::<u16>() as libc::c_ulong,
       );
-      xwrite(
+      crate::libbb::xfuncs_printf::xwrite(
         sock,
         &const_int_0 as *const libc::c_int as *const libc::c_void,
         ::std::mem::size_of::<libc::c_int>() as libc::c_ulong,
@@ -468,8 +458,7 @@ pub unsafe extern "C" fn nbdclient_main(
           let fresh7;
           let fresh8 = __x;
           asm!("bswap $0" : "=r" (fresh7) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8))
-                              :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
         }
         __v
@@ -488,21 +477,20 @@ pub unsafe extern "C" fn nbdclient_main(
           let fresh10;
           let fresh11 = __x;
           asm!("bswap $0" : "=r" (fresh10) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11))
-                              :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
         }
         __v
       };
-      xwrite(
+      crate::libbb::xfuncs_printf::xwrite(
         sock,
         &mut nbd_opts as *mut nbd_opt_t as *const libc::c_void,
         (::std::mem::size_of::<u64>() as libc::c_ulong)
           .wrapping_add(::std::mem::size_of::<u32>() as libc::c_ulong)
           .wrapping_add(::std::mem::size_of::<u32>() as libc::c_ulong),
       );
-      xwrite(sock, name as *const libc::c_void, namelen as size_t);
-      xread(
+      crate::libbb::xfuncs_printf::xwrite(sock, name as *const libc::c_void, namelen as size_t);
+      crate::libbb::read_printf::xread(
         sock,
         &mut new_nbd_header as *mut new_nbd_header_t as *mut libc::c_void,
         (::std::mem::size_of::<u64>() as libc::c_ulong)
@@ -526,8 +514,7 @@ pub unsafe extern "C" fn nbdclient_main(
           let fresh13;
           let fresh14 = __x;
           asm!("bswap ${0:q}" : "=r" (fresh13) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14))
-                              :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
         }
         __v
@@ -573,8 +560,7 @@ pub unsafe extern "C" fn nbdclient_main(
             let fresh16;
             let fresh17 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh16) : "0"
-                                (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17))
-                                : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
           }
           __v
@@ -592,8 +578,7 @@ pub unsafe extern "C" fn nbdclient_main(
             let fresh19;
             let fresh20 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh19) : "0"
-                                   (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20))
-                                   : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh18, fresh20, fresh19);
           }
           __v
@@ -610,7 +595,9 @@ pub unsafe extern "C" fn nbdclient_main(
       &mut ro as *mut libc::c_int,
     ) < 0
     {
-      bb_simple_perror_msg_and_die(b"BLKROSET\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"BLKROSET\x00" as *const u8 as *const libc::c_char,
+      );
     }
     if timeout != 0 {
       if ioctl(
@@ -622,7 +609,9 @@ pub unsafe extern "C" fn nbdclient_main(
         timeout as libc::c_ulong,
       ) != 0
       {
-        bb_simple_perror_msg_and_die(b"NBD_SET_TIMEOUT\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"NBD_SET_TIMEOUT\x00" as *const u8 as *const libc::c_char,
+        );
       }
     }
     if ioctl(
@@ -634,7 +623,9 @@ pub unsafe extern "C" fn nbdclient_main(
       sock,
     ) != 0
     {
-      bb_simple_perror_msg_and_die(b"NBD_SET_SOCK\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"NBD_SET_SOCK\x00" as *const u8 as *const libc::c_char,
+      );
     }
     //if (swap) mlockall(MCL_CURRENT|MCL_FUTURE);
     // Open the device to force reread of the partition table.

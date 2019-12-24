@@ -13,41 +13,8 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn recursive_action(
-    fileName: *const libc::c_char,
-    flags: libc::c_uint,
-    fileAction_0: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    dirAction: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    userData: *mut libc::c_void,
-    depth: libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn parse_chown_usergroup_or_die(u: *mut bb_uidgid_t, user_group: *mut libc::c_char);
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
+
 }
 
 pub type C2RustUnnamed = libc::c_uint;
@@ -58,8 +25,8 @@ pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed = 4;
 pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
 pub const ACTION_RECURSE: C2RustUnnamed = 1;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct param_t {
   pub ugid: bb_uidgid_t,
   pub chown_func: chown_fptr,
@@ -164,7 +131,7 @@ unsafe extern "C" fn fileAction(
     return 1i32;
   }
   if option_mask32 & 0x10i32 as libc::c_uint == 0 {
-    bb_simple_perror_msg(fileName);
+    crate::libbb::perror_msg::bb_simple_perror_msg(fileName);
   }
   return 0;
 }
@@ -567,7 +534,7 @@ pub unsafe extern "C" fn chown_main(
     ugid: bb_uidgid_t { uid: 0, gid: 0 },
     chown_func: None,
   };
-  opt = getopt32long(
+  opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"^RhvcfLHP\x00-2\x00" as *const u8 as *const libc::c_char,
     chown_longopts.as_ptr(),
@@ -591,7 +558,7 @@ pub unsafe extern "C" fn chown_main(
   if opt & 0x20i32 != 0 {
     flags |= ACTION_FOLLOWLINKS as libc::c_int
   }
-  parse_chown_usergroup_or_die(&mut param.ugid, *argv.offset(0));
+  crate::libpwdgrp::uidgid_get::parse_chown_usergroup_or_die(&mut param.ugid, *argv.offset(0));
   loop
   /* Ok, ready to do the deed now */
   {
@@ -599,7 +566,7 @@ pub unsafe extern "C" fn chown_main(
     if (*argv).is_null() {
       break;
     }
-    if recursive_action(
+    if crate::libbb::recursive_action::recursive_action(
       *argv,
       flags as libc::c_uint,
       Some(

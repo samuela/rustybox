@@ -20,30 +20,21 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn string_array_len(argv: *mut *mut libc::c_char) -> libc::c_uint;
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
 }
 pub type __builtin_va_list = [__va_list_tag; 1];
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __va_list_tag {
   pub gp_offset: libc::c_uint,
   pub fp_offset: libc::c_uint,
   pub overflow_arg_area: *mut libc::c_void,
   pub reg_save_area: *mut libc::c_void,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct option {
   pub name: *const libc::c_char,
   pub has_arg: libc::c_int,
@@ -51,8 +42,9 @@ pub struct option {
   pub val: libc::c_int,
 }
 pub type va_list = __builtin_va_list;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct t_complementary {
   pub opt_char: libc::c_uchar,
   pub param_type: smallint,
@@ -383,16 +375,7 @@ unsafe extern "C" fn vgetopt32(
   let mut flags: libc::c_uint = 0 as libc::c_uint;
   let mut requires: libc::c_uint = 0 as libc::c_uint;
   let mut len: libc::c_uint = 0;
-  let mut complementary: [t_complementary; 33] = [t_complementary {
-    opt_char: 0,
-    param_type: 0,
-    switch_on: 0,
-    switch_off: 0,
-    incongruously: 0,
-    requires: 0,
-    optarg: std::ptr::null_mut(),
-    counter: std::ptr::null_mut(),
-  }; 33];
+  let mut complementary: [t_complementary; 33] = [std::mem::zeroed(); 33];
   let mut dont_die_flag: libc::c_char = 0;
   let mut c: libc::c_int = 0;
   let mut s: *const libc::c_uchar = std::ptr::null();
@@ -450,7 +433,7 @@ unsafe extern "C" fn vgetopt32(
         } else {
           PARAM_LIST as libc::c_int
         } as smallint;
-        overlapping_strcpy(
+        crate::libbb::safe_strncpy::overlapping_strcpy(
           (s as *mut libc::c_char).offset(1),
           (s as *mut libc::c_char).offset(2),
         );
@@ -583,7 +566,7 @@ unsafe extern "C" fn vgetopt32(
           match current_block_101 {
             10411727741569490626 => {
               /* Without this, diagnostic of such bugs is not easy */
-              bb_error_msg_and_die(
+              crate::libbb::verror_msg::bb_error_msg_and_die(
                 b"NO OPT %c!\x00" as *const u8 as *const libc::c_char,
                 *s as libc::c_int,
               );
@@ -652,7 +635,9 @@ unsafe extern "C" fn vgetopt32(
    */
   optind = 0;
   /* skip 0: some applets cheat: they do not actually HAVE argv[0] */
-  argc = (1i32 as libc::c_uint).wrapping_add(string_array_len(argv.offset(1))) as libc::c_int;
+  argc = (1i32 as libc::c_uint)
+    .wrapping_add(crate::libbb::appletlib::string_array_len(argv.offset(1)))
+    as libc::c_int;
   's_672: loop
   /* Note: just "getopt() <= 0" will not work well for
    * "fake" short options, like this one:
@@ -693,13 +678,14 @@ unsafe extern "C" fn vgetopt32(
     }
     if !optarg.is_null() {
       if (*on_off).param_type as libc::c_int == PARAM_LIST as libc::c_int {
-        llist_add_to_end(
+        crate::libbb::llist::llist_add_to_end(
           (*on_off).optarg as *mut *mut llist_t,
           optarg as *mut libc::c_void,
         );
       } else if (*on_off).param_type as libc::c_int == PARAM_INT as libc::c_int {
         //TODO: xatoi_positive indirectly pulls in printf machinery
-        *((*on_off).optarg as *mut libc::c_uint) = xatoi_positive(optarg) as libc::c_uint
+        *((*on_off).optarg as *mut libc::c_uint) =
+          crate::libbb::xatonum::xatoi_positive(optarg) as libc::c_uint
       } else if !(*on_off).optarg.is_null() {
         let ref mut fresh5 = *((*on_off).optarg as *mut *mut libc::c_char);
         *fresh5 = optarg
@@ -742,7 +728,7 @@ unsafe extern "C" fn vgetopt32(
   }
   /* c is probably '?' - "bad option" */
   if dont_die_flag as libc::c_int != '!' as i32 {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   return -1i32 as u32;
 }

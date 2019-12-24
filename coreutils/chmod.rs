@@ -9,40 +9,8 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn bb_mode_string(mode: mode_t) -> *const libc::c_char;
-  #[no_mangle]
-  fn recursive_action(
-    fileName: *const libc::c_char,
-    flags: libc::c_uint,
-    fileAction_0: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    dirAction: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    userData: *mut libc::c_void,
-    depth: libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_parse_mode(s: *const libc::c_char, cur_mode: libc::c_uint) -> libc::c_int;
+
 }
 
 /*
@@ -118,9 +86,11 @@ unsafe extern "C" fn fileAction(
   }
   match current_block {
     6873731126896040597 => {
-      newmode = bb_parse_mode(param as *mut libc::c_char, (*statbuf).st_mode) as mode_t;
+      newmode =
+        crate::libbb::parse_mode::bb_parse_mode(param as *mut libc::c_char, (*statbuf).st_mode)
+          as mode_t;
       if newmode == -1i32 as mode_t {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"invalid mode \'%s\'\x00" as *const u8 as *const libc::c_char,
           param as *mut libc::c_char,
         );
@@ -131,7 +101,7 @@ unsafe extern "C" fn fileAction(
             b"mode of \'%s\' changed to %04o (%s)\n\x00" as *const u8 as *const libc::c_char,
             fileName,
             newmode & 0o7777 as libc::c_uint,
-            bb_mode_string(newmode).offset(1),
+            crate::libbb::mode_string::bb_mode_string(newmode).offset(1),
           );
         }
         return 1;
@@ -140,7 +110,7 @@ unsafe extern "C" fn fileAction(
     _ => {}
   }
   if option_mask32 & 8 == 0 {
-    bb_simple_perror_msg(fileName);
+    crate::libbb::perror_msg::bb_simple_perror_msg(fileName);
   }
   return 0;
 }
@@ -184,7 +154,7 @@ pub unsafe extern "C" fn chmod_main(
     }
   }
   /* Parse options */
-  getopt32(argv, b"^Rvcf\x00-2\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::getopt32::getopt32(argv, b"^Rvcf\x00-2\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   /* Restore option-like mode if needed */
   if !arg.is_null() {
@@ -195,7 +165,7 @@ pub unsafe extern "C" fn chmod_main(
   argv = argv.offset(1);
   smode = *fresh0;
   loop {
-    if recursive_action(
+    if crate::libbb::recursive_action::recursive_action(
       *argv,
       option_mask32 & 1i32 as libc::c_uint,
       Some(

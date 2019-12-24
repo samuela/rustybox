@@ -4,12 +4,6 @@ use libc::puts;
 extern "C" {
 
   #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
   fn getlogin_r(__name: *mut libc::c_char, __name_len: size_t) -> libc::c_int;
 }
 /*
@@ -53,7 +47,7 @@ pub unsafe extern "C" fn logname_main(
 ) -> libc::c_int {
   let mut buf: [libc::c_char; 64] = [0; 64];
   if !(*argv.offset(1)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* Using _r function - avoid pulling in static buffer from libc */
   if getlogin_r(
@@ -62,7 +56,9 @@ pub unsafe extern "C" fn logname_main(
   ) == 0
   {
     puts(buf.as_mut_ptr());
-    return fflush_all();
+    return crate::libbb::xfuncs_printf::fflush_all();
   }
-  bb_simple_perror_msg_and_die(b"getlogin\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+    b"getlogin\x00" as *const u8 as *const libc::c_char,
+  );
 }

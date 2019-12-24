@@ -11,20 +11,8 @@ extern "C" {
   fn execvp(__file: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
 
   #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
   static mut xfunc_error_retval: u8;
-  #[no_mangle]
-  fn run_shell(
-    shell: *const libc::c_char,
-    loginshell: libc::c_int,
-    args: *mut *const libc::c_char,
-  ) -> !;
+
 }
 
 /*
@@ -78,7 +66,7 @@ pub unsafe extern "C" fn find_executable(
     if !n.is_null() {
       *n = '\u{0}' as i32 as libc::c_char
     }
-    p = concat_path_file(
+    p = crate::libbb::concat_path_file::concat_path_file(
       if *p.offset(0) as libc::c_int != 0 {
         p
       } else {
@@ -117,7 +105,7 @@ pub unsafe extern "C" fn BB_EXECVP_or_die(mut argv: *mut *mut libc::c_char) -> !
   execvp(*argv.offset(0), argv as *const *mut libc::c_char);
   /* SUSv3-mandated exit codes */
   xfunc_error_retval = if *bb_errno == 2i32 { 127i32 } else { 126i32 } as u8;
-  bb_perror_msg_and_die(
+  crate::libbb::perror_msg::bb_perror_msg_and_die(
     b"can\'t execute \'%s\'\x00" as *const u8 as *const libc::c_char,
     *argv.offset(0),
   );
@@ -435,7 +423,7 @@ pub unsafe extern "C" fn exec_prog_or_SHELL(mut argv: *mut *mut libc::c_char) ->
   if !(*argv.offset(0)).is_null() {
     BB_EXECVP_or_die(argv);
   }
-  run_shell(
+  crate::libbb::run_shell::run_shell(
     getenv(b"SHELL\x00" as *const u8 as *const libc::c_char),
     1i32,
     0 as *mut *const libc::c_char,

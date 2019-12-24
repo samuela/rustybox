@@ -1,9 +1,13 @@
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::procps_status_t;
+use crate::librb::smallint;
 use libc;
+use libc::pid_t;
 use libc::putchar_unlocked;
 use libc::sprintf;
 use libc::strcmp;
 use libc::strcpy;
+use libc::uid_t;
 extern "C" {
 
   #[no_mangle]
@@ -12,79 +16,10 @@ extern "C" {
   static ptr_to_globals: *mut globals;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xatoi(str: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn xuname2uid(name: *const libc::c_char) -> libc::c_long;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn get_terminal_width(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
+
 }
 
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::pid_t;
-use libc::uid_t;
-use libc::DIR;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct smaprec {
-  pub mapped_rw: libc::c_ulong,
-  pub mapped_ro: libc::c_ulong,
-  pub shared_clean: libc::c_ulong,
-  pub shared_dirty: libc::c_ulong,
-  pub private_clean: libc::c_ulong,
-  pub private_dirty: libc::c_ulong,
-  pub stack: libc::c_ulong,
-  pub smap_pss: libc::c_ulong,
-  pub smap_swap: libc::c_ulong,
-  pub smap_size: libc::c_ulong,
-  pub smap_start: libc::c_ulonglong,
-  pub smap_mode: [libc::c_char; 5],
-  pub smap_name: *mut libc::c_char,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct procps_status_t {
-  pub dir: *mut DIR,
-  pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: u8,
-  pub shift_pages_to_kb: u8,
-  pub argv_len: u16,
-  pub argv0: *mut libc::c_char,
-  pub exe: *mut libc::c_char,
-  pub main_thread_pid: libc::c_uint,
-  pub vsz: libc::c_ulong,
-  pub rss: libc::c_ulong,
-  pub stime: libc::c_ulong,
-  pub utime: libc::c_ulong,
-  pub start_time: libc::c_ulong,
-  pub pid: libc::c_uint,
-  pub ppid: libc::c_uint,
-  pub pgid: libc::c_uint,
-  pub sid: libc::c_uint,
-  pub uid: libc::c_uint,
-  pub gid: libc::c_uint,
-  pub ruid: libc::c_uint,
-  pub rgid: libc::c_uint,
-  pub niceness: libc::c_int,
-  pub tty_major: libc::c_uint,
-  pub tty_minor: libc::c_uint,
-  pub smaps: smaprec,
-  pub state: [libc::c_char; 4],
-  pub comm: [libc::c_char; 16],
-  pub last_seen_on_cpu: libc::c_int,
-}
 pub type C2RustUnnamed = libc::c_uint;
 pub const PSSCAN_TASKS: C2RustUnnamed = 4194304;
 pub const PSSCAN_RUIDGID: C2RustUnnamed = 2097152;
@@ -108,8 +43,9 @@ pub const PSSCAN_SID: C2RustUnnamed = 8;
 pub const PSSCAN_PGID: C2RustUnnamed = 4;
 pub const PSSCAN_PPID: C2RustUnnamed = 2;
 pub const PSSCAN_PID: C2RustUnnamed = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub cur_x: libc::c_uint,
   pub output_width: libc::c_uint,
@@ -120,8 +56,9 @@ pub struct globals {
   pub dumped: smallint,
 }
 pub type PROC = proc_0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct proc_0 {
   pub comm: [libc::c_char; 19],
   pub pid: pid_t,
@@ -130,8 +67,9 @@ pub struct proc_0 {
   pub parent: *mut proc_0,
   pub next: *mut proc_0,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct child {
   pub child: *mut PROC,
   pub next: *mut child,
@@ -153,12 +91,12 @@ unsafe extern "C" fn ensure_buffer_capacity(mut bufindex: libc::c_int) {
     (*ptr_to_globals).capacity = (*ptr_to_globals)
       .capacity
       .wrapping_add(0x100i32 as libc::c_uint);
-    (*ptr_to_globals).width = xrealloc(
+    (*ptr_to_globals).width = crate::libbb::xfuncs_printf::xrealloc(
       (*ptr_to_globals).width as *mut libc::c_void,
       ((*ptr_to_globals).capacity as libc::c_ulong)
         .wrapping_mul(::std::mem::size_of::<libc::c_uint>() as libc::c_ulong),
     ) as *mut libc::c_uint;
-    (*ptr_to_globals).more = xrealloc(
+    (*ptr_to_globals).more = crate::libbb::xfuncs_printf::xrealloc(
       (*ptr_to_globals).more as *mut libc::c_void,
       ((*ptr_to_globals).capacity as libc::c_ulong)
         .wrapping_mul(::std::mem::size_of::<u8>() as libc::c_ulong),
@@ -208,7 +146,9 @@ unsafe extern "C" fn new_proc(
   mut pid: pid_t,
   mut uid: uid_t,
 ) -> *mut PROC {
-  let mut new: *mut PROC = xzalloc(::std::mem::size_of::<PROC>() as libc::c_ulong) as *mut PROC;
+  let mut new: *mut PROC =
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<PROC>() as libc::c_ulong)
+      as *mut PROC;
   strcpy((*new).comm.as_mut_ptr(), comm);
   (*new).pid = pid;
   (*new).uid = uid;
@@ -487,7 +427,7 @@ unsafe extern "C" fn mread_proc() {
     | PSSCAN_UIDGID as libc::c_int
     | PSSCAN_TASKS as libc::c_int;
   loop {
-    p = procps_scan(p, flags);
+    p = crate::libbb::procps::procps_scan(p, flags);
     if p.is_null() {
       break;
     }
@@ -513,18 +453,19 @@ pub unsafe extern "C" fn pstree_main(
   let mut uid: libc::c_long = 0;
   let ref mut fresh2 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh2 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh2 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
-  (*ptr_to_globals).output_width = get_terminal_width(0i32) as libc::c_uint;
-  getopt32(argv, b"^p\x00?1\x00" as *const u8 as *const libc::c_char);
+  (*ptr_to_globals).output_width = crate::libbb::xfuncs::get_terminal_width(0i32) as libc::c_uint;
+  crate::libbb::getopt32::getopt32(argv, b"^p\x00?1\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   if !(*argv.offset(0)).is_null() {
     if *(*argv.offset(0)).offset(0) as libc::c_int >= '0' as i32
       && *(*argv.offset(0)).offset(0) as libc::c_int <= '9' as i32
     {
-      pid = xatoi(*argv.offset(0))
+      pid = crate::libbb::xatonum::xatoi(*argv.offset(0))
     } else {
-      uid = xuname2uid(*argv.offset(0))
+      uid = crate::libbb::bb_pwd::xuname2uid(*argv.offset(0))
     }
   }
   mread_proc();
@@ -533,7 +474,9 @@ pub unsafe extern "C" fn pstree_main(
   } else {
     dump_by_user(find_proc(1i32), uid as uid_t);
     if (*ptr_to_globals).dumped == 0 {
-      bb_simple_error_msg_and_die(b"no processes found\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"no processes found\x00" as *const u8 as *const libc::c_char,
+      );
     }
   }
   return 0;

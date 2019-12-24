@@ -1,6 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::skip_whitespace::skip_whitespace;
-use crate::librb::size_t;
 use libc;
 use libc::free;
 use libc::getegid;
@@ -25,18 +24,6 @@ extern "C" {
   #[no_mangle]
   fn longjmp(_: *mut __jmp_buf_tag, _: libc::c_int) -> !;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
-  #[no_mangle]
-  fn bb_getgroups(ngroups: *mut libc::c_int, group_array: *mut gid_t) -> *mut gid_t;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
   /* See test_ptr_hack.c */
   #[no_mangle]
   static test_ptr_to_statics: *mut test_statics;
@@ -45,8 +32,9 @@ pub type __int64_t = libc::c_long;
 pub type int64_t = __int64_t;
 
 pub type __jmp_buf = [libc::c_long; 8];
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __jmp_buf_tag {
   pub __jmpbuf: __jmp_buf,
   pub __mask_was_saved: libc::c_int,
@@ -54,8 +42,9 @@ pub struct __jmp_buf_tag {
 }
 pub type jmp_buf = [__jmp_buf_tag; 1];
 /* We try to minimize both static and stack usage. */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct test_statics {
   pub args: *mut *mut libc::c_char,
   pub last_operator: *const operator_t,
@@ -63,8 +52,9 @@ pub struct test_statics {
   pub ngroups: libc::c_int,
   pub leaving: jmp_buf,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct operator_t {
   pub op_num: libc::c_uchar,
   pub op_type: libc::c_uchar,
@@ -555,9 +545,13 @@ static mut ops_texts: [libc::c_char; 124] = [
 ];
 unsafe extern "C" fn syntax(mut op: *const libc::c_char, mut msg: *const libc::c_char) -> ! {
   if !op.is_null() && *op as libc::c_int != 0 {
-    bb_error_msg(b"%s: %s\x00" as *const u8 as *const libc::c_char, op, msg);
+    crate::libbb::verror_msg::bb_error_msg(
+      b"%s: %s\x00" as *const u8 as *const libc::c_char,
+      op,
+      msg,
+    );
   } else {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       (b"%s: %s\x00" as *const u8 as *const libc::c_char).offset(4),
       msg,
     );
@@ -618,7 +612,7 @@ unsafe extern "C" fn check_operator(mut s: *const libc::c_char) -> token {
   if s.is_null() {
     return EOI;
   }
-  n = index_in_strings(ops_texts.as_ptr(), s);
+  n = crate::libbb::compare_string_array::index_in_strings(ops_texts.as_ptr(), s);
   if n < 0 {
     return OPERAND;
   }
@@ -700,7 +694,7 @@ unsafe extern "C" fn binop() -> libc::c_int {
 }
 unsafe extern "C" fn initialize_group_array() {
   (*test_ptr_to_statics).group_array =
-    bb_getgroups(&mut (*test_ptr_to_statics).ngroups, 0 as *mut gid_t);
+    crate::libbb::bb_getgroups::bb_getgroups(&mut (*test_ptr_to_statics).ngroups, 0 as *mut gid_t);
 }
 /* Return non-zero if GID is one that we have in our groups list. */
 //XXX: FIXME: duplicate of existing libbb function?
@@ -1346,7 +1340,7 @@ pub unsafe extern "C" fn test_main(
   let mut current_block: u64; /* assuming "[[" */
   let mut res: libc::c_int = 0;
   let mut arg0: *const libc::c_char = std::ptr::null();
-  arg0 = bb_basename(*argv.offset(0));
+  arg0 = crate::libbb::get_last_path_component::bb_basename(*argv.offset(0));
   if (1i32 != 0 || 1i32 != 0 || 1i32 != 0 || 1i32 != 0)
     && *arg0.offset(0) as libc::c_int == '[' as i32
   {
@@ -1356,7 +1350,9 @@ pub unsafe extern "C" fn test_main(
       if *(*argv.offset(argc as isize)).offset(0) as libc::c_int != ']' as i32
         || *(*argv.offset(argc as isize)).offset(1) as libc::c_int != 0
       {
-        bb_simple_error_msg(b"missing ]\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg(
+          b"missing ]\x00" as *const u8 as *const libc::c_char,
+        );
         return 2i32;
       }
     } else if strcmp(
@@ -1364,7 +1360,9 @@ pub unsafe extern "C" fn test_main(
       b"]]\x00" as *const u8 as *const libc::c_char,
     ) != 0
     {
-      bb_simple_error_msg(b"missing ]]\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg(
+        b"missing ]]\x00" as *const u8 as *const libc::c_char,
+      );
       return 2i32;
     }
     let ref mut fresh0 = *argv.offset(argc as isize);
@@ -1375,7 +1373,9 @@ pub unsafe extern "C" fn test_main(
   let ref mut fresh1 =
     *(not_const_pp(&test_ptr_to_statics as *const *mut test_statics as *const libc::c_void)
       as *mut *mut test_statics);
-  *fresh1 = xzalloc(::std::mem::size_of::<test_statics>() as libc::c_ulong) as *mut test_statics;
+  *fresh1 =
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<test_statics>() as libc::c_ulong)
+      as *mut test_statics;
   asm!("" : : : "memory" : "volatile");
   res = _setjmp((*test_ptr_to_statics).leaving.as_mut_ptr());
   if !(res != 0) {
@@ -1464,7 +1464,7 @@ pub unsafe extern "C" fn test_main(
              * test 3 -lt 5 6
              * test -t 1 2
              */
-            bb_error_msg(
+            crate::libbb::verror_msg::bb_error_msg(
               b"%s: unknown operand\x00" as *const u8 as *const libc::c_char,
               *(*test_ptr_to_statics).args,
             );

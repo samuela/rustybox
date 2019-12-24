@@ -5,8 +5,6 @@ extern "C" {
   #[no_mangle]
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
 
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 pub type nfds_t = libc::c_ulong;
 
@@ -309,7 +307,7 @@ pub unsafe extern "C" fn safe_poll(
     if *bb_errno == 12i32 {
       continue;
     }
-    bb_simple_perror_msg(b"poll\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg(b"poll\x00" as *const u8 as *const libc::c_char);
     return n;
   }
 }

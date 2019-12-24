@@ -9,35 +9,6 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn get_volume_size_in_bytes(
-    fd: libc::c_int,
-    override_0: *const libc::c_char,
-    override_units: libc::c_uint,
-    extend: libc::c_int,
-  ) -> uoff_t;
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-  #[no_mangle]
-  fn bin2hex(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    count: libc::c_int,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn generate_uuid(buf: *mut u8);
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
   fn fsync(__fd: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn getpagesize() -> libc::c_int;
@@ -83,8 +54,9 @@ extern "C" {
  * Magic header for a swap area. ... Note that the first
  * kilobyte is reserved for boot loader or disk label stuff.
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct swap_header_v1 {
   pub version: u32,
   pub last_page: u32,
@@ -108,15 +80,20 @@ pub unsafe extern "C" fn mkswap_main(
   let mut len: off_t = 0;
   let mut label: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
   /* TODO: -p PAGESZ, -U UUID */
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     b"^L:\x00-1\x00" as *const u8 as *const libc::c_char,
     &mut label as *mut *const libc::c_char,
   );
   argv = argv.offset(optind as isize);
-  fd = xopen(*argv.offset(0), 0o1i32);
+  fd = crate::libbb::xfuncs_printf::xopen(*argv.offset(0), 0o1i32);
   /* Figure out how big the device is */
-  len = get_volume_size_in_bytes(fd, *argv.offset(1), 1024i32 as libc::c_uint, 1i32) as off_t;
+  len = crate::libbb::get_volsize::get_volume_size_in_bytes(
+    fd,
+    *argv.offset(1),
+    1024i32 as libc::c_uint,
+    1i32,
+  ) as off_t;
   pagesize = getpagesize() as libc::c_uint;
   len -= pagesize as libc::c_long;
   /* Announce our intentions */
@@ -130,7 +107,7 @@ pub unsafe extern "C" fn mkswap_main(
    * util-linux-ng 2.17.2 claims to erase it only if it does not see
    * a partition table and is not run on whole disk. -f forces it.
    */
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     fd,
     bb_common_bufsiz1.as_mut_ptr() as *mut swap_header_v1 as *const libc::c_void,
     1024i32 as size_t,
@@ -140,12 +117,12 @@ pub unsafe extern "C" fn mkswap_main(
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut swap_header_v1)).last_page =
     (len as uoff_t).wrapping_div(pagesize as libc::c_ulong) as u32;
   let mut uuid_string: [libc::c_char; 32] = [0; 32];
-  generate_uuid(
+  crate::libbb::xfuncs_printf::generate_uuid(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut swap_header_v1))
       .sws_uuid
       .as_mut_ptr() as *mut libc::c_void as *mut u8,
   );
-  bin2hex(
+  crate::libbb::xfuncs::bin2hex(
     uuid_string.as_mut_ptr(),
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut swap_header_v1))
       .sws_uuid
@@ -166,7 +143,7 @@ pub unsafe extern "C" fn mkswap_main(
       .offset(4)
       .offset(4),
   );
-  safe_strncpy(
+  crate::libbb::safe_strncpy::safe_strncpy(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut swap_header_v1))
       .sws_volume
       .as_mut_ptr(),
@@ -175,13 +152,13 @@ pub unsafe extern "C" fn mkswap_main(
   );
   /* Write the header.  Sync to disk because some kernel versions check
    * signature on disk (not in cache) during swapon. */
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     fd,
     bb_common_bufsiz1.as_mut_ptr() as *mut swap_header_v1 as *const libc::c_void,
     (129i32 * 4i32) as size_t,
   );
-  xlseek(fd, pagesize.wrapping_sub(10i32 as libc::c_uint) as off_t, 0);
-  xwrite(
+  crate::libbb::xfuncs_printf::xlseek(fd, pagesize.wrapping_sub(10i32 as libc::c_uint) as off_t, 0);
+  crate::libbb::xfuncs_printf::xwrite(
     fd,
     SWAPSPACE2.as_ptr() as *const libc::c_void,
     10i32 as size_t,

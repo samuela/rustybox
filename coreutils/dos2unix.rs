@@ -25,26 +25,6 @@ extern "C" {
   fn fileno_unlocked(__stream: *mut FILE) -> libc::c_int;
 
   #[no_mangle]
-  fn xmalloc_follow_symlinks(path: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfstat(fd: libc::c_int, buf: *mut stat, errmsg: *const libc::c_char);
-  #[no_mangle]
-  fn xrename(oldpath: *const libc::c_char, newpath: *const libc::c_char);
-  #[no_mangle]
-  fn xmkstemp(template: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xfdopen_for_write(fd: libc::c_int) -> *mut FILE;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_nomsg_and_die() -> !;
-  #[no_mangle]
   fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
 
 }
@@ -111,22 +91,22 @@ unsafe extern "C" fn convert(mut fn_0: *mut libc::c_char, mut conv_type: libc::c
   if !fn_0.is_null() {
     let mut st: stat = std::mem::zeroed();
     let mut fd: libc::c_int = 0;
-    resolved_fn = xmalloc_follow_symlinks(fn_0);
+    resolved_fn = crate::libbb::xreadlink::xmalloc_follow_symlinks(fn_0);
     if resolved_fn.is_null() {
-      bb_simple_perror_msg_and_die(fn_0);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(fn_0);
     }
-    in_0 = xfopen_for_read(resolved_fn);
-    xfstat(fileno_unlocked(in_0), &mut st, resolved_fn);
-    temp_fn = xasprintf(
+    in_0 = crate::libbb::wfopen::xfopen_for_read(resolved_fn);
+    crate::libbb::xfuncs_printf::xfstat(fileno_unlocked(in_0), &mut st, resolved_fn);
+    temp_fn = crate::libbb::xfuncs_printf::xasprintf(
       b"%sXXXXXX\x00" as *const u8 as *const libc::c_char,
       resolved_fn,
     );
-    fd = xmkstemp(temp_fn);
+    fd = crate::libbb::xfuncs_printf::xmkstemp(temp_fn);
     if fchmod(fd, st.st_mode) == -1i32 {
-      bb_simple_perror_msg_and_die(temp_fn);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(temp_fn);
     }
     fchown(fd, st.st_uid, st.st_gid);
-    out = xfdopen_for_write(fd)
+    out = crate::libbb::wfopen::xfdopen_for_write(fd)
   }
   loop {
     ch = getc_unlocked(in_0);
@@ -146,9 +126,9 @@ unsafe extern "C" fn convert(mut fn_0: *mut libc::c_char, mut conv_type: libc::c
   if !fn_0.is_null() {
     if fclose(in_0) < 0 || fclose(out) < 0 {
       unlink(temp_fn);
-      bb_perror_nomsg_and_die();
+      crate::libbb::perror_nomsg_and_die::bb_perror_nomsg_and_die();
     }
-    xrename(temp_fn, resolved_fn);
+    crate::libbb::xfuncs_printf::xrename(temp_fn, resolved_fn);
     free(temp_fn as *mut libc::c_void);
     free(resolved_fn as *mut libc::c_void);
   };
@@ -167,7 +147,7 @@ pub unsafe extern "C" fn dos2unix_main(
     conv_type = CT_UNIX2DOS as libc::c_int
   }
   /* -u convert to unix, -d convert to dos */
-  o = getopt32(
+  o = crate::libbb::getopt32::getopt32(
     argv,
     b"^du\x00u--d:d--u\x00" as *const u8 as *const libc::c_char,
   ) as libc::c_int; /* mutually exclusive */

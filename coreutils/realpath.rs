@@ -1,17 +1,6 @@
 use libc;
 use libc::free;
 use libc::puts;
-extern "C" {
-
-  #[no_mangle]
-  fn xmalloc_realpath_coreutils(path: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-}
 
 /*
  * Mar 16, 2003      Manuel Novoa III   (mjn3@codepoet.org)
@@ -42,22 +31,23 @@ pub unsafe extern "C" fn realpath_main(
   let mut retval: libc::c_int = 0;
   argv = argv.offset(1);
   if (*argv).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   loop {
     /* NOFORK: only one alloc is allowed; must free */
-    let mut resolved_path: *mut libc::c_char = xmalloc_realpath_coreutils(*argv);
+    let mut resolved_path: *mut libc::c_char =
+      crate::libbb::xreadlink::xmalloc_realpath_coreutils(*argv);
     if !resolved_path.is_null() {
       puts(resolved_path);
       free(resolved_path as *mut libc::c_void);
     } else {
       retval = 1i32;
-      bb_simple_perror_msg(*argv);
+      crate::libbb::perror_msg::bb_simple_perror_msg(*argv);
     }
     argv = argv.offset(1);
     if (*argv).is_null() {
       break;
     }
   }
-  fflush_stdout_and_exit(retval);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(retval);
 }

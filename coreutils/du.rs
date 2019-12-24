@@ -14,38 +14,16 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn warn_opendir(path: *const libc::c_char) -> *mut DIR;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn make_human_readable_str(
-    size: libc::c_ulonglong,
-    block_size: libc::c_ulong,
-    display_unit: libc::c_ulong,
-  ) -> *const libc::c_char;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn concat_subpath_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn is_in_ino_dev_hashtable(statbuf: *const stat) -> *mut libc::c_char;
-  #[no_mangle]
-  fn add_to_ino_dev_hashtable(statbuf: *const stat, name: *const libc::c_char);
+
   #[no_mangle]
   fn reset_ino_dev_hashtable();
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub disp_unit: libc::c_ulong,
   pub max_print_depth: libc::c_int,
@@ -85,7 +63,7 @@ unsafe extern "C" fn print(mut size: libc::c_ulonglong, mut filename: *const lib
   }
   printf(
     b"%s\t%s\n\x00" as *const u8 as *const libc::c_char,
-    make_human_readable_str(
+    crate::libbb::human_readable::make_human_readable_str(
       size,
       512i32 as libc::c_ulong,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).disp_unit,
@@ -98,7 +76,7 @@ unsafe extern "C" fn du(mut filename: *const libc::c_char) -> libc::c_ulonglong 
   let mut statbuf: stat = std::mem::zeroed();
   let mut sum: libc::c_ulonglong = 0;
   if lstat(filename, &mut statbuf) != 0 {
-    bb_simple_perror_msg(filename);
+    crate::libbb::perror_msg::bb_simple_perror_msg(filename);
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).status = 1i32 != 0;
     return 0 as libc::c_ulonglong;
   }
@@ -116,7 +94,7 @@ unsafe extern "C" fn du(mut filename: *const libc::c_char) -> libc::c_ulonglong 
     {
       /* -H or -L */
       if stat(filename, &mut statbuf) != 0 {
-        bb_simple_perror_msg(filename);
+        crate::libbb::perror_msg::bb_simple_perror_msg(filename);
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).status = 1i32 != 0;
         return 0 as libc::c_ulonglong;
       }
@@ -131,16 +109,16 @@ unsafe extern "C" fn du(mut filename: *const libc::c_char) -> libc::c_ulonglong 
     && statbuf.st_nlink > 1i32 as libc::c_ulong
   {
     /* Add files/directories with links only once */
-    if !is_in_ino_dev_hashtable(&mut statbuf).is_null() {
+    if !crate::libbb::inode_hash::is_in_ino_dev_hashtable(&mut statbuf).is_null() {
       return 0 as libc::c_ulonglong;
     }
-    add_to_ino_dev_hashtable(&mut statbuf, 0 as *const libc::c_char);
+    crate::libbb::inode_hash::add_to_ino_dev_hashtable(&mut statbuf, 0 as *const libc::c_char);
   }
   if statbuf.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
     let mut dir: *mut DIR = std::ptr::null_mut();
     let mut entry: *mut dirent = std::ptr::null_mut();
     let mut newfile: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    dir = warn_opendir(filename);
+    dir = crate::libbb::xfuncs_printf::warn_opendir(filename);
     if dir.is_null() {
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).status = 1i32 != 0;
       return sum;
@@ -150,7 +128,10 @@ unsafe extern "C" fn du(mut filename: *const libc::c_char) -> libc::c_ulonglong 
       if entry.is_null() {
         break;
       }
-      newfile = concat_subpath_file(filename, (*entry).d_name.as_mut_ptr());
+      newfile = crate::libbb::concat_subpath_file::concat_subpath_file(
+        filename,
+        (*entry).d_name.as_mut_ptr(),
+      );
       if newfile.is_null() {
         continue;
       }
@@ -194,7 +175,7 @@ pub unsafe extern "C" fn du_main(
    * gnu du exits with an error code in this case.  We choose to simply
    * ignore -a.  This is consistent with -s being equivalent to -d 0.
    */
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^aHkLsxd:+lchm\x00h-km:k-hm:m-hk:H-L:L-H:s-d:d-s\x00" as *const u8 as *const libc::c_char,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_print_depth as *mut libc::c_int,
@@ -240,5 +221,7 @@ pub unsafe extern "C" fn du_main(
   if opt & OPT_c_total as libc::c_int as libc::c_uint != 0 {
     print(total, b"total\x00" as *const u8 as *const libc::c_char);
   }
-  fflush_stdout_and_exit((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).status as libc::c_int);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).status as libc::c_int,
+  );
 }

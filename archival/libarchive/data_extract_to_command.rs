@@ -1,45 +1,19 @@
 use crate::archival::libarchive::bb_archive::archive_handle_t;
 use crate::archival::libarchive::bb_archive::file_header_t;
 use crate::librb::signal::__sighandler_t;
-
 use libc;
 use libc::close;
-use libc::off_t;
 use libc::pid_t;
 use libc::putenv;
 extern "C" {
-
   #[no_mangle]
   fn vfork() -> libc::c_int;
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
   #[no_mangle]
   fn execl(__path: *const libc::c_char, __arg: *const libc::c_char, _: ...) -> libc::c_int;
-
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_copyfd_exact_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t);
-  #[no_mangle]
-  fn xdup2(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn bb_unsetenv_and_free(key: *mut libc::c_char);
-  #[no_mangle]
-  fn xpipe(filedes: *mut libc::c_int);
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfork() -> pid_t;
-  #[no_mangle]
-  fn wait_for_exitstatus(pid: pid_t) -> libc::c_int;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_die_memory_exhausted() -> !;
 }
 
 pub type C2RustUnnamed = libc::c_uint;
@@ -69,7 +43,7 @@ static mut tar_var: [*const libc::c_char; 8] = [
 ];
 unsafe extern "C" fn xputenv(mut str: *mut libc::c_char) {
   if putenv(str) != 0 {
-    bb_die_memory_exhausted();
+    crate::libbb::xfuncs_printf::bb_die_memory_exhausted();
   };
 }
 unsafe extern "C" fn str2env(
@@ -78,7 +52,7 @@ unsafe extern "C" fn str2env(
   mut str: *const libc::c_char,
 ) {
   let ref mut fresh0 = *env.offset(idx as isize);
-  *fresh0 = xasprintf(
+  *fresh0 = crate::libbb::xfuncs_printf::xasprintf(
     b"TAR_%s=%s\x00" as *const u8 as *const libc::c_char,
     tar_var[idx as usize],
     str,
@@ -91,7 +65,7 @@ unsafe extern "C" fn dec2env(
   mut val: libc::c_ulonglong,
 ) {
   let ref mut fresh1 = *env.offset(idx as isize);
-  *fresh1 = xasprintf(
+  *fresh1 = crate::libbb::xfuncs_printf::xasprintf(
     b"TAR_%s=%llu\x00" as *const u8 as *const libc::c_char,
     tar_var[idx as usize],
     val,
@@ -104,7 +78,7 @@ unsafe extern "C" fn oct2env(
   mut val: libc::c_ulong,
 ) {
   let ref mut fresh2 = *env.offset(idx as isize);
-  *fresh2 = xasprintf(
+  *fresh2 = crate::libbb::xfuncs_printf::xasprintf(
     b"TAR_%s=%lo\x00" as *const u8 as *const libc::c_char,
     tar_var[idx as usize],
     val,
@@ -125,14 +99,16 @@ pub unsafe extern "C" fn data_extract_to_command(mut archive_handle: *mut archiv
       0,
       ::std::mem::size_of::<[*mut libc::c_char; 8]>() as libc::c_ulong,
     );
-    xpipe(p.as_mut_ptr());
+    crate::libbb::xfuncs_printf::xpipe(p.as_mut_ptr());
     pid = if 1i32 != 0 {
-      xfork()
+      crate::libbb::xfuncs_printf::xfork()
     } else {
       ({
         let mut bb__xvfork_pid: pid_t = vfork();
         if bb__xvfork_pid < 0 {
-          bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+            b"vfork\x00" as *const u8 as *const libc::c_char,
+          );
         }
         bb__xvfork_pid
       })
@@ -181,7 +157,7 @@ pub unsafe extern "C" fn data_extract_to_command(mut archive_handle: *mut archiv
         (*file_header).gid as libc::c_ulonglong,
       );
       close(p[1]);
-      xdup2(p[0], 0);
+      crate::libbb::xfuncs_printf::xdup2(p[0], 0);
       signal(13i32, None);
       execl(
         (*archive_handle).tar__to_command_shell,
@@ -190,7 +166,7 @@ pub unsafe extern "C" fn data_extract_to_command(mut archive_handle: *mut archiv
         (*archive_handle).tar__to_command,
         std::ptr::null_mut::<libc::c_char>(),
       );
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"can\'t execute \'%s\'\x00" as *const u8 as *const libc::c_char,
         (*archive_handle).tar__to_command_shell,
       );
@@ -198,18 +174,22 @@ pub unsafe extern "C" fn data_extract_to_command(mut archive_handle: *mut archiv
     close(p[0]);
     /* Our caller is expected to do signal(SIGPIPE, SIG_IGN)
      * so that we don't die if child don't read all the input: */
-    bb_copyfd_exact_size((*archive_handle).src_fd, p[1], -(*file_header).size);
+    crate::libbb::copyfd::bb_copyfd_exact_size(
+      (*archive_handle).src_fd,
+      p[1],
+      -(*file_header).size,
+    );
     close(p[1]);
-    status = wait_for_exitstatus(pid);
+    status = crate::libbb::xfuncs::wait_for_exitstatus(pid);
     if status & 0x7fi32 == 0 && (status & 0xff00i32) >> 8i32 != 0 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"\'%s\' returned status %d\x00" as *const u8 as *const libc::c_char,
         (*archive_handle).tar__to_command,
         (status & 0xff00i32) >> 8i32,
       );
     }
     if ((status & 0x7fi32) + 1i32) as libc::c_schar as libc::c_int >> 1i32 > 0 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"\'%s\' terminated by signal %d\x00" as *const u8 as *const libc::c_char,
         (*archive_handle).tar__to_command,
         status & 0x7fi32,
@@ -220,7 +200,7 @@ pub unsafe extern "C" fn data_extract_to_command(mut archive_handle: *mut archiv
       i = 0;
       while i < TAR_MAX as libc::c_int {
         if !tar_env[i as usize].is_null() {
-          bb_unsetenv_and_free(tar_env[i as usize]);
+          crate::libbb::xfuncs_printf::bb_unsetenv_and_free(tar_env[i as usize]);
         }
         i += 1
       }

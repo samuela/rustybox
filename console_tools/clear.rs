@@ -1,9 +1,4 @@
 use libc;
-use libc::ssize_t;
-extern "C" {
-  #[no_mangle]
-  fn full_write1_str(str: *const libc::c_char) -> ssize_t;
-}
 
 /*
  * Mini clear implementation for busybox
@@ -30,6 +25,7 @@ pub unsafe extern "C" fn clear_main(
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   /* home; clear to the end of screen */
-  return (full_write1_str(b"\x1b[H\x1b[J\x00" as *const u8 as *const libc::c_char) != 6)
-    as libc::c_int;
+  return (crate::libbb::xfuncs::full_write1_str(
+    b"\x1b[H\x1b[J\x00" as *const u8 as *const libc::c_char,
+  ) != 6) as libc::c_int;
 }

@@ -36,46 +36,13 @@ extern "C" {
 
   #[no_mangle]
   fn strncasecmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
-  #[no_mangle]
-  fn monotonic_us() -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_get_last_path_component_strip(path: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xsetenv(key: *const libc::c_char, value: *const libc::c_char);
-  #[no_mangle]
-  fn xpipe(filedes: *mut libc::c_int);
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_fgets(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfopen_for_write(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xfdopen_for_write(fd: libc::c_int) -> *mut FILE;
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-  #[no_mangle]
-  fn wait4pid(pid: pid_t) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn read_base64(src_stream: *mut FILE, dst_stream: *mut FILE, flags: libc::c_int);
+
   #[no_mangle]
   fn vfork() -> libc::c_int;
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub helper_pid: pid_t,
   pub timeout: libc::c_uint,
@@ -152,7 +119,7 @@ unsafe extern "C" fn xfind_token(
   if !r.is_null() {
     return r;
   }
-  bb_error_msg_and_die(
+  crate::libbb::verror_msg::bb_error_msg_and_die(
     b"not found: \'%s\'\x00" as *const u8 as *const libc::c_char,
     key,
   );
@@ -191,7 +158,7 @@ unsafe extern "C" fn parse(
         break;
       }
       if header_idx & 0xffi32 as libc::c_uint == 0 {
-        header = xrealloc(
+        header = crate::libbb::xfuncs_printf::xrealloc(
           header as *mut libc::c_void,
           header_idx.wrapping_add(0x101i32 as libc::c_uint) as size_t,
         ) as *mut libc::c_char
@@ -266,7 +233,7 @@ unsafe extern "C" fn parse(
         b"mixed\x00" as *const u8 as *const libc::c_char,
       ) != 0
       {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"no support of content type \'%s\'\x00" as *const u8 as *const libc::c_char,
           type_0,
         );
@@ -301,61 +268,69 @@ unsafe extern "C" fn parse(
         0 as *const libc::c_char,
       ) as *mut libc::c_char;
       if filename.is_null() {
-        filename = xasprintf(uniq.as_mut_ptr(), monotonic_us())
+        filename = crate::libbb::xfuncs_printf::xasprintf(
+          uniq.as_mut_ptr(),
+          crate::libbb::time::monotonic_us(),
+        )
       } else {
-        filename = bb_get_last_path_component_strip(xstrdup(filename))
+        filename = crate::libbb::get_last_path_component::bb_get_last_path_component_strip(
+          crate::libbb::xfuncs_printf::xstrdup(filename),
+        )
       }
       if (*ptr_to_globals).opts & OPT_X as libc::c_int as libc::c_uint != 0 {
         let mut fd: [libc::c_int; 2] = [0; 2];
         /* start external helper */
-        xpipe(fd.as_mut_ptr());
+        crate::libbb::xfuncs_printf::xpipe(fd.as_mut_ptr());
         pid = vfork();
         if 0 == pid {
           /* child reads from fd[0] */
           close(fd[1]);
-          xmove_fd(fd[0], 0);
-          xsetenv(
+          crate::libbb::xfuncs_printf::xmove_fd(fd[0], 0);
+          crate::libbb::xfuncs_printf::xsetenv(
             b"CONTENT_TYPE\x00" as *const u8 as *const libc::c_char,
             type_0,
           );
-          xsetenv(b"CHARSET\x00" as *const u8 as *const libc::c_char, charset);
-          xsetenv(
+          crate::libbb::xfuncs_printf::xsetenv(
+            b"CHARSET\x00" as *const u8 as *const libc::c_char,
+            charset,
+          );
+          crate::libbb::xfuncs_printf::xsetenv(
             b"ENCODING\x00" as *const u8 as *const libc::c_char,
             encoding,
           );
-          xsetenv(
+          crate::libbb::xfuncs_printf::xsetenv(
             b"FILENAME\x00" as *const u8 as *const libc::c_char,
             filename,
           );
-          BB_EXECVP_or_die(argv);
+          crate::libbb::executable::BB_EXECVP_or_die(argv);
         }
         /* parent will write to fd[1] */
         close(fd[0]);
-        fp = xfdopen_for_write(fd[1]);
+        fp = crate::libbb::wfopen::xfdopen_for_write(fd[1]);
         signal(
           13i32,
           ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
         );
       } else {
         /* write to file */
-        let mut fname: *mut libc::c_char = xasprintf(
+        let mut fname: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
           b"%s%s\x00" as *const u8 as *const libc::c_char,
           *argv,
           filename,
         );
-        fp = xfopen_for_write(fname);
+        fp = crate::libbb::wfopen::xfopen_for_write(fname);
         free(fname as *mut libc::c_void);
       }
       free(filename as *mut libc::c_void);
       /* write to fp */
       end = std::ptr::null_mut::<libc::c_char>();
       if 0 == strcasecmp(encoding, b"base64\x00" as *const u8 as *const libc::c_char) {
-        read_base64(stdin, fp, '-' as i32);
+        crate::libbb::uuencode::read_base64(stdin, fp, '-' as i32);
       } else if 0 != strcasecmp(encoding, b"7bit\x00" as *const u8 as *const libc::c_char)
         && 0 != strcasecmp(encoding, b"8bit\x00" as *const u8 as *const libc::c_char)
       {
         /* quoted-printable, binary, user-defined are unsupported so far */
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"encoding \'%s\' not supported\x00" as *const u8 as *const libc::c_char,
           encoding,
         );
@@ -363,7 +338,7 @@ unsafe extern "C" fn parse(
         loop
         /* plain 7bit or 8bit */
         {
-          end = xmalloc_fgets(stdin);
+          end = crate::libbb::get_line_from_file::xmalloc_fgets(stdin);
           if end.is_null() {
             break;
           }
@@ -381,7 +356,7 @@ unsafe extern "C" fn parse(
       if (*ptr_to_globals).opts & OPT_X as libc::c_int as libc::c_uint != 0 {
         let mut rc: libc::c_int = 0;
         signal(13i32, None);
-        rc = wait4pid(pid) & 0xffi32;
+        rc = crate::libbb::xfuncs::wait4pid(pid) & 0xffi32;
         if rc != 0 {
           return rc + 20i32;
         }
@@ -433,13 +408,14 @@ pub unsafe extern "C" fn reformime_main(
   let mut opt_prefix: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
   let ref mut fresh1 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh1 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh1 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).opt_charset =
     b"us-ascii\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
   // parse options
   // N.B. only -x and -X are supported so far
-  (*ptr_to_globals).opts = getopt32(
+  (*ptr_to_globals).opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^x:Xdeis:r:c:m:*h:o:O:\x00x--X:X--x\x00" as *const u8 as *const libc::c_char,
     &mut opt_prefix as *mut *const libc::c_char,

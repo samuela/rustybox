@@ -1,10 +1,17 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::len_and_sockaddr;
+use crate::librb::size_t;
+use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 use libc::close;
 use libc::printf;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
+use libc::ssize_t;
+use libc::useconds_t;
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -29,33 +36,15 @@ extern "C" {
   #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
-  #[no_mangle]
-  fn monotonic_us() -> libc::c_ulonglong;
-  #[no_mangle]
-  fn ndelay_on(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  /* Version which dies on error */
-  #[no_mangle]
-  fn xhost2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
-  /* Assign sin[6]_port member if the socket is an AF_INET[6] one,
-   * otherwise no-op. Useful for ftp.
-   * NB: does NOT do htons() internally, just direct assignment. */
-  #[no_mangle]
-  fn set_nport(sa: *mut sockaddr, port: libc::c_uint);
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_perror_nomsg_and_die() -> !;
+/* Version which dies on error */
+
+/* Assign sin[6]_port member if the socket is an AF_INET[6] one,
+ * otherwise no-op. Useful for ftp.
+ * NB: does NOT do htons() internally, just direct assignment. */
+
 }
 
-use libc::useconds_t;
 pub type __socklen_t = libc::c_uint;
-use crate::librb::size_t;
-use libc::ssize_t;
-pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -66,46 +55,20 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr__: *const sockaddr,
   pub __sockaddr_at__: *const sockaddr_at,
@@ -121,22 +84,18 @@ pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr_un__: *const sockaddr_un,
   pub __sockaddr_x25__: *const sockaddr_x25,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct servent {
   pub s_name: *mut libc::c_char,
   pub s_aliases: *mut *mut libc::c_char,
   pub s_port: libc::c_int,
   pub s_proto: *mut libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_0,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_0 {
   pub sa: sockaddr,
   pub sin: sockaddr_in,
@@ -181,8 +140,7 @@ unsafe extern "C" fn port_name(mut port: libc::c_uint) -> *const libc::c_char {
         let fresh1;
         let fresh2 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
-                                    (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2))
-                                    : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
       }
       __v
@@ -224,7 +182,7 @@ pub unsafe extern "C" fn pscan_main(
   let mut rtt_4: libc::c_uint = 0;
   let mut start: libc::c_uint = 0;
   let mut diff: libc::c_uint = 0;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^cbp:P:t:T:\x00=1\x00" as *const u8 as *const libc::c_char,
     &mut opt_min_port as *mut *const libc::c_char,
@@ -233,18 +191,22 @@ pub unsafe extern "C" fn pscan_main(
     &mut opt_min_rtt as *mut *const libc::c_char,
   );
   argv = argv.offset(optind as isize);
-  max_port = xatou_range(opt_max_port, 1i32 as libc::c_uint, 65535i32 as libc::c_uint);
-  port = xatou_range(opt_min_port, 1i32 as libc::c_uint, max_port);
+  max_port = crate::libbb::xatonum::xatou_range(
+    opt_max_port,
+    1i32 as libc::c_uint,
+    65535i32 as libc::c_uint,
+  );
+  port = crate::libbb::xatonum::xatou_range(opt_min_port, 1i32 as libc::c_uint, max_port);
   nports = max_port
     .wrapping_sub(port)
     .wrapping_add(1i32 as libc::c_uint);
-  min_rtt = xatou_range(
+  min_rtt = crate::libbb::xatonum::xatou_range(
     opt_min_rtt,
     1i32 as libc::c_uint,
     (2147483647i32 / 1000i32 / 4i32) as libc::c_uint,
   )
   .wrapping_mul(1000i32 as libc::c_uint);
-  timeout = xatou_range(
+  timeout = crate::libbb::xatonum::xatou_range(
     opt_timeout,
     1i32 as libc::c_uint,
     (2147483647i32 / 1000i32 / 4i32) as libc::c_uint,
@@ -252,7 +214,7 @@ pub unsafe extern "C" fn pscan_main(
   .wrapping_mul(1000i32 as libc::c_uint);
   /* Initial rtt is BIG: */
   rtt_4 = timeout;
-  lsap = xhost2sockaddr(*argv, port as libc::c_int);
+  lsap = crate::libbb::xconnect::xhost2sockaddr(*argv, port as libc::c_int);
   printf(
     b"Scanning %s ports %u to %u\n Port\tProto\tState\tService\n\x00" as *const u8
       as *const libc::c_char,
@@ -263,7 +225,7 @@ pub unsafe extern "C" fn pscan_main(
   while port <= max_port {
     let mut current_block_42: u64;
     /* The SOCK_STREAM socket type is implemented on the TCP/IP protocol. */
-    set_nport(
+    crate::libbb::xconnect::set_nport(
       &mut (*lsap).u.sa,
       ({
         let mut __v: libc::c_ushort = 0;
@@ -276,23 +238,22 @@ pub unsafe extern "C" fn pscan_main(
           let fresh4;
           let fresh5 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
-                                (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                                : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
         }
         __v
       }) as libc::c_uint,
     );
-    s = xsocket(
+    s = crate::libbb::xfuncs_printf::xsocket(
       (*lsap).u.sa.sa_family as libc::c_int,
       SOCK_STREAM as libc::c_int,
       0,
     );
     /* We need unblocking socket so we don't need to wait for ETIMEOUT. */
     /* Nonblocking connect typically "fails" with errno == EINPROGRESS */
-    ndelay_on(s);
+    crate::libbb::xfuncs::ndelay_on(s);
     result_str = std::ptr::null();
-    start = monotonic_us() as libc::c_uint;
+    start = crate::libbb::time::monotonic_us() as libc::c_uint;
     if connect(
       s,
       __CONST_SOCKADDR_ARG {
@@ -305,7 +266,7 @@ pub unsafe extern "C" fn pscan_main(
     } else {
       /* Check for untypical errors... */
       if *bb_errno != 11i32 && *bb_errno != 115i32 && *bb_errno != 111i32 {
-        bb_perror_nomsg_and_die();
+        crate::libbb::perror_nomsg_and_die::bb_perror_nomsg_and_die();
       }
       diff = 0 as libc::c_uint;
       current_block_42 = 17281240262373992796;
@@ -338,7 +299,7 @@ pub unsafe extern "C" fn pscan_main(
         _ =>
         /* Unlikely, for me even localhost fails :) */
         {
-          diff = (monotonic_us() as libc::c_uint).wrapping_sub(start);
+          diff = (crate::libbb::time::monotonic_us() as libc::c_uint).wrapping_sub(start);
           if !(write(
             s,
             b" \x00" as *const u8 as *const libc::c_char as *const libc::c_void,

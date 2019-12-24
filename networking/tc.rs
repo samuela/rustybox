@@ -1,5 +1,9 @@
+use crate::librb::rtattr;
+use crate::networking::libiproute::libnetlink::rtnl_handle;
 use libc;
+use libc::nlmsghdr;
 use libc::printf;
+use libc::sockaddr_nl;
 use libc::strcmp;
 extern "C" {
 
@@ -21,67 +25,14 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
-  #[no_mangle]
-  fn xrtnl_open(rth: *mut rtnl_handle);
-  #[no_mangle]
-  fn rtnl_dump_request(
-    rth: *mut rtnl_handle,
-    type_0: libc::c_int,
-    req: *mut libc::c_void,
-    len: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn xrtnl_dump_filter(
-    rth: *mut rtnl_handle,
-    filter: Option<
-      unsafe extern "C" fn(
-        _: *const sockaddr_nl,
-        _: *mut nlmsghdr,
-        _: *mut libc::c_void,
-      ) -> libc::c_int,
-    >,
-    arg1: *mut libc::c_void,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn parse_rtattr(tb: *mut *mut rtattr, max: libc::c_int, rta: *mut rtattr, len: libc::c_int);
-  #[no_mangle]
-  fn ll_init_map(rth: *mut rtnl_handle) -> libc::c_int;
-  #[no_mangle]
-  fn xll_name_to_index(name: *const libc::c_char) -> libc::c_int;
-  //static: const char *ll_idx_n2a(int idx, char *buf) FAST_FUNC;
-  #[no_mangle]
-  fn ll_index_to_name(idx: libc::c_int) -> *const libc::c_char;
-  #[no_mangle]
-  fn next_arg(argv: *mut *mut libc::c_char) -> *mut *mut libc::c_char;
-  #[no_mangle]
-  fn get_u32(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> u32;
-  #[no_mangle]
-  fn invarg_1_to_2(_: *const libc::c_char, _: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn duparg(_: *const libc::c_char, _: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn duparg2(_: *const libc::c_char, _: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn ll_proto_a2n(id: *mut libc::c_ushort, buf: *mut libc::c_char) -> libc::c_int;
+
+//static: const char *ll_idx_n2a(int idx, char *buf) FAST_FUNC;
+
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub filter_ifindex: libc::c_int,
   pub filter_qdisc: u32,
@@ -93,23 +44,7 @@ pub type __u8 = libc::c_uchar;
 pub type __u16 = libc::c_ushort;
 pub type u32 = libc::c_uint;
 pub type __kernel_sa_family_t = libc::c_ushort;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_nl {
-  pub nl_family: __kernel_sa_family_t,
-  pub nl_pad: libc::c_ushort,
-  pub nl_pid: u32,
-  pub nl_groups: u32,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct nlmsghdr {
-  pub nlmsg_len: u32,
-  pub nlmsg_type: __u16,
-  pub nlmsg_flags: __u16,
-  pub nlmsg_seq: u32,
-  pub nlmsg_pid: u32,
-}
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const __RTM_MAX: C2RustUnnamed = 97;
 pub const RTM_NEWCACHEREPORT: C2RustUnnamed = 96;
@@ -165,14 +100,9 @@ pub const RTM_GETLINK: C2RustUnnamed = 18;
 pub const RTM_DELLINK: C2RustUnnamed = 17;
 pub const RTM_NEWLINK: C2RustUnnamed = 16;
 pub const RTM_BASE: C2RustUnnamed = 16;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct rtattr {
-  pub rta_len: libc::c_ushort,
-  pub rta_type: libc::c_ushort,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct tcmsg {
   pub tcm_family: libc::c_uchar,
   pub tcm__pad1: libc::c_uchar,
@@ -200,17 +130,9 @@ pub const TCA_UNSPEC: C2RustUnnamed_0 = 0;
 
 /* We need linux/types.h because older kernels use u32 etc
  * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct rtnl_handle {
-  pub fd: libc::c_int,
-  pub local: sockaddr_nl,
-  pub peer: sockaddr_nl,
-  pub seq: u32,
-  pub dump: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct tc_ratespec {
   pub cell_log: libc::c_uchar,
   pub linklayer: __u8,
@@ -219,14 +141,16 @@ pub struct tc_ratespec {
   pub mpu: libc::c_ushort,
   pub rate: u32,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct tc_prio_qopt {
   pub bands: libc::c_int,
   pub priomap: [__u8; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct tc_cbq_lssopt {
   pub change: libc::c_uchar,
   pub flags: libc::c_uchar,
@@ -237,8 +161,9 @@ pub struct tc_cbq_lssopt {
   pub offtime: u32,
   pub avpkt: u32,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct tc_cbq_wrropt {
   pub flags: libc::c_uchar,
   pub priority: libc::c_uchar,
@@ -247,16 +172,18 @@ pub struct tc_cbq_wrropt {
   pub allot: u32,
   pub weight: u32,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct tc_cbq_ovl {
   pub strategy: libc::c_uchar,
   pub priority2: libc::c_uchar,
   pub pad: __u16,
   pub penalty: u32,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct tc_cbq_fopt {
   pub split: u32,
   pub defmap: u32,
@@ -302,19 +229,19 @@ pub type C2RustUnnamed_5 = libc::c_uint;
 unsafe extern "C" fn print_tc_classid(mut cid: u32) -> *mut libc::c_char {
   /* IMPOSSIBLE */
   if cid == 0u32 {
-    return xasprintf(b"none\x00" as *const u8 as *const libc::c_char);
+    return crate::libbb::xfuncs_printf::xasprintf(b"none\x00" as *const u8 as *const libc::c_char);
   } else if cid & 0xffff0000u32 == 0 as libc::c_uint {
-    return xasprintf(
+    return crate::libbb::xfuncs_printf::xasprintf(
       b":%x\x00" as *const u8 as *const libc::c_char,
       cid & 0xffffu32,
     );
   } else if cid & 0xffffu32 == 0 as libc::c_uint {
-    return xasprintf(
+    return crate::libbb::xfuncs_printf::xasprintf(
       b"%x:\x00" as *const u8 as *const libc::c_char,
       (cid & 0xffff0000u32) >> 16i32,
     );
   } else {
-    return xasprintf(
+    return crate::libbb::xfuncs_printf::xasprintf(
       b"%x:%x\x00" as *const u8 as *const libc::c_char,
       (cid & 0xffff0000u32) >> 16i32,
       cid & 0xffffu32,
@@ -452,7 +379,7 @@ unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
   let error: *const libc::c_char = b"CBQ: too short %s opt\x00" as *const u8 as *const libc::c_char;
   let mut buf: [libc::c_char; 64] = [0; 64];
   if !opt.is_null() {
-    parse_rtattr(
+    crate::networking::libiproute::libnetlink::parse_rtattr(
       tb.as_mut_ptr(),
       __TCA_CBQ_MAX as libc::c_int - 1i32,
       (opt as *mut libc::c_char).offset(
@@ -481,7 +408,10 @@ unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
         )
         < ::std::mem::size_of::<tc_ratespec>() as libc::c_ulong
       {
-        bb_error_msg(error, b"rate\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_error_msg(
+          error,
+          b"rate\x00" as *const u8 as *const libc::c_char,
+        );
       } else {
         r = (tb[TCA_CBQ_RATE as libc::c_int as usize] as *mut libc::c_char).offset(
           ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
@@ -503,7 +433,10 @@ unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
         )
         < ::std::mem::size_of::<tc_cbq_lssopt>() as libc::c_ulong
       {
-        bb_error_msg(error, b"lss\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_error_msg(
+          error,
+          b"lss\x00" as *const u8 as *const libc::c_char,
+        );
       } else {
         lss = (tb[TCA_CBQ_LSSOPT as libc::c_int as usize] as *mut libc::c_char).offset(
           ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
@@ -525,7 +458,10 @@ unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
         )
         < ::std::mem::size_of::<tc_cbq_wrropt>() as libc::c_ulong
       {
-        bb_error_msg(error, b"wrr\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_error_msg(
+          error,
+          b"wrr\x00" as *const u8 as *const libc::c_char,
+        );
       } else {
         wrr = (tb[TCA_CBQ_WRROPT as libc::c_int as usize] as *mut libc::c_char).offset(
           ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
@@ -547,7 +483,10 @@ unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
         )
         < ::std::mem::size_of::<tc_cbq_fopt>() as libc::c_ulong
       {
-        bb_error_msg(error, b"fopt\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_error_msg(
+          error,
+          b"fopt\x00" as *const u8 as *const libc::c_char,
+        );
       } else {
         _fopt = (tb[TCA_CBQ_FOPT as libc::c_int as usize] as *mut libc::c_char).offset(
           ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
@@ -570,7 +509,7 @@ unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
         )
         < ::std::mem::size_of::<tc_cbq_ovl>() as libc::c_ulong
       {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"CBQ: too short overlimit strategy %u/%u\x00" as *const u8 as *const libc::c_char,
           ((*tb[TCA_CBQ_OVL_STRATEGY as libc::c_int as usize]).rta_len as libc::c_int
             as libc::c_ulong)
@@ -606,14 +545,14 @@ unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
     }
     if !lss.is_null() && (*lss).flags as libc::c_int != 0 {
       let mut comma: bool = 0 != 0;
-      bb_putchar('(' as i32);
+      crate::libbb::xfuncs_printf::bb_putchar('(' as i32);
       if (*lss).flags as libc::c_int & 1i32 != 0 {
         printf(b"bounded\x00" as *const u8 as *const libc::c_char);
         comma = 1i32 != 0
       }
       if (*lss).flags as libc::c_int & 2i32 != 0 {
         if comma {
-          bb_putchar(',' as i32);
+          crate::libbb::xfuncs_printf::bb_putchar(',' as i32);
         }
         printf(b"isolated\x00" as *const u8 as *const libc::c_char);
       }
@@ -678,7 +617,7 @@ unsafe extern "C" fn print_qdisc(
     0,
     ::std::mem::size_of::<[*mut rtattr; 13]>() as libc::c_ulong,
   );
-  parse_rtattr(
+  crate::networking::libiproute::libnetlink::parse_rtattr(
     tb.as_mut_ptr(),
     __TCA_MAX as libc::c_int - 1i32,
     (msg as *mut libc::c_char).offset(
@@ -711,7 +650,7 @@ unsafe extern "C" fn print_qdisc(
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_ifindex == 0 {
     printf(
       b"dev %s \x00" as *const u8 as *const libc::c_char,
-      ll_index_to_name((*msg).tcm_ifindex),
+      crate::networking::libiproute::ll_map::ll_index_to_name((*msg).tcm_ifindex),
     );
   }
   if (*msg).tcm_parent == 0xffffffffu32 {
@@ -733,7 +672,8 @@ unsafe extern "C" fn print_qdisc(
     static mut _q_: [libc::c_char; 16] = [
       112, 102, 105, 102, 111, 95, 102, 97, 115, 116, 0, 99, 98, 113, 0, 0,
     ];
-    let mut qqq: libc::c_int = index_in_strings(_q_.as_ptr(), name);
+    let mut qqq: libc::c_int =
+      crate::libbb::compare_string_array::index_in_strings(_q_.as_ptr(), name);
     if qqq == 0 {
       /* pfifo_fast aka prio */
       prio_print_opt(tb[TCA_OPTIONS as libc::c_int as usize]);
@@ -741,10 +681,13 @@ unsafe extern "C" fn print_qdisc(
       /* class based queuing */
       cbq_print_opt(tb[TCA_OPTIONS as libc::c_int as usize]);
     } else {
-      bb_error_msg(b"unknown %s\x00" as *const u8 as *const libc::c_char, name);
+      crate::libbb::verror_msg::bb_error_msg(
+        b"unknown %s\x00" as *const u8 as *const libc::c_char,
+        name,
+      );
     }
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   return 0;
 }
 unsafe extern "C" fn print_class(
@@ -797,7 +740,7 @@ unsafe extern "C" fn print_class(
     0,
     ::std::mem::size_of::<[*mut rtattr; 13]>() as libc::c_ulong,
   );
-  parse_rtattr(
+  crate::networking::libiproute::libnetlink::parse_rtattr(
     tb.as_mut_ptr(),
     __TCA_MAX as libc::c_int - 1i32,
     (msg as *mut libc::c_char).offset(
@@ -841,7 +784,7 @@ unsafe extern "C" fn print_class(
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_ifindex == 0 {
     printf(
       b"dev %s \x00" as *const u8 as *const libc::c_char,
-      ll_index_to_name((*msg).tcm_ifindex),
+      crate::networking::libiproute::ll_map::ll_index_to_name((*msg).tcm_ifindex),
     );
   }
   if (*msg).tcm_parent == 0xffffffffu32 {
@@ -870,18 +813,22 @@ unsafe extern "C" fn print_class(
     static mut _q_: [libc::c_char; 16] = [
       112, 102, 105, 102, 111, 95, 102, 97, 115, 116, 0, 99, 98, 113, 0, 0,
     ];
-    let mut qqq: libc::c_int = index_in_strings(_q_.as_ptr(), name);
+    let mut qqq: libc::c_int =
+      crate::libbb::compare_string_array::index_in_strings(_q_.as_ptr(), name);
     if !(qqq == 0) {
       if qqq == 1i32 {
         /* class based queuing */
         /* cbq_print_copt() is identical to cbq_print_opt(). */
         cbq_print_opt(tb[TCA_OPTIONS as libc::c_int as usize]);
       } else {
-        bb_error_msg(b"unknown %s\x00" as *const u8 as *const libc::c_char, name);
+        crate::libbb::verror_msg::bb_error_msg(
+          b"unknown %s\x00" as *const u8 as *const libc::c_char,
+          name,
+        );
       }
     }
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   return 0;
 }
 unsafe extern "C" fn print_filter(
@@ -909,32 +856,8 @@ pub unsafe extern "C" fn tc_main(
     101, 114, 101, 110, 99, 101, 0, 112, 114, 105, 111, 114, 105, 116, 121, 0, 112, 114, 111, 116,
     111, 99, 111, 108, 0, 0,
   ];
-  let mut rth: rtnl_handle = rtnl_handle {
-    fd: 0,
-    local: sockaddr_nl {
-      nl_family: 0,
-      nl_pad: 0,
-      nl_pid: 0,
-      nl_groups: 0,
-    },
-    peer: sockaddr_nl {
-      nl_family: 0,
-      nl_pad: 0,
-      nl_pid: 0,
-      nl_groups: 0,
-    },
-    seq: 0,
-    dump: 0,
-  };
-  let mut msg: tcmsg = tcmsg {
-    tcm_family: 0,
-    tcm__pad1: 0,
-    tcm__pad2: 0,
-    tcm_ifindex: 0,
-    tcm_handle: 0,
-    tcm_parent: 0,
-    tcm_info: 0,
-  };
+  let mut rth: rtnl_handle = std::mem::zeroed();
+  let mut msg: tcmsg = std::mem::zeroed();
   let mut ret: libc::c_int = 0;
   let mut obj: libc::c_int = 0;
   let mut cmd: libc::c_int = 0;
@@ -942,23 +865,23 @@ pub unsafe extern "C" fn tc_main(
   let mut dev: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   argv = argv.offset(1);
   if (*argv).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
-  xrtnl_open(&mut rth);
+  crate::networking::libiproute::libnetlink::xrtnl_open(&mut rth);
   ret = 0;
   let fresh0 = argv;
   argv = argv.offset(1);
-  obj = index_in_substrings(objects.as_ptr(), *fresh0);
+  obj = crate::libbb::compare_string_array::index_in_substrings(objects.as_ptr(), *fresh0);
   if obj < 0 {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   if (*argv).is_null() {
     /* filter */
     cmd = CMD_show as libc::c_int
   } else {
-    cmd = index_in_substrings(commands.as_ptr(), *argv); /* list is the default */
+    cmd = crate::libbb::compare_string_array::index_in_substrings(commands.as_ptr(), *argv); /* list is the default */
     if cmd < 0 {
-      invarg_1_to_2(*argv, *argv.offset(-1i32 as isize));
+      crate::networking::libiproute::utils::invarg_1_to_2(*argv, *argv.offset(-1i32 as isize));
     }
     argv = argv.offset(1)
   }
@@ -970,18 +893,21 @@ pub unsafe extern "C" fn tc_main(
   if 0 != 0 {
     msg.tcm_family = 0 as libc::c_uchar
   }
-  ll_init_map(&mut rth);
+  crate::networking::libiproute::ll_map::ll_init_map(&mut rth);
   while !(*argv).is_null() {
-    arg = index_in_substrings(args.as_ptr(), *argv);
+    arg = crate::libbb::compare_string_array::index_in_substrings(args.as_ptr(), *argv);
     if arg == ARG_dev as libc::c_int {
-      argv = next_arg(argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
       if !dev.is_null() {
-        duparg2(b"dev\x00" as *const u8 as *const libc::c_char, *argv);
+        crate::networking::libiproute::utils::duparg2(
+          b"dev\x00" as *const u8 as *const libc::c_char,
+          *argv,
+        );
       }
       let fresh1 = argv;
       argv = argv.offset(1);
       dev = *fresh1;
-      msg.tcm_ifindex = xll_name_to_index(dev);
+      msg.tcm_ifindex = crate::networking::libiproute::ll_map::xll_name_to_index(dev);
       if cmd >= CMD_show as libc::c_int {
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_ifindex = msg.tcm_ifindex
       }
@@ -992,14 +918,17 @@ pub unsafe extern "C" fn tc_main(
         && obj == OBJ_qdisc as libc::c_int
         && cmd == CMD_change as libc::c_int
     {
-      argv = next_arg(argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
       /* We don't care about duparg2("qdisc handle",*argv) for now */
       if get_qdisc_handle(
         &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_qdisc,
         *argv,
       ) != 0
       {
-        invarg_1_to_2(*argv, b"qdisc\x00" as *const u8 as *const libc::c_char);
+        crate::networking::libiproute::utils::invarg_1_to_2(
+          *argv,
+          b"qdisc\x00" as *const u8 as *const libc::c_char,
+        );
       }
     } else if obj != OBJ_qdisc as libc::c_int
       && (arg == ARG_root as libc::c_int
@@ -1007,12 +936,18 @@ pub unsafe extern "C" fn tc_main(
         || obj == OBJ_filter as libc::c_int && arg >= ARG_pref as libc::c_int)
     {
     } else {
-      invarg_1_to_2(*argv, b"command\x00" as *const u8 as *const libc::c_char);
+      crate::networking::libiproute::utils::invarg_1_to_2(
+        *argv,
+        b"command\x00" as *const u8 as *const libc::c_char,
+      );
     }
-    argv = next_arg(argv);
+    argv = crate::networking::libiproute::utils::next_arg(argv);
     if arg == ARG_root as libc::c_int {
       if msg.tcm_parent != 0 {
-        duparg(b"parent\x00" as *const u8 as *const libc::c_char, *argv);
+        crate::networking::libiproute::utils::duparg(
+          b"parent\x00" as *const u8 as *const libc::c_char,
+          *argv,
+        );
       }
       msg.tcm_parent = 0xffffffffu32;
       if obj == OBJ_filter as libc::c_int {
@@ -1021,10 +956,16 @@ pub unsafe extern "C" fn tc_main(
     } else if arg == ARG_parent as libc::c_int {
       let mut handle: u32 = 0;
       if msg.tcm_parent != 0 {
-        duparg(*argv, b"parent\x00" as *const u8 as *const libc::c_char);
+        crate::networking::libiproute::utils::duparg(
+          *argv,
+          b"parent\x00" as *const u8 as *const libc::c_char,
+        );
       }
       if get_tc_classid(&mut handle, *argv) != 0 {
-        invarg_1_to_2(*argv, b"parent\x00" as *const u8 as *const libc::c_char);
+        crate::networking::libiproute::utils::invarg_1_to_2(
+          *argv,
+          b"parent\x00" as *const u8 as *const libc::c_char,
+        );
       }
       msg.tcm_parent = handle;
       if obj == OBJ_filter as libc::c_int {
@@ -1033,10 +974,16 @@ pub unsafe extern "C" fn tc_main(
     } else if arg == ARG_handle as libc::c_int {
       /* filter::list */
       if msg.tcm_handle != 0 {
-        duparg(*argv, b"handle\x00" as *const u8 as *const libc::c_char);
+        crate::networking::libiproute::utils::duparg(
+          *argv,
+          b"handle\x00" as *const u8 as *const libc::c_char,
+        );
       }
       /* if (slash) {if (get_u32(u32 &mask, slash+1, NULL)) inv mask; addattr32(n, MAX_MSG, TCA_FW_MASK, mask); */
-      msg.tcm_handle = get_u32(*argv, b"handle\x00" as *const u8 as *const libc::c_char)
+      msg.tcm_handle = crate::networking::libiproute::utils::get_u32(
+        *argv,
+        b"handle\x00" as *const u8 as *const libc::c_char,
+      )
     } else if !(arg == ARG_classid as libc::c_int
       && obj == OBJ_class as libc::c_int
       && cmd == CMD_change as libc::c_int)
@@ -1050,18 +997,30 @@ pub unsafe extern "C" fn tc_main(
          */
         /* filter::list */
         if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_prio != 0 {
-          duparg(*argv, b"priority\x00" as *const u8 as *const libc::c_char);
+          crate::networking::libiproute::utils::duparg(
+            *argv,
+            b"priority\x00" as *const u8 as *const libc::c_char,
+          );
         }
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_prio =
-          get_u32(*argv, b"priority\x00" as *const u8 as *const libc::c_char)
+          crate::networking::libiproute::utils::get_u32(
+            *argv,
+            b"priority\x00" as *const u8 as *const libc::c_char,
+          )
       } else if arg == ARG_proto as libc::c_int {
         /* filter::list */
         let mut tmp: u16 = 0;
         if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_proto != 0 {
-          duparg(*argv, b"protocol\x00" as *const u8 as *const libc::c_char);
+          crate::networking::libiproute::utils::duparg(
+            *argv,
+            b"protocol\x00" as *const u8 as *const libc::c_char,
+          );
         }
-        if ll_proto_a2n(&mut tmp, *argv) != 0 {
-          invarg_1_to_2(*argv, b"protocol\x00" as *const u8 as *const libc::c_char);
+        if crate::networking::libiproute::ll_proto::ll_proto_a2n(&mut tmp, *argv) != 0 {
+          crate::networking::libiproute::utils::invarg_1_to_2(
+            *argv,
+            b"protocol\x00" as *const u8 as *const libc::c_char,
+          );
         }
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_proto = tmp as u32
       }
@@ -1074,7 +1033,7 @@ pub unsafe extern "C" fn tc_main(
         & 0xffff0000u32
         | (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filter_proto & 0xffffu32
     }
-    if rtnl_dump_request(
+    if crate::networking::libiproute::libnetlink::rtnl_dump_request(
       &mut rth,
       if obj == OBJ_qdisc as libc::c_int {
         RTM_GETQDISC as libc::c_int
@@ -1089,11 +1048,11 @@ pub unsafe extern "C" fn tc_main(
       ::std::mem::size_of::<tcmsg>() as libc::c_ulong as libc::c_int,
     ) < 0
     {
-      bb_simple_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
         b"can\'t send dump request\x00" as *const u8 as *const libc::c_char,
       );
     }
-    xrtnl_dump_filter(
+    crate::networking::libiproute::libnetlink::xrtnl_dump_filter(
       &mut rth,
       if obj == OBJ_qdisc as libc::c_int {
         Some(

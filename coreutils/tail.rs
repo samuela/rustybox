@@ -20,33 +20,8 @@ extern "C" {
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_copyfd_size(fd1: libc::c_int, fd2: libc::c_int, size: off_t) -> off_t;
-  #[no_mangle]
-  fn open_or_warn_stdin(pathname: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-  #[no_mangle]
   static bkm_suffixes: [suffix_mult; 0];
-  #[no_mangle]
-  fn xatou_sfx(str: *const libc::c_char, sfx: *const suffix_mult) -> libc::c_uint;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_perror_nomsg_and_die() -> !;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -56,14 +31,11 @@ use libc::off64_t;
 use libc::off_t;
 use libc::ssize_t;
 use libc::stat;
-#[derive(Copy, Clone)]
+
+use crate::librb::suffix_mult;
+
 #[repr(C)]
-pub struct suffix_mult {
-  pub suffix: [libc::c_char; 4],
-  pub mult: libc::c_uint,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct globals {
   pub from_top: bool,
   pub exitcode: bool,
@@ -73,7 +45,7 @@ unsafe extern "C" fn tail_xprint_header(
   mut filename: *const libc::c_char,
 ) {
   if dprintf(1i32, fmt, filename) < 0 {
-    bb_perror_nomsg_and_die();
+    crate::libbb::perror_nomsg_and_die::bb_perror_nomsg_and_die();
   };
 }
 unsafe extern "C" fn tail_read(
@@ -82,9 +54,11 @@ unsafe extern "C" fn tail_read(
   mut count: size_t,
 ) -> ssize_t {
   let mut r: ssize_t = 0;
-  r = full_read(fd, buf as *mut libc::c_void, count);
+  r = crate::libbb::read::full_read(fd, buf as *mut libc::c_void, count);
   if r < 0 {
-    bb_simple_perror_msg(b"read error\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg(
+      b"read error\x00" as *const u8 as *const libc::c_char,
+    );
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exitcode = 1i32 != 0
   }
   return r;
@@ -96,7 +70,7 @@ unsafe extern "C" fn eat_num(mut p: *const libc::c_char) -> libc::c_uint {
     p = p.offset(1);
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).from_top = 1i32 != 0
   }
-  return xatou_sfx(p, bkm_suffixes.as_ptr());
+  return crate::libbb::xatonum::xatou_sfx(p, bkm_suffixes.as_ptr());
 }
 #[no_mangle]
 pub unsafe extern "C" fn tail_main(
@@ -128,7 +102,7 @@ pub unsafe extern "C" fn tail_main(
     argc -= 1
   }
   /* -s NUM, -F imlies -f */
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^fc:n:qs:+vF\x00Ff\x00" as *const u8 as *const libc::c_char,
     &mut str_c as *mut *const libc::c_char,
@@ -173,7 +147,8 @@ pub unsafe extern "C" fn tail_main(
   i = 0;
   nfiles = i as libc::c_uint;
   loop {
-    let mut fd: libc::c_int = open_or_warn_stdin(*argv.offset(i as isize));
+    let mut fd: libc::c_int =
+      crate::libbb::wfopen_input::open_or_warn_stdin(*argv.offset(i as isize));
     if fd < 0 && opt & 0x40i32 == 0 {
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exitcode = 1i32 != 0
     } else {
@@ -189,7 +164,9 @@ pub unsafe extern "C" fn tail_main(
     }
   }
   if nfiles == 0 {
-    bb_simple_error_msg_and_die(b"no files\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"no files\x00" as *const u8 as *const libc::c_char,
+    );
   }
   /* prepare the buffer */
   tailbufsize = 8192i32 as size_t;
@@ -233,8 +210,8 @@ pub unsafe extern "C" fn tail_main(
               if current < 0 {
                 current = 0 as off_t
               }
-              xlseek(fd_0, current, 0);
-              bb_copyfd_size(fd_0, 1i32, count as off_t);
+              crate::libbb::xfuncs_printf::xlseek(fd_0, current, 0);
+              crate::libbb::copyfd::bb_copyfd_size(fd_0, 1i32, count as off_t);
               current_block_118 = 11763295167351361500;
             }
           } else {
@@ -251,7 +228,7 @@ pub unsafe extern "C" fn tail_main(
             if current < 0 {
               current = 0 as off_t
             }
-            xlseek(fd_0, current, 0);
+            crate::libbb::xfuncs_printf::xlseek(fd_0, current, 0);
             current_block_118 = 5873035170358615968;
           }
         } else {
@@ -308,7 +285,7 @@ pub unsafe extern "C" fn tail_main(
                 }
               }
               if nwrite > 0 {
-                xwrite(
+                crate::libbb::xfuncs_printf::xwrite(
                   1i32,
                   buf.offset(nread as isize).offset(-(nwrite as isize)) as *const libc::c_void,
                   nwrite as size_t,
@@ -367,14 +344,20 @@ pub unsafe extern "C" fn tail_main(
                 }
                 if tailbufsize < (taillen as size_t).wrapping_add(8192i32 as libc::c_ulong) {
                   tailbufsize = (taillen + 8192i32) as size_t;
-                  tailbuf = xrealloc(tailbuf as *mut libc::c_void, tailbufsize) as *mut libc::c_char
+                  tailbuf =
+                    crate::libbb::xfuncs_printf::xrealloc(tailbuf as *mut libc::c_void, tailbufsize)
+                      as *mut libc::c_char
                 }
               }
               buf = tailbuf.offset(taillen as isize)
             }
           }
           if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).from_top {
-            xwrite(1i32, tailbuf as *const libc::c_void, taillen as size_t);
+            crate::libbb::xfuncs_printf::xwrite(
+              1i32,
+              tailbuf as *const libc::c_void,
+              taillen as size_t,
+            );
           }
         }
       }
@@ -385,7 +368,8 @@ pub unsafe extern "C" fn tail_main(
     }
   }
   prev_fd = *fds.offset((i - 1i32) as isize);
-  tailbuf = xrealloc(tailbuf as *mut libc::c_void, 8192i32 as size_t) as *mut libc::c_char;
+  tailbuf = crate::libbb::xfuncs_printf::xrealloc(tailbuf as *mut libc::c_void, 8192i32 as size_t)
+    as *mut libc::c_char;
   fmt = std::ptr::null();
   if opt & 0x1i32 != 0 {
     loop {
@@ -410,7 +394,7 @@ pub unsafe extern "C" fn tail_main(
             }
             new_fd = open(filename, 0);
             if new_fd >= 0 {
-              bb_error_msg(
+              crate::libbb::verror_msg::bb_error_msg(
                 b"%s has %s; following end of new file\x00" as *const u8 as *const libc::c_char,
                 filename,
                 if fd_1 < 0 {
@@ -420,7 +404,7 @@ pub unsafe extern "C" fn tail_main(
                 },
               );
             } else if fd_1 >= 0 {
-              bb_perror_msg(
+              crate::libbb::perror_msg::bb_perror_msg(
                 b"%s has become inaccessible\x00" as *const u8 as *const libc::c_char,
                 filename,
               );
@@ -441,7 +425,7 @@ pub unsafe extern "C" fn tail_main(
             if fstat(fd_1, &mut sbuf_0) == 0 && sbuf_0.st_size > 0 {
               let mut current_0: off_t = lseek(fd_1, 0 as off64_t, 1i32);
               if sbuf_0.st_size < current_0 {
-                xlseek(fd_1, 0 as off_t, 0);
+                crate::libbb::xfuncs_printf::xlseek(fd_1, 0 as off_t, 0);
               }
             }
             nread_0 = tail_read(fd_1, tailbuf, 8192i32 as size_t) as libc::c_int;
@@ -453,7 +437,11 @@ pub unsafe extern "C" fn tail_main(
               fmt = std::ptr::null();
               prev_fd = fd_1
             }
-            xwrite(1i32, tailbuf as *const libc::c_void, nread_0 as size_t);
+            crate::libbb::xfuncs_printf::xwrite(
+              1i32,
+              tailbuf as *const libc::c_void,
+              nread_0 as size_t,
+            );
           }
         }
         i += 1;

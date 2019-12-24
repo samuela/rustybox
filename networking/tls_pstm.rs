@@ -1,46 +1,15 @@
+use crate::librb::size_t;
 use libc;
 use libc::free;
-extern "C" {
-  #[no_mangle]
-  fn pstm_sqr_comba(
-    A: *mut pstm_int,
-    B: *mut pstm_int,
-    paD: *mut pstm_digit,
-    paDlen: uint32,
-  ) -> int32;
-  #[no_mangle]
-  fn pstm_montgomery_reduce(
-    a: *mut pstm_int,
-    m: *mut pstm_int,
-    mp: pstm_digit,
-    paD: *mut pstm_digit,
-    paDlen: uint32,
-  ) -> int32;
-  #[no_mangle]
-  fn pstm_mul_comba(
-    A: *mut pstm_int,
-    B: *mut pstm_int,
-    C: *mut pstm_int,
-    paD: *mut pstm_digit,
-    paDlen: uint32,
-  ) -> int32;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
 
-}
-
-use crate::librb::size_t;
 pub type uint64 = u64;
 pub type uint32 = u32;
 pub type int32 = i32;
 pub type pstm_digit = uint32;
 pub type pstm_word = uint64;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct pstm_int {
   pub used: libc::c_int,
   pub alloc: libc::c_int,
@@ -59,7 +28,7 @@ pub unsafe extern "C" fn pstm_init_size(mut a: *mut pstm_int, mut size: uint32) 
   /*
    alloc mem
   */
-  (*a).dp = xzalloc(
+  (*a).dp = crate::libbb::xfuncs_printf::xzalloc(
     (::std::mem::size_of::<pstm_digit>() as libc::c_ulong).wrapping_mul(size as libc::c_ulong),
   ) as *mut pstm_digit; //bbox
                         //bbox	a->pool = pool;
@@ -85,7 +54,7 @@ unsafe extern "C" fn pstm_init(mut a: *mut pstm_int) -> int32 {
   /*
    allocate memory required and clear it
   */
-  (*a).dp = xzalloc(
+  (*a).dp = crate::libbb::xfuncs_printf::xzalloc(
     (::std::mem::size_of::<pstm_digit>() as libc::c_ulong).wrapping_mul(64i32 as libc::c_ulong),
   ) as *mut pstm_digit; //bbox
                         /*
@@ -123,7 +92,7 @@ pub unsafe extern "C" fn pstm_grow(mut a: *mut pstm_int, mut size: libc::c_int) 
         We store the return in a temporary variable in case the operation
         failed we don't want to overwrite the dp member of a.
     */
-    tmp = xrealloc(
+    tmp = crate::libbb::xfuncs_printf::xrealloc(
       (*a).dp as *mut libc::c_void,
       (::std::mem::size_of::<pstm_digit>() as libc::c_ulong).wrapping_mul(size as libc::c_ulong),
     ) as *mut pstm_digit; //bbox
@@ -820,7 +789,7 @@ unsafe extern "C" fn pstm_montgomery_setup(
   */
   b = *(*a).dp.offset(0); /* here x*a==1 mod 2**4 */
   if b & 1i32 as libc::c_uint == 0 as libc::c_uint {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"pstm_montogomery_setup failure\n\x00" as *const u8 as *const libc::c_char,
     ); /* here x*a==1 mod 2**8 */
   } /* here x*a==1 mod 2**16 */
@@ -1072,12 +1041,7 @@ unsafe extern "C" fn pstm_div_2d(
   let mut rr: pstm_digit = 0;
   let mut res: int32 = 0;
   let mut x: libc::c_int = 0;
-  let mut t: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: std::ptr::null_mut(),
-  };
+  let mut t: pstm_int = std::mem::zeroed();
   /* if the shift count is <= 0 then we do no work */
   if b <= 0 {
     pstm_copy(a, c);
@@ -1224,36 +1188,11 @@ unsafe extern "C" fn pstm_div(
   mut d: *mut pstm_int,
 ) -> int32 {
   let mut current_block: u64; //bbox: was int16
-  let mut q: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: std::ptr::null_mut(),
-  };
-  let mut x: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: std::ptr::null_mut(),
-  };
-  let mut y: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: std::ptr::null_mut(),
-  };
-  let mut t1: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: std::ptr::null_mut(),
-  };
-  let mut t2: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: std::ptr::null_mut(),
-  };
+  let mut q: pstm_int = std::mem::zeroed();
+  let mut x: pstm_int = std::mem::zeroed();
+  let mut y: pstm_int = std::mem::zeroed();
+  let mut t1: pstm_int = std::mem::zeroed();
+  let mut t2: pstm_int = std::mem::zeroed();
   let mut res: int32 = 0;
   let mut n: libc::c_int = 0;
   let mut t: libc::c_int = 0;
@@ -1537,12 +1476,7 @@ unsafe extern "C" fn pstm_div(
   the pstm_int pointers around
 */
 unsafe extern "C" fn pstm_exch(mut a: *mut pstm_int, mut b: *mut pstm_int) {
-  let mut t: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: std::ptr::null_mut(),
-  };
+  let mut t: pstm_int = std::mem::zeroed();
   t = *a;
   *a = *b;
   *b = t;
@@ -1556,12 +1490,7 @@ unsafe extern "C" fn pstm_mod(
   mut b: *mut pstm_int,
   mut c: *mut pstm_int,
 ) -> int32 {
-  let mut t: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: std::ptr::null_mut(),
-  };
+  let mut t: pstm_int = std::mem::zeroed();
   let mut err: int32 = 0;
   /*
     Smart-size
@@ -1597,12 +1526,7 @@ pub unsafe extern "C" fn pstm_mulmod(
 ) -> int32 {
   let mut res: int32 = 0; //bbox: was int16
   let mut size: libc::c_int = 0;
-  let mut tmp: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: std::ptr::null_mut(),
-  };
+  let mut tmp: pstm_int = std::mem::zeroed();
   /*
     Smart-size pstm_inits.  d is an output that is influenced by this local 't'
     so don't shrink 'd' if it wants to becuase this will lead to an pstm_grow
@@ -1617,7 +1541,13 @@ pub unsafe extern "C" fn pstm_mulmod(
   if res != 0 {
     return res;
   }
-  res = pstm_mul_comba(a, b, &mut tmp, 0 as *mut pstm_digit, 0 as uint32);
+  res = crate::networking::tls_pstm_mul_comba::pstm_mul_comba(
+    a,
+    b,
+    &mut tmp,
+    0 as *mut pstm_digit,
+    0 as uint32,
+  );
   if res != 0 {
     pstm_clear(&mut tmp);
     return res;
@@ -1639,18 +1569,8 @@ pub unsafe extern "C" fn pstm_exptmod(
   mut Y: *mut pstm_int,
 ) -> int32 {
   let mut current_block: u64; /* Keep this winsize based: (1 << max_winsize) */
-  let mut M: [pstm_int; 32] = [pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: std::ptr::null_mut(),
-  }; 32]; //bbox: was int16
-  let mut res: pstm_int = pstm_int {
-    used: 0,
-    alloc: 0,
-    sign: 0,
-    dp: std::ptr::null_mut(),
-  };
+  let mut M: [pstm_int; 32] = [std::mem::zeroed(); 32]; //bbox: was int16
+  let mut res: pstm_int = std::mem::zeroed();
   let mut buf: pstm_digit = 0;
   let mut mp: pstm_digit = 0;
   let mut paD: *mut pstm_digit = std::ptr::null_mut();
@@ -1730,7 +1650,7 @@ pub unsafe extern "C" fn pstm_exptmod(
             paDlen = (((M[1].used + 3i32) * 2i32) as libc::c_ulong)
               .wrapping_mul(::std::mem::size_of::<pstm_digit>() as libc::c_ulong)
               as uint32; //bbox
-            paD = xzalloc(paDlen as size_t) as *mut pstm_digit;
+            paD = crate::libbb::xfuncs_printf::xzalloc(paDlen as size_t) as *mut pstm_digit;
             /*
              compute the value at M[1<<(winsize-1)] by squaring M[1] (winsize-1) times
             */
@@ -1748,7 +1668,7 @@ pub unsafe extern "C" fn pstm_exptmod(
                   current_block = 2604890879466389055;
                   break;
                 }
-                err = pstm_sqr_comba(
+                err = crate::networking::tls_pstm_sqr_comba::pstm_sqr_comba(
                   &mut *M.as_mut_ptr().offset((1i32 << winsize - 1i32) as isize),
                   &mut *M.as_mut_ptr().offset((1i32 << winsize - 1i32) as isize),
                   paD,
@@ -1758,7 +1678,7 @@ pub unsafe extern "C" fn pstm_exptmod(
                   current_block = 6164085797154605288;
                   break;
                 }
-                err = pstm_montgomery_reduce(
+                err = crate::networking::tls_pstm_montgomery_reduce::pstm_montgomery_reduce(
                   &mut *M.as_mut_ptr().offset((1i32 << winsize - 1i32) as isize),
                   P,
                   mp,
@@ -1812,7 +1732,7 @@ pub unsafe extern "C" fn pstm_exptmod(
                           current_block = 5891011138178424807;
                           break;
                         }
-                        err = pstm_mul_comba(
+                        err = crate::networking::tls_pstm_mul_comba::pstm_mul_comba(
                           &mut *M.as_mut_ptr().offset((x - 1i32) as isize),
                           &mut *M.as_mut_ptr().offset(1),
                           &mut *M.as_mut_ptr().offset(x as isize),
@@ -1823,7 +1743,7 @@ pub unsafe extern "C" fn pstm_exptmod(
                           current_block = 14289100601382369252;
                           break;
                         }
-                        err = pstm_montgomery_reduce(
+                        err = crate::networking::tls_pstm_montgomery_reduce::pstm_montgomery_reduce(
                           &mut *M.as_mut_ptr().offset(x as isize),
                           P,
                           mp,
@@ -1875,12 +1795,14 @@ pub unsafe extern "C" fn pstm_exptmod(
                             }
                             /* if the bit is zero and mode == 1 then we square */
                             if mode == 1i32 && y == 0 {
-                              err = pstm_sqr_comba(&mut res, &mut res, paD, paDlen);
+                              err = crate::networking::tls_pstm_sqr_comba::pstm_sqr_comba(
+                                &mut res, &mut res, paD, paDlen,
+                              );
                               if err != 0 {
                                 current_block = 14289100601382369252;
                                 break;
                               }
-                              err = pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
+                              err = crate::networking::tls_pstm_montgomery_reduce::pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
                               if err != 0 {
                                 current_block = 14289100601382369252;
                                 break;
@@ -1896,12 +1818,14 @@ pub unsafe extern "C" fn pstm_exptmod(
                               /* ok window is filled so square as required and mul square first */
                               x = 0;
                               while x < winsize {
-                                err = pstm_sqr_comba(&mut res, &mut res, paD, paDlen);
+                                err = crate::networking::tls_pstm_sqr_comba::pstm_sqr_comba(
+                                  &mut res, &mut res, paD, paDlen,
+                                );
                                 if err != 0 {
                                   current_block = 14289100601382369252;
                                   break 's_285;
                                 }
-                                err = pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
+                                err = crate::networking::tls_pstm_montgomery_reduce::pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
                                 if err != 0 {
                                   current_block = 14289100601382369252;
                                   break 's_285;
@@ -1909,7 +1833,7 @@ pub unsafe extern "C" fn pstm_exptmod(
                                 x += 1
                               }
                               /* then multiply */
-                              err = pstm_mul_comba(
+                              err = crate::networking::tls_pstm_mul_comba::pstm_mul_comba(
                                 &mut res,
                                 &mut *M.as_mut_ptr().offset(bitbuf as isize),
                                 &mut res,
@@ -1920,7 +1844,7 @@ pub unsafe extern "C" fn pstm_exptmod(
                                 current_block = 14289100601382369252;
                                 break;
                               }
-                              err = pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
+                              err = crate::networking::tls_pstm_montgomery_reduce::pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
                               if err != 0 {
                                 current_block = 14289100601382369252;
                                 break;
@@ -1944,12 +1868,14 @@ pub unsafe extern "C" fn pstm_exptmod(
                                     current_block = 10301740260014665685;
                                     break;
                                   }
-                                  err = pstm_sqr_comba(&mut res, &mut res, paD, paDlen);
+                                  err = crate::networking::tls_pstm_sqr_comba::pstm_sqr_comba(
+                                    &mut res, &mut res, paD, paDlen,
+                                  );
                                   if err != 0 {
                                     current_block = 14289100601382369252;
                                     break;
                                   }
-                                  err = pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
+                                  err = crate::networking::tls_pstm_montgomery_reduce::pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
                                   if err != 0 {
                                     current_block = 14289100601382369252;
                                     break;
@@ -1958,7 +1884,7 @@ pub unsafe extern "C" fn pstm_exptmod(
                                   bitbuf <<= 1i32;
                                   if bitbuf & 1i32 << winsize != 0 {
                                     /* then multiply */
-                                    err = pstm_mul_comba(
+                                    err = crate::networking::tls_pstm_mul_comba::pstm_mul_comba(
                                       &mut res,
                                       &mut *M.as_mut_ptr().offset(1),
                                       &mut res,
@@ -1969,7 +1895,7 @@ pub unsafe extern "C" fn pstm_exptmod(
                                       current_block = 14289100601382369252;
                                       break;
                                     }
-                                    err = pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
+                                    err = crate::networking::tls_pstm_montgomery_reduce::pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
                                     if err != 0 {
                                       current_block = 14289100601382369252;
                                       break;
@@ -1989,7 +1915,7 @@ pub unsafe extern "C" fn pstm_exptmod(
                                   one more time to cancel out the factor of R.
                                 */
                                 {
-                                  err = pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
+                                  err = crate::networking::tls_pstm_montgomery_reduce::pstm_montgomery_reduce(&mut res, P, mp, paD, paDlen);
                                   if !(err != 0) {
                                     /* swap res with Y */
                                     pstm_copy(&mut res, Y);
@@ -2213,15 +2139,7 @@ pub unsafe extern "C" fn pstm_to_unsigned_bin(
 ) -> int32 {
   let mut res: int32 = 0; //bbox: was int16
   let mut x: libc::c_int = 0;
-  let mut t: pstm_int = {
-    let mut init = pstm_int {
-      used: 0,
-      alloc: 0,
-      sign: 0,
-      dp: std::ptr::null_mut(),
-    };
-    init
-  };
+  let mut t: pstm_int = std::mem::zeroed();
   pstm_init_copy(&mut t, a, 0);
   res = 0;
   if res != 0 {
@@ -2230,7 +2148,7 @@ pub unsafe extern "C" fn pstm_to_unsigned_bin(
   x = 0;
   while (if t.used == 0 { 1i32 } else { 0 }) == 0 {
     let fresh17 = x;
-    x += 1;
+    x = x + 1;
     *b.offset(fresh17 as isize) = (*t.dp.offset(0) & 255i32 as libc::c_uint) as libc::c_uchar;
     pstm_div_2d(&mut t, 8i32, &mut t, 0 as *mut pstm_int);
     res = 0;

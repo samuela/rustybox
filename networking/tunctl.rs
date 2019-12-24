@@ -6,33 +6,15 @@ extern "C" {
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xuname2uid(name: *const libc::c_char) -> libc::c_long;
-  #[no_mangle]
-  fn xgroup2gid(name: *const libc::c_char) -> libc::c_long;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn ioctl_or_perror_and_die(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    fmt: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
+
 }
 
 pub type __caddr_t = *mut libc::c_char;
 
 use libc::sockaddr;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifmap {
   pub mem_start: libc::c_ulong,
   pub mem_end: libc::c_ulong,
@@ -41,14 +23,16 @@ pub struct ifmap {
   pub dma: libc::c_uchar,
   pub port: libc::c_uchar,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifreq {
   pub ifr_ifrn: C2RustUnnamed_0,
   pub ifr_ifru: C2RustUnnamed,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub ifru_addr: sockaddr,
   pub ifru_dstaddr: sockaddr,
@@ -63,8 +47,9 @@ pub union C2RustUnnamed {
   pub ifru_newname: [libc::c_char; 16],
   pub ifru_data: __caddr_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub ifrn_name: [libc::c_char; 16],
 }
@@ -148,7 +133,7 @@ pub unsafe extern "C" fn tunctl_main(
   let mut user: libc::c_long = -1i32 as libc::c_long;
   let mut group: libc::c_long = -1i32 as libc::c_long;
   let mut opts: libc::c_uint = 0;
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^f:t:d:u:g:b\x00=0:t--d:d--t\x00" as *const u8 as *const libc::c_char,
     &mut opt_device as *mut *const libc::c_char,
@@ -164,10 +149,10 @@ pub unsafe extern "C" fn tunctl_main(
     ::std::mem::size_of::<ifreq>() as libc::c_ulong,
   );
   ifr.ifr_ifru.ifru_flags = (0x2i32 | 0x1000i32) as libc::c_short;
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), opt_name);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), opt_name);
   // open device
-  fd = xopen(opt_device, 0o2i32);
-  ioctl_or_perror_and_die(
+  fd = crate::libbb::xfuncs_printf::xopen(opt_device, 0o2i32);
+  crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
     fd,
     ((1u32 << 0 + 8i32 + 8i32 + 14i32
       | (('T' as i32) << 0 + 8i32) as libc::c_uint
@@ -179,7 +164,7 @@ pub unsafe extern "C" fn tunctl_main(
   );
   // delete?
   if opts & OPT_d as libc::c_int as libc::c_uint != 0 {
-    ioctl_or_perror_and_die(
+    crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
       fd,
       ((1u32 << 0 + 8i32 + 8i32 + 14i32
         | (('T' as i32) << 0 + 8i32) as libc::c_uint
@@ -197,8 +182,8 @@ pub unsafe extern "C" fn tunctl_main(
   }
   // create
   if opts & OPT_g as libc::c_int as libc::c_uint != 0 {
-    group = xgroup2gid(opt_group);
-    ioctl_or_perror_and_die(
+    group = crate::libbb::bb_pwd::xgroup2gid(opt_group);
+    crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
       fd,
       ((1u32 << 0 + 8i32 + 8i32 + 14i32
         | (('T' as i32) << 0 + 8i32) as libc::c_uint
@@ -212,9 +197,9 @@ pub unsafe extern "C" fn tunctl_main(
     user = geteuid() as libc::c_long
   }
   if opts & OPT_u as libc::c_int as libc::c_uint != 0 {
-    user = xuname2uid(opt_user)
+    user = crate::libbb::bb_pwd::xuname2uid(opt_user)
   }
-  ioctl_or_perror_and_die(
+  crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
     fd,
     ((1u32 << 0 + 8i32 + 8i32 + 14i32
       | (('T' as i32) << 0 + 8i32) as libc::c_uint
@@ -224,7 +209,7 @@ pub unsafe extern "C" fn tunctl_main(
     user as uintptr_t as *mut libc::c_void,
     0 as *const libc::c_char,
   );
-  ioctl_or_perror_and_die(
+  crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
     fd,
     ((1u32 << 0 + 8i32 + 8i32 + 14i32
       | (('T' as i32) << 0 + 8i32) as libc::c_uint
@@ -250,7 +235,7 @@ pub unsafe extern "C" fn tunctl_main(
     if group != -1i32 as libc::c_long {
       printf(b" gid %ld\x00" as *const u8 as *const libc::c_char, group);
     }
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   }
   return 0;
 }

@@ -1,9 +1,10 @@
 use crate::libbb::llist::llist_t;
+use crate::libbb::parse_config::parser_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::len_and_sockaddr;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-
 use libc;
 use libc::atoi;
 use libc::chmod;
@@ -20,6 +21,8 @@ use libc::pid_t;
 use libc::rename;
 use libc::sa_family_t;
 use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::sprintf;
 use libc::ssize_t;
 use libc::stat;
@@ -104,116 +107,27 @@ extern "C" {
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
 
-  #[no_mangle]
-  fn monotonic_sec() -> libc::c_uint;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn device_open(device: *const libc::c_char, mode: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xmalloc_follow_symlinks(path: *const libc::c_char) -> *mut libc::c_char;
   /* syscalls like read() will be interrupted with EINTR: */
-  #[no_mangle]
-  fn signal_no_SA_RESTART_empty_mask(
-    sig: libc::c_int,
-    handler: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
-  );
-  #[no_mangle]
-  fn kill_myself_with_sig(sig: libc::c_int) -> !;
+
   /* Standard handler which just records signo */
   #[no_mangle]
   static mut bb_got_signal: smallint;
-  #[no_mangle]
-  fn record_signo(signo: libc::c_int);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xbind(sockfd: libc::c_int, my_addr: *mut sockaddr, addrlen: socklen_t);
+
   /* Return malloc'ed len_and_sockaddr with socket address of host:port
    * Currently will return IPv4 or IPv6 sockaddrs only
    * (depending on host), but in theory nothing prevents e.g.
    * UNIX socket address being returned, IPX sockaddr etc...
    * On error does bb_error_msg and returns NULL */
-  #[no_mangle]
-  fn host2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
+
   // NB: will return short write on error, not -1,
   // if some data was written before error occurred
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn safe_gethostname() -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatoull_range(
-    str: *const libc::c_char,
-    l: libc::c_ulonglong,
-    u: libc::c_ulonglong,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn uid2uname_utoa(uid: uid_t) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
+
   /* { "-", NULL } */
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn write_pidfile_std_path_and_ext(path: *const libc::c_char);
-  #[no_mangle]
-  fn remove_pidfile_std_path_and_ext(path: *const libc::c_char);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn get_linux_version_code() -> libc::c_int;
-  #[no_mangle]
-  fn config_open2(
-    filename: *const libc::c_char,
-    fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
-  ) -> *mut parser_t;
+
   /* delims[0] is a comment char (use '\0' to disable), the rest are token delimiters */
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
+
   /* '*const' ptr makes gcc optimize code much better.
    * Magic prevents ptr_to_globals from going into rodata.
    * If you want to assign a value, use SET_PTR_TO_GLOBALS(x) */
@@ -259,7 +173,7 @@ pub type __socklen_t = libc::c_uint;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 
-pub type socklen_t = __socklen_t;
+use crate::librb::socklen_t;
 pub type key_t = __key_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -295,50 +209,27 @@ pub const MSG_TRYHARD: C2RustUnnamed = 4;
 pub const MSG_DONTROUTE: C2RustUnnamed = 4;
 pub const MSG_PEEK: C2RustUnnamed = 2;
 pub const MSG_OOB: C2RustUnnamed = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sockaddr_un {
   pub sun_family: sa_family_t,
   pub sun_path: [libc::c_char; 108],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed_0,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_0 {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr__: *const sockaddr,
   pub __sockaddr_at__: *const sockaddr_at,
@@ -355,14 +246,8 @@ pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr_x25__: *const sockaddr_x25,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_1,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_1 {
   pub sa: sockaddr,
   pub sin: sockaddr_in,
@@ -451,22 +336,13 @@ pub const PARSE_GREEDY: C2RustUnnamed_3 = 262144;
 // treat consecutive delimiters as one
 pub const PARSE_TRIM: C2RustUnnamed_3 = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed_3 = 65536;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
+
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub logFile: logFile_t,
   pub logLevel: libc::c_int,
@@ -487,22 +363,25 @@ pub struct globals {
   pub parsebuf: [libc::c_char; 512],
   pub printbuf: [libc::c_char; 640],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct shbuf_ds {
   pub size: i32,
   pub tail: i32,
   pub data: [libc::c_char; 1],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct logRule_t {
   pub enabled_facility_priomap: [u8; 24],
   pub file: *mut logFile_t,
   pub next: *mut logRule_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct logFile_t {
   pub path: *const libc::c_char,
   pub fd: libc::c_int,
@@ -510,8 +389,9 @@ pub struct logFile_t {
   pub size: libc::c_uint,
   pub isRegular: u8,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sembuf {
   pub sem_num: libc::c_ushort,
   pub sem_op: libc::c_short,
@@ -519,15 +399,17 @@ pub struct sembuf {
 }
 pub type C2RustUnnamed_4 = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed_4 = 1024;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct _code {
   pub c_name: *mut libc::c_char,
   pub c_val: libc::c_int,
 }
 pub type CODE = _code;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct shmid_ds {
   pub shm_perm: ipc_perm,
   pub shm_segsz: size_t,
@@ -541,8 +423,9 @@ pub struct shmid_ds {
   pub __glibc_reserved5: __syscall_ulong_t,
 }
 pub type shmatt_t = __syscall_ulong_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ipc_perm {
   pub __key: __key_t,
   pub uid: uid_t,
@@ -559,16 +442,18 @@ pub struct ipc_perm {
 pub type C2RustUnnamed_5 = libc::c_uint;
 pub const DNS_WAIT_SEC: C2RustUnnamed_5 = 120;
 pub const MAX_READ: C2RustUnnamed_5 = 256;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct remoteHost_t {
   pub remoteFD: libc::c_int,
   pub last_dns_resolve: libc::c_uint,
   pub remoteAddr: *mut len_and_sockaddr,
   pub remoteHostname: *const libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct init_globals {
   pub logFile: logFile_t,
   pub logLevel: libc::c_int,
@@ -638,7 +523,8 @@ unsafe extern "C" fn xatoul_range(
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
 ) -> libc::c_ulong {
-  return xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong)
+    as libc::c_ulong;
 }
 #[inline(always)]
 unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
@@ -950,16 +836,22 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
   /* tok[2] has to be NULL */
   let mut tok: [*mut libc::c_char; 3] = [0 as *mut libc::c_char; 3];
   let mut parser: *mut parser_t = std::ptr::null_mut();
-  parser = config_open2(
+  parser = crate::libbb::parse_config::config_open2(
     if !file.is_null() {
       file
     } else {
       b"/etc/syslog.conf\x00" as *const u8 as *const libc::c_char
     },
     if !file.is_null() {
-      Some(xfopen_for_read as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE)
+      Some(
+        crate::libbb::wfopen::xfopen_for_read
+          as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+      )
     } else {
-      Some(fopen_for_read as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE)
+      Some(
+        crate::libbb::wfopen::fopen_for_read
+          as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+      )
     },
   );
   if parser.is_null() {
@@ -972,7 +864,7 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
   's_30: loop
   /* iterate through lines of config, skipping comments */
   {
-    if !(config_read(
+    if !(crate::libbb::parse_config::config_read(
       parser,
       tok.as_mut_ptr(),
       (PARSE_NORMAL as libc::c_int
@@ -992,7 +884,9 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
       current_block = 12846980873243673022;
       break;
     }
-    *pp_rule = xzalloc(::std::mem::size_of::<logRule_t>() as libc::c_ulong) as *mut logRule_t;
+    *pp_rule =
+      crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<logRule_t>() as libc::c_ulong)
+        as *mut logRule_t;
     cur_rule = *pp_rule;
     cur_selector = tok[0];
     loop
@@ -1142,10 +1036,11 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
       match current_block {
         3380682794502917957 => {}
         _ => {
-          (*cur_rule).file =
-            xzalloc(::std::mem::size_of::<logFile_t>() as libc::c_ulong) as *mut logFile_t;
+          (*cur_rule).file = crate::libbb::xfuncs_printf::xzalloc(
+            ::std::mem::size_of::<logFile_t>() as libc::c_ulong,
+          ) as *mut logFile_t;
           (*(*cur_rule).file).fd = -1i32;
-          (*(*cur_rule).file).path = xstrdup(tok[1])
+          (*(*cur_rule).file).path = crate::libbb::xfuncs_printf::xstrdup(tok[1])
         }
       }
     }
@@ -1153,7 +1048,7 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
   }
   match current_block {
     12846980873243673022 => {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"error in \'%s\' at line %d\x00" as *const u8 as *const libc::c_char,
         if !file.is_null() {
           file
@@ -1164,7 +1059,7 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
       );
     }
     _ => {
-      config_close(parser);
+      crate::libbb::parse_config::config_close(parser);
       return;
     }
   };
@@ -1246,13 +1141,17 @@ unsafe extern "C" fn ipcsyslog_init() {
     0o1000i32 | 0o644i32,
   );
   if (*ptr_to_globals).shmid == -1i32 {
-    bb_simple_perror_msg_and_die(b"shmget\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"shmget\x00" as *const u8 as *const libc::c_char,
+    );
   }
   (*ptr_to_globals).shbuf =
     shmat((*ptr_to_globals).shmid, 0 as *const libc::c_void, 0) as *mut shbuf_ds;
   if (*ptr_to_globals).shbuf == -1i64 as *mut libc::c_void as *mut shbuf_ds {
     /* shmat has bizarre error return */
-    bb_simple_perror_msg_and_die(b"shmat\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"shmat\x00" as *const u8 as *const libc::c_char,
+    );
   }
   memset(
     (*ptr_to_globals).shbuf as *mut libc::c_void,
@@ -1272,7 +1171,9 @@ unsafe extern "C" fn ipcsyslog_init() {
         return;
       }
     }
-    bb_simple_perror_msg_and_die(b"semget\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"semget\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 /* Write message to shared mem buffer */
@@ -1286,7 +1187,9 @@ unsafe extern "C" fn log_to_shmem(mut msg: *const libc::c_char) {
     3i32 as size_t,
   ) == -1i32
   {
-    bb_simple_perror_msg_and_die(b"SMwdn\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"SMwdn\x00" as *const u8 as *const libc::c_char,
+    );
   }
   /* Circular Buffer Algorithm:
    * --------------------------
@@ -1332,17 +1235,22 @@ unsafe extern "C" fn log_to_shmem(mut msg: *const libc::c_char) {
     1i32 as size_t,
   ) == -1i32
   {
-    bb_simple_perror_msg_and_die(b"SMwup\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"SMwup\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 /* FEATURE_IPC_SYSLOG */
 unsafe extern "C" fn kmsg_init() {
-  (*ptr_to_globals).kmsgfd = xopen(b"/dev/kmsg\x00" as *const u8 as *const libc::c_char, 0o1i32);
+  (*ptr_to_globals).kmsgfd = crate::libbb::xfuncs_printf::xopen(
+    b"/dev/kmsg\x00" as *const u8 as *const libc::c_char,
+    0o1i32,
+  );
   /*
    * kernel < 3.5 expects single char printk KERN_* priority prefix,
    * from 3.5 onwards the full syslog facility/priority format is supported
    */
-  if get_linux_version_code() < (3i32 << 16i32) + (5i32 << 8i32) + 0 {
+  if crate::libbb::kernel_version::get_linux_version_code() < (3i32 << 16i32) + (5i32 << 8i32) + 0 {
     (*ptr_to_globals).primask = 0x7i32
   } else {
     (*ptr_to_globals).primask = -1i32
@@ -1356,7 +1264,7 @@ unsafe extern "C" fn log_to_kmsg(mut pri: libc::c_int, mut msg: *const libc::c_c
    * from 3.5 onwards the full syslog facility/priority format is supported
    */
   pri &= (*ptr_to_globals).primask;
-  full_write(
+  crate::libbb::full_write::full_write(
     (*ptr_to_globals).kmsgfd,
     (*ptr_to_globals).printbuf.as_mut_ptr() as *const libc::c_void,
     sprintf(
@@ -1416,14 +1324,14 @@ unsafe extern "C" fn log_locally(
         );
         if (*log_file).fd < 0 {
           /* cannot open logfile? - print to /dev/console then */
-          let mut fd: libc::c_int = device_open(
+          let mut fd: libc::c_int = crate::libbb::device_open::device_open(
             b"/dev/console\x00" as *const u8 as *const libc::c_char,
             0o1i32 | 0o400i32 | 0o4000i32,
           ); /* then stderr, dammit */
           if fd < 0 {
             fd = 2i32
           }
-          full_write(fd, msg as *const libc::c_void, len as size_t);
+          crate::libbb::full_write::full_write(fd, msg as *const libc::c_void, len as size_t);
           if fd != 2i32 {
             close(fd);
           }
@@ -1499,7 +1407,9 @@ unsafe extern "C" fn log_locally(
     }
   }
   /* TODO: what to do on write errors ("disk full")? */
-  len = full_write((*log_file).fd, msg as *const libc::c_void, len as size_t) as libc::c_int;
+  len =
+    crate::libbb::full_write::full_write((*log_file).fd, msg as *const libc::c_void, len as size_t)
+      as libc::c_int;
   if len > 0 {
     (*log_file).size = (*log_file).size.wrapping_add(len as libc::c_uint)
   };
@@ -1634,7 +1544,7 @@ unsafe extern "C" fn split_escape_and_log(mut tmpbuf: *mut libc::c_char, mut len
     let mut pri: libc::c_int = 1i32 << 3i32 | 5i32;
     if *p as libc::c_int == '<' as i32 {
       /* Parse the magic priority number */
-      pri = bb_strtou(p.offset(1), &mut p, 10i32) as libc::c_int;
+      pri = crate::libbb::bb_strtonum::bb_strtou(p.offset(1), &mut p, 10i32) as libc::c_int;
       if *p as libc::c_int == '>' as i32 {
         p = p.offset(1)
       }
@@ -1695,9 +1605,11 @@ unsafe extern "C" fn create_socket() -> libc::c_int {
     sunx.sun_path.as_mut_ptr(),
     b"/dev/log\x00" as *const u8 as *const libc::c_char,
   );
-  dev_log_name = xmalloc_follow_symlinks(b"/dev/log\x00" as *const u8 as *const libc::c_char);
+  dev_log_name = crate::libbb::xreadlink::xmalloc_follow_symlinks(
+    b"/dev/log\x00" as *const u8 as *const libc::c_char,
+  );
   if !dev_log_name.is_null() {
-    safe_strncpy(
+    crate::libbb::safe_strncpy::safe_strncpy(
       sunx.sun_path.as_mut_ptr(),
       dev_log_name,
       ::std::mem::size_of::<[libc::c_char; 108]>() as libc::c_ulong,
@@ -1705,8 +1617,8 @@ unsafe extern "C" fn create_socket() -> libc::c_int {
     free(dev_log_name as *mut libc::c_void);
   }
   unlink(sunx.sun_path.as_mut_ptr());
-  sock_fd = xsocket(1i32, SOCK_DGRAM as libc::c_int, 0);
-  xbind(
+  sock_fd = crate::libbb::xfuncs_printf::xsocket(1i32, SOCK_DGRAM as libc::c_int, 0);
+  crate::libbb::xfuncs_printf::xbind(
     sock_fd,
     &mut sunx as *mut sockaddr_un as *mut sockaddr,
     ::std::mem::size_of::<sockaddr_un>() as libc::c_ulong as socklen_t,
@@ -1719,18 +1631,18 @@ unsafe extern "C" fn create_socket() -> libc::c_int {
 }
 unsafe extern "C" fn try_to_resolve_remote(mut rh: *mut remoteHost_t) -> libc::c_int {
   if (*rh).remoteAddr.is_null() {
-    let mut now: libc::c_uint = monotonic_sec();
+    let mut now: libc::c_uint = crate::libbb::time::monotonic_sec();
     /* Don't resolve name too often - DNS timeouts can be big */
     if now.wrapping_sub((*rh).last_dns_resolve) < DNS_WAIT_SEC as libc::c_int as libc::c_uint {
       return -1i32;
     }
     (*rh).last_dns_resolve = now;
-    (*rh).remoteAddr = host2sockaddr((*rh).remoteHostname, 514i32);
+    (*rh).remoteAddr = crate::libbb::xconnect::host2sockaddr((*rh).remoteHostname, 514i32);
     if (*rh).remoteAddr.is_null() {
       return -1i32;
     }
   }
-  return xsocket(
+  return crate::libbb::xfuncs_printf::xsocket(
     (*(*rh).remoteAddr).u.sa.sa_family as libc::c_int,
     SOCK_DGRAM as libc::c_int,
     0,
@@ -1742,20 +1654,20 @@ unsafe extern "C" fn do_syslogd() -> ! {
   let mut last_buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut recvbuf: *mut libc::c_char = (*ptr_to_globals).recvbuf.as_mut_ptr();
   /* Set up signal handlers (so that they interrupt read()) */
-  signal_no_SA_RESTART_empty_mask(
+  crate::libbb::signals::signal_no_SA_RESTART_empty_mask(
     15i32,
-    Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
-  signal_no_SA_RESTART_empty_mask(
+  crate::libbb::signals::signal_no_SA_RESTART_empty_mask(
     2i32,
-    Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   //signal_no_SA_RESTART_empty_mask(SIGQUIT, record_signo);
   signal(
     1i32,
     ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
   ); /* while (!bb_got_signal) */
-  xmove_fd(create_socket(), 0);
+  crate::libbb::xfuncs_printf::xmove_fd(create_socket(), 0);
   if option_mask32 & OPT_circularlog as libc::c_int as libc::c_uint != 0 {
     ipcsyslog_init();
   }
@@ -1785,7 +1697,7 @@ unsafe extern "C" fn do_syslogd() -> ! {
       );
       if sz < 0 {
         if bb_got_signal == 0 {
-          bb_perror_msg(
+          crate::libbb::perror_msg::bb_perror_msg(
             b"read from %s\x00" as *const u8 as *const libc::c_char,
             b"/dev/log\x00" as *const u8 as *const libc::c_char,
           );
@@ -1893,12 +1805,14 @@ unsafe extern "C" fn do_syslogd() -> ! {
     }
   }
   timestamp_and_log_internal(b"syslogd exiting\x00" as *const u8 as *const libc::c_char);
-  remove_pidfile_std_path_and_ext(b"syslogd\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::pidfile::remove_pidfile_std_path_and_ext(
+    b"syslogd\x00" as *const u8 as *const libc::c_char,
+  );
   ipcsyslog_cleanup();
   if option_mask32 & OPT_kmsg as libc::c_int as libc::c_uint != 0 {
     kmsg_cleanup();
   }
-  kill_myself_with_sig(bb_got_signal as libc::c_int);
+  crate::libbb::signals::kill_myself_with_sig(bb_got_signal as libc::c_int);
 }
 #[no_mangle]
 pub unsafe extern "C" fn syslogd_main(
@@ -1916,13 +1830,13 @@ pub unsafe extern "C" fn syslogd_main(
   let ref mut fresh6 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
   *fresh6 = memcpy(
-    xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong),
+    crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong),
     &init_data as *const init_globals as *const libc::c_void,
     ::std::mem::size_of::<init_globals>() as libc::c_ulong,
   ) as *mut globals;
   asm!("" : : : "memory" : "volatile");
   /* No non-option params */
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^m:nO:l:Sts:b:R:*LC::Df:K\x00=0\x00" as *const u8 as *const libc::c_char,
     &mut opt_m as *mut *mut libc::c_char,
@@ -1935,26 +1849,29 @@ pub unsafe extern "C" fn syslogd_main(
     &mut opt_f as *mut *mut libc::c_char,
   ) as libc::c_int;
   while !remoteAddrList.is_null() {
-    let mut rh: *mut remoteHost_t =
-      xzalloc(::std::mem::size_of::<remoteHost_t>() as libc::c_ulong) as *mut remoteHost_t;
-    (*rh).remoteHostname = llist_pop(&mut remoteAddrList) as *const libc::c_char;
+    let mut rh: *mut remoteHost_t = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<
+      remoteHost_t,
+    >() as libc::c_ulong) as *mut remoteHost_t;
+    (*rh).remoteHostname =
+      crate::libbb::llist::llist_pop(&mut remoteAddrList) as *const libc::c_char;
     (*rh).remoteFD = -1i32;
-    (*rh).last_dns_resolve = monotonic_sec()
+    (*rh).last_dns_resolve = crate::libbb::time::monotonic_sec()
       .wrapping_sub(DNS_WAIT_SEC as libc::c_int as libc::c_uint)
       .wrapping_sub(1i32 as libc::c_uint);
-    llist_add_to(&mut (*ptr_to_globals).remoteHosts, rh as *mut libc::c_void);
+    crate::libbb::llist::llist_add_to(&mut (*ptr_to_globals).remoteHosts, rh as *mut libc::c_void);
   }
   //if (opts & OPT_nofork) // -n
   //if (opts & OPT_outfile) // -O
   if opts & OPT_loglevel as libc::c_int != 0 {
     // -l
     (*ptr_to_globals).logLevel =
-      xatou_range(opt_l, 1i32 as libc::c_uint, 8i32 as libc::c_uint) as libc::c_int
+      crate::libbb::xatonum::xatou_range(opt_l, 1i32 as libc::c_uint, 8i32 as libc::c_uint)
+        as libc::c_int
   }
   //if (opts & OPT_small) // -S
   if opts & OPT_filesize as libc::c_int != 0 {
     // -s
-    (*ptr_to_globals).logFileSize = xatou_range(
+    (*ptr_to_globals).logFileSize = crate::libbb::xatonum::xatou_range(
       opt_s,
       0 as libc::c_uint,
       (2147483647i32 / 1024i32) as libc::c_uint,
@@ -1963,7 +1880,8 @@ pub unsafe extern "C" fn syslogd_main(
   }
   if opts & OPT_rotatecnt as libc::c_int != 0 {
     // -b
-    (*ptr_to_globals).logFileRotate = xatou_range(opt_b, 0 as libc::c_uint, 99i32 as libc::c_uint)
+    (*ptr_to_globals).logFileRotate =
+      crate::libbb::xatonum::xatou_range(opt_b, 0 as libc::c_uint, 99i32 as libc::c_uint)
   }
   if !opt_C.is_null() {
     // -Cn
@@ -1981,13 +1899,15 @@ pub unsafe extern "C" fn syslogd_main(
   }
   parse_syslogdcfg(opt_f);
   /* Store away localhost's name before the fork */
-  (*ptr_to_globals).hostname = safe_gethostname();
+  (*ptr_to_globals).hostname = crate::libbb::safe_gethostname::safe_gethostname();
   *strchrnul((*ptr_to_globals).hostname, '.' as i32) = '\u{0}' as i32 as libc::c_char;
   if opts & OPT_nofork as libc::c_int == 0 {
-    bb_daemonize_or_rexec(DAEMON_CHDIR_ROOT as libc::c_int);
+    crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(DAEMON_CHDIR_ROOT as libc::c_int);
   }
   //umask(0); - why??
-  write_pidfile_std_path_and_ext(b"syslogd\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::pidfile::write_pidfile_std_path_and_ext(
+    b"syslogd\x00" as *const u8 as *const libc::c_char,
+  );
   do_syslogd();
   /* return EXIT_SUCCESS; */
 }
@@ -2067,7 +1987,7 @@ unsafe extern "C" fn pencode(mut s: *mut libc::c_char) -> libc::c_int {
     *s = '\u{0}' as i32 as libc::c_char;
     fac = decode(save, bb_facilitynames);
     if fac < 0 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"unknown %s name: %s\x00" as *const u8 as *const libc::c_char,
         b"facility\x00" as *const u8 as *const libc::c_char,
         save,
@@ -2081,7 +2001,7 @@ unsafe extern "C" fn pencode(mut s: *mut libc::c_char) -> libc::c_int {
   }
   lev = decode(s, bb_prioritynames);
   if lev < 0 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"unknown %s name: %s\x00" as *const u8 as *const libc::c_char,
       b"priority\x00" as *const u8 as *const libc::c_char,
       save,
@@ -2099,9 +2019,9 @@ pub unsafe extern "C" fn logger_main(
   let mut opt: libc::c_int = 0;
   let mut i: libc::c_int = 0;
   /* Fill out the name string early (may be overwritten later) */
-  str_t = uid2uname_utoa(geteuid());
+  str_t = crate::libbb::bb_pwd::uid2uname_utoa(geteuid());
   /* Parse any options */
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"p:st:\x00" as *const u8 as *const libc::c_char,
     &mut str_p as *mut *mut libc::c_char,
@@ -2146,7 +2066,9 @@ pub unsafe extern "C" fn logger_main(
     loop {
       len = (len as libc::c_ulong).wrapping_add(strlen(*argv).wrapping_add(1i32 as libc::c_ulong))
         as libc::c_int as libc::c_int;
-      message = xrealloc(message as *mut libc::c_void, (len + 1i32) as size_t) as *mut libc::c_char;
+      message =
+        crate::libbb::xfuncs_printf::xrealloc(message as *mut libc::c_void, (len + 1i32) as size_t)
+          as *mut libc::c_char;
       sprintf(
         message.offset(pos as isize),
         b" %s\x00" as *const u8 as *const libc::c_char,

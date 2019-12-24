@@ -1,3 +1,4 @@
+use crate::libbb::parse_config::parser_t;
 use libc;
 use libc::free;
 use libc::printf;
@@ -20,51 +21,14 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
-  #[no_mangle]
-  fn last_char_is(s: *const libc::c_char, c: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_open_zipped_read_close(
-    fname: *const libc::c_char,
-    maxsz_p: *mut size_t,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
+
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn config_open2(
-    filename: *const libc::c_char,
-    fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
-  ) -> *mut parser_t;
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
-  #[no_mangle]
-  fn filename2modname(
-    filename: *const libc::c_char,
-    modname: *mut libc::c_char,
-  ) -> *mut libc::c_char;
+
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct utsname {
   pub sysname: [libc::c_char; 65],
   pub nodename: [libc::c_char; 65],
@@ -87,17 +51,7 @@ pub const PARSE_MIN_DIE: C2RustUnnamed = 1048576;
 pub const PARSE_GREEDY: C2RustUnnamed = 262144;
 pub const PARSE_TRIM: C2RustUnnamed = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed = 65536;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
+
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const OPT_TAGS: C2RustUnnamed_0 = 32764;
 /* field name */
@@ -146,11 +100,11 @@ unsafe extern "C" fn display(mut data: *const libc::c_char, mut pattern: *const 
     let mut n: libc::c_int = printf(b"%s:\x00" as *const u8 as *const libc::c_char, pattern);
     loop {
       let fresh0 = n;
-      n += 1;
+      n = n + 1;
       if !(fresh0 < 16i32) {
         break;
       }
-      bb_putchar(' ' as i32);
+      crate::libbb::xfuncs_printf::bb_putchar(' ' as i32);
     }
   }
   printf(
@@ -184,22 +138,26 @@ unsafe extern "C" fn modinfo(
         .wrapping_mul(8i32 as libc::c_ulong)
         .wrapping_sub(1i32 as libc::c_ulong))
   } as size_t;
-  the_module = xmalloc_open_zipped_read_close(path, &mut len) as *mut libc::c_char;
+  the_module =
+    crate::archival::libarchive::open_transformer::xmalloc_open_zipped_read_close(path, &mut len)
+      as *mut libc::c_char;
   if the_module.is_null() {
     if *path.offset(0) as libc::c_int == '/' as i32 {
       return;
     }
     /* Newer depmod puts relative paths in modules.dep */
-    allocated = xasprintf(
+    allocated = crate::libbb::xfuncs_printf::xasprintf(
       b"%s/%s/%s\x00" as *const u8 as *const libc::c_char,
       b"/lib/modules\x00" as *const u8 as *const libc::c_char,
       version,
       path,
     );
     path = allocated;
-    the_module = xmalloc_open_zipped_read_close(path, &mut len) as *mut libc::c_char;
+    the_module =
+      crate::archival::libarchive::open_transformer::xmalloc_open_zipped_read_close(path, &mut len)
+        as *mut libc::c_char;
     if the_module.is_null() {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"module \'%s\' not found\x00" as *const u8 as *const libc::c_char,
         path,
       );
@@ -237,7 +195,7 @@ unsafe extern "C" fn modinfo(
               if ptr.is_null() {
                 break;
               }
-              after_pattern = is_prefixed_with(ptr, pattern);
+              after_pattern = crate::libbb::compare_string_array::is_prefixed_with(ptr, pattern);
               if !after_pattern.is_null() && *after_pattern as libc::c_int == '=' as i32 {
                 /* field prefixes are 0x80 or 0x00 */
                 if *ptr.offset(-1i32 as isize) as libc::c_int & 0x7fi32 == 0 {
@@ -291,7 +249,7 @@ pub unsafe extern "C" fn modinfo_main(
   let mut opts: libc::c_uint = 0;
   let mut i: libc::c_uint = 0;
   field = std::ptr::null();
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^0F:nadlp\x00-1\x00" as *const u8 as *const libc::c_char,
     &mut field as *mut *const libc::c_char,
@@ -302,28 +260,34 @@ pub unsafe extern "C" fn modinfo_main(
   }
   argv = argv.offset(optind as isize);
   uname(&mut uts);
-  parser = config_open2(
-    xasprintf(
+  parser = crate::libbb::parse_config::config_open2(
+    crate::libbb::xfuncs_printf::xasprintf(
       b"%s/%s/%s\x00" as *const u8 as *const libc::c_char,
       b"/lib/modules\x00" as *const u8 as *const libc::c_char,
       uts.release.as_mut_ptr(),
       b"modules.dep\x00" as *const u8 as *const libc::c_char,
     ),
-    Some(xfopen_for_read as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE),
+    Some(
+      crate::libbb::wfopen::xfopen_for_read
+        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+    ),
   );
-  while config_read(
+  while crate::libbb::parse_config::config_read(
     parser,
     tokens.as_mut_ptr(),
     (PARSE_NORMAL as libc::c_int | (1i32 & 0xffi32) << 8i32 | 2i32 & 0xffi32) as libc::c_uint,
     b"# \t\x00" as *const u8 as *const libc::c_char,
   ) != 0
   {
-    colon = last_char_is(tokens[0], ':' as i32);
+    colon = crate::libbb::last_char_is::last_char_is(tokens[0], ':' as i32);
     if colon.is_null() {
       continue;
     }
     *colon = '\u{0}' as i32 as libc::c_char;
-    filename2modname(bb_basename(tokens[0]), name.as_mut_ptr());
+    crate::modutils::modutils::filename2modname(
+      crate::libbb::get_last_path_component::bb_basename(tokens[0]),
+      name.as_mut_ptr(),
+    );
     i = 0 as libc::c_uint;
     while !(*argv.offset(i as isize)).is_null() {
       if fnmatch(*argv.offset(i as isize), name.as_mut_ptr(), 0) == 0 {

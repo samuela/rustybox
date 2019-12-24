@@ -22,12 +22,7 @@ extern "C" {
   fn localtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
   #[no_mangle]
   fn tzset();
-  #[no_mangle]
-  fn is_suffixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_fgets(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -36,8 +31,9 @@ use crate::librb::size_t;
 use libc::time_t;
 use libc::timeval;
 use libc::FILE;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct timezone {
   pub tz_minuteswest: libc::c_int,
   pub tz_dsttime: libc::c_int,
@@ -72,7 +68,8 @@ pub unsafe extern "C" fn ts_main(
   let mut frac: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fmt_dt2str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  opt = getopt32(argv, b"^is\x00?1\x00" as *const u8 as *const libc::c_char);
+  opt =
+    crate::libbb::getopt32::getopt32(argv, b"^is\x00?1\x00" as *const u8 as *const libc::c_char);
   if opt != 0 {
     putenv(b"TZ=UTC0\x00" as *const u8 as *const libc::c_char as *mut libc::c_char);
     tzset();
@@ -88,9 +85,15 @@ pub unsafe extern "C" fn ts_main(
       b"%b %d %H:%M:%S\x00" as *const u8 as *const libc::c_char
     }) as *mut libc::c_char
   };
-  frac = is_suffixed_with(fmt_dt2str, b"%.S\x00" as *const u8 as *const libc::c_char);
+  frac = crate::libbb::compare_string_array::is_suffixed_with(
+    fmt_dt2str,
+    b"%.S\x00" as *const u8 as *const libc::c_char,
+  );
   if frac.is_null() {
-    frac = is_suffixed_with(fmt_dt2str, b"%.s\x00" as *const u8 as *const libc::c_char)
+    frac = crate::libbb::compare_string_array::is_suffixed_with(
+      fmt_dt2str,
+      b"%.s\x00" as *const u8 as *const libc::c_char,
+    )
   }
   if !frac.is_null() {
     frac = frac.offset(1);
@@ -99,7 +102,7 @@ pub unsafe extern "C" fn ts_main(
   }
   gettimeofday(&mut base, 0 as *mut timezone);
   loop {
-    line = xmalloc_fgets(stdin);
+    line = crate::libbb::get_line_from_file::xmalloc_fgets(stdin);
     if line.is_null() {
       break;
     }

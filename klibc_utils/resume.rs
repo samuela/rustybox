@@ -1,7 +1,7 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
 use libc;
 use libc::sscanf;
+use libc::stat;
 use libc::strchr;
 extern "C" {
   #[no_mangle]
@@ -12,61 +12,27 @@ extern "C" {
   #[no_mangle]
   fn strncmp(_: *const libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> libc::c_int;
 
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn open_read_close(
-    filename: *const libc::c_char,
-    buf: *mut libc::c_void,
-    maxsz: size_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn xwrite_str(fd: libc::c_int, str: *const libc::c_char);
-  #[no_mangle]
-  fn xstrtoull(str: *const libc::c_char, b: libc::c_int) -> libc::c_ulonglong;
-  /* Non-aborting kind of convertors: bb_strto[u][l]l */
-  /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
-   * errno = EINVAL if value was not '\0' terminated, but otherwise ok
-   *    Return value is still valid, caller should just check whether end[0]
-   *    is a valid terminating char for particular case. OTOH, if caller
-   *    requires '\0' terminated input, [s]he can just check errno == 0.
-   * errno = ERANGE if value had alphanumeric terminating char ("1234abcg").
-   * errno = ERANGE if value is out of range, missing, etc.
-   * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
-   *    return value is all-ones in this case.
-   */
-  #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
+/* Non-aborting kind of convertors: bb_strto[u][l]l */
+/* On exit: errno = 0 only if there was non-empty, '\0' terminated value
+ * errno = EINVAL if value was not '\0' terminated, but otherwise ok
+ *    Return value is still valid, caller should just check whether end[0]
+ *    is a valid terminating char for particular case. OTOH, if caller
+ *    requires '\0' terminated input, [s]he can just check errno == 0.
+ * errno = ERANGE if value had alphanumeric terminating char ("1234abcg").
+ * errno = ERANGE if value is out of range, missing, etc.
+ * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
+ *    return value is all-ones in this case.
+ */
+
 }
 
-use crate::librb::size_t;
-use libc::ssize_t;
-use libc::stat;
 #[inline(always)]
 unsafe extern "C" fn bb_strtoul(
   mut arg: *const libc::c_char,
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_ulong {
-  return bb_strtoull(arg, endp, base) as libc::c_ulong;
+  return crate::libbb::bb_strtonum::bb_strtoull(arg, endp, base) as libc::c_ulong;
 }
 /*
  * Copyright (c) 2017 Denys Vlasenko <vda.linux@googlemail.com>
@@ -113,13 +79,14 @@ unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> libc::de
     if !cptr.is_null() {
       /* Colon-separated decimal device number? */
       *cptr = '\u{0}' as i32 as libc::c_char;
-      major_num = bb_strtou(devname, 0 as *mut *mut libc::c_char, 10i32);
+      major_num = crate::libbb::bb_strtonum::bb_strtou(devname, 0 as *mut *mut libc::c_char, 10i32);
       if *bb_errno == 0 {
-        minor_num = bb_strtou(cptr.offset(1), 0 as *mut *mut libc::c_char, 10i32)
+        minor_num =
+          crate::libbb::bb_strtonum::bb_strtou(cptr.offset(1), 0 as *mut *mut libc::c_char, 10i32)
       }
       *cptr = ':' as i32 as libc::c_char;
       if *bb_errno == 0 {
-        return bb_makedev(major_num, minor_num) as libc::dev_t;
+        return crate::libbb::makedev::bb_makedev(major_num, minor_num) as libc::dev_t;
       }
     } else {
       /* Hexadecimal device number? */
@@ -128,7 +95,10 @@ unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> libc::de
         return res;
       }
     }
-    devname = xasprintf(b"/dev/%s\x00" as *const u8 as *const libc::c_char, devname)
+    devname = crate::libbb::xfuncs_printf::xasprintf(
+      b"/dev/%s\x00" as *const u8 as *const libc::c_char,
+      devname,
+    )
   }
   /* Now devname is always "/dev/FOO" */
   if stat(devname, &mut st) == 0
@@ -139,11 +109,11 @@ unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> libc::de
   /* Full blockdevs as well as partitions may be visible
    * in /sys/class/block/ even if /dev is not populated.
    */
-  sysname = xasprintf(
+  sysname = crate::libbb::xfuncs_printf::xasprintf(
     b"/sys/class/block/%s/dev\x00" as *const u8 as *const libc::c_char,
     devname.offset(5),
   );
-  r = open_read_close(
+  r = crate::libbb::read::open_read_close(
     sysname,
     devfile.as_mut_ptr() as *mut libc::c_void,
     (::std::mem::size_of::<[libc::c_char; 28]>() as libc::c_ulong)
@@ -159,7 +129,7 @@ unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> libc::de
       &mut minor_num as *mut libc::c_uint,
     ) == 2i32
     {
-      return bb_makedev(major_num, minor_num) as libc::dev_t;
+      return crate::libbb::makedev::bb_makedev(major_num, minor_num) as libc::dev_t;
     }
   }
   return 0 as libc::dev_t;
@@ -179,31 +149,31 @@ pub unsafe extern "C" fn resume_main(
   let mut fd: libc::c_int = 0;
   argv = argv.offset(1);
   if (*argv.offset(0)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   resume_device = name_to_dev_t(*argv.offset(0));
   if gnu_dev_major(resume_device) == 0 as libc::c_uint {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"invalid resume device: %s\x00" as *const u8 as *const libc::c_char,
       *argv.offset(0),
     );
   }
   ofs = if !(*argv.offset(1)).is_null() {
-    xstrtoull(*argv.offset(1), 0)
+    crate::libbb::xatonum::xstrtoull(*argv.offset(1), 0)
   } else {
     0 as libc::c_ulonglong
   };
-  fd = xopen(
+  fd = crate::libbb::xfuncs_printf::xopen(
     b"/sys/power/resume\x00" as *const u8 as *const libc::c_char,
     0o1i32,
   );
-  s = xasprintf(
+  s = crate::libbb::xfuncs_printf::xasprintf(
     b"%u:%u:%llu\x00" as *const u8 as *const libc::c_char,
     gnu_dev_major(resume_device),
     gnu_dev_minor(resume_device),
     ofs,
   );
-  xwrite_str(fd, s);
+  crate::libbb::xfuncs_printf::xwrite_str(fd, s);
   /* if write() returns, resume did not succeed */
   return 1i32;
   /* klibc-utils exits -1 aka 255 */

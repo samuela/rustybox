@@ -10,8 +10,6 @@ extern "C" {
   #[no_mangle]
   fn mkdir(__path: *const libc::c_char, __mode: mode_t) -> libc::c_int;
 
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
 }
 
 pub type C2RustUnnamed = libc::c_int;
@@ -173,7 +171,7 @@ pub unsafe extern "C" fn bb_make_directory(
   }
   match current_block {
     14469951070566118589 => {
-      bb_perror_msg(
+      crate::libbb::perror_msg::bb_perror_msg(
         b"can\'t %s directory \'%s\'\x00" as *const u8 as *const libc::c_char,
         fail_msg,
         path,

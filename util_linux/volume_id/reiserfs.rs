@@ -3,31 +3,11 @@ extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
-  #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
-
-  #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
-
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
 }
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+
+use crate::util_linux::volume_id::volume_id::volume_id;
 
 pub type uuid_format = libc::c_uint;
 // pub const UUID_DCE_STRING: uuid_format = 3;
@@ -60,8 +40,9 @@ pub const UUID_DCE: uuid_format = 2;
 //config:	default y
 //config:	depends on VOLUMEID
 //kbuild:lib-$(CONFIG_FEATURE_VOLUMEID_REISERFS) += reiserfs.o
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct reiserfs_super_block {
   pub blocks_count: u32,
   pub free_blocks: u32,
@@ -77,8 +58,9 @@ pub struct reiserfs_super_block {
   pub uuid: [u8; 16],
   pub label: [u8; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct reiser4_super_block {
   pub magic: [u8; 16],
   pub dummy: [u16; 2],
@@ -171,7 +153,7 @@ pub unsafe extern "C" fn volume_id_probe_reiserfs(mut id: *mut volume_id) -> lib
   let mut current_block: u64;
   let mut rs: *mut reiserfs_super_block = std::ptr::null_mut();
   let mut rs4: *mut reiser4_super_block = std::ptr::null_mut();
-  rs = volume_id_get_buffer(
+  rs = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     (0i32 as u64).wrapping_add(0x10000i32 as libc::c_ulong),
     0x200i32 as size_t,
@@ -210,10 +192,18 @@ pub unsafe extern "C" fn volume_id_probe_reiserfs(mut id: *mut volume_id) -> lib
       {
         //		strcpy(id->type_version, "4");
         //		volume_id_set_label_raw(id, rs4->label, 16);
-        volume_id_set_label_string(id, (*rs4).label.as_mut_ptr(), 16i32 as size_t);
-        volume_id_set_uuid(id, (*rs4).uuid.as_mut_ptr(), UUID_DCE);
+        crate::util_linux::volume_id::util::volume_id_set_label_string(
+          id,
+          (*rs4).label.as_mut_ptr(),
+          16i32 as size_t,
+        );
+        crate::util_linux::volume_id::util::volume_id_set_uuid(
+          id,
+          (*rs4).uuid.as_mut_ptr(),
+          UUID_DCE,
+        );
       } else {
-        rs = volume_id_get_buffer(
+        rs = crate::util_linux::volume_id::util::volume_id_get_buffer(
           id,
           (0i32 as u64).wrapping_add(0x2000i32 as libc::c_ulong),
           0x200i32 as size_t,
@@ -238,8 +228,16 @@ pub unsafe extern "C" fn volume_id_probe_reiserfs(mut id: *mut volume_id) -> lib
       //		strcpy(id->type_version, "JR");
       //	volume_id_set_label_raw(id, rs->label, 16);
       {
-        volume_id_set_label_string(id, (*rs).label.as_mut_ptr(), 16i32 as size_t);
-        volume_id_set_uuid(id, (*rs).uuid.as_mut_ptr(), UUID_DCE);
+        crate::util_linux::volume_id::util::volume_id_set_label_string(
+          id,
+          (*rs).label.as_mut_ptr(),
+          16i32 as size_t,
+        );
+        crate::util_linux::volume_id::util::volume_id_set_uuid(
+          id,
+          (*rs).uuid.as_mut_ptr(),
+          UUID_DCE,
+        );
       }
     }
   }

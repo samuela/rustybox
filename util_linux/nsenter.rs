@@ -19,44 +19,6 @@ extern "C" {
   fn setgroups(__n: size_t, __groups: *const gid_t) -> libc::c_int;
 
   #[no_mangle]
-  fn xsetgid(gid: gid_t);
-
-  #[no_mangle]
-  fn xsetuid(uid: uid_t);
-
-  #[no_mangle]
-  fn xfchdir(fd: libc::c_int);
-
-  #[no_mangle]
-  fn xchroot(path: *const libc::c_char);
-
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn exec_prog_or_SHELL(argv: *mut *mut libc::c_char) -> !;
-
-  #[no_mangle]
-  fn xvfork_parent_waits_and_exits();
-
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
   fn snprintf(
     _: *mut libc::c_char,
     _: libc::c_ulong,
@@ -98,16 +60,17 @@ extern "C" {
 //usage:     "\n	-r[DIR]		Set root directory"
 //usage:     "\n	-w[DIR]		Set working directory"
 //usage:     "\n	-F		Don't fork before exec'ing PROG"
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct namespace_descr {
   pub flag: libc::c_int,
   pub ns_nsfile8: [libc::c_char; 8],
   /* "ns/" + namespace file in process' procfs entry */
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct namespace_ctx {
   pub path: *mut libc::c_char,
   pub fd: libc::c_int,
@@ -218,7 +181,7 @@ unsafe extern "C" fn open_by_path_or_target(
       /* Example:
        * "nsenter -p PROG" - neither -pFILE nor -tPID given.
        */
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     snprintf(
       proc_path_buf.as_mut_ptr(),
@@ -229,7 +192,7 @@ unsafe extern "C" fn open_by_path_or_target(
     );
     path = proc_path_buf.as_mut_ptr()
   }
-  return xopen(path, 0);
+  return crate::libbb::xfuncs_printf::xopen(path, 0);
 }
 
 #[no_mangle]
@@ -256,7 +219,7 @@ pub unsafe extern "C" fn nsenter_main(
     0,
     ::std::mem::size_of::<[namespace_ctx; 6]>() as libc::c_ulong,
   );
-  opts = getopt32long(
+  opts = crate::libbb::getopt32::getopt32long(
     argv,
     opt_str.as_ptr(),
     nsenter_longopts.as_ptr(),
@@ -342,7 +305,7 @@ pub unsafe extern "C" fn nsenter_main(
       &mut *ns_ctx_list.as_mut_ptr().offset(i as isize) as *mut namespace_ctx;
     if !((*ns_ctx_0).fd < 0) {
       if setns((*ns_ctx_0).fd, (*ns_0).flag) != 0 {
-        bb_perror_msg_and_die(
+        crate::libbb::perror_msg::bb_perror_msg_and_die(
           b"setns(): can\'t reassociate to namespace \'%s\'\x00" as *const u8
             as *const libc::c_char,
           (*ns_0).ns_nsfile8.as_ptr().offset(3),
@@ -360,15 +323,15 @@ pub unsafe extern "C" fn nsenter_main(
        * Save the current working directory if we're not
        * changing it.
        */
-      wd_fd = xopen(b".\x00" as *const u8 as *const libc::c_char, 0)
+      wd_fd = crate::libbb::xfuncs_printf::xopen(b".\x00" as *const u8 as *const libc::c_char, 0)
     }
-    xfchdir(root_fd);
-    xchroot(b".\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::xfuncs_printf::xfchdir(root_fd);
+    crate::libbb::xfuncs_printf::xchroot(b".\x00" as *const u8 as *const libc::c_char);
     close(root_fd);
     /*root_fd = -1;*/
   }
   if wd_fd >= 0 {
-    xfchdir(wd_fd);
+    crate::libbb::xfuncs_printf::xfchdir(wd_fd);
     close(wd_fd);
     /*wd_fd = -1;*/
   }
@@ -379,17 +342,19 @@ pub unsafe extern "C" fn nsenter_main(
   if opts & OPT_nofork as libc::c_int as libc::c_uint == 0
     && opts & OPT_pid as libc::c_int as libc::c_uint != 0
   {
-    xvfork_parent_waits_and_exits();
+    crate::libbb::xfuncs_printf::xvfork_parent_waits_and_exits();
     /* Child continues */
   }
   if opts & OPT_setgid as libc::c_int as libc::c_uint != 0 {
     if setgroups(0i32 as size_t, 0 as *const gid_t) < 0 && setgroups_failed != 0 {
-      bb_simple_perror_msg_and_die(b"setgroups\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"setgroups\x00" as *const u8 as *const libc::c_char,
+      );
     }
-    xsetgid(gid as gid_t);
+    crate::libbb::xfuncs_printf::xsetgid(gid as gid_t);
   }
   if opts & OPT_setuid as libc::c_int as libc::c_uint != 0 {
-    xsetuid(uid as uid_t);
+    crate::libbb::xfuncs_printf::xsetuid(uid as uid_t);
   }
-  exec_prog_or_SHELL(argv);
+  crate::libbb::executable::exec_prog_or_SHELL(argv);
 }

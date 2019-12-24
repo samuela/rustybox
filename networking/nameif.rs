@@ -1,11 +1,16 @@
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::parse_config::parser_t;
 use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
 use libc::ioctl;
 use libc::openlog;
+use libc::sockaddr;
 use libc::strcmp;
 use libc::strcpy;
+use libc::FILE;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -18,54 +23,7 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
-  fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn config_open(filename: *const libc::c_char) -> *mut parser_t;
-  #[no_mangle]
-  fn config_open2(
-    filename: *const libc::c_char,
-    fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
-  ) -> *mut parser_t;
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
-  #[no_mangle]
-  fn ioctl_or_perror_and_die(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    fmt: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
 
   #[no_mangle]
   fn ether_aton_r(__asc: *const libc::c_char, __addr: *mut ether_addr) -> *mut ether_addr;
@@ -85,8 +43,6 @@ pub type __caddr_t = *mut libc::c_char;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::size_t;
-use crate::librb::smallint;
 pub type caddr_t = __caddr_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -99,8 +55,6 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 
-use libc::sockaddr;
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;
@@ -116,19 +70,9 @@ pub const PARSE_MIN_DIE: C2RustUnnamed_0 = 1048576;
 pub const PARSE_GREEDY: C2RustUnnamed_0 = 262144;
 pub const PARSE_TRIM: C2RustUnnamed_0 = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed_0 = 65536;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct ifmap {
   pub mem_start: libc::c_ulong,
   pub mem_end: libc::c_ulong,
@@ -137,14 +81,16 @@ pub struct ifmap {
   pub dma: libc::c_uchar,
   pub port: libc::c_uchar,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifreq {
   pub ifr_ifrn: C2RustUnnamed_2,
   pub ifr_ifru: C2RustUnnamed_1,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub ifru_addr: sockaddr,
   pub ifru_dstaddr: sockaddr,
@@ -159,18 +105,21 @@ pub union C2RustUnnamed_1 {
   pub ifru_newname: [libc::c_char; 16],
   pub ifru_data: __caddr_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_2 {
   pub ifrn_name: [libc::c_char; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct ether_addr {
   pub ether_addr_octet: [u8; 6],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ethtable_s {
   pub next: *mut ethtable_s,
   pub prev: *mut ethtable_s,
@@ -183,8 +132,9 @@ pub struct ethtable_s {
 pub type ethtable_t = ethtable_s;
 /* Cut'n'paste from ethtool.h */
 /* these strings are set to whatever the driver author decides... */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ethtool_drvinfo {
   pub cmd: u32,
   pub driver: [libc::c_char; 32],
@@ -199,8 +149,9 @@ pub struct ethtool_drvinfo {
   pub regdump_len: u32,
   /* Size of data from ETHTOOL_GREGS (bytes) */
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ethtool_cmd {
   pub cmd: u32,
   pub supported: u32,
@@ -232,34 +183,46 @@ unsafe extern "C" fn nameif_parse_selector(
       break;
     }
     /* Search for the end .... */
-    next = skip_non_whitespace(selector);
+    next = crate::libbb::skip_whitespace::skip_non_whitespace(selector);
     if *next != 0 {
       let fresh0 = next;
       next = next.offset(1);
       *fresh0 = '\u{0}' as i32 as libc::c_char
     }
     /* Check for selectors, mac= is assumed */
-    if !is_prefixed_with(selector, b"bus=\x00" as *const u8 as *const libc::c_char).is_null() {
-      (*ch).bus_info = xstrdup(selector.offset(4));
-      found_selector += 1
-    } else if !is_prefixed_with(selector, b"driver=\x00" as *const u8 as *const libc::c_char)
-      .is_null()
+    if !crate::libbb::compare_string_array::is_prefixed_with(
+      selector,
+      b"bus=\x00" as *const u8 as *const libc::c_char,
+    )
+    .is_null()
     {
-      (*ch).driver = xstrdup(selector.offset(7));
+      (*ch).bus_info = crate::libbb::xfuncs_printf::xstrdup(selector.offset(4));
       found_selector += 1
-    } else if !is_prefixed_with(
+    } else if !crate::libbb::compare_string_array::is_prefixed_with(
+      selector,
+      b"driver=\x00" as *const u8 as *const libc::c_char,
+    )
+    .is_null()
+    {
+      (*ch).driver = crate::libbb::xfuncs_printf::xstrdup(selector.offset(7));
+      found_selector += 1
+    } else if !crate::libbb::compare_string_array::is_prefixed_with(
       selector,
       b"phyaddr=\x00" as *const u8 as *const libc::c_char,
     )
     .is_null()
     {
-      (*ch).phy_address = xatoi_positive(selector.offset(8));
+      (*ch).phy_address = crate::libbb::xatonum::xatoi_positive(selector.offset(8));
       found_selector += 1
     } else {
       lmac = xmalloc(6i32 as size_t) as *mut ether_addr;
       (*ch).mac = ether_aton_r(
         selector.offset(
-          (if !is_prefixed_with(selector, b"mac=\x00" as *const u8 as *const libc::c_char).is_null()
+          (if !crate::libbb::compare_string_array::is_prefixed_with(
+            selector,
+            b"mac=\x00" as *const u8 as *const libc::c_char,
+          )
+          .is_null()
           {
             4i32
           } else {
@@ -269,7 +232,7 @@ unsafe extern "C" fn nameif_parse_selector(
         lmac,
       );
       if (*ch).mac.is_null() {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"can\'t parse %s\x00" as *const u8 as *const libc::c_char,
           selector,
         );
@@ -279,7 +242,7 @@ unsafe extern "C" fn nameif_parse_selector(
     selector = next
   }
   if found_selector == 0 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"no selectors found for %s\x00" as *const u8 as *const libc::c_char,
       (*ch).ifname,
     );
@@ -292,13 +255,14 @@ unsafe extern "C" fn prepend_new_eth_table(
 ) {
   let mut ch: *mut ethtable_t = std::ptr::null_mut();
   if strlen(ifname) >= 16i32 as libc::c_ulong {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"interface name \'%s\' too long\x00" as *const u8 as *const libc::c_char,
       ifname,
     );
   }
-  ch = xzalloc(::std::mem::size_of::<ethtable_t>() as libc::c_ulong) as *mut ethtable_t;
-  (*ch).ifname = xstrdup(ifname);
+  ch = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<ethtable_t>() as libc::c_ulong)
+    as *mut ethtable_t;
+  (*ch).ifname = crate::libbb::xfuncs_printf::xstrdup(ifname);
   nameif_parse_selector(ch, selector);
   (*ch).next = *clist;
   if !(*clist).is_null() {
@@ -318,7 +282,7 @@ pub unsafe extern "C" fn nameif_main(
   let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   if 1i32 as libc::c_uint
-    & getopt32(
+    & crate::libbb::getopt32::getopt32(
       argv,
       b"sc:\x00" as *const u8 as *const libc::c_char,
       &mut fname as *mut *const libc::c_char,
@@ -334,7 +298,7 @@ pub unsafe extern "C" fn nameif_main(
   if !(*argv.offset(0)).is_null() {
     loop {
       if (*argv.offset(1)).is_null() {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
       prepend_new_eth_table(&mut clist, *argv.offset(0), *argv.offset(1));
       argv = argv.offset(2);
@@ -343,8 +307,8 @@ pub unsafe extern "C" fn nameif_main(
       }
     }
   } else {
-    parser = config_open(fname);
-    while config_read(
+    parser = crate::libbb::parse_config::config_open(fname);
+    while crate::libbb::parse_config::config_read(
       parser,
       token.as_mut_ptr(),
       (PARSE_NORMAL as libc::c_int | (2i32 & 0xffi32) << 8i32 | 2i32 & 0xffi32) as libc::c_uint,
@@ -353,16 +317,19 @@ pub unsafe extern "C" fn nameif_main(
     {
       prepend_new_eth_table(&mut clist, token[0], token[1]);
     }
-    config_close(parser);
+    crate::libbb::parse_config::config_close(parser);
   }
-  ctl_sk = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
-  parser = config_open2(
+  ctl_sk = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
+  parser = crate::libbb::parse_config::config_open2(
     b"/proc/net/dev\x00" as *const u8 as *const libc::c_char,
-    Some(xfopen_for_read as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE),
+    Some(
+      crate::libbb::wfopen::xfopen_for_read
+        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+    ),
   );
   let mut current_block_42: u64;
   while !clist.is_null()
-    && config_read(
+    && crate::libbb::parse_config::config_read(
       parser,
       token.as_mut_ptr(),
       (PARSE_NORMAL as libc::c_int | (2i32 & 0xffi32) << 8i32 | 2i32 & 0xffi32) as libc::c_uint,
@@ -416,7 +383,7 @@ pub unsafe extern "C" fn nameif_main(
       0,
       ::std::mem::size_of::<ifreq>() as libc::c_ulong,
     );
-    strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), token[0]);
+    crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), token[0]);
     /* Check for phy address */
     memset(
       &mut eth_settings as *mut ethtool_cmd as *mut libc::c_void,
@@ -474,7 +441,7 @@ pub unsafe extern "C" fn nameif_main(
       {
         if strcmp(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), (*ch).ifname) != 0 {
           strcpy(ifr.ifr_ifru.ifru_newname.as_mut_ptr(), (*ch).ifname);
-          ioctl_or_perror_and_die(
+          crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
             ctl_sk,
             0x8923i32 as libc::c_uint,
             &mut ifr as *mut ifreq as *mut libc::c_void,

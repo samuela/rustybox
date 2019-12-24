@@ -27,51 +27,14 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn setgroups(__n: size_t, __groups: *const gid_t) -> libc::c_int;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_strtoll(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_longlong;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn close_on_exec_on(fd: libc::c_int);
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
 }
 
 pub type intptr_t = libc::c_long;
 pub type uintptr_t = libc::c_ulong;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct passdb {
   pub filename: *const libc::c_char,
   pub def: [libc::c_char; 9],
@@ -83,8 +46,9 @@ pub struct passdb {
 }
 
 /* We avoid having big global data. */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct statics {
   pub db: [passdb; 3],
   pub tokenize_end: *mut libc::c_char,
@@ -121,8 +85,9 @@ pub struct statics {
  *    implemented, if you need a particular missing function it should be
  *    easy to write it by using the internal common code.
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct const_passdb {
   pub filename: *const libc::c_char,
   pub def: [libc::c_char; 9],
@@ -130,19 +95,8 @@ pub struct const_passdb {
   pub numfields: u8,
   pub size_of: u8,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct spwd {
-  pub sp_namp: *mut libc::c_char,
-  pub sp_pwdp: *mut libc::c_char,
-  pub sp_lstchg: libc::c_long,
-  pub sp_min: libc::c_long,
-  pub sp_max: libc::c_long,
-  pub sp_warn: libc::c_long,
-  pub sp_inact: libc::c_long,
-  pub sp_expire: libc::c_long,
-  pub sp_flag: libc::c_ulong,
-}
+
+use crate::librb::spwd;
 
 /*
  * ascii-to-numbers implementations for busybox
@@ -175,7 +129,7 @@ unsafe extern "C" fn bb_strtol(
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_long {
-  return bb_strtoll(arg, endp, base) as libc::c_long;
+  return crate::libbb::bb_strtonum::bb_strtoll(arg, endp, base) as libc::c_long;
 }
 // Initialized in run_static_initializers
 static mut const_pw_db: const_passdb = const_passdb {
@@ -201,10 +155,12 @@ static mut const_sp_db: const_passdb = const_passdb {
   numfields: 0,
   size_of: 0,
 };
-static mut ptr_to_statics: *mut statics = 0 as *mut statics;
+static mut ptr_to_statics: *mut statics = std::ptr::null_mut();
 unsafe extern "C" fn get_S() -> *mut statics {
   if ptr_to_statics.is_null() {
-    ptr_to_statics = xzalloc(::std::mem::size_of::<statics>() as libc::c_ulong) as *mut statics;
+    ptr_to_statics =
+      crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<statics>() as libc::c_ulong)
+        as *mut statics;
     memcpy(
       &mut *(*ptr_to_statics).db.as_mut_ptr().offset(0) as *mut passdb as *mut libc::c_void,
       &const_pw_db as *const const_passdb as *const libc::c_void,
@@ -241,7 +197,7 @@ unsafe extern "C" fn tokenize(mut buffer: *mut libc::c_char, mut ch: libc::c_int
         as libc::c_int
     }) != 0
     {
-      overlapping_strcpy(s, skip_whitespace(s));
+      crate::libbb::safe_strncpy::overlapping_strcpy(s, skip_whitespace(s));
     }
     if *p as libc::c_int == ch || *p as libc::c_int == '\u{0}' as i32 {
       let mut end: *mut libc::c_char = p;
@@ -255,7 +211,7 @@ unsafe extern "C" fn tokenize(mut buffer: *mut libc::c_char, mut ch: libc::c_int
         p = p.offset(-1)
       }
       if p != end {
-        overlapping_strcpy(p, end);
+        crate::libbb::safe_strncpy::overlapping_strcpy(p, end);
       }
       num_fields += 1;
       if *end as libc::c_int == '\u{0}' as i32 {
@@ -279,7 +235,7 @@ unsafe extern "C" fn parse_common(
 ) -> *mut libc::c_char {
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   loop {
-    buf = xmalloc_fgetline(fp);
+    buf = crate::libbb::get_line_from_file::xmalloc_fgetline(fp);
     if buf.is_null() {
       break;
     }
@@ -289,14 +245,18 @@ unsafe extern "C" fn parse_common(
     {
       if tokenize(buf, ':' as i32) != (*db).numfields as libc::c_int {
         /* number of fields is wrong */
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"%s: bad record\x00" as *const u8 as *const libc::c_char,
           (*db).filename,
         );
       } else if field_pos == -1i32 {
         /* no key specified: sequential read, return a record */
         break;
-      } else if strcmp(key, nth_string(buf, field_pos)) == 0 {
+      } else if strcmp(
+        key,
+        crate::libbb::compare_string_array::nth_string(buf, field_pos),
+      ) == 0
+      {
         break;
       }
     }
@@ -331,7 +291,7 @@ unsafe extern "C" fn parse_common(
         .wrapping_mul(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong),
     ) as libc::c_uint as libc::c_uint;
     //bb_error_msg("+%d words = %u key:%s buf:'%s'", cnt, S.string_size, key, buf);
-    buf = xrealloc(
+    buf = crate::libbb::xfuncs_printf::xrealloc(
       buf as *mut libc::c_void,
       (*ptr_to_statics).string_size as size_t,
     ) as *mut libc::c_char
@@ -344,7 +304,7 @@ unsafe extern "C" fn parse_file(
   mut field_pos: libc::c_int,
 ) -> *mut libc::c_char {
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut fp: *mut FILE = fopen_for_read((*db).filename);
+  let mut fp: *mut FILE = crate::libbb::wfopen::fopen_for_read((*db).filename);
   if !fp.is_null() {
     buf = parse_common(fp, db, key, field_pos);
     fclose(fp);
@@ -376,7 +336,8 @@ unsafe extern "C" fn convert_to_struct(
     }
     if *def as libc::c_int == 'I' as i32 {
       *(member as *mut libc::c_int) =
-        bb_strtou(buffer, 0 as *mut *mut libc::c_char, 10i32) as libc::c_int
+        crate::libbb::bb_strtonum::bb_strtou(buffer, 0 as *mut *mut libc::c_char, 10i32)
+          as libc::c_int
     }
     if *def as libc::c_int == 'l' as i32 {
       let mut n: libc::c_long = -1i32 as libc::c_long;
@@ -467,7 +428,7 @@ unsafe extern "C" fn massage_data_for_non_r_func(
    * entire result of getXXnam is in a single malloced block.
    * This enables easy creation of xmalloc_getpwnam() API.
    */
-  buf = xrealloc(
+  buf = crate::libbb::xfuncs_printf::xrealloc(
     buf as *mut libc::c_void,
     ((*db).size_of as libc::c_uint).wrapping_add((*ptr_to_statics).string_size) as size_t,
   ) as *mut libc::c_char;
@@ -579,11 +540,11 @@ unsafe extern "C" fn getXXent(mut db_idx: uintptr_t) -> *mut libc::c_void {
     .as_mut_ptr()
     .offset(db_idx as isize) as *mut passdb;
   if (*db).fp.is_null() {
-    (*db).fp = fopen_for_read((*db).filename);
+    (*db).fp = crate::libbb::wfopen::fopen_for_read((*db).filename);
     if (*db).fp.is_null() {
       return std::ptr::null_mut();
     }
-    close_on_exec_on(fileno_unlocked((*db).fp));
+    crate::libbb::xfuncs::close_on_exec_on(fileno_unlocked((*db).fp));
   }
   buf = parse_common((*db).fp, db, 0 as *const libc::c_char, -1i32);
   return massage_data_for_non_r_func(db, buf);
@@ -622,11 +583,17 @@ pub unsafe extern "C" fn bb_internal_getgrnam(mut name: *const libc::c_char) -> 
 /* Search for an entry with a matching user ID.  */
 #[no_mangle]
 pub unsafe extern "C" fn bb_internal_getpwuid(mut id: uid_t) -> *mut passwd {
-  return getXXnam(utoa(id), ((0i32 << 2i32) + 2i32) as libc::c_uint) as *mut passwd;
+  return getXXnam(
+    crate::libbb::xfuncs::utoa(id),
+    ((0i32 << 2i32) + 2i32) as libc::c_uint,
+  ) as *mut passwd;
 }
 #[no_mangle]
 pub unsafe extern "C" fn bb_internal_getgrgid(mut id: gid_t) -> *mut group {
-  return getXXnam(utoa(id), ((1i32 << 2i32) + 2i32) as libc::c_uint) as *mut group;
+  return getXXnam(
+    crate::libbb::xfuncs::utoa(id),
+    ((1i32 << 2i32) + 2i32) as libc::c_uint,
+  ) as *mut group;
 }
 /* Close the password-file stream.  */
 /* ***** end/setXXend */
@@ -688,12 +655,12 @@ unsafe extern "C" fn getgrouplist_internal(
   let mut group_list: *mut gid_t = std::ptr::null_mut();
   let mut ngroups: libc::c_int = 0;
   /* We alloc space for 8 gids at a time. */
-  group_list =
-    xzalloc((8i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<gid_t>() as libc::c_ulong))
-      as *mut gid_t;
+  group_list = crate::libbb::xfuncs_printf::xzalloc(
+    (8i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<gid_t>() as libc::c_ulong),
+  ) as *mut gid_t;
   *group_list.offset(0) = gid;
   ngroups = 1i32;
-  fp = fopen_for_read(b"/etc/group\x00" as *const u8 as *const libc::c_char);
+  fp = crate::libbb::wfopen::fopen_for_read(b"/etc/group\x00" as *const u8 as *const libc::c_char);
   if !fp.is_null() {
     let mut db: *mut passdb = &mut *(*(get_S as unsafe extern "C" fn() -> *mut statics)())
       .db
@@ -706,12 +673,7 @@ unsafe extern "C" fn getgrouplist_internal(
         break;
       }
       let mut m: *mut *mut libc::c_char = std::ptr::null_mut();
-      let mut group: group = group {
-        gr_name: std::ptr::null_mut::<libc::c_char>(),
-        gr_passwd: std::ptr::null_mut::<libc::c_char>(),
-        gr_gid: 0,
-        gr_mem: std::ptr::null_mut(),
-      };
+      let mut group: group = std::mem::zeroed();
       if !convert_to_struct(db, buf, &mut group as *mut group as *mut libc::c_void).is_null() {
         if !(group.gr_gid == gid) {
           m = group.gr_mem;
@@ -719,14 +681,14 @@ unsafe extern "C" fn getgrouplist_internal(
             if strcmp(*m, user) != 0 {
               m = m.offset(1)
             } else {
-              group_list = xrealloc_vector_helper(
+              group_list = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
                 group_list as *mut libc::c_void,
                 ((::std::mem::size_of::<gid_t>() as libc::c_ulong) << 8i32)
                   .wrapping_add(3i32 as libc::c_ulong) as libc::c_uint,
                 ngroups,
               ) as *mut gid_t;
               let fresh5 = ngroups;
-              ngroups += 1;
+              ngroups = ngroups + 1;
               *group_list.offset(fresh5 as isize) = group.gr_gid;
               break;
             }

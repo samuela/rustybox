@@ -8,19 +8,6 @@ extern "C" {
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
 
-  #[no_mangle]
-  fn get_console_fd_or_die() -> libc::c_int;
-  #[no_mangle]
-  fn xatou(str: *const libc::c_char) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 }
 use libc::useconds_t;
 pub type uintptr_t = libc::c_ulong;
@@ -29,7 +16,7 @@ pub unsafe extern "C" fn beep_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut speaker: libc::c_int = get_console_fd_or_die(); /* for compiler */
+  let mut speaker: libc::c_int = crate::libbb::get_console::get_console_fd_or_die(); /* for compiler */
   let mut tickrate_div_freq: libc::c_uint = 0;
   tickrate_div_freq = tickrate_div_freq;
   let mut length: libc::c_uint = 0;
@@ -58,9 +45,10 @@ pub unsafe extern "C" fn beep_main(
     match c {
       102 => {
         /* TODO: what "-f 0" should do? */
-        tickrate_div_freq = (1193180i32 as libc::c_uint).wrapping_div(xatou(optarg))
+        tickrate_div_freq =
+          (1193180i32 as libc::c_uint).wrapping_div(crate::libbb::xatonum::xatou(optarg))
       }
-      108 => length = xatou(optarg),
+      108 => length = crate::libbb::xatonum::xatou(optarg),
       100 => {
         /* TODO:
          * -d N, -D N
@@ -69,13 +57,13 @@ pub unsafe extern "C" fn beep_main(
          * that is, it should not occur after the last repetition.
          * -D indicates that the delay should occur after every repetition
          */
-        delay = xatou(optarg)
+        delay = crate::libbb::xatonum::xatou(optarg)
       }
-      114 => rep = xatou(optarg),
+      114 => rep = crate::libbb::xatonum::xatou(optarg),
       110 | -1 => {
         while rep != 0 {
           //bb_error_msg("rep[%d] freq=%d, length=%d, delay=%d", rep, freq, length, delay);
-          bb_xioctl(
+          crate::libbb::xfuncs_printf::bb_xioctl(
             speaker,
             0x4b2fi32 as libc::c_uint,
             tickrate_div_freq as uintptr_t as *mut libc::c_void,
@@ -90,7 +78,7 @@ pub unsafe extern "C" fn beep_main(
         }
       }
       _ => {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
     }
   }

@@ -4,30 +4,12 @@ use libc;
 use libc::close;
 use libc::off_t;
 use libc::printf;
-use libc::ssize_t;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
 
-  #[no_mangle]
-  fn open_or_warn_stdin(pathname: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn crc32_filltable(tbl256: *mut u32, endian: libc::c_int) -> *mut u32;
-  #[no_mangle]
-  fn crc32_block_endian1(
-    val: u32,
-    buf: *const libc::c_void,
-    len: libc::c_uint,
-    crc_table: *mut u32,
-  ) -> u32;
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -60,18 +42,19 @@ pub unsafe extern "C" fn cksum_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  let mut crc32_table: *mut u32 = crc32_filltable(0 as *mut u32, 1i32); /* coreutils 6.9 compat */
+  let mut crc32_table: *mut u32 = crate::libbb::crc32::crc32_filltable(0 as *mut u32, 1i32); /* coreutils 6.9 compat */
   let mut exit_code: libc::c_int = 0;
-  getopt32(argv, b"\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::getopt32::getopt32(argv, b"\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   loop {
     let mut crc: u32 = 0;
     let mut filesize: off_t = 0;
-    let mut fd: libc::c_int = open_or_warn_stdin(if !(*argv).is_null() {
-      *argv
-    } else {
-      bb_msg_standard_input.as_ptr()
-    });
+    let mut fd: libc::c_int =
+      crate::libbb::wfopen_input::open_or_warn_stdin(if !(*argv).is_null() {
+        *argv
+      } else {
+        bb_msg_standard_input.as_ptr()
+      });
     if fd < 0 {
       exit_code = 1i32
     } else {
@@ -79,7 +62,7 @@ pub unsafe extern "C" fn cksum_main(
       filesize = 0 as off_t;
       loop {
         let mut t: uoff_t = 0;
-        let mut bytes_read: libc::c_int = safe_read(
+        let mut bytes_read: libc::c_int = crate::libbb::read::safe_read(
           fd,
           bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
           COMMON_BUFSIZE as libc::c_int as size_t,
@@ -94,12 +77,12 @@ pub unsafe extern "C" fn cksum_main(
           bytes_read = 0;
           while t != 0 as libc::c_ulong {
             let fresh0 = bytes_read;
-            bytes_read += 1;
+            bytes_read = bytes_read + 1;
             *bb_common_bufsiz1.as_mut_ptr().offset(fresh0 as isize) = t as u8 as libc::c_char;
             t >>= 8i32
           }
         }
-        crc = crc32_block_endian1(
+        crc = crate::libbb::crc32::crc32_block_endian1(
           crc,
           bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,
           bytes_read as libc::c_uint,
@@ -128,5 +111,5 @@ pub unsafe extern "C" fn cksum_main(
       break;
     }
   }
-  fflush_stdout_and_exit(exit_code);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(exit_code);
 }

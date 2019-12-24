@@ -1,4 +1,5 @@
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::parse_config::parser_t;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;
@@ -23,7 +24,6 @@ use libc::sigset_t;
 use libc::sigval;
 use libc::sleep;
 use libc::sprintf;
-use libc::ssize_t;
 use libc::strcmp;
 use libc::strcpy;
 use libc::sync;
@@ -82,84 +82,17 @@ extern "C" {
   fn tcgetattr(__fd: libc::c_int, __termios_p: *mut termios) -> libc::c_int;
 
   #[no_mangle]
-  fn skip_dev_pfx(tty_name: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn device_open(device: *const libc::c_char, mode: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn bb_signals_recursive_norestart(
-    sigs: libc::c_int,
-    f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
-  );
-  #[no_mangle]
-  fn sigaction_set(sig: libc::c_int, act: *const sigaction) -> libc::c_int;
-  #[no_mangle]
-  fn sigprocmask_allsigs(how: libc::c_int) -> libc::c_int;
-  #[no_mangle]
   static mut bb_got_signal: smallint;
-  #[no_mangle]
-  fn record_signo(signo: libc::c_int);
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn xsetenv(key: *const libc::c_char, value: *const libc::c_char);
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn update_utmp_DEAD_PROCESS(pid: pid_t);
-  #[no_mangle]
-  fn wait_any_nohang(wstat: *mut libc::c_int) -> pid_t;
-  #[no_mangle]
-  fn bb_sanitize_stdio();
+
   #[no_mangle]
   static mut die_func: Option<unsafe extern "C" fn() -> ()>;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn config_open2(
-    filename: *const libc::c_char,
-    fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
-  ) -> *mut parser_t;
+
   /* delims[0] is a comment char (use '\0' to disable), the rest are token delimiters */
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
+
   /* Concatenate path and filename to new allocated buffer.
    * Add "/" only as needed (no duplicate "//" are produced).
    * If path is NULL, it is assumed to be "/".
    * filename should not be NULL. */
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn nuke_str(str: *mut libc::c_char);
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
 
   /* allow default system PATH to be extended via CFLAGS */
   #[no_mangle]
@@ -178,8 +111,9 @@ extern "C" {
   fn reboot(__howto: libc::c_int) -> libc::c_int;
 }
 pub type __builtin_va_list = [__va_list_tag; 1];
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __va_list_tag {
   pub gp_offset: libc::c_uint,
   pub fp_offset: libc::c_uint,
@@ -199,8 +133,9 @@ pub type __rlim64_t = libc::c_ulong;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub _pad: [libc::c_int; 28],
   pub _kill: C2RustUnnamed_8,
@@ -211,40 +146,46 @@ pub union C2RustUnnamed {
   pub _sigpoll: C2RustUnnamed_1,
   pub _sigsys: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_0 {
   pub _call_addr: *mut libc::c_void,
   pub _syscall: libc::c_int,
   pub _arch: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_1 {
   pub si_band: libc::c_long,
   pub si_fd: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_2 {
   pub si_addr: *mut libc::c_void,
   pub si_addr_lsb: libc::c_short,
   pub _bounds: C2RustUnnamed_3,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_3 {
   pub _addr_bnd: C2RustUnnamed_4,
   pub _pkey: u32,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_4 {
   pub _lower: *mut libc::c_void,
   pub _upper: *mut libc::c_void,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_5 {
   pub si_pid: pid_t,
   pub si_uid: uid_t,
@@ -252,22 +193,25 @@ pub struct C2RustUnnamed_5 {
   pub si_utime: libc::clock_t,
   pub si_stime: libc::clock_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_6 {
   pub si_pid: pid_t,
   pub si_uid: uid_t,
   pub si_sigval: sigval,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_7 {
   pub si_tid: libc::c_int,
   pub si_overrun: libc::c_int,
   pub si_sigval: sigval,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_8 {
   pub si_pid: pid_t,
   pub si_uid: uid_t,
@@ -295,8 +239,9 @@ pub const RLIMIT_DATA: __rlimit_resource = 2;
 pub const RLIMIT_FSIZE: __rlimit_resource = 1;
 pub const RLIMIT_CPU: __rlimit_resource = 0;
 pub type rlim_t = __rlim64_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct rlimit {
   pub rlim_cur: rlim_t,
   pub rlim_max: rlim_t,
@@ -334,27 +279,19 @@ pub const PARSE_GREEDY: C2RustUnnamed_10 = 262144;
 // treat consecutive delimiters as one
 pub const PARSE_TRIM: C2RustUnnamed_10 = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed_10 = 65536;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
+
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub init_action_list: *mut init_action,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct init_action {
   pub next: *mut init_action,
   pub pid: pid_t,
@@ -412,7 +349,11 @@ unsafe extern "C" fn message(
   msg[l as usize] = '\u{0}' as i32 as libc::c_char;
   if where_0 & L_CONSOLE as libc::c_int != 0 {
     /* Send console messages to console so people will see them. */
-    full_write(2i32, msg.as_mut_ptr() as *const libc::c_void, l as size_t);
+    crate::libbb::full_write::full_write(
+      2i32,
+      msg.as_mut_ptr() as *const libc::c_void,
+      l as size_t,
+    );
   };
 }
 unsafe extern "C" fn console_init() {
@@ -427,12 +368,12 @@ unsafe extern "C" fn console_init() {
     if fd >= 0 {
       dup2(fd, 0);
       dup2(fd, 1i32);
-      xmove_fd(fd, 2i32);
+      crate::libbb::xfuncs_printf::xmove_fd(fd, 2i32);
     }
   } else {
     /* Make sure fd 0,1,2 are not closed
      * (so that they won't be used by future opens) */
-    bb_sanitize_stdio();
+    crate::libbb::vfork_daemon_rexec::bb_sanitize_stdio();
     // Users report problems
     //		/* Make sure init can't be blocked by writing to stderr */
     //		fcntl(STDERR_FILENO, F_SETFL, fcntl(STDERR_FILENO, F_GETFL) | O_NONBLOCK);
@@ -488,7 +429,7 @@ unsafe extern "C" fn set_sane_term() {
   tty.c_lflag =
     (0o1i32 | 0o2i32 | 0o10i32 | 0o20i32 | 0o40i32 | 0o1000i32 | 0o4000i32 | 0o100000i32)
       as tcflag_t;
-  tcsetattr_stdin_TCSANOW(&mut tty);
+  crate::libbb::xfuncs::tcsetattr_stdin_TCSANOW(&mut tty);
 }
 /* Open the new terminal device.
  * NB: careful, we can be called after vfork! */
@@ -498,7 +439,7 @@ unsafe extern "C" fn open_stdio_to_tty(mut tty_name: *const libc::c_char) -> lib
     let mut fd: libc::c_int = 0;
     close(0i32);
     /* fd can be only < 0 or 0: */
-    fd = device_open(tty_name, 0o2i32);
+    fd = crate::libbb::device_open::device_open(tty_name, 0o2i32);
     if fd != 0 {
       message(
         L_LOG as libc::c_int | L_CONSOLE as libc::c_int,
@@ -516,7 +457,7 @@ unsafe extern "C" fn open_stdio_to_tty(mut tty_name: *const libc::c_char) -> lib
   /* success */
 }
 unsafe extern "C" fn reset_sighandlers_and_unblock_sigs() {
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     0 + (1i32 << 10i32)
       + (1i32 << 12i32)
       + (1i32 << 15i32)
@@ -527,7 +468,7 @@ unsafe extern "C" fn reset_sighandlers_and_unblock_sigs() {
       + (1i32 << 19i32),
     None,
   );
-  sigprocmask_allsigs(1i32);
+  crate::libbb::signals::sigprocmask_allsigs(1i32);
 }
 /* Wrapper around exec:
  * Takes string.
@@ -614,7 +555,7 @@ unsafe extern "C" fn init_exec(mut command: *const libc::c_char) {
 unsafe extern "C" fn run(mut a: *const init_action) -> pid_t {
   let mut pid: pid_t = 0;
   /* Careful: don't be affected by a signal in vforked child */
-  sigprocmask_allsigs(0i32);
+  crate::libbb::signals::sigprocmask_allsigs(0i32);
   if 1i32 != 0 && (*a).action_type as libc::c_int & 0x10i32 != 0 {
     pid = fork()
   } else {
@@ -627,7 +568,7 @@ unsafe extern "C" fn run(mut a: *const init_action) -> pid_t {
     );
   }
   if pid != 0 {
-    sigprocmask_allsigs(1i32);
+    crate::libbb::signals::sigprocmask_allsigs(1i32);
     return pid;
     /* Parent or error */
   }
@@ -657,13 +598,13 @@ unsafe extern "C" fn run(mut a: *const init_action) -> pid_t {
      * be allowed to start a shell or whatever an init script
      * specifies.
      */
-    full_write(
+    crate::libbb::full_write::full_write(
       1i32,
       press_enter.as_ptr() as *const libc::c_void,
       (::std::mem::size_of::<[libc::c_char; 47]>() as libc::c_ulong)
         .wrapping_sub(1i32 as libc::c_ulong),
     );
-    while safe_read(
+    while crate::libbb::read::safe_read(
       0,
       &mut c as *mut libc::c_char as *mut libc::c_void,
       1i32 as size_t,
@@ -694,7 +635,7 @@ unsafe extern "C" fn run(mut a: *const init_action) -> pid_t {
 unsafe extern "C" fn mark_terminated(mut pid: pid_t) -> *mut init_action {
   let mut a: *mut init_action = std::ptr::null_mut();
   if pid > 0 {
-    update_utmp_DEAD_PROCESS(pid);
+    crate::libbb::utmp::update_utmp_DEAD_PROCESS(pid);
     a = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).init_action_list;
     while !a.is_null() {
       if (*a).pid == pid {
@@ -796,7 +737,7 @@ unsafe extern "C" fn new_init_action(
   }
   match current_block {
     3276175668257526147 => {
-      a = xzalloc(
+      a = crate::libbb::xfuncs_printf::xzalloc(
         (::std::mem::size_of::<init_action>() as libc::c_ulong).wrapping_add(strlen(command)),
       ) as *mut init_action
     }
@@ -806,7 +747,7 @@ unsafe extern "C" fn new_init_action(
   *nextp = a;
   (*a).action_type = action_type;
   strcpy((*a).command.as_mut_ptr(), command);
-  safe_strncpy(
+  crate::libbb::safe_strncpy::safe_strncpy(
     (*a).terminal.as_mut_ptr(),
     cons,
     ::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong,
@@ -821,9 +762,12 @@ unsafe extern "C" fn new_init_action(
  */
 unsafe extern "C" fn parse_inittab() {
   let mut token: [*mut libc::c_char; 4] = [0 as *mut libc::c_char; 4];
-  let mut parser: *mut parser_t = config_open2(
+  let mut parser: *mut parser_t = crate::libbb::parse_config::config_open2(
     b"/etc/inittab\x00" as *const u8 as *const libc::c_char,
-    Some(fopen_for_read as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE),
+    Some(
+      crate::libbb::wfopen::fopen_for_read
+        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+    ),
   );
   if parser.is_null() {
     /* No inittab file - set up some default behavior */
@@ -884,7 +828,7 @@ unsafe extern "C" fn parse_inittab() {
   /* optional_tty:ignored_runlevel:action:command
    * Delims are not to be collapsed and need exactly 4 tokens
    */
-  while config_read(
+  while crate::libbb::parse_config::config_read(
     parser,
     token.as_mut_ptr(),
     (PARSE_NORMAL as libc::c_int & !(PARSE_TRIM as libc::c_int | PARSE_COLLAPSE as libc::c_int)
@@ -903,13 +847,13 @@ unsafe extern "C" fn parse_inittab() {
     let mut action: libc::c_int = 0;
     let mut tty: *mut libc::c_char = token[0];
     if !token[3].is_null() {
-      action = index_in_strings(actions.as_ptr(), token[2]);
+      action = crate::libbb::compare_string_array::index_in_strings(actions.as_ptr(), token[2]);
       if !(action < 0 || *token[3].offset(0) == 0) {
         /* turn .*TTY -> /dev/TTY */
         if *tty.offset(0) != 0 {
-          tty = concat_path_file(
+          tty = crate::libbb::concat_path_file::concat_path_file(
             b"/dev/\x00" as *const u8 as *const libc::c_char,
-            skip_dev_pfx(tty),
+            crate::libbb::skip_whitespace::skip_dev_pfx(tty),
           )
         }
         new_init_action((1i32 << action) as u8, token[3], tty);
@@ -926,7 +870,7 @@ unsafe extern "C" fn parse_inittab() {
       (*parser).lineno,
     );
   }
-  config_close(parser);
+  crate::libbb::parse_config::config_close(parser);
 }
 unsafe extern "C" fn pause_and_low_level_reboot(mut magic: libc::c_uint) -> ! {
   let mut pid: pid_t = 0;
@@ -1087,7 +1031,7 @@ unsafe extern "C" fn stop_handler(mut _sig: libc::c_int) {
   saved_errno = *bb_errno;
   signal(
     18i32,
-    Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   loop {
     let mut wpid: pid_t = 0;
@@ -1098,7 +1042,7 @@ unsafe extern "C" fn stop_handler(mut _sig: libc::c_int) {
      * which we waitfor() elsewhere! waitfor() must have
      * code which is resilient against this.
      */
-    wpid = wait_any_nohang(0 as *mut libc::c_int);
+    wpid = crate::libbb::xfuncs::wait_any_nohang(0 as *mut libc::c_int);
     mark_terminated(wpid);
     sleep(1i32 as libc::c_uint);
   }
@@ -1200,12 +1144,14 @@ pub unsafe extern "C" fn init_main(
      * To handle this, mask signals early,
      * and unmask them only after signal handlers are installed.
      */
-    sigprocmask_allsigs(0i32);
+    crate::libbb::signals::sigprocmask_allsigs(0i32);
     /* misnomer */
     if getpid() != 1i32 && (1i32 == 0 || *applet_name.offset(0) as libc::c_int != 'l' as i32) {
       /* Expect to be invoked as init with PID=1 or be invoked as linuxrc */
       /* not linuxrc? */
-      bb_simple_error_msg_and_die(b"must be run as PID 1\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"must be run as PID 1\x00" as *const u8 as *const libc::c_char,
+      );
     }
     reboot(0i32);
   }
@@ -1222,7 +1168,7 @@ pub unsafe extern "C" fn init_main(
   /* Figure out where the default console should be */
   console_init();
   set_sane_term();
-  xchdir(b"/\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::xfuncs_printf::xchdir(b"/\x00" as *const u8 as *const libc::c_char);
   setsid();
   /* Make sure environs is set to something sane */
   putenv(b"HOME=/\x00" as *const u8 as *const libc::c_char as *mut libc::c_char); /* needed? why? */
@@ -1230,7 +1176,7 @@ pub unsafe extern "C" fn init_main(
   putenv(b"SHELL=/bin/sh\x00" as *const u8 as *const libc::c_char as *mut libc::c_char);
   putenv(b"USER=root\x00" as *const u8 as *const libc::c_char as *mut libc::c_char);
   if !(*argv.offset(1)).is_null() {
-    xsetenv(
+    crate::libbb::xfuncs_printf::xsetenv(
       b"RUNLEVEL\x00" as *const u8 as *const libc::c_char,
       *argv.offset(1),
     );
@@ -1276,7 +1222,7 @@ pub unsafe extern "C" fn init_main(
     if (*argv).is_null() {
       break;
     }
-    nuke_str(*argv);
+    crate::libbb::nuke_str::nuke_str(*argv);
   }
   /* Set up signal handlers */
   if 0 == 0 {
@@ -1294,15 +1240,15 @@ pub unsafe extern "C" fn init_main(
     /* NB: sa_flags doesn't have SA_RESTART.
      * It must be able to interrupt wait().
      */
-    sigaction_set(20i32, &mut sa); /* pause */
+    crate::libbb::signals::sigaction_set(20i32, &mut sa); /* pause */
     /* Does not work as intended, at least in 2.6.20.
      * SIGSTOP is simply ignored by init:
      */
-    sigaction_set(19i32, &mut sa); /* pause */
+    crate::libbb::signals::sigaction_set(19i32, &mut sa); /* pause */
     /* These signals must interrupt wait(),
      * setting handler without SA_RESTART flag.
      */
-    bb_signals_recursive_norestart(
+    crate::libbb::signals::bb_signals_recursive_norestart(
       0 + (1i32 << 2i32)
         + (1i32 << 3i32)
         + (1i32 << 30i32)
@@ -1310,9 +1256,9 @@ pub unsafe extern "C" fn init_main(
         + (1i32 << 15i32)
         + (1i32 << 12i32)
         + (1i32 << 1i32),
-      Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+      Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
     );
-    sigprocmask_allsigs(1i32);
+    crate::libbb::signals::sigprocmask_allsigs(1i32);
   }
   /* Now run everything that needs to be run */
   /* First run the sysinit command */

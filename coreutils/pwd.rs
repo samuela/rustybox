@@ -3,15 +3,6 @@ use libc::free;
 use libc::getenv;
 use libc::puts;
 use libc::stat;
-extern "C" {
-
-  #[no_mangle]
-  fn xrealloc_getcwd_or_warn(cwd: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-}
 
 /*
  * Mini pwd implementation for busybox
@@ -90,15 +81,16 @@ pub unsafe extern "C" fn pwd_main(
    * Rationale:
    * POSIX requires a default of -L, but most scripts expect -P
    */
-  let mut opt: libc::c_uint = getopt32(argv, b"LP\x00" as *const u8 as *const libc::c_char);
+  let mut opt: libc::c_uint =
+    crate::libbb::getopt32::getopt32(argv, b"LP\x00" as *const u8 as *const libc::c_char);
   if opt & 1i32 as libc::c_uint != 0 && logical_getcwd() != 0 {
-    return fflush_all();
+    return crate::libbb::xfuncs_printf::fflush_all();
   }
-  buf = xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
+  buf = crate::libbb::xgetcwd::xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
   if !buf.is_null() {
     puts(buf);
     free(buf as *mut libc::c_void);
-    return fflush_all();
+    return crate::libbb::xfuncs_printf::fflush_all();
   }
   return 1i32;
 }

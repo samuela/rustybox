@@ -1,12 +1,16 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::skip_whitespace::skip_whitespace;
+use crate::librb::smallint;
+use crate::librb::suffix_mult;
 use libc;
 use libc::fclose;
 use libc::free;
 use libc::getopt;
+use libc::off_t;
 use libc::putchar_unlocked;
 use libc::sscanf;
 use libc::strchr;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -19,59 +23,18 @@ extern "C" {
   static mut stdin: *mut FILE;
 
   #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
   static bkm_suffixes: [suffix_mult; 0];
 
-  /*
-   * ascii-to-numbers implementations for busybox
-   *
-   * Copyright (C) 2003  Manuel Novoa III  <mjn3@codepoet.org>
-   *
-   * Licensed under GPLv2, see file LICENSE in this source tree.
-   */
-  /* Provides extern declarations of functions */
-  /* Unsigned long long functions always exist */
-  #[no_mangle]
-  fn xstrtoull_range_sfx(
-    str: *const libc::c_char,
-    b: libc::c_int,
-    l: libc::c_ulonglong,
-    u: libc::c_ulonglong,
-    sfx: *const suffix_mult,
-  ) -> libc::c_ulonglong;
+/*
+ * ascii-to-numbers implementations for busybox
+ *
+ * Copyright (C) 2003  Manuel Novoa III  <mjn3@codepoet.org>
+ *
+ * Licensed under GPLv2, see file LICENSE in this source tree.
+ */
+/* Provides extern declarations of functions */
+/* Unsigned long long functions always exist */
 
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-
-  #[no_mangle]
-  fn alloc_dumper() -> *mut dumper_t;
-
-  #[no_mangle]
-  fn bb_dump_add(dumper: *mut dumper_t, fmt: *const libc::c_char);
-
-  #[no_mangle]
-  fn bb_dump_dump(dumper: *mut dumper_t, argv: *mut *mut libc::c_char) -> libc::c_int;
-}
-
-use crate::librb::smallint;
-use libc::off_t;
-use libc::FILE;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct suffix_mult {
-  pub suffix: [libc::c_char; 4],
-  pub mult: libc::c_uint,
 }
 
 /* %_A */
@@ -94,8 +57,8 @@ pub type dump_vflag_t = libc::c_uint;
 // pub const DUP: dump_vflag_t = 1;
 pub const ALL: dump_vflag_t = 0;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct PR {
   pub nextpr: *mut PR,
   pub flags: libc::c_uint,
@@ -105,8 +68,8 @@ pub struct PR {
   pub nospace: *mut libc::c_char,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct FU {
   pub nextfu: *mut FU,
   pub nextpr: *mut PR,
@@ -116,22 +79,15 @@ pub struct FU {
   pub fmt: *mut libc::c_char,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct FS {
   pub nextfs: *mut FS,
   pub nextfu: *mut FU,
   pub bcnt: libc::c_int,
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct dumper_t {
-  pub dump_skip: off_t,
-  pub dump_length: libc::c_int,
-  pub dump_vflag: smallint,
-  pub fshead: *mut FS,
-}
+use crate::libbb::dump::dumper_t;
 
 #[inline(always)]
 unsafe extern "C" fn bb_ascii_isxdigit(mut a: libc::c_uchar) -> libc::c_int {
@@ -207,15 +163,15 @@ unsafe extern "C" fn bb_dump_addfile(mut dumper: *mut dumper_t, mut name: *mut l
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  fp = xfopen_for_read(name);
+  fp = crate::libbb::wfopen::xfopen_for_read(name);
   loop {
-    buf = xmalloc_fgetline(fp);
+    buf = crate::libbb::get_line_from_file::xmalloc_fgetline(fp);
     if buf.is_null() {
       break;
     }
     p = skip_whitespace(buf);
     if *p as libc::c_int != 0 && *p as libc::c_int != '#' as i32 {
-      bb_dump_add(dumper, p);
+      crate::libbb::dump::bb_dump_add(dumper, p);
     }
     free(buf as *mut libc::c_void);
   }
@@ -239,7 +195,7 @@ pub unsafe extern "C" fn hexdump_main(
 ) -> libc::c_int {
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut current_block: u64;
-  let mut dumper: *mut dumper_t = alloc_dumper();
+  let mut dumper: *mut dumper_t = crate::libbb::dump::alloc_dumper();
   let mut p: *const libc::c_char = std::ptr::null();
   let mut ch: libc::c_int = 0;
   let mut fp: *mut FILE = std::ptr::null_mut();
@@ -263,11 +219,11 @@ pub unsafe extern "C" fn hexdump_main(
         }
         p = strchr(hexdump_opts.as_ptr(), ch);
         if p.is_null() {
-          bb_show_usage();
+          crate::libbb::appletlib::bb_show_usage();
         }
         if (p.wrapping_offset_from(hexdump_opts.as_ptr()) as libc::c_long) < 5i32 as libc::c_long {
-          bb_dump_add(dumper, add_first.as_ptr());
-          bb_dump_add(
+          crate::libbb::dump::bb_dump_add(dumper, add_first.as_ptr());
+          crate::libbb::dump::bb_dump_add(
             dumper,
             add_strings[p.wrapping_offset_from(hexdump_opts.as_ptr()) as libc::c_long as libc::c_int
               as usize],
@@ -280,34 +236,34 @@ pub unsafe extern "C" fn hexdump_main(
         }
       }
       _ => {
-        bb_dump_add(
+        crate::libbb::dump::bb_dump_add(
           dumper,
           b"\"%08.8_Ax\n\"\x00" as *const u8 as *const libc::c_char,
         );
         //------------------- "address  "   8 * "xx "    "  "  8 * "xx "
-        bb_dump_add(
+        crate::libbb::dump::bb_dump_add(
           dumper,
           b"\"%08.8_ax  \"8/1 \"%02x \"\"  \"8/1 \"%02x \"\x00" as *const u8 as *const libc::c_char,
         );
         //------------------- "  |ASCII...........|\n"
-        bb_dump_add(
+        crate::libbb::dump::bb_dump_add(
           dumper,
           b"\"  |\"16/1 \"%_p\"\"|\n\"\x00" as *const u8 as *const libc::c_char,
         ); /* else */
       }
     } /* else */
     if ch == 'e' as i32 {
-      bb_dump_add(dumper, optarg); /* else */
+      crate::libbb::dump::bb_dump_add(dumper, optarg); /* else */
     } /* else */
     if ch == 'f' as i32 {
       bb_dump_addfile(dumper, optarg);
     }
     if ch == 'n' as i32 {
-      (*dumper).dump_length = xatoi_positive(optarg)
+      (*dumper).dump_length = crate::libbb::xatonum::xatoi_positive(optarg)
     }
     if ch == 's' as i32 {
       /* compat: -s accepts hex numbers too */
-      (*dumper).dump_skip = xstrtoull_range_sfx(
+      (*dumper).dump_skip = crate::libbb::xatonum::xstrtoull_range_sfx(
         optarg,
         0,
         0 as libc::c_ulonglong,
@@ -327,15 +283,15 @@ pub unsafe extern "C" fn hexdump_main(
     current_block = 6873731126896040597;
   }
   if (*dumper).fshead.is_null() {
-    bb_dump_add(dumper, add_first.as_ptr());
-    bb_dump_add(
+    crate::libbb::dump::bb_dump_add(dumper, add_first.as_ptr());
+    crate::libbb::dump::bb_dump_add(
       dumper,
       b"\"%07.7_ax \"8/2 \"%04x \"\"\n\"\x00" as *const u8 as *const libc::c_char,
     );
   }
   argv = argv.offset(optind as isize);
   if rdump == 0 {
-    return bb_dump_dump(dumper, argv);
+    return crate::libbb::dump::bb_dump_dump(dumper, argv);
   }
   /* -R: reverse of 'hexdump -Cv' */
   fp = stdin;
@@ -349,7 +305,7 @@ pub unsafe extern "C" fn hexdump_main(
     match current_block {
       6590038594373520143 => {
         loop {
-          buf = xmalloc_fgetline(fp);
+          buf = crate::libbb::get_line_from_file::xmalloc_fgetline(fp);
           if buf.is_null() {
             break;
           }
@@ -386,10 +342,10 @@ pub unsafe extern "C" fn hexdump_main(
       }
       _ => {
         buf = std::ptr::null_mut::<libc::c_char>();
-        fp = xfopen_for_read(*argv);
+        fp = crate::libbb::wfopen::xfopen_for_read(*argv);
         current_block = 6590038594373520143;
       }
     }
   }
-  fflush_stdout_and_exit(0i32);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
 }

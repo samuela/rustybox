@@ -1,9 +1,14 @@
+use crate::libbb::appletlib::applet_name;
+use crate::librb::rtattr;
+use crate::librb::size_t;
+use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
-use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::close;
+use libc::nlmsghdr;
+use libc::sa_family_t;
+use libc::sockaddr;
 use libc::strcmp;
 extern "C" {
   #[no_mangle]
@@ -16,93 +21,26 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xbind(sockfd: libc::c_int, my_addr: *mut sockaddr, addrlen: socklen_t);
-  #[no_mangle]
-  fn bb_getsockname(
-    sockfd: libc::c_int,
-    addr: *mut libc::c_void,
-    addrlen: socklen_t,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
+
   /* Convert each alpha char in str to lower-case */
-  #[no_mangle]
-  fn str_tolower(str: *mut libc::c_char) -> *mut libc::c_char;
+
   #[no_mangle]
   static mut xfunc_error_retval: u8;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 
   #[no_mangle]
   static bb_msg_requires_arg: [libc::c_char; 0];
-  #[no_mangle]
-  fn ipaddr_list_or_flush(argv: *mut *mut libc::c_char, flush: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn ll_addr_a2n(
-    lladdr: *mut libc::c_uchar,
-    len: libc::c_int,
-    arg: *mut libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn ll_init_map(rth: *mut rtnl_handle) -> libc::c_int;
-  #[no_mangle]
-  fn xll_name_to_index(name: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static mut preferred_family: family_t;
 
-  /* We need linux/types.h because older kernels use u32 etc
-   * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
-  #[no_mangle]
-  fn xrtnl_open(rth: *mut rtnl_handle);
-  #[no_mangle]
-  fn addattr_l(
-    n: *mut nlmsghdr,
-    maxlen: libc::c_int,
-    type_0: libc::c_int,
-    data: *mut libc::c_void,
-    alen: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn rtnl_talk(rtnl: *mut rtnl_handle, n: *mut nlmsghdr, answer: *mut nlmsghdr) -> libc::c_int;
-  #[no_mangle]
-  fn next_arg(argv: *mut *mut libc::c_char) -> *mut *mut libc::c_char;
-  #[no_mangle]
-  fn get_unsigned(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> libc::c_uint;
-  #[no_mangle]
-  fn get_u32(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> u32;
-  #[no_mangle]
-  fn get_u16(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> u16;
-  #[no_mangle]
-  fn invarg_1_to_2(_: *const libc::c_char, _: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn duparg(_: *const libc::c_char, _: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn duparg2(_: *const libc::c_char, _: *const libc::c_char) -> !;
+/* We need linux/types.h because older kernels use u32 etc
+ * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
+
 }
 
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
 
-use crate::librb::size_t;
-pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -113,8 +51,7 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const IFF_DYNAMIC: C2RustUnnamed = 32768;
 pub const IFF_AUTOMEDIA: C2RustUnnamed = 16384;
@@ -132,8 +69,9 @@ pub const IFF_LOOPBACK: C2RustUnnamed = 8;
 pub const IFF_DEBUG: C2RustUnnamed = 4;
 pub const IFF_BROADCAST: C2RustUnnamed = 2;
 pub const IFF_UP: C2RustUnnamed = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifmap {
   pub mem_start: libc::c_ulong,
   pub mem_end: libc::c_ulong,
@@ -142,14 +80,16 @@ pub struct ifmap {
   pub dma: libc::c_uchar,
   pub port: libc::c_uchar,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifreq {
   pub ifr_ifrn: C2RustUnnamed_1,
   pub ifr_ifru: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub ifru_addr: sockaddr,
   pub ifru_dstaddr: sockaddr,
@@ -164,13 +104,15 @@ pub union C2RustUnnamed_0 {
   pub ifru_newname: [libc::c_char; 16],
   pub ifru_data: __caddr_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub ifrn_name: [libc::c_char; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sockaddr_ll {
   pub sll_family: libc::c_ushort,
   pub sll_protocol: libc::c_ushort,
@@ -195,23 +137,7 @@ pub type u32 = libc::c_uint;
 pub type smalluint = libc::c_uchar;
 pub type family_t = i8;
 pub type __kernel_sa_family_t = libc::c_ushort;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_nl {
-  pub nl_family: __kernel_sa_family_t,
-  pub nl_pad: libc::c_ushort,
-  pub nl_pid: u32,
-  pub nl_groups: u32,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct nlmsghdr {
-  pub nlmsg_len: u32,
-  pub nlmsg_type: __u16,
-  pub nlmsg_flags: __u16,
-  pub nlmsg_seq: u32,
-  pub nlmsg_pid: u32,
-}
+
 pub type C2RustUnnamed_2 = libc::c_uint;
 pub const __IFLA_MAX: C2RustUnnamed_2 = 50;
 pub const IFLA_NEW_IFINDEX: C2RustUnnamed_2 = 49;
@@ -280,8 +206,9 @@ pub const IFLA_VLAN_EGRESS_QOS: C2RustUnnamed_4 = 3;
 pub const IFLA_VLAN_FLAGS: C2RustUnnamed_4 = 2;
 pub const IFLA_VLAN_ID: C2RustUnnamed_4 = 1;
 pub const IFLA_VLAN_UNSPEC: C2RustUnnamed_4 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifla_vlan_flags {
   pub flags: u32,
   pub mask: u32,
@@ -345,14 +272,9 @@ pub const RTM_GETLINK: C2RustUnnamed_6 = 18;
 pub const RTM_DELLINK: C2RustUnnamed_6 = 17;
 pub const RTM_NEWLINK: C2RustUnnamed_6 = 16;
 pub const RTM_BASE: C2RustUnnamed_6 = 16;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct rtattr {
-  pub rta_len: libc::c_ushort,
-  pub rta_type: libc::c_ushort,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct ifinfomsg {
   pub ifi_family: libc::c_uchar,
   pub __ifi_pad: libc::c_uchar,
@@ -361,22 +283,16 @@ pub struct ifinfomsg {
   pub ifi_flags: libc::c_uint,
   pub ifi_change: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_7 {
   pub n: nlmsghdr,
   pub i: ifinfomsg,
   pub buf: [libc::c_char; 1024],
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct rtnl_handle {
-  pub fd: libc::c_int,
-  pub local: sockaddr_nl,
-  pub peer: sockaddr_nl,
-  pub seq: u32,
-  pub dump: u32,
-}
+
+use crate::networking::libiproute::libnetlink::rtnl_handle;
 pub const PARM_on: C2RustUnnamed_8 = 0;
 pub const ARG_promisc: C2RustUnnamed_9 = 7;
 pub const ARG_arp: C2RustUnnamed_9 = 6;
@@ -393,8 +309,9 @@ pub const ARG_up: C2RustUnnamed_9 = 0;
 pub type C2RustUnnamed_8 = libc::c_uint;
 pub const PARM_off: C2RustUnnamed_8 = 1;
 pub type C2RustUnnamed_9 = libc::c_uint;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_10 {
   pub n: nlmsghdr,
   pub i: ifinfomsg,
@@ -430,23 +347,15 @@ unsafe extern "C" fn get_ctl_fd() -> libc::c_int {
   if fd >= 0 {
     return fd;
   }
-  return xsocket(10i32, SOCK_DGRAM as libc::c_int, 0);
+  return crate::libbb::xfuncs_printf::xsocket(10i32, SOCK_DGRAM as libc::c_int, 0);
 }
 /* Exits on error */
 unsafe extern "C" fn do_chflags(mut dev: *mut libc::c_char, mut flags: u32, mut mask: u32) {
-  let mut ifr: ifreq = ifreq {
-    ifr_ifrn: C2RustUnnamed_1 { ifrn_name: [0; 16] },
-    ifr_ifru: C2RustUnnamed_0 {
-      ifru_addr: sockaddr {
-        sa_family: 0,
-        sa_data: [0; 14],
-      },
-    },
-  };
+  let mut ifr: ifreq = std::mem::zeroed();
   let mut fd: libc::c_int = 0;
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
   fd = get_ctl_fd();
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     0x8913i32 as libc::c_uint,
     &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -456,7 +365,7 @@ unsafe extern "C" fn do_chflags(mut dev: *mut libc::c_char, mut flags: u32, mut 
     ifr.ifr_ifru.ifru_flags = (ifr.ifr_ifru.ifru_flags as libc::c_uint & !mask) as libc::c_short;
     ifr.ifr_ifru.ifru_flags =
       (ifr.ifr_ifru.ifru_flags as libc::c_uint | mask & flags) as libc::c_short;
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       0x8914i32 as libc::c_uint,
       &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -467,20 +376,12 @@ unsafe extern "C" fn do_chflags(mut dev: *mut libc::c_char, mut flags: u32, mut 
 }
 /* Exits on error */
 unsafe extern "C" fn do_changename(mut dev: *mut libc::c_char, mut newdev: *mut libc::c_char) {
-  let mut ifr: ifreq = ifreq {
-    ifr_ifrn: C2RustUnnamed_1 { ifrn_name: [0; 16] },
-    ifr_ifru: C2RustUnnamed_0 {
-      ifru_addr: sockaddr {
-        sa_family: 0,
-        sa_data: [0; 14],
-      },
-    },
-  };
+  let mut ifr: ifreq = std::mem::zeroed();
   let mut fd: libc::c_int = 0;
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
-  strncpy_IFNAMSIZ(ifr.ifr_ifru.ifru_newname.as_mut_ptr(), newdev);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifru.ifru_newname.as_mut_ptr(), newdev);
   fd = get_ctl_fd();
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     0x8923i32 as libc::c_uint,
     &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -490,15 +391,7 @@ unsafe extern "C" fn do_changename(mut dev: *mut libc::c_char, mut newdev: *mut 
 }
 /* Exits on error */
 unsafe extern "C" fn set_qlen(mut dev: *mut libc::c_char, mut qlen: libc::c_int) {
-  let mut ifr: ifreq = ifreq {
-    ifr_ifrn: C2RustUnnamed_1 { ifrn_name: [0; 16] },
-    ifr_ifru: C2RustUnnamed_0 {
-      ifru_addr: sockaddr {
-        sa_family: 0,
-        sa_data: [0; 14],
-      },
-    },
-  };
+  let mut ifr: ifreq = std::mem::zeroed();
   let mut s: libc::c_int = 0;
   s = get_ctl_fd();
   memset(
@@ -506,9 +399,9 @@ unsafe extern "C" fn set_qlen(mut dev: *mut libc::c_char, mut qlen: libc::c_int)
     0,
     ::std::mem::size_of::<ifreq>() as libc::c_ulong,
   );
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
   ifr.ifr_ifru.ifru_ivalue = qlen;
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     s,
     0x8943i32 as libc::c_uint,
     &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -518,15 +411,7 @@ unsafe extern "C" fn set_qlen(mut dev: *mut libc::c_char, mut qlen: libc::c_int)
 }
 /* Exits on error */
 unsafe extern "C" fn set_mtu(mut dev: *mut libc::c_char, mut mtu: libc::c_int) {
-  let mut ifr: ifreq = ifreq {
-    ifr_ifrn: C2RustUnnamed_1 { ifrn_name: [0; 16] },
-    ifr_ifru: C2RustUnnamed_0 {
-      ifru_addr: sockaddr {
-        sa_family: 0,
-        sa_data: [0; 14],
-      },
-    },
-  };
+  let mut ifr: ifreq = std::mem::zeroed();
   let mut s: libc::c_int = 0;
   s = get_ctl_fd();
   memset(
@@ -534,9 +419,9 @@ unsafe extern "C" fn set_mtu(mut dev: *mut libc::c_char, mut mtu: libc::c_int) {
     0,
     ::std::mem::size_of::<ifreq>() as libc::c_ulong,
   );
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
   ifr.ifr_ifru.ifru_mtu = mtu;
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     s,
     0x8922i32 as libc::c_uint,
     &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -546,41 +431,8 @@ unsafe extern "C" fn set_mtu(mut dev: *mut libc::c_char, mut mtu: libc::c_int) {
 }
 /* Exits on error */
 unsafe extern "C" fn set_master(mut dev: *mut libc::c_char, mut master: libc::c_int) {
-  let mut rth: rtnl_handle = rtnl_handle {
-    fd: 0,
-    local: sockaddr_nl {
-      nl_family: 0,
-      nl_pad: 0,
-      nl_pid: 0,
-      nl_groups: 0,
-    },
-    peer: sockaddr_nl {
-      nl_family: 0,
-      nl_pad: 0,
-      nl_pid: 0,
-      nl_groups: 0,
-    },
-    seq: 0,
-    dump: 0,
-  };
-  let mut req: C2RustUnnamed_7 = C2RustUnnamed_7 {
-    n: nlmsghdr {
-      nlmsg_len: 0,
-      nlmsg_type: 0,
-      nlmsg_flags: 0,
-      nlmsg_seq: 0,
-      nlmsg_pid: 0,
-    },
-    i: ifinfomsg {
-      ifi_family: 0,
-      __ifi_pad: 0,
-      ifi_type: 0,
-      ifi_index: 0,
-      ifi_flags: 0,
-      ifi_change: 0,
-    },
-    buf: [0; 1024],
-  };
+  let mut rth: rtnl_handle = std::mem::zeroed();
+  let mut req: C2RustUnnamed_7 = std::mem::zeroed();
   memset(
     &mut req as *mut C2RustUnnamed_7 as *mut libc::c_void,
     0,
@@ -596,18 +448,20 @@ unsafe extern "C" fn set_master(mut dev: *mut libc::c_char, mut master: libc::c_
   req.n.nlmsg_flags = 0x1i32 as __u16;
   req.n.nlmsg_type = RTM_NEWLINK as libc::c_int as __u16;
   req.i.ifi_family = preferred_family as libc::c_uchar;
-  xrtnl_open(&mut rth);
-  req.i.ifi_index = xll_name_to_index(dev);
+  crate::networking::libiproute::libnetlink::xrtnl_open(&mut rth);
+  req.i.ifi_index = crate::networking::libiproute::ll_map::xll_name_to_index(dev);
   //printf("master %i for %i\n", master, req.i.ifi_index);
-  addattr_l(
+  crate::networking::libiproute::libnetlink::addattr_l(
     &mut req.n,
     ::std::mem::size_of::<C2RustUnnamed_7>() as libc::c_ulong as libc::c_int,
     IFLA_MASTER as libc::c_int,
     &mut master as *mut libc::c_int as *mut libc::c_void,
     4i32,
   );
-  if rtnl_talk(&mut rth, &mut req.n, 0 as *mut nlmsghdr) < 0 {
-    xfunc_die();
+  if crate::networking::libiproute::libnetlink::rtnl_talk(&mut rth, &mut req.n, 0 as *mut nlmsghdr)
+    < 0
+  {
+    crate::libbb::xfunc_die::xfunc_die();
   };
 }
 /* Exits on error */
@@ -615,29 +469,13 @@ unsafe extern "C" fn get_address(
   mut dev: *mut libc::c_char,
   mut htype: *mut libc::c_int,
 ) -> libc::c_int {
-  let mut ifr: ifreq = ifreq {
-    ifr_ifrn: C2RustUnnamed_1 { ifrn_name: [0; 16] },
-    ifr_ifru: C2RustUnnamed_0 {
-      ifru_addr: sockaddr {
-        sa_family: 0,
-        sa_data: [0; 14],
-      },
-    },
-  };
-  let mut me: sockaddr_ll = sockaddr_ll {
-    sll_family: 0,
-    sll_protocol: 0,
-    sll_ifindex: 0,
-    sll_hatype: 0,
-    sll_pkttype: 0,
-    sll_halen: 0,
-    sll_addr: [0; 8],
-  };
+  let mut ifr: ifreq = std::mem::zeroed();
+  let mut me: sockaddr_ll = std::mem::zeroed();
   let mut s: libc::c_int = 0;
-  s = xsocket(17i32, SOCK_DGRAM as libc::c_int, 0);
+  s = crate::libbb::xfuncs_printf::xsocket(17i32, SOCK_DGRAM as libc::c_int, 0);
   /*memset(&ifr, 0, sizeof(ifr)); - SIOCGIFINDEX does not need to clear all */
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
-  bb_xioctl(
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
+  crate::libbb::xfuncs_printf::bb_xioctl(
     s,
     0x8933i32 as libc::c_uint,
     &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -661,18 +499,17 @@ unsafe extern "C" fn get_address(
       let fresh1;
       let fresh2 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
   };
-  xbind(
+  crate::libbb::xfuncs_printf::xbind(
     s,
     &mut me as *mut sockaddr_ll as *mut sockaddr,
     ::std::mem::size_of::<sockaddr_ll>() as libc::c_ulong as socklen_t,
   );
-  bb_getsockname(
+  crate::libbb::bb_getsockname::bb_getsockname(
     s,
     &mut me as *mut sockaddr_ll as *mut sockaddr as *mut libc::c_void,
     ::std::mem::size_of::<sockaddr_ll>() as libc::c_ulong as socklen_t,
@@ -698,10 +535,10 @@ unsafe extern "C" fn parse_address(
     0,
     ::std::mem::size_of::<ifreq>() as libc::c_ulong,
   );
-  strncpy_IFNAMSIZ((*ifr).ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ((*ifr).ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
   (*ifr).ifr_ifru.ifru_hwaddr.sa_family = hatype as sa_family_t;
   alen = if hatype == 1i32 { 14i32 } else { 19i32 };
-  alen = ll_addr_a2n(
+  alen = crate::networking::libiproute::ll_addr::ll_addr_a2n(
     (*ifr).ifr_ifru.ifru_hwaddr.sa_data.as_mut_ptr() as *mut libc::c_uchar,
     alen,
     lla,
@@ -710,7 +547,7 @@ unsafe extern "C" fn parse_address(
     exit(1i32);
   }
   if alen != halen {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"wrong address (%s) length: expected %d bytes\x00" as *const u8 as *const libc::c_char,
       lla,
       halen,
@@ -722,14 +559,14 @@ unsafe extern "C" fn set_address(mut ifr: *mut ifreq, mut brd: libc::c_int) {
   let mut s: libc::c_int = 0;
   s = get_ctl_fd();
   if brd != 0 {
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       s,
       0x8937i32 as libc::c_uint,
       ifr as *mut libc::c_void,
       b"SIOCSIFHWBROADCAST\x00" as *const u8 as *const libc::c_char,
     );
   } else {
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       s,
       0x8924i32 as libc::c_uint,
       ifr as *mut libc::c_void,
@@ -739,7 +576,7 @@ unsafe extern "C" fn set_address(mut ifr: *mut ifreq, mut brd: libc::c_int) {
   close(s);
 }
 unsafe extern "C" fn die_must_be_on_off(mut msg: *const libc::c_char) -> ! {
-  bb_error_msg_and_die(
+  crate::libbb::verror_msg::bb_error_msg_and_die(
     b"argument of \"%s\" must be \"on\" or \"off\"\x00" as *const u8 as *const libc::c_char,
     msg,
   );
@@ -754,24 +591,8 @@ unsafe extern "C" fn do_set(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut master: libc::c_int = -1i32;
   let mut newaddr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut newbrd: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut ifr0: ifreq = ifreq {
-    ifr_ifrn: C2RustUnnamed_1 { ifrn_name: [0; 16] },
-    ifr_ifru: C2RustUnnamed_0 {
-      ifru_addr: sockaddr {
-        sa_family: 0,
-        sa_data: [0; 14],
-      },
-    },
-  };
-  let mut ifr1: ifreq = ifreq {
-    ifr_ifrn: C2RustUnnamed_1 { ifrn_name: [0; 16] },
-    ifr_ifru: C2RustUnnamed_0 {
-      ifru_addr: sockaddr {
-        sa_family: 0,
-        sa_data: [0; 14],
-      },
-    },
-  };
+  let mut ifr0: ifreq = std::mem::zeroed();
+  let mut ifr1: ifreq = std::mem::zeroed();
   let mut newname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut htype: libc::c_int = 0;
   let mut halen: libc::c_int = 0;
@@ -787,7 +608,8 @@ unsafe extern "C" fn do_set(mut argv: *mut *mut libc::c_char) -> libc::c_int {
     /* must be last */
     /* substring search ensures that e.g. "addr" and "address"
      * are both accepted */
-    key = index_in_substrings(keywords.as_ptr(), *argv) as smalluint;
+    key = crate::libbb::compare_string_array::index_in_substrings(keywords.as_ptr(), *argv)
+      as smalluint;
     if key as libc::c_int == ARG_up as libc::c_int {
       mask |= IFF_UP as libc::c_int as libc::c_uint;
       flags |= IFF_UP as libc::c_int as libc::c_uint
@@ -795,43 +617,58 @@ unsafe extern "C" fn do_set(mut argv: *mut *mut libc::c_char) -> libc::c_int {
       mask |= IFF_UP as libc::c_int as libc::c_uint;
       flags &= !(IFF_UP as libc::c_int) as libc::c_uint
     } else if key as libc::c_int == ARG_name as libc::c_int {
-      argv = next_arg(argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
       newname = *argv
     } else if key as libc::c_int == ARG_mtu as libc::c_int {
-      argv = next_arg(argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
       if mtu != -1i32 {
-        duparg(b"mtu\x00" as *const u8 as *const libc::c_char, *argv);
+        crate::networking::libiproute::utils::duparg(
+          b"mtu\x00" as *const u8 as *const libc::c_char,
+          *argv,
+        );
       }
-      mtu = get_unsigned(*argv, b"mtu\x00" as *const u8 as *const libc::c_char) as libc::c_int
+      mtu = crate::networking::libiproute::utils::get_unsigned(
+        *argv,
+        b"mtu\x00" as *const u8 as *const libc::c_char,
+      ) as libc::c_int
     } else if key as libc::c_int == ARG_qlen as libc::c_int {
       //TODO: txqueuelen, txqlen are synonyms to qlen
-      argv = next_arg(argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
       if qlen != -1i32 {
-        duparg(b"qlen\x00" as *const u8 as *const libc::c_char, *argv);
+        crate::networking::libiproute::utils::duparg(
+          b"qlen\x00" as *const u8 as *const libc::c_char,
+          *argv,
+        );
       }
-      qlen = get_unsigned(*argv, b"qlen\x00" as *const u8 as *const libc::c_char) as libc::c_int
+      qlen = crate::networking::libiproute::utils::get_unsigned(
+        *argv,
+        b"qlen\x00" as *const u8 as *const libc::c_char,
+      ) as libc::c_int
     } else if key as libc::c_int == ARG_addr as libc::c_int {
-      argv = next_arg(argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
       newaddr = *argv
     } else if key as libc::c_int == ARG_master as libc::c_int {
-      argv = next_arg(argv);
-      master = xll_name_to_index(*argv)
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      master = crate::networking::libiproute::ll_map::xll_name_to_index(*argv)
     } else if key as libc::c_int == ARG_nomaster as libc::c_int {
       master = 0
     } else if key as libc::c_int >= ARG_dev as libc::c_int {
       /* ^^^^^^ ">=" here results in "dev IFACE" treated as default */
       if key as libc::c_int == ARG_dev as libc::c_int {
-        argv = next_arg(argv)
+        argv = crate::networking::libiproute::utils::next_arg(argv)
       }
       if !dev.is_null() {
-        duparg2(b"dev\x00" as *const u8 as *const libc::c_char, *argv);
+        crate::networking::libiproute::utils::duparg2(
+          b"dev\x00" as *const u8 as *const libc::c_char,
+          *argv,
+        );
       }
       dev = *argv
     } else {
       /* "on|off" options */
       let mut param: libc::c_int = 0;
-      argv = next_arg(argv);
-      param = index_in_strings(
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      param = crate::libbb::compare_string_array::index_in_strings(
         b"on\x00off\x00\x00" as *const u8 as *const libc::c_char,
         *argv,
       );
@@ -871,7 +708,7 @@ unsafe extern "C" fn do_set(mut argv: *mut *mut libc::c_char) -> libc::c_int {
     argv = argv.offset(1)
   } /*if (arg == ARG_loose_binding) */
   if dev.is_null() {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       bb_msg_requires_arg.as_ptr(),
       b"\"dev\"\x00" as *const u8 as *const libc::c_char,
     );
@@ -907,7 +744,7 @@ unsafe extern "C" fn do_set(mut argv: *mut *mut libc::c_char) -> libc::c_int {
 }
 unsafe extern "C" fn ipaddr_list_link(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   preferred_family = 17i32 as family_t;
-  return ipaddr_list_or_flush(argv, 0);
+  return crate::networking::libiproute::ipaddress::ipaddr_list_or_flush(argv, 0);
 }
 unsafe extern "C" fn vlan_parse_opt(
   mut argv: *mut *mut libc::c_char,
@@ -930,14 +767,20 @@ unsafe extern "C" fn vlan_parse_opt(
     init
   };
   while !(*argv).is_null() {
-    arg = index_in_substrings(keywords.as_ptr(), *argv);
+    arg = crate::libbb::compare_string_array::index_in_substrings(keywords.as_ptr(), *argv);
     if arg < 0 {
-      invarg_1_to_2(*argv, b"type vlan\x00" as *const u8 as *const libc::c_char);
+      crate::networking::libiproute::utils::invarg_1_to_2(
+        *argv,
+        b"type vlan\x00" as *const u8 as *const libc::c_char,
+      );
     }
-    argv = next_arg(argv);
+    argv = crate::networking::libiproute::utils::next_arg(argv);
     if arg == ARG_id as libc::c_int {
-      id = get_u16(*argv, b"id\x00" as *const u8 as *const libc::c_char);
-      addattr_l(
+      id = crate::networking::libiproute::utils::get_u16(
+        *argv,
+        b"id\x00" as *const u8 as *const libc::c_char,
+      );
+      crate::networking::libiproute::libnetlink::addattr_l(
         n,
         size as libc::c_int,
         IFLA_VLAN_ID as libc::c_int,
@@ -945,7 +788,10 @@ unsafe extern "C" fn vlan_parse_opt(
         ::std::mem::size_of::<u16>() as libc::c_ulong as libc::c_int,
       );
     } else if arg == ARG_protocol as libc::c_int {
-      arg = index_in_substrings(protocols.as_ptr(), str_tolower(*argv));
+      arg = crate::libbb::compare_string_array::index_in_substrings(
+        protocols.as_ptr(),
+        crate::libbb::str_tolower::str_tolower(*argv),
+      );
       if arg == PROTO_8021Q as libc::c_int {
         proto = {
           let mut __v: libc::c_ushort = 0;
@@ -958,8 +804,7 @@ unsafe extern "C" fn vlan_parse_opt(
             let fresh4;
             let fresh5 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                                  : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
           }
           __v
@@ -976,19 +821,18 @@ unsafe extern "C" fn vlan_parse_opt(
             let fresh7;
             let fresh8 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8))
-                                  : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
           }
           __v
         }
       } else {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"unknown VLAN encapsulation protocol \'%s\'\x00" as *const u8 as *const libc::c_char,
           *argv,
         );
       }
-      addattr_l(
+      crate::networking::libiproute::libnetlink::addattr_l(
         n,
         size as libc::c_int,
         5i32,
@@ -996,12 +840,15 @@ unsafe extern "C" fn vlan_parse_opt(
         ::std::mem::size_of::<u16>() as libc::c_ulong as libc::c_int,
       );
     } else {
-      let mut param: libc::c_int = index_in_strings(
+      let mut param: libc::c_int = crate::libbb::compare_string_array::index_in_strings(
         b"on\x00off\x00\x00" as *const u8 as *const libc::c_char,
         *argv,
       );
       if param < 0 {
-        die_must_be_on_off(nth_string(keywords.as_ptr(), arg));
+        die_must_be_on_off(crate::libbb::compare_string_array::nth_string(
+          keywords.as_ptr(),
+          arg,
+        ));
       }
       if arg == ARG_reorder_hdr as libc::c_int {
         flags.mask |= 0x1i32 as libc::c_uint;
@@ -1032,7 +879,7 @@ unsafe extern "C" fn vlan_parse_opt(
     argv = argv.offset(1)
   }
   if flags.mask != 0 {
-    addattr_l(
+    crate::networking::libiproute::libnetlink::addattr_l(
       n,
       size as libc::c_int,
       IFLA_VLAN_FLAGS as libc::c_int,
@@ -1051,11 +898,17 @@ unsafe extern "C" fn vrf_parse_opt(
    */
   let mut table: u32 = 0;
   if strcmp(*argv, b"table\x00" as *const u8 as *const libc::c_char) != 0 {
-    invarg_1_to_2(*argv, b"type vrf\x00" as *const u8 as *const libc::c_char);
+    crate::networking::libiproute::utils::invarg_1_to_2(
+      *argv,
+      b"type vrf\x00" as *const u8 as *const libc::c_char,
+    );
   }
-  argv = next_arg(argv);
-  table = get_u32(*argv, b"table\x00" as *const u8 as *const libc::c_char);
-  addattr_l(
+  argv = crate::networking::libiproute::utils::next_arg(argv);
+  table = crate::networking::libiproute::utils::get_u32(
+    *argv,
+    b"table\x00" as *const u8 as *const libc::c_char,
+  );
+  crate::networking::libiproute::libnetlink::addattr_l(
     n,
     size as libc::c_int,
     IFLA_VRF_TABLE as libc::c_int,
@@ -1072,41 +925,8 @@ unsafe extern "C" fn do_add_or_delete(
     108, 105, 110, 107, 0, 110, 97, 109, 101, 0, 116, 121, 112, 101, 0, 100, 101, 118, 0, 97, 100,
     100, 114, 101, 115, 115, 0, 0,
   ];
-  let mut rth: rtnl_handle = rtnl_handle {
-    fd: 0,
-    local: sockaddr_nl {
-      nl_family: 0,
-      nl_pad: 0,
-      nl_pid: 0,
-      nl_groups: 0,
-    },
-    peer: sockaddr_nl {
-      nl_family: 0,
-      nl_pad: 0,
-      nl_pid: 0,
-      nl_groups: 0,
-    },
-    seq: 0,
-    dump: 0,
-  };
-  let mut req: C2RustUnnamed_10 = C2RustUnnamed_10 {
-    n: nlmsghdr {
-      nlmsg_len: 0,
-      nlmsg_type: 0,
-      nlmsg_flags: 0,
-      nlmsg_seq: 0,
-      nlmsg_pid: 0,
-    },
-    i: ifinfomsg {
-      ifi_family: 0,
-      __ifi_pad: 0,
-      ifi_type: 0,
-      ifi_index: 0,
-      ifi_flags: 0,
-      ifi_change: 0,
-    },
-    buf: [0; 1024],
-  };
+  let mut rth: rtnl_handle = std::mem::zeroed();
+  let mut req: C2RustUnnamed_10 = std::mem::zeroed();
   let mut arg: smalluint = 0;
   let mut name_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut link_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -1133,37 +953,41 @@ unsafe extern "C" fn do_add_or_delete(
   }
   /* NB: update iplink_full_usage if you extend this code */
   while !(*argv).is_null() {
-    arg = index_in_substrings(keywords.as_ptr(), *argv) as smalluint;
+    arg = crate::libbb::compare_string_array::index_in_substrings(keywords.as_ptr(), *argv)
+      as smalluint;
     if arg as libc::c_int == ARG_type as libc::c_int {
-      argv = next_arg(argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
       let fresh9 = argv;
       argv = argv.offset(1);
       type_str = *fresh9;
       break;
     } else {
       if arg as libc::c_int == ARG_link as libc::c_int {
-        argv = next_arg(argv);
+        argv = crate::networking::libiproute::utils::next_arg(argv);
         link_str = *argv
       } else if arg as libc::c_int == ARG_name_0 as libc::c_int {
-        argv = next_arg(argv);
+        argv = crate::networking::libiproute::utils::next_arg(argv);
         name_str = *argv
       } else if arg as libc::c_int == ARG_address as libc::c_int {
-        argv = next_arg(argv);
+        argv = crate::networking::libiproute::utils::next_arg(argv);
         address_str = *argv
       } else {
         if arg as libc::c_int == ARG_dev_0 as libc::c_int {
           if !dev_str.is_null() {
-            duparg(*argv, b"dev\x00" as *const u8 as *const libc::c_char);
+            crate::networking::libiproute::utils::duparg(
+              *argv,
+              b"dev\x00" as *const u8 as *const libc::c_char,
+            );
           }
-          argv = next_arg(argv)
+          argv = crate::networking::libiproute::utils::next_arg(argv)
         }
         dev_str = *argv
       }
       argv = argv.offset(1)
     }
   }
-  xrtnl_open(&mut rth);
-  ll_init_map(&mut rth);
+  crate::networking::libiproute::libnetlink::xrtnl_open(&mut rth);
+  crate::networking::libiproute::ll_map::ll_init_map(&mut rth);
   if !type_str.is_null() {
     let mut linkinfo: *mut rtattr = (&mut req.n as *mut nlmsghdr as *mut libc::c_void).offset(
       (req
@@ -1173,14 +997,14 @@ unsafe extern "C" fn do_add_or_delete(
         .wrapping_sub(1i32 as libc::c_uint)
         & !4u32.wrapping_sub(1i32 as libc::c_uint)) as isize,
     ) as *mut rtattr;
-    addattr_l(
+    crate::networking::libiproute::libnetlink::addattr_l(
       &mut req.n,
       ::std::mem::size_of::<C2RustUnnamed_10>() as libc::c_ulong as libc::c_int,
       IFLA_LINKINFO as libc::c_int,
       0 as *mut libc::c_void,
       0,
     );
-    addattr_l(
+    crate::networking::libiproute::libnetlink::addattr_l(
       &mut req.n,
       ::std::mem::size_of::<C2RustUnnamed_10>() as libc::c_ulong as libc::c_int,
       IFLA_INFO_KIND as libc::c_int,
@@ -1196,7 +1020,7 @@ unsafe extern "C" fn do_add_or_delete(
           .wrapping_sub(1i32 as libc::c_uint)
           & !4u32.wrapping_sub(1i32 as libc::c_uint)) as isize,
       ) as *mut rtattr;
-      addattr_l(
+      crate::networking::libiproute::libnetlink::addattr_l(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_10>() as libc::c_ulong as libc::c_int,
         IFLA_INFO_DATA as libc::c_int,
@@ -1250,11 +1074,11 @@ unsafe extern "C" fn do_add_or_delete(
     if dev_str.is_null() {
       return 1i32;
     } /* Need a device to delete */
-    req.i.ifi_index = xll_name_to_index(dev_str)
+    req.i.ifi_index = crate::networking::libiproute::ll_map::xll_name_to_index(dev_str)
   } else {
     if !link_str.is_null() {
-      let mut idx: libc::c_int = xll_name_to_index(link_str);
-      addattr_l(
+      let mut idx: libc::c_int = crate::networking::libiproute::ll_map::xll_name_to_index(link_str);
+      crate::networking::libiproute::libnetlink::addattr_l(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_10>() as libc::c_ulong as libc::c_int,
         IFLA_LINK as libc::c_int,
@@ -1264,7 +1088,7 @@ unsafe extern "C" fn do_add_or_delete(
     }
     if !address_str.is_null() {
       let mut abuf: [libc::c_uchar; 32] = [0; 32];
-      let mut len: libc::c_int = ll_addr_a2n(
+      let mut len: libc::c_int = crate::networking::libiproute::ll_addr::ll_addr_a2n(
         abuf.as_mut_ptr(),
         ::std::mem::size_of::<[libc::c_uchar; 32]>() as libc::c_ulong as libc::c_int,
         address_str,
@@ -1272,7 +1096,7 @@ unsafe extern "C" fn do_add_or_delete(
       if len < 0 {
         return -1i32;
       }
-      addattr_l(
+      crate::networking::libiproute::libnetlink::addattr_l(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_10>() as libc::c_ulong as libc::c_int,
         IFLA_ADDRESS as libc::c_int,
@@ -1284,9 +1108,12 @@ unsafe extern "C" fn do_add_or_delete(
   if !name_str.is_null() {
     let name_len: size_t = strlen(name_str).wrapping_add(1i32 as libc::c_ulong);
     if name_len < 2i32 as libc::c_ulong || name_len > 16i32 as libc::c_ulong {
-      invarg_1_to_2(name_str, b"name\x00" as *const u8 as *const libc::c_char);
+      crate::networking::libiproute::utils::invarg_1_to_2(
+        name_str,
+        b"name\x00" as *const u8 as *const libc::c_char,
+      );
     }
-    addattr_l(
+    crate::networking::libiproute::libnetlink::addattr_l(
       &mut req.n,
       ::std::mem::size_of::<C2RustUnnamed_10>() as libc::c_ulong as libc::c_int,
       IFLA_IFNAME as libc::c_int,
@@ -1294,7 +1121,9 @@ unsafe extern "C" fn do_add_or_delete(
       name_len as libc::c_int,
     );
   }
-  if rtnl_talk(&mut rth, &mut req.n, 0 as *mut nlmsghdr) < 0 {
+  if crate::networking::libiproute::libnetlink::rtnl_talk(&mut rth, &mut req.n, 0 as *mut nlmsghdr)
+    < 0
+  {
     return 2i32;
   }
   return 0;
@@ -1312,10 +1141,11 @@ pub unsafe extern "C" fn do_iplink(mut argv: *mut *mut libc::c_char) -> libc::c_
   ]; //TODO: move up to "ip"? Is it the common rule for all "ip" tools?
   xfunc_error_retval = 2i32 as u8;
   if !(*argv).is_null() {
-    let mut key: libc::c_int = index_in_substrings(keywords.as_ptr(), *argv);
+    let mut key: libc::c_int =
+      crate::libbb::compare_string_array::index_in_substrings(keywords.as_ptr(), *argv);
     if key < 0 {
       /* invalid argument */
-      invarg_1_to_2(*argv, applet_name);
+      crate::networking::libiproute::utils::invarg_1_to_2(*argv, applet_name);
     }
     argv = argv.offset(1);
     if key <= 1i32 {

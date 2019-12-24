@@ -1,62 +1,12 @@
+use crate::librb::md5_ctx_t;
+use crate::librb::size_t;
+use crate::util_linux::volume_id::volume_id::volume_id;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 extern "C" {
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn md5_begin(ctx: *mut md5_ctx_t);
-
-  #[no_mangle]
-  fn md5_hash(ctx: *mut md5_ctx_t, buffer: *const libc::c_void, len: size_t);
-
-  #[no_mangle]
-  fn md5_end(ctx: *mut md5_ctx_t, resbuf: *mut libc::c_void) -> libc::c_uint;
-
-  #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
-
-  #[no_mangle]
-  fn volume_id_set_label_unicode16(
-    id: *mut volume_id,
-    buf: *const u8,
-    endianess: endian,
-    count: size_t,
-  );
-
-  #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
-
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off: u64, len: size_t) -> *mut libc::c_void;
-}
-
-use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct md5_ctx_t {
-  pub wbuffer: [u8; 64],
-  pub process_block: Option<unsafe extern "C" fn(_: *mut md5_ctx_t) -> ()>,
-  pub total64: u64,
-  pub hash: [u32; 8],
-  /* 4 elements for md5, 5 for sha1, 8 for sha256 */
-}
-
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
 }
 
 pub type uuid_format = libc::c_uint;
@@ -69,8 +19,8 @@ pub type endian = libc::c_uint;
 pub const BE: endian = 1;
 // pub const LE: endian = 0;
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct hfsplus_catalog_key {
   pub key_len: u16,
   pub parent_id: u32,
@@ -78,8 +28,8 @@ pub struct hfsplus_catalog_key {
   pub unicode: [u8; 510],
 }
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct hfsplus_bnode_descriptor {
   pub next: u32,
   pub prev: u32,
@@ -89,15 +39,15 @@ pub struct hfsplus_bnode_descriptor {
   pub reserved: u16,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct hfsplus_extent {
   pub start_block: u32,
   pub block_count: u32,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct hfsplus_bheader_record {
   pub depth: u16,
   pub root: u32,
@@ -107,8 +57,8 @@ pub struct hfsplus_bheader_record {
   pub node_size: u16,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct hfsplus_fork {
   pub total_size: u64,
   pub clump_size: u32,
@@ -116,8 +66,8 @@ pub struct hfsplus_fork {
   pub extents: [hfsplus_extent; 8],
 }
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct hfsplus_vol_header {
   pub signature: [u8; 2],
   pub version: u16,
@@ -170,8 +120,9 @@ pub struct hfsplus_vol_header {
 //config:	default y
 //config:	depends on VOLUMEID
 //kbuild:lib-$(CONFIG_FEATURE_VOLUMEID_HFS) += hfs.o
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct hfs_finder_info {
   pub boot_folder: u32,
   pub start_app: u32,
@@ -181,8 +132,9 @@ pub struct hfs_finder_info {
   pub osx_folder: u32,
   pub id: [u8; 8],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct hfs_mdb {
   pub signature: [u8; 2],
   pub cr_date: u32,
@@ -237,18 +189,22 @@ unsafe extern "C" fn hfs_set_uuid(mut id: *mut volume_id, mut hfs_id: *const u8)
   match current_block {
     7502529970979898288 => return,
     _ => {
-      md5_begin(&mut md5c);
-      md5_hash(
+      crate::libbb::hash_md5_sha::md5_begin(&mut md5c);
+      crate::libbb::hash_md5_sha::md5_hash(
         &mut md5c,
         b"\xb3\xe2\x0f9\xf2\x92\x11\xd6\x97\xa4\x000eC\xec\xac\x00" as *const u8
           as *const libc::c_char as *const libc::c_void,
         16i32 as size_t,
       );
-      md5_hash(&mut md5c, hfs_id as *const libc::c_void, 8i32 as size_t);
-      md5_end(&mut md5c, uuid.as_mut_ptr() as *mut libc::c_void);
+      crate::libbb::hash_md5_sha::md5_hash(
+        &mut md5c,
+        hfs_id as *const libc::c_void,
+        8i32 as size_t,
+      );
+      crate::libbb::hash_md5_sha::md5_end(&mut md5c, uuid.as_mut_ptr() as *mut libc::c_void);
       uuid[6] = (0x30i32 | uuid[6] as libc::c_int & 0xfi32) as u8;
       uuid[8] = (0x80i32 | uuid[8] as libc::c_int & 0x3fi32) as u8;
-      volume_id_set_uuid(id, uuid.as_mut_ptr(), UUID_DCE);
+      crate::util_linux::volume_id::util::volume_id_set_uuid(id, uuid.as_mut_ptr(), UUID_DCE);
       return;
     }
   };
@@ -347,7 +303,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
   }; 8];
   let mut hfs: *mut hfs_mdb = std::ptr::null_mut();
   let mut buf: *const u8 = std::ptr::null();
-  buf = volume_id_get_buffer(
+  buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     off.wrapping_add(0x400i32 as libc::c_ulong),
     0x200i32 as size_t,
@@ -376,8 +332,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
           let fresh1;
           let fresh2 = __x;
           asm!("bswap $0" : "=r" (fresh1) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2))
-                              :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
         }
         __v
@@ -393,8 +348,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
           let fresh4;
           let fresh5 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                              : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
         }
         __v
@@ -410,8 +364,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
           let fresh7;
           let fresh8 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8))
-                              : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
         }
         __v
@@ -421,7 +374,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
           .wrapping_mul(512i32 as libc::c_uint)
           .wrapping_add(embed_first_block.wrapping_mul(alloc_block_size)) as libc::c_ulong,
       ) as u64 as u64;
-      buf = volume_id_get_buffer(
+      buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
         id,
         off.wrapping_add(0x400i32 as libc::c_ulong),
         0x200i32 as size_t,
@@ -432,7 +385,11 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
     } else {
       if (*hfs).label_len as libc::c_int > 0 && ((*hfs).label_len as libc::c_int) < 28i32 {
         //		volume_id_set_label_raw(id, hfs->label, hfs->label_len);
-        volume_id_set_label_string(id, (*hfs).label.as_mut_ptr(), (*hfs).label_len as size_t);
+        crate::util_linux::volume_id::util::volume_id_set_label_string(
+          id,
+          (*hfs).label.as_mut_ptr(),
+          (*hfs).label_len as size_t,
+        );
       }
       hfs_set_uuid(id, (*hfs).finder_info.id.as_mut_ptr());
       //	volume_id_set_usage(id, VOLUME_ID_FILESYSTEM);
@@ -459,8 +416,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
           let fresh10;
           let fresh11 = __x;
           asm!("bswap $0" : "=r" (fresh10) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11))
-                              :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
         }
         __v
@@ -483,13 +439,12 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
           let fresh13;
           let fresh14 = __x;
           asm!("bswap $0" : "=r" (fresh13) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14))
-                              :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
         }
         __v
       };
-      buf = volume_id_get_buffer(
+      buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
         id,
         off.wrapping_add(cat_block.wrapping_mul(blocksize) as libc::c_ulong),
         0x2000i32 as size_t,
@@ -511,8 +466,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
             let fresh16;
             let fresh17 = __x;
             asm!("bswap $0" : "=r" (fresh16) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17))
-                                  :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
           }
           __v
@@ -528,8 +482,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
             let fresh19;
             let fresh20 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh19) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20))
-                                  : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh18, fresh20, fresh19);
           }
           __v
@@ -547,8 +500,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
             let fresh22;
             let fresh23 = __x;
             asm!("bswap $0" : "=r" (fresh22) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23))
-                                  :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh21, fresh23, fresh22);
           }
           __v
@@ -577,8 +529,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
                 let fresh25;
                 let fresh26 = __x;
                 asm!("bswap $0" : "=r" (fresh25) : "0"
-                                          (c2rust_asm_casts::AsmCast::cast_in(fresh24, fresh26))
-                                          :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh24, fresh26)) :);
                 c2rust_asm_casts::AsmCast::cast_out(fresh24, fresh26, fresh25);
               }
               __v
@@ -596,8 +547,7 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
                 let fresh28;
                 let fresh29 = __x;
                 asm!("bswap $0" : "=r" (fresh28) : "0"
-                                          (c2rust_asm_casts::AsmCast::cast_in(fresh27, fresh29))
-                                          :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh27, fresh29)) :);
                 c2rust_asm_casts::AsmCast::cast_out(fresh27, fresh29, fresh28);
               }
               __v
@@ -621,8 +571,11 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
                 leaf_off = ext_block_start
                   .wrapping_add(leaf_block)
                   .wrapping_mul(blocksize) as u64;
-                buf = volume_id_get_buffer(id, off.wrapping_add(leaf_off), leaf_node_size as size_t)
-                  as *const u8;
+                buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
+                  id,
+                  off.wrapping_add(leaf_off),
+                  leaf_node_size as size_t,
+                ) as *const u8;
                 if !buf.is_null() {
                   descr = buf as *mut hfsplus_bnode_descriptor;
                   record_count = ({
@@ -636,10 +589,8 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
                       let fresh30 = &mut __v;
                       let fresh31;
                       let fresh32 = __x;
-                      asm!("rorw $$8, ${0:w}" :
-                                                      "=r" (fresh31) : "0"
-                                                      (c2rust_asm_casts::AsmCast::cast_in(fresh30, fresh32))
-                                                      : "cc");
+                      asm!("rorw $$8, ${0:w}" : "=r" (fresh31) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh30, fresh32)) : "cc");
                       c2rust_asm_casts::AsmCast::cast_out(fresh30, fresh32, fresh31);
                     }
                     __v
@@ -663,12 +614,8 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
                             let fresh33 = &mut __v;
                             let fresh34;
                             let fresh35 = __x;
-                            asm!("bswap $0"
-                                                                   : "=r"
-                                                                   (fresh34) :
-                                                                   "0"
-                                                                   (c2rust_asm_casts::AsmCast::cast_in(fresh33, fresh35))
-                                                                   :);
+                            asm!("bswap $0" : "=r" (fresh34) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh33, fresh35)) :);
                             c2rust_asm_casts::AsmCast::cast_out(fresh33, fresh35, fresh34);
                           }
                           __v
@@ -685,19 +632,15 @@ pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> 
                             let fresh36 = &mut __v;
                             let fresh37;
                             let fresh38 = __x;
-                            asm!("rorw $$8, ${0:w}"
-                                                                   : "=r"
-                                                                   (fresh37) :
-                                                                   "0"
-                                                                   (c2rust_asm_casts::AsmCast::cast_in(fresh36, fresh38))
-                                                                   : "cc");
+                            asm!("rorw $$8, ${0:w}" : "=r" (fresh37) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh36, fresh38)) : "cc");
                             c2rust_asm_casts::AsmCast::cast_out(fresh36, fresh38, fresh37);
                           }
                           __v
                         }) as libc::c_int
                           * 2i32) as libc::c_uint;
                         //	volume_id_set_label_raw(id, key->unicode, label_len);
-                        volume_id_set_label_unicode16(
+                        crate::util_linux::volume_id::util::volume_id_set_label_unicode16(
                           id,
                           (*key).unicode.as_mut_ptr(),
                           BE,

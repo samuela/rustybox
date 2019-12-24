@@ -19,25 +19,6 @@ extern "C" {
   #[no_mangle]
   fn localtime_r(__timer: *const time_t, __tp: *mut tm) -> *mut tm;
 
-  #[no_mangle]
-  fn xstat(pathname: *const libc::c_char, buf: *mut stat);
-  #[no_mangle]
-  fn parse_datestr(date_str: *const libc::c_char, ptm: *mut tm);
-  #[no_mangle]
-  fn validate_tm_time(date_str: *const libc::c_char, ptm: *mut tm) -> time_t;
-  #[no_mangle]
-  fn xclose(fd: libc::c_int);
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
 pub const OPT_c: C2RustUnnamed = 1;
@@ -145,7 +126,7 @@ pub unsafe extern "C" fn touch_main(
   /* -d and -t both set time. In coreutils,
    * accepted data format differs a bit between -d and -t.
    * We accept the same formats for both */
-  opts = getopt32long(
+  opts = crate::libbb::getopt32::getopt32long(
     argv,
     b"cr:d:t:hfma\x00" as *const u8 as *const libc::c_char,
     touch_longopts.as_ptr(),
@@ -155,11 +136,11 @@ pub unsafe extern "C" fn touch_main(
   ) as libc::c_int;
   argv = argv.offset(optind as isize);
   if (*argv).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   if !reference_file.is_null() {
     let mut stbuf: stat = std::mem::zeroed();
-    xstat(reference_file, &mut stbuf);
+    crate::libbb::xfuncs_printf::xstat(reference_file, &mut stbuf);
     timebuf[0].tv_sec = stbuf.st_mtime;
     timebuf[1].tv_sec = timebuf[0].tv_sec
     /* Can use .st_mtime.tv_nsec
@@ -186,10 +167,10 @@ pub unsafe extern "C" fn touch_main(
     /* Better than memset: makes "HH:MM" dates meaningful */
     time(&mut t);
     localtime_r(&mut t, &mut tm_time);
-    parse_datestr(date_str, &mut tm_time);
+    crate::libbb::time::parse_datestr(date_str, &mut tm_time);
     /* Correct any day of week and day of year etc. fields */
     tm_time.tm_isdst = -1i32; /* Be sure to recheck dst */
-    t = validate_tm_time(date_str, &mut tm_time);
+    t = crate::libbb::time::validate_tm_time(date_str, &mut tm_time);
     timebuf[0].tv_sec = t;
     timebuf[1].tv_sec = timebuf[0].tv_sec
   }
@@ -220,7 +201,7 @@ pub unsafe extern "C" fn touch_main(
           /* Try to create the file */
           fd = open(*argv, 0o2i32 | 0o100i32, 0o666i32);
           if fd >= 0 {
-            xclose(fd);
+            crate::libbb::xfuncs_printf::xclose(fd);
             if !reference_file.is_null() || !date_str.is_null() {
               utimes(*argv, timebuf.as_mut_ptr() as *const timeval);
             }
@@ -236,7 +217,7 @@ pub unsafe extern "C" fn touch_main(
         11042950489265723346 => {}
         _ => {
           status = 1i32;
-          bb_simple_perror_msg(*argv);
+          crate::libbb::perror_msg::bb_simple_perror_msg(*argv);
         }
       }
     }

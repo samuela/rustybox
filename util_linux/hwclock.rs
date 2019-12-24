@@ -5,13 +5,6 @@ use libc::time_t;
 use libc::timeval;
 use libc::tm;
 extern "C" {
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 
   #[no_mangle]
   fn gettimeofday(__tv: *mut timeval, __tz: __timezone_ptr_t) -> libc::c_int;
@@ -37,41 +30,16 @@ extern "C" {
   #[no_mangle]
   static mut timezone: libc::c_long;
 
-  #[no_mangle]
-  fn chomp(s: *mut libc::c_char);
+/*
+ * Common defines/structures/etc... for applets that need to work with the RTC.
+ *
+ * Licensed under GPLv2 or later, see file LICENSE in this source tree.
+ */
 
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-
-  /*
-   * Common defines/structures/etc... for applets that need to work with the RTC.
-   *
-   * Licensed under GPLv2 or later, see file LICENSE in this source tree.
-   */
-
-  #[no_mangle]
-  fn rtc_adjtime_is_utc() -> libc::c_int;
-
-  #[no_mangle]
-  fn rtc_xopen(default_rtc: *mut *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn rtc_read_tm(ptm: *mut tm, fd: libc::c_int);
-
-  #[no_mangle]
-  fn rtc_tm2time(ptm: *mut tm, utc: libc::c_int) -> time_t;
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct timezone {
   pub tz_minuteswest: libc::c_int,
   pub tz_dsttime: libc::c_int,
@@ -82,8 +50,9 @@ pub type __timezone_ptr_t = *mut timezone;
  * Everything below this point has been copied from linux/rtc.h
  * to eliminate the kernel header dependency
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct linux_rtc_time {
   pub tm_sec: libc::c_int,
   pub tm_min: libc::c_int,
@@ -143,14 +112,14 @@ unsafe extern "C" fn read_rtc(
 ) -> time_t {
   let mut tm_time: tm = std::mem::zeroed();
   let mut fd: libc::c_int = 0;
-  fd = rtc_xopen(pp_rtcname, 0);
-  rtc_read_tm(&mut tm_time, fd);
-  return rtc_tm2time(&mut tm_time, utc);
+  fd = crate::libbb::rtc::rtc_xopen(pp_rtcname, 0);
+  crate::libbb::rtc::rtc_read_tm(&mut tm_time, fd);
+  return crate::libbb::rtc::rtc_tm2time(&mut tm_time, utc);
 }
 unsafe extern "C" fn show_clock(mut pp_rtcname: *mut *const libc::c_char, mut utc: libc::c_int) {
   let mut t: time_t = read_rtc(pp_rtcname, utc);
   let mut cp: *mut libc::c_char = ctime(&mut t);
-  chomp(cp);
+  crate::libbb::chomp::chomp(cp);
   printf(
     b"%s  0.000000 seconds\n\x00" as *const u8 as *const libc::c_char,
     cp,
@@ -174,7 +143,9 @@ unsafe extern "C" fn to_sys_clock(mut pp_rtcname: *mut *const libc::c_char, mut 
   tv.tv_sec = read_rtc(pp_rtcname, utc);
   tv.tv_usec = 0 as suseconds_t;
   if settimeofday(&mut tv, &mut tz) != 0 {
-    bb_simple_perror_msg_and_die(b"settimeofday\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"settimeofday\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 unsafe extern "C" fn from_sys_clock(
@@ -187,7 +158,7 @@ unsafe extern "C" fn from_sys_clock(
   };
   let mut tm_time: tm = std::mem::zeroed();
   let mut rtc: libc::c_int = 0;
-  rtc = rtc_xopen(pp_rtcname, 0o1i32);
+  rtc = crate::libbb::rtc::rtc_xopen(pp_rtcname, 0o1i32);
   gettimeofday(&mut tv, 0 as *mut timezone);
   /* Prepare tm_time */
   if ::std::mem::size_of::<time_t>() as libc::c_ulong
@@ -207,7 +178,7 @@ unsafe extern "C" fn from_sys_clock(
     }
   }
   tm_time.tm_isdst = 0;
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     rtc,
     ((1u32 << 0 + 8i32 + 8i32 + 14i32
       | (('p' as i32) << 0 + 8i32) as libc::c_uint
@@ -250,7 +221,9 @@ unsafe extern "C" fn set_system_clock_timezone(mut utc: libc::c_int) {
     tv.tv_sec += (tz.tz_minuteswest * 60i32) as libc::c_long
   }
   if settimeofday(&mut tv, &mut tz) != 0 {
-    bb_simple_perror_msg_and_die(b"settimeofday\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"settimeofday\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 #[no_mangle]
@@ -268,7 +241,7 @@ pub unsafe extern "C" fn hwclock_main(
   ];
   /* Initialize "timezone" (libc global variable) */
   tzset();
-  opt = getopt32long(
+  opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"^lurswtf:\x00r--wst:w--rst:s--wrt:t--rsw:l--u:u--l\x00" as *const u8 as *const libc::c_char,
     hwclock_longopts.as_ptr(),
@@ -278,7 +251,7 @@ pub unsafe extern "C" fn hwclock_main(
   if opt & (0x2i32 | 0x1i32) as libc::c_uint != 0 {
     utc = (opt & 0x2i32 as libc::c_uint) as libc::c_int
   } else {
-    utc = rtc_adjtime_is_utc()
+    utc = crate::libbb::rtc::rtc_adjtime_is_utc()
   }
   if opt & 0x8i32 as libc::c_uint != 0 {
     to_sys_clock(&mut rtcname, utc);

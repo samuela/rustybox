@@ -1,19 +1,27 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::skip_whitespace::skip_whitespace;
+use crate::librb::size_t;
 use libc;
 use libc::close;
 use libc::closedir;
+use libc::dirent;
 use libc::fclose;
 use libc::free;
+use libc::gid_t;
 use libc::open;
 use libc::opendir;
+use libc::pid_t;
 use libc::readdir;
 use libc::sprintf;
 use libc::sscanf;
+use libc::ssize_t;
+use libc::stat;
 use libc::strchr;
 use libc::strcmp;
 use libc::strcpy;
 use libc::strrchr;
+use libc::uid_t;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -47,128 +55,28 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
-  fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmemdup(s: *const libc::c_void, n: libc::c_int) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xopendir(path: *const libc::c_char) -> *mut DIR;
-  #[no_mangle]
-  fn xmalloc_readlink(path: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn open_read_close(
-    filename: *const libc::c_char,
-    buf: *mut libc::c_void,
-    maxsz: size_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn uid2uname_utoa(uid: uid_t) -> *mut libc::c_char;
-  #[no_mangle]
-  fn gid2group_utoa(gid: gid_t) -> *mut libc::c_char;
-
-  #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
   #[no_mangle]
   fn getpagesize() -> libc::c_int;
 }
 
-use crate::librb::size_t;
-use libc::dirent;
-use libc::gid_t;
-use libc::pid_t;
-use libc::ssize_t;
-use libc::stat;
-use libc::uid_t;
-use libc::DIR;
-use libc::FILE;
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct cache_t {
   pub cache: *mut id_to_name_map_t,
   pub size: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct id_to_name_map_t {
   pub id: uid_t,
   pub name: [libc::c_char; 28],
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct smaprec {
-  pub mapped_rw: libc::c_ulong,
-  pub mapped_ro: libc::c_ulong,
-  pub shared_clean: libc::c_ulong,
-  pub shared_dirty: libc::c_ulong,
-  pub private_clean: libc::c_ulong,
-  pub private_dirty: libc::c_ulong,
-  pub stack: libc::c_ulong,
-  pub smap_pss: libc::c_ulong,
-  pub smap_swap: libc::c_ulong,
-  pub smap_size: libc::c_ulong,
-  pub smap_start: libc::c_ulonglong,
-  pub smap_mode: [libc::c_char; 5],
-  pub smap_name: *mut libc::c_char,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct procps_status_t {
-  pub dir: *mut DIR,
-  pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: u8,
-  pub shift_pages_to_kb: u8,
-  pub argv_len: u16,
-  pub argv0: *mut libc::c_char,
-  pub exe: *mut libc::c_char,
-  pub main_thread_pid: libc::c_uint,
-  pub vsz: libc::c_ulong,
-  pub rss: libc::c_ulong,
-  pub stime: libc::c_ulong,
-  pub utime: libc::c_ulong,
-  pub start_time: libc::c_ulong,
-  pub pid: libc::c_uint,
-  pub ppid: libc::c_uint,
-  pub pgid: libc::c_uint,
-  pub sid: libc::c_uint,
-  pub uid: libc::c_uint,
-  pub gid: libc::c_uint,
-  pub ruid: libc::c_uint,
-  pub rgid: libc::c_uint,
-  pub niceness: libc::c_int,
-  pub tty_major: libc::c_uint,
-  pub tty_minor: libc::c_uint,
-  pub smaps: smaprec,
-  pub state: [libc::c_char; 4],
-  pub comm: [libc::c_char; 16],
-  pub last_seen_on_cpu: libc::c_int,
-}
+
+use crate::librb::smaprec;
+
+use crate::librb::procps_status_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PSSCAN_TASKS: C2RustUnnamed = 4194304;
 pub const PSSCAN_RUIDGID: C2RustUnnamed = 2097152;
@@ -227,7 +135,7 @@ unsafe extern "C" fn get_cached(
   let fresh0 = (*cp).size;
   (*cp).size = (*cp).size + 1;
   i = fresh0;
-  (*cp).cache = xrealloc_vector_helper(
+  (*cp).cache = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
     (*cp).cache as *mut libc::c_void,
     ((::std::mem::size_of::<id_to_name_map_t>() as libc::c_ulong) << 8i32)
       .wrapping_add(2i32 as libc::c_ulong) as libc::c_uint,
@@ -235,7 +143,7 @@ unsafe extern "C" fn get_cached(
   ) as *mut id_to_name_map_t;
   (*(*cp).cache.offset(i as isize)).id = id;
   /* Never fails. Generates numeric string if name isn't found */
-  safe_strncpy(
+  crate::libbb::safe_strncpy::safe_strncpy(
     (*(*cp).cache.offset(i as isize)).name.as_mut_ptr(),
     x2x_utoa.expect("non-null function pointer")(id),
     ::std::mem::size_of::<[libc::c_char; 28]>() as libc::c_ulong,
@@ -247,7 +155,9 @@ pub unsafe extern "C" fn get_cached_username(mut uid: uid_t) -> *const libc::c_c
   return get_cached(
     &mut username,
     uid,
-    Some(uid2uname_utoa as unsafe extern "C" fn(_: uid_t) -> *mut libc::c_char),
+    Some(
+      crate::libbb::bb_pwd::uid2uname_utoa as unsafe extern "C" fn(_: uid_t) -> *mut libc::c_char,
+    ),
   );
 }
 #[no_mangle]
@@ -255,7 +165,9 @@ pub unsafe extern "C" fn get_cached_groupname(mut gid: gid_t) -> *const libc::c_
   return get_cached(
     &mut groupname,
     gid,
-    Some(gid2group_utoa as unsafe extern "C" fn(_: gid_t) -> *mut libc::c_char),
+    Some(
+      crate::libbb::bb_pwd::gid2group_utoa as unsafe extern "C" fn(_: gid_t) -> *mut libc::c_char,
+    ),
   );
 }
 unsafe extern "C" fn read_to_buf(
@@ -277,9 +189,11 @@ unsafe extern "C" fn read_to_buf(
 }
 unsafe extern "C" fn alloc_procps_scan() -> *mut procps_status_t {
   let mut n: libc::c_uint = getpagesize() as libc::c_uint;
-  let mut sp: *mut procps_status_t =
-    xzalloc(::std::mem::size_of::<procps_status_t>() as libc::c_ulong) as *mut procps_status_t;
-  (*sp).dir = xopendir(b"/proc\x00" as *const u8 as *const libc::c_char);
+  let mut sp: *mut procps_status_t = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<
+    procps_status_t,
+  >() as libc::c_ulong) as *mut procps_status_t;
+  (*sp).dir =
+    crate::libbb::xfuncs_printf::xopendir(b"/proc\x00" as *const u8 as *const libc::c_char);
   loop {
     n >>= 1i32;
     if n == 0 {
@@ -395,7 +309,7 @@ pub unsafe extern "C" fn procps_read_smaps(
     b"/proc/%u/smaps\x00" as *const u8 as *const libc::c_char,
     pid,
   );
-  file = fopen_for_read(filename.as_mut_ptr());
+  file = crate::libbb::wfopen::fopen_for_read(filename.as_mut_ptr());
   if file.is_null() {
     return 1i32;
   }
@@ -413,7 +327,7 @@ pub unsafe extern "C" fn procps_read_smaps(
     let mut tp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if cb.is_some() {
-      tp = is_prefixed_with(
+      tp = crate::libbb::compare_string_array::is_prefixed_with(
         buf.as_mut_ptr(),
         b"Pss:\x00" as *const u8 as *const libc::c_char,
       );
@@ -423,7 +337,7 @@ pub unsafe extern "C" fn procps_read_smaps(
         (*total).smap_pss = (*total).smap_pss.wrapping_add(currec.smap_pss);
         continue;
       } else {
-        tp = is_prefixed_with(
+        tp = crate::libbb::compare_string_array::is_prefixed_with(
           buf.as_mut_ptr(),
           b"Swap:\x00" as *const u8 as *const libc::c_char,
         );
@@ -435,7 +349,7 @@ pub unsafe extern "C" fn procps_read_smaps(
         }
       }
     }
-    tp = is_prefixed_with(
+    tp = crate::libbb::compare_string_array::is_prefixed_with(
       buf.as_mut_ptr(),
       b"Private_Dirty:\x00" as *const u8 as *const libc::c_char,
     );
@@ -444,7 +358,7 @@ pub unsafe extern "C" fn procps_read_smaps(
       currec.private_dirty = fast_strtoul_10(&mut tp);
       (*total).private_dirty = (*total).private_dirty.wrapping_add(currec.private_dirty)
     } else {
-      tp = is_prefixed_with(
+      tp = crate::libbb::compare_string_array::is_prefixed_with(
         buf.as_mut_ptr(),
         b"Private_Clean:\x00" as *const u8 as *const libc::c_char,
       );
@@ -453,7 +367,7 @@ pub unsafe extern "C" fn procps_read_smaps(
         currec.private_clean = fast_strtoul_10(&mut tp);
         (*total).private_clean = (*total).private_clean.wrapping_add(currec.private_clean)
       } else {
-        tp = is_prefixed_with(
+        tp = crate::libbb::compare_string_array::is_prefixed_with(
           buf.as_mut_ptr(),
           b"Shared_Dirty:\x00" as *const u8 as *const libc::c_char,
         );
@@ -462,7 +376,7 @@ pub unsafe extern "C" fn procps_read_smaps(
           currec.shared_dirty = fast_strtoul_10(&mut tp);
           (*total).shared_dirty = (*total).shared_dirty.wrapping_add(currec.shared_dirty)
         } else {
-          tp = is_prefixed_with(
+          tp = crate::libbb::compare_string_array::is_prefixed_with(
             buf.as_mut_ptr(),
             b"Shared_Clean:\x00" as *const u8 as *const libc::c_char,
           );
@@ -503,7 +417,11 @@ pub unsafe extern "C" fn procps_read_smaps(
               // skipping "rw-s FILEOFS M:m INODE "
               tp = skip_whitespace(skip_fields(tp, 4i32));
               // filter out /dev/something (something != zero)
-              if is_prefixed_with(tp, b"/dev/\x00" as *const u8 as *const libc::c_char).is_null()
+              if crate::libbb::compare_string_array::is_prefixed_with(
+                tp,
+                b"/dev/\x00" as *const u8 as *const libc::c_char,
+              )
+              .is_null()
                 || strcmp(tp, b"/dev/zero\n\x00" as *const u8 as *const libc::c_char) == 0
               {
                 if currec.smap_mode[1] as libc::c_int == 'w' as i32 {
@@ -518,12 +436,14 @@ pub unsafe extern "C" fn procps_read_smaps(
                 (*total).stack = (*total).stack.wrapping_add(currec.smap_size)
               }
               if cb.is_some() {
-                p = skip_non_whitespace(tp);
+                p = crate::libbb::skip_whitespace::skip_non_whitespace(tp);
                 if p == tp {
-                  currec.smap_name = xstrdup(b"  [ anon ]\x00" as *const u8 as *const libc::c_char)
+                  currec.smap_name = crate::libbb::xfuncs_printf::xstrdup(
+                    b"  [ anon ]\x00" as *const u8 as *const libc::c_char,
+                  )
                 } else {
                   *p = '\u{0}' as i32 as libc::c_char;
-                  currec.smap_name = xstrdup(tp)
+                  currec.smap_name = crate::libbb::xfuncs_printf::xstrdup(tp)
                 }
               }
               (*total).smap_size = (*total).smap_size.wrapping_add(currec.smap_size)
@@ -581,7 +501,7 @@ pub unsafe extern "C" fn procps_scan(
       }
       _ => {}
     }
-    pid = bb_strtou(
+    pid = crate::libbb::bb_strtonum::bb_strtou(
       (*entry).d_name.as_mut_ptr(),
       0 as *mut *mut libc::c_char,
       10i32,
@@ -676,7 +596,7 @@ pub unsafe extern "C" fn procps_scan(
         *cp.offset(0) = '\u{0}' as i32 as libc::c_char;
         comm1 = strchr(buf.as_mut_ptr(), '(' as i32);
         /*if (comm1)*/
-        safe_strncpy(
+        crate::libbb::safe_strncpy::safe_strncpy(
           (*sp).comm.as_mut_ptr(),
           comm1.offset(1),
           ::std::mem::size_of::<[libc::c_char; 16]>() as libc::c_ulong,
@@ -738,7 +658,7 @@ pub unsafe extern "C" fn procps_scan(
           filename_tail,
           b"status\x00" as *const u8 as *const libc::c_char,
         );
-        file = fopen_for_read(filename.as_mut_ptr());
+        file = crate::libbb::wfopen::fopen_for_read(filename.as_mut_ptr());
         if !file.is_null() {
           while !fgets_unlocked(
             buf.as_mut_ptr(),
@@ -748,7 +668,7 @@ pub unsafe extern "C" fn procps_scan(
           .is_null()
           {
             let mut tp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-            tp = is_prefixed_with(
+            tp = crate::libbb::compare_string_array::is_prefixed_with(
               buf.as_mut_ptr(),
               b"Uid:\x00" as *const u8 as *const libc::c_char,
             );
@@ -760,7 +680,7 @@ pub unsafe extern "C" fn procps_scan(
                 &mut (*sp).ruid as *mut libc::c_uint,
               );
             } else {
-              tp = is_prefixed_with(
+              tp = crate::libbb::compare_string_array::is_prefixed_with(
                 buf.as_mut_ptr(),
                 b"Gid:\x00" as *const u8 as *const libc::c_char,
               );
@@ -786,7 +706,7 @@ pub unsafe extern "C" fn procps_scan(
           b"exe\x00" as *const u8 as *const libc::c_char,
         );
         free((*sp).exe as *mut libc::c_void);
-        (*sp).exe = xmalloc_readlink(filename.as_mut_ptr())
+        (*sp).exe = crate::libbb::xreadlink::xmalloc_readlink(filename.as_mut_ptr())
       }
       /* Note: if /proc/PID/cmdline is empty,
        * code below "breaks". Therefore it must be
@@ -811,11 +731,12 @@ pub unsafe extern "C" fn procps_scan(
       if flags & PSSCAN_ARGVN as libc::c_int != 0 {
         (*sp).argv_len = n as u16;
         (*sp).argv0 =
-          xmemdup(buf.as_mut_ptr() as *const libc::c_void, n + 1i32) as *mut libc::c_char
+          crate::libbb::xfuncs_printf::xmemdup(buf.as_mut_ptr() as *const libc::c_void, n + 1i32)
+            as *mut libc::c_char
       /* sp->argv0[n] = '\0'; - buf has it */
       } else {
         (*sp).argv_len = 0 as u16;
-        (*sp).argv0 = xstrdup(buf.as_mut_ptr())
+        (*sp).argv0 = crate::libbb::xfuncs_printf::xstrdup(buf.as_mut_ptr())
       }
       break;
     }
@@ -1373,7 +1294,7 @@ pub unsafe extern "C" fn read_cmdline(
     b"/proc/%u/cmdline\x00" as *const u8 as *const libc::c_char,
     pid,
   );
-  sz = open_read_close(
+  sz = crate::libbb::read::open_read_close(
     filename.as_mut_ptr(),
     buf as *mut libc::c_void,
     (col - 1i32) as size_t,
@@ -1390,7 +1311,7 @@ pub unsafe extern "C" fn read_cmdline(
     }
     /* Prevent basename("process foo/bar") = "bar" */
     *strchrnul(buf, ' ' as i32).offset(0) = '\u{0}' as i32 as libc::c_char; /* before we replace argv0's NUL with space */
-    base = bb_basename(buf);
+    base = crate::libbb::get_last_path_component::bb_basename(buf);
     while sz >= 0 {
       if (*buf.offset(sz as isize) as libc::c_uchar as libc::c_int) < ' ' as i32 {
         *buf.offset(sz as isize) = ' ' as i32 as libc::c_char

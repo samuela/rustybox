@@ -1,5 +1,9 @@
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::rtattr;
+use crate::networking::libiproute::libnetlink::rtnl_handle;
 use libc;
+use libc::nlmsghdr;
+use libc::sockaddr_nl;
 use libc::strcpy;
 extern "C" {
   #[no_mangle]
@@ -9,67 +13,26 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn auto_string(str: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+/* We need linux/types.h because older kernels use u32 etc
+ * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
+/* bbox doesn't use parameters no. 3, 4, 6, 7, stub them out */
+//TODO: pass rth->fd instead of full rth?
+// Used to be:
+//struct sockaddr_nl nladdr;
+//memset(&nladdr, 0, sizeof(nladdr));
+//nladdr.nl_family = AF_NETLINK;
+//return xsendto(rth->fd, buf, len, (struct sockaddr*)&nladdr, sizeof(nladdr));
+// iproute2-4.2.0 simplified the above to:
+//return send(rth->fd, buf, len, 0);
+// We are using even shorter:
+// and convert to void, inline.
 
-  /* We need linux/types.h because older kernels use u32 etc
-   * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
-  /* bbox doesn't use parameters no. 3, 4, 6, 7, stub them out */
-  //TODO: pass rth->fd instead of full rth?
-  // Used to be:
-  //struct sockaddr_nl nladdr;
-  //memset(&nladdr, 0, sizeof(nladdr));
-  //nladdr.nl_family = AF_NETLINK;
-  //return xsendto(rth->fd, buf, len, (struct sockaddr*)&nladdr, sizeof(nladdr));
-  // iproute2-4.2.0 simplified the above to:
-  //return send(rth->fd, buf, len, 0);
-  // We are using even shorter:
-  // and convert to void, inline.
-  #[no_mangle]
-  fn parse_rtattr(tb: *mut *mut rtattr, max: libc::c_int, rta: *mut rtattr, len: libc::c_int);
-  #[no_mangle]
-  fn xrtnl_dump_filter(
-    rth: *mut rtnl_handle,
-    filter: Option<
-      unsafe extern "C" fn(
-        _: *const sockaddr_nl,
-        _: *mut nlmsghdr,
-        _: *mut libc::c_void,
-      ) -> libc::c_int,
-    >,
-    arg1: *mut libc::c_void,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn xrtnl_wilddump_request(rth: *mut rtnl_handle, fam: libc::c_int, type_0: libc::c_int);
 }
 
-use crate::librb::size_t;
 pub type __u16 = libc::c_ushort;
 pub type u32 = libc::c_uint;
 pub type __kernel_sa_family_t = libc::c_ushort;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_nl {
-  pub nl_family: __kernel_sa_family_t,
-  pub nl_pad: libc::c_ushort,
-  pub nl_pid: u32,
-  pub nl_groups: u32,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct nlmsghdr {
-  pub nlmsg_len: u32,
-  pub nlmsg_type: __u16,
-  pub nlmsg_flags: __u16,
-  pub nlmsg_seq: u32,
-  pub nlmsg_pid: u32,
-}
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const __IFLA_MAX: C2RustUnnamed = 50;
 pub const IFLA_NEW_IFINDEX: C2RustUnnamed = 49;
@@ -177,14 +140,9 @@ pub const RTM_GETLINK: C2RustUnnamed_0 = 18;
 pub const RTM_DELLINK: C2RustUnnamed_0 = 17;
 pub const RTM_NEWLINK: C2RustUnnamed_0 = 16;
 pub const RTM_BASE: C2RustUnnamed_0 = 16;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct rtattr {
-  pub rta_len: libc::c_ushort,
-  pub rta_type: libc::c_ushort,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct ifinfomsg {
   pub ifi_family: libc::c_uchar,
   pub __ifi_pad: libc::c_uchar,
@@ -192,15 +150,6 @@ pub struct ifinfomsg {
   pub ifi_index: libc::c_int,
   pub ifi_flags: libc::c_uint,
   pub ifi_change: libc::c_uint,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct rtnl_handle {
-  pub fd: libc::c_int,
-  pub local: sockaddr_nl,
-  pub peer: sockaddr_nl,
-  pub seq: u32,
-  pub dump: u32,
 }
 
 /*
@@ -212,8 +161,9 @@ pub struct rtnl_handle {
  * Authors: Alexey Kuznetsov, <kuznet@ms2.inr.ac.ru>
  */
 /* struct ifreq and co. */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct idxmap {
   pub next: *mut idxmap,
   pub index: libc::c_int,
@@ -223,7 +173,7 @@ pub struct idxmap {
   pub addr: [libc::c_uchar; 8],
   pub name: [libc::c_char; 16],
 }
-static mut idxmap: *mut *mut idxmap = 0 as *const *mut idxmap as *mut *mut idxmap;
+static mut idxmap: *mut *mut idxmap = std::ptr::null_mut();
 /* treat as *idxmap[16] */
 unsafe extern "C" fn find_by_index(mut idx: libc::c_int) -> *mut idxmap {
   let mut im: *mut idxmap = std::ptr::null_mut();
@@ -272,7 +222,7 @@ pub unsafe extern "C" fn ll_remember_index(
     return -1i32;
   }
   //memset(tb, 0, sizeof(tb)); - parse_rtattr does this
-  parse_rtattr(
+  crate::networking::libiproute::libnetlink::parse_rtattr(
     tb.as_mut_ptr(),
     __IFLA_MAX as libc::c_int - 1i32,
     (ifi as *mut libc::c_char).offset(
@@ -299,7 +249,7 @@ pub unsafe extern "C" fn ll_remember_index(
     return 0;
   }
   if idxmap.is_null() {
-    idxmap = xzalloc(
+    idxmap = crate::libbb::xfuncs_printf::xzalloc(
       (::std::mem::size_of::<*mut idxmap>() as libc::c_ulong).wrapping_mul(16i32 as libc::c_ulong),
     ) as *mut *mut idxmap
   }
@@ -385,7 +335,7 @@ unsafe extern "C" fn ll_idx_n2a(mut idx: libc::c_int) -> *const libc::c_char
   }
   //snprintf(buf, 16, "if%d", idx);
   //return buf;
-  return auto_string(xasprintf(
+  return crate::libbb::auto_string::auto_string(crate::libbb::xfuncs_printf::xasprintf(
     b"if%d\x00" as *const u8 as *const libc::c_char,
     idx,
   ));
@@ -416,7 +366,7 @@ pub unsafe extern "C" fn xll_name_to_index(mut name: *const libc::c_char) -> lib
   ret = if_nametoindex(name) as libc::c_int;
   /* out:*/
   if ret <= 0 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"can\'t find device \'%s\'\x00" as *const u8 as *const libc::c_char,
       name,
     );
@@ -425,8 +375,12 @@ pub unsafe extern "C" fn xll_name_to_index(mut name: *const libc::c_char) -> lib
 }
 #[no_mangle]
 pub unsafe extern "C" fn ll_init_map(mut rth: *mut rtnl_handle) -> libc::c_int {
-  xrtnl_wilddump_request(rth, 0, RTM_GETLINK as libc::c_int);
-  xrtnl_dump_filter(
+  crate::networking::libiproute::libnetlink::xrtnl_wilddump_request(
+    rth,
+    0,
+    RTM_GETLINK as libc::c_int,
+  );
+  crate::networking::libiproute::libnetlink::xrtnl_dump_filter(
     rth,
     Some(
       ll_remember_index

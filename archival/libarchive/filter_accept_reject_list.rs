@@ -1,11 +1,5 @@
 use crate::libbb::llist::llist_t;
-
 use libc;
-extern "C" {
-
-  #[no_mangle]
-  fn find_list_entry2(list: *const llist_t, filename: *const libc::c_char) -> *const llist_t;
-}
 
 use crate::archival::libarchive::bb_archive::archive_handle_t;
 /*
@@ -25,13 +19,15 @@ pub unsafe extern "C" fn filter_accept_reject_list(
   let mut accept_entry: *const llist_t = std::ptr::null();
   key = (*(*archive_handle).file_header).name;
   /* If the key is in a reject list fail */
-  reject_entry = find_list_entry2((*archive_handle).reject, key);
+  reject_entry =
+    crate::archival::libarchive::find_list_entry::find_list_entry2((*archive_handle).reject, key);
   if !reject_entry.is_null() {
     return 1i32 as libc::c_char;
   }
   /* Fail if an accept list was specified and the key wasnt in there */
   if !(*archive_handle).accept.is_null() {
-    accept_entry = find_list_entry2((*archive_handle).accept, key);
+    accept_entry =
+      crate::archival::libarchive::find_list_entry::find_list_entry2((*archive_handle).accept, key);
     if accept_entry.is_null() {
       return 1i32 as libc::c_char;
     }

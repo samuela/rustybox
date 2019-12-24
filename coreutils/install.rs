@@ -17,53 +17,6 @@ extern "C" {
   #[no_mangle]
   fn dirname(__path: *mut libc::c_char) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn copy_file(
-    source: *const libc::c_char,
-    dest: *const libc::c_char,
-    flags: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
-  #[no_mangle]
-  fn xuname2uid(name: *const libc::c_char) -> libc::c_long;
-  #[no_mangle]
-  fn xgroup2gid(name: *const libc::c_char) -> libc::c_long;
-  #[no_mangle]
-  fn get_ug_id(
-    s: *const libc::c_char,
-    xname2id: Option<unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long>,
-  ) -> libc::c_ulong;
-  #[no_mangle]
-  fn spawn_and_wait(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_parse_mode(s: *const libc::c_char, cur_mode: libc::c_uint) -> libc::c_int;
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_make_directory(
-    path: *mut libc::c_char,
-    mode: libc::c_long,
-    flags: libc::c_int,
-  ) -> libc::c_int;
 }
 
 pub type C2RustUnnamed = libc::c_int;
@@ -161,7 +114,7 @@ pub unsafe extern "C" fn install_main(
   let mut isdir: libc::c_int = 0;
   /* -c exists for backwards compatibility, it's needed */
   /* -b is ignored ("make a backup of each existing destination file") */
-  opts = getopt32long(
+  opts = crate::libbb::getopt32::getopt32long(
     argv,
     b"^cvbDdpsg:m:o:t:\x00t--d:d--t:s--d:d--s\x00" as *const u8 as *const libc::c_char,
     install_longopts.as_ptr(),
@@ -183,20 +136,26 @@ pub unsafe extern "C" fn install_main(
   } /* GNU coreutils 6.10 compat */
   mode = 0o755i32 as mode_t;
   if opts & OPT_MODE as libc::c_int != 0 {
-    mode = bb_parse_mode(mode_str, mode) as mode_t
+    mode = crate::libbb::parse_mode::bb_parse_mode(mode_str, mode) as mode_t
   }
   uid = if opts & OPT_OWNER as libc::c_int != 0 {
-    get_ug_id(
+    crate::libbb::bb_pwd::get_ug_id(
       uid_str,
-      Some(xuname2uid as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long),
+      Some(
+        crate::libbb::bb_pwd::xuname2uid
+          as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long,
+      ),
     )
   } else {
     getuid() as libc::c_ulong
   } as uid_t;
   gid = if opts & OPT_GROUP as libc::c_int != 0 {
-    get_ug_id(
+    crate::libbb::bb_pwd::get_ug_id(
       gid_str,
-      Some(xgroup2gid as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long),
+      Some(
+        crate::libbb::bb_pwd::xgroup2gid
+          as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long,
+      ),
     )
   } else {
     getgid() as libc::c_ulong
@@ -217,7 +176,7 @@ pub unsafe extern "C" fn install_main(
     }
   }
   if argc < 1i32 {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   loop {
     let fresh1 = argv;
@@ -232,7 +191,12 @@ pub unsafe extern "C" fn install_main(
       /* GNU coreutils 6.9 does not set uid:gid
        * on intermediate created directories
        * (only on last one) */
-      if bb_make_directory(dest, 0o755i32 as libc::c_long, mkdir_flags) != 0 {
+      if crate::libbb::make_directory::bb_make_directory(
+        dest,
+        0o755i32 as libc::c_long,
+        mkdir_flags,
+      ) != 0
+      {
         ret = 1i32;
         current_block = 11038358249373066665;
       } else {
@@ -241,12 +205,12 @@ pub unsafe extern "C" fn install_main(
     } else {
       dest = last;
       if opts & OPT_MKDIR_LEADING as libc::c_int != 0 {
-        let mut ddir: *mut libc::c_char = xstrdup(dest);
+        let mut ddir: *mut libc::c_char = crate::libbb::xfuncs_printf::xstrdup(dest);
         /*
          * -D -t DIR1/DIR2/F3 FILE: create DIR1/DIR2/F3, copy FILE there
          * -D FILE DIR1/DIR2/F3: create DIR1/DIR2, copy FILE there as F3
          */
-        bb_make_directory(
+        crate::libbb::make_directory::bb_make_directory(
           if opts & OPT_TARGET as libc::c_int != 0 {
             ddir
           } else {
@@ -261,9 +225,12 @@ pub unsafe extern "C" fn install_main(
         free(ddir as *mut libc::c_void);
       }
       if isdir != 0 {
-        dest = concat_path_file(last, bb_basename(arg))
+        dest = crate::libbb::concat_path_file::concat_path_file(
+          last,
+          crate::libbb::get_last_path_component::bb_basename(arg),
+        )
       }
-      if copy_file(arg, dest, copy_flags) != 0 {
+      if crate::libbb::copy_file::copy_file(arg, dest, copy_flags) != 0 {
         /* copy is not made */
         ret = 1i32; /* -p --preserve-dates */
         current_block = 11038358249373066665;
@@ -274,8 +241,10 @@ pub unsafe extern "C" fn install_main(
           args[1] = b"-p\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
           args[2] = dest;
           args[3] = std::ptr::null_mut::<libc::c_char>();
-          if spawn_and_wait(args.as_mut_ptr()) != 0 {
-            bb_simple_perror_msg(b"strip\x00" as *const u8 as *const libc::c_char);
+          if crate::libbb::vfork_daemon_rexec::spawn_and_wait(args.as_mut_ptr()) != 0 {
+            crate::libbb::perror_msg::bb_simple_perror_msg(
+              b"strip\x00" as *const u8 as *const libc::c_char,
+            );
             ret = 1i32
           }
         }
@@ -287,7 +256,7 @@ pub unsafe extern "C" fn install_main(
         /* Set the file mode (always, not only with -m).
          * GNU coreutils 6.10 is not affected by umask. */
         if chmod(dest, mode) == -1i32 {
-          bb_perror_msg(
+          crate::libbb::perror_msg::bb_perror_msg(
             b"can\'t change %s of %s\x00" as *const u8 as *const libc::c_char,
             b"permissions\x00" as *const u8 as *const libc::c_char,
             dest,
@@ -298,7 +267,7 @@ pub unsafe extern "C" fn install_main(
         if opts & (OPT_OWNER as libc::c_int | OPT_GROUP as libc::c_int) != 0
           && lchown(dest, uid, gid) == -1i32
         {
-          bb_perror_msg(
+          crate::libbb::perror_msg::bb_perror_msg(
             b"can\'t change %s of %s\x00" as *const u8 as *const libc::c_char,
             b"ownership\x00" as *const u8 as *const libc::c_char,
             dest,

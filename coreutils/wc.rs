@@ -12,16 +12,7 @@ extern "C" {
   fn ferror_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn fclose_if_not_stdin(file: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
+
   #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
 }
@@ -139,7 +130,8 @@ pub unsafe extern "C" fn wc_main(
   let mut num_files: libc::c_int = 0;
   let mut status: smallint = 0 as smallint;
   let mut print_type: libc::c_uint = 0;
-  print_type = getopt32(argv, b"lwmcL\x00" as *const u8 as *const libc::c_char);
+  print_type =
+    crate::libbb::getopt32::getopt32(argv, b"lwmcL\x00" as *const u8 as *const libc::c_char);
   if print_type == 0 as libc::c_uint {
     print_type = (1i32 << WC_LINES as libc::c_int
       | 1i32 << WC_WORDS as libc::c_int
@@ -176,7 +168,7 @@ pub unsafe extern "C" fn wc_main(
       linepos = 0;
       in_word = 0;
       num_files += 1;
-      fp = fopen_or_warn_stdin(arg);
+      fp = crate::libbb::wfopen_input::fopen_or_warn_stdin(arg);
       if fp.is_null() {
         status = 1i32 as smallint;
         continue;
@@ -195,7 +187,7 @@ pub unsafe extern "C" fn wc_main(
           c = getc_unlocked(fp);
           if c == -1i32 {
             if ferror_unlocked(fp) != 0 {
-              bb_simple_perror_msg(arg);
+              crate::libbb::perror_msg::bb_simple_perror_msg(arg);
               status = 1i32 as smallint
             }
             current_block_46 = 4254989650113872746;
@@ -258,7 +250,7 @@ pub unsafe extern "C" fn wc_main(
             break;
           }
         }
-        fclose_if_not_stdin(fp);
+        crate::libbb::fclose_nonstdin::fclose_if_not_stdin(fp);
         if totals[WC_LENGTH as libc::c_int as usize] < counts[WC_LENGTH as libc::c_int as usize] {
           totals[WC_LENGTH as libc::c_int as usize] = counts[WC_LENGTH as libc::c_int as usize]
         }
@@ -297,5 +289,5 @@ pub unsafe extern "C" fn wc_main(
     }
     printf(fname_fmt, arg);
   }
-  fflush_stdout_and_exit(status as libc::c_int);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(status as libc::c_int);
 }

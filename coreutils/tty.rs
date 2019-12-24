@@ -5,15 +5,8 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
   static mut xfunc_error_retval: u8;
-  #[no_mangle]
-  fn bb_warn_ignoring_args(arg: *mut libc::c_char);
-  #[no_mangle]
-  fn xmalloc_ttyname(fd: libc::c_int) -> *mut libc::c_char;
+
 }
 
 /*
@@ -53,12 +46,13 @@ pub unsafe extern "C" fn tty_main(
   let mut silent: libc::c_int = 0; /* SUSv3 requires > 1 for error. */
   let mut retval: libc::c_int = 0;
   xfunc_error_retval = 2i32 as u8;
-  silent = getopt32(argv, b"s\x00" as *const u8 as *const libc::c_char) as libc::c_int;
+  silent = crate::libbb::getopt32::getopt32(argv, b"s\x00" as *const u8 as *const libc::c_char)
+    as libc::c_int;
   argv = argv.offset(optind as isize);
   /* gnu tty outputs a warning that it is ignoring all args. */
-  bb_warn_ignoring_args(*argv.offset(0));
+  crate::libbb::warn_ignoring_args::bb_warn_ignoring_args(*argv.offset(0));
   retval = 0;
-  s = xmalloc_ttyname(0i32);
+  s = crate::libbb::xfuncs_printf::xmalloc_ttyname(0i32);
   if s.is_null() {
     /* According to SUSv3, ttyname can fail with EBADF or ENOTTY.
      * We know the file descriptor is good, so failure means not a tty. */
@@ -68,5 +62,5 @@ pub unsafe extern "C" fn tty_main(
   if silent == 0 {
     puts(s);
   }
-  fflush_stdout_and_exit(retval);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(retval);
 }

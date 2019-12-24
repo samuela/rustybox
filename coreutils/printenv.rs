@@ -6,8 +6,6 @@ extern "C" {
   #[no_mangle]
   static mut environ: *mut *mut libc::c_char;
 
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
 }
 
 /*
@@ -68,5 +66,5 @@ pub unsafe extern "C" fn printenv_main(
       }
     }
   }
-  fflush_stdout_and_exit(exit_code);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(exit_code);
 }

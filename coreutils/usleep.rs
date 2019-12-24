@@ -1,10 +1,7 @@
 use libc;
 use libc::useconds_t;
 extern "C" {
-  #[no_mangle]
-  fn xatou(str: *const libc::c_char) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
+
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
 }
@@ -38,7 +35,7 @@ pub unsafe extern "C" fn usleep_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   if (*argv.offset(1)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* Safe wrt NOFORK? (noforks are not allowed to run for
    * a long time). Try "usleep 99999999" + ^C + "echo $?"
@@ -47,6 +44,6 @@ pub unsafe extern "C" fn usleep_main(
    * which returns early on any signal (even caught one),
    * and uclibc does not loop back on EINTR.
    */
-  usleep(xatou(*argv.offset(1)));
+  usleep(crate::libbb::xatonum::xatou(*argv.offset(1)));
   return 0;
 }

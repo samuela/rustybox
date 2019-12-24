@@ -1,7 +1,5 @@
-use crate::librb::size_t;
-use crate::librb::smallint;
-
 use crate::libbb::appletlib::applet_name;
+use crate::librb::smallint;
 use libc;
 use libc::access;
 use libc::kill;
@@ -21,20 +19,6 @@ extern "C" {
 
   #[no_mangle]
   fn updwtmpx(__wtmpx_file: *const libc::c_char, __utmpx: *const utmpx);
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_perror_nomsg_and_die() -> !;
-  #[no_mangle]
-  fn find_pid_by_name(procName: *const libc::c_char) -> *mut pid_t;
 
   #[no_mangle]
   static bb_path_wtmp_file: [libc::c_char; 0];
@@ -44,21 +28,23 @@ extern "C" {
   fn uname(__name: *mut utsname) -> libc::c_int;
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __exit_status {
   pub e_termination: libc::c_short,
   pub e_exit: libc::c_short,
 }
 use libc::utmpx;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed {
   pub tv_sec: i32,
   pub tv_usec: i32,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct utsname {
   pub sysname: [libc::c_char; 65],
   pub nodename: [libc::c_char; 65],
@@ -189,7 +175,7 @@ unsafe extern "C" fn write_wtmp() {
   utmp.ut_line[0] = '~' as i32 as libc::c_char;
   utmp.ut_line[1] = '~' as i32 as libc::c_char;
   uname(&mut uts);
-  safe_strncpy(
+  crate::libbb::safe_strncpy::safe_strncpy(
     utmp.ut_host.as_mut_ptr(),
     uts.release.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong,
@@ -260,7 +246,7 @@ pub unsafe extern "C" fn halt_main(
    * in order to not break scripts.
    * -i (shut down network interfaces) is ignored.
    */
-  flags = getopt32(
+  flags = crate::libbb::getopt32::getopt32(
     argv,
     b"d:+nfwi\x00" as *const u8 as *const libc::c_char,
     &mut delay as *mut libc::c_int,
@@ -283,8 +269,9 @@ pub unsafe extern "C" fn halt_main(
     // pity original author didn't comment on it...
     /* talk to linuxrc */
     /* bbox init/linuxrc assumed */
-    let mut pidlist: *mut pid_t =
-      find_pid_by_name(b"linuxrc\x00" as *const u8 as *const libc::c_char);
+    let mut pidlist: *mut pid_t = crate::libbb::find_pid_by_name::find_pid_by_name(
+      b"linuxrc\x00" as *const u8 as *const libc::c_char,
+    );
     if *pidlist.offset(0) > 0 {
       rc = kill(*pidlist.offset(0), signals[which as usize] as libc::c_int)
     }
@@ -311,7 +298,7 @@ pub unsafe extern "C" fn halt_main(
           },
           0 as *mut libc::c_void as *mut libc::c_char,
         );
-        bb_perror_msg_and_die(
+        crate::libbb::perror_msg::bb_perror_msg_and_die(
           b"can\'t execute \'%s\'\x00" as *const u8 as *const libc::c_char,
           b"\x00" as *const u8 as *const libc::c_char,
         );
@@ -321,7 +308,7 @@ pub unsafe extern "C" fn halt_main(
     rc = reboot(magic[which as usize])
   }
   if rc != 0 {
-    bb_perror_nomsg_and_die();
+    crate::libbb::perror_nomsg_and_die::bb_perror_nomsg_and_die();
   }
   return rc;
 }

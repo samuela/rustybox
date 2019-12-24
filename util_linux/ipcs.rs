@@ -17,34 +17,20 @@ extern "C" {
 
   #[no_mangle]
   fn ctime(__timer: *const time_t) -> *mut libc::c_char;
-  /* Search for an entry with a matching user ID.  */
-  #[no_mangle]
-  fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;
-  /* Search for an entry with a matching group ID.  */
+/* Search for an entry with a matching user ID.  */
 
-  /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
-   * But potentially slow, don't use in one-billion-times loops */
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn xatoi(str: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+/* Search for an entry with a matching group ID.  */
+
+/* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
+ * But potentially slow, don't use in one-billion-times loops */
+
 }
 
 pub type __key_t = libc::c_int;
 pub type __syscall_ulong_t = libc::c_ulong;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ipc_perm {
   pub __key: __key_t,
   pub uid: uid_t,
@@ -58,8 +44,9 @@ pub struct ipc_perm {
   pub __glibc_reserved1: __syscall_ulong_t,
   pub __glibc_reserved2: __syscall_ulong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct semid_ds {
   pub sem_perm: ipc_perm,
   pub sem_otime: time_t,
@@ -70,8 +57,9 @@ pub struct semid_ds {
   pub __glibc_reserved3: __syscall_ulong_t,
   pub __glibc_reserved4: __syscall_ulong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct seminfo {
   pub semmap: libc::c_int,
   pub semmni: libc::c_int,
@@ -86,8 +74,9 @@ pub struct seminfo {
 }
 pub type msgqnum_t = __syscall_ulong_t;
 pub type msglen_t = __syscall_ulong_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct msqid_ds {
   pub msg_perm: ipc_perm,
   pub msg_stime: time_t,
@@ -101,8 +90,9 @@ pub struct msqid_ds {
   pub __glibc_reserved4: __syscall_ulong_t,
   pub __glibc_reserved5: __syscall_ulong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct msginfo {
   pub msgpool: libc::c_int,
   pub msgmap: libc::c_int,
@@ -114,8 +104,9 @@ pub struct msginfo {
   pub msgseg: libc::c_ushort,
 }
 pub type shmatt_t = __syscall_ulong_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct shmid_ds {
   pub shm_perm: ipc_perm,
   pub shm_segsz: size_t,
@@ -128,8 +119,9 @@ pub struct shmid_ds {
   pub __glibc_reserved4: __syscall_ulong_t,
   pub __glibc_reserved5: __syscall_ulong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct shminfo {
   pub shmmax: __syscall_ulong_t,
   pub shmmin: __syscall_ulong_t,
@@ -141,8 +133,9 @@ pub struct shminfo {
   pub __glibc_reserved3: __syscall_ulong_t,
   pub __glibc_reserved4: __syscall_ulong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct shm_info {
   pub used_ids: libc::c_int,
   pub shm_tot: __syscall_ulong_t,
@@ -183,8 +176,9 @@ but inside #ifdef __KERNEL__ ... #endif */
 X/OPEN tells us to define it ourselves, but until recently
 Linux include files would also define it. */
 /* according to X/OPEN we have to define it ourselves */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union semun {
   pub val: libc::c_int,
   pub buf: *mut semid_ds,
@@ -199,7 +193,7 @@ unsafe extern "C" fn print_perms(mut id: libc::c_int, mut ipcp: *mut ipc_perm) {
     id,
     (*ipcp).mode as libc::c_int & 0o777i32,
   );
-  pw = bb_internal_getpwuid((*ipcp).cuid);
+  pw = crate::libpwdgrp::pwd_grp::bb_internal_getpwuid((*ipcp).cuid);
   if !pw.is_null() {
     printf(
       b" %-10s\x00" as *const u8 as *const libc::c_char,
@@ -223,7 +217,7 @@ unsafe extern "C" fn print_perms(mut id: libc::c_int, mut ipcp: *mut ipc_perm) {
       (*ipcp).cgid,
     );
   }
-  pw = bb_internal_getpwuid((*ipcp).uid);
+  pw = crate::libpwdgrp::pwd_grp::bb_internal_getpwuid((*ipcp).uid);
   if !pw.is_null() {
     printf(
       b" %-10s\x00" as *const u8 as *const libc::c_char,
@@ -408,7 +402,7 @@ unsafe extern "C" fn do_shm(mut format: libc::c_int) {
       if format == 3i32 {
         print_perms(shmid, ipcp);
       } else {
-        pw = bb_internal_getpwuid((*ipcp).uid);
+        pw = crate::libpwdgrp::pwd_grp::bb_internal_getpwuid((*ipcp).uid);
         match format {
           4 => {
             if !pw.is_null() {
@@ -642,7 +636,7 @@ unsafe extern "C" fn do_sem(mut format: libc::c_int) {
       if format == 3i32 {
         print_perms(semid, ipcp);
       } else {
-        pw = bb_internal_getpwuid((*ipcp).uid);
+        pw = crate::libpwdgrp::pwd_grp::bb_internal_getpwuid((*ipcp).uid);
         match format {
           4 => {
             if !pw.is_null() {
@@ -859,7 +853,7 @@ unsafe extern "C" fn do_msg(mut format: libc::c_int) {
       if format == 3i32 {
         print_perms(msqid, ipcp);
       } else {
-        pw = bb_internal_getpwuid((*ipcp).uid);
+        pw = crate::libpwdgrp::pwd_grp::bb_internal_getpwuid((*ipcp).uid);
         match format {
           4 => {
             if !pw.is_null() {
@@ -978,7 +972,9 @@ unsafe extern "C" fn print_shm(mut shmid: libc::c_int) {
   };
   let mut ipcp: *mut ipc_perm = &mut shmds.shm_perm;
   if shmctl(shmid, 2i32, &mut shmds) == -1i32 {
-    bb_simple_perror_msg(b"shmctl\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg(
+      b"shmctl\x00" as *const u8 as *const libc::c_char,
+    );
     return;
   }
   printf(b"\nShared memory Segment shmid=%d\nuid=%d\tgid=%d\tcuid=%d\tcgid=%d\nmode=%#o\taccess_perms=%#o\nbytes=%ld\tlpid=%d\tcpid=%d\tnattch=%ld\n\x00"
@@ -1037,7 +1033,9 @@ unsafe extern "C" fn print_msg(mut msqid: libc::c_int) {
   };
   let mut ipcp: *mut ipc_perm = &mut buf.msg_perm;
   if msgctl(msqid, 2i32, &mut buf) == -1i32 {
-    bb_simple_perror_msg(b"msgctl\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg(
+      b"msgctl\x00" as *const u8 as *const libc::c_char,
+    );
     return;
   }
   printf(b"\nMessage Queue msqid=%d\nuid=%d\tgid=%d\tcuid=%d\tcgid=%d\tmode=%#o\ncbytes=%ld\tqbytes=%ld\tqnum=%ld\tlspid=%d\tlrpid=%d\n\x00"
@@ -1099,7 +1097,9 @@ unsafe extern "C" fn print_sem(mut semid: libc::c_int) {
   let mut i: libc::c_uint = 0;
   arg.buf = &mut semds;
   if semctl(semid, 0, 2i32, arg) != 0 {
-    bb_simple_perror_msg(b"semctl\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg(
+      b"semctl\x00" as *const u8 as *const libc::c_char,
+    );
     return;
   }
   printf(b"\nSemaphore Array semid=%d\nuid=%d\t gid=%d\t cuid=%d\t cgid=%d\nmode=%#o, access_perms=%#o\nnsems = %ld\notime = %-26.24s\n\x00"
@@ -1132,7 +1132,9 @@ unsafe extern "C" fn print_sem(mut semid: libc::c_int) {
     zcnt = semctl(semid, i as libc::c_int, 15i32, arg);
     pid = semctl(semid, i as libc::c_int, 11i32, arg);
     if val < 0 || ncnt < 0 || zcnt < 0 || pid < 0 {
-      bb_simple_perror_msg_and_die(b"semctl\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"semctl\x00" as *const u8 as *const libc::c_char,
+      );
     }
     printf(
       b"%-10u %-10d %-10d %-10d %-10d\n\x00" as *const u8 as *const libc::c_char,
@@ -1144,7 +1146,7 @@ unsafe extern "C" fn print_sem(mut semid: libc::c_int) {
     );
     i = i.wrapping_add(1)
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
 }
 //usage:#define ipcs_trivial_usage
 //usage:       "[[-smq] -i SHMID] | [[-asmq] [-tcplu]]"
@@ -1169,7 +1171,7 @@ pub unsafe extern "C" fn ipcs_main(
   let mut format: libc::c_int = 0; // -t
   let mut opt: libc::c_uint = 0; // -c
   let mut opt_i: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); // -p
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"i:aqsmtcplu\x00" as *const u8 as *const libc::c_char,
     &mut opt_i as *mut *mut libc::c_char,
@@ -1192,20 +1194,20 @@ pub unsafe extern "C" fn ipcs_main(
   if opt & (1i32 << 0) as libc::c_uint != 0 {
     // -i
     let mut id: libc::c_int = 0;
-    id = xatoi(opt_i);
+    id = crate::libbb::xatonum::xatoi(opt_i);
     if opt & (1i32 << 4i32) as libc::c_uint != 0 {
       print_shm(id);
-      fflush_stdout_and_exit(0i32);
+      crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
     }
     if opt & (1i32 << 3i32) as libc::c_uint != 0 {
       print_sem(id);
-      fflush_stdout_and_exit(0i32);
+      crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
     }
     if opt & (1i32 << 2i32) as libc::c_uint != 0 {
       print_msg(id);
-      fflush_stdout_and_exit(0i32);
+      crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
     }
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   if opt & (1i32 << 1i32) as libc::c_uint != 0
     || opt & (1i32 << 2i32 | 1i32 << 3i32 | 1i32 << 4i32) as libc::c_uint == 0
@@ -1213,18 +1215,18 @@ pub unsafe extern "C" fn ipcs_main(
     // none of -q,-s,-m == all
     opt |= (1i32 << 2i32 | 1i32 << 3i32 | 1i32 << 4i32) as libc::c_uint
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   if opt & (1i32 << 2i32) as libc::c_uint != 0 {
     do_msg(format);
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   }
   if opt & (1i32 << 4i32) as libc::c_uint != 0 {
     do_shm(format);
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   }
   if opt & (1i32 << 3i32) as libc::c_uint != 0 {
     do_sem(format);
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   }
-  fflush_stdout_and_exit(0i32);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
 }

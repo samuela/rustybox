@@ -1,11 +1,16 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::in6_addr;
+use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 use libc::fclose;
 use libc::free;
 use libc::printf;
+use libc::sa_family_t;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::sscanf;
 use libc::strcpy;
 extern "C" {
@@ -49,75 +54,15 @@ extern "C" {
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
 
-  #[no_mangle]
-  fn chomp(s: *mut libc::c_char);
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn recursive_action(
-    fileName: *const libc::c_char,
-    flags: libc::c_uint,
-    fileAction: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    dirAction: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    userData: *mut libc::c_void,
-    depth: libc::c_uint,
-  ) -> libc::c_int;
   /* Simpler version: does not special case "/" string */
-  #[no_mangle]
-  fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_readlink(path: *const libc::c_char) -> *mut libc::c_char;
+
   /* This one doesn't append :PORTNUM */
-  #[no_mangle]
-  fn xmalloc_sockaddr2host_noport(sa: *const sockaddr) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_sockaddr2dotted_noport(sa: *const sockaddr) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
+
   /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
    * But potentially slow, don't use in one-billion-times loops */
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fputc_printable(ch: libc::c_int, file: *mut FILE);
-  #[no_mangle]
-  fn open_read_close(
-    filename: *const libc::c_char,
-    buf: *mut libc::c_void,
-    maxsz: size_t,
-  ) -> ssize_t;
+
   /* Reads up to (and including) TERMINATING_STRING: */
-  #[no_mangle]
-  fn xmalloc_fgets_str(
-    file: *mut FILE,
-    terminating_string: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn itoa(n: libc::c_int) -> *mut libc::c_char;
+
   /* Non-aborting kind of convertors: bb_strto[u][l]l */
   /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
    * errno = EINVAL if value was not '\0' terminated, but otherwise ok
@@ -129,32 +74,16 @@ extern "C" {
    * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
    *    return value is all-ones in this case.
    */
-  #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
+
   /* { "-", NULL } */
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_displayroutes(noresolve: libc::c_int, netstatfmt: libc::c_int);
+
   /* Concatenate path and filename to new allocated buffer.
    * Add "/" only as needed (no duplicate "//" are produced).
    * If path is NULL, it is assumed to be "/".
    * filename should not be NULL. */
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
+
   /* '*const' ptr makes gcc optimize code much better.
    * Magic prevents ptr_to_globals from going into rodata.
    * If you want to assign a value, use SET_PTR_TO_GLOBALS(x) */
@@ -214,9 +143,8 @@ use crate::librb::smallint;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
-use crate::librb::size_t;
-use libc::ssize_t;
-pub type socklen_t = __socklen_t;
+
+use crate::librb::socklen_t;
 
 use libc::stat;
 pub type __socket_type = libc::c_uint;
@@ -229,46 +157,20 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct servent {
   pub s_name: *mut libc::c_char,
   pub s_aliases: *mut *mut libc::c_char,
@@ -288,8 +190,9 @@ pub const ACTION_RECURSE: C2RustUnnamed_0 = 1;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub flags: smalluint,
   pub prg_cache_loaded: smallint,
@@ -297,8 +200,9 @@ pub struct globals {
   pub progname_banner: *const libc::c_char,
   pub addr_width: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct prg_node {
   pub next: *mut prg_node,
   pub inode: libc::c_long,
@@ -338,8 +242,9 @@ pub const SS_CONNECTED: C2RustUnnamed_3 = 3;
 pub const SS_CONNECTING: C2RustUnnamed_3 = 2;
 pub const SS_UNCONNECTED: C2RustUnnamed_3 = 1;
 pub const SS_FREE: C2RustUnnamed_3 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct inet_params {
   pub local_port: libc::c_int,
   pub rem_port: libc::c_int,
@@ -351,8 +256,9 @@ pub struct inet_params {
   pub txq: libc::c_ulong,
   pub inode: libc::c_ulong,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_4 {
   pub sa: sockaddr,
   pub sin: sockaddr_in,
@@ -364,7 +270,7 @@ unsafe extern "C" fn bb_strtoul(
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_ulong {
-  return bb_strtoull(arg, endp, base) as libc::c_ulong;
+  return crate::libbb::bb_strtonum::bb_strtoull(arg, endp, base) as libc::c_ulong;
 }
 #[inline(always)]
 unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
@@ -403,10 +309,11 @@ unsafe extern "C" fn prg_cache_add(mut inode: libc::c_long, mut name: *mut libc:
     }
     pnp = &mut (*pn).next
   }
-  *pnp = xzalloc(::std::mem::size_of::<prg_node>() as libc::c_ulong) as *mut prg_node;
+  *pnp = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<prg_node>() as libc::c_ulong)
+    as *mut prg_node;
   pn = *pnp;
   (*pn).inode = inode;
-  safe_strncpy((*pn).name.as_mut_ptr(), name, 20i32 as size_t);
+  crate::libbb::safe_strncpy::safe_strncpy((*pn).name.as_mut_ptr(), name, 20i32 as size_t);
 }
 unsafe extern "C" fn prg_cache_get(mut inode: libc::c_long) -> *const libc::c_char {
   let mut hi: libc::c_uint = (inode as libc::c_uint).wrapping_rem(211i32 as libc::c_uint);
@@ -422,7 +329,12 @@ unsafe extern "C" fn prg_cache_get(mut inode: libc::c_long) -> *const libc::c_ch
 }
 unsafe extern "C" fn extract_socket_inode(mut lname: *const libc::c_char) -> libc::c_long {
   let mut inode: libc::c_long = -1i32 as libc::c_long;
-  if !is_prefixed_with(lname, b"socket:[\x00" as *const u8 as *const libc::c_char).is_null() {
+  if !crate::libbb::compare_string_array::is_prefixed_with(
+    lname,
+    b"socket:[\x00" as *const u8 as *const libc::c_char,
+  )
+  .is_null()
+  {
     /* "socket:[12345]", extract the "12345" as inode */
     inode = bb_strtoul(
       lname
@@ -434,7 +346,12 @@ unsafe extern "C" fn extract_socket_inode(mut lname: *const libc::c_char) -> lib
     if *lname as libc::c_int != ']' as i32 {
       inode = -1i32 as libc::c_long
     }
-  } else if !is_prefixed_with(lname, b"[0000]:\x00" as *const u8 as *const libc::c_char).is_null() {
+  } else if !crate::libbb::compare_string_array::is_prefixed_with(
+    lname,
+    b"[0000]:\x00" as *const u8 as *const libc::c_char,
+  )
+  .is_null()
+  {
     /* "[0000]:12345", extract the "12345" as inode */
     inode = bb_strtoul(
       lname
@@ -459,7 +376,7 @@ unsafe extern "C" fn add_to_prg_cache_if_socket(
 ) -> libc::c_int {
   let mut linkname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut inode: libc::c_long = 0;
-  linkname = xmalloc_readlink(fileName);
+  linkname = crate::libbb::xreadlink::xmalloc_readlink(fileName);
   if !linkname.is_null() {
     inode = extract_socket_inode(linkname);
     free(linkname as *mut libc::c_void);
@@ -498,7 +415,7 @@ unsafe extern "C" fn dir_act(
     b"%s/cmdline\x00" as *const u8 as *const libc::c_char,
     fileName,
   );
-  n = open_read_close(
+  n = crate::libbb::read::open_read_close(
     proc_pid_fname.as_mut_ptr(),
     cmdline_buf.as_mut_ptr() as *mut libc::c_void,
     (::std::mem::size_of::<[libc::c_char; 512]>() as libc::c_ulong)
@@ -516,8 +433,11 @@ unsafe extern "C" fn dir_act(
     ),
     b"fd\x00" as *const u8 as *const libc::c_char,
   ); /* "PID/argv0" */
-  pid_slash_progname = concat_path_file(pid, bb_basename(cmdline_buf.as_mut_ptr())); /* signal permissions error to caller */
-  n = recursive_action(
+  pid_slash_progname = crate::libbb::concat_path_file::concat_path_file(
+    pid,
+    crate::libbb::get_last_path_component::bb_basename(cmdline_buf.as_mut_ptr()),
+  ); /* signal permissions error to caller */
+  n = crate::libbb::recursive_action::recursive_action(
     proc_pid_fname.as_mut_ptr(),
     (ACTION_RECURSE as libc::c_int | ACTION_QUIET as libc::c_int) as libc::c_uint,
     Some(
@@ -543,7 +463,7 @@ unsafe extern "C" fn dir_act(
 unsafe extern "C" fn prg_cache_load() {
   let mut load_ok: libc::c_int = 0;
   (*ptr_to_globals).prg_cache_loaded = 1i32 as smallint;
-  load_ok = recursive_action(
+  load_ok = crate::libbb::recursive_action::recursive_action(
     b"/proc\x00" as *const u8 as *const libc::c_char,
     (ACTION_RECURSE as libc::c_int | ACTION_QUIET as libc::c_int) as libc::c_uint,
     None,
@@ -563,11 +483,11 @@ unsafe extern "C" fn prg_cache_load() {
     return;
   }
   if (*ptr_to_globals).prg_cache_loaded as libc::c_int == 1i32 {
-    bb_simple_error_msg(
+    crate::libbb::verror_msg::bb_simple_error_msg(
       b"can\'t scan /proc - are you root?\x00" as *const u8 as *const libc::c_char,
     );
   } else {
-    bb_simple_error_msg(
+    crate::libbb::verror_msg::bb_simple_error_msg(
       b"showing only processes with your user ID\x00" as *const u8 as *const libc::c_char,
     );
   };
@@ -578,11 +498,7 @@ unsafe extern "C" fn build_ipv6_addr(
   mut localaddr: *mut sockaddr_in6,
 ) {
   let mut addr6: [libc::c_char; 46] = [0; 46];
-  let mut in6: in6_addr = in6_addr {
-    __in6_u: C2RustUnnamed {
-      __u6_addr8: [0; 16],
-    },
-  };
+  let mut in6: in6_addr = std::mem::zeroed();
   sscanf(
     local_addr,
     b"%08X%08X%08X%08X\x00" as *const u8 as *const libc::c_char,
@@ -600,7 +516,7 @@ unsafe extern "C" fn build_ipv6_addr(
   inet_pton(
     10i32,
     addr6.as_mut_ptr(),
-    &mut (*localaddr).sin6_addr as *mut in6_addr as *mut libc::c_void,
+    &mut (*localaddr).sin6_addr as *mut libc::in6_addr as *mut libc::c_void,
   );
   (*localaddr).sin6_family = 10i32 as sa_family_t;
 }
@@ -630,7 +546,7 @@ unsafe extern "C" fn get_sname(
     }
   }
   /* hummm, we may return static buffer here!! */
-  return itoa(
+  return crate::libbb::xfuncs::itoa(
     ({
       let mut __v: libc::c_ushort = 0;
       let mut __x: libc::c_ushort = port as libc::c_ushort;
@@ -642,8 +558,7 @@ unsafe extern "C" fn get_sname(
         let fresh1;
         let fresh2 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2))
-                              : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
       }
       __v
@@ -662,12 +577,12 @@ unsafe extern "C" fn ip_port_str(
    * in IPv6, while "0.0.0.0" is not. */
   host = std::ptr::null_mut::<libc::c_char>();
   if numeric == 0 {
-    host = xmalloc_sockaddr2host_noport(addr)
+    host = crate::libbb::xconnect::xmalloc_sockaddr2host_noport(addr)
   }
   if host.is_null() {
-    host = xmalloc_sockaddr2dotted_noport(addr)
+    host = crate::libbb::xconnect::xmalloc_sockaddr2dotted_noport(addr)
   }
-  host_port = xasprintf(
+  host_port = crate::libbb::xfuncs_printf::xasprintf(
     b"%s:%s\x00" as *const u8 as *const libc::c_char,
     host,
     get_sname(
@@ -681,10 +596,8 @@ unsafe extern "C" fn ip_port_str(
           let fresh3 = &mut __v;
           let fresh4;
           let fresh5 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh4) :
-                                          "0"
-                                          (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                                          : "cc");
+          asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
         }
         __v
@@ -771,7 +684,7 @@ unsafe extern "C" fn print_inet_line(
         prg_cache_get((*param).inode as libc::c_long),
       );
     }
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     free(l as *mut libc::c_void);
     free(r as *mut libc::c_void);
   };
@@ -852,14 +765,10 @@ unsafe extern "C" fn udp_do_one(mut line: *mut libc::c_char) -> libc::c_int {
     7 => state_str = b"\x00" as *const u8 as *const libc::c_char,
     _ => {}
   }
-  have_remaddr = (param.remaddr.sa.sa_family as libc::c_int == 10i32
-    && param.remaddr.sin6.sin6_addr.__in6_u.__u6_addr32[0]
-      | param.remaddr.sin6.sin6_addr.__in6_u.__u6_addr32[1]
-      | param.remaddr.sin6.sin6_addr.__in6_u.__u6_addr32[2]
-      | param.remaddr.sin6.sin6_addr.__in6_u.__u6_addr32[3]
-      != 0
-    || param.remaddr.sa.sa_family as libc::c_int == 2i32
-      && param.remaddr.sin.sin_addr.s_addr != 0 as libc::c_uint) as libc::c_int;
+  have_remaddr = (param.remaddr.sa.sa_family == 10
+    && param.remaddr.sin6.sin6_addr.s6_addr != [0; 16]
+    || param.remaddr.sa.sa_family == 2 && param.remaddr.sin.sin_addr.s_addr != 0)
+    as libc::c_int;
   print_inet_line(
     &mut param,
     state_str,
@@ -870,41 +779,17 @@ unsafe extern "C" fn udp_do_one(mut line: *mut libc::c_char) -> libc::c_int {
 }
 unsafe extern "C" fn raw_do_one(mut line: *mut libc::c_char) -> libc::c_int {
   let mut have_remaddr: libc::c_int = 0;
-  let mut param: inet_params = inet_params {
-    local_port: 0,
-    rem_port: 0,
-    state: 0,
-    uid: 0,
-    localaddr: C2RustUnnamed_4 {
-      sa: sockaddr {
-        sa_family: 0,
-        sa_data: [0; 14],
-      },
-    },
-    remaddr: C2RustUnnamed_4 {
-      sa: sockaddr {
-        sa_family: 0,
-        sa_data: [0; 14],
-      },
-    },
-    rxq: 0,
-    txq: 0,
-    inode: 0,
-  };
+  let mut param: inet_params = std::mem::zeroed();
   if scan_inet_proc_line(&mut param, line) != 0 {
     return 1i32;
   }
   have_remaddr = (param.remaddr.sa.sa_family as libc::c_int == 10i32
-    && param.remaddr.sin6.sin6_addr.__in6_u.__u6_addr32[0]
-      | param.remaddr.sin6.sin6_addr.__in6_u.__u6_addr32[1]
-      | param.remaddr.sin6.sin6_addr.__in6_u.__u6_addr32[2]
-      | param.remaddr.sin6.sin6_addr.__in6_u.__u6_addr32[3]
-      != 0
+    && param.remaddr.sin6.sin6_addr.s6_addr != [0; 16]
     || param.remaddr.sa.sa_family as libc::c_int == 2i32
       && param.remaddr.sin.sin_addr.s_addr != 0 as libc::c_uint) as libc::c_int;
   print_inet_line(
     &mut param,
-    itoa(param.state),
+    crate::libbb::xfuncs::itoa(param.state),
     b"raw\x00" as *const u8 as *const libc::c_char,
     have_remaddr,
   );
@@ -1028,13 +913,13 @@ unsafe extern "C" fn unix_do_one(mut line: *mut libc::c_char) -> libc::c_int {
   }
   /* TODO: currently we stop at first NUL byte. Is it a problem? */
   line = line.offset(path_ofs as isize);
-  chomp(line);
+  crate::libbb::chomp::chomp(line);
   while *line != 0 {
     let fresh6 = line;
     line = line.offset(1);
-    fputc_printable(*fresh6 as libc::c_int, stdout);
+    crate::libbb::printable::fputc_printable(*fresh6 as libc::c_int, stdout);
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   return 0;
 }
 unsafe extern "C" fn do_info(
@@ -1045,7 +930,7 @@ unsafe extern "C" fn do_info(
   let mut procinfo: *mut FILE = std::ptr::null_mut();
   let mut buffer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* _stdin is just to save "r" param */
-  procinfo = fopen_or_warn_stdin(file);
+  procinfo = crate::libbb::wfopen_input::fopen_or_warn_stdin(file);
   if procinfo.is_null() {
     return;
   }
@@ -1053,13 +938,16 @@ unsafe extern "C" fn do_info(
   loop
   /* Why xmalloc_fgets_str? because it doesn't stop on NULs */
   {
-    buffer = xmalloc_fgets_str(procinfo, b"\n\x00" as *const u8 as *const libc::c_char);
+    buffer = crate::libbb::fgets_str::xmalloc_fgets_str(
+      procinfo,
+      b"\n\x00" as *const u8 as *const libc::c_char,
+    );
     if buffer.is_null() {
       break;
     }
     /* line 0 is skipped */
     if lnr != 0 && proc_0.expect("non-null function pointer")(buffer) != 0 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"%s: bogus data on line %d\x00" as *const u8 as *const libc::c_char,
         file,
         lnr + 1i32,
@@ -1078,11 +966,13 @@ pub unsafe extern "C" fn netstat_main(
   let mut opt: libc::c_uint = 0;
   let ref mut fresh7 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh7 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh7 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).flags = (0x1i32 | (0x10i32 | 0x20i32 | 0x40i32 | 0x80i32)) as smalluint;
   /* Option string must match NETSTAT_xxx constants */
-  opt = getopt32(argv, b"laentuwxrWp\x00" as *const u8 as *const libc::c_char);
+  opt =
+    crate::libbb::getopt32::getopt32(argv, b"laentuwxrWp\x00" as *const u8 as *const libc::c_char);
   if opt & OPT_sock_listen as libc::c_int as libc::c_uint != 0 {
     // -l
     (*ptr_to_globals).flags = ((*ptr_to_globals).flags as libc::c_int & !0x1i32) as smalluint; // -a
@@ -1102,7 +992,7 @@ pub unsafe extern "C" fn netstat_main(
     //if (opt & OPT_sock_unix) // -x: NETSTAT_UNIX
   if opt & OPT_route as libc::c_int as libc::c_uint != 0 {
     // -r
-    bb_displayroutes(
+    crate::networking::route::bb_displayroutes(
       (*ptr_to_globals).flags as libc::c_int & 0x4i32,
       (opt & OPT_extended as libc::c_int as libc::c_uint == 0) as libc::c_int,
     );

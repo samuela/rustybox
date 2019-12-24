@@ -6,18 +6,7 @@ use libc::off_t;
 extern "C" {
   #[no_mangle]
   fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-  #[no_mangle]
-  fn xatoull_range(
-    str: *const libc::c_char,
-    l: libc::c_ulonglong,
-    u: libc::c_ulonglong,
-  ) -> libc::c_ulonglong;
+
 }
 /*
  * ascii-to-numbers implementations for busybox
@@ -37,7 +26,8 @@ unsafe extern "C" fn xatoul_range(
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
 ) -> libc::c_ulong {
-  return xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong)
+    as libc::c_ulong;
 }
 
 /*
@@ -225,7 +215,9 @@ pub unsafe extern "C" fn get_volume_size_in_bytes(
       }) as uoff_t)
         .wrapping_div(override_units as libc::c_ulong)
     {
-      bb_simple_error_msg_and_die(b"image size is too big\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"image size is too big\x00" as *const u8 as *const libc::c_char,
+      );
     }
     result =
       (result as libc::c_ulong).wrapping_mul(override_units as libc::c_ulong) as uoff_t as uoff_t;
@@ -234,7 +226,7 @@ pub unsafe extern "C" fn get_volume_size_in_bytes(
     //}
     if lseek(fd, result.wrapping_sub(1i32 as libc::c_ulong) as off64_t, 0) != -1i32 as off_t {
       if extend != 0 {
-        xwrite(
+        crate::libbb::xfuncs_printf::xwrite(
           fd,
           b"\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
           1i32 as size_t,
@@ -245,9 +237,9 @@ pub unsafe extern "C" fn get_volume_size_in_bytes(
     }
   } else {
     /* more portable than BLKGETSIZE[64] */
-    result = xlseek(fd, 0 as off_t, 2i32) as uoff_t
+    result = crate::libbb::xfuncs_printf::xlseek(fd, 0 as off_t, 2i32) as uoff_t
   }
-  xlseek(fd, 0 as off_t, 0);
+  crate::libbb::xfuncs_printf::xlseek(fd, 0 as off_t, 0);
   /* Prevent things like this:
    * $ dd if=/dev/zero of=foo count=1 bs=1024
    * $ mkswap foo
@@ -255,7 +247,9 @@ pub unsafe extern "C" fn get_volume_size_in_bytes(
    *
    * Picked 16k arbitrarily: */
   if result < (16i32 * 1024i32) as libc::c_ulong {
-    bb_simple_error_msg_and_die(b"image is too small\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"image is too small\x00" as *const u8 as *const libc::c_char,
+    );
   }
   return result;
 }

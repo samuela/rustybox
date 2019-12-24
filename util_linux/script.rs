@@ -2,7 +2,6 @@ use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-
 use libc;
 use libc::close;
 use libc::fprintf;
@@ -11,7 +10,6 @@ use libc::pid_t;
 use libc::pollfd;
 use libc::printf;
 use libc::setsid;
-use libc::ssize_t;
 use libc::termios;
 use libc::time;
 use libc::time_t;
@@ -60,56 +58,18 @@ extern "C" {
   /* We can just memorize it once - no multithreading in busybox :) */
 
   /* more than enough for "/dev/ttyXXX" */
-  #[no_mangle]
-  fn xgetpty(line: *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ndelay_on(fd: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn xdup2(_: libc::c_int, _: libc::c_int);
 
   /* Standard handler which just records signo */
   #[no_mangle]
   static mut bb_got_signal: smallint;
 
-  #[no_mangle]
-  fn record_signo(signo: libc::c_int);
-
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf_0: *mut libc::c_void, count: size_t) -> ssize_t;
-
   // NB: will return short write on error, not -1,
   // if some data was written before error occurred
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf_0: *const libc::c_void, count: size_t) -> ssize_t;
-
-  #[no_mangle]
-  fn xfopen_for_write(path: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
-  fn bb_sanitize_stdio();
-
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 
   /* Returns $SHELL, getpwuid(getuid())->pw_shell, or DEFAULT_SHELL.
    * Note that getpwuid result might need xstrdup'ing
    * if there is a possibility of intervening getpwxxx() calls.
    */
-  #[no_mangle]
-  fn get_shell_name() -> *const libc::c_char;
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
@@ -117,8 +77,8 @@ extern "C" {
 
 pub type nfds_t = libc::c_ulong;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct timezone {
   pub tz_minuteswest: libc::c_int,
   pub tz_dsttime: libc::c_int,
@@ -222,7 +182,7 @@ pub unsafe extern "C" fn script_main(
     117, 115, 104, 0, 0, 102, 113, 117, 105, 101, 116, 0, 0, 113, 116, 105, 109, 105, 110, 103, 0,
     2, 116, 0,
   ];
-  opt = getopt32long(
+  opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"^ac:fqt::\x00?1\x00" as *const u8 as *const libc::c_char,
     script_longopts.as_ptr(),
@@ -249,15 +209,15 @@ pub unsafe extern "C" fn script_main(
   }
   timing_fp = stderr;
   if !str_t.is_null() {
-    timing_fp = xfopen_for_write(str_t)
+    timing_fp = crate::libbb::wfopen::xfopen_for_write(str_t)
   }
-  shell = get_shell_name();
+  shell = crate::libbb::get_shell_name::get_shell_name();
   /* Some people run "script ... 0>&-".
    * Our code assumes that STDIN_FILENO != pty.
    * Ensure STDIN_FILENO is not closed:
    */
-  bb_sanitize_stdio();
-  pty = xgetpty(pty_line.as_mut_ptr());
+  crate::libbb::vfork_daemon_rexec::bb_sanitize_stdio();
+  pty = crate::libbb::getpty::xgetpty(pty_line.as_mut_ptr());
   /* get current stdin's tty params */
   attr_ok = tcgetattr(0i32, &mut tt);
   winsz_ok = ioctl(
@@ -274,13 +234,15 @@ pub unsafe extern "C" fn script_main(
    * (output may be produced by grandchildren of child) */
   signal(
     17i32,
-    Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   /* TODO: SIGWINCH? pass window size changes down to slave? */
   child_pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
     if bb__xvfork_pid < 0 {
-      bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"vfork\x00" as *const u8 as *const libc::c_char,
+      );
     }
     bb__xvfork_pid
   };
@@ -297,12 +259,12 @@ pub unsafe extern "C" fn script_main(
     let mut loop_0: libc::c_int = 0;
     let mut oldtime: libc::c_double = time(0 as *mut time_t) as libc::c_double;
     let mut fd_count: smallint = 2i32 as smallint;
-    outfd = xopen(fname, mode);
+    outfd = crate::libbb::xfuncs_printf::xopen(fname, mode);
     pfd[0].fd = pty;
     pfd[0].events = 0x1i32 as libc::c_short;
     pfd[1].fd = 0;
     pfd[1].events = 0x1i32 as libc::c_short;
-    ndelay_on(pty);
+    crate::libbb::xfuncs::ndelay_on(pty);
     loop
     /* ndelay_on(STDIN_FILENO); - NO, stdin can be shared! Pity :( */
     /* copy stdin to pty master input,
@@ -320,7 +282,7 @@ pub unsafe extern "C" fn script_main(
       }
       if pfd[0].revents != 0 {
         *bb_errno = 0;
-        count = safe_read(
+        count = crate::libbb::read::safe_read(
           pty,
           bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
           COMMON_BUFSIZE as libc::c_int as size_t,
@@ -347,12 +309,12 @@ pub unsafe extern "C" fn script_main(
             );
             oldtime = newtime
           }
-          full_write(
+          crate::libbb::full_write::full_write(
             1i32,
             bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,
             count as size_t,
           );
-          full_write(
+          crate::libbb::full_write::full_write(
             outfd,
             bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,
             count as size_t,
@@ -364,7 +326,7 @@ pub unsafe extern "C" fn script_main(
         }
       }
       if pfd[1].revents != 0 {
-        count = safe_read(
+        count = crate::libbb::read::safe_read(
           0,
           bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
           COMMON_BUFSIZE as libc::c_int as size_t,
@@ -374,7 +336,7 @@ pub unsafe extern "C" fn script_main(
           pfd[1].revents = 0 as libc::c_short;
           fd_count -= 1
         } else {
-          full_write(
+          crate::libbb::full_write::full_write(
             pty,
             bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,
             count as size_t,
@@ -400,7 +362,7 @@ pub unsafe extern "C" fn script_main(
         {
           loop_0 -= 1;
           if !(loop_0 != 0 && {
-            count = safe_read(
+            count = crate::libbb::read::safe_read(
               pty,
               bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
               COMMON_BUFSIZE as libc::c_int as size_t,
@@ -409,12 +371,12 @@ pub unsafe extern "C" fn script_main(
           }) {
             break;
           }
-          full_write(
+          crate::libbb::full_write::full_write(
             1i32,
             bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,
             count as size_t,
           );
-          full_write(
+          crate::libbb::full_write::full_write(
             outfd,
             bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,
             count as size_t,
@@ -439,9 +401,9 @@ pub unsafe extern "C" fn script_main(
   close(pty); /* close pty master */
   /* open pty slave to fd 0,1,2 */
   close(0i32); /* uses fd 0 */
-  xopen(pty_line.as_mut_ptr(), 0o2i32);
-  xdup2(0i32, 1i32);
-  xdup2(0i32, 2i32);
+  crate::libbb::xfuncs_printf::xopen(pty_line.as_mut_ptr(), 0o2i32);
+  crate::libbb::xfuncs_printf::xdup2(0i32, 1i32);
+  crate::libbb::xfuncs_printf::xdup2(0i32, 2i32);
   /* copy our original stdin tty's parameters to pty */
   if attr_ok == 0 {
     tcsetattr(0i32, 2i32, &mut tt);
@@ -465,5 +427,5 @@ pub unsafe extern "C" fn script_main(
     shell_arg,
     0 as *mut libc::c_void as *mut libc::c_char,
   );
-  bb_simple_perror_msg_and_die(shell);
+  crate::libbb::perror_msg::bb_simple_perror_msg_and_die(shell);
 }

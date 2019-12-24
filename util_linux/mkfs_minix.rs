@@ -2,7 +2,6 @@ use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-use crate::librb::uoff_t;
 use libc;
 use libc::alarm;
 use libc::fprintf;
@@ -27,55 +26,14 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn get_volume_size_in_bytes(
-    fd: libc::c_int,
-    override_0: *const libc::c_char,
-    override_units: libc::c_uint,
-    extend: libc::c_int,
-  ) -> uoff_t;
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xatoull(str: *const libc::c_char) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
   static mut msg_eol: *const libc::c_char;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn find_mount_point(name: *const libc::c_char, subdir_too: libc::c_int) -> *mut mntent;
+
   #[no_mangle]
   static ptr_to_globals: *mut globals;
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
-pub struct mntent {
-  pub mnt_fsname: *mut libc::c_char,
-  pub mnt_dir: *mut libc::c_char,
-  pub mnt_type: *mut libc::c_char,
-  pub mnt_opts: *mut libc::c_char,
-  pub mnt_freq: libc::c_int,
-  pub mnt_passno: libc::c_int,
-}
-
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct globals {
   pub version2: smallint,
   pub device_name: *mut libc::c_char,
@@ -101,8 +59,8 @@ pub struct globals {
   pub dind_block2: [libc::c_ulong; 256],
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub superblock_buffer: [libc::c_char; 1024],
   pub SB: minix_superblock,
@@ -111,8 +69,9 @@ pub union C2RustUnnamed {
 /*
  * minix superblock data on disk
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct minix_superblock {
   pub s_ninodes: u16,
   pub s_nzones: u16,
@@ -130,8 +89,9 @@ pub struct minix_superblock {
  * This is the original minix inode layout on disk.
  * Note the 8-bit gid and atime and ctime.
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct minix1_inode {
   pub i_mode: u16,
   pub i_uid: u16,
@@ -148,8 +108,9 @@ pub struct minix1_inode {
  * instead of 7+1+1). Also, some previously 8-bit values are
  * now 16-bit. The inode is now 64 bytes instead of 32.
  */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct minix2_inode {
   pub i_mode: u16,
   pub i_nlinks: u16,
@@ -195,7 +156,7 @@ pub const dev_fd: C2RustUnnamed_2 = 3;
 
 #[inline(always)]
 unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
-  return xatoull(str) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull(str) as libc::c_ulong;
 }
 #[inline(always)]
 unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
@@ -232,35 +193,35 @@ unsafe extern "C" fn write_tables() {
   (*ptr_to_globals).u.SB.s_state =
     ((*ptr_to_globals).u.SB.s_state as libc::c_int & !(MINIX_ERROR_FS as libc::c_int)) as u16;
   msg_eol = b"seek to 0 failed\x00" as *const u8 as *const libc::c_char;
-  xlseek(dev_fd as libc::c_int, 0 as off_t, 0);
+  crate::libbb::xfuncs_printf::xlseek(dev_fd as libc::c_int, 0 as off_t, 0);
   msg_eol = b"can\'t clear boot sector\x00" as *const u8 as *const libc::c_char;
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     dev_fd as libc::c_int,
     (*ptr_to_globals).boot_block_buffer.as_mut_ptr() as *const libc::c_void,
     512i32 as size_t,
   );
   msg_eol = b"seek to BLOCK_SIZE failed\x00" as *const u8 as *const libc::c_char;
-  xlseek(dev_fd as libc::c_int, BLOCK_SIZE as libc::c_int as off_t, 0);
+  crate::libbb::xfuncs_printf::xlseek(dev_fd as libc::c_int, BLOCK_SIZE as libc::c_int as off_t, 0);
   msg_eol = b"can\'t write superblock\x00" as *const u8 as *const libc::c_char;
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     dev_fd as libc::c_int,
     (*ptr_to_globals).u.superblock_buffer.as_mut_ptr() as *const libc::c_void,
     BLOCK_SIZE as libc::c_int as size_t,
   );
   msg_eol = b"can\'t write inode map\x00" as *const u8 as *const libc::c_char;
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     dev_fd as libc::c_int,
     (*ptr_to_globals).inode_map as *const libc::c_void,
     ((*ptr_to_globals).u.SB.s_imap_blocks as libc::c_int * BLOCK_SIZE as libc::c_int) as size_t,
   );
   msg_eol = b"can\'t write zone map\x00" as *const u8 as *const libc::c_char;
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     dev_fd as libc::c_int,
     (*ptr_to_globals).zone_map as *const libc::c_void,
     ((*ptr_to_globals).u.SB.s_zmap_blocks as libc::c_int * BLOCK_SIZE as libc::c_int) as size_t,
   );
   msg_eol = b"can\'t write inodes\x00" as *const u8 as *const libc::c_char;
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     dev_fd as libc::c_int,
     (*ptr_to_globals).inode_buffer as *const libc::c_void,
     div_roundup(
@@ -276,12 +237,12 @@ unsafe extern "C" fn write_tables() {
   msg_eol = b"\n\x00" as *const u8 as *const libc::c_char;
 }
 unsafe extern "C" fn write_block(mut blk: libc::c_int, mut buffer: *mut libc::c_char) {
-  xlseek(
+  crate::libbb::xfuncs_printf::xlseek(
     dev_fd as libc::c_int,
     (blk * BLOCK_SIZE as libc::c_int) as off_t,
     0,
   );
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     dev_fd as libc::c_int,
     buffer as *const libc::c_void,
     BLOCK_SIZE as libc::c_int as size_t,
@@ -290,7 +251,9 @@ unsafe extern "C" fn write_block(mut blk: libc::c_int, mut buffer: *mut libc::c_
 unsafe extern "C" fn get_free_block() -> libc::c_int {
   let mut blk: libc::c_int = 0;
   if (*ptr_to_globals).used_good_blocks + 1i32 >= MAX_GOOD_BLOCKS as libc::c_int {
-    bb_simple_error_msg_and_die(b"too many bad blocks\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"too many bad blocks\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if (*ptr_to_globals).used_good_blocks != 0 {
     blk = (*ptr_to_globals).good_blocks_table[((*ptr_to_globals).used_good_blocks - 1i32) as usize]
@@ -319,7 +282,9 @@ unsafe extern "C" fn get_free_block() -> libc::c_int {
       (*ptr_to_globals).u.SB.s_nzones as libc::c_uint
     })
   {
-    bb_simple_error_msg_and_die(b"not enough good blocks\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"not enough good blocks\x00" as *const u8 as *const libc::c_char,
+    );
   }
   (*ptr_to_globals).good_blocks_table[(*ptr_to_globals).used_good_blocks as usize] =
     blk as libc::c_ushort;
@@ -472,7 +437,7 @@ unsafe extern "C" fn make_bad_inode() {
           match current_block {
             5743758918637478998 => {}
             _ => {
-              bb_simple_error_msg_and_die(
+              crate::libbb::verror_msg::bb_simple_error_msg_and_die(
                 b"too many bad blocks\x00" as *const u8 as *const libc::c_char,
               );
             }
@@ -604,7 +569,7 @@ unsafe extern "C" fn make_bad_inode2() {
             6635813614084111333 => {}
             _ => {
               /* Could make triple indirect block here */
-              bb_simple_error_msg_and_die(
+              crate::libbb::verror_msg::bb_simple_error_msg_and_die(
                 b"too many bad blocks\x00" as *const u8 as *const libc::c_char,
               );
             }
@@ -703,7 +668,7 @@ unsafe extern "C" fn do_check(
   let mut got: ssize_t = 0;
   /* Seek to the correct loc. */
   msg_eol = b"seek failed during testing of blocks\x00" as *const u8 as *const libc::c_char;
-  xlseek(
+  crate::libbb::xfuncs_printf::xlseek(
     dev_fd as libc::c_int,
     current_block.wrapping_mul(BLOCK_SIZE as libc::c_int as libc::c_uint) as off_t,
     0,
@@ -750,7 +715,7 @@ unsafe extern "C" fn alarm_intr(mut _alnum: libc::c_int) {
     b"%d ...\x00" as *const u8 as *const libc::c_char,
     (*ptr_to_globals).currently_testing,
   );
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
 }
 unsafe extern "C" fn check_blocks() {
   let mut try_0: size_t = 0;
@@ -769,7 +734,7 @@ unsafe extern "C" fn check_blocks() {
     })
   {
     msg_eol = b"seek failed in check_blocks\x00" as *const u8 as *const libc::c_char;
-    xlseek(
+    crate::libbb::xfuncs_printf::xlseek(
       dev_fd as libc::c_int,
       (*ptr_to_globals)
         .currently_testing
@@ -804,7 +769,7 @@ unsafe extern "C" fn check_blocks() {
     }
     if (*ptr_to_globals).currently_testing < (*ptr_to_globals).u.SB.s_firstdatazone as libc::c_uint
     {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"bad blocks before data-area: cannot make fs\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -827,7 +792,7 @@ unsafe extern "C" fn check_blocks() {
 unsafe extern "C" fn get_list_blocks(mut filename: *mut libc::c_char) {
   let mut listfile: *mut FILE = std::ptr::null_mut();
   let mut blockno: libc::c_ulong = 0;
-  listfile = xfopen_for_read(filename);
+  listfile = crate::libbb::wfopen::xfopen_for_read(filename);
   while feof_unlocked(listfile) == 0 {
     fscanf(
       listfile,
@@ -938,7 +903,7 @@ unsafe extern "C" fn setup_tables() {
   }
   match current_block {
     1109700713171191020 => {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"incompatible size/inode count, try different -i N\x00" as *const u8
           as *const libc::c_char,
       );
@@ -983,7 +948,7 @@ unsafe extern "C" fn setup_tables() {
         minix_clrbit((*ptr_to_globals).inode_map, i);
         i = i.wrapping_add(1)
       }
-      (*ptr_to_globals).inode_buffer = xzalloc(
+      (*ptr_to_globals).inode_buffer = crate::libbb::xfuncs_printf::xzalloc(
         div_roundup(
           (*ptr_to_globals).u.SB.s_ninodes as libc::c_uint,
           (if (*ptr_to_globals).version2 as libc::c_int != 0 {
@@ -1034,7 +999,8 @@ pub unsafe extern "C" fn mkfs_minix_main(
   let mut listfile: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let ref mut fresh2 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh2 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh2 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   /* default (changed to 30, per Linus's suggestion, Sun Nov 21 08:05:07 1993) */
   (*ptr_to_globals).namelen = 30i32;
@@ -1043,14 +1009,18 @@ pub unsafe extern "C" fn mkfs_minix_main(
   if INODE_SIZE1 as libc::c_int * MINIX1_INODES_PER_BLOCK as libc::c_int
     != BLOCK_SIZE as libc::c_int
   {
-    bb_simple_error_msg_and_die(b"bad inode size\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"bad inode size\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if INODE_SIZE2 as libc::c_int * MINIX2_INODES_PER_BLOCK as libc::c_int
     != BLOCK_SIZE as libc::c_int
   {
-    bb_simple_error_msg_and_die(b"bad inode size\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"bad inode size\x00" as *const u8 as *const libc::c_char,
+    );
   }
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"ci:l:n:+v\x00" as *const u8 as *const libc::c_char,
     &mut str_i as *mut *mut libc::c_char,
@@ -1070,7 +1040,7 @@ pub unsafe extern "C" fn mkfs_minix_main(
     } else if (*ptr_to_globals).namelen == 30i32 {
       (*ptr_to_globals).magic = MINIX1_SUPER_MAGIC2 as libc::c_int
     } else {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     (*ptr_to_globals).dirsize = (*ptr_to_globals).namelen + 2i32
   }
@@ -1080,19 +1050,19 @@ pub unsafe extern "C" fn mkfs_minix_main(
   }
   (*ptr_to_globals).device_name = *argv.offset(0);
   if (*ptr_to_globals).device_name.is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* Check if it is mounted */
-  if !find_mount_point((*ptr_to_globals).device_name, 0).is_null() {
-    bb_simple_error_msg_and_die(
+  if !crate::libbb::find_mount_point::find_mount_point((*ptr_to_globals).device_name, 0).is_null() {
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"can\'t format mounted filesystem\x00" as *const u8 as *const libc::c_char,
     );
   }
-  xmove_fd(
-    xopen((*ptr_to_globals).device_name, 0o2i32),
+  crate::libbb::xfuncs_printf::xmove_fd(
+    crate::libbb::xfuncs_printf::xopen((*ptr_to_globals).device_name, 0o2i32),
     dev_fd as libc::c_int,
   );
-  (*ptr_to_globals).total_blocks = get_volume_size_in_bytes(
+  (*ptr_to_globals).total_blocks = crate::libbb::get_volsize::get_volume_size_in_bytes(
     dev_fd as libc::c_int,
     *argv.offset(1),
     1024i32 as libc::c_uint,
@@ -1100,7 +1070,7 @@ pub unsafe extern "C" fn mkfs_minix_main(
   )
   .wrapping_div(1024i32 as libc::c_ulong) as u32;
   if (*ptr_to_globals).total_blocks < 10i32 as libc::c_uint {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"must have at least 10 blocks\x00" as *const u8 as *const libc::c_char,
     );
   }

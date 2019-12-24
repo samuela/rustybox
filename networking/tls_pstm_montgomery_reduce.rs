@@ -4,14 +4,7 @@ extern "C" {
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn pstm_clamp(a: *mut pstm_int);
-  #[no_mangle]
-  fn pstm_cmp_mag(a: *mut pstm_int, b: *mut pstm_int) -> int32;
-  #[no_mangle]
-  fn s_pstm_sub(a: *mut pstm_int, b: *mut pstm_int, c: *mut pstm_int) -> int32;
+
 }
 
 use crate::librb::size_t;
@@ -44,14 +37,8 @@ pub type uint32 = u32;
 pub type int32 = i32;
 pub type pstm_digit = uint32;
 pub type pstm_word = uint64;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct pstm_int {
-  pub used: libc::c_int,
-  pub alloc: libc::c_int,
-  pub sign: libc::c_int,
-  pub dp: *mut pstm_digit,
-}
+
+use crate::networking::tls_pstm::pstm_int;
 /*
  * Copyright (C) 2017 Denys Vlasenko
  *
@@ -238,7 +225,7 @@ pub unsafe extern "C" fn pstm_montgomery_reduce(
     c = paD;
     memset(c as *mut libc::c_void, 0, paDlen as libc::c_ulong);
   } else {
-    c = xzalloc((2i32 * pa + 1i32) as size_t) as *mut pstm_digit
+    c = crate::libbb::xfuncs_printf::xzalloc((2i32 * pa + 1i32) as size_t) as *mut pstm_digit
     //bbox
   }
   /* copy the input */
@@ -297,12 +284,12 @@ pub unsafe extern "C" fn pstm_montgomery_reduce(
     x += 1
   }
   (*a).used = pa + 1i32;
-  pstm_clamp(a);
+  crate::networking::tls_pstm::pstm_clamp(a);
   /* reuse x as return code */
   x = 0;
   /* if A >= m then A = A - m */
-  if pstm_cmp_mag(a, m) != -1i32 {
-    if s_pstm_sub(a, m, a) != 0 {
+  if crate::networking::tls_pstm::pstm_cmp_mag(a, m) != -1i32 {
+    if crate::networking::tls_pstm::s_pstm_sub(a, m, a) != 0 {
       x = -8i32
     }
   }

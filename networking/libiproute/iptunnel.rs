@@ -34,62 +34,12 @@ extern "C" {
     __buf: *mut libc::c_char,
     __len: socklen_t,
   ) -> *const libc::c_char;
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
+
   /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
    * But potentially slow, don't use in one-billion-times loops */
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  /* Prints warning to stderr and returns NULL on failure: */
-  #[no_mangle]
-  fn fopen_or_warn(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn bb_ioctl_or_warn(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 
-  #[no_mangle]
-  fn rtnl_dsfield_n2a(id: libc::c_int) -> *const libc::c_char;
-  #[no_mangle]
-  fn rtnl_dsfield_a2n(id: *mut u32, arg: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn duparg2(_: *const libc::c_char, _: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn next_arg(argv: *mut *mut libc::c_char) -> *mut *mut libc::c_char;
-  #[no_mangle]
-  fn invarg_1_to_2(_: *const libc::c_char, _: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn get_unsigned(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> libc::c_uint;
-  #[no_mangle]
-  fn get_addr32(name: *mut libc::c_char) -> u32;
-  #[no_mangle]
-  fn rt_addr_n2a(af: libc::c_int, addr: *mut libc::c_void) -> *const libc::c_char;
+  /* Prints warning to stderr and returns NULL on failure: */
+
   #[no_mangle]
   static mut _SL_: libc::c_char;
 }
@@ -97,7 +47,7 @@ extern "C" {
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
 
-pub type socklen_t = __socklen_t;
+use crate::librb::socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -138,8 +88,9 @@ pub const IPPROTO_IPIP: C2RustUnnamed = 4;
 pub const IPPROTO_IGMP: C2RustUnnamed = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed = 1;
 pub const IPPROTO_IP: C2RustUnnamed = 0;
-#[derive(Copy, Clone, BitfieldStruct)]
+
 #[repr(C)]
+#[derive(Copy, Clone, BitfieldStruct)]
 pub struct iphdr {
   #[bitfield(name = "ihl", ty = "libc::c_uint", bits = "0..=3")]
   #[bitfield(name = "version", ty = "libc::c_uint", bits = "4..=7")]
@@ -154,8 +105,9 @@ pub struct iphdr {
   pub saddr: u32,
   pub daddr: u32,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifmap {
   pub mem_start: libc::c_ulong,
   pub mem_end: libc::c_ulong,
@@ -164,14 +116,16 @@ pub struct ifmap {
   pub dma: libc::c_uchar,
   pub port: libc::c_uchar,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifreq {
   pub ifr_ifrn: C2RustUnnamed_1,
   pub ifr_ifru: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub ifru_addr: sockaddr,
   pub ifru_dstaddr: sockaddr,
@@ -186,8 +140,9 @@ pub union C2RustUnnamed_0 {
   pub ifru_newname: [libc::c_char; 16],
   pub ifru_data: __caddr_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub ifrn_name: [libc::c_char; 16],
 }
@@ -200,8 +155,9 @@ pub union C2RustUnnamed_1 {
 //#define GRE_REC         __constant_htons(0x0700)
 //#define GRE_FLAGS       __constant_htons(0x00F8)
 //#define GRE_VERSION     __constant_htons(0x0007)
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ip_tunnel_parm {
   pub name: [libc::c_char; 16],
   pub link: libc::c_int,
@@ -272,9 +228,9 @@ unsafe extern "C" fn do_ioctl_get_ifindex(mut dev: *mut libc::c_char) -> libc::c
     },
   };
   let mut fd: libc::c_int = 0;
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
-  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
-  bb_xioctl(
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
+  fd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     0x8933i32 as libc::c_uint,
     &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -295,9 +251,9 @@ unsafe extern "C" fn do_ioctl_get_iftype(mut dev: *mut libc::c_char) -> libc::c_
   };
   let mut fd: libc::c_int = 0;
   let mut err: libc::c_int = 0;
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
-  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
-  err = bb_ioctl_or_warn(
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), dev);
+  fd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
+  err = crate::libbb::xfuncs_printf::bb_ioctl_or_warn(
     fd,
     0x8927i32 as libc::c_uint,
     &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -323,8 +279,8 @@ unsafe extern "C" fn do_ioctl_get_ifname(mut idx: libc::c_int) -> *mut libc::c_c
   let mut fd: libc::c_int = 0;
   let mut err: libc::c_int = 0;
   ifr.ifr_ifru.ifru_ivalue = idx;
-  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
-  err = bb_ioctl_or_warn(
+  fd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
+  err = crate::libbb::xfuncs_printf::bb_ioctl_or_warn(
     fd,
     0x8910i32 as libc::c_uint,
     &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -334,7 +290,7 @@ unsafe extern "C" fn do_ioctl_get_ifname(mut idx: libc::c_int) -> *mut libc::c_c
   return if err != 0 {
     std::ptr::null_mut::<libc::c_char>()
   } else {
-    xstrndup(
+    crate::libbb::xfuncs_printf::xstrndup(
       ifr.ifr_ifrn.ifrn_name.as_mut_ptr(),
       ::std::mem::size_of::<[libc::c_char; 16]>() as libc::c_ulong as libc::c_int,
     )
@@ -355,10 +311,10 @@ unsafe extern "C" fn do_get_ioctl(
   };
   let mut fd: libc::c_int = 0;
   let mut err: libc::c_int = 0;
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), basedev);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), basedev);
   ifr.ifr_ifru.ifru_data = p as *mut libc::c_void as __caddr_t;
-  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
-  err = bb_ioctl_or_warn(
+  fd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
+  err = crate::libbb::xfuncs_printf::bb_ioctl_or_warn(
     fd,
     (0x89f0i32 + 0) as libc::c_uint,
     &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -384,22 +340,25 @@ unsafe extern "C" fn do_add_ioctl(
   };
   let mut fd: libc::c_int = 0;
   if cmd == 0x89f0i32 + 3i32 && (*p).name[0] as libc::c_int != 0 {
-    strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), (*p).name.as_mut_ptr());
+    crate::libbb::xfuncs::strncpy_IFNAMSIZ(
+      ifr.ifr_ifrn.ifrn_name.as_mut_ptr(),
+      (*p).name.as_mut_ptr(),
+    );
   } else {
-    strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), basedev);
+    crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), basedev);
   }
   ifr.ifr_ifru.ifru_data = p as *mut libc::c_void as __caddr_t;
-  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
+  fd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
   /* #define magic will turn ioctl# into string */
   if cmd == 0x89f0i32 + 3i32 {
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       (0x89f0i32 + 3i32) as libc::c_uint,
       &mut ifr as *mut ifreq as *mut libc::c_void,
       b"SIOCCHGTUNNEL\x00" as *const u8 as *const libc::c_char,
     );
   } else {
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       (0x89f0i32 + 1i32) as libc::c_uint,
       &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -425,13 +384,16 @@ unsafe extern "C" fn do_del_ioctl(
   };
   let mut fd: libc::c_int = 0;
   if (*p).name[0] != 0 {
-    strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), (*p).name.as_mut_ptr());
+    crate::libbb::xfuncs::strncpy_IFNAMSIZ(
+      ifr.ifr_ifrn.ifrn_name.as_mut_ptr(),
+      (*p).name.as_mut_ptr(),
+    );
   } else {
-    strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), basedev);
+    crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), basedev);
   }
   ifr.ifr_ifru.ifru_data = p as *mut libc::c_void as __caddr_t;
-  fd = xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
-  bb_xioctl(
+  fd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     (0x89f0i32 + 2i32) as libc::c_uint,
     &mut ifr as *mut ifreq as *mut libc::c_void,
@@ -478,22 +440,21 @@ unsafe extern "C" fn parse_args(
       let fresh1;
       let fresh2 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
   };
   while !(*argv).is_null() {
-    key = index_in_strings(keywords.as_ptr(), *argv);
+    key = crate::libbb::compare_string_array::index_in_strings(keywords.as_ptr(), *argv);
     if key == ARG_mode as libc::c_int {
-      argv = next_arg(argv);
-      key = index_in_strings(keywords.as_ptr(), *argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      key = crate::libbb::compare_string_array::index_in_strings(keywords.as_ptr(), *argv);
       if key == ARG_ipip as libc::c_int || key == ARG_ip_ip as libc::c_int {
         if (*p).iph.protocol as libc::c_int != 0
           && (*p).iph.protocol as libc::c_int != IPPROTO_IPIP as libc::c_int
         {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"%s tunnel mode\x00" as *const u8 as *const libc::c_char,
             b"you managed to ask for more than one\x00" as *const u8 as *const libc::c_char,
           );
@@ -503,7 +464,7 @@ unsafe extern "C" fn parse_args(
         if (*p).iph.protocol as libc::c_int != 0
           && (*p).iph.protocol as libc::c_int != IPPROTO_GRE as libc::c_int
         {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"%s tunnel mode\x00" as *const u8 as *const libc::c_char,
             b"you managed to ask for more than one\x00" as *const u8 as *const libc::c_char,
           );
@@ -513,21 +474,21 @@ unsafe extern "C" fn parse_args(
         if (*p).iph.protocol as libc::c_int != 0
           && (*p).iph.protocol as libc::c_int != IPPROTO_IPV6 as libc::c_int
         {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"%s tunnel mode\x00" as *const u8 as *const libc::c_char,
             b"you managed to ask for more than one\x00" as *const u8 as *const libc::c_char,
           );
         }
         (*p).iph.protocol = IPPROTO_IPV6 as libc::c_int as u8
       } else {
-        bb_error_msg_and_die(
+        crate::libbb::verror_msg::bb_error_msg_and_die(
           b"%s tunnel mode\x00" as *const u8 as *const libc::c_char,
           b"can\'t guess\x00" as *const u8 as *const libc::c_char,
         );
       }
     } else if key == ARG_key as libc::c_int {
       let mut uval: libc::c_uint = 0;
-      argv = next_arg(argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
       (*p).i_flags = ((*p).i_flags as libc::c_int
         | ({
           let mut __v: libc::c_ushort = 0;
@@ -540,8 +501,7 @@ unsafe extern "C" fn parse_args(
             let fresh4;
             let fresh5 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
-                                   (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                                   : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
           }
           __v
@@ -558,17 +518,19 @@ unsafe extern "C" fn parse_args(
             let fresh7;
             let fresh8 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
-                                   (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8))
-                                   : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
           }
           __v
         }) as libc::c_int) as u16;
       if !strchr(*argv, '.' as i32).is_null() {
-        (*p).o_key = get_addr32(*argv);
+        (*p).o_key = crate::networking::libiproute::utils::get_addr32(*argv);
         (*p).i_key = (*p).o_key
       } else {
-        uval = get_unsigned(*argv, b"key\x00" as *const u8 as *const libc::c_char);
+        uval = crate::networking::libiproute::utils::get_unsigned(
+          *argv,
+          b"key\x00" as *const u8 as *const libc::c_char,
+        );
         (*p).o_key = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = uval;
@@ -582,8 +544,7 @@ unsafe extern "C" fn parse_args(
             let fresh10;
             let fresh11 = __x;
             asm!("bswap $0" : "=r" (fresh10) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11))
-                                  :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
           }
           __v
@@ -592,7 +553,7 @@ unsafe extern "C" fn parse_args(
       }
     } else if key == ARG_ikey as libc::c_int {
       let mut uval_0: libc::c_uint = 0;
-      argv = next_arg(argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
       (*p).i_flags = ((*p).i_flags as libc::c_int
         | ({
           let mut __v: libc::c_ushort = 0;
@@ -605,16 +566,18 @@ unsafe extern "C" fn parse_args(
             let fresh13;
             let fresh14 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
-                                   (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14))
-                                   : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
           }
           __v
         }) as libc::c_int) as u16;
       if !strchr(*argv, '.' as i32).is_null() {
-        (*p).o_key = get_addr32(*argv)
+        (*p).o_key = crate::networking::libiproute::utils::get_addr32(*argv)
       } else {
-        uval_0 = get_unsigned(*argv, b"ikey\x00" as *const u8 as *const libc::c_char);
+        uval_0 = crate::networking::libiproute::utils::get_unsigned(
+          *argv,
+          b"ikey\x00" as *const u8 as *const libc::c_char,
+        );
         (*p).i_key = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = uval_0;
@@ -628,8 +591,7 @@ unsafe extern "C" fn parse_args(
             let fresh16;
             let fresh17 = __x;
             asm!("bswap $0" : "=r" (fresh16) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17))
-                                  :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
           }
           __v
@@ -637,7 +599,7 @@ unsafe extern "C" fn parse_args(
       }
     } else if key == ARG_okey as libc::c_int {
       let mut uval_1: libc::c_uint = 0;
-      argv = next_arg(argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
       (*p).o_flags = ((*p).o_flags as libc::c_int
         | ({
           let mut __v: libc::c_ushort = 0;
@@ -650,16 +612,18 @@ unsafe extern "C" fn parse_args(
             let fresh19;
             let fresh20 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh19) : "0"
-                                   (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20))
-                                   : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh18, fresh20, fresh19);
           }
           __v
         }) as libc::c_int) as u16;
       if !strchr(*argv, '.' as i32).is_null() {
-        (*p).o_key = get_addr32(*argv)
+        (*p).o_key = crate::networking::libiproute::utils::get_addr32(*argv)
       } else {
-        uval_1 = get_unsigned(*argv, b"okey\x00" as *const u8 as *const libc::c_char);
+        uval_1 = crate::networking::libiproute::utils::get_unsigned(
+          *argv,
+          b"okey\x00" as *const u8 as *const libc::c_char,
+        );
         (*p).o_key = {
           let mut __v: libc::c_uint = 0;
           let mut __x: libc::c_uint = uval_1;
@@ -673,8 +637,7 @@ unsafe extern "C" fn parse_args(
             let fresh22;
             let fresh23 = __x;
             asm!("bswap $0" : "=r" (fresh22) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23))
-                                  :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh21, fresh23, fresh22);
           }
           __v
@@ -693,8 +656,7 @@ unsafe extern "C" fn parse_args(
             let fresh25;
             let fresh26 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh25) : "0"
-                                   (c2rust_asm_casts::AsmCast::cast_in(fresh24, fresh26))
-                                   : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh24, fresh26)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh24, fresh26, fresh25);
           }
           __v
@@ -711,8 +673,7 @@ unsafe extern "C" fn parse_args(
             let fresh28;
             let fresh29 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh28) : "0"
-                                   (c2rust_asm_casts::AsmCast::cast_in(fresh27, fresh29))
-                                   : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh27, fresh29)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh27, fresh29, fresh28);
           }
           __v
@@ -730,8 +691,7 @@ unsafe extern "C" fn parse_args(
             let fresh31;
             let fresh32 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh31) : "0"
-                                   (c2rust_asm_casts::AsmCast::cast_in(fresh30, fresh32))
-                                   : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh30, fresh32)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh30, fresh32, fresh31);
           }
           __v
@@ -749,8 +709,7 @@ unsafe extern "C" fn parse_args(
             let fresh34;
             let fresh35 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh34) : "0"
-                                   (c2rust_asm_casts::AsmCast::cast_in(fresh33, fresh35))
-                                   : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh33, fresh35)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh33, fresh35, fresh34);
           }
           __v
@@ -768,8 +727,7 @@ unsafe extern "C" fn parse_args(
             let fresh37;
             let fresh38 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh37) : "0"
-                                   (c2rust_asm_casts::AsmCast::cast_in(fresh36, fresh38))
-                                   : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh36, fresh38)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh36, fresh38, fresh37);
           }
           __v
@@ -786,8 +744,7 @@ unsafe extern "C" fn parse_args(
             let fresh40;
             let fresh41 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh40) : "0"
-                                   (c2rust_asm_casts::AsmCast::cast_in(fresh39, fresh41))
-                                   : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh39, fresh41)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh39, fresh41, fresh40);
           }
           __v
@@ -805,8 +762,7 @@ unsafe extern "C" fn parse_args(
             let fresh43;
             let fresh44 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh43) : "0"
-                                   (c2rust_asm_casts::AsmCast::cast_in(fresh42, fresh44))
-                                   : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh42, fresh44)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh42, fresh44, fresh43);
           }
           __v
@@ -824,8 +780,7 @@ unsafe extern "C" fn parse_args(
             let fresh46;
             let fresh47 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh46) : "0"
-                                   (c2rust_asm_casts::AsmCast::cast_in(fresh45, fresh47))
-                                   : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh45, fresh47)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh45, fresh47, fresh46);
           }
           __v
@@ -844,45 +799,53 @@ unsafe extern "C" fn parse_args(
           let fresh49;
           let fresh50 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh49) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh48, fresh50))
-                              : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh48, fresh50)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh48, fresh50, fresh49);
         }
         __v
       }
     } else if key == ARG_remote as libc::c_int {
-      argv = next_arg(argv);
-      key = index_in_strings(keywords.as_ptr(), *argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      key = crate::libbb::compare_string_array::index_in_strings(keywords.as_ptr(), *argv);
       if key != ARG_any as libc::c_int {
-        (*p).iph.daddr = get_addr32(*argv)
+        (*p).iph.daddr = crate::networking::libiproute::utils::get_addr32(*argv)
       }
     } else if key == ARG_local as libc::c_int {
-      argv = next_arg(argv);
-      key = index_in_strings(keywords.as_ptr(), *argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      key = crate::libbb::compare_string_array::index_in_strings(keywords.as_ptr(), *argv);
       if key != ARG_any as libc::c_int {
-        (*p).iph.saddr = get_addr32(*argv)
+        (*p).iph.saddr = crate::networking::libiproute::utils::get_addr32(*argv)
       }
     } else if key == ARG_dev as libc::c_int {
-      argv = next_arg(argv);
-      strncpy_IFNAMSIZ(medium.as_mut_ptr(), *argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      crate::libbb::xfuncs::strncpy_IFNAMSIZ(medium.as_mut_ptr(), *argv);
     } else if key == ARG_ttl as libc::c_int {
       let mut uval_2: libc::c_uint = 0;
-      argv = next_arg(argv);
-      key = index_in_strings(keywords.as_ptr(), *argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      key = crate::libbb::compare_string_array::index_in_strings(keywords.as_ptr(), *argv);
       if key != ARG_inherit as libc::c_int {
-        uval_2 = get_unsigned(*argv, b"TTL\x00" as *const u8 as *const libc::c_char);
+        uval_2 = crate::networking::libiproute::utils::get_unsigned(
+          *argv,
+          b"TTL\x00" as *const u8 as *const libc::c_char,
+        );
         if uval_2 > 255i32 as libc::c_uint {
-          invarg_1_to_2(*argv, b"TTL\x00" as *const u8 as *const libc::c_char);
+          crate::networking::libiproute::utils::invarg_1_to_2(
+            *argv,
+            b"TTL\x00" as *const u8 as *const libc::c_char,
+          );
         }
         (*p).iph.ttl = uval_2 as u8
       }
     } else if key == ARG_tos as libc::c_int || key == ARG_dsfield as libc::c_int {
       let mut uval_3: u32 = 0;
-      argv = next_arg(argv);
-      key = index_in_strings(keywords.as_ptr(), *argv);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      key = crate::libbb::compare_string_array::index_in_strings(keywords.as_ptr(), *argv);
       if key != ARG_inherit as libc::c_int {
-        if rtnl_dsfield_a2n(&mut uval_3, *argv) != 0 {
-          invarg_1_to_2(*argv, b"TOS\x00" as *const u8 as *const libc::c_char);
+        if crate::networking::libiproute::rt_names::rtnl_dsfield_a2n(&mut uval_3, *argv) != 0 {
+          crate::networking::libiproute::utils::invarg_1_to_2(
+            *argv,
+            b"TOS\x00" as *const u8 as *const libc::c_char,
+          );
         }
         (*p).iph.tos = uval_3 as u8
       } else {
@@ -890,12 +853,15 @@ unsafe extern "C" fn parse_args(
       }
     } else {
       if key == ARG_name as libc::c_int {
-        argv = next_arg(argv)
+        argv = crate::networking::libiproute::utils::next_arg(argv)
       }
       if (*p).name[0] != 0 {
-        duparg2(b"name\x00" as *const u8 as *const libc::c_char, *argv);
+        crate::networking::libiproute::utils::duparg2(
+          b"name\x00" as *const u8 as *const libc::c_char,
+          *argv,
+        );
       }
-      strncpy_IFNAMSIZ((*p).name.as_mut_ptr(), *argv);
+      crate::libbb::xfuncs::strncpy_IFNAMSIZ((*p).name.as_mut_ptr(), *argv);
       if cmd == 0x89f0i32 + 3i32 && count == 0 {
         let mut old_p: ip_tunnel_parm = ip_tunnel_parm {
           name: [0; 16],
@@ -970,8 +936,7 @@ unsafe extern "C" fn parse_args(
           let fresh52;
           let fresh53 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh52) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh51, fresh53))
-                             : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh51, fresh53)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh51, fresh53, fresh52);
         }
         __v
@@ -989,15 +954,14 @@ unsafe extern "C" fn parse_args(
             let fresh55;
             let fresh56 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh55) : "0"
-                                 (c2rust_asm_casts::AsmCast::cast_in(fresh54, fresh56))
-                                 : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh54, fresh56)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh54, fresh56, fresh55);
           }
           __v
         }) as libc::c_int
         != 0
     {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"keys are not allowed with ipip and sit\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -1019,8 +983,7 @@ unsafe extern "C" fn parse_args(
         let fresh58;
         let fresh59 = __x;
         asm!("bswap $0" : "=r" (fresh58) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh57, fresh59))
-                         :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh57, fresh59)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh57, fresh59, fresh58);
       }
       __v
@@ -1040,8 +1003,7 @@ unsafe extern "C" fn parse_args(
           let fresh61;
           let fresh62 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh61) : "0"
-                               (c2rust_asm_casts::AsmCast::cast_in(fresh60, fresh62))
-                               : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh60, fresh62)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh60, fresh62, fresh61);
         }
         __v
@@ -1061,8 +1023,7 @@ unsafe extern "C" fn parse_args(
         let fresh64;
         let fresh65 = __x;
         asm!("bswap $0" : "=r" (fresh64) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh63, fresh65))
-                         :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh63, fresh65)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh63, fresh65, fresh64);
       }
       __v
@@ -1082,8 +1043,7 @@ unsafe extern "C" fn parse_args(
           let fresh67;
           let fresh68 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh67) : "0"
-                               (c2rust_asm_casts::AsmCast::cast_in(fresh66, fresh68))
-                               : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh66, fresh68)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh66, fresh68, fresh67);
         }
         __v
@@ -1102,8 +1062,7 @@ unsafe extern "C" fn parse_args(
       let fresh70;
       let fresh71 = __x;
       asm!("bswap $0" : "=r" (fresh70) : "0"
-                     (c2rust_asm_casts::AsmCast::cast_in(fresh69, fresh71))
-                     :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh69, fresh71)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh69, fresh71, fresh70);
     }
     __v
@@ -1111,7 +1070,7 @@ unsafe extern "C" fn parse_args(
     == 0xe0000000u32
     && (*p).iph.saddr == 0
   {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"broadcast tunnel requires a source address\x00" as *const u8 as *const libc::c_char,
     );
   };
@@ -1140,7 +1099,7 @@ unsafe extern "C" fn do_add(mut cmd: libc::c_int, mut argv: *mut *mut libc::c_ch
   };
   parse_args(argv, cmd, &mut p);
   if p.iph.ttl as libc::c_int != 0 && p.iph.frag_off as libc::c_int == 0 {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"ttl != 0 and noptmudisc are incompatible\x00" as *const u8 as *const libc::c_char,
     );
   }
@@ -1155,7 +1114,7 @@ unsafe extern "C" fn do_add(mut cmd: libc::c_int, mut argv: *mut *mut libc::c_ch
     47 => return do_add_ioctl(cmd, b"gre0\x00" as *const u8 as *const libc::c_char, &mut p),
     41 => return do_add_ioctl(cmd, b"sit0\x00" as *const u8 as *const libc::c_char, &mut p),
     _ => {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"can\'t determine tunnel mode (ipip, gre or sit)\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -1207,12 +1166,18 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
       b"unknown\x00" as *const u8 as *const libc::c_char
     },
     if (*p).iph.daddr != 0 {
-      rt_addr_n2a(2i32, &mut (*p).iph.daddr as *mut u32 as *mut libc::c_void)
+      crate::networking::libiproute::utils::rt_addr_n2a(
+        2i32,
+        &mut (*p).iph.daddr as *mut u32 as *mut libc::c_void,
+      )
     } else {
       b"any\x00" as *const u8 as *const libc::c_char
     },
     if (*p).iph.saddr != 0 {
-      rt_addr_n2a(2i32, &mut (*p).iph.saddr as *mut u32 as *mut libc::c_void)
+      crate::networking::libiproute::utils::rt_addr_n2a(
+        2i32,
+        &mut (*p).iph.saddr as *mut u32 as *mut libc::c_void,
+      )
     } else {
       b"any\x00" as *const u8 as *const libc::c_char
     },
@@ -1245,7 +1210,9 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
         } else {
           ' ' as i32
         },
-        rtnl_dsfield_n2a((*p).iph.tos as libc::c_int & !1i32),
+        crate::networking::libiproute::rt_names::rtnl_dsfield_n2a(
+          (*p).iph.tos as libc::c_int & !1i32,
+        ),
       );
     }
   }
@@ -1261,8 +1228,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
         let fresh73;
         let fresh74 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh73) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh72, fresh74))
-                         : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh72, fresh74)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh72, fresh74, fresh73);
       }
       __v
@@ -1295,8 +1261,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
         let fresh76;
         let fresh77 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh76) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh75, fresh77))
-                         : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh75, fresh77)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh75, fresh77, fresh76);
       }
       __v
@@ -1314,8 +1279,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
           let fresh79;
           let fresh80 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh79) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh78, fresh80))
-                             : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh78, fresh80)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh78, fresh80, fresh79);
         }
         __v
@@ -1340,8 +1304,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
           let fresh82;
           let fresh83 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh82) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh81, fresh83))
-                             : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh81, fresh83)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh81, fresh83, fresh82);
         }
         __v
@@ -1365,8 +1328,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
           let fresh85;
           let fresh86 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh85) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh84, fresh86))
-                             : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh84, fresh86)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh84, fresh86, fresh85);
         }
         __v
@@ -1391,8 +1353,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
         let fresh88;
         let fresh89 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh88) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh87, fresh89))
-                         : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh87, fresh89)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh87, fresh89, fresh88);
       }
       __v
@@ -1416,8 +1377,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
         let fresh91;
         let fresh92 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh91) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh90, fresh92))
-                         : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh90, fresh92)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh90, fresh92, fresh91);
       }
       __v
@@ -1441,8 +1401,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
         let fresh94;
         let fresh95 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh94) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh93, fresh95))
-                         : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh93, fresh95)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh93, fresh95, fresh94);
       }
       __v
@@ -1466,8 +1425,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
         let fresh97;
         let fresh98 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh97) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh96, fresh98))
-                         : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh96, fresh98)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh96, fresh98, fresh97);
       }
       __v
@@ -1518,7 +1476,7 @@ unsafe extern "C" fn do_tunnels_list(mut p: *mut ip_tunnel_parm) {
     },
   };
   let mut buf: [libc::c_char; 512] = [0; 512];
-  let mut fp: *mut FILE = fopen_or_warn(
+  let mut fp: *mut FILE = crate::libbb::wfopen::fopen_or_warn(
     b"/proc/net/dev\x00" as *const u8 as *const libc::c_char,
     b"r\x00" as *const u8 as *const libc::c_char,
   );
@@ -1556,7 +1514,9 @@ unsafe extern "C" fn do_tunnels_list(mut p: *mut ip_tunnel_parm) {
         name.as_mut_ptr(),
       )) != 1i32
     } {
-      bb_simple_error_msg(b"wrong format of /proc/net/dev\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg(
+        b"wrong format of /proc/net/dev\x00" as *const u8 as *const libc::c_char,
+      );
       return;
     }
     if sscanf(
@@ -1585,7 +1545,7 @@ unsafe extern "C" fn do_tunnels_list(mut p: *mut ip_tunnel_parm) {
     }
     type_0 = do_ioctl_get_iftype(name.as_mut_ptr());
     if type_0 == -1i32 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"can\'t get type of [%s]\x00" as *const u8 as *const libc::c_char,
         name.as_mut_ptr(),
       );
@@ -1611,7 +1571,7 @@ unsafe extern "C" fn do_tunnels_list(mut p: *mut ip_tunnel_parm) {
         continue;
       }
       print_tunnel(&mut p1);
-      bb_putchar('\n' as i32);
+      crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     }
   }
 }
@@ -1679,7 +1639,7 @@ unsafe extern "C" fn do_show(mut argv: *mut *mut libc::c_char) -> libc::c_int {
     return -1i32;
   }
   print_tunnel(&mut p);
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   return 0;
 }
 
@@ -1694,9 +1654,10 @@ pub unsafe extern "C" fn do_iptunnel(mut argv: *mut *mut libc::c_char) -> libc::
     119, 0, 108, 105, 115, 116, 0, 108, 115, 116, 0, 0,
   ];
   if !(*argv).is_null() {
-    let mut key: libc::c_int = index_in_substrings(keywords.as_ptr(), *argv);
+    let mut key: libc::c_int =
+      crate::libbb::compare_string_array::index_in_substrings(keywords.as_ptr(), *argv);
     if key < 0 {
-      invarg_1_to_2(*argv, applet_name);
+      crate::networking::libiproute::utils::invarg_1_to_2(*argv, applet_name);
     }
     argv = argv.offset(1);
     if key == ARG_add as libc::c_int {

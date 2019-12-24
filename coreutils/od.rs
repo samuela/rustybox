@@ -58,44 +58,7 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
   #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn fclose_if_not_stdin(file: *mut FILE) -> libc::c_int;
-
-  #[no_mangle]
-  fn fopen_or_warn_stdin(filename: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
   static bkm_suffixes: [suffix_mult; 0];
-
-  #[no_mangle]
-  fn xstrtoull_sfx(
-    str: *const libc::c_char,
-    b: libc::c_int,
-    sfx: *const suffix_mult,
-  ) -> libc::c_ulonglong;
-
-  #[no_mangle]
-  fn xstrtou_sfx(str: *const libc::c_char, b: libc::c_int, sfx: *const suffix_mult)
-    -> libc::c_uint;
-
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
 
   #[no_mangle]
   static bb_argv_dash: [*const libc::c_char; 0];
@@ -104,44 +67,16 @@ extern "C" {
   static mut option_mask32: u32;
 
   #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct suffix_mult {
-  pub suffix: [libc::c_char; 4],
-  pub mult: libc::c_uint,
-}
+use crate::librb::suffix_mult;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub exit_code: smallint,
   pub string_min: libc::c_uint,
@@ -156,8 +91,9 @@ pub struct globals {
   pub prev_pair_equal: bool,
   pub address_fmt: [libc::c_char; 7],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct tspec {
   pub fmt: output_format,
   pub size: size_spec,
@@ -579,7 +515,7 @@ unsafe extern "C" fn open_next_file() {
     let fresh14 = *fresh13;
     *fresh13 = (*fresh13).offset(1);
     let ref mut fresh15 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).in_stream;
-    *fresh15 = fopen_or_warn_stdin(*fresh14);
+    *fresh15 = crate::libbb::wfopen_input::fopen_or_warn_stdin(*fresh14);
     if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .in_stream
       .is_null()
@@ -609,7 +545,7 @@ unsafe extern "C" fn check_and_close() {
     .is_null()
   {
     if ferror_unlocked((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).in_stream) != 0 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"%s: read error\x00" as *const u8 as *const libc::c_char,
         if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).in_stream == stdin {
           bb_msg_standard_input.as_ptr()
@@ -621,12 +557,16 @@ unsafe extern "C" fn check_and_close() {
       );
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exit_code = 1i32 as smallint
     }
-    fclose_if_not_stdin((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).in_stream);
+    crate::libbb::fclose_nonstdin::fclose_if_not_stdin(
+      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).in_stream,
+    );
     let ref mut fresh16 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).in_stream;
     *fresh16 = std::ptr::null_mut()
   }
   if ferror_unlocked(stdout) != 0 {
-    bb_simple_error_msg_and_die(b"write error\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"write error\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 /* If S points to a single valid modern od format string, put
@@ -671,12 +611,12 @@ unsafe extern "C" fn decode_one_format(
       if p.is_null() || *p as libc::c_int == '\u{0}' as i32 {
         size = ::std::mem::size_of::<libc::c_int>() as libc::c_ulong as libc::c_uint;
         if (*s.offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
-          size = bb_strtou(s, &mut end, 0);
+          size = crate::libbb::bb_strtonum::bb_strtou(s, &mut end, 0);
           if *bb_errno == 34i32
             || (::std::mem::size_of::<ulonglong_t>() as libc::c_ulong) < size as libc::c_ulong
             || integral_type_size[size as usize] as libc::c_int == NO_SIZE as libc::c_int
           {
-            bb_error_msg_and_die(
+            crate::libbb::verror_msg::bb_error_msg_and_die(
               b"invalid type string \'%s\'; %u-byte %s type is not supported\x00" as *const u8
                 as *const libc::c_char,
               s_orig,
@@ -733,7 +673,11 @@ unsafe extern "C" fn decode_one_format(
       if size_spec as libc::c_uint == LONG_LONG as libc::c_int as libc::c_uint {
         p = p.offset(-2)
       }
-      fmt_string = xasprintf(doux_fmtstring[pos as usize].as_ptr(), field_width, p);
+      fmt_string = crate::libbb::xfuncs_printf::xasprintf(
+        doux_fmtstring[pos as usize].as_ptr(),
+        field_width,
+        p,
+      );
       match size_spec as libc::c_uint {
         1 => {
           print_function = if fmt as libc::c_uint == SIGNED_DECIMAL as libc::c_int as libc::c_uint {
@@ -818,12 +762,12 @@ unsafe extern "C" fn decode_one_format(
       if p.is_null() || *p as libc::c_int == '\u{0}' as i32 {
         size = ::std::mem::size_of::<libc::c_double>() as libc::c_ulong as libc::c_uint;
         if (*s.offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
-          size = bb_strtou(s, &mut end, 0);
+          size = crate::libbb::bb_strtonum::bb_strtou(s, &mut end, 0);
           if *bb_errno == 34i32
             || size as libc::c_ulong > ::std::mem::size_of::<longdouble_t>() as libc::c_ulong
             || fp_type_size[size as usize] as libc::c_int == NO_SIZE as libc::c_int
           {
-            bb_error_msg_and_die(
+            crate::libbb::verror_msg::bb_error_msg_and_die(
               b"invalid type string \'%s\'; %u-byte %s type is not supported\x00" as *const u8
                 as *const libc::c_char,
               s_orig,
@@ -857,7 +801,7 @@ unsafe extern "C" fn decode_one_format(
           );
           field_width = (7i32 + 8i32) as libc::c_uint;
           /* Don't use %#e; not all systems support it.  */
-          fmt_string = xasprintf(
+          fmt_string = crate::libbb::xfuncs_printf::xasprintf(
             b" %%%d.%de\x00" as *const u8 as *const libc::c_char,
             field_width,
             7i32,
@@ -873,7 +817,7 @@ unsafe extern "C" fn decode_one_format(
               ) -> (),
           );
           field_width = (15i32 + 8i32) as libc::c_uint;
-          fmt_string = xasprintf(
+          fmt_string = crate::libbb::xfuncs_printf::xasprintf(
             b" %%%d.%de\x00" as *const u8 as *const libc::c_char,
             field_width,
             15i32,
@@ -890,7 +834,7 @@ unsafe extern "C" fn decode_one_format(
               ) -> (),
           );
           field_width = (15i32 + 8i32) as libc::c_uint;
-          fmt_string = xasprintf(
+          fmt_string = crate::libbb::xfuncs_printf::xasprintf(
             b" %%%d.%dLe\x00" as *const u8 as *const libc::c_char,
             field_width,
             15i32,
@@ -919,7 +863,7 @@ unsafe extern "C" fn decode_one_format(
       field_width = 3i32 as libc::c_uint
     }
     _ => {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"invalid character \'%c\' in type string \'%s\'\x00" as *const u8 as *const libc::c_char,
         *s as libc::c_int,
         s_orig,
@@ -1021,7 +965,7 @@ unsafe extern "C" fn skip(mut n_skip: off_t) {
     open_next_file();
   }
   if n_skip != 0 {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"can\'t skip past end of combined input\x00" as *const u8 as *const libc::c_char,
     );
   };
@@ -1042,7 +986,7 @@ unsafe extern "C" fn decode_format_string(mut s: *const libc::c_char) {
     next = decode_one_format(s_orig, s, &mut tspec);
     s = next;
     let ref mut fresh18 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).spec;
-    *fresh18 = xrealloc_vector_helper(
+    *fresh18 = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).spec as *mut libc::c_void,
       ((::std::mem::size_of::<tspec>() as libc::c_ulong) << 8i32)
         .wrapping_add(4i32 as libc::c_ulong) as libc::c_uint,
@@ -1412,7 +1356,8 @@ unsafe extern "C" fn dump_strings(mut address: off_t, mut end_offset: off_t) {
       while option_mask32 & OPT_N as libc::c_int as libc::c_uint == 0 || address < end_offset {
         if i == bufsize as libc::c_ulong {
           bufsize = bufsize.wrapping_add(bufsize.wrapping_div(8i32 as libc::c_uint));
-          buf = xrealloc(buf as *mut libc::c_void, bufsize as size_t) as *mut libc::c_uchar
+          buf = crate::libbb::xfuncs_printf::xrealloc(buf as *mut libc::c_void, bufsize as size_t)
+            as *mut libc::c_uchar
         }
         loop {
           if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -1554,7 +1499,7 @@ unsafe extern "C" fn parse_old_offset(
   {
     radix = 16i32
   }
-  *offset = xstrtoull_sfx(s, radix, Bb.as_ptr()) as off_t;
+  *offset = crate::libbb::xatonum::xstrtoull_sfx(s, radix, Bb.as_ptr()) as off_t;
   if !p.is_null() {
     *p.offset(0) = '.' as i32 as libc::c_char
   }
@@ -1603,7 +1548,7 @@ pub unsafe extern "C" fn od_main(
     as usize] = 'o' as i32 as libc::c_char;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).address_fmt[2] = '7' as i32 as libc::c_char;
   /* Parse command line */
-  opt = getopt32long(
+  opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"A:N:abcdfhij:lot:*vxsS:w:+:\x00" as *const u8 as *const libc::c_char,
     od_longopts.as_ptr(),
@@ -1628,7 +1573,7 @@ pub unsafe extern "C" fn od_main(
     let mut pos: libc::c_int = 0;
     p = strchr(doxn.as_ptr(), *str_A.offset(0) as libc::c_int);
     if p.is_null() {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"bad output address radix \'%c\' (must be [doxn])\x00" as *const u8 as *const libc::c_char,
         *str_A.offset(0) as libc::c_int,
       );
@@ -1647,7 +1592,8 @@ pub unsafe extern "C" fn od_main(
       doxn_address_pad_len_char[pos as usize] as libc::c_char
   }
   if opt & OPT_N as libc::c_int as libc::c_uint != 0 {
-    max_bytes_to_format = xstrtoull_sfx(str_N, 0, bkm_suffixes.as_ptr()) as off_t
+    max_bytes_to_format =
+      crate::libbb::xatonum::xstrtoull_sfx(str_N, 0, bkm_suffixes.as_ptr()) as off_t
   }
   if opt & OPT_a as libc::c_int as libc::c_uint != 0 {
     decode_format_string(b"a\x00" as *const u8 as *const libc::c_char);
@@ -1671,7 +1617,7 @@ pub unsafe extern "C" fn od_main(
     decode_format_string(b"d2\x00" as *const u8 as *const libc::c_char);
   }
   if opt & OPT_j as libc::c_int as libc::c_uint != 0 {
-    n_bytes_to_skip = xstrtoull_sfx(str_j, 0, bkm_suffixes.as_ptr()) as off_t
+    n_bytes_to_skip = crate::libbb::xatonum::xstrtoull_sfx(str_j, 0, bkm_suffixes.as_ptr()) as off_t
   }
   if opt & OPT_l as libc::c_int as libc::c_uint != 0 {
     decode_format_string(b"d4\x00" as *const u8 as *const libc::c_char);
@@ -1680,7 +1626,7 @@ pub unsafe extern "C" fn od_main(
     decode_format_string(b"o2\x00" as *const u8 as *const libc::c_char);
   }
   while !lst_t.is_null() {
-    decode_format_string(llist_pop(&mut lst_t) as *const libc::c_char);
+    decode_format_string(crate::libbb::llist::llist_pop(&mut lst_t) as *const libc::c_char);
   }
   if opt & OPT_x as libc::c_int as libc::c_uint != 0 {
     decode_format_string(b"x2\x00" as *const u8 as *const libc::c_char);
@@ -1690,7 +1636,7 @@ pub unsafe extern "C" fn od_main(
   }
   if opt & OPT_S as libc::c_int as libc::c_uint != 0 {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).string_min =
-      xstrtou_sfx(str_S, 0, bkm_suffixes.as_ptr())
+      crate::libbb::xatonum::xstrtou_sfx(str_S, 0, bkm_suffixes.as_ptr())
   }
   // Bloat:
   //if ((option_mask32 & OPT_S) && G.n_specs > 0)
@@ -1731,7 +1677,7 @@ pub unsafe extern "C" fn od_main(
           let ref mut fresh25 = *argv.offset(1);
           *fresh25 = std::ptr::null_mut::<libc::c_char>()
         } else {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"invalid second argument \'%s\'\x00" as *const u8 as *const libc::c_char,
             *argv.offset(1),
           );
@@ -1747,12 +1693,14 @@ pub unsafe extern "C" fn od_main(
           let ref mut fresh26 = *argv.offset(1);
           *fresh26 = std::ptr::null_mut::<libc::c_char>()
         } else {
-          bb_simple_error_msg_and_die(
+          crate::libbb::verror_msg::bb_simple_error_msg_and_die(
             b"the last two arguments must be offsets\x00" as *const u8 as *const libc::c_char,
           );
         }
       } else {
-        bb_simple_error_msg_and_die(b"too many arguments\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+          b"too many arguments\x00" as *const u8 as *const libc::c_char,
+        );
       }
       if pseudo_start >= 0 {
         if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).format_address
@@ -1783,7 +1731,7 @@ pub unsafe extern "C" fn od_main(
   if option_mask32 & OPT_N as libc::c_int as libc::c_uint != 0 {
     end_offset = n_bytes_to_skip + max_bytes_to_format;
     if end_offset < n_bytes_to_skip {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"SKIP + SIZE is too large\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -1823,7 +1771,7 @@ pub unsafe extern "C" fn od_main(
         .wrapping_rem(l_c_m as libc::c_uint)
         != 0 as libc::c_uint
     {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"warning: invalid width %u; using %d instead\x00" as *const u8 as *const libc::c_char,
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).bytes_per_block,
         l_c_m,
@@ -1843,7 +1791,7 @@ pub unsafe extern "C" fn od_main(
     dump(n_bytes_to_skip, end_offset);
   }
   if fclose(stdin) != 0 {
-    bb_simple_perror_msg_and_die(bb_msg_standard_input.as_ptr());
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(bb_msg_standard_input.as_ptr());
   }
   return (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).exit_code as libc::c_int;
 }

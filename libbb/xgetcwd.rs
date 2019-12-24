@@ -9,10 +9,6 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
 /*
@@ -156,17 +152,20 @@ pub unsafe extern "C" fn xrealloc_getcwd_or_warn(mut cwd: *mut libc::c_char) -> 
   path_max = 128i32 as libc::c_uint;
   loop {
     path_max = path_max.wrapping_add(64i32 as libc::c_uint);
-    cwd = xrealloc(cwd as *mut libc::c_void, path_max as size_t) as *mut libc::c_char;
+    cwd = crate::libbb::xfuncs_printf::xrealloc(cwd as *mut libc::c_void, path_max as size_t)
+      as *mut libc::c_char;
     ret = getcwd(cwd, path_max as size_t);
     if ret.is_null() {
       if *bb_errno == 34i32 {
         continue;
       }
       free(cwd as *mut libc::c_void);
-      bb_simple_perror_msg(b"getcwd\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg(
+        b"getcwd\x00" as *const u8 as *const libc::c_char,
+      );
       return std::ptr::null_mut::<libc::c_char>();
     } else {
-      cwd = xrealloc(
+      cwd = crate::libbb::xfuncs_printf::xrealloc(
         cwd as *mut libc::c_void,
         strlen(cwd).wrapping_add(1i32 as libc::c_ulong),
       ) as *mut libc::c_char;

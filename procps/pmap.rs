@@ -7,45 +7,13 @@ extern "C" {
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn procps_read_smaps(
-    pid: pid_t,
-    total: *mut smaprec,
-    cb: Option<unsafe extern "C" fn(_: *mut smaprec, _: *mut libc::c_void) -> ()>,
-    data: *mut libc::c_void,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn read_cmdline(
-    buf: *mut libc::c_char,
-    size: libc::c_int,
-    pid: libc::c_uint,
-    comm: *const libc::c_char,
-  );
+
 }
 
 pub type uintptr_t = libc::c_ulong;
 use libc::pid_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct smaprec {
-  pub mapped_rw: libc::c_ulong,
-  pub mapped_ro: libc::c_ulong,
-  pub shared_clean: libc::c_ulong,
-  pub shared_dirty: libc::c_ulong,
-  pub private_clean: libc::c_ulong,
-  pub private_dirty: libc::c_ulong,
-  pub stack: libc::c_ulong,
-  pub smap_pss: libc::c_ulong,
-  pub smap_swap: libc::c_ulong,
-  pub smap_size: libc::c_ulong,
-  pub smap_start: libc::c_ulonglong,
-  pub smap_mode: [libc::c_char; 5],
-  pub smap_name: *mut libc::c_char,
-}
+
+use crate::librb::smaprec;
 /*
  * pmap implementation for busybox
  *
@@ -116,7 +84,7 @@ unsafe extern "C" fn procps_get_maps(mut pid: pid_t, mut opt: libc::c_uint) -> l
   };
   let mut ret: libc::c_int = 0;
   let mut buf: [libc::c_char; 256] = [0; 256];
-  read_cmdline(
+  crate::libbb::procps::read_cmdline(
     buf.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 256]>() as libc::c_ulong as libc::c_int,
     pid as libc::c_uint,
@@ -140,7 +108,7 @@ unsafe extern "C" fn procps_get_maps(mut pid: pid_t, mut opt: libc::c_uint) -> l
     0,
     ::std::mem::size_of::<smaprec>() as libc::c_ulong,
   );
-  ret = procps_read_smaps(
+  ret = crate::libbb::procps::procps_read_smaps(
     pid,
     &mut total,
     Some(print_smaprec as unsafe extern "C" fn(_: *mut smaprec, _: *mut libc::c_void) -> ()),
@@ -175,13 +143,14 @@ pub unsafe extern "C" fn pmap_main(
 ) -> libc::c_int {
   let mut opts: libc::c_uint = 0;
   let mut ret: libc::c_int = 0;
-  opts = getopt32(argv, b"^xq\x00-1\x00" as *const u8 as *const libc::c_char);
+  opts =
+    crate::libbb::getopt32::getopt32(argv, b"^xq\x00-1\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   ret = 0;
   while !(*argv).is_null() {
     let fresh0 = argv;
     argv = argv.offset(1);
-    let mut pid: pid_t = xatoi_positive(*fresh0);
+    let mut pid: pid_t = crate::libbb::xatonum::xatoi_positive(*fresh0);
     /* GNU pmap returns 42 if any of the pids failed */
     if procps_get_maps(pid, opts) != 0 {
       ret = 42i32

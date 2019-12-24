@@ -1,8 +1,10 @@
+use crate::libbb::llist::llist_t;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::libbb::xfuncs_printf::xmalloc;
-use c2rust_bitfields;
-use c2rust_bitfields::BitfieldStruct;
+use crate::librb::re_pattern_buffer;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
 use libc::fclose;
 use libc::free;
@@ -15,41 +17,17 @@ use libc::strcpy;
 use libc::strstr;
 use libc::system;
 use libc::time;
+use libc::time_t;
+use libc::tm;
+use libc::FILE;
 extern "C" {
   /* Macros for min/max.  */
   /* buffer allocation schemes */
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_process_escape_sequence(ptr: *mut *const libc::c_char) -> libc::c_char;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn xfopen(filename: *const libc::c_char, mode: *const libc::c_char) -> *mut FILE;
   /* "Opens" stdin if filename is special, else just opens file: */
-  #[no_mangle]
-  fn xfopen_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn itoa(n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
+
   #[no_mangle]
   static mut stdin: *mut FILE;
   #[no_mangle]
@@ -126,14 +104,7 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   static mut environ: *mut *mut libc::c_char;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   #[no_mangle]
   fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t, __stream: *mut FILE) -> size_t;
   #[no_mangle]
@@ -146,8 +117,7 @@ extern "C" {
   fn pclose(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn regfree(__preg: *mut regex_t);
-  #[no_mangle]
-  fn xregcomp(preg: *mut regex_t, regex: *const libc::c_char, cflags: libc::c_int);
+
   #[no_mangle]
   fn regcomp(
     __preg: *mut regex_t,
@@ -178,15 +148,8 @@ extern "C" {
   fn sqrt(_: libc::c_double) -> libc::c_double;
 }
 
-use crate::libbb::llist::llist_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::ssize_t;
-use libc::time_t;
-use libc::tm;
-use libc::FILE;
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub t_double: libc::c_double,
   pub beginseq: chain,
@@ -216,8 +179,9 @@ pub struct globals {
   pub t_rollback: smallint,
 }
 pub type nvblock = nvblock_s;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct nvblock_s {
   pub size: libc::c_int,
   pub pos: *mut var,
@@ -226,32 +190,36 @@ pub struct nvblock_s {
   pub nv: [var; 0],
 }
 pub type var = var_s;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct var_s {
   pub type_0: libc::c_uint,
   pub number: libc::c_double,
   pub string: *mut libc::c_char,
   pub x: C2RustUnnamed,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub aidx: libc::c_int,
   pub array: *mut xhash_s,
   pub parent: *mut var_s,
   pub walker: *mut walker_list,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct walker_list {
   pub end: *mut libc::c_char,
   pub cur: *mut libc::c_char,
   pub prev: *mut walker_list,
   pub wbuf: [libc::c_char; 1],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct xhash_s {
   pub nel: libc::c_uint,
   pub csize: libc::c_uint,
@@ -259,35 +227,40 @@ pub struct xhash_s {
   pub glen: libc::c_uint,
   pub items: *mut *mut hash_item_s,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct hash_item_s {
   pub data: C2RustUnnamed_0,
   pub next: *mut hash_item_s,
   pub name: [libc::c_char; 1],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub v: var_s,
   pub rs: rstream_s,
   pub f: func_s,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct func_s {
   pub nargs: libc::c_uint,
   pub body: chain_s,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct chain_s {
   pub first: *mut node_s,
   pub last: *mut node_s,
   pub programname: *const libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct node_s {
   pub info: u32,
   pub lineno: libc::c_uint,
@@ -295,13 +268,15 @@ pub struct node_s {
   pub r: C2RustUnnamed_2,
   pub a: C2RustUnnamed_1,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub n: *mut node_s,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_2 {
   pub n: *mut node_s,
   pub ire: *mut regex_t,
@@ -309,30 +284,9 @@ pub union C2RustUnnamed_2 {
 }
 pub type func = func_s;
 pub type regex_t = re_pattern_buffer;
-#[derive(Copy, Clone, BitfieldStruct)]
+
 #[repr(C)]
-pub struct re_pattern_buffer {
-  pub buffer: *mut libc::c_uchar,
-  pub allocated: libc::c_ulong,
-  pub used: libc::c_ulong,
-  pub syntax: reg_syntax_t,
-  pub fastmap: *mut libc::c_char,
-  pub translate: *mut libc::c_uchar,
-  pub re_nsub: size_t,
-  #[bitfield(name = "can_be_null", ty = "libc::c_uint", bits = "0..=0")]
-  #[bitfield(name = "regs_allocated", ty = "libc::c_uint", bits = "1..=2")]
-  #[bitfield(name = "fastmap_accurate", ty = "libc::c_uint", bits = "3..=3")]
-  #[bitfield(name = "no_sub", ty = "libc::c_uint", bits = "4..=4")]
-  #[bitfield(name = "not_bol", ty = "libc::c_uint", bits = "5..=5")]
-  #[bitfield(name = "not_eol", ty = "libc::c_uint", bits = "6..=6")]
-  #[bitfield(name = "newline_anchor", ty = "libc::c_uint", bits = "7..=7")]
-  pub can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [u8; 1],
-  #[bitfield(padding)]
-  pub c2rust_padding: [u8; 7],
-}
-pub type reg_syntax_t = libc::c_ulong;
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_3 {
   pub n: *mut node_s,
   pub v: *mut var,
@@ -340,8 +294,9 @@ pub union C2RustUnnamed_3 {
   pub new_progname: *mut libc::c_char,
   pub re: *mut regex_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct rstream_s {
   pub F: *mut FILE,
   pub buffer: *mut libc::c_char,
@@ -355,8 +310,9 @@ pub type rstream = rstream_s;
 pub type node = node_s;
 pub type chain = chain_s;
 pub type regoff_t = libc::c_int;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct regmatch_t {
   pub rm_so: regoff_t,
   pub rm_eo: regoff_t,
@@ -373,8 +329,9 @@ pub const OPTBIT_f: C2RustUnnamed_4 = 2;
 pub const OPTBIT_v: C2RustUnnamed_4 = 1;
 pub const OPTBIT_F: C2RustUnnamed_4 = 0;
 pub type hash_item = hash_item_s;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct tsplitter_s {
   pub n: node,
   pub re: [regex_t; 2],
@@ -478,8 +435,9 @@ pub const OFS: C2RustUnnamed_8 = 3;
 pub const FS: C2RustUnnamed_8 = 2;
 pub const OFMT: C2RustUnnamed_8 = 1;
 pub const CONVFMT: C2RustUnnamed_8 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals2 {
   pub t_info: u32,
   pub t_tclass: u32,
@@ -501,14 +459,16 @@ pub struct globals2 {
   pub fsplitter: tsplitter,
   pub rsplitter: tsplitter,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_9 {
   pub v: *mut var,
   pub s: *const libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_10 {
   pub v: *mut var,
   pub s: *const libc::c_char,
@@ -756,7 +716,7 @@ unsafe extern "C" fn zero_out_var(mut vp: *mut var) {
   );
 }
 unsafe extern "C" fn syntax_error(mut message: *const libc::c_char) -> ! {
-  bb_error_msg_and_die(
+  crate::libbb::verror_msg::bb_error_msg_and_die(
     b"%s:%i: %s\x00" as *const u8 as *const libc::c_char,
     (*ptr_to_globals.offset(-1i32 as isize)).g_progname,
     (*ptr_to_globals.offset(-1i32 as isize)).g_lineno,
@@ -778,9 +738,10 @@ unsafe extern "C" fn hashidx(mut name: *const libc::c_char) -> libc::c_uint {
 /* create new hash */
 unsafe extern "C" fn hash_init() -> *mut xhash {
   let mut newhash: *mut xhash = std::ptr::null_mut();
-  newhash = xzalloc(::std::mem::size_of::<xhash>() as libc::c_ulong) as *mut xhash;
+  newhash = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<xhash>() as libc::c_ulong)
+    as *mut xhash;
   (*newhash).csize = 61i32 as libc::c_uint;
-  (*newhash).items = xzalloc(
+  (*newhash).items = crate::libbb::xfuncs_printf::xzalloc(
     (61i32 as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<*mut hash_item_s>() as libc::c_ulong),
   ) as *mut *mut hash_item_s;
@@ -820,7 +781,7 @@ unsafe extern "C" fn hash_rebuild(mut hash: *mut xhash) {
   let fresh1 = (*hash).nprime;
   (*hash).nprime = (*hash).nprime.wrapping_add(1);
   newsize = PRIMES[fresh1 as usize] as libc::c_uint;
-  newitems = xzalloc(
+  newitems = crate::libbb::xfuncs_printf::xzalloc(
     (newsize as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<*mut hash_item>() as libc::c_ulong),
   ) as *mut *mut hash_item;
@@ -856,7 +817,7 @@ unsafe extern "C" fn hash_find(
       hash_rebuild(hash);
     }
     l = strlen(name).wrapping_add(1i32 as libc::c_ulong) as libc::c_int;
-    hi = xzalloc(
+    hi = crate::libbb::xfuncs_printf::xzalloc(
       (::std::mem::size_of::<hash_item>() as libc::c_ulong).wrapping_add(l as libc::c_ulong),
     ) as *mut hash_item;
     strcpy((*hi).name.as_mut_ptr(), name);
@@ -924,7 +885,9 @@ unsafe extern "C" fn nextchar(mut s: *mut *mut libc::c_char) -> libc::c_char {
   c = *fresh6;
   pps = *s;
   if c as libc::c_int == '\\' as i32 {
-    c = bb_process_escape_sequence(s as *mut *const libc::c_char)
+    c = crate::libbb::process_escape_sequence::bb_process_escape_sequence(
+      s as *mut *const libc::c_char,
+    )
   }
   /* Example awk statement:
    * s = "abc\"def"
@@ -1038,7 +1001,7 @@ unsafe extern "C" fn setvar_s(mut v: *mut var, mut value: *const libc::c_char) -
   return setvar_p(
     v,
     if !value.is_null() && *value as libc::c_int != 0 {
-      xstrdup(value)
+      crate::libbb::xfuncs_printf::xstrdup(value)
     } else {
       std::ptr::null_mut::<libc::c_char>()
     },
@@ -1053,7 +1016,7 @@ unsafe extern "C" fn setvar_u(mut v: *mut var, mut value: *const libc::c_char) -
 /* set array element to user string */
 unsafe extern "C" fn setari_u(mut a: *mut var, mut idx: libc::c_int, mut s: *const libc::c_char) {
   let mut v: *mut var = std::ptr::null_mut();
-  v = hash_find(iamarray(a), itoa(idx)) as *mut var;
+  v = hash_find(iamarray(a), crate::libbb::xfuncs::itoa(idx)) as *mut var;
   setvar_u(v, s);
 }
 /* assign numeric value to variable */
@@ -1074,7 +1037,8 @@ unsafe extern "C" fn getvar_s(mut v: *mut var) -> *const libc::c_char {
       (*v).number,
       1i32,
     );
-    (*v).string = xstrdup((*ptr_to_globals.offset(-1i32 as isize)).g_buf);
+    (*v).string =
+      crate::libbb::xfuncs_printf::xstrdup((*ptr_to_globals.offset(-1i32 as isize)).g_buf);
     (*v).type_0 |= 0x100i32 as libc::c_uint
   }
   return if (*v).string.is_null() {
@@ -1121,7 +1085,7 @@ unsafe extern "C" fn copyvar(mut dest: *mut var, mut src: *const var) -> *mut va
       & !(0x2i32 | 0x400i32 | 0x800i32 | 0x2000i32 | 0x4000i32 | 0x1000i32) as libc::c_uint;
     (*dest).number = (*src).number;
     if !(*src).string.is_null() {
-      (*dest).string = xstrdup((*src).string)
+      (*dest).string = crate::libbb::xfuncs_printf::xstrdup((*src).string)
     }
   }
   handle_special(dest);
@@ -1169,7 +1133,7 @@ unsafe extern "C" fn nvalloc(mut n: libc::c_int) -> *mut var {
   if (*ptr_to_globals.offset(-1i32 as isize)).g_cb.is_null() {
     size = if n <= 64i32 { 64i32 } else { n };
     let ref mut fresh9 = (*ptr_to_globals.offset(-1i32 as isize)).g_cb;
-    *fresh9 = xzalloc(
+    *fresh9 = crate::libbb::xfuncs_printf::xzalloc(
       (::std::mem::size_of::<nvblock>() as libc::c_ulong).wrapping_add(
         (size as libc::c_ulong).wrapping_mul(::std::mem::size_of::<var>() as libc::c_ulong),
       ),
@@ -1315,9 +1279,10 @@ unsafe extern "C" fn next_token(mut expected: u32) -> u32 {
           s = s.offset(1);
           if *fresh20 as libc::c_int == '\\' as i32 {
             let mut pp_0: *mut libc::c_char = p;
-            *s.offset(-1i32 as isize) = bb_process_escape_sequence(
-              &mut pp_0 as *mut *mut libc::c_char as *mut *const libc::c_char,
-            );
+            *s.offset(-1i32 as isize) =
+              crate::libbb::process_escape_sequence::bb_process_escape_sequence(
+                &mut pp_0 as *mut *mut libc::c_char as *mut *const libc::c_char,
+              );
             if *p as libc::c_int == '\\' as i32 {
               let fresh21 = s;
               s = s.offset(1);
@@ -1511,7 +1476,8 @@ unsafe extern "C" fn rollback_token() {
 }
 unsafe extern "C" fn new_node(mut info: u32) -> *mut node {
   let mut n: *mut node = std::ptr::null_mut();
-  n = xzalloc(::std::mem::size_of::<node>() as libc::c_ulong) as *mut node;
+  n = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<node>() as libc::c_ulong)
+    as *mut node;
   (*n).info = info;
   (*n).lineno = (*ptr_to_globals.offset(-1i32 as isize)).g_lineno as libc::c_uint;
   return n;
@@ -1524,8 +1490,8 @@ unsafe extern "C" fn mk_re_node(
   (*n).info = OC_REGEXP as libc::c_int as u32;
   (*n).l.re = re;
   (*n).r.ire = re.offset(1);
-  xregcomp(re, s, 1i32);
-  xregcomp(re.offset(1), s, 1i32 | 1i32 << 1i32);
+  crate::libbb::xregcomp::xregcomp(re, s, 1i32);
+  crate::libbb::xregcomp::xregcomp(re.offset(1), s, 1i32 | 1i32 << 1i32);
 }
 unsafe extern "C" fn condition() -> *mut node {
   next_token((1i32 << 0) as u32);
@@ -1534,19 +1500,7 @@ unsafe extern "C" fn condition() -> *mut node {
 /* parse expression terminated by given argument, return ptr
  * to built subtree. Terminator is eaten by parse_expr */
 unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
-  let mut sn: node = node {
-    info: 0,
-    lineno: 0,
-    l: C2RustUnnamed_3 {
-      n: std::ptr::null_mut(),
-    },
-    r: C2RustUnnamed_2 {
-      n: std::ptr::null_mut(),
-    },
-    a: C2RustUnnamed_1 {
-      n: std::ptr::null_mut(),
-    },
-  };
+  let mut sn: node = std::mem::zeroed();
   let mut cn: *mut node = &mut sn;
   let mut vn: *mut node = std::ptr::null_mut();
   let mut glptr: *mut node = std::ptr::null_mut();
@@ -1747,7 +1701,9 @@ unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
           }
           1073741824 | 536870912 => {
             (*cn).info = OC_VAR as libc::c_int as u32;
-            (*cn).l.v = xzalloc(::std::mem::size_of::<var>() as libc::c_ulong) as *mut var;
+            (*cn).l.v =
+              crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<var>() as libc::c_ulong)
+                as *mut var;
             v = (*cn).l.v;
             if tc & (1i32 << 30i32) as libc::c_uint != 0 {
               setvar_i(v, (*ptr_to_globals.offset(-1i32 as isize)).t_double);
@@ -1759,7 +1715,7 @@ unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
             mk_re_node(
               (*(ptr_to_globals as *mut globals2)).t_string,
               cn,
-              xzalloc(
+              crate::libbb::xfuncs_printf::xzalloc(
                 (::std::mem::size_of::<regex_t>() as libc::c_ulong)
                   .wrapping_mul(2i32 as libc::c_ulong),
               ) as *mut regex_t,
@@ -1831,7 +1787,8 @@ unsafe extern "C" fn chain_node(mut info: u32) -> *mut node {
     let ref mut fresh30 = (*(*ptr_to_globals.offset(-1i32 as isize)).seq).programname;
     *fresh30 = (*ptr_to_globals.offset(-1i32 as isize)).g_progname;
     n = chain_node(OC_NEWSOURCE as libc::c_int as u32);
-    (*n).l.new_progname = xstrdup((*ptr_to_globals.offset(-1i32 as isize)).g_progname)
+    (*n).l.new_progname =
+      crate::libbb::xfuncs_printf::xstrdup((*ptr_to_globals.offset(-1i32 as isize)).g_progname)
   }
   n = (*(*ptr_to_globals.offset(-1i32 as isize)).seq).last;
   (*n).info = info;
@@ -2218,7 +2175,7 @@ unsafe extern "C" fn as_regex(mut op: *mut node, mut preg: *mut regex_t) -> *mut
    */
   if regcomp(preg, s, cflags) != 0 {
     cflags &= !1i32;
-    xregcomp(preg, s, cflags);
+    crate::libbb::xregcomp::xregcomp(preg, s, cflags);
   }
   nvfree(v);
   return preg;
@@ -2234,7 +2191,8 @@ unsafe extern "C" fn qrealloc(
 ) -> *mut libc::c_char {
   if b.is_null() || n >= *size {
     *size = n + (n >> 1i32) + 80i32;
-    b = xrealloc(b as *mut libc::c_void, *size as size_t) as *mut libc::c_char
+    b = crate::libbb::xfuncs_printf::xrealloc(b as *mut libc::c_void, *size as size_t)
+      as *mut libc::c_char
   }
   return b;
 }
@@ -2245,7 +2203,7 @@ unsafe extern "C" fn fsrealloc(mut size: libc::c_int) {
     i = (*ptr_to_globals.offset(-1i32 as isize)).maxfields;
     (*ptr_to_globals.offset(-1i32 as isize)).maxfields = size + 16i32;
     let ref mut fresh45 = (*ptr_to_globals.offset(-1i32 as isize)).Fields;
-    *fresh45 = xrealloc(
+    *fresh45 = crate::libbb::xfuncs_printf::xrealloc(
       (*ptr_to_globals.offset(-1i32 as isize)).Fields as *mut libc::c_void,
       ((*ptr_to_globals.offset(-1i32 as isize)).maxfields as libc::c_ulong)
         .wrapping_mul(::std::mem::size_of::<var>() as libc::c_ulong),
@@ -2286,7 +2244,7 @@ unsafe extern "C" fn awk_split(
   let mut s1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pmatch: [regmatch_t; 2] = [regmatch_t { rm_so: 0, rm_eo: 0 }; 2];
   /* in worst case, each char would be a separate field */
-  s1 = xzalloc(
+  s1 = crate::libbb::xfuncs_printf::xzalloc(
     strlen(s)
       .wrapping_mul(2i32 as libc::c_ulong)
       .wrapping_add(3i32 as libc::c_ulong),
@@ -2591,7 +2549,7 @@ unsafe extern "C" fn hashwalk_init(mut v: *mut var, mut array: *mut xhash) {
     (*v).type_0 |= 0x800i32 as libc::c_uint;
     prev_walker = std::ptr::null_mut()
   }
-  (*v).x.walker = xzalloc(
+  (*v).x.walker = crate::libbb::xfuncs_printf::xzalloc(
     (::std::mem::size_of::<walker_list>() as libc::c_ulong)
       .wrapping_add((*array).glen as libc::c_ulong)
       .wrapping_add(1i32 as libc::c_ulong),
@@ -2734,7 +2692,7 @@ unsafe extern "C" fn awk_getline(mut rsm: *mut rstream, mut v: *mut var) -> libc
     b = m.offset(a as isize);
     pp = p;
     p = p
-      + safe_read(
+      + crate::libbb::read::safe_read(
         fd,
         b.offset(p as isize) as *mut libc::c_void,
         (size - p - 1) as size_t,
@@ -2837,7 +2795,7 @@ unsafe extern "C" fn awk_printf(mut n: *mut node) -> *mut libc::c_char {
   let mut v: *mut var = std::ptr::null_mut();
   let mut arg: *mut var = std::ptr::null_mut();
   v = nvalloc(1i32);
-  f = xstrdup(getvar_s(evaluate(nextarg(&mut n), v)));
+  f = crate::libbb::xfuncs_printf::xstrdup(getvar_s(evaluate(nextarg(&mut n), v)));
   fmt = f;
   i = 0;
   while *f != 0 {
@@ -2898,7 +2856,8 @@ unsafe extern "C" fn awk_printf(mut n: *mut node) -> *mut libc::c_char {
   }
   free(fmt as *mut libc::c_void);
   nvfree(v);
-  b = xrealloc(b as *mut libc::c_void, (i + 1i32) as size_t) as *mut libc::c_char;
+  b = crate::libbb::xfuncs_printf::xrealloc(b as *mut libc::c_void, (i + 1i32) as size_t)
+    as *mut libc::c_char;
   *b.offset(i as isize) = '\u{0}' as i32 as libc::c_char;
   return b;
 }
@@ -2926,17 +2885,7 @@ unsafe extern "C" fn awk_sub(
   let mut resbufsize: libc::c_int = 0;
   let mut regexec_flags: libc::c_int = 0;
   let mut pmatch: [regmatch_t; 10] = [regmatch_t { rm_so: 0, rm_eo: 0 }; 10];
-  let mut sreg: regex_t = regex_t {
-    buffer: std::ptr::null_mut(),
-    allocated: 0,
-    used: 0,
-    syntax: 0,
-    fastmap: std::ptr::null_mut::<libc::c_char>(),
-    translate: std::ptr::null_mut(),
-    re_nsub: 0,
-    can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [0; 1],
-    c2rust_padding: [0; 7],
-  };
+  let mut sreg: regex_t = std::mem::zeroed();
   let mut regex: *mut regex_t = std::ptr::null_mut();
   resbuf = std::ptr::null_mut::<libc::c_char>();
   residx = 0;
@@ -2981,7 +2930,7 @@ unsafe extern "C" fn awk_sub(
       s = repl;
       while *s != 0 {
         let fresh55 = residx;
-        residx += 1;
+        residx = residx + 1;
         let ref mut fresh56 = *resbuf.offset(fresh55 as isize);
         *fresh56 = *s;
         let mut c: libc::c_char = *fresh56;
@@ -3000,7 +2949,7 @@ unsafe extern "C" fn awk_sub(
             }
             if nbs % 2i32 != 0 {
               let fresh57 = residx;
-              residx += 1;
+              residx = residx + 1;
               *resbuf.offset(fresh57 as isize) = c
             } else {
               let mut n: libc::c_int = pmatch[j as usize].rm_eo - pmatch[j as usize].rm_so;
@@ -3106,17 +3055,7 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
   let mut av: [*mut var; 4] = [0 as *mut var; 4];
   let mut as_0: [*const libc::c_char; 4] = [0 as *const libc::c_char; 4];
   let mut pmatch: [regmatch_t; 2] = [regmatch_t { rm_so: 0, rm_eo: 0 }; 2];
-  let mut sreg: regex_t = regex_t {
-    buffer: std::ptr::null_mut(),
-    allocated: 0,
-    used: 0,
-    syntax: 0,
-    fastmap: std::ptr::null_mut::<libc::c_char>(),
-    translate: std::ptr::null_mut(),
-    re_nsub: 0,
-    can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [0; 1],
-    c2rust_padding: [0; 7],
-  };
+  let mut sreg: regex_t = std::mem::zeroed();
   let mut re: *mut regex_t = std::ptr::null_mut();
   let mut spl: *mut node = std::ptr::null_mut();
   let mut isr: u32 = 0;
@@ -3199,7 +3138,7 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
       if n < 0 {
         n = 0
       }
-      s_0 = xstrndup(as_0[0].offset(i as isize), n);
+      s_0 = crate::libbb::xfuncs_printf::xstrndup(as_0[0].offset(i as isize), n);
       setvar_p(res, s_0);
     }
     12 => {
@@ -3240,7 +3179,7 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
     7 | 8 => {
       let mut s_1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
       let mut s1_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-      s_1 = xstrdup(as_0[0]);
+      s_1 = crate::libbb::xfuncs_printf::xstrdup(as_0[0]);
       s1_0 = s_1;
       while *s1_0 != 0 {
         //*s1 = (info == B_up) ? toupper(*s1) : tolower(*s1);
@@ -3379,15 +3318,9 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
   } /* for compiler */
   v1 = nvalloc(2i32);
   while !op.is_null() {
-    let mut L: C2RustUnnamed_10 = C2RustUnnamed_10 {
-      v: std::ptr::null_mut(),
-      s: 0 as *const libc::c_char,
-    };
+    let mut L: C2RustUnnamed_10 = std::mem::zeroed();
     L = L;
-    let mut R: C2RustUnnamed_9 = C2RustUnnamed_9 {
-      v: std::ptr::null_mut(),
-      s: 0 as *const libc::c_char,
-    };
+    let mut R: C2RustUnnamed_9 = std::mem::zeroed();
     R = R;
     let mut L_d: libc::c_double = 0.;
     L_d = L_d;
@@ -3548,7 +3481,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -3564,7 +3497,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -3613,7 +3546,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                     /* not xfopen! */
                   }
                 }
@@ -3717,13 +3650,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -3795,7 +3728,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -4149,7 +4082,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -4165,7 +4098,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -4210,7 +4143,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -4310,13 +4243,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -4386,7 +4319,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -4720,7 +4653,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -4736,7 +4669,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -4781,7 +4714,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -4881,13 +4814,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -4957,7 +4890,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -5291,7 +5224,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -5307,7 +5240,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -5352,7 +5285,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -5452,13 +5385,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -5528,7 +5461,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -5862,7 +5795,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -5878,7 +5811,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -5923,7 +5856,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -6023,13 +5956,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -6099,7 +6032,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -6433,7 +6366,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -6449,7 +6382,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -6494,7 +6427,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -6594,13 +6527,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -6670,7 +6603,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -7004,7 +6937,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -7020,7 +6953,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -7065,7 +6998,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -7165,13 +7098,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -7241,7 +7174,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -7575,7 +7508,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -7591,7 +7524,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -7636,7 +7569,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -7736,13 +7669,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -7812,7 +7745,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -8146,7 +8079,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -8162,7 +8095,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -8207,7 +8140,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -8307,13 +8240,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -8383,7 +8316,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -8717,7 +8650,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -8733,7 +8666,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -8778,7 +8711,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -8878,13 +8811,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -8954,7 +8887,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -9288,7 +9221,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -9304,7 +9237,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -9349,7 +9282,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -9449,13 +9382,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -9525,7 +9458,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -9859,7 +9792,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -9875,7 +9808,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -9920,7 +9853,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -10020,13 +9953,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -10096,7 +10029,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -10430,7 +10363,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -10446,7 +10379,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -10491,7 +10424,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -10591,13 +10524,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -10667,7 +10600,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -11001,7 +10934,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -11017,7 +10950,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -11062,7 +10995,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -11162,13 +11095,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -11238,7 +11171,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -11572,7 +11505,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -11588,7 +11521,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -11633,7 +11566,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -11733,13 +11666,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -11809,7 +11742,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -12143,7 +12076,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -12159,7 +12092,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -12204,7 +12137,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -12304,13 +12237,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -12380,7 +12313,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -12714,7 +12647,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -12730,7 +12663,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -12775,7 +12708,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -12875,13 +12808,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -12951,7 +12884,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -13285,7 +13218,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -13301,7 +13234,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -13346,7 +13279,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -13446,13 +13379,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -13522,7 +13455,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -13856,7 +13789,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -13872,7 +13805,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -13917,7 +13850,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -14017,13 +13950,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -14093,7 +14026,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -14427,7 +14360,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -14443,7 +14376,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -14488,7 +14421,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -14588,13 +14521,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -14664,7 +14597,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -14998,7 +14931,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -15014,7 +14947,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -15059,7 +14992,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -15159,13 +15092,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -15235,7 +15168,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -15569,7 +15502,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -15585,7 +15518,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -15630,7 +15563,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -15730,13 +15663,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -15806,7 +15739,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -16140,7 +16073,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -16156,7 +16089,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -16201,7 +16134,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -16301,13 +16234,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -16377,7 +16310,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -16711,7 +16644,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -16727,7 +16660,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -16772,7 +16705,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -16872,13 +16805,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -16948,7 +16881,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -17282,7 +17215,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -17298,7 +17231,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -17343,7 +17276,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -17443,13 +17376,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -17519,7 +17452,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -17853,7 +17786,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -17869,7 +17802,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -17914,7 +17847,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -18014,13 +17947,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -18090,7 +18023,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -18424,7 +18357,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -18440,7 +18373,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -18485,7 +18418,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -18585,13 +18518,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -18661,7 +18594,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -18995,7 +18928,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -19011,7 +18944,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -19056,7 +18989,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -19156,13 +19089,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -19232,7 +19165,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -19566,7 +19499,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -19582,7 +19515,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -19627,7 +19560,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -19727,13 +19660,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -19803,7 +19736,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -20137,7 +20070,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -20153,7 +20086,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -20198,7 +20131,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -20298,13 +20231,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -20374,7 +20307,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -20708,7 +20641,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   }
                 }
                 10 => {
-                  fflush_all();
+                  crate::libbb::xfuncs_printf::fflush_all();
                   R_d = if 1i32 != 0 && !L.s.is_null() && *L.s as libc::c_int != 0 {
                     (system(L.s)) >> 8i32
                   } else {
@@ -20724,7 +20657,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                         as *mut rstream;
                     fflush((*rsm_1).F);
                   } else {
-                    fflush_all();
+                    crate::libbb::xfuncs_printf::fflush_all();
                   }
                 }
                 12 => {
@@ -20769,7 +20702,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                     (*rsm_0).F = popen(L.s, b"r\x00" as *const u8 as *const libc::c_char);
                     (*rsm_0).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm_0).F = fopen_for_read(L.s)
+                    (*rsm_0).F = crate::libbb::wfopen::fopen_for_read(L.s)
                   }
                 }
               } else {
@@ -20869,13 +20802,13 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
                   if opn == '|' as i32 {
                     (*rsm).F = popen(R.s, b"w\x00" as *const u8 as *const libc::c_char);
                     if (*rsm).F.is_null() {
-                      bb_simple_perror_msg_and_die(
+                      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
                         b"popen\x00" as *const u8 as *const libc::c_char,
                       );
                     }
                     (*rsm).is_pipe = 1i32 as smallint
                   } else {
-                    (*rsm).F = xfopen(
+                    (*rsm).F = crate::libbb::xfuncs_printf::xfopen(
                       R.s,
                       if opn == 'w' as i32 {
                         b"w\x00" as *const u8 as *const libc::c_char
@@ -20945,7 +20878,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
               }
               setvar_p(
                 res,
-                xasprintf(
+                crate::libbb::xfuncs_printf::xasprintf(
                   b"%s%s%s\x00" as *const u8 as *const libc::c_char,
                   L.s,
                   sep,
@@ -21235,7 +21168,7 @@ unsafe extern "C" fn is_assignment(mut expr: *const libc::c_char) -> libc::c_int
   } {
     return 0;
   }
-  exprc = xstrdup(expr);
+  exprc = crate::libbb::xfuncs_printf::xstrdup(expr);
   val = exprc.offset(val.wrapping_offset_from(expr) as libc::c_long as isize);
   let fresh63 = val;
   val = val.offset(1);
@@ -21291,7 +21224,7 @@ unsafe extern "C" fn next_input_file() -> *mut rstream {
       if !(!fname.is_null() && *fname as libc::c_int != 0 && is_assignment(fname) == 0) {
         continue;
       }
-      F = xfopen_stdin(fname);
+      F = crate::libbb::wfopen_input::xfopen_stdin(fname);
       break;
     }
   }
@@ -21329,7 +21262,7 @@ pub unsafe extern "C" fn awk_main(
   let ref mut fresh67 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
-  *fresh67 = (xzalloc(
+  *fresh67 = (crate::libbb::xfuncs_printf::xzalloc(
     (::std::mem::size_of::<globals>() as libc::c_ulong)
       .wrapping_add(::std::mem::size_of::<globals2>() as libc::c_ulong),
   ) as *mut libc::c_char)
@@ -21415,7 +21348,7 @@ pub unsafe extern "C" fn awk_main(
       envp = envp.offset(1)
     }
   }
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"+F:v:*f:*e:*W:\x00" as *const u8 as *const libc::c_char,
     &mut opt_F as *mut *mut libc::c_char,
@@ -21427,7 +21360,9 @@ pub unsafe extern "C" fn awk_main(
   argv = argv.offset(optind as isize);
   //argc -= optind;
   if opt & OPT_W as libc::c_int as libc::c_uint != 0 {
-    bb_simple_error_msg(b"warning: option -W is ignored\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg(
+      b"warning: option -W is ignored\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if opt & OPT_F as libc::c_int as libc::c_uint != 0 {
     unescape_string_in_place(opt_F);
@@ -21437,21 +21372,23 @@ pub unsafe extern "C" fn awk_main(
     );
   }
   while !list_v.is_null() {
-    if is_assignment(llist_pop(&mut list_v) as *const libc::c_char) == 0 {
-      bb_show_usage();
+    if is_assignment(crate::libbb::llist::llist_pop(&mut list_v) as *const libc::c_char) == 0 {
+      crate::libbb::appletlib::bb_show_usage();
     }
   }
   while !list_f.is_null() {
     let mut s_0: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut from_file: *mut FILE = std::ptr::null_mut();
     let ref mut fresh77 = (*ptr_to_globals.offset(-1i32 as isize)).g_progname;
-    *fresh77 = llist_pop(&mut list_f) as *const libc::c_char;
-    from_file = xfopen_stdin((*ptr_to_globals.offset(-1i32 as isize)).g_progname);
+    *fresh77 = crate::libbb::llist::llist_pop(&mut list_f) as *const libc::c_char;
+    from_file =
+      crate::libbb::wfopen_input::xfopen_stdin((*ptr_to_globals.offset(-1i32 as isize)).g_progname);
     /* one byte is reserved for some trick in next_token */
     j = 1i32;
     i = j;
     while j > 0 {
-      s_0 = xrealloc(s_0 as *mut libc::c_void, (i + 4096i32) as size_t) as *mut libc::c_char;
+      s_0 = crate::libbb::xfuncs_printf::xrealloc(s_0 as *mut libc::c_void, (i + 4096i32) as size_t)
+        as *mut libc::c_char;
       j = fread(
         s_0.offset(i as isize) as *mut libc::c_void,
         1i32 as size_t,
@@ -21468,11 +21405,11 @@ pub unsafe extern "C" fn awk_main(
   let ref mut fresh78 = (*ptr_to_globals.offset(-1i32 as isize)).g_progname;
   *fresh78 = b"cmd. line\x00" as *const u8 as *const libc::c_char;
   while !list_e.is_null() {
-    parse_program(llist_pop(&mut list_e) as *mut libc::c_char);
+    parse_program(crate::libbb::llist::llist_pop(&mut list_e) as *mut libc::c_char);
   }
   if opt & (OPT_f as libc::c_int | OPT_e as libc::c_int) as libc::c_uint == 0 {
     if (*argv).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     let fresh79 = argv;
     argv = argv.offset(1);

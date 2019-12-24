@@ -8,12 +8,6 @@ extern "C" {
     __base: libc::c_int,
   ) -> libc::c_ulong;
 
-  #[no_mangle]
-  fn itoa(n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn rtnl_rtrealm_a2n(id: *mut u32, arg: *mut libc::c_char) -> libc::c_int;
 }
 
 pub type smalluint = libc::c_uchar;
@@ -68,7 +62,7 @@ pub unsafe extern "C" fn rtnl_rtntype_n2a(mut id: libc::c_int) -> *const libc::c
     9 => return b"throw\x00" as *const u8 as *const libc::c_char,
     10 => return b"nat\x00" as *const u8 as *const libc::c_char,
     11 => return b"xresolve\x00" as *const u8 as *const libc::c_char,
-    _ => return itoa(id),
+    _ => return crate::libbb::xfuncs::itoa(id),
   };
 }
 #[no_mangle]
@@ -83,7 +77,9 @@ pub unsafe extern "C" fn rtnl_rtntype_a2n(
     108, 97, 99, 107, 104, 111, 108, 101, 0, 120, 114, 101, 115, 111, 108, 118, 101, 0, 117, 110,
     105, 99, 97, 115, 116, 0, 116, 104, 114, 111, 119, 0, 0,
   ];
-  let key: smalluint = (index_in_substrings(keywords.as_ptr(), arg) + 1i32) as smalluint;
+  let key: smalluint =
+    (crate::libbb::compare_string_array::index_in_substrings(keywords.as_ptr(), arg) + 1i32)
+      as smalluint;
   let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut res: libc::c_ulong = 0;
   if key as libc::c_int == ARG_local as libc::c_int {
@@ -130,7 +126,7 @@ pub unsafe extern "C" fn get_rt_realms(
   *realms = 0 as u32;
   if !p.is_null() {
     *p = 0 as libc::c_char;
-    if rtnl_rtrealm_a2n(realms, arg) != 0 {
+    if crate::networking::libiproute::rt_names::rtnl_rtrealm_a2n(realms, arg) != 0 {
       *p = '/' as i32 as libc::c_char;
       return -1i32;
     }
@@ -138,7 +134,9 @@ pub unsafe extern "C" fn get_rt_realms(
     *p = '/' as i32 as libc::c_char;
     arg = p.offset(1)
   }
-  if *arg as libc::c_int != 0 && rtnl_rtrealm_a2n(&mut realm, arg) != 0 {
+  if *arg as libc::c_int != 0
+    && crate::networking::libiproute::rt_names::rtnl_rtrealm_a2n(&mut realm, arg) != 0
+  {
     return -1i32;
   }
   *realms |= realm;

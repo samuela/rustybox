@@ -53,141 +53,7 @@ extern "C" {
   fn inet_aton(__cp: *const libc::c_char, __inp: *mut in_addr) -> libc::c_int;
 
   #[no_mangle]
-  fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn last_char_is(s: *const libc::c_char, c: libc::c_int) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-
-  #[no_mangle]
-  fn xopendir(path: *const libc::c_char) -> *mut DIR;
-
-  #[no_mangle]
-  fn xrename(oldpath: *const libc::c_char, newpath: *const libc::c_char);
-
-  #[no_mangle]
-  fn xpipe(filedes: *mut libc::c_int);
-
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xmalloc_fgets(file: *mut FILE) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-
-  #[no_mangle]
-  fn xfdopen_for_read(fd: libc::c_int) -> *mut FILE;
-
-  #[no_mangle]
-  fn xfdopen_for_write(fd: libc::c_int) -> *mut FILE;
-
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-
-  #[no_mangle]
-  fn safe_waitpid(pid: pid_t, wstat: *mut libc::c_int, options: libc::c_int) -> pid_t;
-
-  #[no_mangle]
   static mut option_mask32: u32;
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
-
-  #[no_mangle]
-  fn llist_add_to_end(list_head: *mut *mut llist_t, data: *mut libc::c_void);
-
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn llist_unlink(head: *mut *mut llist_t, elm: *mut llist_t);
-
-  #[no_mangle]
-  fn llist_free(
-    elm: *mut llist_t,
-    freeit: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
-  );
-
-  #[no_mangle]
-  fn llist_find_str(first: *mut llist_t, str: *const libc::c_char) -> *mut llist_t;
-
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn get_shell_name() -> *const libc::c_char;
-
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
@@ -203,11 +69,8 @@ extern "C" {
 use crate::librb::size_t;
 use libc::pid_t;
 use libc::useconds_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
+use libc::in_addr;
 pub type in_addr_t = u32;
 use crate::libbb::llist::llist_t;
 use crate::librb::fd_pair;
@@ -215,15 +78,17 @@ use crate::librb::smallint;
 use libc::dirent;
 use libc::DIR;
 use libc::FILE;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub my_environ: *mut *mut libc::c_char,
   pub startup_PATH: *const libc::c_char,
   pub shell: *mut libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct interface_defn_t {
   pub address_family: *const address_family_t,
   pub method: *const method_t,
@@ -231,14 +96,16 @@ pub struct interface_defn_t {
   pub n_options: libc::c_int,
   pub option: *mut variable_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct variable_t {
   pub name: *mut libc::c_char,
   pub value: *mut libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct method_t {
   pub name: *const libc::c_char,
   pub up: Option<
@@ -255,15 +122,17 @@ pub struct method_t {
   >,
 }
 pub type execfn = unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct address_family_t {
   pub name: *const libc::c_char,
   pub n_methods: libc::c_int,
   pub method: *const method_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct mapping_defn_t {
   pub next: *mut mapping_defn_t,
   pub max_matches: libc::c_int,
@@ -273,8 +142,9 @@ pub struct mapping_defn_t {
   pub n_mappings: libc::c_int,
   pub mapping: *mut *mut libc::c_char,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct interfaces_file_t {
   pub autointerfaces: *mut llist_t,
   pub ifaces: *mut llist_t,
@@ -318,12 +188,12 @@ unsafe extern "C" fn addstr(
     0 as libc::c_ulong
   } as libc::c_int;
   str_length = str_length.wrapping_add(1);
-  buf = xrealloc(
+  buf = crate::libbb::xfuncs_printf::xrealloc(
     buf as *mut libc::c_void,
     (len as libc::c_ulong).wrapping_add(str_length),
   ) as *mut libc::c_char;
   /* copies at most str_length-1 chars! */
-  safe_strncpy(buf.offset(len as isize), str, str_length);
+  crate::libbb::safe_strncpy::safe_strncpy(buf.offset(len as isize), str, str_length);
   *bufp = buf;
 }
 unsafe extern "C" fn strncmpz(
@@ -397,7 +267,7 @@ unsafe extern "C" fn count_netmask_bits(mut dotted_quad: *const libc::c_char) ->
       let fresh1;
       let fresh2 = __x;
       asm!("bswap $0" : "=r" (fresh1) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
@@ -478,20 +348,24 @@ unsafe extern "C" fn parse(
           /* "hwaddress <class> <address>":
            * unlike ifconfig, ip doesnt want <class>
            * (usually "ether" keyword). Skip it. */
-          if !is_prefixed_with(
+          if !crate::libbb::compare_string_array::is_prefixed_with(
             command,
             b"hwaddress\x00" as *const u8 as *const libc::c_char,
           )
           .is_null()
           {
-            varvalue = skip_whitespace(skip_non_whitespace(varvalue))
+            varvalue = skip_whitespace(crate::libbb::skip_whitespace::skip_non_whitespace(varvalue))
           }
           addstr(&mut result, varvalue, strlen(varvalue));
           current_block_42 = 5892776923941496671;
         } else {
           /* Sigh...  Add a special case for 'ip' to convert from
            * dotted quad to bit count style netmasks.  */
-          if !is_prefixed_with(command, b"bnmask\x00" as *const u8 as *const libc::c_char).is_null()
+          if !crate::libbb::compare_string_array::is_prefixed_with(
+            command,
+            b"bnmask\x00" as *const u8 as *const libc::c_char,
+          )
+          .is_null()
           {
             let mut res: libc::c_uint = 0;
             varvalue = get_var(
@@ -502,7 +376,7 @@ unsafe extern "C" fn parse(
             if !varvalue.is_null() {
               res = count_netmask_bits(varvalue) as libc::c_uint;
               if res > 0 as libc::c_uint {
-                let mut argument: *const libc::c_char = utoa(res);
+                let mut argument: *const libc::c_char = crate::libbb::xfuncs::utoa(res);
                 addstr(&mut result, argument, strlen(argument));
                 command = nextpercent.offset(1);
                 current_block_42 = 9353995356876505083;
@@ -1218,28 +1092,29 @@ unsafe extern "C" fn read_interfaces(
   let mut rest_of_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut currently_processing: C2RustUnnamed_0 = NONE;
   if defn.is_null() {
-    defn =
-      xzalloc(::std::mem::size_of::<interfaces_file_t>() as libc::c_ulong) as *mut interfaces_file_t
+    defn = crate::libbb::xfuncs_printf::xzalloc(
+      ::std::mem::size_of::<interfaces_file_t>() as libc::c_ulong
+    ) as *mut interfaces_file_t
   }
-  f = xfopen_for_read(filename);
+  f = crate::libbb::wfopen::xfopen_for_read(filename);
   loop {
-    buf = xmalloc_fgetline(f);
+    buf = crate::libbb::get_line_from_file::xmalloc_fgetline(f);
     if buf.is_null() {
       break;
     }
     /* Trailing "\" concatenates lines */
     let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     loop {
-      p = last_char_is(buf, '\\' as i32);
+      p = crate::libbb::last_char_is::last_char_is(buf, '\\' as i32);
       if p.is_null() {
         break;
       }
       *p = '\u{0}' as i32 as libc::c_char;
-      rest_of_line = xmalloc_fgetline(f);
+      rest_of_line = crate::libbb::get_line_from_file::xmalloc_fgetline(f);
       if rest_of_line.is_null() {
         break;
       }
-      p = xasprintf(
+      p = crate::libbb::xfuncs_printf::xasprintf(
         b"%s%s\x00" as *const u8 as *const libc::c_char,
         buf,
         rest_of_line,
@@ -1259,14 +1134,15 @@ unsafe extern "C" fn read_interfaces(
         b"mapping\x00" as *const u8 as *const libc::c_char,
       ) == 0
       {
-        currmap =
-          xzalloc(::std::mem::size_of::<mapping_defn_t>() as libc::c_ulong) as *mut mapping_defn_t;
+        currmap = crate::libbb::xfuncs_printf::xzalloc(
+          ::std::mem::size_of::<mapping_defn_t>() as libc::c_ulong
+        ) as *mut mapping_defn_t;
         loop {
           first_word = next_word(&mut rest_of_line);
           if first_word.is_null() {
             break;
           }
-          (*currmap).match_0 = xrealloc_vector_helper(
+          (*currmap).match_0 = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
             (*currmap).match_0 as *mut libc::c_void,
             ((::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong) << 8i32)
               .wrapping_add(4i32 as libc::c_ulong) as libc::c_uint,
@@ -1275,7 +1151,7 @@ unsafe extern "C" fn read_interfaces(
           let fresh4 = (*currmap).n_matches;
           (*currmap).n_matches = (*currmap).n_matches + 1;
           let ref mut fresh5 = *(*currmap).match_0.offset(fresh4 as isize);
-          *fresh5 = xstrdup(first_word)
+          *fresh5 = crate::libbb::xfuncs_printf::xstrdup(first_word)
         }
         /*currmap->n_mappings = 0;*/
         /*currmap->mapping = NULL;*/
@@ -1299,13 +1175,14 @@ unsafe extern "C" fn read_interfaces(
         let mut iface_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut address_family_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         let mut method_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-        currif = xzalloc(::std::mem::size_of::<interface_defn_t>() as libc::c_ulong)
-          as *mut interface_defn_t;
+        currif = crate::libbb::xfuncs_printf::xzalloc(
+          ::std::mem::size_of::<interface_defn_t>() as libc::c_ulong
+        ) as *mut interface_defn_t;
         iface_name = next_word(&mut rest_of_line);
         address_family_name = next_word(&mut rest_of_line);
         method_name = next_word(&mut rest_of_line);
         if method_name.is_null() {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"too few parameters for line \"%s\"\x00" as *const u8 as *const libc::c_char,
             buf,
           );
@@ -1314,27 +1191,27 @@ unsafe extern "C" fn read_interfaces(
         rest_of_line = skip_whitespace(rest_of_line);
         if *rest_of_line.offset(0) as libc::c_int != '\u{0}' as i32 {
           /* && rest_of_line[0] != '#' */
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"too many parameters \"%s\"\x00" as *const u8 as *const libc::c_char,
             buf,
           );
         }
-        (*currif).iface = xstrdup(iface_name);
+        (*currif).iface = crate::libbb::xfuncs_printf::xstrdup(iface_name);
         (*currif).address_family = get_address_family(addr_fams.as_ptr(), address_family_name);
         if (*currif).address_family.is_null() {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"unknown address type \"%s\"\x00" as *const u8 as *const libc::c_char,
             address_family_name,
           );
         }
         (*currif).method = get_method((*currif).address_family, method_name);
         if (*currif).method.is_null() {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"unknown method \"%s\"\x00" as *const u8 as *const libc::c_char,
             method_name,
           );
         }
-        llist_add_to_end(
+        crate::libbb::llist::llist_add_to_end(
           &mut (*defn).ifaces,
           currif as *mut libc::c_char as *mut libc::c_void,
         );
@@ -1346,16 +1223,16 @@ unsafe extern "C" fn read_interfaces(
             break;
           }
           /* Check the interface isnt already listed */
-          if !llist_find_str((*defn).autointerfaces, first_word).is_null() {
-            bb_perror_msg_and_die(
+          if !crate::libbb::llist::llist_find_str((*defn).autointerfaces, first_word).is_null() {
+            crate::libbb::perror_msg::bb_perror_msg_and_die(
               b"interface declared auto twice \"%s\"\x00" as *const u8 as *const libc::c_char,
               buf,
             );
           }
           /* Add the interface to the list */
-          llist_add_to_end(
+          crate::libbb::llist::llist_add_to_end(
             &mut (*defn).autointerfaces,
-            xstrdup(first_word) as *mut libc::c_void,
+            crate::libbb::xfuncs_printf::xstrdup(first_word) as *mut libc::c_void,
           ); /* "down" */
         } /* "up" */
         currently_processing = NONE
@@ -1365,7 +1242,7 @@ unsafe extern "C" fn read_interfaces(
       ) == 0
       {
         read_interfaces(next_word(&mut rest_of_line), defn);
-      } else if !is_prefixed_with(
+      } else if !crate::libbb::compare_string_array::is_prefixed_with(
         first_word,
         b"source-dir\x00" as *const u8 as *const libc::c_char,
       )
@@ -1375,7 +1252,7 @@ unsafe extern "C" fn read_interfaces(
         let mut dir: *mut DIR = std::ptr::null_mut();
         let mut entry: *mut dirent = std::ptr::null_mut();
         dirpath = next_word(&mut rest_of_line);
-        dir = xopendir(dirpath);
+        dir = crate::libbb::xfuncs_printf::xopendir(dirpath);
         loop {
           entry = readdir(dir);
           if entry.is_null() {
@@ -1385,7 +1262,8 @@ unsafe extern "C" fn read_interfaces(
           if (*entry).d_name[0] as libc::c_int == '.' as i32 {
             continue;
           }
-          path = concat_path_file(dirpath, (*entry).d_name.as_mut_ptr());
+          path =
+            crate::libbb::concat_path_file::concat_path_file(dirpath, (*entry).d_name.as_mut_ptr());
           read_interfaces(path, defn);
           free(path as *mut libc::c_void);
         }
@@ -1394,7 +1272,7 @@ unsafe extern "C" fn read_interfaces(
         match currently_processing as libc::c_uint {
           1 => {
             if *rest_of_line.offset(0) as libc::c_int == '\u{0}' as i32 {
-              bb_error_msg_and_die(
+              crate::libbb::verror_msg::bb_error_msg_and_die(
                 b"option with empty value \"%s\"\x00" as *const u8 as *const libc::c_char,
                 buf,
               );
@@ -1413,12 +1291,16 @@ unsafe extern "C" fn read_interfaces(
               first_word = first_word.offset(4)
             }
             /* If not one of "up", "down",... words... */
-            if index_in_strings(keywords_up_down.as_ptr(), first_word) < 0 {
+            if crate::libbb::compare_string_array::index_in_strings(
+              keywords_up_down.as_ptr(),
+              first_word,
+            ) < 0
+            {
               let mut i: libc::c_int = 0;
               i = 0;
               while i < (*currif).n_options {
                 if strcmp((*(*currif).option.offset(i as isize)).name, first_word) == 0 {
-                  bb_error_msg_and_die(
+                  crate::libbb::verror_msg::bb_error_msg_and_die(
                     b"duplicate option \"%s\"\x00" as *const u8 as *const libc::c_char,
                     buf,
                   );
@@ -1426,16 +1308,16 @@ unsafe extern "C" fn read_interfaces(
                 i += 1
               }
             }
-            (*currif).option = xrealloc_vector_helper(
+            (*currif).option = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
               (*currif).option as *mut libc::c_void,
               ((::std::mem::size_of::<variable_t>() as libc::c_ulong) << 8i32)
                 .wrapping_add(4i32 as libc::c_ulong) as libc::c_uint,
               (*currif).n_options,
             ) as *mut variable_t;
             let ref mut fresh6 = (*(*currif).option.offset((*currif).n_options as isize)).name;
-            *fresh6 = xstrdup(first_word);
+            *fresh6 = crate::libbb::xfuncs_printf::xstrdup(first_word);
             let ref mut fresh7 = (*(*currif).option.offset((*currif).n_options as isize)).value;
-            *fresh7 = xstrdup(rest_of_line);
+            *fresh7 = crate::libbb::xfuncs_printf::xstrdup(rest_of_line);
             (*currif).n_options += 1
           }
           2 => {
@@ -1445,31 +1327,31 @@ unsafe extern "C" fn read_interfaces(
             ) == 0
             {
               if !(*currmap).script.is_null() {
-                bb_error_msg_and_die(
+                crate::libbb::verror_msg::bb_error_msg_and_die(
                   b"duplicate script in mapping \"%s\"\x00" as *const u8 as *const libc::c_char,
                   buf,
                 );
               }
-              (*currmap).script = xstrdup(next_word(&mut rest_of_line))
+              (*currmap).script = crate::libbb::xfuncs_printf::xstrdup(next_word(&mut rest_of_line))
             } else if strcmp(first_word, b"map\x00" as *const u8 as *const libc::c_char) == 0 {
-              (*currmap).mapping = xrealloc_vector_helper(
+              (*currmap).mapping = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
                 (*currmap).mapping as *mut libc::c_void,
                 ((::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong) << 8i32)
                   .wrapping_add(2i32 as libc::c_ulong) as libc::c_uint,
                 (*currmap).n_mappings,
               ) as *mut *mut libc::c_char;
               let ref mut fresh8 = *(*currmap).mapping.offset((*currmap).n_mappings as isize);
-              *fresh8 = xstrdup(next_word(&mut rest_of_line));
+              *fresh8 = crate::libbb::xfuncs_printf::xstrdup(next_word(&mut rest_of_line));
               (*currmap).n_mappings += 1
             } else {
-              bb_error_msg_and_die(
+              crate::libbb::verror_msg::bb_error_msg_and_die(
                 b"misplaced option \"%s\"\x00" as *const u8 as *const libc::c_char,
                 buf,
               );
             }
           }
           0 | _ => {
-            bb_error_msg_and_die(
+            crate::libbb::verror_msg::bb_error_msg_and_die(
               b"misplaced option \"%s\"\x00" as *const u8 as *const libc::c_char,
               buf,
             );
@@ -1481,7 +1363,7 @@ unsafe extern "C" fn read_interfaces(
   }
   if ferror_unlocked(f) != 0 {
     /* ferror does NOT set errno! */
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"%s: I/O error\x00" as *const u8 as *const libc::c_char,
       filename,
     );
@@ -1498,7 +1380,7 @@ unsafe extern "C" fn setlocalenv(
   let mut dst: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut src: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut c: libc::c_char = 0;
-  result = xasprintf(format, name, value);
+  result = crate::libbb::xfuncs_printf::xasprintf(format, name, value);
   src = result;
   dst = src;
   loop {
@@ -1519,7 +1401,7 @@ unsafe extern "C" fn setlocalenv(
     }
     src = src.offset(1)
   }
-  overlapping_strcpy(dst, src);
+  crate::libbb::safe_strncpy::overlapping_strcpy(dst, src);
   return result;
 }
 unsafe extern "C" fn set_environ(
@@ -1542,14 +1424,14 @@ unsafe extern "C" fn set_environ(
   }
   /* note: last element will stay NULL: */
   let ref mut fresh10 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).my_environ;
-  *fresh10 = xzalloc(
+  *fresh10 = crate::libbb::xfuncs_printf::xzalloc(
     (::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong)
       .wrapping_mul(((*iface).n_options + 7i32) as libc::c_ulong),
   ) as *mut *mut libc::c_char;
   pp = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).my_environ;
   i = 0;
   while i < (*iface).n_options {
-    if !(index_in_strings(
+    if !(crate::libbb::compare_string_array::index_in_strings(
       keywords_up_down.as_ptr(),
       (*(*iface).option.offset(i as isize)).name,
     ) >= 0)
@@ -1619,7 +1501,7 @@ unsafe extern "C" fn doit(mut str: *mut libc::c_char) -> libc::c_int {
   if option_mask32 & OPT_no_act as libc::c_int as libc::c_uint == 0 {
     let mut child: pid_t = 0;
     let mut status: libc::c_int = 0;
-    fflush_all();
+    crate::libbb::xfuncs_printf::fflush_all();
     child = vfork();
     if child < 0 {
       /* failure */
@@ -1637,7 +1519,7 @@ unsafe extern "C" fn doit(mut str: *mut libc::c_char) -> libc::c_int {
       );
       _exit(127i32);
     }
-    safe_waitpid(child, &mut status, 0);
+    crate::libbb::xfuncs::safe_waitpid(child, &mut status, 0);
     if !(status & 0x7fi32 == 0) || (status & 0xff00i32) >> 8i32 != 0 {
       return 0;
     }
@@ -1754,13 +1636,15 @@ unsafe extern "C" fn popen2(
   let mut infd: fd_pair = fd_pair { rd: 0, wr: 0 };
   let mut outfd: fd_pair = fd_pair { rd: 0, wr: 0 };
   let mut pid: pid_t = 0;
-  xpipe(&mut infd.rd);
-  xpipe(&mut outfd.rd);
-  fflush_all();
+  crate::libbb::xfuncs_printf::xpipe(&mut infd.rd);
+  crate::libbb::xfuncs_printf::xpipe(&mut outfd.rd);
+  crate::libbb::xfuncs_printf::fflush_all();
   pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
     if bb__xvfork_pid < 0 {
-      bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"vfork\x00" as *const u8 as *const libc::c_char,
+      );
     }
     bb__xvfork_pid
   };
@@ -1769,15 +1653,15 @@ unsafe extern "C" fn popen2(
     /* NB: close _first_, then move fds! */
     close(infd.wr);
     close(outfd.rd);
-    xmove_fd(infd.rd, 0);
-    xmove_fd(outfd.wr, 1i32);
-    BB_EXECVP_or_die(argv.as_mut_ptr());
+    crate::libbb::xfuncs_printf::xmove_fd(infd.rd, 0);
+    crate::libbb::xfuncs_printf::xmove_fd(outfd.wr, 1i32);
+    crate::libbb::executable::BB_EXECVP_or_die(argv.as_mut_ptr());
   }
   /* parent */
   close(infd.rd);
   close(outfd.wr);
-  *in_0 = xfdopen_for_write(infd.wr);
-  *out = xfdopen_for_read(outfd.rd);
+  *in_0 = crate::libbb::wfopen::xfdopen_for_write(infd.wr);
+  *out = crate::libbb::wfopen::xfdopen_for_read(outfd.rd);
   return pid;
 }
 unsafe extern "C" fn run_mapping(
@@ -1789,7 +1673,7 @@ unsafe extern "C" fn run_mapping(
   let mut i: libc::c_int = 0;
   let mut status: libc::c_int = 0;
   let mut pid: pid_t = 0;
-  let mut logical: *mut libc::c_char = xstrdup(physical);
+  let mut logical: *mut libc::c_char = crate::libbb::xfuncs_printf::xstrdup(physical);
   /* Run the mapping script. Never fails. */
   pid = popen2(&mut in_0, &mut out, (*map).script, physical);
   /* Write mappings to stdin of mapping script. */
@@ -1803,12 +1687,13 @@ unsafe extern "C" fn run_mapping(
     i += 1
   }
   fclose(in_0);
-  safe_waitpid(pid, &mut status, 0);
+  crate::libbb::xfuncs::safe_waitpid(pid, &mut status, 0);
   if status & 0x7fi32 == 0 && (status & 0xff00i32) >> 8i32 == 0 {
     /* If the mapping script exited successfully, try to
      * grab a line of output and use that as the name of the
      * logical interface. */
-    let mut new_logical: *mut libc::c_char = xmalloc_fgetline(out);
+    let mut new_logical: *mut libc::c_char =
+      crate::libbb::get_line_from_file::xmalloc_fgetline(out);
     if !new_logical.is_null() {
       /* If we are able to read a line of output from the script,
        * remove any trailing whitespace and use this value
@@ -1839,7 +1724,8 @@ unsafe extern "C" fn find_iface_state(
 ) -> *mut llist_t {
   let mut search: *mut llist_t = state_list;
   while !search.is_null() {
-    let mut after_iface: *mut libc::c_char = is_prefixed_with((*search).data, iface);
+    let mut after_iface: *mut libc::c_char =
+      crate::libbb::compare_string_array::is_prefixed_with((*search).data, iface);
     if !after_iface.is_null() && *after_iface as libc::c_int == '=' as i32 {
       return search;
     }
@@ -1850,13 +1736,14 @@ unsafe extern "C" fn find_iface_state(
 /* read the previous state from the state file */
 unsafe extern "C" fn read_iface_state() -> *mut llist_t {
   let mut state_list: *mut llist_t = std::ptr::null_mut();
-  let mut state_fp: *mut FILE =
-    fopen_for_read(b"/var/run/ifstate\x00" as *const u8 as *const libc::c_char);
+  let mut state_fp: *mut FILE = crate::libbb::wfopen::fopen_for_read(
+    b"/var/run/ifstate\x00" as *const u8 as *const libc::c_char,
+  );
   if !state_fp.is_null() {
     let mut start: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut end_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     loop {
-      start = xmalloc_fgets(state_fp);
+      start = crate::libbb::get_line_from_file::xmalloc_fgets(state_fp);
       if start.is_null() {
         break;
       }
@@ -1864,7 +1751,7 @@ unsafe extern "C" fn read_iface_state() -> *mut llist_t {
       end_ptr =
         start.offset(strcspn(start, b" \t\n\x00" as *const u8 as *const libc::c_char) as isize);
       *end_ptr = '\u{0}' as i32 as libc::c_char;
-      llist_add_to(&mut state_list, start as *mut libc::c_void);
+      crate::libbb::llist::llist_add_to(&mut state_list, start as *mut libc::c_void);
     }
     fclose(state_fp);
   }
@@ -1887,7 +1774,7 @@ unsafe extern "C" fn open_new_state_file() -> *mut FILE {
       break;
     }
     if *bb_errno != 17i32 || flags == 0o1i32 | 0o100i32 | 0o1000i32 {
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"can\'t open \'%s\'\x00" as *const u8 as *const libc::c_char,
         b"/var/run/ifstate.new\x00" as *const u8 as *const libc::c_char,
       );
@@ -1903,7 +1790,7 @@ unsafe extern "C" fn open_new_state_file() -> *mut FILE {
       cnt += 1000i32
     }
   }
-  return xfdopen_for_write(fd);
+  return crate::libbb::wfopen::xfdopen_for_write(fd);
 }
 #[no_mangle]
 pub unsafe extern "C" fn ifupdown_main(
@@ -1920,14 +1807,14 @@ pub unsafe extern "C" fn ifupdown_main(
   let ref mut fresh19 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).startup_PATH;
   *fresh19 = getenv(b"PATH\x00" as *const u8 as *const libc::c_char);
   let ref mut fresh20 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).shell;
-  *fresh20 = xstrdup(get_shell_name());
+  *fresh20 = crate::libbb::xfuncs_printf::xstrdup(crate::libbb::get_shell_name::get_shell_name());
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(2) as libc::c_int == 'u' as i32) {
     /* ifup command */
     cmds = Some(iface_up as unsafe extern "C" fn(_: *mut interface_defn_t) -> libc::c_int)
   } else {
     cmds = Some(iface_down as unsafe extern "C" fn(_: *mut interface_defn_t) -> libc::c_int)
   }
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     b"anvfmi:\x00" as *const u8 as *const libc::c_char,
     &mut interfaces as *mut *const libc::c_char,
@@ -1935,17 +1822,17 @@ pub unsafe extern "C" fn ifupdown_main(
   argv = argv.offset(optind as isize);
   if !(*argv.offset(0)).is_null() {
     if option_mask32 & OPT_do_all as libc::c_int as libc::c_uint != 0 {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
   } else if option_mask32 & OPT_do_all as libc::c_int as libc::c_uint == 0 {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   defn = read_interfaces(interfaces, 0 as *mut interfaces_file_t);
   /* Create a list of interfaces to work on */
   if option_mask32 & OPT_do_all as libc::c_int as libc::c_uint != 0 {
     target_list = (*defn).autointerfaces
   } else {
-    llist_add_to_end(&mut target_list, *argv.offset(0) as *mut libc::c_void);
+    crate::libbb::llist::llist_add_to_end(&mut target_list, *argv.offset(0) as *mut libc::c_void);
   }
   /* Update the interfaces */
   while !target_list.is_null() {
@@ -1957,14 +1844,14 @@ pub unsafe extern "C" fn ifupdown_main(
     let mut okay: bool = 0 != 0;
     let mut cmds_ret: libc::c_int = 0;
     let mut curr_failure: bool = 0 != 0;
-    iface = xstrdup((*target_list).data);
+    iface = crate::libbb::xfuncs_printf::xstrdup((*target_list).data);
     target_list = (*target_list).link;
     pch = strchr(iface, '=' as i32);
     if !pch.is_null() {
       *pch = '\u{0}' as i32 as libc::c_char;
-      liface = xstrdup(pch.offset(1))
+      liface = crate::libbb::xfuncs_printf::xstrdup(pch.offset(1))
     } else {
-      liface = xstrdup(iface)
+      liface = crate::libbb::xfuncs_printf::xstrdup(iface)
     }
     if option_mask32 & OPT_force as libc::c_int as libc::c_uint == 0 {
       let mut state_list: *mut llist_t = read_iface_state();
@@ -1972,7 +1859,7 @@ pub unsafe extern "C" fn ifupdown_main(
       if cmds == Some(iface_up as unsafe extern "C" fn(_: *mut interface_defn_t) -> libc::c_int) {
         /* ifup */
         if !iface_state.is_null() {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"interface %s already configured\x00" as *const u8 as *const libc::c_char,
             iface,
           );
@@ -1981,7 +1868,7 @@ pub unsafe extern "C" fn ifupdown_main(
           current_block = 2989495919056355252;
         }
       } else if iface_state.is_null() {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"interface %s not configured\x00" as *const u8 as *const libc::c_char,
           iface,
         );
@@ -1992,7 +1879,7 @@ pub unsafe extern "C" fn ifupdown_main(
       match current_block {
         12709013627096618709 => {}
         _ => {
-          llist_free(
+          crate::libbb::llist::llist_free(
             state_list,
             Some(free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
           );
@@ -2041,7 +1928,7 @@ pub unsafe extern "C" fn ifupdown_main(
             /* Call the cmds function pointer, does either iface_up() or iface_down() */
             cmds_ret = cmds.expect("non-null function pointer")(currif);
             if cmds_ret == -1i32 {
-              bb_error_msg(
+              crate::libbb::verror_msg::bb_error_msg(
                 b"don\'t have all variables for %s/%s\x00" as *const u8 as *const libc::c_char,
                 liface,
                 (*(*currif).address_family).name,
@@ -2057,10 +1944,10 @@ pub unsafe extern "C" fn ifupdown_main(
           iface_list = (*iface_list).link
         }
         if option_mask32 & OPT_verbose as libc::c_int as libc::c_uint != 0 {
-          bb_putchar('\n' as i32);
+          crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
         }
         if !okay && option_mask32 & OPT_force as libc::c_int as libc::c_uint == 0 {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"ignoring unknown interface %s\x00" as *const u8 as *const libc::c_char,
             liface,
           );
@@ -2074,21 +1961,24 @@ pub unsafe extern "C" fn ifupdown_main(
           if cmds == Some(iface_up as unsafe extern "C" fn(_: *mut interface_defn_t) -> libc::c_int)
             && !curr_failure
           {
-            let mut newiface: *mut libc::c_char = xasprintf(
+            let mut newiface: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
               b"%s=%s\x00" as *const u8 as *const libc::c_char,
               iface,
               liface,
             );
             if iface_state_0.is_null() {
-              llist_add_to_end(&mut state_list_0, newiface as *mut libc::c_void);
+              crate::libbb::llist::llist_add_to_end(
+                &mut state_list_0,
+                newiface as *mut libc::c_void,
+              );
             } else {
               free((*iface_state_0).data as *mut libc::c_void);
               (*iface_state_0).data = newiface
             }
           } else {
             /* Remove an interface from state_list */
-            llist_unlink(&mut state_list_0, iface_state_0);
-            free(llist_pop(&mut iface_state_0));
+            crate::libbb::llist::llist_unlink(&mut state_list_0, iface_state_0);
+            free(crate::libbb::llist::llist_pop(&mut iface_state_0));
           }
           /* Actually write the new state */
           state = state_list_0;
@@ -2103,11 +1993,11 @@ pub unsafe extern "C" fn ifupdown_main(
             state = (*state).link
           }
           fclose(new_state_fp);
-          xrename(
+          crate::libbb::xfuncs_printf::xrename(
             b"/var/run/ifstate.new\x00" as *const u8 as *const libc::c_char,
             b"/var/run/ifstate\x00" as *const u8 as *const libc::c_char,
           );
-          llist_free(
+          crate::libbb::llist::llist_free(
             state_list_0,
             Some(free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
           );

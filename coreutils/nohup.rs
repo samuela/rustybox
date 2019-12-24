@@ -11,22 +11,8 @@ extern "C" {
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
 
   #[no_mangle]
-  fn xopen3(pathname: *const libc::c_char, flags: libc::c_int, mode: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-  #[no_mangle]
   static mut xfunc_error_retval: u8;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
+
 }
 
 /*
@@ -81,13 +67,13 @@ pub unsafe extern "C" fn nohup_main(
   let mut home: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   xfunc_error_retval = 127i32 as u8;
   if (*argv.offset(1)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* If stdin is a tty, detach from it. */
   if isatty(0i32) != 0 {
     /* bb_error_msg("ignoring input"); */
     close(0i32);
-    xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0);
+    crate::libbb::xfuncs_printf::xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0);
     /* will be fd 0 (STDIN_FILENO) */
   }
   nohupout = b"nohup.out\x00" as *const u8 as *const libc::c_char;
@@ -97,14 +83,18 @@ pub unsafe extern "C" fn nohup_main(
     if open(nohupout, 0o100i32 | 0o1i32 | 0o2000i32, 0o400i32 | 0o200i32) < 0 {
       home = getenv(b"HOME\x00" as *const u8 as *const libc::c_char);
       if !home.is_null() {
-        nohupout = concat_path_file(home, nohupout);
-        xopen3(nohupout, 0o100i32 | 0o1i32 | 0o2000i32, 0o400i32 | 0o200i32);
+        nohupout = crate::libbb::concat_path_file::concat_path_file(home, nohupout);
+        crate::libbb::xfuncs_printf::xopen3(
+          nohupout,
+          0o100i32 | 0o1i32 | 0o2000i32,
+          0o400i32 | 0o200i32,
+        );
       } else {
-        xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0);
+        crate::libbb::xfuncs_printf::xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0);
         /* will be fd 1 */
       }
     }
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"appending output to %s\x00" as *const u8 as *const libc::c_char,
       nohupout,
     );
@@ -120,5 +110,5 @@ pub unsafe extern "C" fn nohup_main(
     ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
   );
   argv = argv.offset(1);
-  BB_EXECVP_or_die(argv);
+  crate::libbb::executable::BB_EXECVP_or_die(argv);
 }

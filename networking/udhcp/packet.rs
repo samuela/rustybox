@@ -1,10 +1,17 @@
+use crate::librb::size_t;
+use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
 use c2rust_bitfields::BitfieldStruct;
-
 use libc;
 use libc::close;
+use libc::in_addr;
+use libc::sa_family_t;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
+use libc::ssize_t;
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -38,36 +45,10 @@ extern "C" {
   ) -> ssize_t;
   #[no_mangle]
   static mut dhcp_verbose: libc::c_uint;
-  #[no_mangle]
-  fn safe_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn setsockopt_reuseaddr(fd: libc::c_int);
-  #[no_mangle]
-  fn inet_cksum(addr: *mut u16, len: libc::c_int) -> u16;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn bin2hex(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    count: libc::c_int,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_info_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_info_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn udhcp_end_option(optionptr: *mut u8) -> libc::c_int;
-  #[no_mangle]
-  fn udhcp_add_simple_option(packet: *mut dhcp_packet, code: u8, data: u32);
+
 }
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::size_t;
-use libc::ssize_t;
-pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -78,46 +59,19 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr__: *const sockaddr,
   pub __sockaddr_at__: *const sockaddr_at,
@@ -160,35 +114,40 @@ pub const IPPROTO_IPIP: C2RustUnnamed_0 = 4;
 pub const IPPROTO_IGMP: C2RustUnnamed_0 = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed_0 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_0 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct udphdr {
   pub c2rust_unnamed: C2RustUnnamed_1,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub c2rust_unnamed: C2RustUnnamed_3,
   pub c2rust_unnamed_0: C2RustUnnamed_2,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_2 {
   pub source: u16,
   pub dest: u16,
   pub len: u16,
   pub check: u16,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_3 {
   pub uh_sport: u16,
   pub uh_dport: u16,
   pub uh_ulen: u16,
   pub uh_sum: u16,
 }
-#[derive(Copy, Clone, BitfieldStruct)]
+
 #[repr(C)]
+#[derive(Copy, Clone, BitfieldStruct)]
 pub struct iphdr {
   #[bitfield(name = "ihl", ty = "libc::c_uint", bits = "0..=3")]
   #[bitfield(name = "version", ty = "libc::c_uint", bits = "4..=7")]
@@ -203,28 +162,11 @@ pub struct iphdr {
   pub saddr: u32,
   pub daddr: u32,
 }
-#[derive(Copy, Clone)]
+
+use crate::networking::udhcp::common::dhcp_packet;
+
 #[repr(C, packed)]
-pub struct dhcp_packet {
-  pub op: u8,
-  pub htype: u8,
-  pub hlen: u8,
-  pub hops: u8,
-  pub xid: u32,
-  pub secs: u16,
-  pub flags: u16,
-  pub ciaddr: u32,
-  pub yiaddr: u32,
-  pub siaddr_nip: u32,
-  pub gateway_nip: u32,
-  pub chaddr: [u8; 16],
-  pub sname: [u8; 64],
-  pub file: [u8; 128],
-  pub cookie: u32,
-  pub options: [u8; 388],
-}
 #[derive(Copy, Clone)]
-#[repr(C, packed)]
 pub struct ip_udp_dhcp_packet {
   pub ip: iphdr,
   pub udp: udphdr,
@@ -234,8 +176,9 @@ pub type C2RustUnnamed_4 = libc::c_uint;
 pub const DHCP_SIZE: C2RustUnnamed_4 = 548;
 pub const UDP_DHCP_SIZE: C2RustUnnamed_4 = 556;
 pub const IP_UDP_DHCP_SIZE: C2RustUnnamed_4 = 576;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct sockaddr_ll {
   pub sll_family: libc::c_ushort,
   pub sll_protocol: libc::c_ushort,
@@ -283,7 +226,7 @@ pub unsafe extern "C" fn udhcp_init_header(mut packet: *mut dhcp_packet, mut typ
       let fresh1;
       let fresh2 = __x;
       asm!("bswap $0" : "=r" (fresh1) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
@@ -291,7 +234,7 @@ pub unsafe extern "C" fn udhcp_init_header(mut packet: *mut dhcp_packet, mut typ
   if 0xffi32 != 0 {
     (*packet).options[0] = 0xffi32 as u8
   }
-  udhcp_add_simple_option(packet, 0x35i32 as u8, type_0 as u32);
+  crate::networking::udhcp::common::udhcp_add_simple_option(packet, 0x35i32 as u8, type_0 as u32);
 }
 #[no_mangle]
 pub unsafe extern "C" fn udhcp_dump_packet(mut packet: *mut dhcp_packet) {
@@ -299,7 +242,7 @@ pub unsafe extern "C" fn udhcp_dump_packet(mut packet: *mut dhcp_packet) {
   if dhcp_verbose < 2i32 as libc::c_uint {
     return;
   }
-  bb_info_msg(
+  crate::libbb::verror_msg::bb_info_msg(
     b" hlen %x xid %x ciaddr %x yiaddr %x siaddr %x giaddr %x\x00" as *const u8
       as *const libc::c_char,
     (*packet).hlen as libc::c_int,
@@ -309,12 +252,12 @@ pub unsafe extern "C" fn udhcp_dump_packet(mut packet: *mut dhcp_packet) {
     (*packet).siaddr_nip,
     (*packet).gateway_nip,
   );
-  *bin2hex(
+  *crate::libbb::xfuncs::bin2hex(
     buf.as_mut_ptr(),
     (*packet).chaddr.as_mut_ptr() as *mut libc::c_void as *const libc::c_char,
     ::std::mem::size_of::<[u8; 16]>() as libc::c_ulong as libc::c_int,
   ) = '\u{0}' as i32 as libc::c_char;
-  bb_info_msg(
+  crate::libbb::verror_msg::bb_info_msg(
     b" chaddr %s\x00" as *const u8 as *const libc::c_char,
     buf.as_mut_ptr(),
   );
@@ -331,14 +274,16 @@ pub unsafe extern "C" fn udhcp_recv_kernel_packet(
     0,
     ::std::mem::size_of::<dhcp_packet>() as libc::c_ulong,
   );
-  bytes = safe_read(
+  bytes = crate::libbb::read::safe_read(
     fd,
     packet as *mut libc::c_void,
     ::std::mem::size_of::<dhcp_packet>() as libc::c_ulong,
   ) as libc::c_int;
   if bytes < 0 {
     if dhcp_verbose >= 1i32 as libc::c_uint {
-      bb_simple_info_msg(b"packet read error, ignoring\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_info_msg(
+        b"packet read error, ignoring\x00" as *const u8 as *const libc::c_char,
+      );
     }
     return bytes;
     /* returns -1 */
@@ -358,18 +303,19 @@ pub unsafe extern "C" fn udhcp_recv_kernel_packet(
           let fresh4;
           let fresh5 = __x;
           asm!("bswap $0" : "=r" (fresh4) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                             :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
         }
         __v
       })
   {
-    bb_simple_info_msg(b"packet with bad magic, ignoring\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_info_msg(
+      b"packet with bad magic, ignoring\x00" as *const u8 as *const libc::c_char,
+    );
     return -2i32;
   }
   if dhcp_verbose >= 1i32 as libc::c_uint {
-    bb_info_msg(
+    crate::libbb::verror_msg::bb_info_msg(
       b"received %s\x00" as *const u8 as *const libc::c_char,
       b"a packet\x00" as *const u8 as *const libc::c_char,
     );
@@ -458,8 +404,7 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
         let fresh7;
         let fresh8 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8))
-                             : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
       }
       __v
@@ -492,8 +437,7 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
         let fresh10;
         let fresh11 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh10) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11))
-                          : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
       }
       __v
@@ -531,8 +475,10 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
        * Thus, we retain enough padding to not go below 300 BOOTP bytes.
        * Some devices have filters which drop DHCP packets shorter than that.
        */
-      padding =
-        (308i32 - 1i32 - udhcp_end_option(packet.data.options.as_mut_ptr())) as libc::c_uint;
+      padding = (308i32
+        - 1i32
+        - crate::networking::udhcp::common::udhcp_end_option(packet.data.options.as_mut_ptr()))
+        as libc::c_uint;
       if padding > (DHCP_SIZE as libc::c_int - 300i32) as libc::c_uint {
         padding = (DHCP_SIZE as libc::c_int - 300i32) as libc::c_uint
       }
@@ -550,8 +496,7 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
           let fresh13;
           let fresh14 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14))
-                              : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
         }
         __v
@@ -567,8 +512,7 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
           let fresh16;
           let fresh17 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh16) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17))
-                              : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
         }
         __v
@@ -586,15 +530,14 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
           let fresh19;
           let fresh20 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh19) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20))
-                              : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh18, fresh20, fresh19);
         }
         __v
       };
       /* for UDP checksumming, ip.len is set to UDP packet len */
       packet.ip.tot_len = packet.udp.c2rust_unnamed.c2rust_unnamed_0.len;
-      packet.udp.c2rust_unnamed.c2rust_unnamed_0.check = inet_cksum(
+      packet.udp.c2rust_unnamed.c2rust_unnamed_0.check = crate::libbb::inet_cksum::inet_cksum(
         &mut packet as *mut ip_udp_dhcp_packet as *mut u16,
         (IP_UDP_DHCP_SIZE as libc::c_int as libc::c_uint).wrapping_sub(padding) as libc::c_int,
       );
@@ -611,8 +554,7 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
           let fresh22;
           let fresh23 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh22) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23))
-                              : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh21, fresh23, fresh22);
         }
         __v
@@ -622,7 +564,7 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
         .set_ihl((::std::mem::size_of::<iphdr>() as libc::c_ulong >> 2i32) as libc::c_uint);
       packet.ip.set_version(4i32 as libc::c_uint);
       packet.ip.ttl = 64i32 as u8;
-      packet.ip.check = inet_cksum(
+      packet.ip.check = crate::libbb::inet_cksum::inet_cksum(
         &mut packet.ip as *mut iphdr as *mut u16,
         ::std::mem::size_of::<iphdr>() as libc::c_ulong as libc::c_int,
       );
@@ -648,7 +590,10 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
   }
   match current_block {
     2404584983316808095 => {
-      bb_perror_msg(msg, b"PACKET\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_perror_msg(
+        msg,
+        b"PACKET\x00" as *const u8 as *const libc::c_char,
+      );
     }
     _ => {}
   }
@@ -825,7 +770,7 @@ pub unsafe extern "C" fn udhcp_send_kernel_packet(
     msg = b"socket(%s)\x00" as *const u8 as *const libc::c_char;
     current_block = 840687141290369799;
   } else {
-    setsockopt_reuseaddr(fd);
+    crate::libbb::xconnect::setsockopt_reuseaddr(fd);
     memset(
       &mut sa as *mut sockaddr_in as *mut libc::c_void,
       0,
@@ -843,8 +788,7 @@ pub unsafe extern "C" fn udhcp_send_kernel_packet(
         let fresh25;
         let fresh26 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh25) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh24, fresh26))
-                          : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh24, fresh26)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh24, fresh26, fresh25);
       }
       __v
@@ -877,8 +821,7 @@ pub unsafe extern "C" fn udhcp_send_kernel_packet(
           let fresh28;
           let fresh29 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh28) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh27, fresh29))
-                              : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh27, fresh29)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh27, fresh29, fresh28);
         }
         __v
@@ -895,12 +838,14 @@ pub unsafe extern "C" fn udhcp_send_kernel_packet(
         msg = b"connect\x00" as *const u8 as *const libc::c_char
       } else {
         udhcp_dump_packet(dhcp_pkt);
-        padding =
-          (308i32 - 1i32 - udhcp_end_option((*dhcp_pkt).options.as_mut_ptr())) as libc::c_uint;
+        padding = (308i32
+          - 1i32
+          - crate::networking::udhcp::common::udhcp_end_option((*dhcp_pkt).options.as_mut_ptr()))
+          as libc::c_uint;
         if padding > (DHCP_SIZE as libc::c_int - 300i32) as libc::c_uint {
           padding = (DHCP_SIZE as libc::c_int - 300i32) as libc::c_uint
         }
-        result = safe_write(
+        result = crate::libbb::safe_write::safe_write(
           fd,
           dhcp_pkt as *const libc::c_void,
           (DHCP_SIZE as libc::c_int as libc::c_uint).wrapping_sub(padding) as size_t,
@@ -917,7 +862,7 @@ pub unsafe extern "C" fn udhcp_send_kernel_packet(
   }
   match current_block {
     840687141290369799 => {
-      bb_perror_msg(msg, b"UDP\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_perror_msg(msg, b"UDP\x00" as *const u8 as *const libc::c_char);
     }
     _ => {}
   }

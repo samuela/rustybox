@@ -10,22 +10,7 @@ extern "C" {
 
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn die_if_ferror(file: *mut FILE, msg: *const libc::c_char);
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn xfopen_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xatoull_range(
-    str: *const libc::c_char,
-    l: libc::c_ulonglong,
-    u: libc::c_ulonglong,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   static mut logmode: smallint;
   #[no_mangle]
@@ -46,7 +31,8 @@ unsafe extern "C" fn xatoul_range(
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
 ) -> libc::c_ulong {
-  return xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong)
+    as libc::c_ulong;
 }
 
 /*
@@ -103,7 +89,7 @@ pub unsafe extern "C" fn cmp_main(
   let mut c2: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;
   let mut retval: libc::c_int = 0;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^sl\x00-1:?4:l--s:s--l\x00" as *const u8 as *const libc::c_char,
   );
@@ -135,8 +121,8 @@ pub unsafe extern "C" fn cmp_main(
   if opt & (1i32 << 0) as libc::c_uint != 0 {
     logmode = 0 as smallint
   }
-  fp1 = xfopen_stdin(filename1);
-  fp2 = xfopen_stdin(filename2);
+  fp1 = crate::libbb::wfopen_input::xfopen_stdin(filename1);
+  fp2 = crate::libbb::wfopen_input::xfopen_stdin(filename2);
   if fp1 == fp2 {
     /* Paranoia check... stdin == stdin? */
     /* Note that we don't bother reading stdin.  Neither does gnu wc.
@@ -176,12 +162,12 @@ pub unsafe extern "C" fn cmp_main(
         c1 = c2
       }
       if c1 == -1i32 {
-        die_if_ferror(fp1, filename1);
+        crate::libbb::xfuncs_printf::die_if_ferror(fp1, filename1);
         fmt = fmt_eof.as_ptr();
         outfile = stderr;
         /* There may have been output to stdout (option -l), so
          * make sure we fflush before writing to stderr. */
-        fflush_all();
+        crate::libbb::xfuncs_printf::fflush_all();
       }
       if !(opt & (1i32 << 0) as libc::c_uint == 0) {
         break;
@@ -204,7 +190,7 @@ pub unsafe extern "C" fn cmp_main(
       break;
     }
   }
-  die_if_ferror(fp1, filename1);
-  die_if_ferror(fp2, filename2);
-  fflush_stdout_and_exit(retval);
+  crate::libbb::xfuncs_printf::die_if_ferror(fp1, filename1);
+  crate::libbb::xfuncs_printf::die_if_ferror(fp2, filename2);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(retval);
 }

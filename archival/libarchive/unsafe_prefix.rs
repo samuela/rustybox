@@ -1,15 +1,7 @@
+use crate::librb::smallint;
 use libc;
 use libc::strstr;
-extern "C" {
 
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-}
-
-use crate::librb::smallint;
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
@@ -20,7 +12,7 @@ pub unsafe extern "C" fn strip_unsafe_prefix(mut str: *const libc::c_char) -> *c
     let mut cp2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if *cp as libc::c_int == '/' as i32 {
       cp = cp.offset(1)
-    } else if !is_prefixed_with(
+    } else if !crate::libbb::compare_string_array::is_prefixed_with(
       cp,
       (b"/../\x00" as *const u8 as *const libc::c_char).offset(1),
     )
@@ -39,7 +31,7 @@ pub unsafe extern "C" fn strip_unsafe_prefix(mut str: *const libc::c_char) -> *c
     static mut warned: smallint = 0 as smallint;
     if warned == 0 {
       warned = 1i32 as smallint;
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"removing leading \'%.*s\' from member names\x00" as *const u8 as *const libc::c_char,
         cp.wrapping_offset_from(str) as libc::c_long as libc::c_int,
         str,

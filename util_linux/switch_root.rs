@@ -3,6 +3,7 @@ use libc;
 use libc::access;
 use libc::close;
 use libc::closedir;
+use libc::dirent;
 use libc::free;
 use libc::getpid;
 use libc::lstat;
@@ -16,6 +17,7 @@ use libc::stat;
 use libc::statfs;
 use libc::strtok;
 use libc::unlink;
+use libc::DIR;
 extern "C" {
 
   /*
@@ -67,71 +69,10 @@ extern "C" {
   #[no_mangle]
   fn execv(__path: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
 
-  #[no_mangle]
-  fn xdup2(_: libc::c_int, _: libc::c_int);
-
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-
-  #[no_mangle]
-  fn xchroot(path: *const libc::c_char);
-
-  #[no_mangle]
-  fn xstat(pathname: *const libc::c_char, buf: *mut stat);
-
-  #[no_mangle]
-  fn open_or_warn(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn open_read_close(
-    filename: *const libc::c_char,
-    buf: *mut libc::c_void,
-    maxsz: size_t,
-  ) -> ssize_t;
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn cap_name_to_number(cap: *const libc::c_char) -> libc::c_uint;
-
-  #[no_mangle]
-  fn getcaps(caps: *mut libc::c_void);
-
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __fsid_t {
   pub __val: [libc::c_int; 2],
 }
@@ -170,8 +111,8 @@ pub const MS_MOVE: C2RustUnnamed = 8192;
 
 pub type u32 = libc::c_uint;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __user_cap_header_struct {
   pub version: u32,
   pub pid: libc::c_int,
@@ -179,8 +120,8 @@ pub struct __user_cap_header_struct {
 
 pub type cap_user_header_t = *mut __user_cap_header_struct;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __user_cap_data_struct {
   pub effective: u32,
   pub permitted: u32,
@@ -188,12 +129,9 @@ pub struct __user_cap_data_struct {
 }
 
 pub type cap_user_data_t = *mut __user_cap_data_struct;
-use crate::librb::size_t;
-use libc::dirent;
-use libc::ssize_t;
-use libc::DIR;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct caps {
   pub header: __user_cap_header_struct,
   pub u32s: libc::c_uint,
@@ -227,7 +165,7 @@ unsafe extern "C" fn delete_contents(mut directory: *const libc::c_char, mut roo
           continue;
         }
         // Recurse to delete contents
-        newdir = concat_path_file(directory, newdir);
+        newdir = crate::libbb::concat_path_file::concat_path_file(directory, newdir);
         delete_contents(newdir, rootdev);
         free(newdir as *mut libc::c_void);
       }
@@ -250,17 +188,19 @@ unsafe extern "C" fn drop_capset(mut cap_idx: libc::c_int) {
       inheritable: 0,
     }; 2],
   };
-  getcaps(&mut caps as *mut caps as *mut libc::c_void);
+  crate::libbb::capability::getcaps(&mut caps as *mut caps as *mut libc::c_void);
   caps.data[(cap_idx >> 5i32) as usize].inheritable &= !(1i32 << (cap_idx & 31i32)) as libc::c_uint;
   if capset(&mut caps.header, caps.data.as_mut_ptr()) != 0 {
-    bb_simple_perror_msg_and_die(b"capset\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"capset\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 unsafe extern "C" fn drop_bounding_set(mut cap_idx: libc::c_int) {
   let mut ret: libc::c_int = 0;
   ret = prctl(23i32, cap_idx, 0, 0, 0);
   if ret < 0 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"prctl: %s\x00" as *const u8 as *const libc::c_char,
       b"PR_CAPBSET_READ\x00" as *const u8 as *const libc::c_char,
     );
@@ -268,7 +208,7 @@ unsafe extern "C" fn drop_bounding_set(mut cap_idx: libc::c_int) {
   if ret == 1i32 {
     ret = prctl(24i32, cap_idx, 0, 0, 0);
     if ret != 0 {
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"prctl: %s\x00" as *const u8 as *const libc::c_char,
         b"PR_CAPBSET_DROP\x00" as *const u8 as *const libc::c_char,
       );
@@ -284,7 +224,7 @@ unsafe extern "C" fn drop_usermodehelper(
   let mut buf: [libc::c_char; 32] = [0; 32];
   let mut fd: libc::c_int = 0;
   let mut ret: libc::c_int = 0;
-  ret = open_read_close(
+  ret = crate::libbb::read::open_read_close(
     filename,
     buf.as_mut_ptr() as *mut libc::c_void,
     (::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong)
@@ -301,7 +241,7 @@ unsafe extern "C" fn drop_usermodehelper(
     &mut hi as *mut libc::c_uint,
   );
   if ret != 2i32 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t parse file \'%s\'\x00" as *const u8 as *const libc::c_char,
       filename,
     );
@@ -311,7 +251,7 @@ unsafe extern "C" fn drop_usermodehelper(
   } else {
     hi &= !(1i32 << cap_idx - 32i32) as libc::c_uint
   }
-  fd = xopen(filename, 0o1i32);
+  fd = crate::libbb::xfuncs_printf::xopen(filename, 0o1i32);
   dprintf(fd, b"%u %u\x00" as *const u8 as *const libc::c_char, lo, hi);
   close(fd);
 }
@@ -320,7 +260,7 @@ unsafe extern "C" fn drop_capabilities(mut string: *mut libc::c_char) {
   cap = strtok(string, b",\x00" as *const u8 as *const libc::c_char);
   while !cap.is_null() {
     let mut cap_idx: libc::c_uint = 0;
-    cap_idx = cap_name_to_number(cap);
+    cap_idx = crate::libbb::capability::cap_name_to_number(cap);
     drop_usermodehelper(
       b"/proc/sys/kernel/usermodehelper/bset\x00" as *const u8 as *const libc::c_char,
       cap_idx as libc::c_int,
@@ -331,7 +271,7 @@ unsafe extern "C" fn drop_capabilities(mut string: *mut libc::c_char) {
     );
     drop_bounding_set(cap_idx as libc::c_int);
     drop_capset(cap_idx as libc::c_int);
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"dropped capability: %s\x00" as *const u8 as *const libc::c_char,
       cap,
     );
@@ -361,7 +301,7 @@ pub unsafe extern "C" fn switch_root_main(
     //usage:       "chroot to NEW_ROOT, delete all in /, move NEW_ROOT to /,\n"
     //usage:       "execute NEW_INIT. PID must be 1. NEW_ROOT must be a mountpoint.\n"
     //usage:     "\n	-c DEV	Reopen stdio to DEV after switch"
-    getopt32(
+    crate::libbb::getopt32::getopt32(
       argv,
       b"^+c:\x00-2\x00" as *const u8 as *const libc::c_char,
       &mut console as *mut *mut libc::c_char,
@@ -377,7 +317,7 @@ pub unsafe extern "C" fn switch_root_main(
     //usage:     "\n	-d CAPS	Drop capabilities"
     //usage:     "\n	-n	Dry run"
     let mut cap_list: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); // -n
-    dry_run = getopt32(
+    dry_run = crate::libbb::getopt32::getopt32(
       argv,
       b"^+c:d:n\x00-2\x00" as *const u8 as *const libc::c_char,
       &mut console as *mut *mut libc::c_char,
@@ -393,17 +333,17 @@ pub unsafe extern "C" fn switch_root_main(
   argv = argv.offset(1);
   newroot = *fresh0;
   // Change to new root directory and verify it's a different fs
-  xchdir(newroot);
-  xstat(b"/\x00" as *const u8 as *const libc::c_char, &mut st);
+  crate::libbb::xfuncs_printf::xchdir(newroot);
+  crate::libbb::xfuncs_printf::xstat(b"/\x00" as *const u8 as *const libc::c_char, &mut st);
   rootdev = st.st_dev;
-  xstat(b".\x00" as *const u8 as *const libc::c_char, &mut st);
+  crate::libbb::xfuncs_printf::xstat(b".\x00" as *const u8 as *const libc::c_char, &mut st);
   if st.st_dev == rootdev {
     // Show usage, it says new root must be a mountpoint
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   if dry_run == 0 && getpid() != 1i32 {
     // Show usage, it says we must be PID 1
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   // Additional sanity checks: we're about to rm -rf /, so be REALLY SURE
   // we mean it. I could make this a CONFIG option, but I would get email
@@ -411,7 +351,7 @@ pub unsafe extern "C" fn switch_root_main(
   if stat(b"/init\x00" as *const u8 as *const libc::c_char, &mut st) != 0
     || !(st.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint)
   {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"\'%s\' is not a regular file\x00" as *const u8 as *const libc::c_char,
       b"/init\x00" as *const u8 as *const libc::c_char,
     ); // this never fails
@@ -420,7 +360,7 @@ pub unsafe extern "C" fn switch_root_main(
   if stfs.f_type as libc::c_uint != 0x858458f6u32
     && stfs.f_type as libc::c_uint != 0x1021994i32 as libc::c_uint
   {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"root filesystem is not ramfs/tmpfs\x00" as *const u8 as *const libc::c_char,
     );
   }
@@ -437,19 +377,21 @@ pub unsafe extern "C" fn switch_root_main(
     ) != 0
     {
       // For example, fails when newroot is not a mountpoint
-      bb_simple_perror_msg_and_die(b"error moving root\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"error moving root\x00" as *const u8 as *const libc::c_char,
+      );
     }
   }
-  xchroot(b".\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::xfuncs_printf::xchroot(b".\x00" as *const u8 as *const libc::c_char);
   // The chdir is needed to recalculate "." and ".." links
   /*xchdir("/"); - done in xchroot */
   // If a new console specified, redirect stdin/stdout/stderr to it
   if !console.is_null() {
-    let mut fd: libc::c_int = open_or_warn(console, 0o2i32);
+    let mut fd: libc::c_int = crate::libbb::xfuncs_printf::open_or_warn(console, 0o2i32);
     if fd >= 0 {
-      xmove_fd(fd, 0);
-      xdup2(0i32, 1i32);
-      xdup2(0i32, 2i32);
+      crate::libbb::xfuncs_printf::xmove_fd(fd, 0);
+      crate::libbb::xfuncs_printf::xdup2(0i32, 1i32);
+      crate::libbb::xfuncs_printf::xdup2(0i32, 2i32);
     }
   }
   if dry_run != 0 {
@@ -464,7 +406,7 @@ pub unsafe extern "C" fn switch_root_main(
     // Exec NEW_INIT
     execv(*argv.offset(0), argv as *const *mut libc::c_char);
   }
-  bb_perror_msg_and_die(
+  crate::libbb::perror_msg::bb_perror_msg_and_die(
     b"can\'t execute \'%s\'\x00" as *const u8 as *const libc::c_char,
     *argv.offset(0),
   );

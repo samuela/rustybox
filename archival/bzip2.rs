@@ -2758,14 +2758,7 @@ unsafe extern "C" fn compressStream(mut _xstate: *mut transformer_state_t) -> li
   let mut opt: libc::c_uint = 0;
   let mut level: libc::c_uint = 0;
   let mut count: ssize_t = 0;
-  let mut bzs: bz_stream = bz_stream {
-    state: std::ptr::null_mut(),
-    next_in: std::ptr::null_mut::<libc::c_char>(),
-    next_out: std::ptr::null_mut::<libc::c_char>(),
-    avail_in: 0,
-    avail_out: 0,
-    total_out: 0,
-  };
+  let mut bzs: bz_stream = std::mem::zeroed();
   let mut iobuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   iobuf = xmalloc((2i32 * IOBUF_SIZE as libc::c_int) as size_t) as *mut libc::c_char;
   opt = option_mask32 >> 5i32 + 2i32 + 2i32;

@@ -2,11 +2,9 @@ use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 use libc::alarm;
 use libc::printf;
-use libc::ssize_t;
 use libc::time;
 use libc::time_t;
 extern "C" {
@@ -20,24 +18,11 @@ extern "C" {
   fn ctime(__timer: *const time_t) -> *mut libc::c_char;
   #[no_mangle]
   fn stime(__when: *const time_t) -> libc::c_int;
-  /* Create client TCP socket connected to peer:port. Peer cannot be NULL.
-   * Peer can be numeric IP ("N.N.N.N"), numeric IPv6 address or hostname,
-   * and can have ":PORT" suffix (for IPv6 use "[X:X:...:X]:PORT").
-   * If there is no suffix, port argument is used */
-  #[no_mangle]
-  fn create_and_connect_stream_or_die(peer: *const libc::c_char, port: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+/* Create client TCP socket connected to peer:port. Peer cannot be NULL.
+ * Peer can be numeric IP ("N.N.N.N"), numeric IPv6 address or hostname,
+ * and can have ":PORT" suffix (for IPv6 use "[X:X:...:X]:PORT").
+ * If there is no suffix, port argument is used */
+
 }
 
 /*
@@ -67,7 +52,7 @@ extern "C" {
 pub type C2RustUnnamed = libc::c_uint;
 pub const RFC_868_BIAS: C2RustUnnamed = 2208988800;
 unsafe extern "C" fn socket_timeout(mut _sig: libc::c_int) {
-  bb_simple_error_msg_and_die(
+  crate::libbb::verror_msg::bb_simple_error_msg_and_die(
     b"timeout connecting to time server\x00" as *const u8 as *const libc::c_char,
   );
 }
@@ -80,15 +65,15 @@ unsafe extern "C" fn askremotedate(mut host: *const libc::c_char) -> time_t {
     14i32,
     Some(socket_timeout as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
-  fd = create_and_connect_stream_or_die(host, 37i32);
-  if safe_read(
+  fd = crate::libbb::xconnect::create_and_connect_stream_or_die(host, 37i32);
+  if crate::libbb::read::safe_read(
     fd,
     &mut nett as *mut u32 as *mut libc::c_void,
     4i32 as size_t,
   ) != 4
   {
     /* read time from server */
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"%s: %s\x00" as *const u8 as *const libc::c_char,
       host,
       b"short read\x00" as *const u8 as *const libc::c_char,
@@ -112,7 +97,7 @@ unsafe extern "C" fn askremotedate(mut host: *const libc::c_char) -> time_t {
       let fresh1;
       let fresh2 = __x;
       asm!("bswap $0" : "=r" (fresh1) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
@@ -140,7 +125,8 @@ pub unsafe extern "C" fn rdate_main(
 ) -> libc::c_int {
   let mut remote_time: time_t = 0;
   let mut flags: libc::c_uint = 0;
-  flags = getopt32(argv, b"^sp\x00-1\x00" as *const u8 as *const libc::c_char);
+  flags =
+    crate::libbb::getopt32::getopt32(argv, b"^sp\x00-1\x00" as *const u8 as *const libc::c_char);
   remote_time = askremotedate(*argv.offset(optind as isize));
   /* Manpages of various Unixes are confusing. What happens is:
    * (no opts) set and print time
@@ -151,11 +137,11 @@ pub unsafe extern "C" fn rdate_main(
   if flags & 2i32 as libc::c_uint == 0 {
     /* no -p (-s may be present) */
     if time(0 as *mut time_t) == remote_time {
-      bb_simple_error_msg(
+      crate::libbb::verror_msg::bb_simple_error_msg(
         b"current time matches remote time\x00" as *const u8 as *const libc::c_char,
       );
     } else if stime(&mut remote_time) < 0 {
-      bb_simple_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
         b"can\'t set time of day\x00" as *const u8 as *const libc::c_char,
       );
     }

@@ -3,7 +3,6 @@ use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::size_t;
 use libc;
 use libc::free;
-use libc::ssize_t;
 extern "C" {
 
   #[no_mangle]
@@ -11,12 +10,6 @@ extern "C" {
   #[no_mangle]
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
 
-  #[no_mangle]
-  fn bb_process_escape_sequence(ptr: *mut *const libc::c_char) -> libc::c_char;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
 }
 
 /*
@@ -575,7 +568,8 @@ pub unsafe extern "C" fn echo_main(
           /* optimization: don't force arg to be on-stack,
            * use another variable for that. ~30 bytes win */
           let mut z: *const libc::c_char = arg;
-          c = bb_process_escape_sequence(&mut z) as libc::c_int;
+          c = crate::libbb::process_escape_sequence::bb_process_escape_sequence(&mut z)
+            as libc::c_int;
           arg = z
         }
         let fresh1 = out;
@@ -607,14 +601,16 @@ pub unsafe extern "C" fn echo_main(
   /* Careful to error out on partial writes too (think ENOSPC!) */
   *bb_errno = 0;
   /*r =*/
-  full_write(
+  crate::libbb::full_write::full_write(
     1i32,
     buffer as *const libc::c_void,
     out.wrapping_offset_from(buffer) as libc::c_long as size_t,
   );
   free(buffer as *mut libc::c_void);
   if *bb_errno != 0 {
-    bb_simple_perror_msg(b"write error\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg(
+      b"write error\x00" as *const u8 as *const libc::c_char,
+    );
     return 1i32;
   }
   return 0;

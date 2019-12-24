@@ -5,37 +5,11 @@ use libc::strchr;
 extern "C" {
 
   /* Search for an entry with a matching user ID.  */
-  #[no_mangle]
-  fn bb_internal_getpwuid(__uid: uid_t) -> *mut passwd;
+
   /* Search for an entry with a matching username.  */
 
   /* Search for an entry with a matching group name.  */
-  #[no_mangle]
-  fn bb_internal_getgrnam(__name: *const libc::c_char) -> *mut group;
 
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn xuname2uid(name: *const libc::c_char) -> libc::c_long;
-  #[no_mangle]
-  fn xgroup2gid(name: *const libc::c_char) -> libc::c_long;
-  #[no_mangle]
-  fn get_ug_id(
-    s: *const libc::c_char,
-    xname2id: Option<unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long>,
-  ) -> libc::c_ulong;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
 use crate::librb::bb_uidgid_t;
@@ -89,12 +63,12 @@ pub unsafe extern "C" fn get_uidgid(
     let mut fresh0 = ::std::vec::from_elem(0, sz as libc::c_ulong as usize);
     user = fresh0.as_mut_ptr() as *mut libc::c_char;
     /* copies sz-1 bytes, stores terminating '\0' */
-    safe_strncpy(user, ug, sz as size_t);
+    crate::libbb::safe_strncpy::safe_strncpy(user, ug, sz as size_t);
   }
-  n = bb_strtou(user, 0 as *mut *mut libc::c_char, 10i32);
+  n = crate::libbb::bb_strtonum::bb_strtou(user, 0 as *mut *mut libc::c_char, 10i32);
   if *bb_errno == 0 {
     (*u).uid = n;
-    pwd = bb_internal_getpwuid(n);
+    pwd = crate::libpwdgrp::pwd_grp::bb_internal_getpwuid(n);
     /* If we have e.g. "500" string without user */
     /* with uid 500 in /etc/passwd, we set gid == uid */
     (*u).gid = if !pwd.is_null() { (*pwd).pw_gid } else { n }
@@ -108,12 +82,12 @@ pub unsafe extern "C" fn get_uidgid(
     (*u).gid = (*pwd).pw_gid
   }
   if !group.is_null() {
-    n = bb_strtou(group, 0 as *mut *mut libc::c_char, 10i32);
+    n = crate::libbb::bb_strtonum::bb_strtou(group, 0 as *mut *mut libc::c_char, 10i32);
     if *bb_errno == 0 {
       (*u).gid = n;
       return 1i32;
     }
-    gr = bb_internal_getgrnam(group);
+    gr = crate::libpwdgrp::pwd_grp::bb_internal_getgrnam(group);
     if gr.is_null() {
       return 0;
     }
@@ -124,7 +98,7 @@ pub unsafe extern "C" fn get_uidgid(
 #[no_mangle]
 pub unsafe extern "C" fn xget_uidgid(mut u: *mut bb_uidgid_t, mut ug: *const libc::c_char) {
   if get_uidgid(u, ug) == 0 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"unknown user/group %s\x00" as *const u8 as *const libc::c_char,
       ug,
     );
@@ -449,15 +423,21 @@ pub unsafe extern "C" fn parse_chown_usergroup_or_die(
   /* Parse "user[:[group]]" */
   if group.is_null() {
     /* "user" */
-    (*u).uid = get_ug_id(
+    (*u).uid = crate::libbb::bb_pwd::get_ug_id(
       user_group,
-      Some(xuname2uid as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long),
+      Some(
+        crate::libbb::bb_pwd::xuname2uid
+          as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long,
+      ),
     ) as uid_t
   } else if group == user_group {
     /* ":group" */
-    (*u).gid = get_ug_id(
+    (*u).gid = crate::libbb::bb_pwd::get_ug_id(
       group.offset(1),
-      Some(xgroup2gid as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long),
+      Some(
+        crate::libbb::bb_pwd::xgroup2gid
+          as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long,
+      ),
     ) as gid_t
   } else {
     if *group.offset(1) == 0 {

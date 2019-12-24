@@ -5,6 +5,8 @@ use libc::free;
 use libc::printf;
 use libc::puts;
 use libc::time;
+use libc::time_t;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -17,47 +19,25 @@ extern "C" {
   fn ctime(__timer: *const time_t) -> *mut libc::c_char;
   #[no_mangle]
   fn inet_ntoa(__in: in_addr) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  // NB: will return short read on error, not -1,
-  // if some data was read before error occurred
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xread(fd: libc::c_int, buf: *mut libc::c_void, count: size_t);
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  //UNUSED: char* FAST_FUNC unicode_conv_to_printable_maxwidth(uni_stat_t *stats, const char *src, unsigned maxwidth);
-  #[no_mangle]
-  fn unicode_conv_to_printable_fixedwidth(
-    src: *const libc::c_char,
-    width: libc::c_uint,
-  ) -> *mut libc::c_char;
+
+// NB: will return short read on error, not -1,
+// if some data was read before error occurred
+
+//UNUSED: char* FAST_FUNC unicode_conv_to_printable_maxwidth(uni_stat_t *stats, const char *src, unsigned maxwidth);
+
 }
 
 pub type __int64_t = libc::c_long;
-
 pub type int64_t = __int64_t;
-use crate::librb::size_t;
-use libc::ssize_t;
-use libc::time_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
+use libc::in_addr;
 pub type in_addr_t = u32;
 
-use libc::FILE;
 /* client_data sits in 2nd half of bb_common_bufsiz1 */
 pub type leasetime_t = u32;
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct dyn_lease {
   pub expires: leasetime_t,
   pub lease_nip: u32,
@@ -120,13 +100,13 @@ pub unsafe extern "C" fn dumpleases_main(
     97, 98, 115, 111, 108, 117, 116, 101, 0, 0, 97, 114, 101, 109, 97, 105, 110, 105, 110, 103, 0,
     0, 114, 102, 105, 108, 101, 0, 1, 102, 100, 101, 99, 105, 109, 97, 108, 0, 0, 100, 0,
   ];
-  opt = getopt32long(
+  opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"^arf:d\x00=0:a--r:r--a\x00" as *const u8 as *const libc::c_char,
     dumpleases_longopts.as_ptr(),
     &mut file as *mut *const libc::c_char,
   );
-  fd = xopen(file, 0);
+  fd = crate::libbb::xfuncs_printf::xopen(file, 0);
   /*     "123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 */
   /*     "00:00:00:00:00:00 255.255.255.255 ABCDEFGHIJKLMNOPQRS Wed Jun 30 21:49:08 1993" */
   
@@ -141,7 +121,7 @@ pub unsafe extern "C" fn dumpleases_main(
       b"in\x00" as *const u8 as *const libc::c_char
     },
   ); /* lease file from future! :) */
-  xread(
+  crate::libbb::read_printf::xread(
     fd,
     &mut written_at as *mut int64_t as *mut libc::c_void,
     ::std::mem::size_of::<int64_t>() as libc::c_ulong,
@@ -163,7 +143,7 @@ pub unsafe extern "C" fn dumpleases_main(
       let fresh1;
       let fresh2 = __x;
       asm!("bswap ${0:q}" : "=r" (fresh1) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
     __v
@@ -172,7 +152,7 @@ pub unsafe extern "C" fn dumpleases_main(
   if curr < written_at {
     written_at = curr
   }
-  while full_read(
+  while crate::libbb::read::full_read(
     fd,
     &mut lease as *mut dyn_lease as *mut libc::c_void,
     ::std::mem::size_of::<dyn_lease>() as libc::c_ulong,
@@ -190,7 +170,10 @@ pub unsafe extern "C" fn dumpleases_main(
     }
     addr.s_addr = lease.lease_nip;
     let mut uni_name: *mut libc::c_char =
-      unicode_conv_to_printable_fixedwidth(lease.hostname.as_mut_ptr(), 19i32 as libc::c_uint);
+      crate::libbb::unicode::unicode_conv_to_printable_fixedwidth(
+        lease.hostname.as_mut_ptr(),
+        19i32 as libc::c_uint,
+      );
     printf(
       b" %-16s%s \x00" as *const u8 as *const libc::c_char,
       inet_ntoa(addr),
@@ -210,8 +193,7 @@ pub unsafe extern "C" fn dumpleases_main(
         let fresh4;
         let fresh5 = __x;
         asm!("bswap $0" : "=r" (fresh4) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                          :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
       }
       __v

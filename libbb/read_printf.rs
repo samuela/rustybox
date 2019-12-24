@@ -11,10 +11,6 @@ use libc::ssize_t;
 use libc::stat;
 extern "C" {
 
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
   /* Else use variable one (a bit more expensive) */
   /* Autodetects gzip/bzip2 formats. fd may be in the middle of the file! */
   /* Autodetects .gz etc */
@@ -42,10 +38,7 @@ extern "C" {
    * On other errors complains [perror("poll")] and returns.
    * Warning! May take (much) longer than timeout_ms to return!
    * If this is a problem, use bare poll and open-code EINTR/ENOMEM handling */
-  #[no_mangle]
-  fn safe_poll(ufds: *mut pollfd, nfds: nfds_t, timeout_ms: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
+
   /* Convert each alpha char in str to lower-case */
   /* Returns a pointer past the formatted number, does NOT null-terminate */
   /* Intelligent formatters of bignums */
@@ -161,10 +154,7 @@ extern "C" {
   /* start_stop_daemon and udhcpc are special - they want
    * to create pidfiles regardless of FEATURE_PIDFILE */
   /* True only if we created pidfile which is *file*, not /dev/null etc */
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
+
 }
 
 pub type nfds_t = libc::c_ulong;
@@ -225,7 +215,7 @@ pub unsafe extern "C" fn nonblock_immune_read(
   }; 1];
   let mut n: ssize_t = 0;
   loop {
-    n = safe_read(fd, buf, count);
+    n = crate::libbb::read::safe_read(fd, buf, count);
     if n >= 0 || *bb_errno != 11i32 {
       return n;
     }
@@ -233,7 +223,7 @@ pub unsafe extern "C" fn nonblock_immune_read(
     pfd[0].fd = fd;
     pfd[0].events = 0x1i32 as libc::c_short;
     /* note: safe_poll pulls in printf */
-    safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, -1i32);
+    crate::libbb::safe_poll::safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, -1i32);
   }
 }
 // Reads one line a-la fgets (but doesn't save terminating '\n').
@@ -253,7 +243,7 @@ pub unsafe extern "C" fn xmalloc_reads(
     (2147483647i32 - 4095i32) as libc::c_ulong
   };
   'c_6940: loop {
-    buf = xrealloc(
+    buf = crate::libbb::xfuncs_printf::xrealloc(
       buf as *mut libc::c_void,
       sz.wrapping_add(128i32 as libc::c_ulong),
     ) as *mut libc::c_char;
@@ -284,7 +274,7 @@ pub unsafe extern "C" fn xmalloc_reads(
     *maxsz_p = p.wrapping_offset_from(buf) as libc::c_long as size_t
   }
   p = p.offset(1);
-  return xrealloc(
+  return crate::libbb::xfuncs_printf::xrealloc(
     buf as *mut libc::c_void,
     p.wrapping_offset_from(buf) as libc::c_long as size_t,
   ) as *mut libc::c_char;
@@ -317,11 +307,13 @@ pub unsafe extern "C" fn xmalloc_read_with_initial_buf(
     if to_read < size {
       size = to_read
     }
-    buf = xrealloc(
+    buf = crate::libbb::xfuncs_printf::xrealloc(
       buf as *mut libc::c_void,
       total.wrapping_add(size).wrapping_add(1i32 as libc::c_ulong),
     ) as *mut libc::c_char;
-    rd_size = full_read(fd, buf.offset(total as isize) as *mut libc::c_void, size) as size_t;
+    rd_size =
+      crate::libbb::read::full_read(fd, buf.offset(total as isize) as *mut libc::c_void, size)
+        as size_t;
     if rd_size as ssize_t == -1i32 as ssize_t {
       /* error */
       free(buf as *mut libc::c_void);
@@ -342,7 +334,7 @@ pub unsafe extern "C" fn xmalloc_read_with_initial_buf(
       size = (64i32 * 1024i32) as size_t
     }
   }
-  buf = xrealloc(
+  buf = crate::libbb::xfuncs_printf::xrealloc(
     buf as *mut libc::c_void,
     total.wrapping_add(1i32 as libc::c_ulong),
   ) as *mut libc::c_char;
@@ -385,9 +377,11 @@ pub unsafe extern "C" fn xmalloc_open_read_close(
 #[no_mangle]
 pub unsafe extern "C" fn xread(mut fd: libc::c_int, mut buf: *mut libc::c_void, mut count: size_t) {
   if count != 0 {
-    let mut size: ssize_t = full_read(fd, buf, count);
+    let mut size: ssize_t = crate::libbb::read::full_read(fd, buf, count);
     if size as size_t != count {
-      bb_simple_error_msg_and_die(b"short read\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"short read\x00" as *const u8 as *const libc::c_char,
+      );
     }
   };
 }
@@ -647,7 +641,7 @@ pub unsafe extern "C" fn xmalloc_xopen_read_close(
 ) -> *mut libc::c_void {
   let mut buf: *mut libc::c_void = xmalloc_open_read_close(filename, maxsz_p);
   if buf.is_null() {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t read \'%s\'\x00" as *const u8 as *const libc::c_char,
       filename,
     );

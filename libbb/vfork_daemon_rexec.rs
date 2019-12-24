@@ -19,23 +19,6 @@ extern "C" {
   #[no_mangle]
   fn dup(__fd: libc::c_int) -> libc::c_int;
 
-  #[no_mangle]
-  fn xdup2(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn xfork() -> pid_t;
-  #[no_mangle]
-  fn safe_waitpid(pid: pid_t, wstat: *mut libc::c_int, options: libc::c_int) -> pid_t;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn wait4pid(pid: pid_t) -> libc::c_int;
-
 }
 
 pub type C2RustUnnamed = libc::c_uint;
@@ -77,7 +60,7 @@ pub unsafe extern "C" fn spawn(mut argv: *mut *mut libc::c_char) -> pid_t {
   /* Compiler should not optimize stores here */
   let mut failed: libc::c_int = 0;
   let mut pid: pid_t = 0;
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   /* Be nice to nommu machines. */
   ::std::ptr::write_volatile(&mut failed as *mut libc::c_int, 0);
   pid = vfork();
@@ -105,7 +88,7 @@ pub unsafe extern "C" fn spawn(mut argv: *mut *mut libc::c_char) -> pid_t {
    * Interested party can wait on pid and learn exit code.
    * If 111 - then it (most probably) failed to exec */
   if failed != 0 {
-    safe_waitpid(pid, 0 as *mut libc::c_int, 0); /* prevent zombie */
+    crate::libbb::xfuncs::safe_waitpid(pid, 0 as *mut libc::c_int, 0); /* prevent zombie */
     *bb_errno = failed;
     return -1i32;
   }
@@ -116,7 +99,7 @@ pub unsafe extern "C" fn spawn(mut argv: *mut *mut libc::c_char) -> pid_t {
 pub unsafe extern "C" fn xspawn(mut argv: *mut *mut libc::c_char) -> pid_t {
   let mut pid: pid_t = spawn(argv);
   if pid < 0 {
-    bb_simple_perror_msg_and_die(*argv);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(*argv);
   }
   return pid;
 }
@@ -124,7 +107,7 @@ pub unsafe extern "C" fn xspawn(mut argv: *mut *mut libc::c_char) -> pid_t {
 pub unsafe extern "C" fn spawn_and_wait(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut rc: libc::c_int = 0;
   rc = spawn(argv);
-  return wait4pid(rc);
+  return crate::libbb::xfuncs::wait4pid(rc);
 }
 /* Due to a #define in libbb.h on MMU systems we actually have 1 argument -
  * char **argv "vanishes" */
@@ -132,7 +115,7 @@ pub unsafe extern "C" fn spawn_and_wait(mut argv: *mut *mut libc::c_char) -> lib
 pub unsafe extern "C" fn bb_daemonize_or_rexec(mut flags: libc::c_int) {
   let mut fd: libc::c_int = 0;
   if flags & DAEMON_CHDIR_ROOT as libc::c_int != 0 {
-    xchdir(b"/\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::xfuncs_printf::xchdir(b"/\x00" as *const u8 as *const libc::c_char);
   }
   fd = open(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0o2i32);
   if fd < 0 {
@@ -140,13 +123,13 @@ pub unsafe extern "C" fn bb_daemonize_or_rexec(mut flags: libc::c_int) {
      * or mdev, and there /dev/null may legitimately not (yet) exist!
      * Do not use xopen above, but obtain _ANY_ open descriptor,
      * even bogus one as below. */
-    fd = xopen(b"/\x00" as *const u8 as *const libc::c_char, 0)
+    fd = crate::libbb::xfuncs_printf::xopen(b"/\x00" as *const u8 as *const libc::c_char, 0)
     /* don't believe this can fail */
   }
   if flags & DAEMON_DEVNULL_STDIO as libc::c_int != 0 {
-    xdup2(fd, 0);
-    xdup2(fd, 1i32);
-    xdup2(fd, 2i32);
+    crate::libbb::xfuncs_printf::xdup2(fd, 0);
+    crate::libbb::xfuncs_printf::xdup2(fd, 1i32);
+    crate::libbb::xfuncs_printf::xdup2(fd, 2i32);
   } else {
     /* have 0,1,2 open at least to /dev/null */
     while (fd as libc::c_uint) < 2i32 as libc::c_uint {
@@ -155,7 +138,7 @@ pub unsafe extern "C" fn bb_daemonize_or_rexec(mut flags: libc::c_int) {
   }
   if flags & DAEMON_ONLY_SANITIZE as libc::c_int == 0 {
     /* fflush_all(); - add it in fork_or_rexec() if necessary */
-    if xfork() != 0 {
+    if crate::libbb::xfuncs_printf::xfork() != 0 {
       _exit(0i32); /* parent */
     }
     //		if (flags & DAEMON_DOUBLE_FORK) {

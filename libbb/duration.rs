@@ -13,24 +13,16 @@ extern "C" {
   #[no_mangle]
   fn nanosleep(__requested_time: *const timespec, __remaining: *mut timespec) -> libc::c_int;
 
-  #[no_mangle]
-  fn xatoull_sfx(str: *const libc::c_char, sfx: *const suffix_mult) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct suffix_mult {
-  pub suffix: [libc::c_char; 4],
-  pub mult: libc::c_uint,
-}
+
+use crate::librb::suffix_mult;
 pub type duration_t = libc::c_double;
 #[inline(always)]
 unsafe extern "C" fn xatoul_sfx(
   mut str: *const libc::c_char,
   mut sfx: *const suffix_mult,
 ) -> libc::c_ulong {
-  return xatoull_sfx(str, sfx) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull_sfx(str, sfx) as libc::c_ulong;
 }
 
 /*
@@ -100,7 +92,7 @@ pub unsafe extern "C" fn parse_duration_str(mut str: *mut libc::c_char) -> durat
     *bb_errno = 0;
     d = strtod(str, &mut pp);
     if *bb_errno != 0 || *pp as libc::c_int != 0 {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     str = str.offset(len as isize);
     let fresh0 = str;

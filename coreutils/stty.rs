@@ -52,54 +52,11 @@ extern "C" {
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
 
-  #[no_mangle]
-  fn ndelay_off(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xopen_nonblocking(pathname: *const libc::c_char) -> libc::c_int;
   /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
    * But potentially slow, don't use in one-billion-times loops */
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn visible(ch: libc::c_uint, buf: *mut libc::c_char, flags: libc::c_int);
-  #[no_mangle]
-  fn xatoull_range_sfx(
-    str: *const libc::c_char,
-    l: libc::c_ulonglong,
-    u: libc::c_ulonglong,
-    sfx: *const suffix_mult,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xatoull_sfx(str: *const libc::c_char, sfx: *const suffix_mult) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xatou(str: *const libc::c_char) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn tty_baud_to_value(speed: speed_t) -> libc::c_uint;
-  #[no_mangle]
-  fn tty_value_to_baud(value: libc::c_uint) -> speed_t;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
+
   /* NB: typically you want to pass fd 0, not 1. Think 'applet | grep something' */
-  #[no_mangle]
-  fn get_terminal_width_height(
-    fd: libc::c_int,
-    width: *mut libc::c_uint,
-    height: *mut libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn get_terminal_width(fd: libc::c_int) -> libc::c_int;
+
   #[no_mangle]
   static bb_msg_requires_arg: [libc::c_char; 0];
   #[no_mangle]
@@ -108,8 +65,9 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 pub type __builtin_va_list = [__va_list_tag; 1];
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __va_list_tag {
   pub gp_offset: libc::c_uint,
   pub fp_offset: libc::c_uint,
@@ -119,17 +77,14 @@ pub struct __va_list_tag {
 pub type va_list = __builtin_va_list;
 
 /* Last element is marked by mult == 0 */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct suffix_mult {
-  pub suffix: [libc::c_char; 4],
-  pub mult: libc::c_uint,
-}
+
+use crate::librb::suffix_mult;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub device_name: *const libc::c_char,
   pub max_col: libc::c_uint,
@@ -145,14 +100,16 @@ pub const local: C2RustUnnamed = 3;
 pub const output: C2RustUnnamed = 2;
 pub const input: C2RustUnnamed = 1;
 pub const control: C2RustUnnamed = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct control_info {
   pub saneval: u8,
   pub offset: u8,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct mode_info {
   pub type_0: u8,
   pub flags: u8,
@@ -216,15 +173,19 @@ unsafe extern "C" fn xatoul_range_sfx(
   mut u: libc::c_ulong,
   mut sfx: *const suffix_mult,
 ) -> libc::c_ulong {
-  return xatoull_range_sfx(str, l as libc::c_ulonglong, u as libc::c_ulonglong, sfx)
-    as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull_range_sfx(
+    str,
+    l as libc::c_ulonglong,
+    u as libc::c_ulonglong,
+    sfx,
+  ) as libc::c_ulong;
 }
 #[inline(always)]
 unsafe extern "C" fn xatoul_sfx(
   mut str: *const libc::c_char,
   mut sfx: *const suffix_mult,
 ) -> libc::c_ulong {
-  return xatoull_sfx(str, sfx) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull_sfx(str, sfx) as libc::c_ulong;
 }
 unsafe extern "C" fn get_ptr_to_tcflag(
   mut type_0: libc::c_uint,
@@ -1202,7 +1163,7 @@ unsafe extern "C" fn set_speed_or_die(
   mut mode: *mut termios,
 ) {
   let mut baud: speed_t = 0;
-  baud = tty_value_to_baud(xatou(arg));
+  baud = crate::libbb::speed_table::tty_value_to_baud(crate::libbb::xatonum::xatou(arg));
   if type_0 as libc::c_uint != output_speed as libc::c_int as libc::c_uint {
     /* either input or both */
     cfsetispeed(mode, baud);
@@ -1213,13 +1174,13 @@ unsafe extern "C" fn set_speed_or_die(
   };
 }
 unsafe extern "C" fn perror_on_device_and_die(mut fmt: *const libc::c_char) -> ! {
-  bb_perror_msg_and_die(
+  crate::libbb::perror_msg::bb_perror_msg_and_die(
     fmt,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device_name,
   );
 }
 unsafe extern "C" fn perror_on_device(mut fmt: *const libc::c_char) {
-  bb_perror_msg(
+  crate::libbb::perror_msg::bb_perror_msg(
     fmt,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device_name,
   );
@@ -1255,9 +1216,9 @@ unsafe extern "C" fn wrapf(mut message: *const libc::c_char, mut args: ...) {
         >= (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_col
       {
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_col = 0 as libc::c_uint;
-        bb_putchar('\n' as i32);
+        crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
       } else {
-        bb_putchar(' ' as i32);
+        crate::libbb::xfuncs_printf::bb_putchar(' ' as i32);
       }
     }
   }
@@ -1331,7 +1292,7 @@ unsafe extern "C" fn display_window_size(mut fancy: libc::c_int) {
     b"%s\x00%s: no size information for this device\x00" as *const u8 as *const libc::c_char;
   let mut width: libc::c_uint = 0;
   let mut height: libc::c_uint = 0;
-  if get_terminal_width_height(0i32, &mut width, &mut height) != 0 {
+  if crate::libbb::xfuncs::get_terminal_width_height(0i32, &mut width, &mut height) != 0 {
     if *bb_errno != 22i32 || {
       fmt_str = fmt_str.offset(2);
       (fancy) == 0
@@ -1381,7 +1342,8 @@ static mut stty_suffixes: [suffix_mult; 4] = [
   },
 ];
 unsafe extern "C" fn find_mode(mut name: *const libc::c_char) -> *const mode_info {
-  let mut i: libc::c_int = index_in_strings(mode_name.as_ptr(), name);
+  let mut i: libc::c_int =
+    crate::libbb::compare_string_array::index_in_strings(mode_name.as_ptr(), name);
   return if i >= 0 {
     &*mode_info.as_ptr().offset(i as isize) as *const mode_info
   } else {
@@ -1389,7 +1351,8 @@ unsafe extern "C" fn find_mode(mut name: *const libc::c_char) -> *const mode_inf
   };
 }
 unsafe extern "C" fn find_control(mut name: *const libc::c_char) -> *const control_info {
-  let mut i: libc::c_int = index_in_strings(control_name.as_ptr(), name);
+  let mut i: libc::c_int =
+    crate::libbb::compare_string_array::index_in_strings(control_name.as_ptr(), name);
   return if i >= 0 {
     &*control_info.as_ptr().offset(i as isize) as *const control_info
   } else {
@@ -1402,7 +1365,8 @@ unsafe extern "C" fn find_param(mut name: *const libc::c_char) -> libc::c_int {
     110, 115, 0, 115, 105, 122, 101, 0, 115, 112, 101, 101, 100, 0, 105, 115, 112, 101, 101, 100,
     0, 111, 115, 112, 101, 101, 100, 0, 0,
   ];
-  let mut i: libc::c_int = index_in_strings(params.as_ptr(), name) + 1i32;
+  let mut i: libc::c_int =
+    crate::libbb::compare_string_array::index_in_strings(params.as_ptr(), name) + 1i32;
   if i == 0 {
     return 0;
   }
@@ -1479,7 +1443,7 @@ unsafe extern "C" fn display_recoverable(mut mode: *const termios, mut _dummy: l
     );
     i += 1
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
 }
 unsafe extern "C" fn display_speed(mut mode: *const termios, mut fancy: libc::c_int) {
   //____________________ 01234567 8 9
@@ -1499,8 +1463,8 @@ unsafe extern "C" fn display_speed(mut mode: *const termios, mut fancy: libc::c_
   }
   wrapf(
     fmt_str,
-    tty_baud_to_value(ispeed as speed_t),
-    tty_baud_to_value(ospeed as speed_t),
+    crate::libbb::speed_table::tty_baud_to_value(ispeed as speed_t),
+    crate::libbb::speed_table::tty_baud_to_value(ospeed as speed_t),
   );
 }
 unsafe extern "C" fn do_display(mut mode: *const termios, mut all: libc::c_int) {
@@ -1529,11 +1493,11 @@ unsafe extern "C" fn do_display(mut mode: *const termios, mut all: libc::c_int) 
         b"<undef>\x00" as *const u8 as *const libc::c_char,
       );
     } else {
-      visible(ch as libc::c_uint, buf10.as_mut_ptr(), 0);
+      crate::libbb::printable::visible(ch as libc::c_uint, buf10.as_mut_ptr(), 0);
     }
     wrapf(
       b"%s = %s;\x00" as *const u8 as *const libc::c_char,
-      nth_string(control_name.as_ptr(), i),
+      crate::libbb::compare_string_array::nth_string(control_name.as_ptr(), i),
       buf10.as_mut_ptr(),
     );
     i += 1
@@ -1561,7 +1525,7 @@ unsafe extern "C" fn do_display(mut mode: *const termios, mut all: libc::c_int) 
         if all != 0 || mode_info[i as usize].flags as libc::c_int & 2i32 != 0 {
           wrapf(
             (b"-%s\x00" as *const u8 as *const libc::c_char).offset(1),
-            nth_string(mode_name.as_ptr(), i),
+            crate::libbb::compare_string_array::nth_string(mode_name.as_ptr(), i),
           );
         }
       } else if all != 0 && mode_info[i as usize].flags as libc::c_int & 4i32 != 0
@@ -1569,7 +1533,7 @@ unsafe extern "C" fn do_display(mut mode: *const termios, mut all: libc::c_int) 
       {
         wrapf(
           b"-%s\x00" as *const u8 as *const libc::c_char,
-          nth_string(mode_name.as_ptr(), i),
+          crate::libbb::compare_string_array::nth_string(mode_name.as_ptr(), i),
         );
       }
     }
@@ -1889,7 +1853,7 @@ pub unsafe extern "C" fn stty_main(
             }
             70 => {
               if !file_name.is_null() {
-                bb_simple_error_msg_and_die(
+                crate::libbb::verror_msg::bb_simple_error_msg_and_die(
                   b"only one device may be specified\x00" as *const u8 as *const libc::c_char,
                 );
               }
@@ -1899,7 +1863,7 @@ pub unsafe extern "C" fn stty_main(
                 let mut p: libc::c_int = k + 1i32; /* argv[p] is argnext */
                 file_name = argnext;
                 if file_name.is_null() {
-                  bb_error_msg_and_die(
+                  crate::libbb::verror_msg::bb_error_msg_and_die(
                     bb_msg_requires_arg.as_ptr(),
                     b"-F\x00" as *const u8 as *const libc::c_char,
                   );
@@ -1928,7 +1892,7 @@ pub unsafe extern "C" fn stty_main(
         cp = find_control(arg);
         if !cp.is_null() {
           if argnext.is_null() {
-            bb_error_msg_and_die(bb_msg_requires_arg.as_ptr(), arg);
+            crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_requires_arg.as_ptr(), arg);
           }
           /* called for the side effect of xfunc death only */
           set_control_char_or_die(cp, argnext, &mut mode);
@@ -1939,7 +1903,7 @@ pub unsafe extern "C" fn stty_main(
           param = find_param(arg);
           if param & param_need_arg as libc::c_int != 0 {
             if argnext.is_null() {
-              bb_error_msg_and_die(bb_msg_requires_arg.as_ptr(), arg);
+              crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_requires_arg.as_ptr(), arg);
             }
             k += 1
           }
@@ -1970,7 +1934,10 @@ pub unsafe extern "C" fn stty_main(
             _ => {
               if recover_mode(arg, &mut mode) == 1i32 {
                 current_block = 7178192492338286402;
-              } else if tty_value_to_baud(xatou(arg)) != -1i32 as speed_t {
+              } else if crate::libbb::speed_table::tty_value_to_baud(crate::libbb::xatonum::xatou(
+                arg,
+              )) != -1i32 as speed_t
+              {
                 current_block = 7178192492338286402;
               } else {
                 current_block = 14462319228209588966;
@@ -1987,20 +1954,20 @@ pub unsafe extern "C" fn stty_main(
         }
       }
     }
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"invalid argument \'%s\'\x00" as *const u8 as *const libc::c_char,
       arg,
     );
   }
   /* Specifying both -a and -g is an error */
   if stty_state & (1i32 << 2i32 | 1i32 << 3i32) == 1i32 << 2i32 | 1i32 << 3i32 {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"-a and -g are mutually exclusive\x00" as *const u8 as *const libc::c_char,
     );
   }
   /* Specifying -a or -g with non-options is an error */
   if stty_state & (1i32 << 2i32 | 1i32 << 3i32) != 0 && stty_state & 1i32 << 4i32 == 0 {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"modes may not be set when -a or -g is used\x00" as *const u8 as *const libc::c_char,
     );
   }
@@ -2008,11 +1975,13 @@ pub unsafe extern "C" fn stty_main(
   if !file_name.is_null() {
     let ref mut fresh4 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device_name;
     *fresh4 = file_name;
-    xmove_fd(
-      xopen_nonblocking((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device_name),
+    crate::libbb::xfuncs_printf::xmove_fd(
+      crate::libbb::xfuncs_printf::xopen_nonblocking(
+        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device_name,
+      ),
       0,
     );
-    ndelay_off(0i32);
+    crate::libbb::xfuncs::ndelay_off(0i32);
   }
   /* Initialize to all zeroes so there is no risk memcmp will report a
   spurious difference in an uninitialized portion of the structure */
@@ -2026,7 +1995,7 @@ pub unsafe extern "C" fn stty_main(
   }
   if stty_state & (1i32 << 2i32 | 1i32 << 3i32 | 1i32 << 4i32) != 0 {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_col =
-      get_terminal_width(1i32) as libc::c_uint;
+      crate::libbb::xfuncs::get_terminal_width(1i32) as libc::c_uint;
     output_func.expect("non-null function pointer")(&mut mode, display_all);
     return 0;
   }

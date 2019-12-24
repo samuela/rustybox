@@ -15,17 +15,6 @@ extern "C" {
   #[no_mangle]
   fn gnu_dev_minor(__dev: libc::dev_t) -> libc::c_uint;
 
-  #[no_mangle]
-  fn find_block_device(path: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
 }
 
 /*
@@ -68,7 +57,9 @@ pub unsafe extern "C" fn mountpoint_main(
   let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut rc: libc::c_int = 0;
   let mut opt: libc::c_int = 0;
-  opt = getopt32(argv, b"^qdxn\x00=1\x00" as *const u8 as *const libc::c_char) as libc::c_int;
+  opt =
+    crate::libbb::getopt32::getopt32(argv, b"^qdxn\x00=1\x00" as *const u8 as *const libc::c_char)
+      as libc::c_int;
   arg = *argv.offset(optind as isize);
   msg = b"%s\x00" as *const u8 as *const libc::c_char;
   rc = if opt & 4i32 != 0 {
@@ -93,8 +84,10 @@ pub unsafe extern "C" fn mountpoint_main(
       if st.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint {
         let mut st_dev: libc::dev_t = st.st_dev;
         let mut st_ino: ino_t = st.st_ino;
-        let mut p: *mut libc::c_char =
-          xasprintf(b"%s/..\x00" as *const u8 as *const libc::c_char, arg);
+        let mut p: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
+          b"%s/..\x00" as *const u8 as *const libc::c_char,
+          arg,
+        );
         if stat(p, &mut st) == 0 {
           /* else: stat had set errno, just fall through */
           //int is_mnt = (st_dev != st.st_dev) || (st_dev == st.st_dev && st_ino == st.st_ino);
@@ -108,7 +101,7 @@ pub unsafe extern "C" fn mountpoint_main(
             );
           }
           if opt & 8i32 != 0 {
-            let mut d: *const libc::c_char = find_block_device(arg);
+            let mut d: *const libc::c_char = crate::libbb::find_root_device::find_block_device(arg);
             /* name is undefined, but device is mounted -> anonymous superblock! */
             /* happens with btrfs */
             if d.is_null() {
@@ -136,7 +129,7 @@ pub unsafe extern "C" fn mountpoint_main(
     }
   }
   if opt & 1i32 == 0 {
-    bb_perror_msg(msg, arg);
+    crate::libbb::perror_msg::bb_perror_msg(msg, arg);
   }
   return 1i32;
 }

@@ -10,28 +10,6 @@ extern "C" {
   #[no_mangle]
   fn memchr(_: *const libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_process_escape_sequence(ptr: *mut *const libc::c_char) -> libc::c_char;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
 }
 
 /*
@@ -223,14 +201,16 @@ unsafe extern "C" fn expand(
   while *arg != 0 {
     if pos.wrapping_add(ASCII as libc::c_int as libc::c_uint) > size {
       size = size.wrapping_add(ASCII as libc::c_int as libc::c_uint);
-      buffer = xrealloc(buffer as *mut libc::c_void, size as size_t) as *mut libc::c_char;
+      buffer = crate::libbb::xfuncs_printf::xrealloc(buffer as *mut libc::c_void, size as size_t)
+        as *mut libc::c_char;
       *buffer_p = buffer
     }
     if *arg as libc::c_int == '\\' as i32 {
       let mut z: *const libc::c_char = std::ptr::null();
       arg = arg.offset(1);
       z = arg;
-      ac = bb_process_escape_sequence(&mut z) as libc::c_uchar;
+      ac =
+        crate::libbb::process_escape_sequence::bb_process_escape_sequence(&mut z) as libc::c_uchar;
       arg = z as *mut libc::c_char;
       arg = arg.offset(-1);
       *arg = ac as libc::c_char
@@ -256,7 +236,8 @@ unsafe extern "C" fn expand(
         if ac as libc::c_int == '\\' as i32 {
           let mut z_0: *const libc::c_char = std::ptr::null();
           z_0 = arg;
-          ac = bb_process_escape_sequence(&mut z_0) as libc::c_uchar;
+          ac = crate::libbb::process_escape_sequence::bb_process_escape_sequence(&mut z_0)
+            as libc::c_uchar;
           arg = z_0 as *mut libc::c_char
         }
         while i <= ac as libc::c_uint {
@@ -289,8 +270,9 @@ unsafe extern "C" fn expand(
           let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
           /* xdigit needs 8, not 7 */
           i = (7i32 + (*arg.offset(0) as libc::c_int == 'x' as i32) as libc::c_int) as libc::c_uint;
-          tmp = xstrndup(arg, i as libc::c_int);
-          j = (index_in_strings(classes.as_ptr(), tmp) + 1i32) as smalluint;
+          tmp = crate::libbb::xfuncs_printf::xstrndup(arg, i as libc::c_int);
+          j = (crate::libbb::compare_string_array::index_in_strings(classes.as_ptr(), tmp) + 1i32)
+            as smalluint;
           free(tmp as *mut libc::c_void);
           if !(j as libc::c_int == CLASS_invalid as libc::c_int) {
             arg = arg.offset(i as isize);
@@ -408,7 +390,7 @@ unsafe extern "C" fn expand(
             || *arg.offset(1) as libc::c_int != '=' as i32
             || *arg.offset(2) as libc::c_int != ']' as i32
           {
-            bb_show_usage();
+            crate::libbb::appletlib::bb_show_usage();
           }
           arg = arg.offset(3);
           continue;
@@ -451,7 +433,7 @@ unsafe extern "C" fn complement(
     .is_null()
     {
       let fresh20 = len;
-      len += 1;
+      len = len + 1;
       conv[fresh20 as usize] = ch as libc::c_char
     }
     ch = ch.wrapping_add(1);
@@ -486,7 +468,8 @@ pub unsafe extern "C" fn tr_main(
   let mut str2_length: libc::c_int = 0;
   let mut str1_length: libc::c_int = 0;
   let mut vector: *mut libc::c_char =
-    xzalloc((ASCII as libc::c_int * 3i32) as size_t) as *mut libc::c_char;
+    crate::libbb::xfuncs_printf::xzalloc((ASCII as libc::c_int * 3i32) as size_t)
+      as *mut libc::c_char;
   let mut invec: *mut libc::c_char = vector.offset(ASCII as libc::c_int as isize);
   let mut outvec: *mut libc::c_char = vector.offset((ASCII as libc::c_int * 2i32) as isize);
   i = 0;
@@ -500,7 +483,7 @@ pub unsafe extern "C" fn tr_main(
    * In POSIX locale, these are the same.
    */
   /* '+': stop at first non-option */
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^+Ccds\x00-1\x00" as *const u8 as *const libc::c_char,
   ) as smalluint;
@@ -514,7 +497,7 @@ pub unsafe extern "C" fn tr_main(
   }
   if !(*argv).is_null() {
     if *(*argv.offset(0)).offset(0) as libc::c_int == '\u{0}' as i32 {
-      bb_simple_error_msg_and_die(
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"STRING2 cannot be empty\x00" as *const u8 as *const libc::c_char,
       );
     }
@@ -540,14 +523,16 @@ pub unsafe extern "C" fn tr_main(
   'c_9891: loop {
     out_index = 0 as size_t;
     loop {
-      read_chars = safe_read(
+      read_chars = crate::libbb::read::safe_read(
         0,
         str1 as *mut libc::c_void,
         TR_BUFSIZ as libc::c_int as size_t,
       );
       if read_chars <= 0 {
         if read_chars < 0 {
-          bb_simple_perror_msg_and_die(b"read error\x00" as *const u8 as *const libc::c_char);
+          crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+            b"read error\x00" as *const u8 as *const libc::c_char,
+          );
         }
         break 'c_9891;
       } else {
@@ -579,7 +564,7 @@ pub unsafe extern "C" fn tr_main(
         if !(out_index != 0) {
           continue;
         }
-        xwrite(1i32, str2 as *const libc::c_void, out_index);
+        crate::libbb::xfuncs_printf::xwrite(1i32, str2 as *const libc::c_void, out_index);
         break;
       }
     }

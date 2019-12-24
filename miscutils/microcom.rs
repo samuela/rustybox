@@ -38,38 +38,8 @@ extern "C" {
   fn tcsendbreak(__fd: libc::c_int, __duration: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
-  fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
   static mut bb_got_signal: smallint;
-  #[no_mangle]
-  fn record_signo(signo: libc::c_int);
-  #[no_mangle]
-  fn open_or_warn(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn safe_poll(ufds: *mut pollfd, nfds: nfds_t, timeout_ms: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn tty_value_to_baud(value: libc::c_uint) -> speed_t;
-  #[no_mangle]
-  fn get_termios_and_make_raw(
-    fd: libc::c_int,
-    newterm: *mut termios,
-    oldterm: *mut termios,
-    flags: libc::c_int,
-  ) -> libc::c_int;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -114,7 +84,7 @@ pub const OPT_s: C2RustUnnamed_0 = 2;
 //usage:     "\n	-X	Disable special meaning of NUL and Ctrl-X from stdin"
 // set raw tty mode
 unsafe extern "C" fn xget1(mut fd: libc::c_int, mut t: *mut termios, mut oldt: *mut termios) {
-  get_termios_and_make_raw(
+  crate::libbb::xfuncs::get_termios_and_make_raw(
     fd,
     t,
     oldt,
@@ -128,7 +98,7 @@ unsafe extern "C" fn xset1(
 ) -> libc::c_int {
   let mut ret: libc::c_int = tcsetattr(fd, 2i32, tio);
   if ret != 0 {
-    bb_perror_msg(
+    crate::libbb::perror_msg::bb_perror_msg(
       b"can\'t tcsetattr for %s\x00" as *const u8 as *const libc::c_char,
       device,
     );
@@ -184,7 +154,7 @@ pub unsafe extern "C" fn microcom_main(
   let mut timeout: libc::c_int = -1i32;
   let mut opts: libc::c_uint = 0;
   // fetch options
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^Xs:+d:+t:+\x00=1\x00" as *const u8 as *const libc::c_char,
     &mut speed as *mut speed_t,
@@ -194,8 +164,9 @@ pub unsafe extern "C" fn microcom_main(
   //	argc -= optind;
   argv = argv.offset(optind as isize);
   // try to create lock file in /var/lock
-  device_lock_file = bb_basename(*argv.offset(0)) as *mut libc::c_char;
-  device_lock_file = xasprintf(
+  device_lock_file =
+    crate::libbb::get_last_path_component::bb_basename(*argv.offset(0)) as *mut libc::c_char;
+  device_lock_file = crate::libbb::xfuncs_printf::xasprintf(
     b"/var/lock/LCK..%s\x00" as *const u8 as *const libc::c_char,
     device_lock_file,
   );
@@ -207,7 +178,7 @@ pub unsafe extern "C" fn microcom_main(
   if sfd < 0 {
     // device already locked -> bail out
     if *bb_errno == 17i32 {
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"can\'t create \'%s\'\x00" as *const u8 as *const libc::c_char,
         device_lock_file,
       );
@@ -226,20 +197,23 @@ pub unsafe extern "C" fn microcom_main(
     close(sfd);
   }
   // setup signals
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     0 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 15i32) + (1i32 << 13i32),
-    Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   // error exit code if we fail to open the device
   bb_got_signal = 1i32 as smallint;
   // open device
-  sfd = open_or_warn(*argv.offset(0), 0o2i32 | 0o400i32 | 0o4000i32);
+  sfd = crate::libbb::xfuncs_printf::open_or_warn(*argv.offset(0), 0o2i32 | 0o400i32 | 0o4000i32);
   if !(sfd < 0) {
     fcntl(sfd, 4i32, 0o2i32);
     // put device to "raw mode"
     xget1(sfd, &mut tio, &mut tiosfd);
     // set device speed
-    cfsetspeed(&mut tio, tty_value_to_baud(speed));
+    cfsetspeed(
+      &mut tio,
+      crate::libbb::speed_table::tty_value_to_baud(speed),
+    );
     if !(xset1(sfd, &mut tio, *argv.offset(0)) != 0) {
       // put stdin to "raw mode" (if stdin is a TTY),
       // handle one character at a time
@@ -273,7 +247,7 @@ pub unsafe extern "C" fn microcom_main(
             if nfd > 1i32 && pfd[1].revents as libc::c_int != 0 {
               let mut c: libc::c_char = 0;
               // read from stdin -> write to device
-              if safe_read(
+              if crate::libbb::read::safe_read(
                 0,
                 &mut c as *mut libc::c_char as *mut libc::c_void,
                 1i32 as size_t,
@@ -307,7 +281,7 @@ pub unsafe extern "C" fn microcom_main(
                       1i32 as size_t,
                     );
                     if delay >= 0 {
-                      safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, delay);
+                      crate::libbb::safe_poll::safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, delay);
                     }
                   }
                 }
@@ -318,13 +292,13 @@ pub unsafe extern "C" fn microcom_main(
             }
             let mut len: ssize_t = 0;
             // read from device -> write to stdout
-            len = safe_read(
+            len = crate::libbb::read::safe_read(
               sfd,
               bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
               COMMON_BUFSIZE as libc::c_int as size_t,
             );
             if len > 0 {
-              full_write(
+              crate::libbb::full_write::full_write(
                 1i32,
                 bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,
                 len as size_t,

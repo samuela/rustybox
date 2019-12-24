@@ -1,10 +1,4 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn display_uuid_cache(scan_devices: libc::c_int);
-  #[no_mangle]
-  fn add_to_uuid_cache(device: *const libc::c_char) -> libc::c_int;
-}
 
 /*
  * Print UUIDs on all filesystems
@@ -45,9 +39,9 @@ pub unsafe extern "C" fn blkid_main(
       break;
     }
     /* Note: bogus device names don't cause any error messages */
-    add_to_uuid_cache(*argv);
+    crate::util_linux::volume_id::get_devname::add_to_uuid_cache(*argv);
     scan_devices = 0
   }
-  display_uuid_cache(scan_devices);
+  crate::util_linux::volume_id::get_devname::display_uuid_cache(scan_devices);
   return 0;
 }

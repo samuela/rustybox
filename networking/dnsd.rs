@@ -1,10 +1,17 @@
+use crate::libbb::appletlib::applet_name;
+use crate::libbb::parse_config::parser_t;
+use crate::librb::len_and_sockaddr;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
-use crate::libbb::appletlib::applet_name;
 use libc;
 use libc::free;
+use libc::in_addr;
 use libc::openlog;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::sprintf;
 use libc::strcasecmp;
 use libc::strcpy;
@@ -18,69 +25,12 @@ extern "C" {
 
   #[no_mangle]
   fn inet_aton(__cp: *const libc::c_char, __inp: *mut in_addr) -> libc::c_int;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xbind(sockfd: libc::c_int, my_addr: *mut sockaddr, addrlen: socklen_t);
-  #[no_mangle]
-  fn xdotted2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
-  #[no_mangle]
-  fn xmalloc_sockaddr2dotted(sa: *const sockaddr) -> *mut libc::c_char;
-  #[no_mangle]
-  fn socket_want_pktinfo(fd: libc::c_int);
-  #[no_mangle]
-  fn send_to_from(
-    fd: libc::c_int,
-    buf: *mut libc::c_void,
-    len: size_t,
-    flags: libc::c_int,
-    to: *const sockaddr,
-    from: *const sockaddr,
-    tolen: socklen_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn recv_from_to(
-    fd: libc::c_int,
-    buf: *mut libc::c_void,
-    len: size_t,
-    flags: libc::c_int,
-    from: *mut sockaddr,
-    to: *mut sockaddr,
-    sa_size: socklen_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
+
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_info_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_info_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn config_open(filename: *const libc::c_char) -> *mut parser_t;
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
 
 }
 
@@ -88,10 +38,6 @@ pub type __socklen_t = libc::c_uint;
 
 pub type bb__aliased_u16 = u16;
 pub type bb__aliased_u32 = u32;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::ssize_t;
-pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -102,54 +48,20 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
 pub type in_addr_t = u32;
 
-use libc::FILE;
-#[derive(Copy, Clone)]
 #[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_0,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_0 {
   pub sa: sockaddr,
   pub sin: sockaddr_in,
@@ -178,17 +90,6 @@ pub const PARSE_MIN_DIE: C2RustUnnamed_4 = 1048576;
 pub const PARSE_GREEDY: C2RustUnnamed_4 = 262144;
 pub const PARSE_TRIM: C2RustUnnamed_4 = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed_4 = 65536;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
 
 /*
  * Mini DNS server implementation for busybox
@@ -239,8 +140,9 @@ pub const MAX_PACK_LEN: C2RustUnnamed_5 = 512;
 /* can tweak this */
 pub const DEFAULT_TTL: C2RustUnnamed_5 = 120;
 /* the message from client and first part of response msg */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct dns_head {
   pub id: u16,
   pub flags: u16,
@@ -254,15 +156,17 @@ pub struct dns_head {
  * is 16-bit aligned and replaces 16-bit memcpy (in move_from_unaligned16 macro)
  * with aligned halfword access on arm920t!
  * Oh well. Slapping PACKED everywhere seems to help: */
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct type_and_class {
   pub type_0: u16,
   pub class: u16,
 }
 /* element of known name, ip address and reversed ip address */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct dns_entry {
   pub next: *mut dns_entry,
   pub ip: u32,
@@ -300,8 +204,8 @@ unsafe extern "C" fn parse_conf_file(mut fileconf: *const libc::c_char) -> *mut 
   let mut nextp: *mut *mut dns_entry = std::ptr::null_mut();
   conf_data = std::ptr::null_mut();
   nextp = &mut conf_data;
-  parser = config_open(fileconf);
-  while config_read(
+  parser = crate::libbb::parse_config::config_open(fileconf);
+  while crate::libbb::parse_config::config_read(
     parser,
     token.as_mut_ptr(),
     (PARSE_NORMAL as libc::c_int | (2i32 & 0xffi32) << 8i32 | 2i32 & 0xffi32) as libc::c_uint,
@@ -311,20 +215,20 @@ unsafe extern "C" fn parse_conf_file(mut fileconf: *const libc::c_char) -> *mut 
     let mut ip: in_addr = in_addr { s_addr: 0 };
     let mut v32: u32 = 0;
     if inet_aton(token[1], &mut ip) == 0 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"error at line %u, skipping\x00" as *const u8 as *const libc::c_char,
         (*parser).lineno,
       );
     } else {
       if option_mask32 & 1i32 as libc::c_uint != 0 {
-        bb_info_msg(
+        crate::libbb::verror_msg::bb_info_msg(
           b"name:%s, ip:%s\x00" as *const u8 as *const libc::c_char,
           token[0],
           token[1],
         );
       }
       /* sizeof(*m) includes 1 byte for m->name[0] */
-      m = xzalloc(
+      m = crate::libbb::xfuncs_printf::xzalloc(
         (::std::mem::size_of::<dns_entry>() as libc::c_ulong)
           .wrapping_add(strlen(token[0]))
           .wrapping_add(1i32 as libc::c_ulong),
@@ -349,8 +253,7 @@ unsafe extern "C" fn parse_conf_file(mut fileconf: *const libc::c_char) -> *mut 
           let fresh1;
           let fresh2 = __x;
           asm!("bswap $0" : "=r" (fresh1) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2))
-                              :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
         }
         __v
@@ -367,7 +270,7 @@ unsafe extern "C" fn parse_conf_file(mut fileconf: *const libc::c_char) -> *mut 
       undot((*m).rip.as_mut_ptr());
     }
   }
-  config_close(parser);
+  crate::libbb::parse_config::config_close(parser);
   return conf_data;
 }
 /*
@@ -394,8 +297,7 @@ unsafe extern "C" fn table_lookup(
           let fresh4;
           let fresh5 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                             : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
         }
         __v
@@ -428,7 +330,8 @@ unsafe extern "C" fn table_lookup(
       }
     } else if (len != 1i32 as libc::c_uint
       || *(*d).name.as_mut_ptr().offset(1) as libc::c_int != '*' as i32)
-      && !is_prefixed_with(query_string, (*d).rip.as_mut_ptr()).is_null()
+      && !crate::libbb::compare_string_array::is_prefixed_with(query_string, (*d).rip.as_mut_ptr())
+        .is_null()
     {
       return (*d).name.as_mut_ptr();
     }
@@ -615,7 +518,9 @@ unsafe extern "C" fn process_packet(
   let mut query_len: libc::c_int = 0;
   head = buf as *mut dns_head;
   if (*head).nquer as libc::c_int == 0 {
-    bb_simple_error_msg(b"packet has 0 queries, ignored\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg(
+      b"packet has 0 queries, ignored\x00" as *const u8 as *const libc::c_char,
+    );
     return 0;
     /* don't reply */
   }
@@ -631,8 +536,7 @@ unsafe extern "C" fn process_packet(
         let fresh7;
         let fresh8 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8))
-                         : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
       }
       __v
@@ -640,7 +544,9 @@ unsafe extern "C" fn process_packet(
     != 0
   {
     /* QR bit */
-    bb_simple_error_msg(b"response packet, ignored\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg(
+      b"response packet, ignored\x00" as *const u8 as *const libc::c_char,
+    );
     return 0;
     /* don't reply */
   }
@@ -656,8 +562,7 @@ unsafe extern "C" fn process_packet(
       let fresh10;
       let fresh11 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh10) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
     }
     __v
@@ -688,8 +593,7 @@ unsafe extern "C" fn process_packet(
         let fresh13;
         let fresh14 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14))
-                         : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
       }
       __v
@@ -711,8 +615,7 @@ unsafe extern "C" fn process_packet(
           let fresh16;
           let fresh17 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh16) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17))
-                             : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
         }
         __v
@@ -734,8 +637,7 @@ unsafe extern "C" fn process_packet(
             let fresh19;
             let fresh20 = __x;
             asm!("rorw $$8, ${0:w}" : "=r" (fresh19) : "0"
-                                 (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20))
-                                 : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh18, fresh20, fresh19);
           }
           __v
@@ -752,8 +654,7 @@ unsafe extern "C" fn process_packet(
               let fresh22;
               let fresh23 = __x;
               asm!("rorw $$8, ${0:w}" : "=r" (fresh22) : "0"
-                                     (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23))
-                                     : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23)) : "cc");
               c2rust_asm_casts::AsmCast::cast_out(fresh21, fresh23, fresh22);
             }
             __v
@@ -778,10 +679,8 @@ unsafe extern "C" fn process_packet(
                 let fresh24 = &mut __v;
                 let fresh25;
                 let fresh26 = __x;
-                asm!("rorw $$8, ${0:w}" : "=r" (fresh25) :
-                                         "0"
-                                         (c2rust_asm_casts::AsmCast::cast_in(fresh24, fresh26))
-                                         : "cc");
+                asm!("rorw $$8, ${0:w}" : "=r" (fresh25) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh24, fresh26)) : "cc");
                 c2rust_asm_casts::AsmCast::cast_out(fresh24, fresh26, fresh25);
               }
               __v
@@ -812,10 +711,8 @@ unsafe extern "C" fn process_packet(
               let fresh27 = &mut __v;
               let fresh28;
               let fresh29 = __x;
-              asm!("rorw $$8, ${0:w}" : "=r" (fresh28) :
-                                      "0"
-                                      (c2rust_asm_casts::AsmCast::cast_in(fresh27, fresh29))
-                                      : "cc");
+              asm!("rorw $$8, ${0:w}" : "=r" (fresh28) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh27, fresh29)) : "cc");
               c2rust_asm_casts::AsmCast::cast_out(fresh27, fresh29, fresh28);
             }
             __v
@@ -841,8 +738,7 @@ unsafe extern "C" fn process_packet(
               let fresh31;
               let fresh32 = __x;
               asm!("bswap $0" : "=r" (fresh31) : "0"
-                                      (c2rust_asm_casts::AsmCast::cast_in(fresh30, fresh32))
-                                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh30, fresh32)) :);
               c2rust_asm_casts::AsmCast::cast_out(fresh30, fresh32, fresh31);
             }
             __v
@@ -858,10 +754,8 @@ unsafe extern "C" fn process_packet(
               let fresh33 = &mut __v;
               let fresh34;
               let fresh35 = __x;
-              asm!("rorw $$8, ${0:w}" : "=r" (fresh34) :
-                                      "0"
-                                      (c2rust_asm_casts::AsmCast::cast_in(fresh33, fresh35))
-                                      : "cc");
+              asm!("rorw $$8, ${0:w}" : "=r" (fresh34) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh33, fresh35)) : "cc");
               c2rust_asm_casts::AsmCast::cast_out(fresh33, fresh35, fresh34);
             }
             __v
@@ -881,7 +775,9 @@ unsafe extern "C" fn process_packet(
            * RCODE = 0 "success"
            */
           if option_mask32 & 1i32 as libc::c_uint != 0 {
-            bb_simple_info_msg(b"returning positive reply\x00" as *const u8 as *const libc::c_char);
+            crate::libbb::verror_msg::bb_simple_info_msg(
+              b"returning positive reply\x00" as *const u8 as *const libc::c_char,
+            );
           }
           outr_flags = {
             let mut __v: libc::c_ushort = 0;
@@ -893,10 +789,8 @@ unsafe extern "C" fn process_packet(
               let fresh36 = &mut __v;
               let fresh37;
               let fresh38 = __x;
-              asm!("rorw $$8, ${0:w}" : "=r" (fresh37) :
-                                      "0"
-                                      (c2rust_asm_casts::AsmCast::cast_in(fresh36, fresh38))
-                                      : "cc");
+              asm!("rorw $$8, ${0:w}" : "=r" (fresh37) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh36, fresh38)) : "cc");
               c2rust_asm_casts::AsmCast::cast_out(fresh36, fresh38, fresh37);
             }
             __v
@@ -912,10 +806,8 @@ unsafe extern "C" fn process_packet(
               let fresh39 = &mut __v;
               let fresh40;
               let fresh41 = __x;
-              asm!("rorw $$8, ${0:w}" : "=r" (fresh40) :
-                                      "0"
-                                      (c2rust_asm_casts::AsmCast::cast_in(fresh39, fresh41))
-                                      : "cc");
+              asm!("rorw $$8, ${0:w}" : "=r" (fresh40) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh39, fresh41)) : "cc");
               c2rust_asm_casts::AsmCast::cast_out(fresh39, fresh41, fresh40);
             }
             __v
@@ -936,8 +828,7 @@ unsafe extern "C" fn process_packet(
         let fresh43;
         let fresh44 = __x;
         asm!("rorw $$8, ${0:w}" : "=r" (fresh43) : "0"
-                         (c2rust_asm_casts::AsmCast::cast_in(fresh42, fresh44))
-                         : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh42, fresh44)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh42, fresh44, fresh43);
       }
       __v
@@ -946,7 +837,7 @@ unsafe extern "C" fn process_packet(
   {
     /* not a positive response */
     if option_mask32 & 1i32 as libc::c_uint != 0 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"%s, %s\x00" as *const u8 as *const libc::c_char,
         err_msg,
         if option_mask32 & 2i32 as libc::c_uint != 0 {
@@ -974,8 +865,7 @@ unsafe extern "C" fn process_packet(
       let fresh46;
       let fresh47 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh46) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh45, fresh47)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh45, fresh47)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh45, fresh47, fresh46);
     }
     __v
@@ -1003,7 +893,7 @@ pub unsafe extern "C" fn dnsd_main(
   let mut port: u16 = 53i32 as u16;
   /* Ensure buf is 32bit aligned (we need 16bit, but 32bit can't hurt) */
   let mut buf: [u8; 513] = [0; 513];
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"vsi:c:t:p:d\x00" as *const u8 as *const libc::c_char,
     &mut listen_interface as *mut *const libc::c_char,
@@ -1017,32 +907,34 @@ pub unsafe extern "C" fn dnsd_main(
   //if (opts & (1 << 3)) // -c
   if opts & 1i32 << 4i32 != 0 {
     // -t
-    conf_ttl = xatou_range(sttl, 1i32 as libc::c_uint, 0xffffffffu32)
+    conf_ttl = crate::libbb::xatonum::xatou_range(sttl, 1i32 as libc::c_uint, 0xffffffffu32)
   }
   if opts & 1i32 << 5i32 != 0 {
     // -p
-    port = xatou_range(sport, 1i32 as libc::c_uint, 0xffffi32 as libc::c_uint) as u16
+    port =
+      crate::libbb::xatonum::xatou_range(sport, 1i32 as libc::c_uint, 0xffffi32 as libc::c_uint)
+        as u16
   }
   if opts & 1i32 << 6i32 != 0 {
     // -d
-    bb_daemonize_or_rexec(DAEMON_CLOSE_EXTRA_FDS as libc::c_int); /* needed for recv_from_to to work */
+    crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(DAEMON_CLOSE_EXTRA_FDS as libc::c_int); /* needed for recv_from_to to work */
     openlog(applet_name, 0x1i32, 3i32 << 3i32);
     logmode = LOGMODE_SYSLOG as libc::c_int as smallint
   }
   conf_data = parse_conf_file(fileconf);
-  lsa = xdotted2sockaddr(listen_interface, port as libc::c_int);
-  udps = xsocket(
+  lsa = crate::libbb::xconnect::xdotted2sockaddr(listen_interface, port as libc::c_int);
+  udps = crate::libbb::xfuncs_printf::xsocket(
     (*lsa).u.sa.sa_family as libc::c_int,
     SOCK_DGRAM as libc::c_int,
     0,
   );
-  xbind(udps, &mut (*lsa).u.sa, (*lsa).len);
-  socket_want_pktinfo(udps);
+  crate::libbb::xfuncs_printf::xbind(udps, &mut (*lsa).u.sa, (*lsa).len);
+  crate::libbb::udp_io::socket_want_pktinfo(udps);
   lsa_size = (LSA_LEN_SIZE as libc::c_int as libc::c_uint).wrapping_add((*lsa).len);
-  from = xzalloc(lsa_size as size_t) as *mut len_and_sockaddr;
-  to = xzalloc(lsa_size as size_t) as *mut len_and_sockaddr;
-  let mut p: *mut libc::c_char = xmalloc_sockaddr2dotted(&mut (*lsa).u.sa);
-  bb_info_msg(
+  from = crate::libbb::xfuncs_printf::xzalloc(lsa_size as size_t) as *mut len_and_sockaddr;
+  to = crate::libbb::xfuncs_printf::xzalloc(lsa_size as size_t) as *mut len_and_sockaddr;
+  let mut p: *mut libc::c_char = crate::libbb::xconnect::xmalloc_sockaddr2dotted(&mut (*lsa).u.sa);
+  crate::libbb::verror_msg::bb_info_msg(
     b"accepting UDP packets on %s\x00" as *const u8 as *const libc::c_char,
     p,
   );
@@ -1059,7 +951,7 @@ pub unsafe extern "C" fn dnsd_main(
       lsa as *const libc::c_void,
       lsa_size as libc::c_ulong,
     ); /* paranoia */
-    r = recv_from_to(
+    r = crate::libbb::udp_io::recv_from_to(
       udps,
       buf.as_mut_ptr() as *mut libc::c_void,
       (MAX_PACK_LEN as libc::c_int + 1i32) as size_t,
@@ -1069,20 +961,22 @@ pub unsafe extern "C" fn dnsd_main(
       (*lsa).len,
     ) as libc::c_int;
     if r < 12i32 || r > MAX_PACK_LEN as libc::c_int {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"packet size %d, ignored\x00" as *const u8 as *const libc::c_char,
         r,
       );
     } else {
       if option_mask32 & 1i32 as libc::c_uint != 0 {
-        bb_simple_info_msg(b"got UDP packet\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::verror_msg::bb_simple_info_msg(
+          b"got UDP packet\x00" as *const u8 as *const libc::c_char,
+        );
       }
       buf[r as usize] = '\u{0}' as i32 as u8;
       r = process_packet(conf_data, conf_ttl, buf.as_mut_ptr());
       if r <= 0 {
         continue;
       }
-      send_to_from(
+      crate::libbb::udp_io::send_to_from(
         udps,
         buf.as_mut_ptr() as *mut libc::c_void,
         r as size_t,

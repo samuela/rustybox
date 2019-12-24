@@ -1,6 +1,13 @@
 use crate::libbb::appletlib::applet_name;
+use crate::librb::rtattr;
+use crate::librb::size_t;
+use crate::networking::libiproute::libnetlink::rtnl_handle;
+use crate::networking::libiproute::utils::inet_prefix;
 use libc;
+use libc::nlmsghdr;
 use libc::printf;
+use libc::sockaddr_nl;
+use libc::FILE;
 extern "C" {
   #[no_mangle]
   static mut stdout: *mut FILE;
@@ -13,30 +20,6 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
   /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
    * But potentially slow, don't use in one-billion-times loops */
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_warn_ignoring_args(arg: *mut libc::c_char);
-  #[no_mangle]
-  fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn rtnl_rtrealm_n2a(id: libc::c_int) -> *const libc::c_char;
-  #[no_mangle]
-  fn rtnl_dsfield_n2a(id: libc::c_int) -> *const libc::c_char;
-  #[no_mangle]
-  fn rtnl_rttable_n2a(id: libc::c_int) -> *const libc::c_char;
-  #[no_mangle]
-  fn rtnl_dsfield_a2n(id: *mut u32, arg: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn rtnl_rttable_a2n(id: *mut u32, arg: *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn rtnl_rtntype_n2a(id: libc::c_int) -> *const libc::c_char;
-  #[no_mangle]
-  fn rtnl_rtntype_a2n(id: *mut libc::c_int, arg: *mut libc::c_char) -> libc::c_int;
 
   /* We need linux/types.h because older kernels use u32 etc
    * in linux/[rt]netlink.h. 2.6.19 seems to be ok, though */
@@ -51,84 +34,19 @@ extern "C" {
   //return send(rth->fd, buf, len, 0);
   // We are using even shorter:
   // and convert to void, inline.
-  #[no_mangle]
-  fn parse_rtattr(tb: *mut *mut rtattr, max: libc::c_int, rta: *mut rtattr, len: libc::c_int);
-  #[no_mangle]
-  fn rt_addr_n2a(af: libc::c_int, addr: *mut libc::c_void) -> *const libc::c_char;
-  #[no_mangle]
-  fn rtnl_talk(rtnl: *mut rtnl_handle, n: *mut nlmsghdr, answer: *mut nlmsghdr) -> libc::c_int;
-  #[no_mangle]
-  fn invarg_1_to_2(_: *const libc::c_char, _: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn next_arg(argv: *mut *mut libc::c_char) -> *mut *mut libc::c_char;
-  #[no_mangle]
-  fn get_addr32(name: *mut libc::c_char) -> u32;
-  #[no_mangle]
-  fn addattr32(
-    n: *mut nlmsghdr,
-    maxlen: libc::c_int,
-    type_0: libc::c_int,
-    data: u32,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn addattr_l(
-    n: *mut nlmsghdr,
-    maxlen: libc::c_int,
-    type_0: libc::c_int,
-    data: *mut libc::c_void,
-    alen: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn get_u32(arg: *mut libc::c_char, errmsg: *const libc::c_char) -> u32;
-  #[no_mangle]
-  fn get_rt_realms(realms: *mut u32, arg: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn get_prefix(dst: *mut inet_prefix, arg: *mut libc::c_char, family: libc::c_int);
-  #[no_mangle]
-  fn xrtnl_wilddump_request(rth: *mut rtnl_handle, fam: libc::c_int, type_0: libc::c_int);
+
   #[no_mangle]
   static mut preferred_family: family_t;
-  #[no_mangle]
-  fn xrtnl_dump_filter(
-    rth: *mut rtnl_handle,
-    filter: Option<
-      unsafe extern "C" fn(
-        _: *const sockaddr_nl,
-        _: *mut nlmsghdr,
-        _: *mut libc::c_void,
-      ) -> libc::c_int,
-    >,
-    arg1: *mut libc::c_void,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn xrtnl_open(rth: *mut rtnl_handle);
+
 }
 
-use crate::librb::size_t;
 pub type smalluint = libc::c_uchar;
 
-use libc::FILE;
 pub type family_t = i8;
 pub type __u16 = libc::c_ushort;
 pub type u32 = libc::c_uint;
 pub type __kernel_sa_family_t = libc::c_ushort;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_nl {
-  pub nl_family: __kernel_sa_family_t,
-  pub nl_pad: libc::c_ushort,
-  pub nl_pid: u32,
-  pub nl_groups: u32,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct nlmsghdr {
-  pub nlmsg_len: u32,
-  pub nlmsg_type: __u16,
-  pub nlmsg_flags: __u16,
-  pub nlmsg_seq: u32,
-  pub nlmsg_pid: u32,
-}
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const __RTM_MAX: C2RustUnnamed = 97;
 pub const RTM_NEWCACHEREPORT: C2RustUnnamed = 96;
@@ -184,14 +102,9 @@ pub const RTM_GETLINK: C2RustUnnamed = 18;
 pub const RTM_DELLINK: C2RustUnnamed = 17;
 pub const RTM_NEWLINK: C2RustUnnamed = 16;
 pub const RTM_BASE: C2RustUnnamed = 16;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct rtattr {
-  pub rta_len: libc::c_ushort,
-  pub rta_type: libc::c_ushort,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct rtmsg {
   pub rtm_family: libc::c_uchar,
   pub rtm_dst_len: libc::c_uchar,
@@ -259,17 +172,9 @@ pub const RTA_IIF: rtattr_type_t = 3;
 pub const RTA_SRC: rtattr_type_t = 2;
 pub const RTA_DST: rtattr_type_t = 1;
 pub const RTA_UNSPEC: rtattr_type_t = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct rtnl_handle {
-  pub fd: libc::c_int,
-  pub local: sockaddr_nl,
-  pub peer: sockaddr_nl,
-  pub seq: u32,
-  pub dump: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct C2RustUnnamed_1 {
   pub n: nlmsghdr,
   pub r: rtmsg,
@@ -291,14 +196,7 @@ pub const ARG_tos: C2RustUnnamed_2 = 6;
 pub const ARG_priority: C2RustUnnamed_2 = 5;
 pub const ARG_order: C2RustUnnamed_2 = 4;
 pub const ARG_preference: C2RustUnnamed_2 = 3;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct inet_prefix {
-  pub family: u8,
-  pub bytelen: u8,
-  pub bitlen: i16,
-  pub data: [u32; 4],
-}
+
 pub const ARG_to: C2RustUnnamed_2 = 2;
 pub const ARG_from: C2RustUnnamed_2 = 1;
 pub type C2RustUnnamed_2 = libc::c_uint;
@@ -345,7 +243,7 @@ unsafe extern "C" fn print_rule(
     return -1i32;
   }
   //memset(tb, 0, sizeof(tb)); - parse_rtattr does this
-  parse_rtattr(
+  crate::networking::libiproute::libnetlink::parse_rtattr(
     tb.as_mut_ptr(),
     __RTA_MAX as libc::c_int - 1i32,
     (r as *mut libc::c_char).offset(
@@ -385,7 +283,7 @@ unsafe extern "C" fn print_rule(
     if (*r).rtm_src_len as libc::c_int != host_len {
       printf(
         b"%s/%u\x00" as *const u8 as *const libc::c_char,
-        rt_addr_n2a(
+        crate::networking::libiproute::utils::rt_addr_n2a(
           (*r).rtm_family as libc::c_int,
           (tb[RTA_SRC as libc::c_int as usize] as *mut libc::c_char).offset(
             ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
@@ -399,7 +297,7 @@ unsafe extern "C" fn print_rule(
       );
     } else {
       fputs_unlocked(
-        rt_addr_n2a(
+        crate::networking::libiproute::utils::rt_addr_n2a(
           (*r).rtm_family as libc::c_int,
           (tb[RTA_SRC as libc::c_int as usize] as *mut libc::c_char).offset(
             ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
@@ -420,12 +318,12 @@ unsafe extern "C" fn print_rule(
   } else {
     printf(b"all\x00" as *const u8 as *const libc::c_char);
   }
-  bb_putchar(' ' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar(' ' as i32);
   if !tb[RTA_DST as libc::c_int as usize].is_null() {
     if (*r).rtm_dst_len as libc::c_int != host_len {
       printf(
         b"to %s/%u \x00" as *const u8 as *const libc::c_char,
-        rt_addr_n2a(
+        crate::networking::libiproute::utils::rt_addr_n2a(
           (*r).rtm_family as libc::c_int,
           (tb[RTA_DST as libc::c_int as usize] as *mut libc::c_char).offset(
             ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
@@ -440,7 +338,7 @@ unsafe extern "C" fn print_rule(
     } else {
       printf(
         b"to %s \x00" as *const u8 as *const libc::c_char,
-        rt_addr_n2a(
+        crate::networking::libiproute::utils::rt_addr_n2a(
           (*r).rtm_family as libc::c_int,
           (tb[RTA_DST as libc::c_int as usize] as *mut libc::c_char).offset(
             ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
@@ -461,7 +359,7 @@ unsafe extern "C" fn print_rule(
   if (*r).rtm_tos != 0 {
     printf(
       b"tos %s \x00" as *const u8 as *const libc::c_char,
-      rtnl_dsfield_n2a((*r).rtm_tos as libc::c_int),
+      crate::networking::libiproute::rt_names::rtnl_dsfield_n2a((*r).rtm_tos as libc::c_int),
     );
   }
   if !tb[RTA_PROTOINFO as libc::c_int as usize].is_null() {
@@ -491,7 +389,7 @@ unsafe extern "C" fn print_rule(
   if !tb[RTA_TABLE as libc::c_int as usize].is_null() {
     printf(
       b"lookup %s \x00" as *const u8 as *const libc::c_char,
-      rtnl_rttable_n2a(
+      crate::networking::libiproute::rt_names::rtnl_rttable_n2a(
         *((tb[RTA_TABLE as libc::c_int as usize] as *mut libc::c_char).offset(
           ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
             .wrapping_add(4u32 as libc::c_ulong)
@@ -504,7 +402,7 @@ unsafe extern "C" fn print_rule(
   } else if (*r).rtm_table != 0 {
     printf(
       b"lookup %s \x00" as *const u8 as *const libc::c_char,
-      rtnl_rttable_n2a((*r).rtm_table as libc::c_int),
+      crate::networking::libiproute::rt_names::rtnl_rttable_n2a((*r).rtm_table as libc::c_int),
     );
   }
   if !tb[14].is_null() {
@@ -575,19 +473,19 @@ unsafe extern "C" fn print_rule(
     if from != 0 {
       printf(
         b"realms %s/\x00" as *const u8 as *const libc::c_char,
-        rtnl_rtrealm_n2a(from as libc::c_int),
+        crate::networking::libiproute::rt_names::rtnl_rtrealm_n2a(from as libc::c_int),
       );
     }
     printf(
       b"%s \x00" as *const u8 as *const libc::c_char,
-      rtnl_rtrealm_n2a(to as libc::c_int),
+      crate::networking::libiproute::rt_names::rtnl_rtrealm_n2a(to as libc::c_int),
     );
   }
   if (*r).rtm_type as libc::c_int == RTN_NAT as libc::c_int {
     if !tb[RTA_GATEWAY as libc::c_int as usize].is_null() {
       printf(
         b"map-to %s \x00" as *const u8 as *const libc::c_char,
-        rt_addr_n2a(
+        crate::networking::libiproute::utils::rt_addr_n2a(
           (*r).rtm_family as libc::c_int,
           (tb[RTA_GATEWAY as libc::c_int as usize] as *mut libc::c_char).offset(
             ((::std::mem::size_of::<rtattr>() as libc::c_ulong)
@@ -602,43 +500,34 @@ unsafe extern "C" fn print_rule(
       printf(b"masquerade\x00" as *const u8 as *const libc::c_char);
     }
   } else if (*r).rtm_type as libc::c_int != RTN_UNICAST as libc::c_int {
-    fputs_unlocked(rtnl_rtntype_n2a((*r).rtm_type as libc::c_int), stdout);
+    fputs_unlocked(
+      crate::networking::libiproute::rtm_map::rtnl_rtntype_n2a((*r).rtm_type as libc::c_int),
+      stdout,
+    );
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   /*fflush_all();*/
   return 0;
 }
 /* Return value becomes exitcode. It's okay to not return at all */
 unsafe extern "C" fn iprule_list(mut argv: *mut *mut libc::c_char) -> libc::c_int {
-  let mut rth: rtnl_handle = rtnl_handle {
-    fd: 0,
-    local: sockaddr_nl {
-      nl_family: 0,
-      nl_pad: 0,
-      nl_pid: 0,
-      nl_groups: 0,
-    },
-    peer: sockaddr_nl {
-      nl_family: 0,
-      nl_pad: 0,
-      nl_pid: 0,
-      nl_groups: 0,
-    },
-    seq: 0,
-    dump: 0,
-  };
+  let mut rth: rtnl_handle = std::mem::zeroed();
   let mut af: libc::c_int = preferred_family as libc::c_int;
   if af == 0 {
     af = 2i32
   }
   if !(*argv).is_null() {
     //bb_error_msg("\"rule show\" needs no arguments");
-    bb_warn_ignoring_args(*argv);
+    crate::libbb::warn_ignoring_args::bb_warn_ignoring_args(*argv);
     return -1i32;
   }
-  xrtnl_open(&mut rth);
-  xrtnl_wilddump_request(&mut rth, af, RTM_GETRULE as libc::c_int);
-  xrtnl_dump_filter(
+  crate::networking::libiproute::libnetlink::xrtnl_open(&mut rth);
+  crate::networking::libiproute::libnetlink::xrtnl_wilddump_request(
+    &mut rth,
+    af,
+    RTM_GETRULE as libc::c_int,
+  );
+  crate::networking::libiproute::libnetlink::xrtnl_dump_filter(
     &mut rth,
     Some(
       print_rule
@@ -658,23 +547,7 @@ unsafe extern "C" fn iprule_modify(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut table_ok: bool = 0 != 0;
-  let mut rth: rtnl_handle = rtnl_handle {
-    fd: 0,
-    local: sockaddr_nl {
-      nl_family: 0,
-      nl_pad: 0,
-      nl_pid: 0,
-      nl_groups: 0,
-    },
-    peer: sockaddr_nl {
-      nl_family: 0,
-      nl_pad: 0,
-      nl_pid: 0,
-      nl_groups: 0,
-    },
-    seq: 0,
-    dump: 0,
-  };
+  let mut rth: rtnl_handle = std::mem::zeroed();
   let mut req: C2RustUnnamed_1 = C2RustUnnamed_1 {
     n: nlmsghdr {
       nlmsg_len: 0,
@@ -725,10 +598,11 @@ unsafe extern "C" fn iprule_modify(
     req.r.rtm_type = RTN_UNICAST as libc::c_int as libc::c_uchar
   }
   while !(*argv).is_null() {
-    key = (index_in_substrings(keywords.as_ptr(), *argv) + 1i32) as smalluint;
+    key = (crate::libbb::compare_string_array::index_in_substrings(keywords.as_ptr(), *argv) + 1i32)
+      as smalluint;
     if key as libc::c_int == 0 {
       /* no match found in keywords array, bail out. */
-      invarg_1_to_2(*argv, applet_name);
+      crate::networking::libiproute::utils::invarg_1_to_2(*argv, applet_name);
     }
     if key as libc::c_int == ARG_from as libc::c_int {
       let mut dst: inet_prefix = inet_prefix {
@@ -737,10 +611,14 @@ unsafe extern "C" fn iprule_modify(
         bitlen: 0,
         data: [0; 4],
       };
-      argv = next_arg(argv);
-      get_prefix(&mut dst, *argv, req.r.rtm_family as libc::c_int);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      crate::networking::libiproute::utils::get_prefix(
+        &mut dst,
+        *argv,
+        req.r.rtm_family as libc::c_int,
+      );
       req.r.rtm_src_len = dst.bitlen as libc::c_uchar;
-      addattr_l(
+      crate::networking::libiproute::libnetlink::addattr_l(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong as libc::c_int,
         RTA_SRC as libc::c_int,
@@ -754,10 +632,14 @@ unsafe extern "C" fn iprule_modify(
         bitlen: 0,
         data: [0; 4],
       };
-      argv = next_arg(argv);
-      get_prefix(&mut dst_0, *argv, req.r.rtm_family as libc::c_int);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      crate::networking::libiproute::utils::get_prefix(
+        &mut dst_0,
+        *argv,
+        req.r.rtm_family as libc::c_int,
+      );
       req.r.rtm_dst_len = dst_0.bitlen as libc::c_uchar;
-      addattr_l(
+      crate::networking::libiproute::libnetlink::addattr_l(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong as libc::c_int,
         RTA_DST as libc::c_int,
@@ -769,15 +651,15 @@ unsafe extern "C" fn iprule_modify(
       || key as libc::c_int == ARG_priority as libc::c_int
     {
       let mut pref: u32 = 0;
-      argv = next_arg(argv);
-      pref = get_u32(
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      pref = crate::networking::libiproute::utils::get_u32(
         *argv,
         keywords
           .as_ptr()
           .offset(::std::mem::size_of::<[libc::c_char; 5]>() as libc::c_ulong as isize)
           .offset(::std::mem::size_of::<[libc::c_char; 3]>() as libc::c_ulong as isize),
       );
-      addattr32(
+      crate::networking::libiproute::libnetlink::addattr32(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong as libc::c_int,
         RTA_PRIORITY as libc::c_int,
@@ -785,15 +667,18 @@ unsafe extern "C" fn iprule_modify(
       );
     } else if key as libc::c_int == ARG_tos as libc::c_int {
       let mut tos: u32 = 0;
-      argv = next_arg(argv);
-      if rtnl_dsfield_a2n(&mut tos, *argv) != 0 {
-        invarg_1_to_2(*argv, b"TOS\x00" as *const u8 as *const libc::c_char);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      if crate::networking::libiproute::rt_names::rtnl_dsfield_a2n(&mut tos, *argv) != 0 {
+        crate::networking::libiproute::utils::invarg_1_to_2(
+          *argv,
+          b"TOS\x00" as *const u8 as *const libc::c_char,
+        );
       }
       req.r.rtm_tos = tos as libc::c_uchar
     } else if key as libc::c_int == ARG_fwmark as libc::c_int {
       let mut fwmark: u32 = 0;
-      argv = next_arg(argv);
-      fwmark = get_u32(
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      fwmark = crate::networking::libiproute::utils::get_u32(
         *argv,
         keywords
           .as_ptr()
@@ -804,7 +689,7 @@ unsafe extern "C" fn iprule_modify(
           .offset(::std::mem::size_of::<[libc::c_char; 9]>() as libc::c_ulong as isize)
           .offset(::std::mem::size_of::<[libc::c_char; 4]>() as libc::c_ulong as isize),
       );
-      addattr32(
+      crate::networking::libiproute::libnetlink::addattr32(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong as libc::c_int,
         RTA_PROTOINFO as libc::c_int,
@@ -812,9 +697,9 @@ unsafe extern "C" fn iprule_modify(
       );
     } else if key as libc::c_int == ARG_realms as libc::c_int {
       let mut realm: u32 = 0;
-      argv = next_arg(argv);
-      if get_rt_realms(&mut realm, *argv) != 0 {
-        invarg_1_to_2(
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      if crate::networking::libiproute::rtm_map::get_rt_realms(&mut realm, *argv) != 0 {
+        crate::networking::libiproute::utils::invarg_1_to_2(
           *argv,
           keywords
             .as_ptr()
@@ -827,7 +712,7 @@ unsafe extern "C" fn iprule_modify(
             .offset(::std::mem::size_of::<[libc::c_char; 7]>() as libc::c_ulong as isize),
         );
       }
-      addattr32(
+      crate::networking::libiproute::libnetlink::addattr32(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong as libc::c_int,
         RTA_FLOW as libc::c_int,
@@ -837,13 +722,16 @@ unsafe extern "C" fn iprule_modify(
       || key as libc::c_int == ARG_lookup as libc::c_int
     {
       let mut tid: u32 = 0;
-      argv = next_arg(argv);
-      if rtnl_rttable_a2n(&mut tid, *argv) != 0 {
-        invarg_1_to_2(*argv, b"table ID\x00" as *const u8 as *const libc::c_char);
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      if crate::networking::libiproute::rt_names::rtnl_rttable_a2n(&mut tid, *argv) != 0 {
+        crate::networking::libiproute::utils::invarg_1_to_2(
+          *argv,
+          b"table ID\x00" as *const u8 as *const libc::c_char,
+        );
       }
       if tid > 255i32 as libc::c_uint {
         req.r.rtm_table = RT_TABLE_UNSPEC as libc::c_int as libc::c_uchar;
-        addattr32(
+        crate::networking::libiproute::libnetlink::addattr32(
           &mut req.n,
           ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong as libc::c_int,
           RTA_TABLE as libc::c_int,
@@ -855,8 +743,8 @@ unsafe extern "C" fn iprule_modify(
       table_ok = 1i32 != 0
     } else if key as libc::c_int == ARG_suppress_prefixlength as libc::c_int {
       let mut prefix_length: libc::c_int = 0;
-      argv = next_arg(argv);
-      prefix_length = get_u32(
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      prefix_length = crate::networking::libiproute::utils::get_u32(
         *argv,
         keywords
           .as_ptr()
@@ -871,7 +759,7 @@ unsafe extern "C" fn iprule_modify(
           .offset(::std::mem::size_of::<[libc::c_char; 6]>() as libc::c_ulong as isize)
           .offset(::std::mem::size_of::<[libc::c_char; 7]>() as libc::c_ulong as isize),
       ) as libc::c_int;
-      addattr32(
+      crate::networking::libiproute::libnetlink::addattr32(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong as libc::c_int,
         14i32,
@@ -879,8 +767,8 @@ unsafe extern "C" fn iprule_modify(
       );
     } else if key as libc::c_int == ARG_suppress_ifgroup as libc::c_int {
       let mut grp: libc::c_int = 0;
-      argv = next_arg(argv);
-      grp = get_u32(
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      grp = crate::networking::libiproute::utils::get_u32(
         *argv,
         keywords
           .as_ptr()
@@ -896,7 +784,7 @@ unsafe extern "C" fn iprule_modify(
           .offset(::std::mem::size_of::<[libc::c_char; 7]>() as libc::c_ulong as isize)
           .offset(::std::mem::size_of::<[libc::c_char; 22]>() as libc::c_ulong as isize),
       ) as libc::c_int;
-      addattr32(
+      crate::networking::libiproute::libnetlink::addattr32(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong as libc::c_int,
         13i32,
@@ -905,8 +793,8 @@ unsafe extern "C" fn iprule_modify(
     } else if key as libc::c_int == ARG_dev as libc::c_int
       || key as libc::c_int == ARG_iif as libc::c_int
     {
-      argv = next_arg(argv);
-      addattr_l(
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      crate::networking::libiproute::libnetlink::addattr_l(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong as libc::c_int,
         RTA_IIF as libc::c_int,
@@ -916,24 +804,27 @@ unsafe extern "C" fn iprule_modify(
     } else if key as libc::c_int == ARG_nat as libc::c_int
       || key as libc::c_int == ARG_map_to as libc::c_int
     {
-      argv = next_arg(argv);
-      addattr32(
+      argv = crate::networking::libiproute::utils::next_arg(argv);
+      crate::networking::libiproute::libnetlink::addattr32(
         &mut req.n,
         ::std::mem::size_of::<C2RustUnnamed_1>() as libc::c_ulong as libc::c_int,
         RTA_GATEWAY as libc::c_int,
-        get_addr32(*argv),
+        crate::networking::libiproute::utils::get_addr32(*argv),
       );
       req.r.rtm_type = RTN_NAT as libc::c_int as libc::c_uchar
     } else {
       let mut type_0: libc::c_int = 0;
       if key as libc::c_int == ARG_type as libc::c_int {
-        argv = next_arg(argv)
+        argv = crate::networking::libiproute::utils::next_arg(argv)
       }
       if key as libc::c_int == ARG_help as libc::c_int {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
-      if rtnl_rtntype_a2n(&mut type_0, *argv) != 0 {
-        invarg_1_to_2(*argv, b"type\x00" as *const u8 as *const libc::c_char);
+      if crate::networking::libiproute::rtm_map::rtnl_rtntype_a2n(&mut type_0, *argv) != 0 {
+        crate::networking::libiproute::utils::invarg_1_to_2(
+          *argv,
+          b"type\x00" as *const u8 as *const libc::c_char,
+        );
       }
       req.r.rtm_type = type_0 as libc::c_uchar
     }
@@ -945,8 +836,10 @@ unsafe extern "C" fn iprule_modify(
   if !table_ok && cmd == RTM_NEWRULE as libc::c_int {
     req.r.rtm_table = RT_TABLE_MAIN as libc::c_int as libc::c_uchar
   }
-  xrtnl_open(&mut rth);
-  if rtnl_talk(&mut rth, &mut req.n, 0 as *mut nlmsghdr) < 0 {
+  crate::networking::libiproute::libnetlink::xrtnl_open(&mut rth);
+  if crate::networking::libiproute::libnetlink::rtnl_talk(&mut rth, &mut req.n, 0 as *mut nlmsghdr)
+    < 0
+  {
     return 2i32;
   }
   return 0;
@@ -963,9 +856,10 @@ pub unsafe extern "C" fn do_iprule(mut argv: *mut *mut libc::c_char) -> libc::c_
     0,
   ];
   if !(*argv).is_null() {
-    let mut cmd: libc::c_int = index_in_substrings(ip_rule_commands.as_ptr(), *argv);
+    let mut cmd: libc::c_int =
+      crate::libbb::compare_string_array::index_in_substrings(ip_rule_commands.as_ptr(), *argv);
     if cmd < 0 {
-      invarg_1_to_2(*argv, applet_name);
+      crate::networking::libiproute::utils::invarg_1_to_2(*argv, applet_name);
     }
     argv = argv.offset(1);
     if cmd < 2i32 {

@@ -9,24 +9,11 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc(old: *mut libc::c_void, size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrndup(s: *const libc::c_char, n: libc::c_int) -> *mut libc::c_char;
-  #[no_mangle]
-  fn printable_string2(stats: *mut uni_stat_t, str: *const libc::c_char) -> *const libc::c_char;
 }
 
 pub type wchar_t = libc::c_int;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct uni_stat_t {
-  pub byte_count: libc::c_uint,
-  pub unicode_count: libc::c_uint,
-  pub unicode_width: libc::c_uint,
-}
+
+use crate::librb::uni_stat_t;
 
 /*
  * Licensed under GPLv2, see file LICENSE in this source tree.
@@ -38,8 +25,9 @@ pub const UNICODE_UNKNOWN: C2RustUnnamed = 0;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const UNI_FLAG_PAD: C2RustUnnamed_0 = 1;
 pub type bb_wint_t = i32;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct bb_mbstate_t {
   pub bogus: libc::c_char,
 }
@@ -455,7 +443,7 @@ pub unsafe extern "C" fn unicode_strwidth(mut string: *const libc::c_char) -> si
     unicode_count: 0,
     unicode_width: 0,
   };
-  printable_string2(&mut uni_stat, string);
+  crate::libbb::printable_string::printable_string2(&mut uni_stat, string);
   return uni_stat.unicode_width as size_t;
 }
 unsafe extern "C" fn unicode_conv_to_printable2(
@@ -504,7 +492,7 @@ unsafe extern "C" fn unicode_conv_to_printable2(
       }
       *d = '\u{0}' as i32 as libc::c_char
     } else {
-      dst = xstrndup(src, width as libc::c_int);
+      dst = crate::libbb::xfuncs_printf::xstrndup(src, width as libc::c_int);
       d = dst;
       while *d != 0 {
         let mut c_0: libc::c_uchar = *d as libc::c_uchar;
@@ -569,7 +557,7 @@ unsafe extern "C" fn unicode_conv_to_printable2(
     } else {
       uni_count = uni_count.wrapping_add(1);
       uni_width = uni_width.wrapping_add(w as libc::c_uint);
-      dst = xrealloc(
+      dst = crate::libbb::xfuncs_printf::xrealloc(
         dst as *mut libc::c_void,
         dst_len.wrapping_add(6i32 as libc::c_uint) as size_t,
       ) as *mut libc::c_char;
@@ -581,7 +569,7 @@ unsafe extern "C" fn unicode_conv_to_printable2(
   /* end-of-string */
   /* Pad to remaining width */
   if flags & UNI_FLAG_PAD as libc::c_int != 0 {
-    dst = xrealloc(
+    dst = crate::libbb::xfuncs_printf::xrealloc(
       dst as *mut libc::c_void,
       dst_len
         .wrapping_add(width)
@@ -601,7 +589,7 @@ unsafe extern "C" fn unicode_conv_to_printable2(
   }
   if dst.is_null() {
     /* for example, if input was "" */
-    dst = xzalloc(1i32 as size_t) as *mut libc::c_char
+    dst = crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t) as *mut libc::c_char
   }
   *dst.offset(dst_len as isize) = '\u{0}' as i32 as libc::c_char;
   if !stats.is_null() {

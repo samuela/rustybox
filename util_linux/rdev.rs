@@ -1,10 +1,5 @@
 use libc;
 use libc::printf;
-extern "C" {
-
-  #[no_mangle]
-  fn find_block_device(path: *const libc::c_char) -> *mut libc::c_char;
-}
 
 /*
  * rdev - print device node associated with a filesystem
@@ -35,7 +30,7 @@ pub unsafe extern "C" fn rdev_main(
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut root_device: *const libc::c_char =
-    find_block_device(b"/\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::find_root_device::find_block_device(b"/\x00" as *const u8 as *const libc::c_char);
   if !root_device.is_null() {
     printf(
       b"%s /\n\x00" as *const u8 as *const libc::c_char,

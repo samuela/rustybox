@@ -28,63 +28,6 @@ extern "C" {
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
   #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xopendir(path: *const libc::c_char) -> *mut DIR;
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn strncpy_IFNAMSIZ(dst: *mut libc::c_char, src: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn open_read_close(
-    filename: *const libc::c_char,
-    buf: *mut libc::c_void,
-    maxsz: size_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xstrtoull(str: *const libc::c_char, b: libc::c_int) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xstrtou(str: *const libc::c_char, b: libc::c_int) -> libc::c_uint;
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
-  #[no_mangle]
-  fn ioctl_or_perror_and_die(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    fmt: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
-
-  #[no_mangle]
   static bb_msg_invalid_arg_to: [libc::c_char; 0];
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
@@ -113,8 +56,9 @@ use libc::sockaddr;
 use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifmap {
   pub mem_start: libc::c_ulong,
   pub mem_end: libc::c_ulong,
@@ -123,14 +67,16 @@ pub struct ifmap {
   pub dma: libc::c_uchar,
   pub port: libc::c_uchar,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ifreq {
   pub ifr_ifrn: C2RustUnnamed_1,
   pub ifr_ifru: C2RustUnnamed_0,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_0 {
   pub ifru_addr: sockaddr,
   pub ifru_dstaddr: sockaddr,
@@ -145,13 +91,15 @@ pub union C2RustUnnamed_0 {
   pub ifru_newname: [libc::c_char; 16],
   pub ifru_data: __caddr_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub ifrn_name: [libc::c_char; 16],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fdb_entry {
   pub mac_addr: [u8; 6],
   pub port_no: u8,
@@ -247,7 +195,7 @@ unsafe extern "C" fn str_to_jiffies(mut time_str: *const libc::c_char) -> libc::
   let mut endptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   dd = strtod(time_str, &mut endptr);
   if endptr == time_str as *mut libc::c_char || dd < 0 as libc::c_double {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       bb_msg_invalid_arg_to.as_ptr(),
       time_str,
       b"timespec\x00" as *const u8 as *const libc::c_char,
@@ -263,7 +211,7 @@ unsafe extern "C" fn str_to_jiffies(mut time_str: *const libc::c_char) -> libc::
   return dd as libc::c_uint;
 }
 unsafe extern "C" fn read_file(mut name: *const libc::c_char) -> libc::c_int {
-  let mut n: libc::c_int = open_read_close(
+  let mut n: libc::c_int = crate::libbb::read::open_read_close(
     name,
     bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
     (COMMON_BUFSIZE as libc::c_int - 1i32) as size_t,
@@ -364,7 +312,7 @@ unsafe extern "C" fn show_bridge(
   }
   if tabs == 0 {
     /* bridge has no interfaces */
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   }
   return 0;
 }
@@ -382,7 +330,7 @@ unsafe extern "C" fn write_uint(
     name,
     leaf,
   );
-  fd = xopen(pathbuf.as_mut_ptr(), 0o1i32);
+  fd = crate::libbb::xfuncs_printf::xopen(pathbuf.as_mut_ptr(), 0o1i32);
   n = sprintf(
     bb_common_bufsiz1.as_mut_ptr(),
     b"%u\n\x00" as *const u8 as *const libc::c_char,
@@ -394,7 +342,7 @@ unsafe extern "C" fn write_uint(
     n as size_t,
   ) < 0
   {
-    bb_simple_perror_msg_and_die(name);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(name);
   };
 }
 unsafe extern "C" fn compare_fdbs(
@@ -425,7 +373,7 @@ unsafe extern "C" fn read_bridge_forward_db(
   );
   fd = open(pathbuf.as_mut_ptr(), 0);
   if fd < 0 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"bridge %s does not exist\x00" as *const u8 as *const libc::c_char,
       name,
     );
@@ -433,13 +381,13 @@ unsafe extern "C" fn read_bridge_forward_db(
   fdb = std::ptr::null_mut();
   nentries = 0 as size_t;
   loop {
-    fdb = xrealloc_vector_helper(
+    fdb = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
       fdb as *mut libc::c_void,
       ((::std::mem::size_of::<fdb_entry>() as libc::c_ulong) << 8i32)
         .wrapping_add(4i32 as libc::c_ulong) as libc::c_uint,
       nentries as libc::c_int,
     ) as *mut fdb_entry;
-    cc = full_read(
+    cc = crate::libbb::read::full_read(
       fd,
       &mut *fdb.offset(nentries as isize) as *mut fdb_entry as *mut libc::c_void,
       ::std::mem::size_of::<fdb_entry>() as libc::c_ulong,
@@ -448,7 +396,7 @@ unsafe extern "C" fn read_bridge_forward_db(
       break;
     }
     if cc as libc::c_ulong != ::std::mem::size_of::<fdb_entry>() as libc::c_ulong {
-      bb_perror_msg_and_die(
+      crate::libbb::perror_msg::bb_perror_msg_and_die(
         b"can\'t read bridge %s forward db\x00" as *const u8 as *const libc::c_char,
         name,
       );
@@ -500,7 +448,8 @@ unsafe extern "C" fn show_bridge_macs(mut name: *const libc::c_char) {
   }
 }
 unsafe extern "C" fn show_bridge_timer(mut msg: *const libc::c_char) {
-  let mut centisec: libc::c_ulonglong = xstrtoull(bb_common_bufsiz1.as_mut_ptr(), 0);
+  let mut centisec: libc::c_ulonglong =
+    crate::libbb::xatonum::xstrtoull(bb_common_bufsiz1.as_mut_ptr(), 0);
   let mut tv_sec: libc::c_uint = centisec.wrapping_div(100i32 as libc::c_ulonglong) as libc::c_uint;
   let mut tv_csec: libc::c_uint =
     centisec.wrapping_rem(100i32 as libc::c_ulonglong) as libc::c_uint;
@@ -519,12 +468,18 @@ unsafe extern "C" fn show_bridge_state(mut state: libc::c_uint) -> *const libc::
     108, 111, 99, 107, 105, 110, 103, 0,
   ];
   if state < 5i32 as libc::c_uint {
-    return nth_string(state_names.as_ptr(), state as libc::c_int);
+    return crate::libbb::compare_string_array::nth_string(
+      state_names.as_ptr(),
+      state as libc::c_int,
+    );
   }
-  return utoa(state);
+  return crate::libbb::xfuncs::utoa(state);
 }
 unsafe extern "C" fn printf_xstrtou(mut fmt: *const libc::c_char) {
-  printf(fmt, xstrtou(bb_common_bufsiz1.as_mut_ptr(), 0));
+  printf(
+    fmt,
+    crate::libbb::xatonum::xstrtou(bb_common_bufsiz1.as_mut_ptr(), 0),
+  );
 }
 unsafe extern "C" fn show_bridge_port(mut name: *const libc::c_char) {
   let mut pathbuf: [libc::c_char; 52] = [0; 52];
@@ -539,7 +494,7 @@ unsafe extern "C" fn show_bridge_port(mut name: *const libc::c_char) {
   printf(
     b"%s (%u)\n\x00" as *const u8 as *const libc::c_char,
     name,
-    xstrtou(bb_common_bufsiz1.as_mut_ptr(), 0),
+    crate::libbb::xatonum::xstrtou(bb_common_bufsiz1.as_mut_ptr(), 0),
   );
   //BR_STATE_BLOCKING   4
   strcpy(sfx.offset(5), b"id\x00" as *const u8 as *const libc::c_char); // "port_id"
@@ -549,7 +504,10 @@ unsafe extern "C" fn show_bridge_port(mut name: *const libc::c_char) {
   read_file(pathbuf.as_mut_ptr());
   printf(
     b"\t\t\tstate\t\t%15s\n\x00" as *const u8 as *const libc::c_char,
-    show_bridge_state(xstrtou(bb_common_bufsiz1.as_mut_ptr(), 0)),
+    show_bridge_state(crate::libbb::xatonum::xstrtou(
+      bb_common_bufsiz1.as_mut_ptr(),
+      0,
+    )),
   );
   strcpy(
     sfx,
@@ -636,7 +594,7 @@ unsafe extern "C" fn show_bridge_stp(mut name: *const libc::c_char) {
   ) as isize);
   strcpy(sfx, b"bridge_id\x00" as *const u8 as *const libc::c_char);
   if read_file(pathbuf.as_mut_ptr()) < 0 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"bridge %s does not exist\x00" as *const u8 as *const libc::c_char,
       name,
     );
@@ -761,13 +719,17 @@ pub unsafe extern "C" fn brctl_main(
   argv = argv.offset(1);
   if (*argv).is_null() {
     /* bare "brctl" shows --help */
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
-  xchdir(b"/sys/class/net\x00" as *const u8 as *const libc::c_char);
-  key = index_in_strings(keywords.as_ptr(), *argv);
+  crate::libbb::xfuncs_printf::xchdir(b"/sys/class/net\x00" as *const u8 as *const libc::c_char);
+  key = crate::libbb::compare_string_array::index_in_strings(keywords.as_ptr(), *argv);
   if key == -1i32 {
     /* no match found in keywords array, bail out. */
-    bb_error_msg_and_die(bb_msg_invalid_arg_to.as_ptr(), *argv, applet_name);
+    crate::libbb::verror_msg::bb_error_msg_and_die(
+      bb_msg_invalid_arg_to.as_ptr(),
+      *argv,
+      applet_name,
+    );
   }
   argv = argv.offset(1);
   if key == ARG_show as libc::c_int {
@@ -783,7 +745,7 @@ pub unsafe extern "C" fn brctl_main(
         if show_bridge(*argv, need_hdr) >= 0 {
           need_hdr = 0
         } else {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"bridge %s does not exist\x00" as *const u8 as *const libc::c_char,
             *argv,
           );
@@ -799,7 +761,7 @@ pub unsafe extern "C" fn brctl_main(
       return exitcode;
     }
     /* "show" (if no ifaces, shows nothing, not even header) */
-    net = xopendir(b".\x00" as *const u8 as *const libc::c_char); /* . or .. */
+    net = crate::libbb::xfuncs_printf::xopendir(b".\x00" as *const u8 as *const libc::c_char); /* . or .. */
     loop {
       ent = readdir(net);
       if ent.is_null() {
@@ -819,7 +781,7 @@ pub unsafe extern "C" fn brctl_main(
   }
   if (*argv).is_null() {
     /* All of the below need at least one argument */
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   let fresh0 = argv;
   argv = argv.offset(1);
@@ -828,8 +790,9 @@ pub unsafe extern "C" fn brctl_main(
     /* brctl from bridge-utils 1.6 still uses ioctl
      * for SIOCBRADDBR / SIOCBRDELBR, not /sys accesses
      */
-    let mut fd: libc::c_int = xsocket(2i32, SOCK_STREAM as libc::c_int, 0);
-    ioctl_or_perror_and_die(
+    let mut fd: libc::c_int =
+      crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_STREAM as libc::c_int, 0);
+    crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
       fd,
       if key == ARG_addbr as libc::c_int {
         0x89a0i32
@@ -857,15 +820,20 @@ pub unsafe extern "C" fn brctl_main(
   }
   if (*argv).is_null() {
     /* All of the below need at least two arguments */
-    bb_show_usage(); /* 4 .. 7 */
+    crate::libbb::appletlib::bb_show_usage(); /* 4 .. 7 */
   }
   if key == ARG_stp as libc::c_int {
     static mut no_yes: [libc::c_char; 23] = [
       48, 0, 111, 102, 102, 0, 110, 0, 110, 111, 0, 49, 0, 111, 110, 0, 121, 0, 121, 101, 115, 0, 0,
     ];
-    let mut onoff: libc::c_int = index_in_strings(no_yes.as_ptr(), *argv);
+    let mut onoff: libc::c_int =
+      crate::libbb::compare_string_array::index_in_strings(no_yes.as_ptr(), *argv);
     if onoff < 0 {
-      bb_error_msg_and_die(bb_msg_invalid_arg_to.as_ptr(), *argv, applet_name);
+      crate::libbb::verror_msg::bb_error_msg_and_die(
+        bb_msg_invalid_arg_to.as_ptr(),
+        *argv,
+        applet_name,
+      );
     }
     onoff = (onoff as libc::c_uint).wrapping_div(4i32 as libc::c_uint) as libc::c_int;
     write_uint(
@@ -884,7 +852,7 @@ pub unsafe extern "C" fn brctl_main(
      */
     write_uint(
       br,
-      nth_string(
+      crate::libbb::compare_string_array::nth_string(
         b"bridge/ageing_time\x00bridge/forward_delay\x00bridge/hello_time\x00bridge/max_age\x00"
           as *const u8 as *const libc::c_char,
         key - ARG_setageing as libc::c_int,
@@ -897,13 +865,13 @@ pub unsafe extern "C" fn brctl_main(
     write_uint(
       br,
       b"bridge/priority\x00" as *const u8 as *const libc::c_char,
-      xatoi_positive(*argv) as libc::c_uint,
+      crate::libbb::xatonum::xatoi_positive(*argv) as libc::c_uint,
     );
     return 0;
   }
   if key == ARG_setpathcost as libc::c_int || key == ARG_setportprio as libc::c_int {
     if (*argv.offset(1)).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     /* BR is not used (and ignored!) for these commands:
      * "setpathcost BR PORT N" writes "N\n" to
@@ -913,11 +881,11 @@ pub unsafe extern "C" fn brctl_main(
      */
     write_uint(
       *argv.offset(0),
-      nth_string(
+      crate::libbb::compare_string_array::nth_string(
         b"brport/path_cost\x00brport/priority\x00" as *const u8 as *const libc::c_char,
         key - ARG_setpathcost as libc::c_int,
       ),
-      xatoi_positive(*argv.offset(1)) as libc::c_uint,
+      crate::libbb::xatonum::xatoi_positive(*argv.offset(1)) as libc::c_uint,
     );
     return 0;
   }
@@ -931,13 +899,17 @@ pub unsafe extern "C" fn brctl_main(
       },
     },
   };
-  let mut fd_0: libc::c_int = xsocket(2i32, SOCK_STREAM as libc::c_int, 0);
-  strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), br);
+  let mut fd_0: libc::c_int =
+    crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_STREAM as libc::c_int, 0);
+  crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), br);
   ifr.ifr_ifru.ifru_ivalue = if_nametoindex(*argv) as libc::c_int;
   if ifr.ifr_ifru.ifru_ivalue == 0 {
-    bb_perror_msg_and_die(b"iface %s\x00" as *const u8 as *const libc::c_char, *argv);
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
+      b"iface %s\x00" as *const u8 as *const libc::c_char,
+      *argv,
+    );
   }
-  ioctl_or_perror_and_die(
+  crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
     fd_0,
     if key == ARG_addif as libc::c_int {
       0x89a2i32

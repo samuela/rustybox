@@ -1,14 +1,25 @@
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::parse_config::parser_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::len_and_sockaddr;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use crate::networking::udhcp::common::BUG_bb_strtou32_unimplemented;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::close;
 use libc::free;
+use libc::in_addr;
 use libc::openlog;
+use libc::pollfd;
+use libc::sa_family_t;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::strcasecmp;
 use libc::time;
+use libc::time_t;
 use libc::unlink;
 extern "C" {
   //extern const int const_int_1;
@@ -49,36 +60,12 @@ extern "C" {
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
 
-  #[no_mangle]
-  fn monotonic_sec() -> libc::c_uint;
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn open_or_warn(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xhost_and_af2sockaddr(
-    host: *const libc::c_char,
-    port: libc::c_int,
-    af: sa_family_t,
-  ) -> *mut len_and_sockaddr;
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
   // NB: will return short read on error, not -1,
   // if some data was read before error occurred
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
+
   // NB: will return short write on error, not -1,
   // if some data was written before error occurred
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xatou(str: *const libc::c_char) -> libc::c_uint;
+
   /* Non-aborting kind of convertors: bb_strto[u][l]l */
   /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
    * errno = EINVAL if value was not '\0' terminated, but otherwise ok
@@ -90,18 +77,7 @@ extern "C" {
    * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
    *    return value is all-ones in this case.
    */
-  #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
+
   // #[no_mangle]
   // fn BUG_bb_strtou32_unimplemented() -> u32;
   /* ***********************************************************************/
@@ -110,12 +86,7 @@ extern "C" {
   /* other. Be careful if you change them. Consult docs/nofork_noexec.txt */
   /* ***********************************************************************/
   /* Same as wait4pid(spawn(argv)), but with NOFORK/NOEXEC if configured: */
-  #[no_mangle]
-  fn spawn_and_wait(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn bb_daemonize_or_rexec(flags: libc::c_int);
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   /* BTW, surprisingly, changing API to
    *   llist_t *llist_add_to(llist_t *old_head, void *data)
    * etc does not result in smaller code... */
@@ -124,32 +95,11 @@ extern "C" {
   /* True only if we created pidfile which is *file*, not /dev/null etc */
   #[no_mangle]
   static mut wrote_pidfile: smallint;
-  #[no_mangle]
-  fn write_pidfile(path: *const libc::c_char);
+
   #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_info_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_info_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn config_open(filename: *const libc::c_char) -> *mut parser_t;
+
   /* delims[0] is a comment char (use '\0' to disable), the rest are token delimiters */
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
 
   /* '*const' ptr makes gcc optimize code much better.
    * Magic prevents ptr_to_globals from going into rodata.
@@ -171,19 +121,11 @@ extern "C" {
   static dhcp_optflags: [dhcp_optflag; 0];
   #[no_mangle]
   static dhcp_option_strings: [libc::c_char; 0];
-  #[no_mangle]
-  fn udhcp_get_option(packet: *mut dhcp_packet, code: libc::c_int) -> *mut u8;
+
   /* Same as above + ensures that option length is 4 bytes
    * (returns NULL if size is different)
    */
-  #[no_mangle]
-  fn udhcp_get_option32(packet: *mut dhcp_packet, code: libc::c_int) -> *mut u8;
-  #[no_mangle]
-  fn udhcp_add_binary_option(packet: *mut dhcp_packet, addopt: *mut u8);
-  #[no_mangle]
-  fn udhcp_add_simple_option(packet: *mut dhcp_packet, code: u8, data: u32);
-  #[no_mangle]
-  fn udhcp_find_option(opt_list: *mut option_set, code: u8) -> *mut option_set;
+
   // RFC 2131  Table 5: Fields and options used by DHCP clients
   //
   // Fields 'hops', 'yiaddr', 'siaddr', 'giaddr' are always zero, 'chaddr' is always client's MAC
@@ -225,120 +167,33 @@ extern "C" {
   /* ** Logging ***/
   #[no_mangle]
   static mut dhcp_verbose: libc::c_uint;
-  /* ** Other shared functions ***/
-  /* 2nd param is "u32*" */
-  #[no_mangle]
-  fn udhcp_str2nip(str: *const libc::c_char, arg: *mut libc::c_void) -> libc::c_int;
-  /* 2nd param is "struct option_set**" */
-  #[no_mangle]
-  fn udhcp_str2optset(
-    str: *const libc::c_char,
-    arg: *mut libc::c_void,
-    optflags: *const dhcp_optflag,
-    option_strings: *const libc::c_char,
-    dhcpv6: bool,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn udhcp_init_header(packet: *mut dhcp_packet, type_0: libc::c_char);
-  #[no_mangle]
-  fn udhcp_recv_kernel_packet(packet: *mut dhcp_packet, fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn udhcp_send_raw_packet(
-    dhcp_pkt: *mut dhcp_packet,
-    source_nip: u32,
-    source_port: libc::c_int,
-    dest_nip: u32,
-    dest_port: libc::c_int,
-    dest_arp: *const u8,
-    ifindex: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn udhcp_send_kernel_packet(
-    dhcp_pkt: *mut dhcp_packet,
-    source_nip: u32,
-    source_port: libc::c_int,
-    dest_nip: u32,
-    dest_port: libc::c_int,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn udhcp_sp_setup();
-  #[no_mangle]
-  fn udhcp_sp_fd_set(pfds: *mut pollfd, extra_fd: libc::c_int);
-  #[no_mangle]
-  fn udhcp_sp_read() -> libc::c_int;
-  #[no_mangle]
-  fn udhcp_read_interface(
-    interface: *const libc::c_char,
-    ifindex: *mut libc::c_int,
-    nip: *mut u32,
-    mac: *mut u8,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn udhcp_listen_socket(port: libc::c_int, inf: *const libc::c_char) -> libc::c_int;
-  /* Returns 1 if no reply received */
-  #[no_mangle]
-  fn arpping(
-    test_nip: u32,
-    safe_mac: *const u8,
-    from_ip: u32,
-    from_mac: *mut u8,
-    interface: *const libc::c_char,
-    timeo: libc::c_uint,
-  ) -> libc::c_int;
+/* ** Other shared functions ***/
+/* 2nd param is "u32*" */
+
+/* 2nd param is "struct option_set**" */
+
+/* Returns 1 if no reply received */
+
 }
 
 pub type __int64_t = libc::c_long;
-
 pub type __socklen_t = libc::c_uint;
-
-use crate::librb::size_t;
-use libc::ssize_t;
-use libc::time_t;
 pub type int64_t = __int64_t;
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct ether_addr {
   pub ether_addr_octet: [u8; 6],
 }
-pub type socklen_t = __socklen_t;
-use libc::sa_family_t;
-use libc::sockaddr;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
 pub type in_addr_t = u32;
 pub type bb__aliased_u32 = u32;
 
@@ -391,18 +246,10 @@ pub type bb__aliased_u32 = u32;
  */
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
-use crate::librb::smallint;
-use libc::FILE;
+
 pub type nfds_t = libc::c_ulong;
-use libc::pollfd;
-#[derive(Copy, Clone)]
 #[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_0,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_0 {
   pub sa: sockaddr,
   pub sin: sockaddr_in,
@@ -444,41 +291,13 @@ pub const PARSE_GREEDY: C2RustUnnamed_2 = 262144;
 // treat consecutive delimiters as one
 pub const PARSE_TRIM: C2RustUnnamed_2 = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed_2 = 65536;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
+
 /* six all-ones */
 /* ** DHCP packet ***/
 /* DHCP protocol. See RFC 2131 */
 //TODO: rename ciaddr/yiaddr/chaddr
-#[derive(Copy, Clone)]
-#[repr(C, packed)]
-pub struct dhcp_packet {
-  pub op: u8,
-  pub htype: u8,
-  pub hlen: u8,
-  pub hops: u8,
-  pub xid: u32,
-  pub secs: u16,
-  pub flags: u16,
-  pub ciaddr: u32,
-  pub yiaddr: u32,
-  pub siaddr_nip: u32,
-  pub gateway_nip: u32,
-  pub chaddr: [u8; 16],
-  pub sname: [u8; 64],
-  pub file: [u8; 128],
-  pub cookie: u32,
-  pub options: [u8; 388],
-}
+
+use crate::networking::udhcp::common::dhcp_packet;
 /* DHCP option codes (partial list). See RFC 2132 and
  * http://www.iana.org/assignments/bootp-dhcp-parameters/
  * Commented out options are handled by common option machinery,
@@ -544,20 +363,13 @@ pub struct dhcp_packet {
 /* client <- server */
 /* client -> server */
 /* client -> server */
-#[derive(Copy, Clone)]
+
+use crate::networking::udhcp::common::dhcp_optflag;
+
+use crate::networking::udhcp::common::option_set;
+
 #[repr(C)]
-pub struct dhcp_optflag {
-  pub flags: u8,
-  pub code: u8,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct option_set {
-  pub data: *mut u8,
-  pub next: *mut option_set,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub struct static_lease {
   pub next: *mut static_lease,
   pub nip: u32,
@@ -589,8 +401,9 @@ pub struct static_lease {
   /* bootp server name */
   /* bootp boot file option */
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct server_data_t {
   pub interface: *mut libc::c_char,
   pub ifindex: libc::c_int,
@@ -617,8 +430,9 @@ pub struct server_data_t {
 }
 pub type leasetime_t = u32;
 pub type signed_leasetime_t = i32;
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct dyn_lease {
   pub expires: leasetime_t,
   pub lease_nip: u32,
@@ -627,8 +441,9 @@ pub struct dyn_lease {
   pub pad: [u8; 2],
   /* total size is a multiply of 4 */
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct config_keyword {
   pub keyword: *const libc::c_char,
   pub handler:
@@ -644,7 +459,7 @@ unsafe extern "C" fn bb_strtoul(
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_ulong {
-  return bb_strtoull(arg, endp, base) as libc::c_ulong;
+  return crate::libbb::bb_strtonum::bb_strtoull(arg, endp, base) as libc::c_ulong;
 }
 #[inline(always)]
 unsafe extern "C" fn bb_strtou32(
@@ -655,7 +470,7 @@ unsafe extern "C" fn bb_strtou32(
   if ::std::mem::size_of::<u32>() as libc::c_ulong
     == ::std::mem::size_of::<libc::c_uint>() as libc::c_ulong
   {
-    return bb_strtou(arg, endp, base);
+    return crate::libbb::bb_strtonum::bb_strtou(arg, endp, base);
   }
   if ::std::mem::size_of::<u32>() as libc::c_ulong
     == ::std::mem::size_of::<libc::c_ulong>() as libc::c_ulong
@@ -716,7 +531,7 @@ unsafe extern "C" fn add_static_lease(
     st_lease_pp = &mut (*st_lease).next
   }
   /* Add new node */
-  st_lease = xzalloc(
+  st_lease = crate::libbb::xfuncs_printf::xzalloc(
     (::std::mem::size_of::<static_lease>() as libc::c_ulong).wrapping_add(optlen as libc::c_ulong),
   ) as *mut static_lease;
   *st_lease_pp = st_lease;
@@ -739,7 +554,7 @@ unsafe extern "C" fn add_static_lease(
   }
   /* Print out static leases just to check what's going on */
   if dhcp_verbose >= 2i32 as libc::c_uint {
-    bb_info_msg(
+    crate::libbb::verror_msg::bb_info_msg(
       b"static lease: mac:%02x:%02x:%02x:%02x:%02x:%02x nip:%x\x00" as *const u8
         as *const libc::c_char,
       (*st_lease).mac[0] as libc::c_int,
@@ -854,7 +669,7 @@ unsafe extern "C" fn add_lease(
       {
         hostname_len = ::std::mem::size_of::<[libc::c_char; 20]>() as libc::c_ulong as libc::c_int
       }
-      p = safe_strncpy(
+      p = crate::libbb::safe_strncpy::safe_strncpy(
         (*oldest).hostname.as_mut_ptr(),
         hostname,
         hostname_len as size_t,
@@ -930,7 +745,7 @@ unsafe extern "C" fn nobody_responds_to_arp(
 ) -> libc::c_int {
   let mut temp: in_addr = in_addr { s_addr: 0 };
   let mut r: libc::c_int = 0;
-  r = arpping(
+  r = crate::networking::udhcp::arpping::arpping(
     nip,
     safe_mac,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).server_nip,
@@ -944,7 +759,7 @@ unsafe extern "C" fn nobody_responds_to_arp(
     return r;
   }
   temp.s_addr = nip;
-  bb_info_msg(
+  crate::libbb::verror_msg::bb_info_msg(
     b"%s belongs to someone, reserving it for %u seconds\x00" as *const u8 as *const libc::c_char,
     inet_ntoa(temp),
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).conflict_time,
@@ -986,8 +801,7 @@ unsafe extern "C" fn find_free_or_expired_nip(
             let fresh1;
             let fresh2 = __x;
             asm!("bswap $0" : "=r" (fresh1) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2))
-                                  :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
           }
           __v
@@ -1033,7 +847,7 @@ unsafe extern "C" fn read_str(
 ) -> libc::c_int {
   let mut dest: *mut *mut libc::c_char = arg as *mut *mut libc::c_char; /* it's "struct { u8 mac[6]; }" */
   free(*dest as *mut libc::c_void);
-  *dest = xstrdup(line);
+  *dest = crate::libbb::xfuncs_printf::xstrdup(line);
   return 1i32;
 }
 unsafe extern "C" fn read_u32(
@@ -1071,7 +885,11 @@ unsafe extern "C" fn read_staticlease(
     b" \t\x00" as *const u8 as *const libc::c_char,
     &mut line,
   );
-  if ip_string.is_null() || udhcp_str2nip(ip_string, &mut nip as *mut u32 as *mut libc::c_void) == 0
+  if ip_string.is_null()
+    || crate::networking::udhcp::common::udhcp_str2nip(
+      ip_string,
+      &mut nip as *mut u32 as *mut libc::c_void,
+    ) == 0
   {
     return 0;
   }
@@ -1093,7 +911,7 @@ unsafe extern "C" fn read_optset(
   mut line: *const libc::c_char,
   mut arg: *mut libc::c_void,
 ) -> libc::c_int {
-  return udhcp_str2optset(
+  return crate::networking::udhcp::common::udhcp_str2optset(
     line,
     arg,
     dhcp_optflags.as_ptr(),
@@ -1107,7 +925,7 @@ static mut keywords: [config_keyword; 18] = [
     let mut init = config_keyword {
       keyword: b"start\x00" as *const u8 as *const libc::c_char,
       handler: Some(
-        udhcp_str2nip
+        crate::networking::udhcp::common::udhcp_str2nip
           as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
       ),
       ofs: 32u64 as libc::c_uint,
@@ -1119,7 +937,7 @@ static mut keywords: [config_keyword; 18] = [
     let mut init = config_keyword {
       keyword: b"end\x00" as *const u8 as *const libc::c_char,
       handler: Some(
-        udhcp_str2nip
+        crate::networking::udhcp::common::udhcp_str2nip
           as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
       ),
       ofs: 36u64 as libc::c_uint,
@@ -1239,7 +1057,7 @@ static mut keywords: [config_keyword; 18] = [
     let mut init = config_keyword {
       keyword: b"siaddr\x00" as *const u8 as *const libc::c_char,
       handler: Some(
-        udhcp_str2nip
+        crate::networking::udhcp::common::udhcp_str2nip
           as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> libc::c_int,
       ),
       ofs: 68u64 as libc::c_uint,
@@ -1338,8 +1156,8 @@ unsafe extern "C" fn read_config(mut file: *const libc::c_char) {
     );
     i = i.wrapping_add(1)
   }
-  parser = config_open(file);
-  while config_read(
+  parser = crate::libbb::parse_config::config_open(file);
+  while crate::libbb::parse_config::config_read(
     parser,
     token.as_mut_ptr(),
     (PARSE_NORMAL as libc::c_int | (2i32 & 0xffi32) << 8i32 | 2i32 & 0xffi32) as libc::c_uint,
@@ -1360,7 +1178,7 @@ unsafe extern "C" fn read_config(mut file: *const libc::c_char) {
             .offset((*k).ofs as isize) as *mut libc::c_void,
         ) == 0
         {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"can\'t parse line %u in %s\x00" as *const u8 as *const libc::c_char,
             (*parser).lineno,
             file,
@@ -1379,7 +1197,7 @@ unsafe extern "C" fn read_config(mut file: *const libc::c_char) {
       }
     }
   }
-  config_close(parser);
+  crate::libbb::parse_config::config_close(parser);
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).start_ip = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).start_ip;
@@ -1393,7 +1211,7 @@ unsafe extern "C" fn read_config(mut file: *const libc::c_char) {
       let fresh4;
       let fresh5 = __x;
       asm!("bswap $0" : "=r" (fresh4) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
     }
     __v
@@ -1411,7 +1229,7 @@ unsafe extern "C" fn read_config(mut file: *const libc::c_char) {
       let fresh7;
       let fresh8 = __x;
       asm!("bswap $0" : "=r" (fresh7) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
     }
     __v
@@ -1422,7 +1240,7 @@ unsafe extern "C" fn write_leases() {
   let mut i: libc::c_uint = 0;
   let mut curr: leasetime_t = 0;
   let mut written_at: int64_t = 0;
-  fd = open_or_warn(
+  fd = crate::libbb::xfuncs_printf::open_or_warn(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).lease_file,
     0o1i32 | 0o100i32 | 0o1000i32,
   );
@@ -1448,13 +1266,12 @@ unsafe extern "C" fn write_leases() {
       let fresh10;
       let fresh11 = __x;
       asm!("bswap ${0:q}" : "=r" (fresh10) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11))
-                      :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
     }
     __v
   }) as int64_t;
-  full_write(
+  crate::libbb::full_write::full_write(
     fd,
     &mut written_at as *mut int64_t as *const libc::c_void,
     ::std::mem::size_of::<int64_t>() as libc::c_ulong,
@@ -1486,15 +1303,14 @@ unsafe extern "C" fn write_leases() {
           let fresh14;
           let fresh15 = __x;
           asm!("bswap $0" : "=r" (fresh14) : "0"
-                              (c2rust_asm_casts::AsmCast::cast_in(fresh13, fresh15))
-                              :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh13, fresh15)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh13, fresh15, fresh14);
         }
         __v
       };
       /* No error check. If the file gets truncated,
        * we lose some leases on restart. Oh well. */
-      full_write(
+      crate::libbb::full_write::full_write(
         fd,
         &mut *(ptr_to_globals as *mut dyn_lease).offset(i as isize) as *mut dyn_lease
           as *const libc::c_void,
@@ -1514,7 +1330,7 @@ unsafe extern "C" fn write_leases() {
     argv[0] = (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).notify_file;
     argv[1] = (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).lease_file;
     argv[2] = std::ptr::null_mut::<libc::c_char>();
-    spawn_and_wait(argv.as_mut_ptr());
+    crate::libbb::vfork_daemon_rexec::spawn_and_wait(argv.as_mut_ptr());
   };
 }
 #[inline(never)]
@@ -1530,11 +1346,11 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
   let mut time_passed: int64_t = 0;
   let mut fd: libc::c_int = 0;
   let mut i: libc::c_uint = 0 as libc::c_uint;
-  fd = open_or_warn(file, 0);
+  fd = crate::libbb::xfuncs_printf::open_or_warn(file, 0);
   if fd < 0 {
     return;
   }
-  if !(full_read(
+  if !(crate::libbb::read::full_read(
     fd,
     &mut written_at as *mut int64_t as *mut libc::c_void,
     ::std::mem::size_of::<int64_t>() as libc::c_ulong,
@@ -1558,8 +1374,7 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
         let fresh17;
         let fresh18 = __x;
         asm!("bswap ${0:q}" : "=r" (fresh17) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh16, fresh18))
-                          :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh16, fresh18)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh16, fresh18, fresh17);
       }
       __v
@@ -1570,7 +1385,7 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
     if !(time_passed as u64 > (12i32 * 60i32 * 60i32) as libc::c_ulong) {
       /* NB: we do not add lease even if static_nip == lease.lease_nip.
        */
-      while full_read(
+      while crate::libbb::read::full_read(
         fd,
         &mut lease as *mut dyn_lease as *mut libc::c_void,
         ::std::mem::size_of::<dyn_lease>() as libc::c_ulong,
@@ -1590,8 +1405,7 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
             let fresh20;
             let fresh21 = __x;
             asm!("bswap $0" : "=r" (fresh20) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh19, fresh21))
-                                  :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh19, fresh21)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh19, fresh21, fresh20);
           }
           __v
@@ -1614,8 +1428,7 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
             let fresh23;
             let fresh24 = __x;
             asm!("bswap $0" : "=r" (fresh23) : "0"
-                                  (c2rust_asm_casts::AsmCast::cast_in(fresh22, fresh24))
-                                  :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh22, fresh24)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh22, fresh24, fresh23);
           }
           __v
@@ -1649,7 +1462,7 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
         )
         .is_null()
         {
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"too many leases while loading %s\x00" as *const u8 as *const libc::c_char,
             file,
           );
@@ -1659,7 +1472,10 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
         }
       }
       if dhcp_verbose >= 1i32 as libc::c_uint {
-        bb_info_msg(b"read %d leases\x00" as *const u8 as *const libc::c_char, i);
+        crate::libbb::verror_msg::bb_info_msg(
+          b"read %d leases\x00" as *const u8 as *const libc::c_char,
+          i,
+        );
       }
     }
   }
@@ -1696,8 +1512,7 @@ unsafe extern "C" fn send_packet_to_client(
           let fresh26;
           let fresh27 = __x;
           asm!("rorw $$8, ${0:w}" : "=r" (fresh26) : "0"
-                             (c2rust_asm_casts::AsmCast::cast_in(fresh25, fresh27))
-                             : "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh25, fresh27)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh25, fresh27, fresh26);
         }
         __v
@@ -1706,20 +1521,22 @@ unsafe extern "C" fn send_packet_to_client(
     || (*dhcp_pkt).ciaddr == 0 as libc::c_uint
   {
     if dhcp_verbose >= 1i32 as libc::c_uint {
-      bb_simple_info_msg(b"broadcasting packet to client\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_info_msg(
+        b"broadcasting packet to client\x00" as *const u8 as *const libc::c_char,
+      );
     }
     ciaddr = 0xffffffffu32;
     chaddr = MAC_BCAST_ADDR.as_ptr()
   } else {
     if dhcp_verbose >= 1i32 as libc::c_uint {
-      bb_simple_info_msg(
+      crate::libbb::verror_msg::bb_simple_info_msg(
         b"unicasting packet to client ciaddr\x00" as *const u8 as *const libc::c_char,
       );
     }
     ciaddr = (*dhcp_pkt).ciaddr;
     chaddr = (*dhcp_pkt).chaddr.as_mut_ptr()
   }
-  udhcp_send_raw_packet(
+  crate::networking::udhcp::packet::udhcp_send_raw_packet(
     dhcp_pkt,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).server_nip,
     67i32,
@@ -1732,9 +1549,11 @@ unsafe extern "C" fn send_packet_to_client(
 /* Send a packet to gateway_nip using the kernel ip stack */
 unsafe extern "C" fn send_packet_to_relay(mut dhcp_pkt: *mut dhcp_packet) {
   if dhcp_verbose >= 1i32 as libc::c_uint {
-    bb_simple_info_msg(b"forwarding packet to relay\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_info_msg(
+      b"forwarding packet to relay\x00" as *const u8 as *const libc::c_char,
+    );
   }
-  udhcp_send_kernel_packet(
+  crate::networking::udhcp::packet::udhcp_send_kernel_packet(
     dhcp_pkt,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).server_nip,
     67i32,
@@ -1755,7 +1574,7 @@ unsafe extern "C" fn send_packet_verbose(
 ) {
   let mut addr: in_addr = in_addr { s_addr: 0 };
   addr.s_addr = (*dhcp_pkt).yiaddr;
-  bb_info_msg(fmt, inet_ntoa(addr));
+  crate::libbb::verror_msg::bb_info_msg(fmt, inet_ntoa(addr));
   /* send_packet emits error message itself if it detects failure */
   send_packet(dhcp_pkt, 0);
 }
@@ -1766,7 +1585,7 @@ unsafe extern "C" fn init_packet(
 ) {
   /* Sets op, htype, hlen, cookie fields
    * and adds DHCP_MESSAGE_TYPE option */
-  udhcp_init_header(packet, type_0);
+  crate::networking::udhcp::packet::udhcp_init_header(packet, type_0);
   (*packet).xid = (*oldpacket).xid;
   memcpy(
     (*packet).chaddr.as_mut_ptr() as *mut libc::c_void,
@@ -1776,7 +1595,7 @@ unsafe extern "C" fn init_packet(
   (*packet).flags = (*oldpacket).flags;
   (*packet).gateway_nip = (*oldpacket).gateway_nip;
   (*packet).ciaddr = (*oldpacket).ciaddr;
-  udhcp_add_simple_option(
+  crate::networking::udhcp::common::udhcp_add_simple_option(
     packet,
     0x36i32 as u8,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).server_nip,
@@ -1820,13 +1639,13 @@ unsafe extern "C" fn add_server_options(mut packet: *mut dhcp_packet) {
          * that'd give all clients the same hostname,
          * but it's a valid configuration).
          */
-        udhcp_add_binary_option(packet, (*config_opts).data);
+        crate::networking::udhcp::common::udhcp_add_binary_option(packet, (*config_opts).data);
       }
     }
     config_opts = (*config_opts).next
   }
   if !client_hostname_opt.is_null() {
-    udhcp_add_binary_option(packet, client_hostname_opt);
+    crate::networking::udhcp::common::udhcp_add_binary_option(packet, client_hostname_opt);
   }
   (*packet).siaddr_nip = (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).siaddr_nip;
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t))
@@ -1853,7 +1672,8 @@ unsafe extern "C" fn add_server_options(mut packet: *mut dhcp_packet) {
 unsafe extern "C" fn select_lease_time(mut packet: *mut dhcp_packet) -> u32 {
   let mut lease_time_sec: u32 =
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).max_lease_sec;
-  let mut lease_time_opt: *mut u8 = udhcp_get_option32(packet, 0x33i32);
+  let mut lease_time_opt: *mut u8 =
+    crate::networking::udhcp::common::udhcp_get_option32(packet, 0x33i32);
   if !lease_time_opt.is_null() {
     lease_time_sec = *(lease_time_opt as *mut bb__aliased_u32);
     lease_time_sec = {
@@ -1869,8 +1689,7 @@ unsafe extern "C" fn select_lease_time(mut packet: *mut dhcp_packet) -> u32 {
         let fresh29;
         let fresh30 = __x;
         asm!("bswap $0" : "=r" (fresh29) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh28, fresh30))
-                          :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh28, fresh30)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh28, fresh30, fresh29);
       }
       __v
@@ -1940,8 +1759,7 @@ unsafe extern "C" fn send_offer(
           let fresh32;
           let fresh33 = __x;
           asm!("bswap $0" : "=r" (fresh32) : "0"
-                                    (c2rust_asm_casts::AsmCast::cast_in(fresh31, fresh33))
-                                    :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh31, fresh33)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh31, fresh33, fresh32);
         }
         __v
@@ -1959,8 +1777,7 @@ unsafe extern "C" fn send_offer(
           let fresh35;
           let fresh36 = __x;
           asm!("bswap $0" : "=r" (fresh35) : "0"
-                                    (c2rust_asm_casts::AsmCast::cast_in(fresh34, fresh36))
-                                    :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh34, fresh36)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh34, fresh36, fresh35);
         }
         __v
@@ -1977,13 +1794,14 @@ unsafe extern "C" fn send_offer(
       packet.yiaddr = find_free_or_expired_nip((*oldpacket).chaddr.as_mut_ptr(), arpping_ms)
     }
     if packet.yiaddr == 0 {
-      bb_simple_error_msg(
+      crate::libbb::verror_msg::bb_simple_error_msg(
         b"no free IP addresses. OFFER abandoned\x00" as *const u8 as *const libc::c_char,
       );
       return;
     }
     /* Reserve the IP for a short time hoping to get DHCPREQUEST soon */
-    p_host_name = udhcp_get_option(oldpacket, 0xci32) as *const libc::c_char;
+    p_host_name =
+      crate::networking::udhcp::common::udhcp_get_option(oldpacket, 0xci32) as *const libc::c_char;
     lease = add_lease(
       packet.chaddr.as_mut_ptr(),
       packet.yiaddr,
@@ -1996,14 +1814,14 @@ unsafe extern "C" fn send_offer(
       },
     );
     if lease.is_null() {
-      bb_simple_error_msg(
+      crate::libbb::verror_msg::bb_simple_error_msg(
         b"no free IP addresses. OFFER abandoned\x00" as *const u8 as *const libc::c_char,
       );
       return;
     }
   }
   lease_time_sec = select_lease_time(oldpacket);
-  udhcp_add_simple_option(&mut packet, 0x33i32 as u8, {
+  crate::networking::udhcp::common::udhcp_add_simple_option(&mut packet, 0x33i32 as u8, {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = lease_time_sec;
     if false {
@@ -2016,8 +1834,7 @@ unsafe extern "C" fn send_offer(
       let fresh38;
       let fresh39 = __x;
       asm!("bswap $0" : "=r" (fresh38) : "0"
-                                          (c2rust_asm_casts::AsmCast::cast_in(fresh37, fresh39))
-                                          :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh37, fresh39)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh37, fresh39, fresh38);
     }
     __v
@@ -2052,7 +1869,7 @@ unsafe extern "C" fn send_NAK(mut oldpacket: *mut dhcp_packet) {
   };
   init_packet(&mut packet, oldpacket, 6i32 as libc::c_char);
   if dhcp_verbose >= 1i32 as libc::c_uint {
-    bb_info_msg(
+    crate::libbb::verror_msg::bb_info_msg(
       b"sending %s\x00" as *const u8 as *const libc::c_char,
       b"NAK\x00" as *const u8 as *const libc::c_char,
     );
@@ -2085,7 +1902,7 @@ unsafe extern "C" fn send_ACK(mut oldpacket: *mut dhcp_packet, mut yiaddr: u32) 
   init_packet(&mut packet, oldpacket, 5i32 as libc::c_char);
   packet.yiaddr = yiaddr;
   lease_time_sec = select_lease_time(oldpacket);
-  udhcp_add_simple_option(&mut packet, 0x33i32 as u8, {
+  crate::networking::udhcp::common::udhcp_add_simple_option(&mut packet, 0x33i32 as u8, {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = lease_time_sec;
     if false {
@@ -2098,8 +1915,7 @@ unsafe extern "C" fn send_ACK(mut oldpacket: *mut dhcp_packet, mut yiaddr: u32) 
       let fresh41;
       let fresh42 = __x;
       asm!("bswap $0" : "=r" (fresh41) : "0"
-                                          (c2rust_asm_casts::AsmCast::cast_in(fresh40, fresh42))
-                                          :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh40, fresh42)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh40, fresh42, fresh41);
     }
     __v
@@ -2109,7 +1925,8 @@ unsafe extern "C" fn send_ACK(mut oldpacket: *mut dhcp_packet, mut yiaddr: u32) 
     &mut packet,
     b"sending ACK to %s\x00" as *const u8 as *const libc::c_char,
   );
-  p_host_name = udhcp_get_option(oldpacket, 0xci32) as *const libc::c_char;
+  p_host_name =
+    crate::networking::udhcp::common::udhcp_get_option(oldpacket, 0xci32) as *const libc::c_char;
   add_lease(
     packet.chaddr.as_mut_ptr(),
     packet.yiaddr,
@@ -2186,8 +2003,8 @@ pub unsafe extern "C" fn udhcpd_main(
   let mut arpping_ms: libc::c_uint = 0;
   /* Make sure fd 0,1,2 are open */
   /* Setup the signal pipe on fds 3,4 - must be before openlog() */
-  udhcp_sp_setup();
-  opt = getopt32(
+  crate::networking::udhcp::signalpipe::udhcp_sp_setup();
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^fSI:va:\x00vv\x00" as *const u8 as *const libc::c_char,
     &mut str_I as *mut *mut libc::c_char,
@@ -2196,7 +2013,7 @@ pub unsafe extern "C" fn udhcpd_main(
   );
   if opt & 1i32 as libc::c_uint == 0 {
     /* no -f */
-    bb_daemonize_or_rexec(0i32);
+    crate::libbb::vfork_daemon_rexec::bb_daemonize_or_rexec(0i32);
     logmode = LOGMODE_NONE as libc::c_int as smallint
   }
   /* update argv after the possible vfork+exec in daemonize */
@@ -2208,12 +2025,13 @@ pub unsafe extern "C" fn udhcpd_main(
   }
   if opt & 4i32 as libc::c_uint != 0 {
     /* -I */
-    let mut lsa: *mut len_and_sockaddr = xhost_and_af2sockaddr(str_I, 0, 2i32 as sa_family_t);
+    let mut lsa: *mut len_and_sockaddr =
+      crate::libbb::xconnect::xhost_and_af2sockaddr(str_I, 0, 2i32 as sa_family_t);
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).server_nip =
       (*lsa).u.sin.sin_addr.s_addr;
     free(lsa as *mut libc::c_void);
   }
-  arpping_ms = xatou(str_a);
+  arpping_ms = crate::libbb::xatonum::xatou(str_a);
   /* Would rather not do read_config before daemonization -
    * otherwise NOMMU machines will parse config twice */
   read_config(if !(*argv.offset(0)).is_null() {
@@ -2229,10 +2047,14 @@ pub unsafe extern "C" fn udhcpd_main(
       (2147483647i32 / 1000i32) as u32
   }
   /* Create pidfile */
-  write_pidfile((*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).pidfile);
+  crate::libbb::pidfile::write_pidfile(
+    (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).pidfile,
+  );
   /* if (!..) bb_perror_msg("can't create pidfile %s", pidfile); */
-  bb_simple_info_msg(b"started, v1.32.0.git\x00" as *const u8 as *const libc::c_char);
-  option = udhcp_find_option(
+  crate::libbb::verror_msg::bb_simple_info_msg(
+    b"started, v1.32.0.git\x00" as *const u8 as *const libc::c_char,
+  );
+  option = crate::networking::udhcp::common::udhcp_find_option(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).options,
     0x33i32 as u8,
   );
@@ -2255,8 +2077,7 @@ pub unsafe extern "C" fn udhcpd_main(
         let fresh44;
         let fresh45 = __x;
         asm!("bswap $0" : "=r" (fresh44) : "0"
-                          (c2rust_asm_casts::AsmCast::cast_in(fresh43, fresh45))
-                          :);
+     (c2rust_asm_casts::AsmCast::cast_in(fresh43, fresh45)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh43, fresh45, fresh44);
       }
       __v
@@ -2268,7 +2089,7 @@ pub unsafe extern "C" fn udhcpd_main(
     .wrapping_sub((*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).start_ip)
     .wrapping_add(1i32 as libc::c_uint);
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).max_leases > num_ips {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"max_leases=%u is too big, setting to %u\x00" as *const u8 as *const libc::c_char,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).max_leases,
       num_ips,
@@ -2279,13 +2100,13 @@ pub unsafe extern "C" fn udhcpd_main(
   let ref mut fresh46 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
-  *fresh46 = xzalloc(
+  *fresh46 = crate::libbb::xfuncs_printf::xzalloc(
     ((*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).max_leases as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<dyn_lease>() as libc::c_ulong),
   ) as *mut globals;
   asm!("" : : : "memory" : "volatile");
   read_leases((*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).lease_file);
-  if udhcp_read_interface(
+  if crate::networking::udhcp::socket::udhcp_read_interface(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).interface,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).ifindex,
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).server_nip == 0 as libc::c_uint {
@@ -2303,7 +2124,7 @@ pub unsafe extern "C" fn udhcpd_main(
     'c_13480: loop
     /* why not just reset the timeout, eh */
     {
-      timeout_end = monotonic_sec()
+      timeout_end = crate::libbb::time::monotonic_sec()
         .wrapping_add((*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).auto_time);
       loop
       /* loop until universe collapses */
@@ -2346,16 +2167,16 @@ pub unsafe extern "C" fn udhcpd_main(
           pad: [0; 2],
         };
         if server_socket < 0 {
-          server_socket = udhcp_listen_socket(
+          server_socket = crate::networking::udhcp::socket::udhcp_listen_socket(
             67i32,
             (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).interface,
           )
         }
-        udhcp_sp_fd_set(pfds.as_mut_ptr(), server_socket);
+        crate::networking::udhcp::signalpipe::udhcp_sp_fd_set(pfds.as_mut_ptr(), server_socket);
         loop {
           tv = -1i32;
           if (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).auto_time != 0 {
-            tv = timeout_end.wrapping_sub(monotonic_sec()) as libc::c_int;
+            tv = timeout_end.wrapping_sub(crate::libbb::time::monotonic_sec()) as libc::c_int;
             if tv <= 0 {
               current_block = 16181713839514877146;
               break;
@@ -2373,7 +2194,9 @@ pub unsafe extern "C" fn udhcpd_main(
               continue;
             }
             /* < 0 and not EINTR: should not happen */
-            bb_simple_perror_msg_and_die(b"poll\x00" as *const u8 as *const libc::c_char);
+            crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+              b"poll\x00" as *const u8 as *const libc::c_char,
+            );
           } else if pfds[0].revents != 0 {
             current_block = 7494008139977416618;
             break;
@@ -2383,12 +2206,12 @@ pub unsafe extern "C" fn udhcpd_main(
           }
         }
         match current_block {
-          7494008139977416618 => match udhcp_sp_read() {
+          7494008139977416618 => match crate::networking::udhcp::signalpipe::udhcp_sp_read() {
             10 => {
               current_block = 15734667288518933029;
               match current_block {
                 14059375994042912985 => {
-                  bb_info_msg(
+                  crate::libbb::verror_msg::bb_info_msg(
                     b"received %s\x00" as *const u8 as *const libc::c_char,
                     b"SIGTERM\x00" as *const u8 as *const libc::c_char,
                   );
@@ -2396,7 +2219,7 @@ pub unsafe extern "C" fn udhcpd_main(
                   break;
                 }
                 _ => {
-                  bb_info_msg(
+                  crate::libbb::verror_msg::bb_info_msg(
                     b"received %s\x00" as *const u8 as *const libc::c_char,
                     b"SIGUSR1\x00" as *const u8 as *const libc::c_char,
                   );
@@ -2409,7 +2232,7 @@ pub unsafe extern "C" fn udhcpd_main(
               current_block = 14059375994042912985;
               match current_block {
                 14059375994042912985 => {
-                  bb_info_msg(
+                  crate::libbb::verror_msg::bb_info_msg(
                     b"received %s\x00" as *const u8 as *const libc::c_char,
                     b"SIGTERM\x00" as *const u8 as *const libc::c_char,
                   );
@@ -2417,7 +2240,7 @@ pub unsafe extern "C" fn udhcpd_main(
                   break;
                 }
                 _ => {
-                  bb_info_msg(
+                  crate::libbb::verror_msg::bb_info_msg(
                     b"received %s\x00" as *const u8 as *const libc::c_char,
                     b"SIGUSR1\x00" as *const u8 as *const libc::c_char,
                   );
@@ -2442,12 +2265,13 @@ pub unsafe extern "C" fn udhcpd_main(
          * Blocking here would prevent SIGTERM from working:
          * socket read inside this call is restarted on caught signals.
          */
-        bytes = udhcp_recv_kernel_packet(&mut packet, server_socket);
+        bytes =
+          crate::networking::udhcp::packet::udhcp_recv_kernel_packet(&mut packet, server_socket);
         if bytes < 0 {
           /* bytes can also be -2 ("bad packet data") */
           if bytes == -1i32 && *bb_errno != 4i32 {
             if dhcp_verbose >= 1i32 as libc::c_uint {
-              bb_info_msg(
+              crate::libbb::verror_msg::bb_info_msg(
                 b"read error: %m, reopening socket\x00" as *const u8 as *const libc::c_char,
               );
             }
@@ -2455,28 +2279,29 @@ pub unsafe extern "C" fn udhcpd_main(
             server_socket = -1i32
           }
         } else if packet.hlen as libc::c_int != 6i32 {
-          bb_info_msg(
+          crate::libbb::verror_msg::bb_info_msg(
             b"MAC length != 6%s\x00" as *const u8 as *const libc::c_char,
             b", ignoring packet\x00" as *const u8 as *const libc::c_char,
           );
         } else if packet.op as libc::c_int != 1i32 {
-          bb_info_msg(
+          crate::libbb::verror_msg::bb_info_msg(
             b"not a REQUEST%s\x00" as *const u8 as *const libc::c_char,
             b", ignoring packet\x00" as *const u8 as *const libc::c_char,
           );
         } else {
-          state = udhcp_get_option(&mut packet, 0x35i32);
+          state = crate::networking::udhcp::common::udhcp_get_option(&mut packet, 0x35i32);
           if state.is_null()
             || (*state.offset(0) as libc::c_int) < 1i32
             || *state.offset(0) as libc::c_int > 8i32
           {
-            bb_info_msg(
+            crate::libbb::verror_msg::bb_info_msg(
               b"no or bad message type option%s\x00" as *const u8 as *const libc::c_char,
               b", ignoring packet\x00" as *const u8 as *const libc::c_char,
             );
           } else {
             /* Get SERVER_ID if present */
-            server_id_opt = udhcp_get_option32(&mut packet, 0x36i32);
+            server_id_opt =
+              crate::networking::udhcp::common::udhcp_get_option32(&mut packet, 0x36i32);
             if !server_id_opt.is_null() {
               let mut server_id_network_order: u32 = 0;
               server_id_network_order = *(server_id_opt as *mut bb__aliased_u32);
@@ -2485,7 +2310,7 @@ pub unsafe extern "C" fn udhcpd_main(
               {
                 /* client talks to somebody else */
                 if dhcp_verbose >= 1i32 as libc::c_uint {
-                  bb_info_msg(
+                  crate::libbb::verror_msg::bb_info_msg(
                     b"server ID doesn\'t match%s\x00" as *const u8 as *const libc::c_char,
                     b", ignoring\x00" as *const u8 as *const libc::c_char,
                   );
@@ -2497,7 +2322,7 @@ pub unsafe extern "C" fn udhcpd_main(
             static_lease_nip =
               get_static_nip_by_mac(&mut packet.chaddr as *mut [u8; 16] as *mut libc::c_void);
             if static_lease_nip != 0 {
-              bb_info_msg(
+              crate::libbb::verror_msg::bb_info_msg(
                 b"found static lease: %x\x00" as *const u8 as *const libc::c_char,
                 static_lease_nip,
               );
@@ -2514,7 +2339,8 @@ pub unsafe extern "C" fn udhcpd_main(
             }
             /* Get REQUESTED_IP if present */
             requested_nip = 0 as u32;
-            requested_ip_opt = udhcp_get_option32(&mut packet, 0x32i32);
+            requested_ip_opt =
+              crate::networking::udhcp::common::udhcp_get_option32(&mut packet, 0x32i32);
             if !requested_ip_opt.is_null() {
               requested_nip = *(requested_ip_opt as *mut bb__aliased_u32)
             }
@@ -2522,7 +2348,7 @@ pub unsafe extern "C" fn udhcpd_main(
             match *state.offset(0) as libc::c_int {
               1 => {
                 if dhcp_verbose >= 1i32 as libc::c_uint {
-                  bb_info_msg(
+                  crate::libbb::verror_msg::bb_info_msg(
                     b"received %s\x00" as *const u8 as *const libc::c_char,
                     b"DISCOVER\x00" as *const u8 as *const libc::c_char,
                   );
@@ -2537,7 +2363,7 @@ pub unsafe extern "C" fn udhcpd_main(
               }
               3 => {
                 if dhcp_verbose >= 1i32 as libc::c_uint {
-                  bb_info_msg(
+                  crate::libbb::verror_msg::bb_info_msg(
                     b"received %s\x00" as *const u8 as *const libc::c_char,
                     b"REQUEST\x00" as *const u8 as *const libc::c_char,
                   );
@@ -2632,7 +2458,7 @@ pub unsafe extern "C" fn udhcpd_main(
                   requested_nip = packet.ciaddr;
                   if requested_nip == 0 as libc::c_uint {
                     if dhcp_verbose >= 1i32 as libc::c_uint {
-                      bb_info_msg(
+                      crate::libbb::verror_msg::bb_info_msg(
                         b"no requested IP and no ciaddr%s\x00" as *const u8 as *const libc::c_char,
                         b", ignoring\x00" as *const u8 as *const libc::c_char,
                       );
@@ -2676,7 +2502,7 @@ pub unsafe extern "C" fn udhcpd_main(
                  * ciaddr must be 0 (we do not check this)
                  */
                 if dhcp_verbose >= 1i32 as libc::c_uint {
-                  bb_info_msg(
+                  crate::libbb::verror_msg::bb_info_msg(
                     b"received %s\x00" as *const u8 as *const libc::c_char,
                     b"DECLINE\x00" as *const u8 as *const libc::c_char,
                   );
@@ -2706,7 +2532,7 @@ pub unsafe extern "C" fn udhcpd_main(
                  * ciaddr must be filled in
                  */
                 if dhcp_verbose >= 1i32 as libc::c_uint {
-                  bb_info_msg(
+                  crate::libbb::verror_msg::bb_info_msg(
                     b"received %s\x00" as *const u8 as *const libc::c_char,
                     b"RELEASE\x00" as *const u8 as *const libc::c_char,
                   );
@@ -2720,7 +2546,7 @@ pub unsafe extern "C" fn udhcpd_main(
               }
               8 => {
                 if dhcp_verbose >= 1i32 as libc::c_uint {
-                  bb_info_msg(
+                  crate::libbb::verror_msg::bb_info_msg(
                     b"received %s\x00" as *const u8 as *const libc::c_char,
                     b"INFORM\x00" as *const u8 as *const libc::c_char,
                   );

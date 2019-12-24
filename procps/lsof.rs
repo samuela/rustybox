@@ -1,77 +1,16 @@
+use crate::librb::procps_status_t;
+use crate::librb::size_t;
 use libc;
 use libc::closedir;
+use libc::dirent;
 use libc::free;
 use libc::getpid;
 use libc::opendir;
 use libc::printf;
 use libc::readdir;
 use libc::sprintf;
-extern "C" {
-
-  #[no_mangle]
-  fn xmalloc_readlink(path: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
-}
-
-use crate::librb::size_t;
-use libc::dirent;
 use libc::DIR;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct smaprec {
-  pub mapped_rw: libc::c_ulong,
-  pub mapped_ro: libc::c_ulong,
-  pub shared_clean: libc::c_ulong,
-  pub shared_dirty: libc::c_ulong,
-  pub private_clean: libc::c_ulong,
-  pub private_dirty: libc::c_ulong,
-  pub stack: libc::c_ulong,
-  pub smap_pss: libc::c_ulong,
-  pub smap_swap: libc::c_ulong,
-  pub smap_size: libc::c_ulong,
-  pub smap_start: libc::c_ulonglong,
-  pub smap_mode: [libc::c_char; 5],
-  pub smap_name: *mut libc::c_char,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct procps_status_t {
-  pub dir: *mut DIR,
-  pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: u8,
-  pub shift_pages_to_kb: u8,
-  pub argv_len: u16,
-  pub argv0: *mut libc::c_char,
-  pub exe: *mut libc::c_char,
-  pub main_thread_pid: libc::c_uint,
-  pub vsz: libc::c_ulong,
-  pub rss: libc::c_ulong,
-  pub stime: libc::c_ulong,
-  pub utime: libc::c_ulong,
-  pub start_time: libc::c_ulong,
-  pub pid: libc::c_uint,
-  pub ppid: libc::c_uint,
-  pub pgid: libc::c_uint,
-  pub sid: libc::c_uint,
-  pub uid: libc::c_uint,
-  pub gid: libc::c_uint,
-  pub ruid: libc::c_uint,
-  pub rgid: libc::c_uint,
-  pub niceness: libc::c_int,
-  pub tty_major: libc::c_uint,
-  pub tty_minor: libc::c_uint,
-  pub smaps: smaprec,
-  pub state: [libc::c_char; 4],
-  pub comm: [libc::c_char; 16],
-  pub last_seen_on_cpu: libc::c_int,
-}
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const PSSCAN_TASKS: C2RustUnnamed = 4194304;
 pub const PSSCAN_RUIDGID: C2RustUnnamed = 2097152;
@@ -138,7 +77,7 @@ pub unsafe extern "C" fn lsof_main(
 ) -> libc::c_int {
   let mut proc_0: *mut procps_status_t = std::ptr::null_mut();
   loop {
-    proc_0 = procps_scan(
+    proc_0 = crate::libbb::procps::procps_scan(
       proc_0,
       PSSCAN_PID as libc::c_int | PSSCAN_EXE as libc::c_int,
     );
@@ -169,12 +108,12 @@ pub unsafe extern "C" fn lsof_main(
         if (*entry).d_name[0] as libc::c_int == '.' as i32 {
           continue;
         }
-        safe_strncpy(
+        crate::libbb::safe_strncpy::safe_strncpy(
           name.as_mut_ptr().offset(baseofs as isize),
           (*entry).d_name.as_mut_ptr(),
           10i32 as size_t,
         );
-        fdlink = xmalloc_readlink(name.as_mut_ptr());
+        fdlink = crate::libbb::xreadlink::xmalloc_readlink(name.as_mut_ptr());
         if !fdlink.is_null() {
           printf(
             b"%d\t%s\t%s\n\x00" as *const u8 as *const libc::c_char,

@@ -9,14 +9,7 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn xatoll(str: *const libc::c_char) -> libc::c_longlong;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_perror_nomsg_and_die() -> !;
-  #[no_mangle]
-  fn nth_string(strings: *const libc::c_char, n: libc::c_int) -> *const libc::c_char;
+
   #[no_mangle]
   fn adjtimex(__ntx: *mut timex) -> libc::c_int;
 }
@@ -24,8 +17,9 @@ extern "C" {
 use crate::librb::__syscall_slong_t;
 use crate::librb::size_t;
 use libc::timeval;
-#[derive(Copy, Clone, BitfieldStruct)]
+
 #[repr(C)]
+#[derive(Copy, Clone, BitfieldStruct)]
 pub struct timex {
   pub modes: libc::c_uint,
   pub offset: __syscall_slong_t,
@@ -65,7 +59,7 @@ pub const OPT_quiet: C2RustUnnamed = 1;
 pub type C2RustUnnamed = libc::c_uint;
 #[inline(always)]
 unsafe extern "C" fn xatol(mut str: *const libc::c_char) -> libc::c_long {
-  return xatoll(str) as libc::c_long;
+  return crate::libbb::xatonum::xatoll(str) as libc::c_long;
 }
 
 /*
@@ -169,7 +163,7 @@ pub unsafe extern "C" fn adjtimex_main(
     0,
     ::std::mem::size_of::<timex>() as libc::c_ulong,
   );
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^qo:f:p:t:\x00=0\x00" as *const u8 as *const libc::c_char,
     &mut opt_o as *mut *mut libc::c_char,
@@ -204,7 +198,7 @@ pub unsafe extern "C" fn adjtimex_main(
    */
   ret = adjtimex(&mut txc);
   if ret < 0 {
-    bb_perror_nomsg_and_die();
+    crate::libbb::perror_nomsg_and_die::bb_perror_nomsg_and_die();
   }
   if opt & OPT_quiet as libc::c_int as libc::c_uint == 0 {
     let mut sep: *const libc::c_char = std::ptr::null();
@@ -229,7 +223,7 @@ pub unsafe extern "C" fn adjtimex_main(
     }
     descript = b"error\x00" as *const u8 as *const libc::c_char;
     if ret <= 5i32 {
-      descript = nth_string(ret_code_descript.as_ptr(), ret)
+      descript = crate::libbb::compare_string_array::nth_string(ret_code_descript.as_ptr(), ret)
     }
     printf(b")\n-p  timeconstant: %ld\n    precision:    %ld us\n    tolerance:    %ld\n-t  tick:         %ld us\n    time.tv_sec:  %ld\n    time.tv_usec: %ld\n    return value: %d (%s)\n\x00"
                    as *const u8 as *const libc::c_char, txc.constant,

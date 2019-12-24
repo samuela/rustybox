@@ -27,48 +27,25 @@ extern "C" {
   ) -> libc::c_int;
   #[no_mangle]
   fn cfmakeraw(__termios_p: *mut termios);
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
+
   /* Standard handler which just records signo */
   #[no_mangle]
   static mut bb_got_signal: smallint;
-  #[no_mangle]
-  fn record_signo(signo: libc::c_int);
+
   /* On Linux this never fails. */
-  #[no_mangle]
-  fn setsockopt_keepalive(fd: libc::c_int) -> libc::c_int;
+
   /* NB: returns port in host byte order */
-  #[no_mangle]
-  fn bb_lookup_port(
-    port: *const libc::c_char,
-    protocol: *const libc::c_char,
-    default_port: libc::c_uint,
-  ) -> libc::c_uint;
+
   /* Create client TCP socket connected to peer:port. Peer cannot be NULL.
    * Peer can be numeric IP ("N.N.N.N"), numeric IPv6 address or hostname,
    * and can have ":PORT" suffix (for IPv6 use "[X:X:...:X]:PORT").
    * If there is no suffix, port argument is used */
-  #[no_mangle]
-  fn create_and_connect_stream_or_die(peer: *const libc::c_char, port: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
+
   // NB: will return short write on error, not -1,
   // if some data was written before error occurred
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn full_write1_str(str: *const libc::c_char) -> ssize_t;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
+
   /* NB: typically you want to pass fd 0, not 1. Think 'applet | grep something' */
-  #[no_mangle]
-  fn get_terminal_width_height(
-    fd: libc::c_int,
-    width: *mut libc::c_uint,
-    height: *mut libc::c_uint,
-  ) -> libc::c_int;
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -83,8 +60,9 @@ use libc::termios;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub iaclen: libc::c_int,
   pub telstate: byte,
@@ -121,7 +99,7 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 pub const netfd: C2RustUnnamed_0 = 3;
 unsafe extern "C" fn iac_flush() {
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).iaclen != 0 {
-    full_write(
+    crate::libbb::full_write::full_write(
       netfd as libc::c_int,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .iacbuf
@@ -142,7 +120,7 @@ unsafe extern "C" fn con_escape() {
     /* came from line mode... go raw */
     rawmode(); /* IAC -> IAC IAC */
   }
-  full_write1_str(b"\r\nConsole escape. Commands are:\r\n\n l\tgo to line mode\r\n c\tgo to character mode\r\n z\tsuspend telnet\r\n e\texit telnet\r\n\x00"
+  crate::libbb::xfuncs::full_write1_str(b"\r\nConsole escape. Commands are:\r\n\n l\tgo to line mode\r\n c\tgo to character mode\r\n z\tsuspend telnet\r\n e\texit telnet\r\n\x00"
                         as *const u8 as *const libc::c_char);
   if read(
     0,
@@ -184,7 +162,9 @@ unsafe extern "C" fn con_escape() {
   }
   match current_block {
     5143058163439228106 => {
-      full_write1_str(b"continuing...\r\n\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::xfuncs::full_write1_str(
+        b"continuing...\r\n\x00" as *const u8 as *const libc::c_char,
+      );
       if bb_got_signal != 0 {
         cookmode();
       }
@@ -226,7 +206,7 @@ unsafe extern "C" fn handle_net_output(mut len: libc::c_int) {
     dst = dst.offset(1)
   }
   if dst.wrapping_offset_from(outbuf.as_mut_ptr()) as libc::c_long != 0 {
-    full_write(
+    crate::libbb::full_write::full_write(
       netfd as libc::c_int,
       outbuf.as_mut_ptr() as *const libc::c_void,
       dst.wrapping_offset_from(outbuf.as_mut_ptr()) as libc::c_long as size_t,
@@ -272,7 +252,7 @@ unsafe extern "C" fn handle_net_input(mut len: libc::c_int) {
         cstart = i - 1i32
       }
       11650488183268122163 => {
-        full_write(
+        crate::libbb::full_write::full_write(
           1i32,
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
             .buf
@@ -309,7 +289,7 @@ unsafe extern "C" fn handle_net_input(mut len: libc::c_int) {
           255 => {
             /* IAC IAC -> one IAC */
             let fresh2 = cstart;
-            cstart += 1;
+            cstart = cstart + 1;
             (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).buf[fresh2 as usize] =
               c as libc::c_char;
             (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).telstate =
@@ -360,7 +340,7 @@ unsafe extern "C" fn handle_net_input(mut len: libc::c_int) {
             TS_IAC as libc::c_int as byte
         } else {
           let fresh1 = cstart;
-          cstart += 1;
+          cstart = cstart + 1;
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).buf[fresh1 as usize] =
             c as libc::c_char;
           if c as libc::c_int == '\r' as i32 {
@@ -382,7 +362,7 @@ unsafe extern "C" fn handle_net_input(mut len: libc::c_int) {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).telstate = TS_NORMAL as libc::c_int as byte
   } /* "... & 0xff" is implicit */
   if cstart != 0 {
-    full_write(
+    crate::libbb::full_write::full_write(
       1i32,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
         .buf
@@ -535,7 +515,7 @@ unsafe extern "C" fn to_echo() {
     put_iac3_IAC_x_y_merged(((254i32 << 8i32) + 1i32) as libc::c_uint);
   }
   setConMode();
-  full_write1_str(b"\r\n\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::xfuncs::full_write1_str(b"\r\n\x00" as *const u8 as *const libc::c_char);
   /* sudden modec */
 }
 unsafe extern "C" fn to_sga() {
@@ -693,7 +673,7 @@ pub unsafe extern "C" fn telnet_main(
     cfmakeraw(&mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).termios_raw);
   }
   if 1i32 as libc::c_uint
-    == getopt32(
+    == crate::libbb::getopt32::getopt32(
       argv,
       b"al:\x00" as *const u8 as *const libc::c_char,
       &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).autologin
@@ -706,7 +686,7 @@ pub unsafe extern "C" fn telnet_main(
   }
   argv = argv.offset(optind as isize);
   if (*argv).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   let fresh11 = argv;
   argv = argv.offset(1);
@@ -714,7 +694,7 @@ pub unsafe extern "C" fn telnet_main(
   port = if !(*argv).is_null() {
     let fresh12 = argv;
     argv = argv.offset(1);
-    bb_lookup_port(
+    crate::libbb::xconnect::bb_lookup_port(
       *fresh12,
       b"tcp\x00" as *const u8 as *const libc::c_char,
       23i32 as libc::c_uint,
@@ -724,18 +704,18 @@ pub unsafe extern "C" fn telnet_main(
   } as libc::c_int;
   if !(*argv).is_null() {
     /* extra params?? */
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
-  xmove_fd(
-    create_and_connect_stream_or_die(host, port),
+  crate::libbb::xfuncs_printf::xmove_fd(
+    crate::libbb::xconnect::create_and_connect_stream_or_die(host, port),
     netfd as libc::c_int,
   );
   printf(
     b"Connected to %s\n\x00" as *const u8 as *const libc::c_char,
     host,
   );
-  setsockopt_keepalive(netfd as libc::c_int);
-  get_terminal_width_height(
+  crate::libbb::xconnect::setsockopt_keepalive(netfd as libc::c_int);
+  crate::libbb::xfuncs::get_terminal_width_height(
     0,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).win_width,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).win_height,
@@ -743,7 +723,7 @@ pub unsafe extern "C" fn telnet_main(
   //TODO: support dynamic resize?
   signal(
     2i32,
-    Some(record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
   ufds[0].fd = 0;
   ufds[0].events = 0x1i32 as libc::c_short;
@@ -760,7 +740,7 @@ pub unsafe extern "C" fn telnet_main(
     } else {
       // FIXME: reads can block. Need full bidirectional buffering.
       if ufds[0].revents != 0 {
-        len = safe_read(
+        len = crate::libbb::read::safe_read(
           0,
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
             .buf
@@ -773,7 +753,7 @@ pub unsafe extern "C" fn telnet_main(
         handle_net_output(len);
       }
       if ufds[1].revents != 0 {
-        len = safe_read(
+        len = crate::libbb::read::safe_read(
           netfd as libc::c_int,
           (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
             .buf
@@ -781,7 +761,7 @@ pub unsafe extern "C" fn telnet_main(
           DATABUFSIZE as libc::c_int as size_t,
         ) as libc::c_int;
         if len <= 0 {
-          full_write1_str(
+          crate::libbb::xfuncs::full_write1_str(
             b"Connection closed by foreign host\r\n\x00" as *const u8 as *const libc::c_char,
           );
           doexit(1i32);

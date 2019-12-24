@@ -2,10 +2,7 @@ use libc;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn xunlink(pathname: *const libc::c_char);
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
 }
 
 /*
@@ -31,8 +28,8 @@ pub unsafe extern "C" fn unlink_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  getopt32(argv, b"^\x00=1\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::getopt32::getopt32(argv, b"^\x00=1\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
-  xunlink(*argv.offset(0));
+  crate::libbb::xfuncs_printf::xunlink(*argv.offset(0));
   return 0;
 }

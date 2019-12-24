@@ -3,7 +3,6 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
 use libc::free;
-use libc::ssize_t;
 use libc::strcpy;
 use libc::syslog;
 extern "C" {
@@ -28,17 +27,12 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn xfunc_die() -> !;
 
 }
 pub type __builtin_va_list = [__va_list_tag; 1];
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __va_list_tag {
   pub gp_offset: libc::c_uint,
   pub fp_offset: libc::c_uint,
@@ -142,7 +136,7 @@ pub unsafe extern "C" fn bb_verror_msg(
       ) as *mut libc::c_char; /* overwrites NUL */
       if msg1.is_null() {
         let fresh0 = used;
-        used += 1;
+        used = used + 1;
         *msg.offset(fresh0 as isize) = '\n' as i32 as libc::c_char;
         applet_len = 0;
         current_block = 10692455896603418738;
@@ -169,10 +163,10 @@ pub unsafe extern "C" fn bb_verror_msg(
         if *s.offset(0) != 0 {
           /* not perror_nomsg? */
           let fresh1 = used;
-          used += 1;
+          used = used + 1;
           *msg.offset(fresh1 as isize) = ':' as i32 as libc::c_char;
           let fresh2 = used;
-          used += 1;
+          used = used + 1;
           *msg.offset(fresh2 as isize) = ' ' as i32 as libc::c_char
         }
         strcpy(&mut *msg.offset(used as isize), strerr);
@@ -184,8 +178,8 @@ pub unsafe extern "C" fn bb_verror_msg(
     _ => {}
   }
   if logmode as libc::c_int & LOGMODE_STDIO as libc::c_int != 0 {
-    fflush_all();
-    full_write(2i32, msg as *const libc::c_void, used as size_t);
+    crate::libbb::xfuncs_printf::fflush_all();
+    crate::libbb::full_write::full_write(2i32, msg as *const libc::c_void, used as size_t);
   }
   if logmode as libc::c_int & LOGMODE_SYSLOG as libc::c_int != 0 {
     syslog(
@@ -203,7 +197,7 @@ pub unsafe extern "C" fn bb_error_msg_and_die(mut s: *const libc::c_char, mut ar
   let mut p: ::std::ffi::VaListImpl;
   p = args.clone();
   bb_verror_msg(s, p.as_va_list(), 0 as *const libc::c_char);
-  xfunc_die();
+  crate::libbb::xfunc_die::xfunc_die();
 }
 #[no_mangle]
 pub unsafe extern "C" fn bb_error_msg(mut s: *const libc::c_char, mut args: ...) {

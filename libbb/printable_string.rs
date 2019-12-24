@@ -1,22 +1,12 @@
 use libc;
 extern "C" {
-  #[no_mangle]
-  fn auto_string(str: *mut libc::c_char) -> *mut libc::c_char;
+
   //UNUSED: unsigned FAST_FUNC unicode_padding_to_width(unsigned width, const char *src);
   //UNUSED: char* FAST_FUNC unicode_conv_to_printable2(uni_stat_t *stats, const char *src, unsigned width, int flags);
-  #[no_mangle]
-  fn unicode_conv_to_printable(
-    stats: *mut uni_stat_t,
-    src: *const libc::c_char,
-  ) -> *mut libc::c_char;
+
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct uni_stat_t {
-  pub byte_count: libc::c_uint,
-  pub unicode_count: libc::c_uint,
-  pub unicode_width: libc::c_uint,
-}
+
+use crate::librb::uni_stat_t;
 
 /*
  * Unicode support routines.
@@ -52,8 +42,8 @@ pub unsafe extern "C" fn printable_string2(
     }
     s = s.offset(1)
   }
-  dst = unicode_conv_to_printable(stats, str);
-  return auto_string(dst);
+  dst = crate::libbb::unicode::unicode_conv_to_printable(stats, str);
+  return crate::libbb::auto_string::auto_string(dst);
 }
 
 /*

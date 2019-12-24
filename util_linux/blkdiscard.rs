@@ -4,42 +4,13 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
   static cwbkMG_suffixes: [suffix_mult; 0];
 
-  #[no_mangle]
-  fn xatoull_sfx(str: *const libc::c_char, sfx: *const suffix_mult) -> libc::c_ulonglong;
-
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn ioctl_or_perror_and_die(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    fmt: *const libc::c_char,
-    _: ...
-  ) -> libc::c_int;
-
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 }
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct suffix_mult {
-  pub suffix: [libc::c_char; 4],
-  pub mult: libc::c_uint,
-}
+
+use crate::librb::suffix_mult;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_SECURE: C2RustUnnamed = 4;
@@ -83,23 +54,25 @@ pub unsafe extern "C" fn blkdiscard_main(
   let mut length: u64 = 0;
   let mut range: [u64; 2] = [0; 2];
   let mut fd: libc::c_int = 0;
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^o:l:s\x00=1\x00" as *const u8 as *const libc::c_char,
     &mut offset_str as *mut *const libc::c_char,
     &mut length_str as *mut *const libc::c_char,
   );
   argv = argv.offset(optind as isize);
-  fd = xopen(*argv.offset(0), 0o2i32 | 0o200i32);
+  fd = crate::libbb::xfuncs_printf::xopen(*argv.offset(0), 0o2i32 | 0o200i32);
   //Why bother, BLK[SEC]DISCARD will fail on non-blockdevs anyway?
   //	xfstat(fd, &st);
   //	if (!S_ISBLK(st.st_mode))
   //		bb_error_msg_and_die("%s: not a block device", argv[0]);
-  offset = xatoull_sfx(offset_str, cwbkMG_suffixes.as_ptr().offset(3)) as u64;
+  offset =
+    crate::libbb::xatonum::xatoull_sfx(offset_str, cwbkMG_suffixes.as_ptr().offset(3)) as u64;
   if opts & OPT_LENGTH as libc::c_int as libc::c_uint != 0 {
-    length = xatoull_sfx(length_str, cwbkMG_suffixes.as_ptr().offset(3)) as u64
+    length =
+      crate::libbb::xatonum::xatoull_sfx(length_str, cwbkMG_suffixes.as_ptr().offset(3)) as u64
   } else {
-    bb_xioctl(
+    crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       ((2u32 << 0 + 8i32 + 8i32 + 14i32
         | (0x12i32 << 0 + 8i32) as libc::c_uint
@@ -113,7 +86,7 @@ pub unsafe extern "C" fn blkdiscard_main(
   }
   range[0] = offset;
   range[1] = length;
-  ioctl_or_perror_and_die(
+  crate::libbb::xfuncs_printf::ioctl_or_perror_and_die(
     fd,
     if opts & OPT_SECURE as libc::c_int as libc::c_uint != 0 {
       (0u32 << 0 + 8i32 + 8i32 + 14i32

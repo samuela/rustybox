@@ -1,5 +1,4 @@
 use crate::libbb::appletlib::applet_name;
-use crate::librb::size_t;
 use libc;
 use libc::printf;
 use libc::puts;
@@ -17,29 +16,21 @@ extern "C" {
 
   #[no_mangle]
   fn getutxent() -> *mut utmpx;
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-  /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
-   * But potentially slow, don't use in one-billion-times loops */
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
+/* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
+ * But potentially slow, don't use in one-billion-times loops */
 
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __exit_status {
   pub e_termination: libc::c_short,
   pub e_exit: libc::c_short,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed {
   pub tv_sec: i32,
   pub tv_usec: i32,
@@ -158,7 +149,7 @@ pub unsafe extern "C" fn who_main(
   let mut ut: *mut utmpx = std::ptr::null_mut();
   let mut opt: libc::c_uint = 0;
   let mut fmt: *const libc::c_char = b"%s\x00" as *const u8 as *const libc::c_char;
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     if do_who != 0 {
       b"^aH\x00=0\x00" as *const u8 as *const libc::c_char
@@ -190,7 +181,7 @@ pub unsafe extern "C" fn who_main(
           name.as_mut_ptr(),
           b"/dev/\x00" as *const u8 as *const libc::c_char,
         );
-        safe_strncpy(
+        crate::libbb::safe_strncpy::safe_strncpy(
           if (*ut).ut_line[0] as libc::c_int == '/' as i32 {
             name.as_mut_ptr()
           } else {
@@ -231,7 +222,7 @@ pub unsafe extern "C" fn who_main(
     }
   }
   if do_users != 0 {
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   }
   return 0;
 }

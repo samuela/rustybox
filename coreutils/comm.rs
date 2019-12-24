@@ -10,13 +10,6 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfopen_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
   static mut option_mask32: u32;
 }
 
@@ -57,11 +50,11 @@ pub unsafe extern "C" fn comm_main(
   let mut stream: [*mut FILE; 2] = [0 as *mut FILE; 2];
   let mut i: libc::c_int = 0;
   let mut order: libc::c_int = 0;
-  getopt32(argv, b"^123\x00=2\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::getopt32::getopt32(argv, b"^123\x00=2\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   i = 0;
   while i < 2i32 {
-    stream[i as usize] = xfopen_stdin(*argv.offset(i as isize));
+    stream[i as usize] = crate::libbb::wfopen_input::xfopen_stdin(*argv.offset(i as isize));
     i += 1
   }
   order = 0;
@@ -70,11 +63,11 @@ pub unsafe extern "C" fn comm_main(
   loop {
     if order <= 0 {
       free(thisline[0] as *mut libc::c_void);
-      thisline[0] = xmalloc_fgetline(stream[0])
+      thisline[0] = crate::libbb::get_line_from_file::xmalloc_fgetline(stream[0])
     }
     if order >= 0 {
       free(thisline[1] as *mut libc::c_void);
-      thisline[1] = xmalloc_fgetline(stream[1])
+      thisline[1] = crate::libbb::get_line_from_file::xmalloc_fgetline(stream[1])
     }
     i = thisline[0].is_null() as libc::c_int + ((thisline[1].is_null() as libc::c_int) << 1i32);
     if i != 0 {
@@ -96,7 +89,7 @@ pub unsafe extern "C" fn comm_main(
     writeline(p, i);
     loop {
       free(p as *mut libc::c_void);
-      p = xmalloc_fgetline(stream[i as usize]);
+      p = crate::libbb::get_line_from_file::xmalloc_fgetline(stream[i as usize]);
       if p.is_null() {
         break;
       }

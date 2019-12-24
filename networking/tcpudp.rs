@@ -1,15 +1,21 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::bb_uidgid_t;
+use crate::librb::len_and_sockaddr;
+use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
+use crate::librb::socklen_t;
+use crate::networking::tcpudp_perhost::hcc;
 use libc;
 use libc::close;
 use libc::free;
 use libc::getpid;
-use libc::gid_t;
 use libc::pid_t;
 use libc::putenv;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::ssize_t;
-use libc::uid_t;
 extern "C" {
   pub type sockaddr_x25;
   pub type sockaddr_un;
@@ -52,116 +58,20 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
-  fn close_on_exec_on(fd: libc::c_int);
-  #[no_mangle]
-  fn xdup2(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn wait_for_any_sig();
-  #[no_mangle]
-  fn kill_myself_with_sig(sig: libc::c_int) -> !;
-  #[no_mangle]
-  fn sig_block(sig: libc::c_int);
-  #[no_mangle]
-  fn sig_unblock(sig: libc::c_int);
-  #[no_mangle]
-  fn xsetgid(gid: gid_t);
-  #[no_mangle]
-  fn xsetuid(uid: uid_t);
-  #[no_mangle]
-  fn bb_unsetenv_and_free(key: *mut libc::c_char);
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xbind(sockfd: libc::c_int, my_addr: *mut sockaddr, addrlen: socklen_t);
-  #[no_mangle]
-  fn xlisten(s: libc::c_int, backlog: libc::c_int);
-  #[no_mangle]
-  fn xconnect(s: libc::c_int, s_addr: *const sockaddr, addrlen: socklen_t);
-  #[no_mangle]
-  fn setsockopt_reuseaddr(fd: libc::c_int);
-  #[no_mangle]
-  fn bb_lookup_port(
-    port: *const libc::c_char,
-    protocol: *const libc::c_char,
-    default_port: libc::c_uint,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn xhost2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
-  #[no_mangle]
-  fn xmalloc_sockaddr2host_noport(sa: *const sockaddr) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_sockaddr2dotted(sa: *const sockaddr) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xmalloc_sockaddr2dotted_noport(sa: *const sockaddr) -> *mut libc::c_char;
-  #[no_mangle]
-  fn socket_want_pktinfo(fd: libc::c_int);
-  #[no_mangle]
-  fn recv_from_to(
-    fd: libc::c_int,
-    buf: *mut libc::c_void,
-    len: size_t,
-    flags: libc::c_int,
-    from: *mut sockaddr,
-    to: *mut sockaddr,
-    sa_size: socklen_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn xget_uidgid(_: *mut bb_uidgid_t, _: *const libc::c_char);
-  #[no_mangle]
-  fn BB_EXECVP_or_die(argv: *mut *mut libc::c_char) -> !;
-  #[no_mangle]
-  fn wait_any_nohang(wstat: *mut libc::c_int) -> pid_t;
-  #[no_mangle]
-  fn bb_sanitize_stdio();
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-
-  #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
-  #[no_mangle]
-  fn ipsvd_perhost_init(_: libc::c_uint) -> *mut hcc;
-  /* Returns number of already opened connects to this ips, including this one.
-   * ip should be a malloc'ed ptr.
-   * If return value is <= maxconn, ip is inserted into the table
-   * and pointer to table entry if stored in *hccpp
-   * (useful for storing pid later).
-   * Else ip is NOT inserted (you must take care of it - free() etc) */
-  #[no_mangle]
-  fn ipsvd_perhost_add(
-    cc: *mut hcc,
-    ip: *mut libc::c_char,
-    maxconn: libc::c_uint,
-    hccpp: *mut *mut hcc,
-  ) -> libc::c_uint;
-  /* Finds and frees element with pid */
-  #[no_mangle]
-  fn ipsvd_perhost_remove(cc: *mut hcc, pid: libc::c_int);
+
+/* Returns number of already opened connects to this ips, including this one.
+ * ip should be a malloc'ed ptr.
+ * If return value is <= maxconn, ip is inserted into the table
+ * and pointer to table entry if stored in *hccpp
+ * (useful for storing pid later).
+ * Else ip is NOT inserted (you must take care of it - free() etc) */
+
+/* Finds and frees element with pid */
+
 }
 
 pub type __socklen_t = libc::c_uint;
-pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -172,8 +82,7 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
+
 pub type C2RustUnnamed = libc::c_uint;
 pub const MSG_CMSG_CLOEXEC: C2RustUnnamed = 1073741824;
 pub const MSG_FASTOPEN: C2RustUnnamed = 536870912;
@@ -197,8 +106,9 @@ pub const MSG_TRYHARD: C2RustUnnamed = 4;
 pub const MSG_DONTROUTE: C2RustUnnamed = 4;
 pub const MSG_PEEK: C2RustUnnamed = 2;
 pub const MSG_OOB: C2RustUnnamed = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __SOCKADDR_ARG {
   pub __sockaddr__: *mut sockaddr,
   pub __sockaddr_at__: *mut sockaddr_at,
@@ -214,61 +124,22 @@ pub union __SOCKADDR_ARG {
   pub __sockaddr_un__: *mut sockaddr_un,
   pub __sockaddr_x25__: *mut sockaddr_x25,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed_0,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_0 {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
 pub type in_addr_t = u32;
-use crate::librb::signal::__sighandler_t;
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed_1 = 117503054;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_2,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub union C2RustUnnamed_2 {
-  pub sa: sockaddr,
-  pub sin: sockaddr_in,
-  pub sin6: sockaddr_in6,
-}
-use crate::librb::bb_uidgid_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub struct globals {
   pub verbose: libc::c_uint,
   pub max_per_host: libc::c_uint,
@@ -287,12 +158,7 @@ pub struct globals {
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct hcc {
-  pub ip: *mut libc::c_char,
-  pub pid: libc::c_int,
-}
+
 /* Must match getopt32 in main! */
 pub type C2RustUnnamed_3 = libc::c_uint;
 pub const OPT_K: C2RustUnnamed_3 = 65536;
@@ -316,7 +182,7 @@ pub const OPT_c: C2RustUnnamed_3 = 1;
 /* We have to be careful about leaking memory in repeated setenv's */
 unsafe extern "C" fn xsetenv_plain(mut n: *const libc::c_char, mut v: *const libc::c_char) {
   let mut var: *mut libc::c_char =
-    xasprintf(b"%s=%s\x00" as *const u8 as *const libc::c_char, n, v);
+    crate::libbb::xfuncs_printf::xasprintf(b"%s=%s\x00" as *const u8 as *const libc::c_char, n, v);
   let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).env_cur;
   let fresh1 = *fresh0;
   *fresh0 = (*fresh0).offset(1);
@@ -328,7 +194,7 @@ unsafe extern "C" fn xsetenv_proto(
   mut n: *const libc::c_char,
   mut v: *const libc::c_char,
 ) {
-  let mut var: *mut libc::c_char = xasprintf(
+  let mut var: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
     b"%s%s=%s\x00" as *const u8 as *const libc::c_char,
     proto,
     n,
@@ -349,7 +215,7 @@ unsafe extern "C" fn undo_xsetenv() {
   let mut pp: *mut *mut libc::c_char = *fresh4;
   while !(*pp).is_null() {
     let mut var: *mut libc::c_char = *pp;
-    bb_unsetenv_and_free(var);
+    crate::libbb::xfuncs_printf::bb_unsetenv_and_free(var);
     let fresh5 = pp;
     pp = pp.offset(1);
     *fresh5 = std::ptr::null_mut::<libc::c_char>()
@@ -357,12 +223,12 @@ unsafe extern "C" fn undo_xsetenv() {
 }
 unsafe extern "C" fn sig_term_handler(mut sig: libc::c_int) {
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose != 0 {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"got signal %u, exit\x00" as *const u8 as *const libc::c_char,
       sig,
     );
   }
-  kill_myself_with_sig(sig);
+  crate::libbb::signals::kill_myself_with_sig(sig);
 }
 /* Little bloated, but tries to give accurate info how child exited.
  * Makes easier to spot segfaulting children etc... */
@@ -376,7 +242,7 @@ unsafe extern "C" fn print_waitstat(mut pid: libc::c_uint, mut wstat: libc::c_in
     cause = b"signal\x00" as *const u8 as *const libc::c_char;
     e = (wstat & 0x7fi32) as libc::c_uint
   }
-  bb_error_msg(
+  crate::libbb::verror_msg::bb_error_msg(
     b"end %d %s %d\x00" as *const u8 as *const libc::c_char,
     pid,
     cause,
@@ -386,7 +252,7 @@ unsafe extern "C" fn print_waitstat(mut pid: libc::c_uint, mut wstat: libc::c_in
 unsafe extern "C" fn connection_status() {
   /* "only 1 client max" desn't need this */
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cmax > 1i32 as libc::c_uint {
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"status %u/%u\x00" as *const u8 as *const libc::c_char,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cnum,
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cmax,
@@ -397,12 +263,15 @@ unsafe extern "C" fn sig_child_handler(mut _sig: libc::c_int) {
   let mut wstat: libc::c_int = 0; /* for compiler */
   let mut pid: pid_t = 0;
   loop {
-    pid = wait_any_nohang(&mut wstat);
+    pid = crate::libbb::xfuncs::wait_any_nohang(&mut wstat);
     if !(pid > 0) {
       break;
     }
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_per_host != 0 {
-      ipsvd_perhost_remove((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cc, pid);
+      crate::networking::tcpudp_perhost::ipsvd_perhost_remove(
+        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cc,
+        pid,
+      );
     }
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cnum != 0 {
       let ref mut fresh6 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cnum;
@@ -438,24 +307,8 @@ pub unsafe extern "C" fn tcpudpsvd_main(
   let mut remote_addr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   remote_addr = remote_addr;
   let mut lsa: *mut len_and_sockaddr = std::ptr::null_mut();
-  let mut local: len_and_sockaddr = len_and_sockaddr {
-    len: 0,
-    u: C2RustUnnamed_2 {
-      sa: sockaddr {
-        sa_family: 0,
-        sa_data: [0; 14],
-      },
-    },
-  };
-  let mut remote: len_and_sockaddr = len_and_sockaddr {
-    len: 0,
-    u: C2RustUnnamed_2 {
-      sa: sockaddr {
-        sa_family: 0,
-        sa_data: [0; 14],
-      },
-    },
-  };
+  let mut local: len_and_sockaddr = std::mem::zeroed();
+  let mut remote: len_and_sockaddr = std::mem::zeroed();
   let mut sa_len: socklen_t = 0;
   let mut pid: libc::c_int = 0;
   let mut sock: libc::c_int = 0;
@@ -470,7 +323,7 @@ pub unsafe extern "C" fn tcpudpsvd_main(
     .offset(0) as *mut *mut libc::c_char;
   tcp = *applet_name.offset(0) as libc::c_int == 't' as i32;
   /* "+": stop on first non-option */
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^+c:+C:i:x:u:l:Eb:+hpt:v\x00-3:i--i:ph:vv\x00" as *const u8 as *const libc::c_char,
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cmax as *mut libc::c_uint,
@@ -486,10 +339,10 @@ pub unsafe extern "C" fn tcpudpsvd_main(
   if opts & OPT_C as libc::c_int as libc::c_uint != 0 {
     /* -C n[:message] */
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_per_host =
-      bb_strtou(str_C, &mut str_C, 10i32);
+      crate::libbb::bb_strtonum::bb_strtou(str_C, &mut str_C, 10i32);
     if *str_C.offset(0) != 0 {
       if *str_C.offset(0) as libc::c_int != ':' as i32 {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
       msg_per_host = str_C.offset(1);
       len_per_host = strlen(msg_per_host) as libc::c_uint
@@ -502,7 +355,7 @@ pub unsafe extern "C" fn tcpudpsvd_main(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cmax
   }
   if opts & OPT_u as libc::c_int as libc::c_uint != 0 {
-    xget_uidgid(&mut ugid, user);
+    crate::libpwdgrp::uidgid_get::xget_uidgid(&mut ugid, user);
   }
   argv = argv.offset(optind as isize);
   if *(*argv.offset(0)).offset(0) == 0
@@ -516,13 +369,13 @@ pub unsafe extern "C" fn tcpudpsvd_main(
   if !tcp {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_per_host = 0 as libc::c_uint
   } /* fd# 0,1,2 must be opened */
-  bb_sanitize_stdio(); /* I presume sockaddr len stays the same */
-  sig_block(17i32); /* udp: needed for recv_from_to to work: */
+  crate::libbb::vfork_daemon_rexec::bb_sanitize_stdio(); /* I presume sockaddr len stays the same */
+  crate::libbb::signals::sig_block(17i32); /* udp: needed for recv_from_to to work: */
   signal(
     17i32,
     Some(sig_child_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     BB_FATAL_SIGS as libc::c_int,
     Some(sig_term_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
@@ -532,9 +385,11 @@ pub unsafe extern "C" fn tcpudpsvd_main(
   );
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_per_host != 0 {
     let ref mut fresh9 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cc;
-    *fresh9 = ipsvd_perhost_init((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cmax)
+    *fresh9 = crate::networking::tcpudp_perhost::ipsvd_perhost_init(
+      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cmax,
+    )
   }
-  local_port = bb_lookup_port(
+  local_port = crate::libbb::xconnect::bb_lookup_port(
     *argv.offset(1),
     if tcp as libc::c_int != 0 {
       b"tcp\x00" as *const u8 as *const libc::c_char
@@ -543,9 +398,9 @@ pub unsafe extern "C" fn tcpudpsvd_main(
     },
     0 as libc::c_uint,
   ) as u16;
-  lsa = xhost2sockaddr(*argv.offset(0), local_port as libc::c_int);
+  lsa = crate::libbb::xconnect::xhost2sockaddr(*argv.offset(0), local_port as libc::c_int);
   argv = argv.offset(2);
-  sock = xsocket(
+  sock = crate::libbb::xfuncs_printf::xsocket(
     (*lsa).u.sa.sa_family as libc::c_int,
     if tcp as libc::c_int != 0 {
       SOCK_STREAM as libc::c_int
@@ -554,32 +409,33 @@ pub unsafe extern "C" fn tcpudpsvd_main(
     },
     0,
   );
-  setsockopt_reuseaddr(sock);
+  crate::libbb::xconnect::setsockopt_reuseaddr(sock);
   sa_len = (*lsa).len;
-  xbind(sock, &mut (*lsa).u.sa, sa_len);
+  crate::libbb::xfuncs_printf::xbind(sock, &mut (*lsa).u.sa, sa_len);
   if tcp {
-    xlisten(sock, backlog as libc::c_int);
-    close_on_exec_on(sock);
+    crate::libbb::xfuncs_printf::xlisten(sock, backlog as libc::c_int);
+    crate::libbb::xfuncs::close_on_exec_on(sock);
   } else {
-    socket_want_pktinfo(sock);
+    crate::libbb::udp_io::socket_want_pktinfo(sock);
   }
   /* ndelay_off(sock); - it is the default I think? */
   if opts & OPT_u as libc::c_int as libc::c_uint != 0 {
     /* drop permissions */
-    xsetgid(ugid.gid);
-    xsetuid(ugid.uid);
+    crate::libbb::xfuncs_printf::xsetgid(ugid.gid);
+    crate::libbb::xfuncs_printf::xsetuid(ugid.uid);
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose != 0 {
-    let mut addr: *mut libc::c_char = xmalloc_sockaddr2dotted(&mut (*lsa).u.sa);
+    let mut addr: *mut libc::c_char =
+      crate::libbb::xconnect::xmalloc_sockaddr2dotted(&mut (*lsa).u.sa);
     if opts & OPT_u as libc::c_int as libc::c_uint != 0 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"listening on %s, starting, uid %u, gid %u\x00" as *const u8 as *const libc::c_char,
         addr,
         ugid.uid,
         ugid.gid,
       );
     } else {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"listening on %s, starting\x00" as *const u8 as *const libc::c_char,
         addr,
       );
@@ -599,10 +455,10 @@ pub unsafe extern "C" fn tcpudpsvd_main(
       while (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cnum
         >= (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cmax
       {
-        wait_for_any_sig(); /* expecting SIGCHLD */
+        crate::libbb::signals::wait_for_any_sig(); /* expecting SIGCHLD */
       }
       loop {
-        sig_unblock(17i32);
+        crate::libbb::signals::sig_unblock(17i32);
         remote.len = sa_len;
         local.len = remote.len;
         if tcp {
@@ -618,7 +474,7 @@ pub unsafe extern "C" fn tcpudpsvd_main(
           /* In case recv_from_to won't be able to recover local addr.
            * Also sets port - recv_from_to is unable to do it. */
           local = *lsa;
-          conn = recv_from_to(
+          conn = crate::libbb::udp_io::recv_from_to(
             sock,
             0 as *mut libc::c_void,
             0 as size_t,
@@ -628,31 +484,32 @@ pub unsafe extern "C" fn tcpudpsvd_main(
             sa_len,
           ) as libc::c_int
         }
-        sig_block(17i32);
+        crate::libbb::signals::sig_block(17i32);
         if !(conn < 0) {
           break;
         }
         if *bb_errno != 4i32 {
-          bb_simple_perror_msg(if tcp as libc::c_int != 0 {
+          crate::libbb::perror_msg::bb_simple_perror_msg(if tcp as libc::c_int != 0 {
             b"accept\x00" as *const u8 as *const libc::c_char
           } else {
             b"recv\x00" as *const u8 as *const libc::c_char
           });
         }
       }
-      xmove_fd(if tcp as libc::c_int != 0 { conn } else { sock }, 0);
+      crate::libbb::xfuncs_printf::xmove_fd(if tcp as libc::c_int != 0 { conn } else { sock }, 0);
       if !((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_per_host != 0) {
         break;
       }
       /* Drop connection immediately if cur_per_host > max_per_host
        * (minimizing load under SYN flood) */
-      remote_addr = xmalloc_sockaddr2dotted_noport(&mut remote.u.sa);
-      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_per_host = ipsvd_perhost_add(
-        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cc,
-        remote_addr,
-        (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_per_host,
-        &mut hccp,
-      );
+      remote_addr = crate::libbb::xconnect::xmalloc_sockaddr2dotted_noport(&mut remote.u.sa);
+      (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_per_host =
+        crate::networking::tcpudp_perhost::ipsvd_perhost_add(
+          (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cc,
+          remote_addr,
+          (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_per_host,
+          &mut hccp,
+        );
       if !((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_per_host
         > (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_per_host)
       {
@@ -679,24 +536,26 @@ pub unsafe extern "C" fn tcpudpsvd_main(
        * 1) we have to do it before fork()
        * 2) order is important - is it right now? */
       /* Open new non-connected UDP socket for further clients... */
-      sock = xsocket(
+      sock = crate::libbb::xfuncs_printf::xsocket(
         (*lsa).u.sa.sa_family as libc::c_int,
         SOCK_DGRAM as libc::c_int,
         0,
       );
-      setsockopt_reuseaddr(sock);
+      crate::libbb::xconnect::setsockopt_reuseaddr(sock);
       /* Doesn't work:
        * we cannot replace fd #0 - we will lose pending packet
        * which is already buffered for us! And we cannot use fd #1
        * instead - it will "intercept" all following packets, but child
        * does not expect data coming *from fd #1*! */
-      xconnect(0i32, &mut remote.u.sa, sa_len);
-      xbind(sock, &mut (*lsa).u.sa, sa_len);
-      socket_want_pktinfo(sock);
+      crate::libbb::xconnect::xconnect(0i32, &mut remote.u.sa, sa_len);
+      crate::libbb::xfuncs_printf::xbind(sock, &mut (*lsa).u.sa, sa_len);
+      crate::libbb::udp_io::socket_want_pktinfo(sock);
     }
     pid = vfork();
     if pid == -1i32 {
-      bb_simple_perror_msg(b"vfork\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg(
+        b"vfork\x00" as *const u8 as *const libc::c_char,
+      );
     } else {
       if !(pid != 0) {
         break;
@@ -734,14 +593,14 @@ pub unsafe extern "C" fn tcpudpsvd_main(
   {
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_per_host == 0 {
       /* remote_addr is not yet known */
-      remote_addr = xmalloc_sockaddr2dotted(&mut remote.u.sa);
+      remote_addr = crate::libbb::xconnect::xmalloc_sockaddr2dotted(&mut remote.u.sa);
       free_me0 = remote_addr
     }
     if opts & OPT_h as libc::c_int as libc::c_uint != 0 {
-      remote_hostname = xmalloc_sockaddr2host_noport(&mut remote.u.sa);
+      remote_hostname = crate::libbb::xconnect::xmalloc_sockaddr2host_noport(&mut remote.u.sa);
       free_me1 = remote_hostname;
       if remote_hostname.is_null() {
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"can\'t look up hostname for %s\x00" as *const u8 as *const libc::c_char,
           remote_addr,
         );
@@ -761,14 +620,14 @@ pub unsafe extern "C" fn tcpudpsvd_main(
       );
     }
     /* else: for UDP it is done earlier by parent */
-    local_addr = xmalloc_sockaddr2dotted(&mut local.u.sa);
+    local_addr = crate::libbb::xconnect::xmalloc_sockaddr2dotted(&mut local.u.sa);
     if opts & OPT_h as libc::c_int as libc::c_uint != 0 {
       local_hostname = preset_local_hostname;
       if local_hostname.is_null() {
-        local_hostname = xmalloc_sockaddr2host_noport(&mut local.u.sa);
+        local_hostname = crate::libbb::xconnect::xmalloc_sockaddr2host_noport(&mut local.u.sa);
         free_me2 = local_hostname;
         if local_hostname.is_null() {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"can\'t look up hostname for %s\x00" as *const u8 as *const libc::c_char,
             local_addr,
           );
@@ -780,14 +639,14 @@ pub unsafe extern "C" fn tcpudpsvd_main(
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).verbose != 0 {
     pid = getpid();
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_per_host != 0 {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"concurrency %s %u/%u\x00" as *const u8 as *const libc::c_char,
         remote_addr,
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_per_host,
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_per_host,
       );
     }
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       if opts & OPT_h as libc::c_int as libc::c_uint != 0 {
         b"start %u %s-%s (%s-%s)\x00" as *const u8 as *const libc::c_char
       } else {
@@ -820,7 +679,8 @@ pub unsafe extern "C" fn tcpudpsvd_main(
         &mut local.len,
       ) == 0
     {
-      let mut addr_0: *mut libc::c_char = xmalloc_sockaddr2dotted(&mut local.u.sa);
+      let mut addr_0: *mut libc::c_char =
+        crate::libbb::xconnect::xmalloc_sockaddr2dotted(&mut local.u.sa);
       xsetenv_plain(
         b"TCPORIGDSTADDR\x00" as *const u8 as *const libc::c_char,
         addr_0,
@@ -856,7 +716,9 @@ pub unsafe extern "C" fn tcpudpsvd_main(
       /* can not be true for udp */
       xsetenv_plain(
         b"TCPCONCURRENCY\x00" as *const u8 as *const libc::c_char,
-        utoa((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_per_host),
+        crate::libbb::xfuncs::utoa(
+          (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_per_host,
+        ),
       ); /* this one was SIG_IGNed */
     }
   }
@@ -864,12 +726,12 @@ pub unsafe extern "C" fn tcpudpsvd_main(
   free(free_me0 as *mut libc::c_void);
   free(free_me1 as *mut libc::c_void);
   free(free_me2 as *mut libc::c_void);
-  xdup2(0i32, 1i32);
+  crate::libbb::xfuncs_printf::xdup2(0i32, 1i32);
   signal(13i32, None);
   /* Non-ignored signals revert to SIG_DFL on exec anyway */
   /*signal(SIGCHLD, SIG_DFL);*/
-  sig_unblock(17i32);
-  BB_EXECVP_or_die(argv);
+  crate::libbb::signals::sig_unblock(17i32);
+  crate::libbb::executable::BB_EXECVP_or_die(argv);
 }
 /*
 tcpsvd [-hpEvv] [-c n] [-C n:msg] [-b n] [-u user] [-l name]

@@ -11,65 +11,8 @@ extern "C" {
   fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
 
   #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn recursive_action(
-    fileName: *const libc::c_char,
-    flags: libc::c_uint,
-    fileAction: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    dirAction: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    userData: *mut libc::c_void,
-    depth: libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_basename(name: *const libc::c_char) -> *const libc::c_char;
-
-  #[no_mangle]
-  fn xstrtou_range(
-    str: *const libc::c_char,
-    b: libc::c_int,
-    l: libc::c_uint,
-    u: libc::c_uint,
-  ) -> libc::c_uint;
-  #[no_mangle]
-  fn spawn_and_wait(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
@@ -85,8 +28,9 @@ pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed = 4;
 pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
 pub const ACTION_RECURSE: C2RustUnnamed = 1;
 use crate::libbb::llist::llist_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub names: *mut *mut libc::c_char,
   pub cur: libc::c_int,
@@ -114,7 +58,7 @@ unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
  * underscores, and hyphens only?)
  */
 unsafe extern "C" fn invalid_name(mut c: *const libc::c_char) -> bool {
-  c = bb_basename(c);
+  c = crate::libbb::get_last_path_component::bb_basename(c);
   while *c as libc::c_int != 0
     && (bb_ascii_isalnum(*c as libc::c_uchar) != 0
       || *c as libc::c_int == '_' as i32
@@ -156,7 +100,7 @@ unsafe extern "C" fn act(
     return 2i32;
   }
   let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).names;
-  *fresh0 = xrealloc_vector_helper(
+  *fresh0 = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).names as *mut libc::c_void,
     ((::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong) << 8i32)
       .wrapping_add(4i32 as libc::c_ulong) as libc::c_uint,
@@ -168,7 +112,7 @@ unsafe extern "C" fn act(
   let ref mut fresh3 = *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .names
     .offset(fresh2 as isize);
-  *fresh3 = xstrdup(file);
+  *fresh3 = crate::libbb::xfuncs_printf::xstrdup(file);
   /*names[cur] = NULL; - xrealloc_vector did it */
   return 1i32;
 }
@@ -187,14 +131,14 @@ pub unsafe extern "C" fn run_parts_main(
   let mut n: libc::c_uint = 0;
   let mut ret: libc::c_int = 0;
   /* We require exactly one argument: the directory name */
-  getopt32long(
+  crate::libbb::getopt32::getopt32long(
     argv,
     b"^a:*u:\x00=1\x00" as *const u8 as *const libc::c_char,
     runparts_longopts.as_ptr(),
     &mut arg_list as *mut *mut llist_t,
     &mut umask_p as *mut *const libc::c_char,
   );
-  umask(xstrtou_range(
+  umask(crate::libbb::xatonum::xstrtou_range(
     umask_p,
     8i32,
     0 as libc::c_uint,
@@ -205,11 +149,11 @@ pub unsafe extern "C" fn run_parts_main(
     let fresh4 = n;
     n = n.wrapping_add(1);
     let ref mut fresh5 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cmd[fresh4 as usize];
-    *fresh5 = llist_pop(&mut arg_list) as *mut libc::c_char
+    *fresh5 = crate::libbb::llist::llist_pop(&mut arg_list) as *mut libc::c_char
   }
   /* cmd[n] = NULL; - is already zeroed out */
   /* run-parts has to sort executables by name before running them */
-  recursive_action(
+  crate::libbb::recursive_action::recursive_action(
     *argv.offset(optind as isize),
     (ACTION_RECURSE as libc::c_int | ACTION_FOLLOWLINKS as libc::c_int) as libc::c_uint,
     Some(
@@ -262,7 +206,7 @@ pub unsafe extern "C" fn run_parts_main(
     } else {
       let ref mut fresh8 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cmd[0];
       *fresh8 = name;
-      ret = spawn_and_wait(
+      ret = crate::libbb::vfork_daemon_rexec::spawn_and_wait(
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
           .cmd
           .as_mut_ptr(),
@@ -272,20 +216,20 @@ pub unsafe extern "C" fn run_parts_main(
       }
       n = 1i32 as libc::c_uint;
       if ret < 0 {
-        bb_perror_msg(
+        crate::libbb::perror_msg::bb_perror_msg(
           b"can\'t execute \'%s\'\x00" as *const u8 as *const libc::c_char,
           name,
         );
       } else {
         /* ret > 0 */
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"%s: exit status %u\x00" as *const u8 as *const libc::c_char,
           name,
           ret & 0xffi32,
         );
       }
       if option_mask32 & OPT_e as libc::c_int as libc::c_uint != 0 {
-        xfunc_die();
+        crate::libbb::xfunc_die::xfunc_die();
       }
     }
   }

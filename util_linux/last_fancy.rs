@@ -31,48 +31,12 @@ extern "C" {
   fn ctime(__timer: *const time_t) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn xmemdup(s: *const libc::c_void, n: libc::c_int) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xread(fd: libc::c_int, buf: *mut libc::c_void, count: size_t);
-
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-
-  #[no_mangle]
   static mut option_mask32: u32;
 
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-
-  #[no_mangle]
-  fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
-
-  #[no_mangle]
-  fn llist_unlink(head: *mut *mut llist_t, elm: *mut llist_t);
-
-  #[no_mangle]
-  fn llist_free(
-    elm: *mut llist_t,
-    freeit: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
-  );
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct __exit_status {
   pub e_termination: libc::c_short,
   pub e_exit: libc::c_short,
@@ -80,8 +44,8 @@ pub struct __exit_status {
 
 use libc::utmpx;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed {
   pub tv_sec: i32,
   pub tv_usec: i32,
@@ -116,7 +80,11 @@ unsafe extern "C" fn show_entry(mut ut: *mut utmpx, mut state: libc::c_int, mut 
   /* manpages say ut_tv.tv_sec *is* time_t,
    * but some systems have it wrong */
   tmp = (*ut).ut_tv.tv_sec as time_t;
-  safe_strncpy(login_time.as_mut_ptr(), ctime(&mut tmp), 17i32 as size_t);
+  crate::libbb::safe_strncpy::safe_strncpy(
+    login_time.as_mut_ptr(),
+    ctime(&mut tmp),
+    17i32 as size_t,
+  );
   tmp = dur_secs;
   snprintf(
     logout_time.as_mut_ptr(),
@@ -255,12 +223,12 @@ pub unsafe extern "C" fn last_main(
   let mut going_down: smallint = 0;
   let mut boot_down: smallint = 0;
   /*opt =*/
-  getopt32(
+  crate::libbb::getopt32::getopt32(
     argv,
     b"Wf:\x00" as *const u8 as *const libc::c_char,
     &mut filename as *mut *const libc::c_char,
   );
-  file = xopen(filename, 0);
+  file = crate::libbb::xfuncs_printf::xopen(filename, 0);
   /* in case the file is empty... */
   let mut st: stat = std::mem::zeroed(); /* 0 */
   fstat(file, &mut st);
@@ -271,7 +239,7 @@ pub unsafe extern "C" fn last_main(
   zlist = std::ptr::null_mut();
   boot_time = 0 as time_t;
   /* get file size, rounding down to last full record */
-  pos = (xlseek(file, 0 as off_t, 2i32) as libc::c_ulong)
+  pos = (crate::libbb::xfuncs_printf::xlseek(file, 0 as off_t, 2i32) as libc::c_ulong)
     .wrapping_div(::std::mem::size_of::<utmpx>() as libc::c_ulong)
     .wrapping_mul(::std::mem::size_of::<utmpx>() as libc::c_ulong) as off_t;
   loop {
@@ -279,8 +247,8 @@ pub unsafe extern "C" fn last_main(
     if pos < 0 {
       break;
     }
-    xlseek(file, pos, 0);
-    xread(
+    crate::libbb::xfuncs_printf::xlseek(file, pos, 0);
+    crate::libbb::read_printf::xread(
       file,
       &mut ut as *mut utmpx as *mut libc::c_void,
       ::std::mem::size_of::<utmpx>() as libc::c_ulong,
@@ -313,9 +281,9 @@ pub unsafe extern "C" fn last_main(
       8 => {
         if !(ut.ut_line[0] == 0) {
           /* add_entry */
-          llist_add_to(
+          crate::libbb::llist::llist_add_to(
             &mut zlist,
-            xmemdup(
+            crate::libbb::xfuncs_printf::xmemdup(
               &mut ut as *mut utmpx as *const libc::c_void,
               ::std::mem::size_of::<utmpx>() as libc::c_ulong as libc::c_int,
             ),
@@ -343,7 +311,7 @@ pub unsafe extern "C" fn last_main(
                 show_entry(&mut ut, NORMAL as libc::c_int, (*up).ut_tv.tv_sec as time_t);
                 show = 0
               }
-              llist_unlink(&mut zlist, el);
+              crate::libbb::llist::llist_unlink(&mut zlist, el);
               free((*el).data as *mut libc::c_void);
               free(el as *mut libc::c_void);
             }
@@ -361,9 +329,9 @@ pub unsafe extern "C" fn last_main(
             show_entry(&mut ut, state, boot_time);
           }
           /* add_entry */
-          llist_add_to(
+          crate::libbb::llist::llist_add_to(
             &mut zlist,
-            xmemdup(
+            crate::libbb::xfuncs_printf::xmemdup(
               &mut ut as *mut utmpx as *const libc::c_void,
               ::std::mem::size_of::<utmpx>() as libc::c_ulong as libc::c_int,
             ),
@@ -374,7 +342,7 @@ pub unsafe extern "C" fn last_main(
     }
     if going_down != 0 {
       boot_time = ut.ut_tv.tv_sec as time_t;
-      llist_free(
+      crate::libbb::llist::llist_free(
         zlist,
         Some(free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
       );
@@ -386,5 +354,5 @@ pub unsafe extern "C" fn last_main(
     b"\nwtmp begins %s\x00" as *const u8 as *const libc::c_char,
     ctime(&mut start_time),
   );
-  fflush_stdout_and_exit(0i32);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
 }

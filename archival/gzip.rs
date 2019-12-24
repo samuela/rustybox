@@ -1046,7 +1046,7 @@ unsafe extern "C" fn build_tree(mut desc: *mut tree_desc) {
     (*tree.offset(n as isize)).dl.dad = *fresh33;
     /* and insert the new node in the heap */
     let fresh34 = node;
-    node += 1;
+    node = node + 1;
     (*(ptr_to_globals as *mut globals2)).heap[1] = fresh34 as ush;
     pqdownheap(tree, 1i32);
     if !((*(ptr_to_globals as *mut globals2)).heap_len >= 2i32) {
@@ -1888,7 +1888,7 @@ unsafe extern "C" fn ct_init() {
     n = 0;
     while n < 1i32 << extra_lbits[code as usize] as libc::c_int {
       let fresh65 = length;
-      length += 1;
+      length = length + 1;
       (*(ptr_to_globals as *mut globals2)).length_code[fresh65 as usize] = code as uch;
       n += 1
     }
@@ -1907,7 +1907,7 @@ unsafe extern "C" fn ct_init() {
     n = 0;
     while n < 1i32 << extra_dbits[code as usize] as libc::c_int {
       let fresh66 = dist;
-      dist += 1;
+      dist = dist + 1;
       (*(ptr_to_globals as *mut globals2)).dist_code[fresh66 as usize] = code as uch;
       n += 1
     }
@@ -1919,7 +1919,7 @@ unsafe extern "C" fn ct_init() {
     n = 0;
     while n < 1i32 << extra_dbits[code as usize] as libc::c_int - 7i32 {
       let fresh67 = dist;
-      dist += 1;
+      dist = dist + 1;
       (*(ptr_to_globals as *mut globals2)).dist_code[(256i32 + fresh67) as usize] = code as uch;
       n += 1
     }
@@ -1931,7 +1931,7 @@ unsafe extern "C" fn ct_init() {
   n = 0;
   while n <= 143i32 {
     let fresh68 = n;
-    n += 1;
+    n = n + 1;
     (*(ptr_to_globals as *mut globals2)).static_ltree[fresh68 as usize]
       .dl
       .len = 8i32 as ush
@@ -1940,7 +1940,7 @@ unsafe extern "C" fn ct_init() {
   //G2.bl_count[8] = 143 + 1;
   while n <= 255i32 {
     let fresh69 = n;
-    n += 1;
+    n = n + 1;
     (*(ptr_to_globals as *mut globals2)).static_ltree[fresh69 as usize]
       .dl
       .len = 9i32 as ush
@@ -1949,7 +1949,7 @@ unsafe extern "C" fn ct_init() {
   //G2.bl_count[9] = 255 - 143;
   while n <= 279i32 {
     let fresh70 = n;
-    n += 1;
+    n = n + 1;
     (*(ptr_to_globals as *mut globals2)).static_ltree[fresh70 as usize]
       .dl
       .len = 7i32 as ush
@@ -1958,7 +1958,7 @@ unsafe extern "C" fn ct_init() {
   //G2.bl_count[7] = 279 - 255;
   while n <= 287i32 {
     let fresh71 = n;
-    n += 1;
+    n = n + 1;
     (*(ptr_to_globals as *mut globals2)).static_ltree[fresh71 as usize]
       .dl
       .len = 8i32 as ush

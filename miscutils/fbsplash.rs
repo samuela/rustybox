@@ -1,11 +1,15 @@
+use crate::libbb::parse_config::parser_t;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
 use libc;
 use libc::atoi;
 use libc::close;
 use libc::fclose;
 use libc::free;
+use libc::off64_t;
 use libc::open;
 use libc::sscanf;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -33,64 +37,11 @@ extern "C" {
   ) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn is_prefixed_with(string: *const libc::c_char, key: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn open_zipped(fname: *const libc::c_char, fail_if_not_compressed: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfopen_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xfdopen_for_read(fd: libc::c_int) -> *mut FILE;
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn config_open2(
-    filename: *const libc::c_char,
-    fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
-  ) -> *mut parser_t;
-  #[no_mangle]
-  fn config_read(
-    parser: *mut parser_t,
-    tokens: *mut *mut libc::c_char,
-    flags: libc::c_uint,
-    delims: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn config_close(parser: *mut parser_t);
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
-  #[no_mangle]
   static ptr_to_globals: *mut globals;
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::size_t;
-use libc::off64_t;
-use libc::ssize_t;
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;
 pub const PARSE_WS_COMMENTS: C2RustUnnamed = 16777216;
@@ -101,19 +52,9 @@ pub const PARSE_MIN_DIE: C2RustUnnamed = 1048576;
 pub const PARSE_GREEDY: C2RustUnnamed = 262144;
 pub const PARSE_TRIM: C2RustUnnamed = 131072;
 pub const PARSE_COLLAPSE: C2RustUnnamed = 65536;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct parser_t {
-  pub fp: *mut FILE,
-  pub data: *mut libc::c_char,
-  pub line: *mut libc::c_char,
-  pub nline: *mut libc::c_char,
-  pub line_alloc: size_t,
-  pub nline_alloc: size_t,
-  pub lineno: libc::c_int,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct globals {
   pub addr: *mut libc::c_uchar,
   pub ns: [libc::c_uint; 9],
@@ -125,8 +66,9 @@ pub struct globals {
   pub green_shift: libc::c_uint,
   pub blue_shift: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fb_fix_screeninfo {
   pub id: [libc::c_char; 16],
   pub smem_start: libc::c_ulong,
@@ -146,8 +88,9 @@ pub struct fb_fix_screeninfo {
 }
 pub type __u16 = libc::c_ushort;
 pub type u32 = libc::c_uint;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fb_var_screeninfo {
   pub xres: u32,
   pub yres: u32,
@@ -179,8 +122,9 @@ pub struct fb_var_screeninfo {
   pub colorspace: u32,
   pub reserved: [u32; 4],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fb_bitfield {
   pub offset: u32,
   pub length: u32,
@@ -188,8 +132,9 @@ pub struct fb_bitfield {
 }
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed_0 = 1024;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct fb_cmap {
   pub start: u32,
   pub len: u32,
@@ -257,7 +202,7 @@ unsafe extern "C" fn fb_setpal(mut fd: libc::c_int) {
   cmap.green = green.as_mut_ptr();
   cmap.blue = blue.as_mut_ptr();
   cmap.transp = std::ptr::null_mut();
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     0x4605i32 as libc::c_uint,
     &mut cmap as *mut fb_cmap as *mut libc::c_void,
@@ -270,15 +215,15 @@ unsafe extern "C" fn fb_setpal(mut fd: libc::c_int) {
  * \param *strfb_device pointer to framebuffer device
  */
 unsafe extern "C" fn fb_open(mut strfb_device: *const libc::c_char) {
-  let mut fbfd: libc::c_int = xopen(strfb_device, 0o2i32);
+  let mut fbfd: libc::c_int = crate::libbb::xfuncs_printf::xopen(strfb_device, 0o2i32);
   // framebuffer properties
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fbfd,
     0x4600i32 as libc::c_uint,
     &mut (*ptr_to_globals).scr_var as *mut fb_var_screeninfo as *mut libc::c_void,
     b"FBIOGET_VSCREENINFO\x00" as *const u8 as *const libc::c_char,
   );
-  bb_xioctl(
+  crate::libbb::xfuncs_printf::bb_xioctl(
     fbfd,
     0x4602i32 as libc::c_uint,
     &mut (*ptr_to_globals).scr_fix as *mut fb_fix_screeninfo as *mut libc::c_void,
@@ -290,7 +235,7 @@ unsafe extern "C" fn fb_open(mut strfb_device: *const libc::c_char) {
     }
     16 | 24 | 32 => {}
     _ => {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"unsupported %u bpp\x00" as *const u8 as *const libc::c_char,
         (*ptr_to_globals).scr_var.bits_per_pixel as libc::c_int,
       );
@@ -322,7 +267,9 @@ unsafe extern "C" fn fb_open(mut strfb_device: *const libc::c_char) {
     0 as off64_t,
   ) as *mut libc::c_uchar;
   if (*ptr_to_globals).addr == -1i32 as *mut libc::c_void as *mut libc::c_uchar {
-    bb_simple_perror_msg_and_die(b"mmap\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"mmap\x00" as *const u8 as *const libc::c_char,
+    );
   }
   // point to the start of the visible screen
   (*ptr_to_globals).addr = (*ptr_to_globals).addr.offset(
@@ -596,11 +543,14 @@ unsafe extern "C" fn fb_drawimage() {
   {
     theme_file = stdin
   } else {
-    let mut fd: libc::c_int = open_zipped((*ptr_to_globals).image_filename, 0);
+    let mut fd: libc::c_int = crate::archival::libarchive::open_transformer::open_zipped(
+      (*ptr_to_globals).image_filename,
+      0,
+    );
     if fd < 0 {
-      bb_simple_perror_msg_and_die((*ptr_to_globals).image_filename);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die((*ptr_to_globals).image_filename);
     }
-    theme_file = xfdopen_for_read(fd)
+    theme_file = crate::libbb::wfopen::xfdopen_for_read(fd)
   }
   /* Parse ppm header:
    * - Magic: two characters "P6".
@@ -625,7 +575,7 @@ unsafe extern "C" fn fb_drawimage() {
       .offset(COMMON_BUFSIZE as libc::c_int as isize)
       .wrapping_offset_from(read_ptr) as libc::c_long as libc::c_int;
     if rem < 2i32 || fgets_unlocked(read_ptr, rem, theme_file).is_null() {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"bad PPM file \'%s\'\x00" as *const u8 as *const libc::c_char,
         (*ptr_to_globals).image_filename,
       );
@@ -672,7 +622,7 @@ unsafe extern "C" fn fb_drawimage() {
       theme_file,
     ) != line_size as libc::c_ulong
     {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"bad PPM file \'%s\'\x00" as *const u8 as *const libc::c_char,
         (*ptr_to_globals).image_filename,
       );
@@ -715,11 +665,14 @@ unsafe extern "C" fn init(mut cfg_filename: *const libc::c_char) {
     0,
   ]; // for compiler
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
-  let mut parser: *mut parser_t = config_open2(
+  let mut parser: *mut parser_t = crate::libbb::parse_config::config_open2(
     cfg_filename,
-    Some(xfopen_stdin as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE),
+    Some(
+      crate::libbb::wfopen_input::xfopen_stdin
+        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+    ),
   );
-  while config_read(
+  while crate::libbb::parse_config::config_read(
     parser,
     token.as_mut_ptr(),
     ((PARSE_NORMAL as libc::c_int | PARSE_MIN_DIE as libc::c_int)
@@ -729,10 +682,11 @@ unsafe extern "C" fn init(mut cfg_filename: *const libc::c_char) {
     b"#=\x00" as *const u8 as *const libc::c_char,
   ) != 0
   {
-    let mut val: libc::c_uint = xatoi_positive(token[1]) as libc::c_uint;
-    let mut i: libc::c_int = index_in_strings(param_names.as_ptr(), token[0]);
+    let mut val: libc::c_uint = crate::libbb::xatonum::xatoi_positive(token[1]) as libc::c_uint;
+    let mut i: libc::c_int =
+      crate::libbb::compare_string_array::index_in_strings(param_names.as_ptr(), token[0]);
     if i < 0 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"syntax error: %s\x00" as *const u8 as *const libc::c_char,
         token[0],
       );
@@ -741,7 +695,7 @@ unsafe extern "C" fn init(mut cfg_filename: *const libc::c_char) {
       (*ptr_to_globals).ns[i as usize] = val
     }
   }
-  config_close(parser);
+  crate::libbb::parse_config::config_close(parser);
 }
 #[no_mangle]
 pub unsafe extern "C" fn fbsplash_main(
@@ -758,14 +712,15 @@ pub unsafe extern "C" fn fbsplash_main(
   let mut bCursorOff: bool = false;
   let ref mut fresh0 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh0 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh0 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   // parse command line options
   fb_device = b"/dev/fb0\x00" as *const u8 as *const libc::c_char;
   cfg_filename = std::ptr::null();
   fifo_filename = std::ptr::null();
   bCursorOff = 1i32 as libc::c_uint
-    & getopt32(
+    & crate::libbb::getopt32::getopt32(
       argv,
       b"cs:d:i:f:\x00" as *const u8 as *const libc::c_char,
       &mut (*ptr_to_globals).image_filename as *mut *const libc::c_char,
@@ -780,12 +735,12 @@ pub unsafe extern "C" fn fbsplash_main(
   }
   // We must have -s IMG
   if (*ptr_to_globals).image_filename.is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   fb_open(fb_device);
   if !fifo_filename.is_null() && bCursorOff as libc::c_int != 0 {
     // hide cursor (BEFORE any fb ops)
-    full_write(
+    crate::libbb::full_write::full_write(
       1i32,
       b"\x1b[?25l\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       6i32 as size_t,
@@ -795,7 +750,7 @@ pub unsafe extern "C" fn fbsplash_main(
   if fifo_filename.is_null() {
     return 0;
   }
-  fp = xfopen_stdin(fifo_filename);
+  fp = crate::libbb::wfopen_input::xfopen_stdin(fifo_filename);
   if fp != stdin {
     // For named pipes, we want to support this:
     //  mkfifo cmd_pipe
@@ -818,11 +773,16 @@ pub unsafe extern "C" fn fbsplash_main(
   // handle a case when we have many buffered lines
   // already in the pipe
   {
-    num_buf = xmalloc_fgetline(fp);
+    num_buf = crate::libbb::get_line_from_file::xmalloc_fgetline(fp);
     if num_buf.is_null() {
       break;
     }
-    if !is_prefixed_with(num_buf, b"exit\x00" as *const u8 as *const libc::c_char).is_null() {
+    if !crate::libbb::compare_string_array::is_prefixed_with(
+      num_buf,
+      b"exit\x00" as *const u8 as *const libc::c_char,
+    )
+    .is_null()
+    {
       break;
     }
     num = atoi(num_buf) as libc::c_uint;
@@ -835,7 +795,7 @@ pub unsafe extern "C" fn fbsplash_main(
   }
   if bCursorOff {
     // restore cursor
-    full_write(
+    crate::libbb::full_write::full_write(
       1i32,
       b"\x1b[?25h\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       6i32 as size_t,

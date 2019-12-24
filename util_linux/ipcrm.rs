@@ -14,12 +14,6 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn xstrtoull(str: *const libc::c_char, b: libc::c_int) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xatoull(str: *const libc::c_char) -> libc::c_ulonglong;
   /* Non-aborting kind of convertors: bb_strto[u][l]l */
   /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
    * errno = EINVAL if value was not '\0' terminated, but otherwise ok
@@ -31,18 +25,7 @@ extern "C" {
    * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
    *    return value is all-ones in this case.
    */
-  #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
+
   #[no_mangle]
   fn shmctl(__shmid: libc::c_int, __cmd: libc::c_int, __buf: *mut shmid_ds) -> libc::c_int;
   #[no_mangle]
@@ -62,8 +45,8 @@ pub type __key_t = libc::c_int;
 pub type __syscall_ulong_t = libc::c_ulong;
 pub type key_t = __key_t;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct ipc_perm {
   pub __key: __key_t,
   pub uid: uid_t,
@@ -78,8 +61,9 @@ pub struct ipc_perm {
   pub __glibc_reserved2: __syscall_ulong_t,
 }
 pub type shmatt_t = __syscall_ulong_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct shmid_ds {
   pub shm_perm: ipc_perm,
   pub shm_segsz: size_t,
@@ -94,8 +78,9 @@ pub struct shmid_ds {
 }
 pub type msgqnum_t = __syscall_ulong_t;
 pub type msglen_t = __syscall_ulong_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct msqid_ds {
   pub msg_perm: ipc_perm,
   pub msg_stime: time_t,
@@ -109,8 +94,9 @@ pub struct msqid_ds {
   pub __glibc_reserved4: __syscall_ulong_t,
   pub __glibc_reserved5: __syscall_ulong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct semid_ds {
   pub sem_perm: ipc_perm,
   pub sem_otime: time_t,
@@ -121,8 +107,9 @@ pub struct semid_ds {
   pub __glibc_reserved3: __syscall_ulong_t,
   pub __glibc_reserved4: __syscall_ulong_t,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct seminfo {
   pub semmap: libc::c_int,
   pub semmni: libc::c_int,
@@ -156,8 +143,9 @@ pub struct seminfo {
 /* X/OPEN tells us to use <sys/{types,ipc,sem}.h> for semctl() */
 /* X/OPEN tells us to use <sys/{types,ipc,msg}.h> for msgctl() */
 /* according to X/OPEN we have to define it ourselves */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union semun {
   pub val: libc::c_int,
   pub buf: *mut semid_ds,
@@ -170,11 +158,11 @@ pub const SEM: type_id = 1;
 pub const SHM: type_id = 0;
 #[inline(always)]
 unsafe extern "C" fn xstrtoul(mut str: *const libc::c_char, mut b: libc::c_int) -> libc::c_ulong {
-  return xstrtoull(str, b) as libc::c_ulong;
+  return crate::libbb::xatonum::xstrtoull(str, b) as libc::c_ulong;
 }
 #[inline(always)]
 unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
-  return xatoull(str) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull(str) as libc::c_ulong;
 }
 #[inline(always)]
 unsafe extern "C" fn bb_strtoul(
@@ -182,7 +170,7 @@ unsafe extern "C" fn bb_strtoul(
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_ulong {
-  return bb_strtoull(arg, endp, base) as libc::c_ulong;
+  return crate::libbb::bb_strtonum::bb_strtoull(arg, endp, base) as libc::c_ulong;
 }
 unsafe extern "C" fn remove_ids(
   mut type_0: type_id,
@@ -195,7 +183,7 @@ unsafe extern "C" fn remove_ids(
   while !(*argv.offset(0)).is_null() {
     id = bb_strtoul(*argv.offset(0), 0 as *mut *mut libc::c_char, 10i32);
     if *bb_errno != 0 || id > 2147483647i32 as libc::c_ulong {
-      bb_error_msg(
+      crate::libbb::verror_msg::bb_error_msg(
         b"invalid id: %s\x00" as *const u8 as *const libc::c_char,
         *argv.offset(0),
       );
@@ -210,7 +198,7 @@ unsafe extern "C" fn remove_ids(
         ret = shmctl(id as libc::c_int, 0, 0 as *mut shmid_ds)
       }
       if ret != 0 {
-        bb_perror_msg(
+        crate::libbb::perror_msg::bb_perror_msg(
           b"can\'t remove id %s\x00" as *const u8 as *const libc::c_char,
           *argv.offset(0),
         );
@@ -258,7 +246,7 @@ pub unsafe extern "C" fn ipcrm_main(
     && *(*argv.offset(1)).offset(3) as libc::c_int == '\u{0}' as i32
   {
     if argc < 3i32 {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     if w as libc::c_int == 'h' as i32 {
       what = SHM
@@ -268,7 +256,7 @@ pub unsafe extern "C" fn ipcrm_main(
       what = SEM
     }
     if remove_ids(what, &mut *argv.offset(2)) != 0 {
-      fflush_stdout_and_exit(1i32);
+      crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(1i32);
     }
     puts(b"resource(s) deleted\x00" as *const u8 as *const libc::c_char);
     return 0;
@@ -292,7 +280,7 @@ pub unsafe extern "C" fn ipcrm_main(
     let mut arg: semun = semun { val: 0 };
     if c == '?' as i32 {
       /* option not in the string */
-      bb_show_usage(); /* uppercase? */
+      crate::libbb::appletlib::bb_show_usage(); /* uppercase? */
     }
     id = 0;
     arg.val = 0;
@@ -302,7 +290,7 @@ pub unsafe extern "C" fn ipcrm_main(
       let mut key: key_t = xstrtoul(optarg, 0) as key_t; /* lowercase. c is 'q', 'm' or 's' now */
       if key == 0 {
         error += 1;
-        bb_error_msg(
+        crate::libbb::verror_msg::bb_error_msg(
           b"illegal key (%s)\x00" as *const u8 as *const libc::c_char,
           optarg,
         );
@@ -326,7 +314,7 @@ pub unsafe extern "C" fn ipcrm_main(
             2 => errmsg = b"invalid\x00" as *const u8 as *const libc::c_char,
             _ => errmsg = b"unknown error in\x00" as *const u8 as *const libc::c_char,
           }
-          bb_error_msg(
+          crate::libbb::verror_msg::bb_error_msg(
             b"%s %s (%s)\x00" as *const u8 as *const libc::c_char,
             errmsg,
             b"key\x00" as *const u8 as *const libc::c_char,
@@ -362,7 +350,7 @@ pub unsafe extern "C" fn ipcrm_main(
       43 => errmsg_0 = b"already removed\x00" as *const u8 as *const libc::c_char,
       _ => errmsg_0 = b"unknown error in\x00" as *const u8 as *const libc::c_char,
     }
-    bb_error_msg(
+    crate::libbb::verror_msg::bb_error_msg(
       b"%s %s (%s)\x00" as *const u8 as *const libc::c_char,
       errmsg_0,
       what_0,
@@ -371,7 +359,7 @@ pub unsafe extern "C" fn ipcrm_main(
   }
   /* print usage if we still have some arguments left over */
   if optind != argc {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   return error;
 }

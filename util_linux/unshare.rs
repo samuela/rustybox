@@ -25,45 +25,9 @@ extern "C" {
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
-  #[no_mangle]
-  fn xpipe(filedes: *mut libc::c_int);
+/* xvfork() can't be a _function_, return after vfork in child mangles stack
+ * in the parent. It must be a macro. */
 
-  #[no_mangle]
-  fn xopen_xwrite_close(file: *const libc::c_char, str: *const libc::c_char);
-
-  #[no_mangle]
-  fn exec_prog_or_SHELL(argv: *mut *mut libc::c_char) -> !;
-
-  /* xvfork() can't be a _function_, return after vfork in child mangles stack
-   * in the parent. It must be a macro. */
-  #[no_mangle]
-  fn xfork() -> pid_t;
-
-  #[no_mangle]
-  fn xvfork_parent_waits_and_exits();
-
-  #[no_mangle]
-  fn wait_for_exitstatus(pid: pid_t) -> libc::c_int;
-
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
 }
 
 pub type C2RustUnnamed = libc::c_int;
@@ -96,15 +60,15 @@ pub const MS_NOSUID: C2RustUnnamed = 2;
 
 pub type uintptr_t = libc::c_ulong;
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct namespace_descr {
   pub flag: libc::c_int,
   pub nsfile4: [libc::c_char; 4],
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct namespace_ctx {
   pub path: *mut libc::c_char,
 }
@@ -175,7 +139,7 @@ unsafe extern "C" fn mount_or_die(
   mut mountflags: libc::c_ulong,
 ) {
   if mount(source, target, fstype, mountflags, 0 as *const libc::c_void) != 0 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"can\'t mount %s on %s (flags:0x%lx)\x00" as *const u8 as *const libc::c_char,
       source,
       target,
@@ -247,12 +211,12 @@ static mut unshare_longopts: [libc::c_char; 102] = [
   0, 1, -2, 115, 101, 116, 103, 114, 111, 117, 112, 115, 0, 1, -1, 0,
 ];
 unsafe extern "C" fn parse_propagation(mut prop_str: *const libc::c_char) -> libc::c_ulong {
-  let mut i: libc::c_int = index_in_strings(
+  let mut i: libc::c_int = crate::libbb::compare_string_array::index_in_strings(
     b"private\x00unchanged\x00shared\x00slave\x00\x00" as *const u8 as *const libc::c_char,
     prop_str,
   ); /* for compiler */
   if i < 0 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"unrecognized: --%s=%s\x00" as *const u8 as *const libc::c_char,
       b"propagation\x00" as *const u8 as *const libc::c_char,
       prop_str,
@@ -324,7 +288,7 @@ pub unsafe extern "C" fn unshare_main(
   proc_mnt_target = b"/proc\x00" as *const u8 as *const libc::c_char;
   prop_str = b"private\x00unchanged\x00shared\x00slave\x00\x00" as *const u8 as *const libc::c_char;
   setgrp_str = std::ptr::null();
-  opts = getopt32long(
+  opts = crate::libbb::getopt32::getopt32long(
     argv,
     b"^+muinpUfr\xfd::\xfe:\xff:\x00\xf0m:\xf1u:\xf2i:\xf3n:\xf4p:\xf5U:rU:\xfdm\x00" as *const u8
       as *const libc::c_char,
@@ -367,13 +331,13 @@ pub unsafe extern "C" fn unshare_main(
   if !setgrp_str.is_null() {
     if strcmp(setgrp_str, b"allow\x00" as *const u8 as *const libc::c_char) == 0 {
       if opts & OPT_map_root as libc::c_int as libc::c_uint != 0 {
-        bb_simple_error_msg_and_die(
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
           b"--setgroups=allow and --map-root-user are mutually exclusive\x00" as *const u8
             as *const libc::c_char,
         );
       }
     } else if strcmp(setgrp_str, b"deny\x00" as *const u8 as *const libc::c_char) != 0 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"unrecognized: --%s=%s\x00" as *const u8 as *const libc::c_char,
         b"setgroups\x00" as *const u8 as *const libc::c_char,
         setgrp_str,
@@ -415,8 +379,8 @@ pub unsafe extern "C" fn unshare_main(
      * pid namespace.
      */
     let mut ppid: pid_t = getpid();
-    xpipe(&mut fdp.rd);
-    child = xfork();
+    crate::libbb::xfuncs_printf::xpipe(&mut fdp.rd);
+    child = crate::libbb::xfuncs_printf::xfork();
     if child == 0 {
       /* Child */
       close(fdp.wr);
@@ -433,7 +397,7 @@ pub unsafe extern "C" fn unshare_main(
     }
   }
   if unshare(unsflags) != 0 {
-    bb_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_perror_msg_and_die(
       b"unshare(0x%x)\x00" as *const u8 as *const libc::c_char,
       unsflags,
     );
@@ -446,7 +410,7 @@ pub unsafe extern "C" fn unshare_main(
   if need_mount != 0 {
     /* Wait for the child to finish mounting the namespaces. */
     if opts & OPT_mount as libc::c_int as libc::c_uint != 0 {
-      let mut exit_status: libc::c_int = wait_for_exitstatus(child);
+      let mut exit_status: libc::c_int = crate::libbb::xfuncs::wait_for_exitstatus(child);
       if exit_status & 0x7fi32 == 0 && (exit_status & 0xff00i32) >> 8i32 != 0 {
         return (exit_status & 0xff00i32) >> 8i32;
       }
@@ -465,7 +429,7 @@ pub unsafe extern "C" fn unshare_main(
    * that'll become PID 1 in this new namespace.
    */
   if opts & OPT_fork as libc::c_int as libc::c_uint != 0 {
-    xvfork_parent_waits_and_exits();
+    crate::libbb::xfuncs_printf::xvfork_parent_waits_and_exits();
     /* Child continues */
   }
   if opts & OPT_map_root as libc::c_int as libc::c_uint != 0 {
@@ -476,7 +440,7 @@ pub unsafe extern "C" fn unshare_main(
      * first to permanently disable the ability to call setgroups
      * in that user namespace.
      */
-    xopen_xwrite_close(
+    crate::libbb::write::xopen_xwrite_close(
       b"/proc/self/setgroups\x00" as *const u8 as *const libc::c_char,
       b"deny\x00" as *const u8 as *const libc::c_char,
     );
@@ -485,7 +449,7 @@ pub unsafe extern "C" fn unshare_main(
       b"0 %u 1\x00" as *const u8 as *const libc::c_char,
       reuid,
     );
-    xopen_xwrite_close(
+    crate::libbb::write::xopen_xwrite_close(
       b"/proc/self/uid_map\x00" as *const u8 as *const libc::c_char,
       uidmap_buf.as_mut_ptr(),
     );
@@ -494,13 +458,13 @@ pub unsafe extern "C" fn unshare_main(
       b"0 %u 1\x00" as *const u8 as *const libc::c_char,
       regid,
     );
-    xopen_xwrite_close(
+    crate::libbb::write::xopen_xwrite_close(
       b"/proc/self/gid_map\x00" as *const u8 as *const libc::c_char,
       uidmap_buf.as_mut_ptr(),
     );
   } else if !setgrp_str.is_null() {
     /* Write "allow" or "deny" */
-    xopen_xwrite_close(
+    crate::libbb::write::xopen_xwrite_close(
       b"/proc/self/setgroups\x00" as *const u8 as *const libc::c_char,
       setgrp_str,
     );
@@ -535,5 +499,5 @@ pub unsafe extern "C" fn unshare_main(
         as libc::c_ulong,
     );
   }
-  exec_prog_or_SHELL(argv);
+  crate::libbb::executable::exec_prog_or_SHELL(argv);
 }

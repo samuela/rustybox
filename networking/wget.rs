@@ -1,6 +1,14 @@
+use crate::libbb::llist::llist_t;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::bb_progress_t;
+use crate::librb::len_and_sockaddr;
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::tls_state;
+use crate::librb::uoff_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
@@ -11,12 +19,21 @@ use libc::fclose;
 use libc::fprintf;
 use libc::free;
 use libc::getenv;
+use libc::in_addr;
+use libc::off64_t;
+use libc::off_t;
 use libc::open;
+use libc::pid_t;
+use libc::pollfd;
+use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::sprintf;
 use libc::strchr;
 use libc::strcmp;
 use libc::strrchr;
 use libc::strstr;
+use libc::FILE;
 extern "C" {
   pub type tls_handshake_data;
 
@@ -34,15 +51,6 @@ extern "C" {
   static ptr_to_globals: *mut globals;
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn bb_progress_update(
-    p: *mut bb_progress_t,
-    beg_range: uoff_t,
-    transferred: uoff_t,
-    totalsize: uoff_t,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_progress_init(p: *mut bb_progress_t, curfile: *const libc::c_char);
 
   #[no_mangle]
   fn socketpair(
@@ -101,57 +109,6 @@ extern "C" {
     __buf: *mut libc::c_void,
   ) -> libc::c_int;
 
-  #[no_mangle]
-  fn skip_non_whitespace(_: *const libc::c_char) -> *mut libc::c_char;
-
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_get_last_path_component_nostrip(path: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn ndelay_on(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn ndelay_off(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xdup2(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn xconnect_stream(lsa: *const len_and_sockaddr) -> libc::c_int;
-  #[no_mangle]
-  fn xhost2sockaddr(host: *const libc::c_char, port: libc::c_int) -> *mut len_and_sockaddr;
-  #[no_mangle]
-  fn set_nport(sa: *mut sockaddr, port: libc::c_uint);
-  #[no_mangle]
-  fn xmalloc_sockaddr2dotted(sa: *const sockaddr) -> *mut libc::c_char;
-  #[no_mangle]
-  fn tls_handshake(tls: *mut tls_state_t, sni: *const libc::c_char);
-  #[no_mangle]
-  fn tls_run_copy_loop(tls: *mut tls_state_t, flags: libc::c_uint);
-  #[no_mangle]
-  fn parse_pasv_epsv(buf: *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn overlapping_strcpy(dst: *mut libc::c_char, src: *const libc::c_char);
-  #[no_mangle]
-  fn bb_putchar_stderr(ch: libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-  #[no_mangle]
-  fn xclose(fd: libc::c_int);
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn safe_poll(ufds: *mut pollfd, nfds: nfds_t, timeout_ms: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn str_tolower(str: *mut libc::c_char) -> *mut libc::c_char;
   /* Non-aborting kind of convertors: bb_strto[u][l]l */
   /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
    * errno = EINVAL if value was not '\0' terminated, but otherwise ok
@@ -163,59 +120,13 @@ extern "C" {
    * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
    *    return value is all-ones in this case.
    */
-  #[no_mangle]
-  fn bb_strtoull(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xatoi_positive(numstr: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn xfork() -> pid_t;
+
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn llist_pop(elm: *mut *mut llist_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xfunc_die() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_die_memory_exhausted() -> !;
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn percent_decode_in_place(str: *mut libc::c_char, strict: libc::c_int) -> *mut libc::c_char;
+
   #[no_mangle]
   static bb_uuenc_tbl_base64: [libc::c_char; 0];
-  #[no_mangle]
-  fn bb_uuencode(
-    store: *mut libc::c_char,
-    s: *const libc::c_void,
-    length: libc::c_int,
-    tbl: *const libc::c_char,
-  );
+
   #[no_mangle]
   fn execvp(__file: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
@@ -224,14 +135,8 @@ extern "C" {
   fn vfork() -> libc::c_int;
 }
 
-use libc::off64_t;
 pub type __socklen_t = libc::c_uint;
-use crate::librb::smallint;
 pub type smalluint = libc::c_uchar;
-use crate::librb::size_t;
-use libc::off_t;
-use libc::pid_t;
-pub type socklen_t = __socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -242,118 +147,33 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
 pub type C2RustUnnamed = libc::c_uint;
 pub const SHUT_RDWR: C2RustUnnamed = 2;
 pub const SHUT_WR: C2RustUnnamed = 1;
 pub const SHUT_RD: C2RustUnnamed = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed_0,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_0 {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
 pub type in_addr_t = u32;
-use crate::librb::signal::__sighandler_t;
-use libc::FILE;
 pub type nfds_t = libc::c_ulong;
-use crate::librb::uoff_t;
-use libc::pollfd;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_1,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_1 {
   pub sa: sockaddr,
   pub sin: sockaddr_in,
   pub sin6: sockaddr_in6,
 }
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct tls_aes {
-  pub key: [u32; 60],
-  pub rounds: libc::c_uint,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct tls_state {
-  pub flags: libc::c_uint,
-  pub ofd: libc::c_int,
-  pub ifd: libc::c_int,
-  pub min_encrypted_len_on_read: libc::c_uint,
-  pub cipher_id: u16,
-  pub MAC_size: libc::c_uint,
-  pub key_size: libc::c_uint,
-  pub IV_size: libc::c_uint,
-  pub outbuf: *mut u8,
-  pub outbuf_size: libc::c_int,
-  pub inbuf_size: libc::c_int,
-  pub ofs_to_buffered: libc::c_int,
-  pub buffered_size: libc::c_int,
-  pub inbuf: *mut u8,
-  pub hsd: *mut tls_handshake_data,
-  pub write_seq64_be: u64,
-  pub client_write_key: *mut u8,
-  pub server_write_key: *mut u8,
-  pub client_write_IV: *mut u8,
-  pub server_write_IV: *mut u8,
-  pub client_write_MAC_key: [u8; 32],
-  pub server_write_MAC_k__: [u8; 32],
-  pub client_write_k__: [u8; 32],
-  pub server_write_k__: [u8; 32],
-  pub client_write_I_: [u8; 4],
-  pub server_write_I_: [u8; 4],
-  pub aes_encrypt: tls_aes,
-  pub aes_decrypt: tls_aes,
-  pub H: [u8; 16],
-}
 pub type tls_state_t = tls_state;
-use crate::libbb::llist::llist_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
-pub struct bb_progress_t {
-  pub last_size: libc::c_uint,
-  pub last_update_sec: libc::c_uint,
-  pub last_change_sec: libc::c_uint,
-  pub start_sec: libc::c_uint,
-  pub curfile: *const libc::c_char,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct globals {
   pub content_len: off_t,
   pub beg_range: off_t,
@@ -377,8 +197,9 @@ pub struct globals {
   pub got_clen: smallint,
   pub wget_buf: [libc::c_char; 4096],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct host_info {
   pub allocated: *mut libc::c_char,
   pub path: *const libc::c_char,
@@ -433,8 +254,9 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
 }
 #[inline]
 unsafe extern "C" fn new_tls_state() -> *mut tls_state_t {
-  let mut tls: *mut tls_state_t =
-    xzalloc(::std::mem::size_of::<tls_state_t>() as libc::c_ulong) as *mut tls_state_t;
+  let mut tls: *mut tls_state_t = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<
+    tls_state_t,
+  >() as libc::c_ulong) as *mut tls_state_t;
   return tls;
 }
 #[inline(always)]
@@ -443,7 +265,7 @@ unsafe extern "C" fn bb_strtoul(
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_ulong {
-  return bb_strtoull(arg, endp, base) as libc::c_ulong;
+  return crate::libbb::bb_strtonum::bb_strtoull(arg, endp, base) as libc::c_ulong;
 }
 static mut P_FTP: [libc::c_char; 4] = [102, 116, 112, 0];
 static mut P_HTTP: [libc::c_char; 5] = [104, 116, 116, 112, 0];
@@ -464,9 +286,9 @@ unsafe extern "C" fn progress_meter(mut flag: libc::c_int) {
     return;
   } /* it's tty */
   if flag == PROGRESS_START as libc::c_int {
-    bb_progress_init(&mut (*ptr_to_globals).pmt, (*ptr_to_globals).curfile);
+    crate::libbb::progress::bb_progress_init(&mut (*ptr_to_globals).pmt, (*ptr_to_globals).curfile);
   }
-  notty = bb_progress_update(
+  notty = crate::libbb::progress::bb_progress_update(
     &mut (*ptr_to_globals).pmt,
     (*ptr_to_globals).beg_range as uoff_t,
     (*ptr_to_globals).transferred as uoff_t,
@@ -480,7 +302,7 @@ unsafe extern "C" fn progress_meter(mut flag: libc::c_int) {
     free((*ptr_to_globals).pmt.curfile as *mut libc::c_char as *mut libc::c_void);
     (*ptr_to_globals).pmt.curfile = std::ptr::null();
     if notty == 0 {
-      bb_putchar_stderr('\n' as i32 as libc::c_char);
+      crate::libbb::xfuncs::bb_putchar_stderr('\n' as i32 as libc::c_char);
     }
     (*ptr_to_globals).transferred = 0 as off_t
   };
@@ -517,7 +339,7 @@ unsafe extern "C" fn strip_ipv6_scope_id(mut host: *mut libc::c_char) {
     return;
   }
   /* cp points to "]...", scope points to "%eth0]..." */
-  overlapping_strcpy(scope, cp);
+  crate::libbb::safe_strncpy::overlapping_strcpy(scope, cp);
 }
 /* Base64-encode character string. */
 unsafe extern "C" fn base64enc(mut str: *const libc::c_char) -> *mut libc::c_char {
@@ -529,7 +351,7 @@ unsafe extern "C" fn base64enc(mut str: *const libc::c_char) -> *mut libc::c_cha
       .wrapping_mul(3i32 as libc::c_ulong)
       .wrapping_sub(10i32 as libc::c_ulong),
   ) as libc::c_uint;
-  bb_uuencode(
+  crate::libbb::uuencode::bb_uuencode(
     (*ptr_to_globals).wget_buf.as_mut_ptr(),
     str as *const libc::c_void,
     len as libc::c_int,
@@ -540,7 +362,9 @@ unsafe extern "C" fn base64enc(mut str: *const libc::c_char) -> *mut libc::c_cha
 unsafe extern "C" fn alarm_handler(mut _sig: libc::c_int) {
   /* This is theoretically unsafe (uses stdio and malloc in signal handler) */
   if (*ptr_to_globals).die_if_timed_out != 0 {
-    bb_simple_error_msg_and_die(b"download timed out\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+      b"download timed out\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }
 unsafe extern "C" fn set_alarm() {
@@ -567,21 +391,11 @@ unsafe extern "C" fn is_ip_address(mut string: *const libc::c_char) -> libc::c_i
     &mut sa.sin_addr as *mut in_addr as *mut libc::c_void,
   );
   if result == 0 {
-    let mut sa6: sockaddr_in6 = sockaddr_in6 {
-      sin6_family: 0,
-      sin6_port: 0,
-      sin6_flowinfo: 0,
-      sin6_addr: in6_addr {
-        __in6_u: C2RustUnnamed_0 {
-          __u6_addr8: [0; 16],
-        },
-      },
-      sin6_scope_id: 0,
-    };
+    let mut sa6: sockaddr_in6 = std::mem::zeroed();
     result = inet_pton(
       10i32,
       string,
-      &mut sa6.sin6_addr as *mut in6_addr as *mut libc::c_void,
+      &mut sa6.sin6_addr as *mut libc::in6_addr as *mut libc::c_void,
     )
   }
   return (result == 1i32) as libc::c_int;
@@ -590,13 +404,13 @@ unsafe extern "C" fn open_socket(mut lsa: *mut len_and_sockaddr) -> *mut FILE {
   let mut fd: libc::c_int = 0;
   let mut fp: *mut FILE = std::ptr::null_mut();
   set_alarm();
-  fd = xconnect_stream(lsa);
+  fd = crate::libbb::xconnect::xconnect_stream(lsa);
   (*ptr_to_globals).die_if_timed_out = 0 as smallint;
   /* glibc 2.4 seems to try seeking on it - ??! */
   /* hopefully it understands what ESPIPE means... */
   fp = fdopen(fd, b"r+\x00" as *const u8 as *const libc::c_char);
   if fp.is_null() {
-    bb_die_memory_exhausted();
+    crate::libbb::xfuncs_printf::bb_die_memory_exhausted();
   }
   return fp;
 }
@@ -636,7 +450,9 @@ unsafe extern "C" fn fgets_trim_sanitize(
   )
   .is_null()
   {
-    bb_simple_perror_msg_and_die(b"error getting response\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"error getting response\x00" as *const u8 as *const libc::c_char,
+    );
   }
   (*ptr_to_globals).die_if_timed_out = 0 as smallint;
   buf_ptr = strchrnul((*ptr_to_globals).wget_buf.as_mut_ptr(), '\n' as i32);
@@ -689,7 +505,7 @@ unsafe extern "C" fn ftpcmd(
     }
   }
   (*ptr_to_globals).wget_buf[3] = '\u{0}' as i32 as libc::c_char;
-  result = xatoi_positive((*ptr_to_globals).wget_buf.as_mut_ptr());
+  result = crate::libbb::xatonum::xatoi_positive((*ptr_to_globals).wget_buf.as_mut_ptr());
   (*ptr_to_globals).wget_buf[3] = ' ' as i32 as libc::c_char;
   return result;
 }
@@ -698,7 +514,7 @@ unsafe extern "C" fn parse_url(mut src_url: *const libc::c_char, mut h: *mut hos
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   free((*h).allocated as *mut libc::c_void);
-  url = xstrdup(src_url);
+  url = crate::libbb::xfuncs_printf::xstrdup(src_url);
   (*h).allocated = url;
   (*h).protocol = P_FTP.as_ptr();
   p = strstr(url, b"://\x00" as *const u8 as *const libc::c_char);
@@ -721,7 +537,7 @@ unsafe extern "C" fn parse_url(mut src_url: *const libc::c_char, mut h: *mut hos
       current_block_19 = 15973521690641649086;
     } else {
       *p = ':' as i32 as libc::c_char;
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"not an http or ftp url: %s\x00" as *const u8 as *const libc::c_char,
         url,
       );
@@ -784,7 +600,9 @@ unsafe extern "C" fn parse_url(mut src_url: *const libc::c_char, mut h: *mut hos
     // Standard wget and curl do this too.
     *sp = '\u{0}' as i32 as libc::c_char;
     free((*h).user as *mut libc::c_void);
-    (*h).user = xstrdup(percent_decode_in_place((*h).host, 0));
+    (*h).user = crate::libbb::xfuncs_printf::xstrdup(
+      crate::libbb::percent_decode::percent_decode_in_place((*h).host, 0),
+    );
     (*h).host = sp.offset(1)
   };
   /* else: h->user remains NULL, or as set by original request
@@ -822,7 +640,7 @@ unsafe extern "C" fn get_sanitized_hdr(mut fp: *mut FILE) -> *mut libc::c_char {
   }
   /* verify we are at the end of the header name */
   if *s as libc::c_int != ':' as i32 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"bad header line: %s\x00" as *const u8 as *const libc::c_char,
       (*ptr_to_globals).wget_buf.as_mut_ptr(),
     );
@@ -845,9 +663,11 @@ unsafe extern "C" fn get_sanitized_hdr(mut fp: *mut FILE) -> *mut libc::c_char {
   return hdrval;
 }
 unsafe extern "C" fn reset_beg_range_to_zero() {
-  bb_simple_error_msg(b"restart failed\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::verror_msg::bb_simple_error_msg(
+    b"restart failed\x00" as *const u8 as *const libc::c_char,
+  );
   (*ptr_to_globals).beg_range = 0 as off_t;
-  xlseek((*ptr_to_globals).output_fd, 0 as off_t, 0);
+  crate::libbb::xfuncs_printf::xlseek((*ptr_to_globals).output_fd, 0 as off_t, 0);
   /* Done at the end instead: */
   /* ftruncate(G.output_fd, 0); */
 }
@@ -862,19 +682,27 @@ unsafe extern "C" fn spawn_https_helper_openssl(
   let mut child_failed: libc::c_int = 0;
   if socketpair(1i32, SOCK_STREAM as libc::c_int, 0, sp.as_mut_ptr()) != 0 {
     /* Kernel can have AF_UNIX support disabled */
-    bb_simple_perror_msg_and_die(b"socketpair\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"socketpair\x00" as *const u8 as *const libc::c_char,
+    );
   }
   if strchr(host, ':' as i32).is_null() {
-    allocated = xasprintf(b"%s:%u\x00" as *const u8 as *const libc::c_char, host, port);
+    allocated = crate::libbb::xfuncs_printf::xasprintf(
+      b"%s:%u\x00" as *const u8 as *const libc::c_char,
+      host,
+      port,
+    );
     host = allocated
   }
-  servername = xstrdup(host);
+  servername = crate::libbb::xfuncs_printf::xstrdup(host);
   *strrchr(servername, ':' as i32).offset(0) = '\u{0}' as i32 as libc::c_char;
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   pid = {
     let mut bb__xvfork_pid: pid_t = vfork();
     if bb__xvfork_pid < 0 {
-      bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"vfork\x00" as *const u8 as *const libc::c_char,
+      );
     }
     bb__xvfork_pid
   };
@@ -882,15 +710,18 @@ unsafe extern "C" fn spawn_https_helper_openssl(
     /* Child */
     let mut argv: [*mut libc::c_char; 8] = [0 as *mut libc::c_char; 8];
     close(sp[0]);
-    xmove_fd(sp[1], 0);
-    xdup2(0i32, 1i32);
+    crate::libbb::xfuncs_printf::xmove_fd(sp[1], 0);
+    crate::libbb::xfuncs_printf::xdup2(0i32, 1i32);
     /*
      * openssl s_client -quiet -connect www.kernel.org:443 2>/dev/null
      * It prints some debug stuff on stderr, don't know how to suppress it.
      * Work around by dev-nulling stderr. We lose all error messages :(
      */
-    xmove_fd(2i32, 3i32);
-    xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0o2i32);
+    crate::libbb::xfuncs_printf::xmove_fd(2i32, 3i32);
+    crate::libbb::xfuncs_printf::xopen(
+      b"/dev/null\x00" as *const u8 as *const libc::c_char,
+      0o2i32,
+    );
     memset(
       &mut argv as *mut [*mut libc::c_char; 8] as *mut libc::c_void,
       0,
@@ -911,9 +742,9 @@ unsafe extern "C" fn spawn_https_helper_openssl(
       argv[6] = servername
     }
     execvp(argv[0], argv.as_mut_ptr() as *const *mut libc::c_char);
-    xmove_fd(3i32, 2i32);
+    crate::libbb::xfuncs_printf::xmove_fd(3i32, 2i32);
     ::std::ptr::write_volatile(&mut child_failed as *mut libc::c_int, 1i32);
-    xfunc_die();
+    crate::libbb::xfunc_die::xfunc_die();
     /* notreached */
   }
   /* Parent */
@@ -937,27 +768,31 @@ unsafe extern "C" fn spawn_ssl_client(
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if option_mask32 & WGET_OPT_NO_CHECK_CERT as libc::c_int as libc::c_uint == 0 {
     option_mask32 |= WGET_OPT_NO_CHECK_CERT as libc::c_int as libc::c_uint;
-    bb_simple_error_msg(
+    crate::libbb::verror_msg::bb_simple_error_msg(
       b"note: TLS certificate validation not implemented\x00" as *const u8 as *const libc::c_char,
     );
   }
-  servername = xstrdup(host);
+  servername = crate::libbb::xfuncs_printf::xstrdup(host);
   p = strrchr(servername, ':' as i32);
   if !p.is_null() {
     *p = '\u{0}' as i32 as libc::c_char
   }
   if socketpair(1i32, SOCK_STREAM as libc::c_int, 0, sp.as_mut_ptr()) != 0 {
     /* Kernel can have AF_UNIX support disabled */
-    bb_simple_perror_msg_and_die(b"socketpair\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"socketpair\x00" as *const u8 as *const libc::c_char,
+    );
   }
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
   pid = if 1i32 != 0 {
-    xfork()
+    crate::libbb::xfuncs_printf::xfork()
   } else {
     ({
       let mut bb__xvfork_pid: pid_t = vfork();
       if bb__xvfork_pid < 0 {
-        bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"vfork\x00" as *const u8 as *const libc::c_char,
+        );
       }
       bb__xvfork_pid
     })
@@ -965,20 +800,20 @@ unsafe extern "C" fn spawn_ssl_client(
   if pid == 0 {
     /* Child */
     close(sp[0]);
-    xmove_fd(sp[1], 0);
-    xdup2(0i32, 1i32);
+    crate::libbb::xfuncs_printf::xmove_fd(sp[1], 0);
+    crate::libbb::xfuncs_printf::xdup2(0i32, 1i32);
     let mut tls: *mut tls_state_t = new_tls_state();
     (*tls).ofd = network_fd;
     (*tls).ifd = (*tls).ofd;
-    tls_handshake(tls, servername);
-    tls_run_copy_loop(tls, flags as libc::c_uint);
+    crate::networking::tls::tls_handshake(tls, servername);
+    crate::networking::tls::tls_run_copy_loop(tls, flags as libc::c_uint);
     exit(0i32);
     /* notreached */
   }
   /* Parent */
   free(servername as *mut libc::c_void);
   close(sp[1]);
-  xmove_fd(sp[0], network_fd);
+  crate::libbb::xfuncs_printf::xmove_fd(sp[0], network_fd);
 }
 unsafe extern "C" fn prepare_ftp_session(
   mut dfpp: *mut *mut FILE,
@@ -994,7 +829,7 @@ unsafe extern "C" fn prepare_ftp_session(
     spawn_ssl_client((*target).host, fileno_unlocked(sfp), 1i32 << 0);
   }
   if ftpcmd(0 as *const libc::c_char, 0 as *const libc::c_char, sfp) != 220i32 {
-    bb_simple_error_msg_and_die((*ptr_to_globals).wget_buf.as_mut_ptr());
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die((*ptr_to_globals).wget_buf.as_mut_ptr());
   }
   /* note: ftpcmd() sanitizes G.wget_buf, ok to print */
   /* Split username:password pair */
@@ -1036,7 +871,7 @@ unsafe extern "C" fn prepare_ftp_session(
     17720461952361946060 =>
     /* fall through (failed login) */
     {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"ftp login: %s\x00" as *const u8 as *const libc::c_char,
         (*ptr_to_globals).wget_buf.as_mut_ptr(),
       );
@@ -1061,7 +896,7 @@ unsafe extern "C" fn prepare_ftp_session(
       10i32,
     ) as off_t;
     if (*ptr_to_globals).content_len < 0 || *bb_errno != 0 {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"bad SIZE value \'%s\'\x00" as *const u8 as *const libc::c_char,
         (*ptr_to_globals).wget_buf.as_mut_ptr().offset(4),
       );
@@ -1091,9 +926,11 @@ unsafe extern "C" fn prepare_ftp_session(
     7056779235015430508 =>
     /* good */
     {
-      port = parse_pasv_epsv((*ptr_to_globals).wget_buf.as_mut_ptr());
+      port = crate::networking::parse_pasv_epsv::parse_pasv_epsv(
+        (*ptr_to_globals).wget_buf.as_mut_ptr(),
+      );
       if !(port < 0) {
-        set_nport(
+        crate::libbb::xconnect::set_nport(
           &mut (*lsa).u.sa,
           ({
             let mut __v: libc::c_ushort = 0;
@@ -1105,10 +942,8 @@ unsafe extern "C" fn prepare_ftp_session(
               let fresh3 = &mut __v;
               let fresh4;
               let fresh5 = __x;
-              asm!("rorw $$8, ${0:w}" : "=r" (fresh4) :
-                                        "0"
-                                        (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                                        : "cc");
+              asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
               c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
             }
             __v
@@ -1154,7 +989,7 @@ unsafe extern "C" fn prepare_ftp_session(
           sfp,
         ) > 150i32
         {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"bad response to %s: %s\x00" as *const u8 as *const libc::c_char,
             b"RETR\x00" as *const u8 as *const libc::c_char,
             (*ptr_to_globals).wget_buf.as_mut_ptr(),
@@ -1165,7 +1000,7 @@ unsafe extern "C" fn prepare_ftp_session(
     }
     _ => {}
   }
-  bb_error_msg_and_die(
+  crate::libbb::verror_msg::bb_error_msg_and_die(
     b"bad response to %s: %s\x00" as *const u8 as *const libc::c_char,
     b"PASV\x00" as *const u8 as *const libc::c_char,
     (*ptr_to_globals).wget_buf.as_mut_ptr(),
@@ -1213,7 +1048,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
          * very carefully around EAGAIN. See explanation at
          * clearerr() calls.
          */
-        ndelay_on(polldata.fd);
+        crate::libbb::xfuncs::ndelay_on(polldata.fd);
         loop
         /*
          * Note that fgets may result in some data being buffered in dfp.
@@ -1253,7 +1088,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
             dfp,
           ) as libc::c_int;
           if n > 0 {
-            xwrite(
+            crate::libbb::xfuncs_printf::xwrite(
               (*ptr_to_globals).output_fd,
               (*ptr_to_globals).wget_buf.as_mut_ptr() as *const libc::c_void,
               n as size_t,
@@ -1269,7 +1104,9 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
           } else if *bb_errno != 11i32 {
             if ferror_unlocked(dfp) != 0 {
               progress_meter(PROGRESS_END as libc::c_int);
-              bb_simple_perror_msg_and_die(b"read error\x00" as *const u8 as *const libc::c_char);
+              crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+                b"read error\x00" as *const u8 as *const libc::c_char,
+              );
             }
             break;
           /* n <= 0.
@@ -1279,13 +1116,14 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
            * fread does not distinguish between EOF and error.
            */
           /* EOF, not error */
-          } else if safe_poll(&mut polldata, 1i32 as nfds_t, 1000i32) == 0 {
+          } else if crate::libbb::safe_poll::safe_poll(&mut polldata, 1i32 as nfds_t, 1000i32) == 0
+          {
             if second_cnt != 0 as libc::c_uint && {
               second_cnt = second_cnt.wrapping_sub(1);
               (second_cnt) == 0 as libc::c_uint
             } {
               progress_meter(PROGRESS_END as libc::c_int);
-              bb_simple_error_msg_and_die(
+              crate::libbb::verror_msg::bb_simple_error_msg_and_die(
                 b"download timed out\x00" as *const u8 as *const libc::c_char,
               );
             }
@@ -1303,7 +1141,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
           progress_meter(PROGRESS_BUMP as libc::c_int); /* else fgets can get very unhappy */
         }
         clearerr(dfp);
-        ndelay_off(polldata.fd);
+        crate::libbb::xfuncs::ndelay_off(polldata.fd);
         if (*ptr_to_globals).chunked == 0 {
           break;
         }
@@ -1325,7 +1163,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
          * smashing the heap later. Ensure >= 0.
          */
         if (*ptr_to_globals).content_len < 0 || *bb_errno != 0 {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"bad chunk length \'%s\'\x00" as *const u8 as *const libc::c_char,
             (*ptr_to_globals).wget_buf.as_mut_ptr(),
           ); /* all done! */
@@ -1343,7 +1181,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
   (*ptr_to_globals).got_clen = 1i32 as smallint; /* makes it show 100% even for download of (formerly) unknown size */
   progress_meter(PROGRESS_END as libc::c_int);
   if (*ptr_to_globals).content_len != 0 {
-    bb_simple_perror_msg_and_die(
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
       b"connection closed prematurely\x00" as *const u8 as *const libc::c_char,
     );
     /* GNU wget says "DATE TIME (NN MB/s) - Connection closed at byte NNN. Retrying." */
@@ -1426,14 +1264,15 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
     server.protocol = target.protocol;
     server.port = target.port;
     //free(server.allocated); - can't be non-NULL
-    server.allocated = xstrdup(target.host);
+    server.allocated = crate::libbb::xfuncs_printf::xstrdup(target.host);
     server.host = server.allocated
   }
   strip_ipv6_scope_id(target.host);
   /* If there was no -O FILE, guess output filename */
   fname_out_alloc = std::ptr::null_mut::<libc::c_char>();
   if option_mask32 & WGET_OPT_OUTNAME as libc::c_int as libc::c_uint == 0 {
-    (*ptr_to_globals).fname_out = bb_get_last_path_component_nostrip(target.path);
+    (*ptr_to_globals).fname_out =
+      crate::libbb::get_last_path_component::bb_get_last_path_component_nostrip(target.path);
     /* handle "wget http://kernel.org//" */
     if *(*ptr_to_globals).fname_out.offset(0) as libc::c_int == '/' as i32
       || *(*ptr_to_globals).fname_out.offset(0) == 0
@@ -1443,30 +1282,38 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
     }
     /* -P DIR is considered only if there was no -O FILE */
     if !(*ptr_to_globals).dir_prefix.is_null() {
-      fname_out_alloc = concat_path_file((*ptr_to_globals).dir_prefix, (*ptr_to_globals).fname_out);
+      fname_out_alloc = crate::libbb::concat_path_file::concat_path_file(
+        (*ptr_to_globals).dir_prefix,
+        (*ptr_to_globals).fname_out,
+      );
       (*ptr_to_globals).fname_out = fname_out_alloc
     } else {
       /* redirects may free target.path later, need to make a copy */
-      fname_out_alloc = xstrdup((*ptr_to_globals).fname_out);
+      fname_out_alloc = crate::libbb::xfuncs_printf::xstrdup((*ptr_to_globals).fname_out);
       (*ptr_to_globals).fname_out = fname_out_alloc
     }
   }
-  (*ptr_to_globals).curfile = bb_get_last_path_component_nostrip((*ptr_to_globals).fname_out);
+  (*ptr_to_globals).curfile =
+    crate::libbb::get_last_path_component::bb_get_last_path_component_nostrip(
+      (*ptr_to_globals).fname_out,
+    );
   /* Determine where to start transfer */
   (*ptr_to_globals).beg_range = 0 as off_t;
   if option_mask32 & WGET_OPT_CONTINUE as libc::c_int as libc::c_uint != 0 {
     (*ptr_to_globals).output_fd = open((*ptr_to_globals).fname_out, 0o1i32);
     if (*ptr_to_globals).output_fd >= 0 {
-      (*ptr_to_globals).beg_range = xlseek((*ptr_to_globals).output_fd, 0 as off_t, 2i32)
+      (*ptr_to_globals).beg_range =
+        crate::libbb::xfuncs_printf::xlseek((*ptr_to_globals).output_fd, 0 as off_t, 2i32)
     }
     /* File doesn't exist. We do not create file here yet.
      * We are not sure it exists on remote side */
   }
   redir_limit = 16i32;
   'c_12019: loop {
-    lsa = xhost2sockaddr(server.host, server.port);
+    lsa = crate::libbb::xconnect::xhost2sockaddr(server.host, server.port);
     if option_mask32 & WGET_OPT_QUIET as libc::c_int as libc::c_uint == 0 {
-      let mut s: *mut libc::c_char = xmalloc_sockaddr2dotted(&mut (*lsa).u.sa);
+      let mut s: *mut libc::c_char =
+        crate::libbb::xconnect::xmalloc_sockaddr2dotted(&mut (*lsa).u.sa);
       fprintf(
         stderr,
         b"Connecting to %s (%s)\n\x00" as *const u8 as *const libc::c_char,
@@ -1501,7 +1348,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
           } else {
             sfp = fdopen(fd, b"r+\x00" as *const u8 as *const libc::c_char);
             if sfp.is_null() {
-              bb_die_memory_exhausted();
+              crate::libbb::xfuncs_printf::bb_die_memory_exhausted();
             }
           }
         } else {
@@ -1611,7 +1458,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
         {
           fgets_trim_sanitize(sfp, b"  %s\n\x00" as *const u8 as *const libc::c_char);
           str = (*ptr_to_globals).wget_buf.as_mut_ptr();
-          str = skip_non_whitespace(str);
+          str = crate::libbb::skip_whitespace::skip_non_whitespace(str);
           str = skip_whitespace(str);
           // FIXME: no error check
           // xatou wouldn't work: "200 OK"
@@ -1748,13 +1595,15 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
             *s_0 = '\u{0}' as i32 as libc::c_char;
             s_0 = s_0.offset(-1)
           }
-          key = (index_in_strings(keywords.as_ptr(), (*ptr_to_globals).wget_buf.as_mut_ptr())
-            + 1i32) as smalluint;
+          key = (crate::libbb::compare_string_array::index_in_strings(
+            keywords.as_ptr(),
+            (*ptr_to_globals).wget_buf.as_mut_ptr(),
+          ) + 1i32) as smalluint;
           if key as libc::c_int == KEY_content_length as libc::c_int {
             (*ptr_to_globals).content_len =
               bb_strtoul(str, 0 as *mut *mut libc::c_char, 10i32) as off_t;
             if (*ptr_to_globals).content_len < 0 || *bb_errno != 0 {
-              bb_error_msg_and_die(
+              crate::libbb::verror_msg::bb_error_msg_and_die(
                 b"content-length %s is garbage\x00" as *const u8 as *const libc::c_char,
                 str,
               );
@@ -1763,11 +1612,11 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
           } else {
             if key as libc::c_int == KEY_transfer_encoding as libc::c_int {
               if strcmp(
-                str_tolower(str),
+                crate::libbb::str_tolower::str_tolower(str),
                 b"chunked\x00" as *const u8 as *const libc::c_char,
               ) != 0
               {
-                bb_error_msg_and_die(
+                crate::libbb::verror_msg::bb_error_msg_and_die(
                   b"transfer encoding \'%s\' is not supported\x00" as *const u8
                     as *const libc::c_char,
                   str,
@@ -1780,14 +1629,14 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
             }
             redir_limit -= 1;
             if redir_limit == 0 {
-              bb_simple_error_msg_and_die(
+              crate::libbb::verror_msg::bb_simple_error_msg_and_die(
                 b"too many redirections\x00" as *const u8 as *const libc::c_char,
               );
             }
             fclose(sfp);
             if *str.offset(0) as libc::c_int == '/' as i32 {
               free(redirected_path as *mut libc::c_void);
-              redirected_path = xstrdup(str.offset(1));
+              redirected_path = crate::libbb::xfuncs_printf::xstrdup(str.offset(1));
               target.path = redirected_path;
               continue 'c_12021;
             /* lsa stays the same: it's on the same server */
@@ -1831,7 +1680,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
     /* Partial Content even though we did not ask for it??? */
     /* fall through */
     {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"server returned error: %s\x00" as *const u8 as *const libc::c_char,
         (*ptr_to_globals).wget_buf.as_mut_ptr(),
       );
@@ -1840,12 +1689,14 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
       free(lsa as *mut libc::c_void);
       if option_mask32 & WGET_OPT_SPIDER as libc::c_int as libc::c_uint == 0 {
         if (*ptr_to_globals).output_fd < 0 {
-          (*ptr_to_globals).output_fd =
-            xopen((*ptr_to_globals).fname_out, (*ptr_to_globals).o_flags)
+          (*ptr_to_globals).output_fd = crate::libbb::xfuncs_printf::xopen(
+            (*ptr_to_globals).fname_out,
+            (*ptr_to_globals).o_flags,
+          )
         }
         retrieve_file_data(dfp);
         if option_mask32 & WGET_OPT_OUTNAME as libc::c_int as libc::c_uint == 0 {
-          xclose((*ptr_to_globals).output_fd);
+          crate::libbb::xfuncs_printf::xclose((*ptr_to_globals).output_fd);
           (*ptr_to_globals).output_fd = -1i32
         }
       } else if option_mask32 & WGET_OPT_QUIET as libc::c_int as libc::c_uint == 0 {
@@ -1858,7 +1709,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
         /* It's ftp. Close data connection properly */
         fclose(dfp);
         if ftpcmd(0 as *const libc::c_char, 0 as *const libc::c_char, sfp) != 226i32 {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             b"ftp error: %s\x00" as *const u8 as *const libc::c_char,
             (*ptr_to_globals).wget_buf.as_mut_ptr(),
           );
@@ -1899,7 +1750,8 @@ pub unsafe extern "C" fn wget_main(
   let mut headers_llist: *mut llist_t = std::ptr::null_mut();
   let ref mut fresh6 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh6 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh6 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).timeout_seconds = 900i32 as libc::c_uint;
   signal(
@@ -1908,7 +1760,7 @@ pub unsafe extern "C" fn wget_main(
   );
   (*ptr_to_globals).proxy_flag = b"on\x00" as *const u8 as *const libc::c_char;
   (*ptr_to_globals).user_agent = b"Wget\x00" as *const u8 as *const libc::c_char;
-  getopt32long(
+  crate::libbb::getopt32::getopt32long(
     argv,
     b"^cqSO:o:P:Y:U:T:+t:n::\x00-1:\xff::\x00" as *const u8 as *const libc::c_char,
     wget_longopts.as_ptr(),
@@ -1943,7 +1795,7 @@ pub unsafe extern "C" fn wget_main(
       size = sprintf(
         hdr,
         b"%s\r\n\x00" as *const u8 as *const libc::c_char,
-        llist_pop(&mut headers_llist) as *mut libc::c_char,
+        crate::libbb::llist::llist_pop(&mut headers_llist) as *mut libc::c_char,
       );
       /* a bit like index_in_substrings but don't match full key */
       bit = 1i32;
@@ -1983,9 +1835,12 @@ pub unsafe extern "C" fn wget_main(
     {
       /* not -o - ? */
       /* compat with wget: -o FILE can overwrite */
-      (*ptr_to_globals).log_fd = xopen((*ptr_to_globals).fname_log, 0o1i32 | 0o100i32 | 0o1000i32);
+      (*ptr_to_globals).log_fd = crate::libbb::xfuncs_printf::xopen(
+        (*ptr_to_globals).fname_log,
+        0o1i32 | 0o100i32 | 0o1000i32,
+      );
       /* Redirect only stderr to log file, so -O - will work */
-      xdup2((*ptr_to_globals).log_fd, 2i32);
+      crate::libbb::xfuncs_printf::xdup2((*ptr_to_globals).log_fd, 2i32);
     }
   }
   while !(*argv).is_null() {
@@ -1994,10 +1849,10 @@ pub unsafe extern "C" fn wget_main(
     download_one_url(*fresh7);
   }
   if (*ptr_to_globals).output_fd >= 0 {
-    xclose((*ptr_to_globals).output_fd);
+    crate::libbb::xfuncs_printf::xclose((*ptr_to_globals).output_fd);
   }
   if (*ptr_to_globals).log_fd >= 0 {
-    xclose((*ptr_to_globals).log_fd);
+    crate::libbb::xfuncs_printf::xclose((*ptr_to_globals).log_fd);
   }
   return 0;
 }

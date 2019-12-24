@@ -1,12 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
 use libc;
-extern "C" {
-
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-}
-
 use libc::stat;
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
@@ -41,7 +34,7 @@ pub unsafe extern "C" fn cp_mv_stat2(
 ) -> libc::c_int {
   if sf.expect("non-null function pointer")(fn_0, fn_stat) < 0 {
     if *bb_errno != 2i32 {
-      bb_perror_msg(
+      crate::libbb::perror_msg::bb_perror_msg(
         b"can\'t stat \'%s\'\x00" as *const u8 as *const libc::c_char,
         fn_0,
       );

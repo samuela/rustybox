@@ -11,35 +11,6 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn monotonic_us() -> libc::c_ulonglong;
-
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fflush_stdout_and_exit(retval: libc::c_int) -> !;
-  #[no_mangle]
-  fn fclose_if_not_stdin(file: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn xfopen_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn xatou(str: *const libc::c_char) -> libc::c_uint;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
 }
 
 pub type uintptr_t = libc::c_ulong;
@@ -50,7 +21,7 @@ unsafe extern "C" fn shuffle_lines(mut lines: *mut *mut libc::c_char, mut numlin
   let mut i: libc::c_uint = 0;
   let mut r: libc::c_uint = 0;
   let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  srand(monotonic_us() as libc::c_uint);
+  srand(crate::libbb::time::monotonic_us() as libc::c_uint);
   i = numlines.wrapping_sub(1i32 as libc::c_uint);
   while i > 0 as libc::c_uint {
     r = rand() as libc::c_uint;
@@ -80,7 +51,7 @@ pub unsafe extern "C" fn shuf_main(
   let mut lines: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut numlines: libc::c_uint = 0;
   let mut eol: libc::c_char = 0;
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^ei:n:o:z\x00e--i:i--e\x00" as *const u8 as *const libc::c_char,
     &mut opt_i_str as *mut *mut libc::c_char,
@@ -101,17 +72,17 @@ pub unsafe extern "C" fn shuf_main(
     let mut hi: libc::c_uint = 0;
     dash = strchr(opt_i_str, '-' as i32);
     if dash.is_null() {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"bad range \'%s\'\x00" as *const u8 as *const libc::c_char,
         opt_i_str,
       );
     }
     *dash = '\u{0}' as i32 as libc::c_char;
-    lo = xatou(opt_i_str);
-    hi = xatou(dash.offset(1));
+    lo = crate::libbb::xatonum::xatou(opt_i_str);
+    hi = crate::libbb::xatonum::xatou(dash.offset(1));
     *dash = '-' as i32 as libc::c_char;
     if hi < lo {
-      bb_error_msg_and_die(
+      crate::libbb::verror_msg::bb_error_msg_and_die(
         b"bad range \'%s\'\x00" as *const u8 as *const libc::c_char,
         opt_i_str,
       );
@@ -132,9 +103,9 @@ pub unsafe extern "C" fn shuf_main(
     /* default - read lines from stdin or the input file */
     let mut fp: *mut FILE = std::ptr::null_mut();
     if argc > 1i32 {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
-    fp = xfopen_stdin(if !(*argv.offset(0)).is_null() {
+    fp = crate::libbb::wfopen_input::xfopen_stdin(if !(*argv.offset(0)).is_null() {
       *argv.offset(0)
     } else {
       b"-\x00" as *const u8 as *const libc::c_char
@@ -142,11 +113,11 @@ pub unsafe extern "C" fn shuf_main(
     lines = std::ptr::null_mut();
     numlines = 0 as libc::c_uint;
     loop {
-      let mut line: *mut libc::c_char = xmalloc_fgetline(fp);
+      let mut line: *mut libc::c_char = crate::libbb::get_line_from_file::xmalloc_fgetline(fp);
       if line.is_null() {
         break;
       }
-      lines = xrealloc_vector_helper(
+      lines = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
         lines as *mut libc::c_void,
         ((::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong) << 8i32)
           .wrapping_add(6i32 as libc::c_ulong) as libc::c_uint,
@@ -157,17 +128,20 @@ pub unsafe extern "C" fn shuf_main(
       let ref mut fresh4 = *lines.offset(fresh3 as isize);
       *fresh4 = line
     }
-    fclose_if_not_stdin(fp);
+    crate::libbb::fclose_nonstdin::fclose_if_not_stdin(fp);
   }
   if numlines != 0 as libc::c_uint {
     shuffle_lines(lines, numlines);
   }
   if opts & (1i32 << 3i32) as libc::c_uint != 0 {
-    xmove_fd(xopen(opt_o_str, 0o1i32 | 0o100i32 | 0o1000i32), 1i32);
+    crate::libbb::xfuncs_printf::xmove_fd(
+      crate::libbb::xfuncs_printf::xopen(opt_o_str, 0o1i32 | 0o100i32 | 0o1000i32),
+      1i32,
+    );
   }
   if opts & (1i32 << 2i32) as libc::c_uint != 0 {
     let mut maxlines: libc::c_uint = 0;
-    maxlines = xatou(opt_n_str);
+    maxlines = crate::libbb::xatonum::xatou(opt_n_str);
     if numlines > maxlines {
       numlines = maxlines
     }
@@ -193,5 +167,5 @@ pub unsafe extern "C" fn shuf_main(
     }
     i = i.wrapping_add(1)
   }
-  fflush_stdout_and_exit(0i32);
+  crate::libbb::fflush_stdout_and_exit::fflush_stdout_and_exit(0i32);
 }

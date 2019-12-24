@@ -8,4 +8,4 @@ extern "C" {
 #[no_mangle]
 pub static mut ptr_to_globals: *mut globals = 0 as *mut globals;
 
-pub static mut bb_errno: *mut libc::c_int = 0 as *const libc::c_int as *mut libc::c_int;
+pub static mut bb_errno: *mut libc::c_int = std::ptr::null_mut();

@@ -1,13 +1,6 @@
-use crate::libbb::llist::llist_t;
-
-use libc;
-extern "C" {
-
-  #[no_mangle]
-  fn find_list_entry(list: *const llist_t, filename: *const libc::c_char) -> *const llist_t;
-}
-
 use crate::archival::libarchive::bb_archive::archive_handle_t;
+use libc;
+
 /*
  * Copyright (C) 2002 by Glenn McGrath
  *
@@ -20,7 +13,7 @@ use crate::archival::libarchive::bb_archive::archive_handle_t;
 pub unsafe extern "C" fn filter_accept_list(
   mut archive_handle: *mut archive_handle_t,
 ) -> libc::c_char {
-  if !find_list_entry(
+  if !crate::archival::libarchive::find_list_entry::find_list_entry(
     (*archive_handle).accept,
     (*(*archive_handle).file_header).name,
   )

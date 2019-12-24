@@ -1,7 +1,5 @@
-use c2rust_bitfields;
-use c2rust_bitfields::BitfieldStruct;
-
 use crate::libbb::appletlib::applet_name;
+use crate::librb::re_pattern_buffer;
 use libc;
 use libc::fclose;
 use libc::free;
@@ -27,61 +25,16 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn recursive_action(
-    fileName: *const libc::c_char,
-    flags: libc::c_uint,
-    fileAction: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    dirAction: Option<
-      unsafe extern "C" fn(
-        _: *const libc::c_char,
-        _: *mut stat,
-        _: *mut libc::c_void,
-        _: libc::c_int,
-      ) -> libc::c_int,
-    >,
-    userData: *mut libc::c_void,
-    depth: libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn fclose_if_not_stdin(file: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn xfopen_stdin(filename: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn fopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn llist_add_to(old_head: *mut *mut llist_t, data: *mut libc::c_void);
+
   #[no_mangle]
   static mut xfunc_error_retval: u8;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
+
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
   #[no_mangle]
   fn regfree(__preg: *mut regex_t);
-  #[no_mangle]
-  fn xregcomp(preg: *mut regex_t, regex: *const libc::c_char, cflags: libc::c_int);
+
   #[no_mangle]
   fn regexec(
     __preg: *const regex_t,
@@ -153,8 +106,9 @@ pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed = 4;
 pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
 pub const ACTION_RECURSE: C2RustUnnamed = 1;
 use crate::libbb::llist::llist_t;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub max_matches: libc::c_int,
   pub reflags: libc::c_int,
@@ -169,32 +123,12 @@ pub struct globals {
   pub pattern_head: *mut llist_t,
   pub cur_file: *const libc::c_char,
 }
-pub type reg_syntax_t = libc::c_ulong;
-#[derive(Copy, Clone, BitfieldStruct)]
-#[repr(C)]
-pub struct re_pattern_buffer {
-  pub buffer: *mut libc::c_uchar,
-  pub allocated: libc::c_ulong,
-  pub used: libc::c_ulong,
-  pub syntax: reg_syntax_t,
-  pub fastmap: *mut libc::c_char,
-  pub translate: *mut libc::c_uchar,
-  pub re_nsub: size_t,
-  #[bitfield(name = "can_be_null", ty = "libc::c_uint", bits = "0..=0")]
-  #[bitfield(name = "regs_allocated", ty = "libc::c_uint", bits = "1..=2")]
-  #[bitfield(name = "fastmap_accurate", ty = "libc::c_uint", bits = "3..=3")]
-  #[bitfield(name = "no_sub", ty = "libc::c_uint", bits = "4..=4")]
-  #[bitfield(name = "not_bol", ty = "libc::c_uint", bits = "5..=5")]
-  #[bitfield(name = "not_eol", ty = "libc::c_uint", bits = "6..=6")]
-  #[bitfield(name = "newline_anchor", ty = "libc::c_uint", bits = "7..=7")]
-  pub can_be_null_regs_allocated_fastmap_accurate_no_sub_not_bol_not_eol_newline_anchor: [u8; 1],
-  #[bitfield(padding)]
-  pub c2rust_padding: [u8; 7],
-}
+
 pub type regex_t = re_pattern_buffer;
 pub type regoff_t = libc::c_int;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct regmatch_t {
   pub rm_so: regoff_t,
   pub rm_eo: regoff_t,
@@ -245,8 +179,9 @@ pub const OPTBIT_v: C2RustUnnamed_0 = 3;
 pub const OPTBIT_q: C2RustUnnamed_0 = 2;
 pub const OPTBIT_n: C2RustUnnamed_0 = 1;
 pub const OPTBIT_l: C2RustUnnamed_0 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct grep_list_data_t {
   pub pattern: *mut libc::c_char,
   pub compiled_regex: regex_t,
@@ -314,7 +249,7 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
   let mut curpos: libc::c_int = 0;
   let mut idx: libc::c_int = 0;
   loop {
-    line = xmalloc_fgetline(file);
+    line = crate::libbb::get_line_from_file::xmalloc_fgetline(file);
     if line.is_null() {
       break;
     }
@@ -393,7 +328,7 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
         let mut match_at: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
         if (*gl).flg_mem_allocated_compiled & 2i32 == 0 {
           (*gl).flg_mem_allocated_compiled |= 2i32;
-          xregcomp(
+          crate::libbb::xregcomp::xregcomp(
             &mut (*gl).compiled_regex,
             (*gl).pattern,
             (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).reflags,
@@ -661,8 +596,9 @@ unsafe extern "C" fn grep_file(mut file: *mut FILE) -> libc::c_int {
   return nmatches;
 }
 unsafe extern "C" fn add_grep_list_data(mut pattern: *mut libc::c_char) -> *mut libc::c_char {
-  let mut gl: *mut grep_list_data_t =
-    xzalloc(::std::mem::size_of::<grep_list_data_t>() as libc::c_ulong) as *mut grep_list_data_t;
+  let mut gl: *mut grep_list_data_t = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<
+    grep_list_data_t,
+  >() as libc::c_ulong) as *mut grep_list_data_t;
   (*gl).pattern = pattern;
   /*gl->flg_mem_allocated_compiled = 0;*/
   return gl as *mut libc::c_char;
@@ -675,18 +611,18 @@ unsafe extern "C" fn load_regexes_from_file(mut fopt: *mut llist_t) {
     let mut ffile: *mut libc::c_char = (*cur).data;
     fopt = (*cur).link;
     free(cur as *mut libc::c_void);
-    fp = xfopen_stdin(ffile);
+    fp = crate::libbb::wfopen_input::xfopen_stdin(ffile);
     loop {
-      line = xmalloc_fgetline(fp);
+      line = crate::libbb::get_line_from_file::xmalloc_fgetline(fp);
       if line.is_null() {
         break;
       }
-      llist_add_to(
+      crate::libbb::llist::llist_add_to(
         &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pattern_head,
         add_grep_list_data(line) as *mut libc::c_void,
       );
     }
-    fclose_if_not_stdin(fp);
+    crate::libbb::fclose_nonstdin::fclose_if_not_stdin(fp);
   }
 }
 unsafe extern "C" fn file_action_grep(
@@ -704,7 +640,7 @@ unsafe extern "C" fn file_action_grep(
     let mut sb: stat = std::mem::zeroed();
     if stat(filename, &mut sb) != 0 {
       if option_mask32 & OPT_s as libc::c_int as libc::c_uint == 0 {
-        bb_simple_perror_msg(filename);
+        crate::libbb::perror_msg::bb_simple_perror_msg(filename);
       }
       return 0;
     }
@@ -712,10 +648,10 @@ unsafe extern "C" fn file_action_grep(
       return 1i32;
     }
   }
-  file = fopen_for_read(filename);
+  file = crate::libbb::wfopen::fopen_for_read(filename);
   if file.is_null() {
     if option_mask32 & OPT_s as libc::c_int as libc::c_uint == 0 {
-      bb_simple_perror_msg(filename);
+      crate::libbb::perror_msg::bb_simple_perror_msg(filename);
     }
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).open_errors = 1i32 as smalluint;
     return 0;
@@ -728,7 +664,7 @@ unsafe extern "C" fn file_action_grep(
 }
 unsafe extern "C" fn grep_dir(mut dir: *const libc::c_char) -> libc::c_int {
   let mut matched: libc::c_int = 0;
-  recursive_action(
+  crate::libbb::recursive_action::recursive_action(
     dir,
     (ACTION_RECURSE as libc::c_int
       | ACTION_FOLLOWLINKS_L0 as libc::c_int
@@ -762,7 +698,7 @@ pub unsafe extern "C" fn grep_main(
   xfunc_error_retval = 2i32 as u8;
   /* do normal option parsing */
   /* -H unsets -h; -C unsets -A,-B */
-  opts = getopt32long(
+  opts = crate::libbb::getopt32::getopt32long(
     argv,
     b"^lnqvscFiHhe:*f:*Lorm:+wxA:+B:+C:+EaI\x00H-h:C-AB\x00" as *const u8 as *const libc::c_char,
     b"color\x00\x02\xff\x00" as *const u8 as *const libc::c_char,
@@ -806,7 +742,7 @@ pub unsafe extern "C" fn grep_main(
     }
     /* overflow in (lines_before * sizeof(x)) is prevented (above) */
     let ref mut fresh3 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).before_buf; /* 0 | 1 */
-    *fresh3 = xzalloc(
+    *fresh3 = crate::libbb::xfuncs_printf::xzalloc(
       ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).lines_before as libc::c_ulong)
         .wrapping_mul(::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong),
     ) as *mut *mut libc::c_char
@@ -829,7 +765,7 @@ pub unsafe extern "C" fn grep_main(
     {
       /* -f EMPTY_FILE? */
       /* GNU grep treats it as "nothing matches" */
-      llist_add_to(
+      crate::libbb::llist::llist_add_to(
         &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pattern_head,
         add_grep_list_data(b"\x00" as *const u8 as *const libc::c_char as *mut libc::c_char)
           as *mut libc::c_void,
@@ -864,12 +800,12 @@ pub unsafe extern "C" fn grep_main(
   {
     let mut pattern: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     if (*argv).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     let fresh5 = argv;
     argv = argv.offset(1);
     pattern = add_grep_list_data(*fresh5);
-    llist_add_to(
+    crate::libbb::llist::llist_add_to(
       &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pattern_head,
       pattern as *mut libc::c_void,
     );
@@ -933,10 +869,14 @@ pub unsafe extern "C" fn grep_main(
         8545136480011357681 => {}
         _ => {
           /* else: fopen(dir) will succeed, but reading won't */
-          file = fopen_for_read((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_file);
+          file = crate::libbb::wfopen::fopen_for_read(
+            (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_file,
+          );
           if file.is_null() {
             if option_mask32 & OPT_s as libc::c_int as libc::c_uint == 0 {
-              bb_simple_perror_msg((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_file);
+              crate::libbb::perror_msg::bb_simple_perror_msg(
+                (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_file,
+              );
             }
             (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).open_errors = 1i32 as smalluint;
             current_block_71 = 8545136480011357681;
@@ -949,7 +889,7 @@ pub unsafe extern "C" fn grep_main(
     match current_block_71 {
       9437375157805982253 => {
         matched += grep_file(file);
-        fclose_if_not_stdin(file);
+        crate::libbb::fclose_nonstdin::fclose_if_not_stdin(file);
       }
       _ => {}
     }

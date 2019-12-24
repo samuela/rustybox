@@ -30,54 +30,8 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn monotonic_us() -> libc::c_ulonglong;
-
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn signal_SA_RESTART_empty_mask(
-    sig: libc::c_int,
-    handler: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
-  );
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn safe_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn full_read(fd: libc::c_int, buf: *mut libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn make_human_readable_str(
-    size: libc::c_ulonglong,
-    block_size: libc::c_ulong,
-    display_unit: libc::c_ulong,
-  ) -> *const libc::c_char;
-  #[no_mangle]
   static cwbkMG_suffixes: [suffix_mult; 0];
-  #[no_mangle]
-  fn xatoull_range_sfx(
-    str: *const libc::c_char,
-    l: libc::c_ulonglong,
-    u: libc::c_ulonglong,
-    sfx: *const suffix_mult,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn xatoull_sfx(str: *const libc::c_char, sfx: *const suffix_mult) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_perror_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
+
   #[no_mangle]
   static bb_msg_invalid_arg_to: [libc::c_char; 0];
   #[no_mangle]
@@ -88,14 +42,10 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-#[derive(Copy, Clone)]
+use crate::librb::suffix_mult;
+
 #[repr(C)]
-pub struct suffix_mult {
-  pub suffix: [libc::c_char; 4],
-  pub mult: libc::c_uint,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub struct globals {
   pub out_full: off_t,
   pub out_part: off_t,
@@ -132,8 +82,9 @@ pub const FLAG_SYNC: C2RustUnnamed_0 = 2;
 /* Must be in the same order as OP_conv_XXX! */
 /* (see "flags |= (1 << what)" below) */
 pub const FLAG_NOTRUNC: C2RustUnnamed_0 = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct C2RustUnnamed_1 {
   pub ocount: size_t,
   pub prev_read_size: ssize_t,
@@ -185,13 +136,17 @@ unsafe extern "C" fn xatoul_range_sfx(
   mut u: libc::c_ulong,
   mut sfx: *const suffix_mult,
 ) -> libc::c_ulong {
-  return xatoull_range_sfx(str, l as libc::c_ulonglong, u as libc::c_ulonglong, sfx)
-    as libc::c_ulong; /* before fprintf */
+  return crate::libbb::xatonum::xatoull_range_sfx(
+    str,
+    l as libc::c_ulonglong,
+    u as libc::c_ulonglong,
+    sfx,
+  ) as libc::c_ulong; /* before fprintf */
 }
 unsafe extern "C" fn dd_output_status(mut _cur_signal: libc::c_int) {
   let mut seconds: libc::c_double = 0.;
   let mut bytes_sec: libc::c_ulonglong = 0;
-  let mut now_us: libc::c_ulonglong = monotonic_us();
+  let mut now_us: libc::c_ulonglong = crate::libbb::time::monotonic_us();
   /* Deliberately using %u, not %d */
   fprintf(
     stderr,
@@ -214,7 +169,7 @@ unsafe extern "C" fn dd_output_status(mut _cur_signal: libc::c_int) {
     stderr,
     b"%llu bytes (%sB) copied, \x00" as *const u8 as *const libc::c_char,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).total_bytes,
-    make_human_readable_str(
+    crate::libbb::human_readable::make_human_readable_str(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).total_bytes,
       1i32 as libc::c_ulong,
       0 as libc::c_ulong,
@@ -235,7 +190,11 @@ unsafe extern "C" fn dd_output_status(mut _cur_signal: libc::c_int) {
     stderr,
     b"%f seconds, %sB/s\n\x00" as *const u8 as *const libc::c_char,
     seconds,
-    make_human_readable_str(bytes_sec, 1i32 as libc::c_ulong, 0 as libc::c_ulong),
+    crate::libbb::human_readable::make_human_readable_str(
+      bytes_sec,
+      1i32 as libc::c_ulong,
+      0 as libc::c_ulong,
+    ),
   );
 }
 unsafe extern "C" fn write_and_stats(
@@ -245,7 +204,7 @@ unsafe extern "C" fn write_and_stats(
   mut filename: *const libc::c_char,
 ) -> bool {
   let mut n: ssize_t = 0;
-  n = full_write(ofd as libc::c_int, buf, len);
+  n = crate::libbb::full_write::full_write(ofd as libc::c_int, buf, len);
   if n > 0 {
     let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).total_bytes;
     *fresh0 = (*fresh0).wrapping_add(n as libc::c_ulonglong)
@@ -267,7 +226,7 @@ unsafe extern "C" fn write_and_stats(
    * the remainder and gets errno set to ENOSPC.
    * It returns n > 0 (the amount which it did write).
    */
-  bb_perror_msg(
+  crate::libbb::perror_msg::bb_perror_msg(
     b"error writing \'%s\'\x00" as *const u8 as *const libc::c_char,
     filename,
   );
@@ -291,9 +250,9 @@ unsafe extern "C" fn parse_comma_flags(
     if !arg.is_null() {
       *arg = '\u{0}' as i32 as libc::c_char
     }
-    n = index_in_strings(words, val);
+    n = crate::libbb::compare_string_array::index_in_strings(words, val);
     if n < 0 {
-      bb_error_msg_and_die(bb_msg_invalid_arg_to.as_ptr(), val, error_in);
+      crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_invalid_arg_to.as_ptr(), val, error_in);
     }
     flags |= 1i32 << n;
     if arg.is_null() {
@@ -368,12 +327,12 @@ pub unsafe extern "C" fn dd_main(
     {
       val = strchr(arg, '=' as i32);
       if val.is_null() {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
       *val = '\u{0}' as i32 as libc::c_char;
-      what = index_in_strings(keywords.as_ptr(), arg);
+      what = crate::libbb::compare_string_array::index_in_strings(keywords.as_ptr(), arg);
       if what < 0 {
-        bb_show_usage();
+        crate::libbb::appletlib::bb_show_usage();
       }
       /* *val = '='; - to preserve ps listing? */
       val = val.offset(1);
@@ -435,15 +394,15 @@ pub unsafe extern "C" fn dd_main(
       /* These can be large: */
       if what == OP_count as libc::c_int {
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).flags |= FLAG_COUNT as libc::c_int;
-        Z.count = xatoull_sfx(val, cwbkMG_suffixes.as_ptr()) as off_t
+        Z.count = crate::libbb::xatonum::xatoull_sfx(val, cwbkMG_suffixes.as_ptr()) as off_t
         /*continue;*/
       }
       if what == OP_seek as libc::c_int {
-        Z.seek = xatoull_sfx(val, cwbkMG_suffixes.as_ptr()) as off_t
+        Z.seek = crate::libbb::xatonum::xatoull_sfx(val, cwbkMG_suffixes.as_ptr()) as off_t
         /*continue;*/
       }
       if what == OP_skip as libc::c_int {
-        Z.skip = xatoull_sfx(val, cwbkMG_suffixes.as_ptr()) as off_t
+        Z.skip = crate::libbb::xatonum::xatoull_sfx(val, cwbkMG_suffixes.as_ptr()) as off_t
         /*continue;*/
       }
       if what == OP_if as libc::c_int {
@@ -456,9 +415,9 @@ pub unsafe extern "C" fn dd_main(
       }
       if what == OP_status as libc::c_int {
         let mut n: libc::c_int = 0;
-        n = index_in_strings(status_words.as_ptr(), val);
+        n = crate::libbb::compare_string_array::index_in_strings(status_words.as_ptr(), val);
         if n < 0 {
-          bb_error_msg_and_die(
+          crate::libbb::verror_msg::bb_error_msg_and_die(
             bb_msg_invalid_arg_to.as_ptr(),
             val,
             b"status\x00" as *const u8 as *const libc::c_char,
@@ -478,13 +437,17 @@ pub unsafe extern "C" fn dd_main(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).flags |= FLAG_TWOBUFS as libc::c_int;
     obuf = xmalloc(obs) as *mut libc::c_char
   }
-  signal_SA_RESTART_empty_mask(
+  crate::libbb::signals::signal_SA_RESTART_empty_mask(
     10i32,
     Some(dd_output_status as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
-  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).begin_time_us = monotonic_us();
+  (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).begin_time_us =
+    crate::libbb::time::monotonic_us();
   if !Z.infile.is_null() {
-    xmove_fd(xopen(Z.infile, 0), ifd as libc::c_int);
+    crate::libbb::xfuncs_printf::xmove_fd(
+      crate::libbb::xfuncs_printf::xopen(Z.infile, 0),
+      ifd as libc::c_int,
+    );
   } else {
     Z.infile = bb_msg_standard_input.as_ptr()
   }
@@ -499,7 +462,10 @@ pub unsafe extern "C" fn dd_main(
     if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).flags & FLAG_APPEND as libc::c_int != 0 {
       oflag |= 0o2000i32
     }
-    xmove_fd(xopen(Z.outfile, oflag), ofd as libc::c_int);
+    crate::libbb::xfuncs_printf::xmove_fd(
+      crate::libbb::xfuncs_printf::xopen(Z.outfile, oflag),
+      ofd as libc::c_int,
+    );
     if Z.seek != 0
       && (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).flags & FLAG_NOTRUNC as libc::c_int
         == 0
@@ -559,9 +525,17 @@ pub unsafe extern "C" fn dd_main(
               & FLAG_FULLBLOCK as libc::c_int
               != 0
             {
-              n_0 = full_read(ifd as libc::c_int, ibuf as *mut libc::c_void, blocksz_0)
+              n_0 = crate::libbb::read::full_read(
+                ifd as libc::c_int,
+                ibuf as *mut libc::c_void,
+                blocksz_0,
+              )
             } else {
-              n_0 = safe_read(ifd as libc::c_int, ibuf as *mut libc::c_void, blocksz_0)
+              n_0 = crate::libbb::read::safe_read(
+                ifd as libc::c_int,
+                ibuf as *mut libc::c_void,
+                blocksz_0,
+              )
             }
             if n_0 < 0 {
               current_block = 5737263145267917659;
@@ -626,9 +600,17 @@ pub unsafe extern "C" fn dd_main(
                   & FLAG_FULLBLOCK as libc::c_int
                   != 0
                 {
-                  n_1 = full_read(ifd as libc::c_int, ibuf as *mut libc::c_void, ibs)
+                  n_1 = crate::libbb::read::full_read(
+                    ifd as libc::c_int,
+                    ibuf as *mut libc::c_void,
+                    ibs,
+                  )
                 } else {
-                  n_1 = safe_read(ifd as libc::c_int, ibuf as *mut libc::c_void, ibs)
+                  n_1 = crate::libbb::read::safe_read(
+                    ifd as libc::c_int,
+                    ibuf as *mut libc::c_void,
+                    ibs,
+                  )
                 }
                 if n_1 == 0 {
                   current_block = 9354678635443812511;
@@ -643,9 +625,9 @@ pub unsafe extern "C" fn dd_main(
                     current_block = 5737263145267917659;
                     break;
                   }
-                  bb_simple_perror_msg(Z.infile);
+                  crate::libbb::perror_msg::bb_simple_perror_msg(Z.infile);
                   /* GNU dd with conv=noerror skips over bad blocks */
-                  xlseek(ifd as libc::c_int, ibs as off_t, 1i32);
+                  crate::libbb::xfuncs_printf::xlseek(ifd as libc::c_int, ibs as off_t, 1i32);
                   /* conv=noerror,sync writes NULs,
                    * conv=noerror just ignores input bad blocks */
                   n_1 = 0 as ssize_t
@@ -658,7 +640,7 @@ pub unsafe extern "C" fn dd_main(
                   let mut n2: ssize_t = 0;
                   /* Our code allows only last read to be odd-sized */
                   if Z.prev_read_size & 1 != 0 {
-                    bb_error_msg_and_die(
+                    crate::libbb::verror_msg::bb_error_msg_and_die(
                       b"can\'t swab %lu byte buffer\x00" as *const u8 as *const libc::c_char,
                       Z.prev_read_size as libc::c_ulong,
                     );
@@ -686,11 +668,8 @@ pub unsafe extern "C" fn dd_main(
                         let fresh3 = &mut __v;
                         let fresh4;
                         let fresh5 = __x;
-                        asm!("rorw $$8, ${0:w}"
-                                                              : "=r" (fresh4)
-                                                              : "0"
-                                                              (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5))
-                                                              : "cc");
+                        asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
                         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
                       }
                       __v
@@ -829,11 +808,11 @@ pub unsafe extern "C" fn dd_main(
       match current_block {
         17215991467164075883 => {}
         _ => {
-          bb_simple_perror_msg_and_die(Z.infile);
+          crate::libbb::perror_msg::bb_simple_perror_msg_and_die(Z.infile);
         }
       }
     }
     _ => {}
   }
-  bb_simple_perror_msg_and_die(Z.outfile);
+  crate::libbb::perror_msg::bb_simple_perror_msg_and_die(Z.outfile);
 }

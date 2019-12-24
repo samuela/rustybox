@@ -1,17 +1,6 @@
 use libc;
 use libc::free;
-extern "C" {
 
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xrealloc_getcwd_or_warn(cwd: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn concat_path_file(
-    path: *const libc::c_char,
-    filename: *const libc::c_char,
-  ) -> *mut libc::c_char;
-}
 /* Returns ptr to NUL */
 
 /*
@@ -518,10 +507,10 @@ pub unsafe extern "C" fn bb_simplify_path(mut path: *const libc::c_char) -> *mut
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if *path.offset(0) as libc::c_int == '/' as i32 {
-    s = xstrdup(path)
+    s = crate::libbb::xfuncs_printf::xstrdup(path)
   } else {
-    p = xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
-    s = concat_path_file(p, path);
+    p = crate::libbb::xgetcwd::xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
+    s = crate::libbb::concat_path_file::concat_path_file(p, path);
     free(p as *mut libc::c_void);
   }
   bb_simplify_abs_path_inplace(s);

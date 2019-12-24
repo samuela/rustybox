@@ -43,9 +43,6 @@ extern "C" {
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
 
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-
   /* NB: "unsigned request" is crucial! "int request" will break some arches! */
   /* At least glibc has horrendously large inline for this, so wrap it */
   /* "Keycodes" that report an escape sequence.
@@ -144,8 +141,6 @@ extern "C" {
   #[no_mangle]
   static bb_hexdigits_upcase: [libc::c_char; 0];
 
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
 }
 
 pub const IFNAMSIZ: C2RustUnnamed = 16;
@@ -378,12 +373,12 @@ pub unsafe extern "C" fn bb_putchar_stderr(mut ch: libc::c_char) -> libc::c_int 
 
 #[no_mangle]
 pub unsafe extern "C" fn full_write1_str(mut string: *const libc::c_char) -> ssize_t {
-  return full_write(1i32, string as *const libc::c_void, strlen(string));
+  return crate::libbb::full_write::full_write(1i32, string as *const libc::c_void, strlen(string));
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn full_write2_str(mut string: *const libc::c_char) -> ssize_t {
-  return full_write(2i32, string as *const libc::c_void, strlen(string));
+  return crate::libbb::full_write::full_write(2i32, string as *const libc::c_void, strlen(string));
 }
 
 unsafe extern "C" fn wh_helper(
@@ -962,7 +957,9 @@ pub unsafe extern "C" fn wait_for_exitstatus(mut pid: pid_t) -> libc::c_int {
   let mut n: libc::c_int = 0;
   n = safe_waitpid(pid, &mut exit_status, 0);
   if n < 0 {
-    bb_simple_perror_msg_and_die(b"waitpid\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+      b"waitpid\x00" as *const u8 as *const libc::c_char,
+    );
   }
   return exit_status;
 }

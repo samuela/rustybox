@@ -21,6 +21,8 @@ use libc::openlog;
 use libc::pid_t;
 use libc::rename;
 use libc::rmdir;
+use libc::sockaddr;
+use libc::sockaddr_in;
 use libc::sprintf;
 use libc::stat;
 use libc::strchr;
@@ -87,123 +89,44 @@ extern "C" {
   /* glibc uses __errno_location() to get a ptr to errno */
   /* We can just memorize it once - no multithreading in busybox :) */
 
-  #[no_mangle]
-  fn monotonic_sec() -> libc::c_uint;
-
-  #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
   /* bb_copyfd_XX print read/write errors and return -1 if they occur */
-  #[no_mangle]
-  fn bb_copyfd_eof(fd1: libc::c_int, fd2: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn ndelay_off(fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xmove_fd(_: libc::c_int, _: libc::c_int);
+
   /* !RETURNS_MALLOC: it's a realloc-like function */
-  #[no_mangle]
-  fn xrealloc_getcwd_or_warn(cwd: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn xlseek(fd: libc::c_int, offset: off_t, whence: libc::c_int) -> off_t;
-  #[no_mangle]
-  fn xpipe(filedes: *mut libc::c_int);
-  #[no_mangle]
-  fn xsocket(domain: libc::c_int, type_0: libc::c_int, protocol: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xbind(sockfd: libc::c_int, my_addr: *mut sockaddr, addrlen: socklen_t);
-  #[no_mangle]
-  fn xlisten(s: libc::c_int, backlog: libc::c_int);
-  #[no_mangle]
-  fn setsockopt_1(fd: libc::c_int, level: libc::c_int, optname: libc::c_int) -> libc::c_int;
+
   /* SO_REUSEADDR allows a server to rebind to an address that is already
    * "in use" by old connections to e.g. previous server instance which is
    * killed or crashed. Without it bind will fail until all such connections
    * time out. Linux does not allow multiple live binds on same ip:port
    * regardless of SO_REUSEADDR (unlike some other flavors of Unix).
    * Turn it on before you call bind(). */
-  #[no_mangle]
-  fn setsockopt_reuseaddr(fd: libc::c_int);
+
   /* On Linux this never fails. */
-  #[no_mangle]
-  fn setsockopt_keepalive(fd: libc::c_int) -> libc::c_int;
+
   /* Connect to peer identified by lsa */
-  #[no_mangle]
-  fn xconnect_stream(lsa: *const len_and_sockaddr) -> libc::c_int;
+
   /* Get local address of bound or accepted socket */
-  #[no_mangle]
-  fn get_sock_lsa(fd: libc::c_int) -> *mut len_and_sockaddr;
+
   /* Get remote address of connected or accepted socket */
-  #[no_mangle]
-  fn get_peer_lsa(fd: libc::c_int) -> *mut len_and_sockaddr;
+
   /* Assign sin[6]_port member if the socket is an AF_INET[6] one,
    * otherwise no-op. Useful for ftp.
    * NB: does NOT do htons() internally, just direct assignment. */
-  #[no_mangle]
-  fn set_nport(sa: *mut sockaddr, port: libc::c_uint);
+
   /* Retrieve sin[6]_port or return -1 for non-INET[6] lsa's */
-  #[no_mangle]
-  fn get_nport(sa: *const sockaddr) -> libc::c_int;
-  #[no_mangle]
-  fn xmalloc_sockaddr2dotted_noport(sa: *const sockaddr) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xwrite(fd: libc::c_int, buf: *const libc::c_void, count: size_t);
-  #[no_mangle]
-  fn xwrite_str(fd: libc::c_int, str: *const libc::c_char);
+
   /* Same, with limited max size, and returns the length (excluding NUL): */
-  #[no_mangle]
-  fn xmalloc_fgets_str_len(
-    file: *mut FILE,
-    terminating_string: *const libc::c_char,
-    maxsz_p: *mut size_t,
-  ) -> *mut libc::c_char;
+
   /* Reads up to (and including) "\n" or NUL byte: */
-  #[no_mangle]
-  fn xmalloc_fgets(file: *mut FILE) -> *mut libc::c_char;
+
   /* Chops off '\n' from the end, unlike fgets: */
-  #[no_mangle]
-  fn xmalloc_fgetline(file: *mut FILE) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xfdopen_for_read(fd: libc::c_int) -> *mut FILE;
-  #[no_mangle]
-  fn xatoull_range(
-    str: *const libc::c_char,
-    l: libc::c_ulonglong,
-    u: libc::c_ulonglong,
-  ) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn bb_strtou(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_uint;
+
   /* xvfork() can't be a _function_, return after vfork in child mangles stack
    * in the parent. It must be a macro. */
-  #[no_mangle]
-  fn xfork() -> pid_t;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_error_msg(s: *const libc::c_char, _: ...);
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
+
   /* Used by ftpd */
-  #[no_mangle]
-  fn ls_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn change_identity(pw: *const passwd);
-  #[no_mangle]
-  fn check_password(pw: *const passwd, plaintext: *const libc::c_char) -> libc::c_int;
 
   /* '*const' ptr makes gcc optimize code much better.
    * Magic prevents ptr_to_globals from going into rodata.
@@ -216,7 +139,7 @@ extern "C" {
 pub type __socklen_t = libc::c_uint;
 
 pub type bb__aliased_u32 = u32;
-pub type socklen_t = __socklen_t;
+use crate::librb::socklen_t;
 
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -228,10 +151,9 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __SOCKADDR_ARG {
   pub __sockaddr__: *mut sockaddr,
   pub __sockaddr_at__: *mut sockaddr_at,
@@ -247,41 +169,18 @@ pub union __SOCKADDR_ARG {
   pub __sockaddr_un__: *mut sockaddr_un,
   pub __sockaddr_x25__: *mut sockaddr_x25,
 }
-#[derive(Copy, Clone)]
+
+use libc::sockaddr_in6;
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
 pub type in_addr_t = u32;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const IPPROTO_MAX: C2RustUnnamed_0 = 256;
@@ -316,14 +215,10 @@ use libc::tm;
 use libc::FILE;
 /* In this form code with pipes is much more readable */
 use crate::librb::fd_pair;
-#[derive(Copy, Clone)]
+use crate::librb::len_and_sockaddr;
+
 #[repr(C)]
-pub struct len_and_sockaddr {
-  pub len: socklen_t,
-  pub u: C2RustUnnamed_1,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed_1 {
   pub sa: sockaddr,
   pub sin: sockaddr_in,
@@ -337,8 +232,9 @@ pub const LOGMODE_NONE: C2RustUnnamed_2 = 0;
 //extern const int const_int_1;
 /* This struct is deliberately not defined. */
 /* See docs/keep_data_small.txt */
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub pasv_listen_fd: libc::c_int,
   pub local_file_fd: libc::c_int,
@@ -409,7 +305,8 @@ unsafe extern "C" fn xatoul_range(
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
 ) -> libc::c_ulong {
-  return xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong) as libc::c_ulong;
+  return crate::libbb::xatonum::xatoull_range(str, l as libc::c_ulonglong, u as libc::c_ulonglong)
+    as libc::c_ulong;
 }
 #[inline(always)]
 unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
@@ -483,7 +380,7 @@ unsafe extern "C" fn replace_char(
   return p.wrapping_offset_from(str) as libc::c_long as libc::c_uint;
 }
 unsafe extern "C" fn verbose_log(mut str: *const libc::c_char) {
-  bb_error_msg(
+  crate::libbb::verror_msg::bb_error_msg(
     b"%.*s\x00" as *const u8 as *const libc::c_char,
     strcspn(str, b"\r\n\x00" as *const u8 as *const libc::c_char) as libc::c_int,
     str,
@@ -507,9 +404,9 @@ unsafe extern "C" fn cmdio_write(mut status_str: u32, mut str: *const libc::c_ch
     '\u{0}' as i32 as libc::c_char,
   ) as libc::c_int; /* tack on trailing '\n' */
   let fresh1 = len;
-  len += 1;
+  len = len + 1;
   *response.offset(fresh1 as isize) = '\n' as i32 as libc::c_char;
-  xwrite(1i32, response as *const libc::c_void, len as size_t);
+  crate::libbb::xfuncs_printf::xwrite(1i32, response as *const libc::c_void, len as size_t);
   if (*ptr_to_globals).verbose > 1i32 as libc::c_uint {
     verbose_log(response);
   }
@@ -517,7 +414,7 @@ unsafe extern "C" fn cmdio_write(mut status_str: u32, mut str: *const libc::c_ch
 }
 unsafe extern "C" fn cmdio_write_ok(mut status: libc::c_uint) {
   *((*ptr_to_globals).msg_ok.as_mut_ptr() as *mut bb__aliased_u32) = status;
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     1i32,
     (*ptr_to_globals).msg_ok.as_mut_ptr() as *const libc::c_void,
     (::std::mem::size_of::<[libc::c_char; 27]>() as libc::c_ulong)
@@ -530,7 +427,7 @@ unsafe extern "C" fn cmdio_write_ok(mut status: libc::c_uint) {
 /* TODO: output strerr(errno) if errno != 0? */
 unsafe extern "C" fn cmdio_write_error(mut status: libc::c_uint) {
   *((*ptr_to_globals).msg_err.as_mut_ptr() as *mut bb__aliased_u32) = status;
-  xwrite(
+  crate::libbb::xfuncs_printf::xwrite(
     1i32,
     (*ptr_to_globals).msg_err.as_mut_ptr() as *const libc::c_void,
     (::std::mem::size_of::<[libc::c_char; 12]>() as libc::c_ulong)
@@ -541,7 +438,7 @@ unsafe extern "C" fn cmdio_write_error(mut status: libc::c_uint) {
   };
 }
 unsafe extern "C" fn cmdio_write_raw(mut p_text: *const libc::c_char) {
-  xwrite_str(1i32, p_text);
+  crate::libbb::xfuncs_printf::xwrite_str(1i32, p_text);
   if (*ptr_to_globals).verbose > 1i32 as libc::c_uint {
     verbose_log(p_text);
   };
@@ -549,9 +446,11 @@ unsafe extern "C" fn cmdio_write_raw(mut p_text: *const libc::c_char) {
 unsafe extern "C" fn timeout_handler(mut _sig: libc::c_int) {
   let mut pos: off_t = 0;
   let mut sv_errno: libc::c_int = *bb_errno;
-  if !(monotonic_sec().wrapping_sub((*ptr_to_globals).end_time) as libc::c_int >= 0) {
+  if !(crate::libbb::time::monotonic_sec().wrapping_sub((*ptr_to_globals).end_time) as libc::c_int
+    >= 0)
+  {
     if !((*ptr_to_globals).local_file_fd == 0) {
-      pos = xlseek((*ptr_to_globals).local_file_fd, 0 as off_t, 1i32);
+      pos = crate::libbb::xfuncs_printf::xlseek((*ptr_to_globals).local_file_fd, 0 as off_t, 1i32);
       if !(pos == (*ptr_to_globals).local_file_pos) {
         (*ptr_to_globals).local_file_pos = pos;
         alarm((*ptr_to_globals).timeout);
@@ -568,9 +467,9 @@ unsafe extern "C" fn timeout_handler(mut _sig: libc::c_int) {
 unsafe extern "C" fn handle_pwd() {
   let mut cwd: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut response: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  cwd = xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
+  cwd = crate::libbb::xgetcwd::xrealloc_getcwd_or_warn(0 as *mut libc::c_char);
   if cwd.is_null() {
-    cwd = xstrdup(b"\x00" as *const u8 as *const libc::c_char)
+    cwd = crate::libbb::xfuncs_printf::xstrdup(b"\x00" as *const u8 as *const libc::c_char)
   }
   /* We have to promote each " to "" */
   
@@ -687,7 +586,7 @@ unsafe extern "C" fn ftpdataio_get_pasv_fd() -> libc::c_int {
     );
     return remote_fd;
   }
-  setsockopt_keepalive(remote_fd);
+  crate::libbb::xconnect::setsockopt_keepalive(remote_fd);
   return remote_fd;
 }
 /* Clears port/pasv data.
@@ -703,7 +602,7 @@ unsafe extern "C" fn get_remote_transfer_fd(mut p_status_msg: *const libc::c_cha
     remote_fd = ftpdataio_get_pasv_fd()
   } else {
     /* Exits on error */
-    remote_fd = xconnect_stream((*ptr_to_globals).port_addr)
+    remote_fd = crate::libbb::xconnect::xconnect_stream((*ptr_to_globals).port_addr)
   }
   port_pasv_cleanup();
   if remote_fd < 0 {
@@ -731,20 +630,20 @@ unsafe extern "C" fn bind_for_passive_mode() -> libc::c_uint {
   let mut fd: libc::c_int = 0;
   let mut port: libc::c_uint = 0;
   port_pasv_cleanup();
-  fd = xsocket(
+  fd = crate::libbb::xfuncs_printf::xsocket(
     (*(*ptr_to_globals).local_addr).u.sa.sa_family as libc::c_int,
     SOCK_STREAM as libc::c_int,
     0,
   );
   (*ptr_to_globals).pasv_listen_fd = fd;
-  setsockopt_reuseaddr(fd);
-  set_nport(&mut (*(*ptr_to_globals).local_addr).u.sa, 0 as libc::c_uint);
-  xbind(
+  crate::libbb::xconnect::setsockopt_reuseaddr(fd);
+  crate::libbb::xconnect::set_nport(&mut (*(*ptr_to_globals).local_addr).u.sa, 0 as libc::c_uint);
+  crate::libbb::xfuncs_printf::xbind(
     fd,
     &mut (*(*ptr_to_globals).local_addr).u.sa,
     (*(*ptr_to_globals).local_addr).len,
   );
-  xlisten(fd, 1i32);
+  crate::libbb::xfuncs_printf::xlisten(fd, 1i32);
   getsockname(
     fd,
     __SOCKADDR_ARG {
@@ -752,7 +651,8 @@ unsafe extern "C" fn bind_for_passive_mode() -> libc::c_uint {
     },
     &mut (*(*ptr_to_globals).local_addr).len,
   );
-  port = get_nport(&mut (*(*ptr_to_globals).local_addr).u.sa) as libc::c_uint;
+  port =
+    crate::libbb::xconnect::get_nport(&mut (*(*ptr_to_globals).local_addr).u.sa) as libc::c_uint;
   port = ({
     let mut __v: libc::c_ushort = 0;
     let mut __x: libc::c_ushort = port as libc::c_ushort;
@@ -764,8 +664,7 @@ unsafe extern "C" fn bind_for_passive_mode() -> libc::c_uint {
       let fresh3;
       let fresh4 = __x;
       asm!("rorw $$8, ${0:w}" : "=r" (fresh3) : "0"
-                      (c2rust_asm_casts::AsmCast::cast_in(fresh2, fresh4)) :
-                      "cc");
+     (c2rust_asm_casts::AsmCast::cast_in(fresh2, fresh4)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh2, fresh4, fresh3);
     }
     __v
@@ -779,13 +678,15 @@ unsafe extern "C" fn handle_pasv() {
   let mut response: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   port = bind_for_passive_mode();
   if (*(*ptr_to_globals).local_addr).u.sa.sa_family as libc::c_int == 2i32 {
-    addr = xmalloc_sockaddr2dotted_noport(&mut (*(*ptr_to_globals).local_addr).u.sa)
+    addr = crate::libbb::xconnect::xmalloc_sockaddr2dotted_noport(
+      &mut (*(*ptr_to_globals).local_addr).u.sa,
+    )
   } else {
     /* seen this in the wild done by other ftp servers: */
-    addr = xstrdup(b"0.0.0.0\x00" as *const u8 as *const libc::c_char)
+    addr = crate::libbb::xfuncs_printf::xstrdup(b"0.0.0.0\x00" as *const u8 as *const libc::c_char)
   }
   replace_char(addr, '.' as i32 as libc::c_char, ',' as i32 as libc::c_char);
-  response = xasprintf(
+  response = crate::libbb::xfuncs_printf::xasprintf(
     b"227 PASV ok (%s,%u,%u)\r\n\x00" as *const u8 as *const libc::c_char,
     addr,
     (port >> 8i32) as libc::c_int,
@@ -800,7 +701,7 @@ unsafe extern "C" fn handle_epsv() {
   let mut port: libc::c_uint = 0;
   let mut response: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   port = bind_for_passive_mode();
-  response = xasprintf(
+  response = crate::libbb::xfuncs_printf::xasprintf(
     b"229 EPSV ok (|||%u|)\r\n\x00" as *const u8 as *const libc::c_char,
     port,
   );
@@ -819,16 +720,24 @@ unsafe extern "C" fn handle_port() {
     comma = strrchr(raw, ',' as i32);
     if !comma.is_null() {
       *comma = '\u{0}' as i32 as libc::c_char;
-      port = bb_strtou(&mut *comma.offset(1), 0 as *mut *mut libc::c_char, 10i32);
+      port = crate::libbb::bb_strtonum::bb_strtou(
+        &mut *comma.offset(1),
+        0 as *mut *mut libc::c_char,
+        10i32,
+      );
       if !(*bb_errno != 0 || port > 0xffi32 as libc::c_uint) {
         comma = strrchr(raw, ',' as i32);
         if !comma.is_null() {
           *comma = '\u{0}' as i32 as libc::c_char;
-          port_hi = bb_strtou(&mut *comma.offset(1), 0 as *mut *mut libc::c_char, 10i32);
+          port_hi = crate::libbb::bb_strtonum::bb_strtou(
+            &mut *comma.offset(1),
+            0 as *mut *mut libc::c_char,
+            10i32,
+          );
           if !(*bb_errno != 0 || port_hi > 0xffi32 as libc::c_uint) {
             port |= port_hi << 8i32;
-            (*ptr_to_globals).port_addr = get_peer_lsa(0i32);
-            set_nport(
+            (*ptr_to_globals).port_addr = crate::libbb::xconnect::get_peer_lsa(0i32);
+            crate::libbb::xconnect::set_nport(
               &mut (*(*ptr_to_globals).port_addr).u.sa,
               ({
                 let mut __v: libc::c_ushort = 0;
@@ -841,10 +750,8 @@ unsafe extern "C" fn handle_port() {
                   let fresh5 = &mut __v;
                   let fresh6;
                   let fresh7 = __x;
-                  asm!("rorw $$8, ${0:w}" : "=r"
-                                                (fresh6) : "0"
-                                                (c2rust_asm_casts::AsmCast::cast_in(fresh5, fresh7))
-                                                : "cc");
+                  asm!("rorw $$8, ${0:w}" : "=r" (fresh6) : "0"
+     (c2rust_asm_casts::AsmCast::cast_in(fresh5, fresh7)) : "cc");
                   c2rust_asm_casts::AsmCast::cast_out(fresh5, fresh7, fresh6);
                 }
                 __v
@@ -934,12 +841,12 @@ unsafe extern "C" fn handle_retr() {
     /* Now deactive O_NONBLOCK, otherwise we have a problem
      * on DMAPI filesystems such as XFS DMAPI.
      */
-    ndelay_off(local_file_fd);
+    crate::libbb::xfuncs::ndelay_off(local_file_fd);
     /* Set the download offset (from REST) if any */
     if offset != 0 {
-      xlseek(local_file_fd, offset, 0);
+      crate::libbb::xfuncs_printf::xlseek(local_file_fd, offset, 0);
     }
-    response = xasprintf(
+    response = crate::libbb::xfuncs_printf::xasprintf(
       b" Opening BINARY connection for %s (%lu bytes)\x00" as *const u8 as *const libc::c_char,
       (*ptr_to_globals).ftp_arg,
       statbuf.st_size,
@@ -947,7 +854,7 @@ unsafe extern "C" fn handle_retr() {
     remote_fd = get_remote_transfer_fd(response);
     free(response as *mut libc::c_void);
     if !(remote_fd < 0) {
-      bytes_transferred = bb_copyfd_eof(local_file_fd, remote_fd);
+      bytes_transferred = crate::libbb::copyfd::bb_copyfd_eof(local_file_fd, remote_fd);
       close(remote_fd);
       if bytes_transferred < 0 {
         cmdio_write_error(
@@ -995,15 +902,17 @@ unsafe extern "C" fn popen_ls(mut opt: *const libc::c_char) -> libc::c_int {
     }
     argv[3] = tmp
   }
-  xpipe(&mut outfd.rd);
+  crate::libbb::xfuncs_printf::xpipe(&mut outfd.rd);
   /*fflush_all(); - so far we dont use stdio on output */
   pid = if 1i32 != 0 {
-    xfork()
+    crate::libbb::xfuncs_printf::xfork()
   } else {
     ({
       let mut bb__xvfork_pid: pid_t = vfork();
       if bb__xvfork_pid < 0 {
-        bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+          b"vfork\x00" as *const u8 as *const libc::c_char,
+        );
       }
       bb__xvfork_pid
     })
@@ -1012,7 +921,7 @@ unsafe extern "C" fn popen_ls(mut opt: *const libc::c_char) -> libc::c_int {
     /* child */
     /* NB: close _first_, then move fd! */
     close(outfd.rd);
-    xmove_fd(outfd.wr, 1i32);
+    crate::libbb::xfuncs_printf::xmove_fd(outfd.wr, 1i32);
     /* Opening /dev/null in chroot is hard.
      * Just making sure STDIN_FILENO is opened
      * to something harmless. Paranoia,
@@ -1020,7 +929,10 @@ unsafe extern "C" fn popen_ls(mut opt: *const libc::c_char) -> libc::c_int {
     close(0i32); /* copy will become STDIN_FILENO */
     dup(1i32);
     /* memset(&G, 0, sizeof(G)); - ls_main does it */
-    exit(ls_main(0i32, argv.as_mut_ptr() as *mut *mut libc::c_char));
+    exit(crate::coreutils::ls::ls_main(
+      0,
+      argv.as_mut_ptr() as *mut *mut libc::c_char,
+    ));
   }
   /* parent */
   close(outfd.wr); /* port_or_pasv_was_seen emitted error response */
@@ -1038,13 +950,13 @@ unsafe extern "C" fn handle_dir_common(mut opts: libc::c_int) {
   } else {
     b"-1A\x00" as *const u8 as *const libc::c_char
   });
-  ls_fp = xfdopen_for_read(ls_fd);
+  ls_fp = crate::libbb::wfopen::xfdopen_for_read(ls_fd);
   /* FIXME: filenames with embedded newlines are mishandled */
   if opts & USE_CTRL_CONN as libc::c_int != 0 {
     /* STAT <filename> */
     cmdio_write_raw(b"213-File status:\r\n\x00" as *const u8 as *const libc::c_char);
     loop {
-      line = xmalloc_fgetline(ls_fp);
+      line = crate::libbb::get_line_from_file::xmalloc_fgetline(ls_fp);
       if line.is_null() {
         break;
       }
@@ -1068,7 +980,7 @@ unsafe extern "C" fn handle_dir_common(mut opts: libc::c_int) {
     if remote_fd >= 0 {
       loop {
         let mut len: libc::c_uint = 0;
-        line = xmalloc_fgets(ls_fp);
+        line = crate::libbb::get_line_from_file::xmalloc_fgets(ls_fp);
         if line.is_null() {
           break;
         }
@@ -1083,7 +995,7 @@ unsafe extern "C" fn handle_dir_common(mut opts: libc::c_int) {
             '\r' as i32 as libc::c_char
         }
         *line.offset(len as isize) = '\n' as i32 as libc::c_char;
-        xwrite(
+        crate::libbb::xfuncs_printf::xwrite(
           remote_fd,
           line as *const libc::c_void,
           len.wrapping_add(1i32 as libc::c_uint) as size_t,
@@ -1248,7 +1160,7 @@ unsafe extern "C" fn handle_dele() {
 }
 unsafe extern "C" fn handle_rnfr() {
   free((*ptr_to_globals).rnfr_filename as *mut libc::c_void);
-  (*ptr_to_globals).rnfr_filename = xstrdup((*ptr_to_globals).ftp_arg);
+  (*ptr_to_globals).rnfr_filename = crate::libbb::xfuncs_printf::xstrdup((*ptr_to_globals).ftp_arg);
   cmdio_write_ok(
     (0i32
       | (' ' as i32) << SHIFTsp as libc::c_int
@@ -1300,7 +1212,9 @@ unsafe extern "C" fn handle_upload_common(mut is_append: libc::c_int, mut is_uni
   tempname = std::ptr::null_mut::<libc::c_char>();
   local_file_fd = -1i32;
   if is_unique != 0 {
-    tempname = xstrdup(b" FILE: uniq.XXXXXX\x00" as *const u8 as *const libc::c_char);
+    tempname = crate::libbb::xfuncs_printf::xstrdup(
+      b" FILE: uniq.XXXXXX\x00" as *const u8 as *const libc::c_char,
+    );
     local_file_fd = mkstemp(tempname.offset(7))
   } else if !(*ptr_to_globals).ftp_arg.is_null() {
     let mut flags: libc::c_int = 0o1i32 | 0o100i32 | 0o1000i32;
@@ -1330,7 +1244,7 @@ unsafe extern "C" fn handle_upload_common(mut is_append: libc::c_int, mut is_uni
   } else {
     (*ptr_to_globals).local_file_fd = local_file_fd;
     if offset != 0 {
-      xlseek(local_file_fd, offset, 0);
+      crate::libbb::xfuncs_printf::xlseek(local_file_fd, offset, 0);
     }
     remote_fd = get_remote_transfer_fd(if !tempname.is_null() {
       tempname
@@ -1339,7 +1253,7 @@ unsafe extern "C" fn handle_upload_common(mut is_append: libc::c_int, mut is_uni
     });
     free(tempname as *mut libc::c_void);
     if !(remote_fd < 0) {
-      bytes_transferred = bb_copyfd_eof(remote_fd, local_file_fd);
+      bytes_transferred = crate::libbb::copyfd::bb_copyfd_eof(remote_fd, local_file_fd);
       close(remote_fd);
       if bytes_transferred < 0 {
         cmdio_write_error(
@@ -1385,7 +1299,7 @@ unsafe extern "C" fn cmdio_get_cmd_and_arg() -> u32 {
   /* Using separate len_on_stk instead of len optimizes
    * code size (allows len to be in CPU register) */
   let mut len_on_stk: size_t = (8i32 * 1024i32) as size_t;
-  cmd = xmalloc_fgets_str_len(
+  cmd = crate::libbb::fgets_str::xmalloc_fgets_str_len(
     stdin,
     b"\r\n\x00" as *const u8 as *const libc::c_char,
     &mut len_on_stk,
@@ -1447,7 +1361,7 @@ unsafe extern "C" fn cmdio_get_cmd_and_arg() -> u32 {
         1109700713171191020 => {
           /* NUL => '\n' */
           let fresh8 = dst;
-          dst += 1;
+          dst = dst + 1;
           *cmd.offset(fresh8 as isize) = if *cmd.offset(src as isize) as libc::c_int != 0 {
             *cmd.offset(src as isize) as libc::c_int
           } else {
@@ -1497,12 +1411,13 @@ pub unsafe extern "C" fn ftpd_main(
   let ref mut fresh11 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
-  *fresh11 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh11 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   abs_timeout = (1i32 * 60i32 * 60i32) as libc::c_uint;
   verbose_S = 0 as libc::c_uint;
   (*ptr_to_globals).timeout = (2i32 * 60i32) as libc::c_uint;
-  opts = getopt32(
+  opts = crate::libbb::getopt32::getopt32(
     argv,
     b"^AvSwt:+T:+a:\x00vv:SS\x00" as *const u8 as *const libc::c_char,
     &mut (*ptr_to_globals).timeout as *mut libc::c_uint,
@@ -1518,7 +1433,7 @@ pub unsafe extern "C" fn ftpd_main(
     if abs_timeout == 0 as libc::c_uint {
       abs_timeout = 2147483647i32 as libc::c_uint
     }
-    (*ptr_to_globals).end_time = monotonic_sec().wrapping_add(abs_timeout);
+    (*ptr_to_globals).end_time = crate::libbb::time::monotonic_sec().wrapping_add(abs_timeout);
     if (*ptr_to_globals).timeout > abs_timeout {
       (*ptr_to_globals).timeout = abs_timeout
     }
@@ -1531,12 +1446,12 @@ pub unsafe extern "C" fn ftpd_main(
     (*ptr_to_globals).msg_err.as_mut_ptr().offset(4),
     b"Error\r\n\x00" as *const u8 as *const libc::c_char,
   );
-  (*ptr_to_globals).local_addr = get_sock_lsa(0i32);
+  (*ptr_to_globals).local_addr = crate::libbb::xconnect::get_sock_lsa(0i32);
   if (*ptr_to_globals).local_addr.is_null() {
     /* This is confusing:
      * bb_error_msg_and_die("stdin is not a socket");
      * Better: */
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
     /* Help text says that ftpd must be used as inetd service,
      * which is by far the most usual cause of get_sock_lsa
      * failure */
@@ -1550,7 +1465,7 @@ pub unsafe extern "C" fn ftpd_main(
     logmode = (logmode as libc::c_int | LOGMODE_SYSLOG as libc::c_int) as smallint
   }
   if logmode != 0 {
-    applet_name = xasprintf(
+    applet_name = crate::libbb::xfuncs_printf::xasprintf(
       b"%s[%u]\x00" as *const u8 as *const libc::c_char,
       applet_name,
       getpid(),
@@ -1558,16 +1473,16 @@ pub unsafe extern "C" fn ftpd_main(
   }
   //umask(077); - admin can set umask before starting us
   /* Signals */
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     0 + (1i32 << 13i32) + (1i32 << 17i32),
     ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
   );
   /* Set up options on the command socket (do we need these all? why?) */
-  setsockopt_1(0i32, IPPROTO_TCP as libc::c_int, 1i32);
-  setsockopt_keepalive(0i32);
+  crate::libbb::xconnect::setsockopt_1(0i32, IPPROTO_TCP as libc::c_int, 1i32);
+  crate::libbb::xconnect::setsockopt_keepalive(0i32);
   /* Telnet protocol over command link may send "urgent" data,
    * we prefer it to be received in the "normal" data stream: */
-  setsockopt_1(0i32, 1i32, 10i32);
+  crate::libbb::xconnect::setsockopt_1(0i32, 1i32, 10i32);
   cmdio_write_ok(
     (0i32
       | (' ' as i32) << SHIFTsp as libc::c_int
@@ -1598,7 +1513,7 @@ pub unsafe extern "C" fn ftpd_main(
         pw = bb_internal_getpwnam((*ptr_to_globals).ftp_arg);
         cmdio_write_raw(b"331 Specify password\r\n\x00" as *const u8 as *const libc::c_char);
       } else if cmdval == const_PASS as libc::c_int as libc::c_uint {
-        if check_password(pw, (*ptr_to_globals).ftp_arg) > 0 {
+        if crate::libbb::correct_password::check_password(pw, (*ptr_to_globals).ftp_arg) > 0 {
           break;
         }
         cmdio_write_raw(b"530 Login failed\r\n\x00" as *const u8 as *const libc::c_char);
@@ -1637,10 +1552,10 @@ pub unsafe extern "C" fn ftpd_main(
      * (older versions were dying with error message).
      * If chroot worked, move current dir to new "/":
      */
-    xchdir(basedir);
+    crate::libbb::xfuncs_printf::xchdir(basedir);
   }
   if !pw.is_null() {
-    change_identity(pw);
+    crate::libbb::change_identity::change_identity(pw);
   }
   loop
   /* else: -A is in effect */

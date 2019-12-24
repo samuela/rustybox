@@ -3,44 +3,18 @@ extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off_0: u64, len: size_t) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn volume_id_set_label_string(id: *mut volume_id, buf: *const u8, count: size_t);
-
-  #[no_mangle]
-  fn volume_id_set_unicode16(
-    str: *mut libc::c_char,
-    len: size_t,
-    buf: *const u8,
-    endianess: endian,
-    count: size_t,
-  );
 }
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+
+use crate::util_linux::volume_id::volume_id::volume_id;
 
 pub type endian = libc::c_uint;
 pub const BE: endian = 1;
 // pub const LE: endian = 0;
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct high_sierra_volume_descriptor {
   pub foo: [u8; 8],
   pub type_0: u8,
@@ -48,8 +22,8 @@ pub struct high_sierra_volume_descriptor {
   pub version: u8,
 }
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct iso_volume_descriptor {
   pub vd_type: u8,
   pub vd_id: [u8; 5],
@@ -133,7 +107,7 @@ pub unsafe extern "C" fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc
   let mut buf: *mut u8 = std::ptr::null_mut();
   let mut is: *mut iso_volume_descriptor = std::ptr::null_mut();
   let mut hs: *mut high_sierra_volume_descriptor = std::ptr::null_mut();
-  buf = volume_id_get_buffer(
+  buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     (0i32 as u64).wrapping_add(0x8000i32 as libc::c_ulong),
     0x200i32 as size_t,
@@ -151,12 +125,16 @@ pub unsafe extern "C" fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc
     let mut vd_offset: libc::c_int = 0;
     let mut i: libc::c_int = 0;
     //		volume_id_set_label_raw(id, is->volume_id, 32);
-    volume_id_set_label_string(id, (*is).volume_id.as_mut_ptr(), 32i32 as size_t);
+    crate::util_linux::volume_id::util::volume_id_set_label_string(
+      id,
+      (*is).volume_id.as_mut_ptr(),
+      32i32 as size_t,
+    );
     vd_offset = 0x8000i32 + 0x800i32;
     i = 0;
     while i < 16i32 {
       let mut svd_label: [u8; 64] = [0; 64];
-      is = volume_id_get_buffer(
+      is = crate::util_linux::volume_id::util::volume_id_get_buffer(
         id,
         (0i32 as u64).wrapping_add(vd_offset as libc::c_ulong),
         0x200i32 as size_t,
@@ -181,7 +159,7 @@ pub unsafe extern "C" fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc
             3i32 as libc::c_ulong,
           ) == 0
         {
-          volume_id_set_unicode16(
+          crate::util_linux::volume_id::util::volume_id_set_unicode16(
             svd_label.as_mut_ptr() as *mut libc::c_char,
             ::std::mem::size_of::<[u8; 64]>() as libc::c_ulong,
             (*is).volume_id.as_mut_ptr(),
@@ -197,7 +175,11 @@ pub unsafe extern "C" fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc
             break;
           }
           //				volume_id_set_label_raw(id, is->volume_id, 32);
-          volume_id_set_label_string(id, svd_label.as_mut_ptr(), 32i32 as size_t);
+          crate::util_linux::volume_id::util::volume_id_set_label_string(
+            id,
+            svd_label.as_mut_ptr(),
+            32i32 as size_t,
+          );
           //				strcpy(id->type_version, "Joliet Extension");
           break;
         } else {

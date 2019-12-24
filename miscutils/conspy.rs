@@ -59,48 +59,8 @@ extern "C" {
   ) -> libc::c_int;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xdup2(_: libc::c_int, _: libc::c_int);
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn kill_myself_with_sig(sig: libc::c_int) -> !;
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xread(fd: libc::c_int, buf: *mut libc::c_void, count: size_t);
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn xatou_range(str: *const libc::c_char, l: libc::c_uint, u: libc::c_uint) -> libc::c_uint;
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn get_shell_name() -> *const libc::c_char;
-  #[no_mangle]
-  fn get_terminal_width_height(
-    fd: libc::c_int,
-    width: *mut libc::c_uint,
-    height: *mut libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
-  #[no_mangle]
-  fn set_termios_to_raw(fd: libc::c_int, oldterm: *mut termios, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn bb_makedev(major: libc::c_uint, minor: libc::c_uint) -> libc::c_ulonglong;
+
   #[no_mangle]
   static ptr_to_globals: *mut globals;
   #[no_mangle]
@@ -111,8 +71,9 @@ pub type nfds_t = libc::c_ulong;
 
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub data: *mut libc::c_char,
   pub size: libc::c_int,
@@ -136,8 +97,9 @@ pub struct globals {
   pub term_orig: termios,
   pub vcsa_name: [libc::c_char; 12],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct screen_info {
   pub lines: libc::c_uchar,
   pub cols: libc::c_uchar,
@@ -181,7 +143,7 @@ unsafe extern "C" fn set_cursor(mut state: libc::c_int) {
   if (*ptr_to_globals).curoff as libc::c_int != state {
     (*ptr_to_globals).curoff = state as smallint;
     putcsi(b"?25\x00" as *const u8 as *const libc::c_char);
-    bb_putchar(
+    crate::libbb::xfuncs_printf::bb_putchar(
       (*::std::mem::transmute::<&[u8; 4], &[libc::c_char; 4]>(b"h?l\x00"))[(1i32 + state) as usize]
         as libc::c_int,
     );
@@ -210,9 +172,9 @@ unsafe extern "C" fn cleanup(mut code: libc::c_int) -> ! {
   if option_mask32 & (1i32 << FLAG_n as libc::c_int) as libc::c_uint == 0 {
     putcsi(b"0m\x00" as *const u8 as *const libc::c_char);
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   if code > 1i32 {
-    kill_myself_with_sig(code);
+    crate::libbb::signals::kill_myself_with_sig(code);
   }
   exit(code);
 }
@@ -222,8 +184,8 @@ unsafe extern "C" fn screen_read_close() {
   let mut vcsa_fd: libc::c_int = 0;
   let mut data: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   // Close & re-open vcsa in case they have swapped virtual consoles
-  vcsa_fd = xopen((*ptr_to_globals).vcsa_name.as_mut_ptr(), 0); // if will catch j < G.x too
-  xread(
+  vcsa_fd = crate::libbb::xfuncs_printf::xopen((*ptr_to_globals).vcsa_name.as_mut_ptr(), 0); // if will catch j < G.x too
+  crate::libbb::read_printf::xread(
     vcsa_fd,
     &mut (*ptr_to_globals).remote as *mut screen_info as *mut libc::c_void,
     4i32 as size_t,
@@ -235,7 +197,8 @@ unsafe extern "C" fn screen_read_close() {
   if (*ptr_to_globals).data.is_null() {
     (*ptr_to_globals).size = i as libc::c_int;
     (*ptr_to_globals).data =
-      xzalloc((2i32 as libc::c_uint).wrapping_mul(i) as size_t) as *mut libc::c_char
+      crate::libbb::xfuncs_printf::xzalloc((2i32 as libc::c_uint).wrapping_mul(i) as size_t)
+        as *mut libc::c_char
   }
   if (*ptr_to_globals).size as libc::c_uint != i {
     cleanup(1i32);
@@ -243,7 +206,7 @@ unsafe extern "C" fn screen_read_close() {
   data = (*ptr_to_globals)
     .data
     .offset((*ptr_to_globals).current as isize);
-  xread(
+  crate::libbb::read_printf::xread(
     vcsa_fd,
     data as *mut libc::c_void,
     (*ptr_to_globals).size as size_t,
@@ -403,7 +366,7 @@ unsafe extern "C" fn screen_dump() {
         {
           while linefeed_cnt != 0 {
             //bb_putchar('\r'); - tty driver does it for us
-            bb_putchar('\n' as i32);
+            crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
             linefeed_cnt -= 1
           }
           loop {
@@ -411,7 +374,7 @@ unsafe extern "C" fn screen_dump() {
             if !(space_cnt != 0) {
               break;
             }
-            bb_putchar(' ' as i32);
+            crate::libbb::xfuncs_printf::bb_putchar(' ' as i32);
           }
           screen_char(data);
         }
@@ -451,7 +414,9 @@ unsafe extern "C" fn start_shell_in_child(mut tty_name: *const libc::c_char) {
   let mut pid: libc::c_int = {
     let mut bb__xvfork_pid: pid_t = vfork();
     if bb__xvfork_pid < 0 {
-      bb_simple_perror_msg_and_die(b"vfork\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
+        b"vfork\x00" as *const u8 as *const libc::c_char,
+      );
     }
     bb__xvfork_pid
   };
@@ -466,7 +431,7 @@ unsafe extern "C" fn start_shell_in_child(mut tty_name: *const libc::c_char) {
       c_ispeed: 0,
       c_ospeed: 0,
     };
-    let mut shell: *const libc::c_char = get_shell_name();
+    let mut shell: *const libc::c_char = crate::libbb::get_shell_name::get_shell_name();
     signal(
       1i32,
       ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
@@ -475,9 +440,9 @@ unsafe extern "C" fn start_shell_in_child(mut tty_name: *const libc::c_char) {
     setsid();
     // make tty to be input, output, error
     close(0i32); // uses fd 0
-    xopen(tty_name, 0o2i32);
-    xdup2(0i32, 1i32);
-    xdup2(0i32, 2i32);
+    crate::libbb::xfuncs_printf::xopen(tty_name, 0o2i32);
+    crate::libbb::xfuncs_printf::xdup2(0i32, 1i32);
+    crate::libbb::xfuncs_printf::xdup2(0i32, 2i32);
     ioctl(0i32, 0x540ei32 as libc::c_ulong, 1i32);
     tcsetpgrp(0i32, getpid());
     tcgetattr(0i32, &mut termchild);
@@ -485,14 +450,14 @@ unsafe extern "C" fn start_shell_in_child(mut tty_name: *const libc::c_char) {
     termchild.c_oflag |= (0o4i32 | 0o14000i32) as libc::c_uint;
     termchild.c_iflag |= 0o400i32 as libc::c_uint;
     termchild.c_iflag &= !0o10000i32 as libc::c_uint;
-    tcsetattr_stdin_TCSANOW(&mut termchild);
+    crate::libbb::xfuncs::tcsetattr_stdin_TCSANOW(&mut termchild);
     execl(
       shell,
       shell,
       b"-i\x00" as *const u8 as *const libc::c_char,
       0 as *mut libc::c_void as *mut libc::c_char,
     );
-    bb_simple_perror_msg_and_die(shell);
+    crate::libbb::perror_msg::bb_simple_perror_msg_and_die(shell);
   };
 }
 #[no_mangle]
@@ -515,7 +480,8 @@ pub unsafe extern "C" fn conspy_main(
   let ref mut fresh11 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);
-  *fresh11 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh11 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).height = (2147483647i32 as libc::c_uint)
     .wrapping_mul(2u32)
@@ -527,7 +493,7 @@ pub unsafe extern "C" fn conspy_main(
     b"/dev/vcsa\x00" as *const u8 as *const libc::c_char,
   );
   // numeric params
-  opts = getopt32long(
+  opts = crate::libbb::getopt32::getopt32long(
     argv,
     b"vcQsndfFx:+y:+\x00" as *const u8 as *const libc::c_char,
     conspy_longopts.as_ptr(),
@@ -537,7 +503,8 @@ pub unsafe extern "C" fn conspy_main(
   argv = argv.offset(optind as isize);
   ttynum = 0 as libc::c_uint;
   if !(*argv.offset(0)).is_null() {
-    ttynum = xatou_range(*argv.offset(0), 0 as libc::c_uint, 63i32 as libc::c_uint);
+    ttynum =
+      crate::libbb::xatonum::xatou_range(*argv.offset(0), 0 as libc::c_uint, 63i32 as libc::c_uint);
     sprintf(
       (*ptr_to_globals)
         .vcsa_name
@@ -560,12 +527,12 @@ pub unsafe extern "C" fn conspy_main(
     {
       create_cdev_if_doesnt_exist(
         tty_name.as_mut_ptr(),
-        bb_makedev(4i32 as libc::c_uint, ttynum) as libc::dev_t,
+        crate::libbb::makedev::bb_makedev(4i32 as libc::c_uint, ttynum) as libc::dev_t,
       );
     }
     create_cdev_if_doesnt_exist(
       (*ptr_to_globals).vcsa_name.as_mut_ptr(),
-      bb_makedev(
+      crate::libbb::makedev::bb_makedev(
         7i32 as libc::c_uint,
         (128i32 as libc::c_uint).wrapping_add(ttynum),
       ) as libc::dev_t,
@@ -577,19 +544,20 @@ pub unsafe extern "C" fn conspy_main(
   screen_read_close();
   if opts & (1i32 << FLAG_d as libc::c_int) as libc::c_uint != 0 {
     screen_dump();
-    bb_putchar('\n' as i32);
+    crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
     return 0;
   }
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     BB_FATAL_SIGS as libc::c_int,
     ::std::mem::transmute::<
       Option<unsafe extern "C" fn(_: libc::c_int) -> !>,
       Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
     >(Some(cleanup as unsafe extern "C" fn(_: libc::c_int) -> !)),
   );
-  (*ptr_to_globals).kbd_fd = xopen(b"/dev/tty\x00" as *const u8 as *const libc::c_char, 0);
+  (*ptr_to_globals).kbd_fd =
+    crate::libbb::xfuncs_printf::xopen(b"/dev/tty\x00" as *const u8 as *const libc::c_char, 0);
   // All characters must be passed through to us unaltered
-  set_termios_to_raw(
+  crate::libbb::xfuncs::set_termios_to_raw(
     (*ptr_to_globals).kbd_fd,
     &mut (*ptr_to_globals).term_orig,
     0 | 1i32 << 0 | 1i32 << 3i32,
@@ -610,7 +578,7 @@ pub unsafe extern "C" fn conspy_main(
     // in the first loop G.width = G.height = 0: refresh
     i = (*ptr_to_globals).width as libc::c_int;
     j = (*ptr_to_globals).height as libc::c_int;
-    get_terminal_width_height(
+    crate::libbb::xfuncs::get_terminal_width_height(
       (*ptr_to_globals).kbd_fd,
       &mut (*ptr_to_globals).width,
       &mut (*ptr_to_globals).height,
@@ -697,7 +665,7 @@ pub unsafe extern "C" fn conspy_main(
     }
     curmove();
     // Wait for local user keypresses
-    fflush_all();
+    crate::libbb::xfuncs_printf::fflush_all();
     pfd.fd = (*ptr_to_globals).kbd_fd;
     pfd.events = 0x1i32 as libc::c_short;
     bytes_read = 0;
@@ -758,7 +726,7 @@ pub unsafe extern "C" fn conspy_main(
     let mut handle: libc::c_int = 0;
     let mut result: libc::c_int = 0;
     let mut kbd_mode: libc::c_long = 0;
-    handle = xopen(tty_name.as_mut_ptr(), 0o1i32);
+    handle = crate::libbb::xfuncs_printf::xopen(tty_name.as_mut_ptr(), 0o1i32);
     result = ioctl(
       handle,
       0x4b44i32 as libc::c_ulong,

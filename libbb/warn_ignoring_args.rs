@@ -1,8 +1,5 @@
 use libc;
-extern "C" {
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-}
+
 /* Specialized: */
 /* Using xatoi() instead of naive atoi() is not always convenient -
  * in many places people want *non-negative* values, but store them
@@ -130,6 +127,8 @@ extern "C" {
 #[no_mangle]
 pub unsafe extern "C" fn bb_warn_ignoring_args(mut arg: *mut libc::c_char) {
   if !arg.is_null() {
-    bb_simple_error_msg(b"ignoring all arguments\x00" as *const u8 as *const libc::c_char);
+    crate::libbb::verror_msg::bb_simple_error_msg(
+      b"ignoring all arguments\x00" as *const u8 as *const libc::c_char,
+    );
   };
 }

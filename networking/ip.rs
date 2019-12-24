@@ -1,26 +1,9 @@
 use libc;
 extern "C" {
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn index_in_substrings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
 
-  #[no_mangle]
-  fn ip_parse_common_args(argv: *mut *mut libc::c_char) -> *mut *mut libc::c_char;
   //int FAST_FUNC iproute_monitor(char **argv);
   //void FAST_FUNC ipneigh_reset_filter(void);
-  #[no_mangle]
-  fn do_ipaddr(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn do_iproute(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn do_iprule(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn do_ipneigh(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn do_iptunnel(argv: *mut *mut libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn do_iplink(argv: *mut *mut libc::c_char) -> libc::c_int;
+
 }
 
 /*
@@ -348,7 +331,7 @@ unsafe extern "C" fn ip_do(
   mut ip_func: ip_func_ptr_t,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  argv = ip_parse_common_args(argv.offset(1));
+  argv = crate::networking::libiproute::ip_parse_common_args::ip_parse_common_args(argv.offset(1));
   return ip_func.expect("non-null function pointer")(argv);
 }
 #[no_mangle]
@@ -357,7 +340,10 @@ pub unsafe extern "C" fn ipaddr_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return ip_do(
-    Some(do_ipaddr as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
+    Some(
+      crate::networking::libiproute::ipaddress::do_ipaddr
+        as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int,
+    ),
     argv,
   );
 }
@@ -367,7 +353,10 @@ pub unsafe extern "C" fn iplink_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return ip_do(
-    Some(do_iplink as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
+    Some(
+      crate::networking::libiproute::iplink::do_iplink
+        as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int,
+    ),
     argv,
   );
 }
@@ -377,7 +366,10 @@ pub unsafe extern "C" fn iproute_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return ip_do(
-    Some(do_iproute as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
+    Some(
+      crate::networking::libiproute::iproute::do_iproute
+        as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int,
+    ),
     argv,
   );
 }
@@ -387,7 +379,10 @@ pub unsafe extern "C" fn iprule_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return ip_do(
-    Some(do_iprule as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
+    Some(
+      crate::networking::libiproute::iprule::do_iprule
+        as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int,
+    ),
     argv,
   );
 }
@@ -397,7 +392,10 @@ pub unsafe extern "C" fn iptunnel_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return ip_do(
-    Some(do_iptunnel as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
+    Some(
+      crate::networking::libiproute::iptunnel::do_iptunnel
+        as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int,
+    ),
     argv,
   );
 }
@@ -407,12 +405,15 @@ pub unsafe extern "C" fn ipneigh_main(
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return ip_do(
-    Some(do_ipneigh as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
+    Some(
+      crate::networking::libiproute::ipneigh::do_ipneigh
+        as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int,
+    ),
     argv,
   );
 }
 unsafe extern "C" fn ip_print_help(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
-  bb_show_usage();
+  crate::libbb::appletlib::bb_show_usage();
 }
 #[no_mangle]
 pub unsafe extern "C" fn ip_main(
@@ -426,18 +427,42 @@ pub unsafe extern "C" fn ip_main(
   ];
   static mut ip_func_ptrs: [ip_func_ptr_t; 9] = [
     Some(ip_print_help as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-    Some(do_ipaddr as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-    Some(do_iproute as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-    Some(do_iproute as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-    Some(do_iplink as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-    Some(do_iptunnel as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-    Some(do_iptunnel as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-    Some(do_iprule as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
-    Some(do_ipneigh as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int),
+    Some(
+      crate::networking::libiproute::ipaddress::do_ipaddr
+        as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int,
+    ),
+    Some(
+      crate::networking::libiproute::iproute::do_iproute
+        as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int,
+    ),
+    Some(
+      crate::networking::libiproute::iproute::do_iproute
+        as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int,
+    ),
+    Some(
+      crate::networking::libiproute::iplink::do_iplink
+        as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int,
+    ),
+    Some(
+      crate::networking::libiproute::iptunnel::do_iptunnel
+        as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int,
+    ),
+    Some(
+      crate::networking::libiproute::iptunnel::do_iptunnel
+        as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int,
+    ),
+    Some(
+      crate::networking::libiproute::iprule::do_iprule
+        as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int,
+    ),
+    Some(
+      crate::networking::libiproute::ipneigh::do_ipneigh
+        as unsafe extern "C" fn(_: *mut *mut libc::c_char) -> libc::c_int,
+    ),
   ];
   let mut ip_func: ip_func_ptr_t = None;
   let mut key: libc::c_int = 0;
-  argv = ip_parse_common_args(argv.offset(1));
+  argv = crate::networking::libiproute::ip_parse_common_args::ip_parse_common_args(argv.offset(1));
   if (::std::mem::size_of::<[ip_func_ptr_t; 9]>() as libc::c_ulong)
     .wrapping_div(::std::mem::size_of::<ip_func_ptr_t>() as libc::c_ulong) as libc::c_uint
     > 1i32 as libc::c_uint
@@ -445,7 +470,7 @@ pub unsafe extern "C" fn ip_main(
   {
     let fresh0 = argv;
     argv = argv.offset(1);
-    key = index_in_substrings(keywords.as_ptr(), *fresh0)
+    key = crate::libbb::compare_string_array::index_in_substrings(keywords.as_ptr(), *fresh0)
   } else {
     key = -1i32
   }

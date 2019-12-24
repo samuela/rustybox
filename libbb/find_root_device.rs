@@ -13,18 +13,10 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  #[no_mangle]
-  fn xstrdup(s: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn safe_strncpy(
-    dst: *mut libc::c_char,
-    src: *const libc::c_char,
-    size: size_t,
-  ) -> *mut libc::c_char;
 }
 
-#[derive(Copy, Clone)]
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct arena {
   pub st: stat,
   pub dev: libc::dev_t,
@@ -66,7 +58,7 @@ unsafe extern "C" fn find_block_device_in_dir(mut ap: *mut arena) -> *mut libc::
     if entry.is_null() {
       break;
     }
-    safe_strncpy(
+    crate::libbb::safe_strncpy::safe_strncpy(
       (*ap).devpath.as_mut_ptr().offset(len as isize),
       (*entry).d_name.as_mut_ptr(),
       rem as size_t,
@@ -78,7 +70,7 @@ unsafe extern "C" fn find_block_device_in_dir(mut ap: *mut arena) -> *mut libc::
     if (*ap).st.st_mode & 0o170000i32 as libc::c_uint == 0o60000i32 as libc::c_uint
       && (*ap).st.st_rdev == (*ap).dev
     {
-      retpath = xstrdup((*ap).devpath.as_mut_ptr());
+      retpath = crate::libbb::xfuncs_printf::xstrdup((*ap).devpath.as_mut_ptr());
       break;
     } else {
       if !((*ap).st.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint) {

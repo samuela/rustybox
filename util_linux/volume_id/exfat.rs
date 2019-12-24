@@ -3,36 +3,11 @@ extern "C" {
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
 
-  #[no_mangle]
-  fn volume_id_set_label_unicode16(
-    id: *mut volume_id,
-    buf: *const u8,
-    endianess: endian,
-    count: size_t,
-  );
-
-  #[no_mangle]
-  fn volume_id_set_uuid(id: *mut volume_id, buf: *const u8, format: uuid_format);
-
-  #[no_mangle]
-  fn volume_id_get_buffer(id: *mut volume_id, off: u64, len: size_t) -> *mut libc::c_void;
 }
 
 use crate::librb::size_t;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct volume_id {
-  pub fd: libc::c_int,
-  pub error: libc::c_int,
-  pub sbbuf_len: size_t,
-  pub seekbuf_len: size_t,
-  pub sbbuf: *mut u8,
-  pub seekbuf: *mut u8,
-  pub seekbuf_off: u64,
-  pub label: [libc::c_char; 65],
-  pub uuid: [libc::c_char; 37],
-  pub type_0: *const libc::c_char,
-}
+
+use crate::util_linux::volume_id::volume_id::volume_id;
 
 pub type uuid_format = libc::c_uint;
 // pub const UUID_DCE_STRING: uuid_format = 3;
@@ -43,8 +18,8 @@ pub type endian = libc::c_uint;
 // pub const BE: endian = 1;
 pub const LE: endian = 0;
 
-#[derive(Copy, Clone)]
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct volume_guid {
   pub sec_count: u8,
   pub set_checksum: u16,
@@ -52,27 +27,31 @@ pub struct volume_guid {
   pub vol_guid: [u8; 16],
   pub reserved: [u8; 10],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed {
   pub label: volume_label,
   pub guid: volume_guid,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct volume_label {
   pub char_count: u8,
   pub vol_label: [u16; 11],
   pub reserved: [u8; 8],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct exfat_dir_entry {
   pub entry_type: u8,
   pub type_0: C2RustUnnamed,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C, packed)]
+#[derive(Copy, Clone)]
 pub struct exfat_super_block {
   pub boot_jump: [u8; 3],
   pub fs_name: [u8; 8],
@@ -182,7 +161,7 @@ pub unsafe extern "C" fn volume_id_probe_exfat(mut id: *mut volume_id) -> libc::
   let mut count: libc::c_uint = 0;
   let mut need_lbl_guid: libc::c_uint = 0;
   // Primary super block
-  sb = volume_id_get_buffer(
+  sb = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     0 as u64,
     ::std::mem::size_of::<exfat_super_block>() as libc::c_ulong,
@@ -210,7 +189,11 @@ pub unsafe extern "C" fn volume_id_probe_exfat(mut id: *mut volume_id) -> libc::
         .wrapping_mul(cluster_sz) as libc::c_ulong,
     );
   // Use DOS uuid as fallback, if no GUID set
-  volume_id_set_uuid(id, (*sb).vol_serial_nr.as_mut_ptr(), UUID_DOS);
+  crate::util_linux::volume_id::util::volume_id_set_uuid(
+    id,
+    (*sb).vol_serial_nr.as_mut_ptr(),
+    UUID_DOS,
+  );
   // EXFAT_MAX_DIR_ENTRIES is used as a safety belt.
   // The Root Directory may hold an unlimited number of entries,
   // so we do not want to check all. Usually label and GUID
@@ -218,7 +201,7 @@ pub unsafe extern "C" fn volume_id_probe_exfat(mut id: *mut volume_id) -> libc::
   need_lbl_guid = (1i32 << 0 | 1i32 << 1i32) as libc::c_uint;
   count = 0 as libc::c_uint;
   while count < 100i32 as libc::c_uint {
-    de = volume_id_get_buffer(
+    de = crate::util_linux::volume_id::util::volume_id_get_buffer(
       id,
       root_dir_off.wrapping_add(count.wrapping_mul(32i32 as libc::c_uint) as libc::c_ulong),
       32i32 as size_t,
@@ -231,7 +214,7 @@ pub unsafe extern "C" fn volume_id_probe_exfat(mut id: *mut volume_id) -> libc::
     }
     if (*de).entry_type as libc::c_int == 0x83i32 {
       // Volume Label Directory Entry
-      volume_id_set_label_unicode16(
+      crate::util_linux::volume_id::util::volume_id_set_label_unicode16(
         id,
         (*de).type_0.label.vol_label.as_mut_ptr() as *mut u8,
         LE,
@@ -241,7 +224,11 @@ pub unsafe extern "C" fn volume_id_probe_exfat(mut id: *mut volume_id) -> libc::
     }
     if (*de).entry_type as libc::c_int == 0xa0i32 {
       // Volume GUID Directory Entry
-      volume_id_set_uuid(id, (*de).type_0.guid.vol_guid.as_mut_ptr(), UUID_DCE);
+      crate::util_linux::volume_id::util::volume_id_set_uuid(
+        id,
+        (*de).type_0.guid.vol_guid.as_mut_ptr(),
+        UUID_DCE,
+      );
       need_lbl_guid &= !(1i32 << 1i32) as libc::c_uint
     }
     if need_lbl_guid == 0 {

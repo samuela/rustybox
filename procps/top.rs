@@ -1,13 +1,21 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::__compar_fn_t;
+use crate::librb::procps_status_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
 use libc::fclose;
 use libc::free;
+use libc::pid_t;
 use libc::printf;
 use libc::puts;
 use libc::sscanf;
 use libc::strchr;
 use libc::strcpy;
+use libc::termios;
+use libc::useconds_t;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -52,107 +60,24 @@ extern "C" {
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn xzalloc(size: size_t) -> *mut libc::c_void;
-  #[no_mangle]
-  fn xrealloc_vector_helper(
-    vector: *mut libc::c_void,
-    sizeof_and_shift: libc::c_uint,
-    idx: libc::c_int,
-  ) -> *mut libc::c_void;
-  #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-  #[no_mangle]
-  fn kill_myself_with_sig(sig: libc::c_int) -> !;
-  #[no_mangle]
-  fn xchdir(path: *const libc::c_char);
-  #[no_mangle]
-  fn bb_putchar(ch: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn open_read_close(
-    filename: *const libc::c_char,
-    buf: *mut libc::c_void,
-    maxsz: size_t,
-  ) -> ssize_t;
-  #[no_mangle]
-  fn fflush_all() -> libc::c_int;
-  #[no_mangle]
-  fn xfopen_for_read(path: *const libc::c_char) -> *mut FILE;
-  #[no_mangle]
-  fn utoa(n: libc::c_uint) -> *mut libc::c_char;
-  #[no_mangle]
-  fn smart_ulltoa5(
-    ul: libc::c_ulonglong,
-    buf: *mut libc::c_char,
-    scale: *const libc::c_char,
-  ) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xatou(str: *const libc::c_char) -> libc::c_uint;
-  #[no_mangle]
-  fn sleep_for_duration(duration: duration_t);
-  #[no_mangle]
-  fn parse_duration_str(str: *mut libc::c_char) -> duration_t;
-  #[no_mangle]
-  fn get_cached_username(uid: uid_t) -> *const libc::c_char;
-  #[no_mangle]
-  fn clear_username_cache();
-  #[no_mangle]
-  fn make_all_argv_opts(argv: *mut *mut libc::c_char);
-  #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
+
   #[no_mangle]
   static mut die_func: Option<unsafe extern "C" fn() -> ()>;
-  #[no_mangle]
-  fn bb_simple_error_msg(s: *const libc::c_char);
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn index_in_strings(strings: *const libc::c_char, key: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn get_terminal_width_height(
-    fd: libc::c_int,
-    width: *mut libc::c_uint,
-    height: *mut libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn tcsetattr_stdin_TCSANOW(tp: *const termios) -> libc::c_int;
-  #[no_mangle]
-  fn set_termios_to_raw(fd: libc::c_int, oldterm: *mut termios, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn read_key(fd: libc::c_int, buffer: *mut libc::c_char, timeout: libc::c_int) -> int64_t;
-  #[no_mangle]
-  fn procps_scan(sp: *mut procps_status_t, flags: libc::c_int) -> *mut procps_status_t;
-  #[no_mangle]
-  fn read_cmdline(
-    buf: *mut libc::c_char,
-    size: libc::c_int,
-    pid: libc::c_uint,
-    comm: *const libc::c_char,
-  );
+
   #[no_mangle]
   static ptr_to_globals: *mut globals;
 }
 
 pub type __int64_t = libc::c_long;
-
-use libc::useconds_t;
 pub type int64_t = __int64_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::pid_t;
-use libc::ssize_t;
-use libc::uid_t;
-use libc::DIR;
-use libc::FILE;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct div_t {
   pub quot: libc::c_int,
   pub rem: libc::c_int,
 }
-use crate::librb::__compar_fn_t;
-use libc::termios;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 pub type duration_t = libc::c_double;
@@ -177,55 +102,7 @@ pub const KEYCODE_LEFT: C2RustUnnamed_0 = -5;
 pub const KEYCODE_RIGHT: C2RustUnnamed_0 = -4;
 pub const KEYCODE_DOWN: C2RustUnnamed_0 = -3;
 pub const KEYCODE_UP: C2RustUnnamed_0 = -2;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct smaprec {
-  pub mapped_rw: libc::c_ulong,
-  pub mapped_ro: libc::c_ulong,
-  pub shared_clean: libc::c_ulong,
-  pub shared_dirty: libc::c_ulong,
-  pub private_clean: libc::c_ulong,
-  pub private_dirty: libc::c_ulong,
-  pub stack: libc::c_ulong,
-  pub smap_pss: libc::c_ulong,
-  pub smap_swap: libc::c_ulong,
-  pub smap_size: libc::c_ulong,
-  pub smap_start: libc::c_ulonglong,
-  pub smap_mode: [libc::c_char; 5],
-  pub smap_name: *mut libc::c_char,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct procps_status_t {
-  pub dir: *mut DIR,
-  pub task_dir: *mut DIR,
-  pub shift_pages_to_bytes: u8,
-  pub shift_pages_to_kb: u8,
-  pub argv_len: u16,
-  pub argv0: *mut libc::c_char,
-  pub exe: *mut libc::c_char,
-  pub main_thread_pid: libc::c_uint,
-  pub vsz: libc::c_ulong,
-  pub rss: libc::c_ulong,
-  pub stime: libc::c_ulong,
-  pub utime: libc::c_ulong,
-  pub start_time: libc::c_ulong,
-  pub pid: libc::c_uint,
-  pub ppid: libc::c_uint,
-  pub pgid: libc::c_uint,
-  pub sid: libc::c_uint,
-  pub uid: libc::c_uint,
-  pub gid: libc::c_uint,
-  pub ruid: libc::c_uint,
-  pub rgid: libc::c_uint,
-  pub niceness: libc::c_int,
-  pub tty_major: libc::c_uint,
-  pub tty_minor: libc::c_uint,
-  pub smaps: smaprec,
-  pub state: [libc::c_char; 4],
-  pub comm: [libc::c_char; 16],
-  pub last_seen_on_cpu: libc::c_int,
-}
+
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const PSSCAN_TASKS: C2RustUnnamed_1 = 4194304;
 pub const PSSCAN_RUIDGID: C2RustUnnamed_1 = 2097152;
@@ -249,8 +126,9 @@ pub const PSSCAN_SID: C2RustUnnamed_1 = 8;
 pub const PSSCAN_PGID: C2RustUnnamed_1 = 4;
 pub const PSSCAN_PPID: C2RustUnnamed_1 = 2;
 pub const PSSCAN_PID: C2RustUnnamed_1 = 1;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct globals {
   pub top: *mut top_status_t,
   pub ntop: libc::c_int,
@@ -272,8 +150,9 @@ pub struct globals {
   pub kbd_input: [libc::c_char; 16],
   pub line_buf: [libc::c_char; 448],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct jiffy_counts_t {
   pub usr: libc::c_ulonglong,
   pub nic: libc::c_ulonglong,
@@ -286,16 +165,18 @@ pub struct jiffy_counts_t {
   pub total: libc::c_ulonglong,
   pub busy: libc::c_ulonglong,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct save_hist {
   pub ticks: libc::c_ulong,
   pub pid: pid_t,
 }
 pub type cmp_funcp =
   Option<unsafe extern "C" fn(_: *mut top_status_t, _: *mut top_status_t) -> libc::c_int>;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct top_status_t {
   pub vsz: libc::c_ulong,
   pub ticks: libc::c_ulong,
@@ -342,8 +223,9 @@ pub type C2RustUnnamed_6 = libc::c_uint;
  * TOPMEM support
  */
 pub type mem_t = libc::c_ulong;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct topmem_status_t {
   pub pid: libc::c_uint,
   pub comm: [libc::c_char; 16],
@@ -477,12 +359,13 @@ unsafe extern "C" fn read_cpu_jiffy(
   return ret;
 }
 unsafe extern "C" fn get_jiffy_counts() {
-  let mut fp: *mut FILE = xfopen_for_read(b"stat\x00" as *const u8 as *const libc::c_char);
+  let mut fp: *mut FILE =
+    crate::libbb::wfopen::xfopen_for_read(b"stat\x00" as *const u8 as *const libc::c_char);
   /* We need to parse cumulative counts even if SMP CPU display is on,
    * they are used to calculate per process CPU% */
   (*ptr_to_globals).prev_jif = (*ptr_to_globals).cur_jif; /* Non first time invocation */
   if read_cpu_jiffy(fp, &mut (*ptr_to_globals).cur_jif) < 4i32 {
-    bb_error_msg_and_die(
+    crate::libbb::verror_msg::bb_error_msg_and_die(
       b"can\'t read \'%s\'\x00" as *const u8 as *const libc::c_char,
       b"/proc/stat\x00" as *const u8 as *const libc::c_char,
     );
@@ -497,7 +380,7 @@ unsafe extern "C" fn get_jiffy_counts() {
      * There will be at least 1 /proc/stat line with cpu%d
      */
     {
-      (*ptr_to_globals).cpu_jif = xrealloc_vector_helper(
+      (*ptr_to_globals).cpu_jif = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
         (*ptr_to_globals).cpu_jif as *mut libc::c_void,
         ((::std::mem::size_of::<jiffy_counts_t>() as libc::c_ulong) << 8i32)
           .wrapping_add(1i32 as libc::c_ulong) as libc::c_uint,
@@ -518,7 +401,7 @@ unsafe extern "C" fn get_jiffy_counts() {
       /* /proc/stat with only "cpu ..." line?! */
       (*ptr_to_globals).smp_cpu_info = 0 as smallint
     }
-    (*ptr_to_globals).cpu_prev_jif = xzalloc(
+    (*ptr_to_globals).cpu_prev_jif = crate::libbb::xfuncs_printf::xzalloc(
       (::std::mem::size_of::<jiffy_counts_t>() as libc::c_ulong)
         .wrapping_mul((*ptr_to_globals).num_cpus as libc::c_ulong),
     ) as *mut jiffy_counts_t;
@@ -684,7 +567,7 @@ unsafe extern "C" fn display_cpus(
       scr_width as libc::c_ulong,
       b"CPU%s:%susr%ssys%snic%sidle%sio%sirq%ssirq\x00" as *const u8 as *const libc::c_char,
       if (*ptr_to_globals).smp_cpu_info as libc::c_int != 0 {
-        utoa(i as libc::c_uint)
+        crate::libbb::xfuncs::utoa(i as libc::c_uint)
       } else {
         b"\x00" as *const u8 as *const libc::c_char
       },
@@ -746,7 +629,7 @@ unsafe extern "C" fn parse_meminfo(mut meminfo: *mut libc::c_ulong) {
     (::std::mem::size_of::<libc::c_ulong>() as libc::c_ulong)
       .wrapping_mul(MI_MAX as libc::c_int as libc::c_ulong),
   );
-  f = xfopen_for_read(b"meminfo\x00" as *const u8 as *const libc::c_char);
+  f = crate::libbb::wfopen::xfopen_for_read(b"meminfo\x00" as *const u8 as *const libc::c_char);
   while !fgets_unlocked(
     buf.as_mut_ptr(),
     ::std::mem::size_of::<[libc::c_char; 60]>() as libc::c_ulong as libc::c_int,
@@ -759,7 +642,7 @@ unsafe extern "C" fn parse_meminfo(mut meminfo: *mut libc::c_ulong) {
       continue;
     }
     *c = '\u{0}' as i32 as libc::c_char;
-    i = index_in_strings(fields.as_ptr(), buf.as_mut_ptr());
+    i = crate::libbb::compare_string_array::index_in_strings(fields.as_ptr(), buf.as_mut_ptr());
     if i >= 0 {
       *meminfo.offset(i as isize) = strtoul(c.offset(1), 0 as *mut *mut libc::c_char, 10i32)
     }
@@ -810,7 +693,7 @@ unsafe extern "C" fn display_header(
     scrbuf.as_mut_ptr(),
     b"Load average: \x00" as *const u8 as *const libc::c_char,
   ); /* or use total_vsz? */
-  open_read_close(
+  crate::libbb::read::open_read_close(
     b"loadavg\x00" as *const u8 as *const libc::c_char,
     buf as *mut libc::c_void,
     (::std::mem::size_of::<[libc::c_char; 100]>() as libc::c_ulong)
@@ -931,7 +814,7 @@ unsafe extern "C" fn display_process_list(mut lines_rem: libc::c_int, mut scr_wi
       ((*s).pcpu.wrapping_mul(pcpu_scale).wrapping_add(pcpu_half) >> pcpu_shift) as libc::c_int,
       10i32,
     );
-    smart_ulltoa5(
+    crate::libbb::human_readable::smart_ulltoa5(
       (*s).vsz as libc::c_ulonglong,
       vsz_str_buf.as_mut_ptr(),
       b" mgtpezy\x00" as *const u8 as *const libc::c_char,
@@ -943,7 +826,7 @@ unsafe extern "C" fn display_process_list(mut lines_rem: libc::c_int, mut scr_wi
       b"\n%5u%6u %-8.8s %s  %.5s%3u.%c %3d%3u.%c \x00" as *const u8 as *const libc::c_char,
       (*s).pid,
       (*s).ppid,
-      get_cached_username((*s).uid),
+      crate::libbb::procps::get_cached_username((*s).uid),
       (*s).state.as_mut_ptr(),
       vsz_str_buf.as_mut_ptr(),
       pmem.quot,
@@ -953,7 +836,7 @@ unsafe extern "C" fn display_process_list(mut lines_rem: libc::c_int, mut scr_wi
       '0' as i32 + pcpu.rem,
     ) as libc::c_uint;
     if (scr_width as libc::c_uint).wrapping_sub(col) as libc::c_int > 1i32 {
-      read_cmdline(
+      crate::libbb::procps::read_cmdline(
         (*ptr_to_globals).line_buf.as_mut_ptr().offset(col as isize),
         (scr_width as libc::c_uint).wrapping_sub(col) as libc::c_int,
         (*s).pid,
@@ -966,28 +849,28 @@ unsafe extern "C" fn display_process_list(mut lines_rem: libc::c_int, mut scr_wi
     s = s.offset(1)
   }
   /* printf(" %d", hist_iterations); */
-  bb_putchar(
+  crate::libbb::xfuncs_printf::bb_putchar(
     if option_mask32 & OPT_b as libc::c_int as libc::c_uint != 0 {
       '\n' as i32
     } else {
       '\r' as i32
     },
   );
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
 }
 unsafe extern "C" fn clearmems() {
-  clear_username_cache();
+  crate::libbb::procps::clear_username_cache();
   free((*ptr_to_globals).top as *mut libc::c_void);
   (*ptr_to_globals).top = std::ptr::null_mut();
 }
 unsafe extern "C" fn reset_term() {
   if option_mask32 & OPT_b as libc::c_int as libc::c_uint == 0 {
-    tcsetattr_stdin_TCSANOW(&mut (*ptr_to_globals).initial_settings);
+    crate::libbb::xfuncs::tcsetattr_stdin_TCSANOW(&mut (*ptr_to_globals).initial_settings);
   };
 }
 unsafe extern "C" fn sig_catcher(mut sig: libc::c_int) {
   reset_term();
-  kill_myself_with_sig(sig);
+  crate::libbb::signals::kill_myself_with_sig(sig);
 }
 unsafe extern "C" fn topmem_sort(
   mut a: *mut libc::c_char,
@@ -1075,8 +958,12 @@ unsafe extern "C" fn display_topmem_header(
 }
 unsafe extern "C" fn ulltoa6_and_space(mut ul: libc::c_ulonglong, mut buf: *mut libc::c_char) {
   /* see http://en.wikipedia.org/wiki/Tera */
-  *smart_ulltoa5(ul, buf, b" mgtpezy\x00" as *const u8 as *const libc::c_char).offset(0) =
-    ' ' as i32 as libc::c_char;
+  *crate::libbb::human_readable::smart_ulltoa5(
+    ul,
+    buf,
+    b" mgtpezy\x00" as *const u8 as *const libc::c_char,
+  )
+  .offset(0) = ' ' as i32 as libc::c_char;
 }
 #[inline(never)]
 unsafe extern "C" fn display_topmem_process_list(
@@ -1187,7 +1074,7 @@ unsafe extern "C" fn display_topmem_process_list(
     );
     (*ptr_to_globals).line_buf[(8i32 * 6i32) as usize] = '\u{0}' as i32 as libc::c_char;
     if scr_width > ::std::mem::size_of::<[libc::c_char; 48]>() as libc::c_ulong as libc::c_int {
-      read_cmdline(
+      crate::libbb::procps::read_cmdline(
         &mut *(*ptr_to_globals)
           .line_buf
           .as_mut_ptr()
@@ -1206,14 +1093,14 @@ unsafe extern "C" fn display_topmem_process_list(
     );
     s = s.offset(1)
   }
-  bb_putchar(
+  crate::libbb::xfuncs_printf::bb_putchar(
     if option_mask32 & OPT_b as libc::c_int as libc::c_uint != 0 {
       '\n' as i32
     } else {
       '\r' as i32
     },
   );
-  fflush_all();
+  crate::libbb::xfuncs_printf::fflush_all();
 }
 unsafe extern "C" fn handle_input(
   mut scan_mask: libc::c_uint,
@@ -1221,12 +1108,12 @@ unsafe extern "C" fn handle_input(
 ) -> libc::c_uint {
   if option_mask32 & OPT_EOF as libc::c_int as libc::c_uint != 0 {
     /* EOF on stdin ("top </dev/null") */
-    sleep_for_duration(interval);
+    crate::libbb::duration::sleep_for_duration(interval);
     return scan_mask;
   }
   loop {
     let mut c: i32 = 0;
-    c = read_key(
+    c = crate::libbb::read_key::read_key(
       0,
       (*ptr_to_globals).kbd_input.as_mut_ptr(),
       (interval * 1000i32 as libc::c_double) as libc::c_int,
@@ -1437,7 +1324,8 @@ pub unsafe extern "C" fn top_main(
   let mut scan_mask: libc::c_uint = TOP_MASK as libc::c_int as libc::c_uint;
   let ref mut fresh1 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
     as *mut *mut globals);
-  *fresh1 = xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong) as *mut globals;
+  *fresh1 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
+    as *mut globals;
   asm!("" : : : "memory" : "volatile");
   interval = 5i32 as duration_t;
   iterations = 0;
@@ -1447,8 +1335,8 @@ pub unsafe extern "C" fn top_main(
   (*ptr_to_globals).cpu_jif = &mut (*ptr_to_globals).cur_jif;
   (*ptr_to_globals).cpu_prev_jif = &mut (*ptr_to_globals).prev_jif;
   /* all args are options; -n NUM */
-  make_all_argv_opts(argv); /* options can be specified w/o dash */
-  col = getopt32(
+  crate::libbb::getopt_allopts::make_all_argv_opts(argv); /* options can be specified w/o dash */
+  col = crate::libbb::getopt32::getopt32(
     argv,
     b"d:n:bHm\x00" as *const u8 as *const libc::c_char,
     &mut str_interval as *mut *mut libc::c_char,
@@ -1464,7 +1352,7 @@ pub unsafe extern "C" fn top_main(
     if *str_interval.offset(0) as libc::c_int == '-' as i32 {
       str_interval = str_interval.offset(1)
     }
-    interval = parse_duration_str(str_interval);
+    interval = crate::libbb::duration::parse_duration_str(str_interval);
     /* Need to limit it to not overflow poll timeout */
     if interval > (2147483647i32 / 1000i32) as libc::c_double {
       interval = (2147483647i32 / 1000i32) as duration_t
@@ -1474,13 +1362,13 @@ pub unsafe extern "C" fn top_main(
     if *str_iterations.offset(0) as libc::c_int == '-' as i32 {
       str_iterations = str_iterations.offset(1)
     }
-    iterations = xatou(str_iterations) as libc::c_int
+    iterations = crate::libbb::xatonum::xatou(str_iterations) as libc::c_int
   }
   if col & OPT_H as libc::c_int as libc::c_uint != 0 {
     scan_mask |= PSSCAN_TASKS as libc::c_int as libc::c_uint
   }
   /* change to /proc */
-  xchdir(b"/proc\x00" as *const u8 as *const libc::c_char);
+  crate::libbb::xfuncs_printf::xchdir(b"/proc\x00" as *const u8 as *const libc::c_char);
   (*ptr_to_globals).sort_function[0] = Some(
     pcpu_sort as unsafe extern "C" fn(_: *mut top_status_t, _: *mut top_status_t) -> libc::c_int,
   );
@@ -1494,10 +1382,10 @@ pub unsafe extern "C" fn top_main(
     option_mask32 |= OPT_EOF as libc::c_int as libc::c_uint
   } else {
     /* Turn on unbuffered input; turn off echoing, ^C ^Z etc */
-    set_termios_to_raw(0i32, &mut (*ptr_to_globals).initial_settings, 1i32 << 0);
+    crate::libbb::xfuncs::set_termios_to_raw(0, &mut (*ptr_to_globals).initial_settings, 1i32 << 0);
     die_func = Some(reset_term as unsafe extern "C" fn() -> ())
   }
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     BB_FATAL_SIGS as libc::c_int,
     Some(sig_catcher as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );
@@ -1514,9 +1402,9 @@ pub unsafe extern "C" fn top_main(
       (*ptr_to_globals).lines = 24i32 as libc::c_uint; /* default */
       col = 79i32 as libc::c_uint;
       /* We output to stdout, we need size of stdout (not stdin)! */
-      get_terminal_width_height(1i32, &mut col, &mut (*ptr_to_globals).lines);
+      crate::libbb::xfuncs::get_terminal_width_height(1i32, &mut col, &mut (*ptr_to_globals).lines);
       if (*ptr_to_globals).lines < 5i32 as libc::c_uint || col < 10i32 as libc::c_uint {
-        sleep_for_duration(interval);
+        crate::libbb::duration::sleep_for_duration(interval);
         continue;
       } else if col > (LINE_BUF_SIZE as libc::c_int - 2i32) as libc::c_uint {
         col = (LINE_BUF_SIZE as libc::c_int - 2i32) as libc::c_uint
@@ -1525,7 +1413,7 @@ pub unsafe extern "C" fn top_main(
     /* read process IDs & status for all the processes */
     (*ptr_to_globals).ntop = 0; /* end of "while we read /proc" */
     loop {
-      p = procps_scan(p, scan_mask as libc::c_int);
+      p = crate::libbb::procps::procps_scan(p, scan_mask as libc::c_int);
       if p.is_null() {
         break;
       }
@@ -1534,7 +1422,7 @@ pub unsafe extern "C" fn top_main(
         n = (*ptr_to_globals).ntop;
         let fresh2 = (*ptr_to_globals).ntop;
         (*ptr_to_globals).ntop = (*ptr_to_globals).ntop + 1;
-        (*ptr_to_globals).top = xrealloc_vector_helper(
+        (*ptr_to_globals).top = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
           (*ptr_to_globals).top as *mut libc::c_void,
           ((::std::mem::size_of::<top_status_t>() as libc::c_ulong) << 8i32)
             .wrapping_add(6i32 as libc::c_ulong) as libc::c_uint,
@@ -1567,7 +1455,7 @@ pub unsafe extern "C" fn top_main(
         /* No bug here - top and topmem are the same */
         let fresh3 = (*ptr_to_globals).ntop;
         (*ptr_to_globals).ntop = (*ptr_to_globals).ntop + 1;
-        (*ptr_to_globals).top = xrealloc_vector_helper(
+        (*ptr_to_globals).top = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
           (*ptr_to_globals).top as *mut topmem_status_t as *mut libc::c_void,
           ((::std::mem::size_of::<topmem_status_t>() as libc::c_ulong) << 8i32)
             .wrapping_add(6i32 as libc::c_ulong) as libc::c_uint,
@@ -1606,7 +1494,9 @@ pub unsafe extern "C" fn top_main(
       }
     }
     if (*ptr_to_globals).ntop == 0 {
-      bb_simple_error_msg(b"no process info in /proc\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg(
+        b"no process info in /proc\x00" as *const u8 as *const libc::c_char,
+      );
       break;
     } else {
       if scan_mask != TOPMEM_MASK as libc::c_int as libc::c_uint {
@@ -1670,7 +1560,7 @@ pub unsafe extern "C" fn top_main(
       clearmems();
     }
   }
-  bb_putchar('\n' as i32);
+  crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   reset_term();
   return 0;
 }

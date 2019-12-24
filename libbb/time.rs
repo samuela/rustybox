@@ -33,17 +33,8 @@ extern "C" {
   fn clock_gettime(__clock_id: clockid_t, __tp: *mut timespec) -> libc::c_int;
 
   #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
   static bb_msg_invalid_date: [libc::c_char; 0];
-  #[no_mangle]
-  fn bb_error_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
-  fn bb_strtoll(
-    arg: *const libc::c_char,
-    endp: *mut *mut libc::c_char,
-    base: libc::c_int,
-  ) -> libc::c_longlong;
+
 }
 
 pub type __clockid_t = libc::c_int;
@@ -80,7 +71,7 @@ unsafe extern "C" fn bb_strtol(
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_long {
-  return bb_strtoll(arg, endp, base) as libc::c_long;
+  return crate::libbb::bb_strtonum::bb_strtoll(arg, endp, base) as libc::c_long;
 }
 
 /*
@@ -156,7 +147,7 @@ pub unsafe extern "C" fn parse_datestr(mut date_str: *const libc::c_char, mut pt
           return;
         /* don't fall through to end == ":" check */
         } else {
-          bb_error_msg_and_die(bb_msg_invalid_date.as_ptr(), date_str);
+          crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_invalid_date.as_ptr(), date_str);
         }
       }
     }
@@ -366,11 +357,11 @@ pub unsafe extern "C" fn parse_datestr(mut date_str: *const libc::c_char, mut pt
         _ => {}
       }
       /* month# is 0..11, not 1..12 */
-      bb_error_msg_and_die(bb_msg_invalid_date.as_ptr(), date_str);
+      crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_invalid_date.as_ptr(), date_str);
     }
   }
   if end as libc::c_int != '\u{0}' as i32 {
-    bb_error_msg_and_die(bb_msg_invalid_date.as_ptr(), date_str);
+    crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_invalid_date.as_ptr(), date_str);
   };
 }
 #[no_mangle]
@@ -380,7 +371,7 @@ pub unsafe extern "C" fn validate_tm_time(
 ) -> time_t {
   let mut t: time_t = mktime(ptm);
   if t == -1i64 {
-    bb_error_msg_and_die(bb_msg_invalid_date.as_ptr(), date_str);
+    crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_invalid_date.as_ptr(), date_str);
   }
   return t;
 }
@@ -517,7 +508,7 @@ pub unsafe extern "C" fn strftime_YYYYMMDDHHMMSS(
  * directly so this definition is safe. */
 unsafe extern "C" fn get_mono(mut ts: *mut timespec) {
   if clock_gettime(1i32, ts) != 0 {
-    bb_simple_error_msg_and_die(
+    crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"clock_gettime(MONOTONIC) failed\x00" as *const u8 as *const libc::c_char,
     );
   };

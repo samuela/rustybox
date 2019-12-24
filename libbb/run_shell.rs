@@ -5,12 +5,6 @@ extern "C" {
   fn execv(__path: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
 
   #[no_mangle]
-  fn bb_get_last_path_component_nostrip(path: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn xasprintf(format: *const libc::c_char, _: ...) -> *mut libc::c_char;
-  #[no_mangle]
-  fn bb_perror_msg_and_die(s: *const libc::c_char, _: ...) -> !;
-  #[no_mangle]
   static bb_default_login_shell: [libc::c_char; 0];
 }
 /*
@@ -496,10 +490,10 @@ pub unsafe extern "C" fn run_shell(
     shell = bb_default_login_shell.as_ptr().offset(1)
   }
   let ref mut fresh0 = *args.offset(0);
-  *fresh0 = bb_get_last_path_component_nostrip(shell);
+  *fresh0 = crate::libbb::get_last_path_component::bb_get_last_path_component_nostrip(shell);
   if loginshell != 0 {
     let ref mut fresh1 = *args.offset(0);
-    *fresh1 = xasprintf(
+    *fresh1 = crate::libbb::xfuncs_printf::xasprintf(
       b"-%s\x00" as *const u8 as *const libc::c_char,
       *args.offset(0),
     )
@@ -524,7 +518,7 @@ pub unsafe extern "C" fn run_shell(
     shell,
     args as *mut *mut libc::c_char as *const *mut libc::c_char,
   );
-  bb_perror_msg_and_die(
+  crate::libbb::perror_msg::bb_perror_msg_and_die(
     b"can\'t execute \'%s\'\x00" as *const u8 as *const libc::c_char,
     shell,
   );

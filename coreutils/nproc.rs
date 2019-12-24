@@ -14,18 +14,13 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn getopt32long(
-    argv: *mut *mut libc::c_char,
-    optstring: *const libc::c_char,
-    longopts: *const libc::c_char,
-    _: ...
-  ) -> u32;
+
 }
 
 pub type __cpu_mask = libc::c_ulong;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct cpu_set_t {
   pub __bits: [__cpu_mask; 16],
 }
@@ -61,7 +56,7 @@ pub unsafe extern "C" fn nproc_main(
   let mut mask: [libc::c_ulong; 1024] = [0; 1024];
   let mut count: libc::c_int = 0;
   let mut ignore: libc::c_int = 0;
-  let mut opts: libc::c_int = getopt32long(
+  let mut opts: libc::c_int = crate::libbb::getopt32::getopt32long(
     argv,
     b"\xfe:+\x00" as *const u8 as *const libc::c_char,
     b"ignore\x00\x01\xfeall\x00\x00\xff\x00" as *const u8 as *const libc::c_char,

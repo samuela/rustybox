@@ -8,38 +8,6 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
 
-  #[no_mangle]
-  fn xopen(pathname: *const libc::c_char, flags: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn xatoull(str: *const libc::c_char) -> libc::c_ulonglong;
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
-  #[no_mangle]
-  fn bb_simple_error_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn bb_simple_perror_msg_and_die(s: *const libc::c_char) -> !;
-  #[no_mangle]
-  fn query_loop(device: *const libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn get_free_loop() -> libc::c_int;
-  #[no_mangle]
-  fn del_loop(device: *const libc::c_char) -> libc::c_int;
-  #[no_mangle]
-  fn set_loop(
-    devname: *mut *mut libc::c_char,
-    file: *const libc::c_char,
-    offset: libc::c_ulonglong,
-    flags: libc::c_uint,
-  ) -> libc::c_int;
-  #[no_mangle]
-  fn bb_xioctl(
-    fd: libc::c_int,
-    request: libc::c_uint,
-    argp: *mut libc::c_void,
-    ioctl_name: *const libc::c_char,
-  ) -> libc::c_int;
 }
 
 pub const OPT_r: C2RustUnnamed = 64;
@@ -58,7 +26,7 @@ pub unsafe extern "C" fn losetup_main(
   let mut opt: libc::c_uint = 0;
   let mut opt_o: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut dev: [libc::c_char; 23] = [0; 23];
-  opt = getopt32(
+  opt = crate::libbb::getopt32::getopt32(
     argv,
     b"^cdPo:far\x00?2:d--Pofar:a--Pofr\x00" as *const u8 as *const libc::c_char,
     &mut opt_o as *mut *mut libc::c_char,
@@ -67,9 +35,9 @@ pub unsafe extern "C" fn losetup_main(
   /* LOOPDEV */
   if opt == 0 && !(*argv.offset(0)).is_null() && (*argv.offset(1)).is_null() {
     let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-    s = query_loop(*argv.offset(0));
+    s = crate::libbb::r#loop::query_loop(*argv.offset(0));
     if s.is_null() {
-      bb_simple_perror_msg_and_die(*argv.offset(0));
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(*argv.offset(0));
     }
     printf(
       b"%s: %s\n\x00" as *const u8 as *const libc::c_char,
@@ -80,8 +48,8 @@ pub unsafe extern "C" fn losetup_main(
   }
   /* -c LOOPDEV */
   if opt == OPT_c as libc::c_int as libc::c_uint && !(*argv.offset(0)).is_null() {
-    let mut fd: libc::c_int = xopen(*argv.offset(0), 0);
-    bb_xioctl(
+    let mut fd: libc::c_int = crate::libbb::xfuncs_printf::xopen(*argv.offset(0), 0);
+    crate::libbb::xfuncs_printf::bb_xioctl(
       fd,
       0x4c07i32 as libc::c_uint,
       0 as *mut libc::c_void,
@@ -91,8 +59,8 @@ pub unsafe extern "C" fn losetup_main(
   }
   /* -d LOOPDEV */
   if opt == OPT_d as libc::c_int as libc::c_uint && !(*argv.offset(0)).is_null() {
-    if del_loop(*argv.offset(0)) != 0 {
-      bb_simple_perror_msg_and_die(*argv.offset(0));
+    if crate::libbb::r#loop::del_loop(*argv.offset(0)) != 0 {
+      crate::libbb::perror_msg::bb_simple_perror_msg_and_die(*argv.offset(0));
     }
     return 0;
   }
@@ -107,7 +75,7 @@ pub unsafe extern "C" fn losetup_main(
         b"/dev/loop%u\x00" as *const u8 as *const libc::c_char,
         n,
       );
-      s_0 = query_loop(dev.as_mut_ptr());
+      s_0 = crate::libbb::r#loop::query_loop(dev.as_mut_ptr());
       if !s_0.is_null() {
         printf(
           b"%s: %s\n\x00" as *const u8 as *const libc::c_char,
@@ -124,9 +92,11 @@ pub unsafe extern "C" fn losetup_main(
   if opt & OPT_f as libc::c_int as libc::c_uint != 0 {
     let mut s_1: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut n_0: libc::c_int = 0;
-    n_0 = get_free_loop();
+    n_0 = crate::libbb::r#loop::get_free_loop();
     if n_0 == -1i32 {
-      bb_simple_error_msg_and_die(b"no free loop devices\x00" as *const u8 as *const libc::c_char);
+      crate::libbb::verror_msg::bb_simple_error_msg_and_die(
+        b"no free loop devices\x00" as *const u8 as *const libc::c_char,
+      );
     }
     if n_0 < 0 {
       /* n == -2: no /dev/loop-control, use legacy method */
@@ -136,18 +106,18 @@ pub unsafe extern "C" fn losetup_main(
     /* or: n >= 0: the number of next free loopdev, just verify it */
     {
       if n_0 > 1023i32 {
-        bb_simple_error_msg_and_die(
+        crate::libbb::verror_msg::bb_simple_error_msg_and_die(
           b"no free loop devices\x00" as *const u8 as *const libc::c_char,
         );
       }
       let fresh0 = n_0;
-      n_0 += 1;
+      n_0 = n_0 + 1;
       sprintf(
         dev.as_mut_ptr(),
         b"/dev/loop%u\x00" as *const u8 as *const libc::c_char,
         fresh0,
       );
-      s_1 = query_loop(dev.as_mut_ptr());
+      s_1 = crate::libbb::r#loop::query_loop(dev.as_mut_ptr());
       free(s_1 as *mut libc::c_void);
       if s_1.is_null() {
         break;
@@ -166,7 +136,7 @@ pub unsafe extern "C" fn losetup_main(
     let mut offset: libc::c_ulonglong = 0 as libc::c_ulonglong;
     let mut d: *mut libc::c_char = dev.as_mut_ptr();
     if opt & OPT_o as libc::c_int as libc::c_uint != 0 {
-      offset = xatoull(opt_o)
+      offset = crate::libbb::xatonum::xatoull(opt_o)
     }
     if opt & OPT_f as libc::c_int as libc::c_uint == 0 {
       let fresh1 = argv;
@@ -182,8 +152,8 @@ pub unsafe extern "C" fn losetup_main(
       if opt & OPT_P as libc::c_int as libc::c_uint != 0 {
         flags |= 8i32 as libc::c_uint
       }
-      if set_loop(&mut d, *argv.offset(0), offset, flags) < 0 {
-        bb_simple_perror_msg_and_die(*argv.offset(0));
+      if crate::libbb::r#loop::set_loop(&mut d, *argv.offset(0), offset, flags) < 0 {
+        crate::libbb::perror_msg::bb_simple_perror_msg_and_die(*argv.offset(0));
       }
       return 0;
     }
@@ -212,7 +182,7 @@ pub unsafe extern "C" fn losetup_main(
    * open("/sys/dev/block/7:0/loop/dio", O_RDONLY|O_CLOEXEC) = 5
    * read(5, "0\n", 4096)                    = 2
    */
-  bb_show_usage();
+  crate::libbb::appletlib::bb_show_usage();
   /* does not return */
   /*return EXIT_FAILURE;*/
 }

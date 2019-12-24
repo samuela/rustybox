@@ -30,9 +30,6 @@ extern "C" {
   ) -> libc::c_int;
 
   #[no_mangle]
-  fn bb_signals(sigs: libc::c_int, f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>);
-
-  #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
@@ -80,7 +77,7 @@ pub unsafe extern "C" fn resize_main(
   );
   new.c_cflag |= (0o4000i32 | 0o200i32) as libc::c_uint;
   new.c_lflag &= !(0o2i32 | 0o10i32 | 0o20i32 | 0o1i32) as libc::c_uint;
-  bb_signals(
+  crate::libbb::signals::bb_signals(
     0 + (1i32 << 2i32) + (1i32 << 3i32) + (1i32 << 15i32) + (1i32 << 14i32),
     Some(onintr as unsafe extern "C" fn(_: libc::c_int) -> ()),
   );

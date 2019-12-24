@@ -31,22 +31,23 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-  #[no_mangle]
-  fn setsockopt_1(fd: libc::c_int, level: libc::c_int, optname: libc::c_int) -> libc::c_int;
+
 }
 
 pub type __socklen_t = libc::c_uint;
-pub type socklen_t = __socklen_t;
-#[derive(Copy, Clone)]
+use crate::librb::socklen_t;
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct iovec {
   pub iov_base: *mut libc::c_void,
   pub iov_len: size_t,
 }
 use libc::sa_family_t;
 use libc::sockaddr;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct msghdr {
   pub msg_name: *mut libc::c_void,
   pub msg_namelen: socklen_t,
@@ -56,52 +57,36 @@ pub struct msghdr {
   pub msg_controllen: size_t,
   pub msg_flags: libc::c_int,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct cmsghdr {
   pub cmsg_len: size_t,
   pub cmsg_level: libc::c_int,
   pub cmsg_type: libc::c_int,
   pub __cmsg_data: [libc::c_uchar; 0],
 }
-#[derive(Copy, Clone)]
+
+use libc::sockaddr_in6;
+
+use crate::librb::in6_addr;
+
 #[repr(C)]
-pub struct sockaddr_in6 {
-  pub sin6_family: sa_family_t,
-  pub sin6_port: in_port_t,
-  pub sin6_flowinfo: u32,
-  pub sin6_addr: in6_addr,
-  pub sin6_scope_id: u32,
-}
 #[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in6_addr {
-  pub __in6_u: C2RustUnnamed,
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
 pub union C2RustUnnamed {
   pub __u6_addr8: [u8; 16],
   pub __u6_addr16: [u16; 8],
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct sockaddr_in {
-  pub sin_family: sa_family_t,
-  pub sin_port: in_port_t,
-  pub sin_addr: in_addr,
-  pub sin_zero: [libc::c_uchar; 8],
-}
-#[derive(Copy, Clone)]
-#[repr(C)]
-pub struct in_addr {
-  pub s_addr: in_addr_t,
-}
+
+use libc::sockaddr_in;
+
+use libc::in_addr;
 pub type in_addr_t = u32;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr__: *const sockaddr,
   pub __sockaddr_at__: *const sockaddr_at,
@@ -117,8 +102,9 @@ pub union __CONST_SOCKADDR_ARG {
   pub __sockaddr_un__: *const sockaddr_un,
   pub __sockaddr_x25__: *const sockaddr_x25,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct in_pktinfo {
   pub ipi_ifindex: libc::c_int,
   pub ipi_spec_dst: in_addr,
@@ -151,20 +137,23 @@ pub const IPPROTO_IPIP: C2RustUnnamed_0 = 4;
 pub const IPPROTO_IGMP: C2RustUnnamed_0 = 2;
 pub const IPPROTO_ICMP: C2RustUnnamed_0 = 1;
 pub const IPPROTO_IP: C2RustUnnamed_0 = 0;
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct in6_pktinfo {
   pub ipi6_addr: in6_addr,
   pub ipi6_ifindex: libc::c_uint,
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_1 {
   pub cmsg: [libc::c_char; 32],
   pub cmsg6: [libc::c_char; 40],
 }
-#[derive(Copy, Clone)]
+
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub union C2RustUnnamed_2 {
   pub cmsg: [libc::c_char; 32],
   pub cmsg6: [libc::c_char; 40],
@@ -183,8 +172,8 @@ pub union C2RustUnnamed_2 {
  */
 #[no_mangle]
 pub unsafe extern "C" fn socket_want_pktinfo(mut fd: libc::c_int) {
-  setsockopt_1(fd, IPPROTO_IP as libc::c_int, 8i32);
-  setsockopt_1(fd, IPPROTO_IPV6 as libc::c_int, 49i32);
+  crate::libbb::xconnect::setsockopt_1(fd, IPPROTO_IP as libc::c_int, 8i32);
+  crate::libbb::xconnect::setsockopt_1(fd, IPPROTO_IPV6 as libc::c_int, 49i32);
 }
 #[no_mangle]
 pub unsafe extern "C" fn send_to_from(
@@ -196,19 +185,8 @@ pub unsafe extern "C" fn send_to_from(
   mut from: *const sockaddr,
   mut tolen: socklen_t,
 ) -> ssize_t {
-  let mut iov: [iovec; 1] = [iovec {
-    iov_base: std::ptr::null_mut(),
-    iov_len: 0,
-  }; 1];
-  let mut msg: msghdr = msghdr {
-    msg_name: std::ptr::null_mut(),
-    msg_namelen: 0,
-    msg_iov: std::ptr::null_mut(),
-    msg_iovlen: 0,
-    msg_control: std::ptr::null_mut(),
-    msg_controllen: 0,
-    msg_flags: 0,
-  };
+  let mut iov: [iovec; 1] = [std::mem::zeroed(); 1];
+  let mut msg: msghdr = std::mem::zeroed();
   let mut u: C2RustUnnamed_1 = C2RustUnnamed_1 { cmsg: [0; 32] };
   let mut cmsgptr: *mut cmsghdr = std::ptr::null_mut();
   if (*from).sa_family as libc::c_int != 2i32 && (*from).sa_family as libc::c_int != 10i32 {
@@ -282,7 +260,7 @@ pub unsafe extern "C" fn send_to_from(
     .wrapping_add(::std::mem::size_of::<in6_pktinfo>() as libc::c_ulong);
     pktptr_0 = (*cmsgptr).__cmsg_data.as_mut_ptr() as *mut in6_pktinfo;
     /* pktptr->ipi6_ifindex = 0; -- already done by memset(u...) */
-    (*pktptr_0).ipi6_addr = (*(from as *mut sockaddr_in6)).sin6_addr
+    (*pktptr_0).ipi6_addr = std::mem::transmute((*(from as *mut sockaddr_in6)).sin6_addr)
   }
   msg.msg_controllen = (*cmsgptr).cmsg_len;
   return sendmsg(fd, &mut msg, flags);
@@ -515,21 +493,10 @@ pub unsafe extern "C" fn recv_from_to(
   mut sa_size: socklen_t,
 ) -> ssize_t {
   /* man recvmsg and man cmsg is needed to make sense of code below */
-  let mut iov: [iovec; 1] = [iovec {
-    iov_base: std::ptr::null_mut(),
-    iov_len: 0,
-  }; 1];
+  let mut iov: [iovec; 1] = [std::mem::zeroed(); 1];
   let mut u: C2RustUnnamed_2 = C2RustUnnamed_2 { cmsg: [0; 32] };
   let mut cmsgptr: *mut cmsghdr = std::ptr::null_mut();
-  let mut msg: msghdr = msghdr {
-    msg_name: std::ptr::null_mut(),
-    msg_namelen: 0,
-    msg_iov: std::ptr::null_mut(),
-    msg_iovlen: 0,
-    msg_control: std::ptr::null_mut(),
-    msg_controllen: 0,
-    msg_flags: 0,
-  };
+  let mut msg: msghdr = std::mem::zeroed();
   let mut recv_length: ssize_t = 0;
   iov[0].iov_base = buf;
   iov[0].iov_len = len;
@@ -575,7 +542,7 @@ pub unsafe extern "C" fn recv_from_to(
       /*#  define pktinfo(cmsgptr) ( (struct in6_pktinfo*)(CMSG_DATA(cmsgptr)) )*/
       /*to6->sin6_addr = pktinfo(cmsgptr)->ipi6_addr; - may be unaligned */
       memcpy(
-        &mut (*(to as *mut sockaddr_in6)).sin6_addr as *mut in6_addr as *mut libc::c_void,
+        &mut (*(to as *mut sockaddr_in6)).sin6_addr as *mut libc::in6_addr as *mut libc::c_void,
         ((*cmsgptr).__cmsg_data.as_mut_ptr() as *mut libc::c_char).offset(IPI6_ADDR_OFF as isize)
           as *const libc::c_void,
         ::std::mem::size_of::<in6_addr>() as libc::c_ulong,

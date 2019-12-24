@@ -6,12 +6,7 @@ extern "C" {
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-  #[no_mangle]
-  fn bb_get_last_path_component_strip(path: *mut libc::c_char) -> *mut libc::c_char;
-  #[no_mangle]
-  fn full_write(fd: libc::c_int, buf: *const libc::c_void, count: size_t) -> ssize_t;
-  #[no_mangle]
-  fn bb_show_usage() -> !;
+
 }
 
 /*
@@ -69,16 +64,16 @@ pub unsafe extern "C" fn basename_main(
     argv = argv.offset(1)
   }
   if (*argv.offset(1)).is_null() {
-    bb_show_usage();
+    crate::libbb::appletlib::bb_show_usage();
   }
   /* It should strip slash: /abc/def/ -> def */
   argv = argv.offset(1);
-  s = bb_get_last_path_component_strip(*argv);
+  s = crate::libbb::get_last_path_component::bb_get_last_path_component_strip(*argv);
   m = strlen(s);
   argv = argv.offset(1);
   if !(*argv).is_null() {
     if !(*argv.offset(1)).is_null() {
-      bb_show_usage();
+      crate::libbb::appletlib::bb_show_usage();
     }
     n = strlen(*argv);
     if m > n && strcmp(s.offset(m as isize).offset(-(n as isize)), *argv) == 0 {
@@ -91,5 +86,6 @@ pub unsafe extern "C" fn basename_main(
   m = m.wrapping_add(1);
   *s.offset(fresh0 as isize) = '\n' as i32 as libc::c_char;
   /* NB: != is correct here: */
-  return (full_write(1, s as *const libc::c_void, m) != m as ssize_t) as libc::c_int;
+  return (crate::libbb::full_write::full_write(1, s as *const libc::c_void, m) != m as ssize_t)
+    as libc::c_int;
 }
