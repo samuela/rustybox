@@ -106,9 +106,7 @@ unsafe extern "C" fn get_attr_volume_id(
       if !((*dir).attr as libc::c_int & 0x3fi32 == 0xfi32) {
         if (*dir).attr as libc::c_int & (0x8i32 | 0x10i32) == 0x8i32 {
           /* labels do not have file data */
-          if !((*dir).cluster_high as libc::c_int != 0
-            || (*dir).cluster_low as libc::c_int != 0)
-          {
+          if !((*dir).cluster_high as libc::c_int != 0 || (*dir).cluster_low as libc::c_int != 0) {
             return (*dir).name.as_mut_ptr();
           }
         }
@@ -448,11 +446,9 @@ pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c
     ) as *mut u8;
     if !buf.is_null() {
       label = get_attr_volume_id(buf as *mut vfat_dir_entry, dir_entries as libc::c_int);
-      vs = crate::util_linux::volume_id::util::volume_id_get_buffer(
-        id,
-        0 as u64,
-        0x200i32 as size_t,
-      ) as *mut vfat_super_block;
+      vs =
+        crate::util_linux::volume_id::util::volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t)
+          as *mut vfat_super_block;
       if vs.is_null() {
         return -1i32;
       }

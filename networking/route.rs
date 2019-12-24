@@ -250,11 +250,8 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
   prefix = strchr(target, '/' as i32);
   if !prefix.is_null() {
     let mut prefix_len: libc::c_int = 0;
-    prefix_len = xatoul_range(
-      prefix.offset(1),
-      0 as libc::c_ulong,
-      32i32 as libc::c_ulong,
-    ) as libc::c_int;
+    prefix_len =
+      xatoul_range(prefix.offset(1), 0 as libc::c_ulong, 32i32 as libc::c_ulong) as libc::c_int;
     (*(&mut (*rt).rt_genmask as *mut sockaddr as *mut sockaddr_in))
       .sin_addr
       .s_addr = {

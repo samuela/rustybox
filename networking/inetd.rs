@@ -846,8 +846,8 @@ unsafe extern "C" fn reopen_config_file() -> libc::c_int {
   *fresh4 = crate::libbb::parse_config::config_open(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).config_filename,
   );
-  return ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser
-    != std::ptr::null_mut()) as libc::c_int;
+  return ((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser != std::ptr::null_mut())
+    as libc::c_int;
 }
 unsafe extern "C" fn close_config_file() {
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))

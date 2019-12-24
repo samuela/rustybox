@@ -699,8 +699,7 @@ unsafe extern "C" fn ignore(mut fs: *mut fs_info) -> libc::c_int {
     return 1i32;
   }
   /* Are we ignoring this type? */
-  if crate::libbb::compare_string_array::index_in_strings(ignored_types.as_ptr(), (*fs).type_0)
-    >= 0
+  if crate::libbb::compare_string_array::index_in_strings(ignored_types.as_ptr(), (*fs).type_0) >= 0
   {
     return 1i32;
   }

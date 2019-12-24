@@ -111,8 +111,7 @@ unsafe extern "C" fn do_compress(
               let ref mut fresh1 = *dict.offset(dindex as isize);
               *fresh1 = ip as *const libc::c_void;
               /* store current literal run */
-              if ip.wrapping_offset_from(ii) as libc::c_long as libc::c_uint > 0 as libc::c_uint
-              {
+              if ip.wrapping_offset_from(ii) as libc::c_long as libc::c_uint > 0 as libc::c_uint {
                 let mut t: libc::c_uint =
                   ip.wrapping_offset_from(ii) as libc::c_long as libc::c_uint;
                 if t <= 3i32 as libc::c_uint {

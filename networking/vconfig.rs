@@ -300,29 +300,22 @@ pub unsafe extern "C" fn vconfig_main(
      */
     if ifr.cmd == SET_VLAN_FLAG_CMD as libc::c_int {
       /* set_flag */
-      ifr.u.flag =
-        crate::libbb::xatonum::xatou_range(p, 0 as libc::c_uint, 1i32 as libc::c_uint);
+      ifr.u.flag = crate::libbb::xatonum::xatou_range(p, 0 as libc::c_uint, 1i32 as libc::c_uint);
       /* DM: in order to set reorder header, qos must be set */
-      ifr.vlan_qos = crate::libbb::xatonum::xatou_range(
-        *argv.offset(3),
-        0 as libc::c_uint,
-        7i32 as libc::c_uint,
-      ) as libc::c_short
+      ifr.vlan_qos =
+        crate::libbb::xatonum::xatou_range(*argv.offset(3), 0 as libc::c_uint, 7i32 as libc::c_uint)
+          as libc::c_short
     } else if ifr.cmd == ADD_VLAN_CMD as libc::c_int {
       /* add */
-      ifr.u.VID = crate::libbb::xatonum::xatou_range(
-        p,
-        0 as libc::c_uint,
-        (4096i32 - 1i32) as libc::c_uint,
-      ) as libc::c_int
+      ifr.u.VID =
+        crate::libbb::xatonum::xatou_range(p, 0 as libc::c_uint, (4096i32 - 1i32) as libc::c_uint)
+          as libc::c_int
     } else if ifr.cmd != DEL_VLAN_CMD as libc::c_int {
       /* set_{egress|ingress}_map */
       ifr.u.skb_priority = crate::libbb::xatonum::xatou(p);
-      ifr.vlan_qos = crate::libbb::xatonum::xatou_range(
-        *argv.offset(3),
-        0 as libc::c_uint,
-        7i32 as libc::c_uint,
-      ) as libc::c_short
+      ifr.vlan_qos =
+        crate::libbb::xatonum::xatou_range(*argv.offset(3), 0 as libc::c_uint, 7i32 as libc::c_uint)
+          as libc::c_short
     }
   }
   fd = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_STREAM as libc::c_int, 0);

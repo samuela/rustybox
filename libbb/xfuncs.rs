@@ -357,11 +357,7 @@ pub unsafe extern "C" fn hex2bin(
     }
     count -= 1
   }
-  *bb_errno = if *str as libc::c_int != 0 {
-    34i32
-  } else {
-    0
-  };
+  *bb_errno = if *str as libc::c_int != 0 { 34i32 } else { 0 };
   return dst;
 }
 

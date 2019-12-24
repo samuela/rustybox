@@ -1413,8 +1413,7 @@ pub unsafe extern "C" fn tar_main(
    * because check_errors_in_children() uses _it_ as error indicator.
    */
   bb_got_signal = 1i32 as smallint; /* saw at least one header, good */
-  while crate::archival::libarchive::get_header_tar::get_header_tar(tar_handle) as libc::c_int
-    == 0
+  while crate::archival::libarchive::get_header_tar::get_header_tar(tar_handle) as libc::c_int == 0
   {
     bb_got_signal = 0 as smallint
   }

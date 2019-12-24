@@ -10542,8 +10542,7 @@ unsafe extern "C" fn run_list(mut pi: *mut pipe) -> libc::c_int {
               argv = (*(*pi).cmds).argv;
               while !(*argv).is_null() {
                 let mut pattern: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-                pattern =
-                  expand_string_to_string(*argv, EXP_FLAG_ESC_GLOB_CHARS as libc::c_int, 0);
+                pattern = expand_string_to_string(*argv, EXP_FLAG_ESC_GLOB_CHARS as libc::c_int, 0);
                 /* TODO: which FNM_xxx flags to use? */
                 cond_code = (fnmatch(pattern, case_word, 0) != 0) as libc::c_int as smalluint;
                 free(pattern as *mut libc::c_void);

@@ -258,8 +258,7 @@ unsafe extern "C" fn get_prefix_1(
         data: [0; 4],
       };
       netmask_pfx.family = 0 as u8;
-      plen =
-        crate::libbb::bb_strtonum::bb_strtou(slash.offset(1), 0 as *mut *mut libc::c_char, 0);
+      plen = crate::libbb::bb_strtonum::bb_strtou(slash.offset(1), 0 as *mut *mut libc::c_char, 0);
       if (*bb_errno != 0 || plen > (*dst).bitlen as libc::c_uint)
         && get_addr_1(&mut netmask_pfx, slash.offset(1), family) != 0
       {

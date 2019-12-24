@@ -1833,10 +1833,7 @@ unsafe extern "C" fn send_cgi_and_exit(
           }
         }
         /* restore default signal dispositions for CGI process */
-        crate::libbb::signals::bb_signals(
-          0 | 1i32 << 17i32 | 1i32 << 13i32 | 1i32 << 1i32,
-          None,
-        );
+        crate::libbb::signals::bb_signals(0 | 1i32 << 17i32 | 1i32 << 13i32 | 1i32 << 1i32, None);
         /* _NOT_ execvp. We do not search PATH. argv[0] is a filename
          * without any dir components and will only match a file
          * in the current directory */

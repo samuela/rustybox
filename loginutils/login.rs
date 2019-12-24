@@ -349,8 +349,7 @@ pub unsafe extern "C" fn login_main(
       if opt & LOGIN_OPT_f as libc::c_int as libc::c_uint != 0 {
         break;
       }
-      if (*pw).pw_uid == 0 as libc::c_uint
-        && crate::libbb::securetty::is_tty_secure(short_tty) == 0
+      if (*pw).pw_uid == 0 as libc::c_uint && crate::libbb::securetty::is_tty_secure(short_tty) == 0
       {
         current_block = 8456411428248478739;
       } else {

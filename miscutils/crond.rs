@@ -486,8 +486,7 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
   } else {
     256i32
   };
-  if fstat(fileno_unlocked((*parser).fp), &mut sbuf) == 0 && sbuf.st_uid == 0 as libc::c_uint
-  {
+  if fstat(fileno_unlocked((*parser).fp), &mut sbuf) == 0 && sbuf.st_uid == 0 as libc::c_uint {
     let mut file: *mut CronFile =
       crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<CronFile>() as libc::c_ulong)
         as *mut CronFile;

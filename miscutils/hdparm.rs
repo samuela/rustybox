@@ -1657,8 +1657,7 @@ unsafe extern "C" fn dump_identity(mut id: *const hd_driveid) {
         b"unknown\x00" as *const u8 as *const libc::c_char
       },
     );
-    if (*id).major_rev_num as libc::c_int != 0 && (*id).major_rev_num as libc::c_int != 0xffffi32
-    {
+    if (*id).major_rev_num as libc::c_int != 0 && (*id).major_rev_num as libc::c_int != 0xffffi32 {
       /* NOVAL_1 */
       i = 0;
       while i <= 15i32 {
@@ -2928,11 +2927,7 @@ unsafe extern "C" fn identify_from_stdin() -> ! {
   let mut buf: [libc::c_uchar; 1280] = [0; 1280];
   let mut b: *mut libc::c_uchar = buf.as_mut_ptr();
   let mut i: libc::c_int = 0;
-  crate::libbb::read_printf::xread(
-    0,
-    buf.as_mut_ptr() as *mut libc::c_void,
-    1280i32 as size_t,
-  );
+  crate::libbb::read_printf::xread(0, buf.as_mut_ptr() as *mut libc::c_void, 1280i32 as size_t);
   // Convert the newline-separated hex data into an identify block.
   i = 0;
   while i < 256i32 {

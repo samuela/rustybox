@@ -608,10 +608,10 @@ unsafe extern "C" fn longest_match(mut cur_match: IPos) -> libc::c_int {
 /* number of codes used to transfer the bit lengths */
 /* extra bits for each length code */
 static mut extra_lbits: [u8; 29] = [
-  0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8,
-  1i32 as u8, 1i32 as u8, 1i32 as u8, 1i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8,
-  3i32 as u8, 3i32 as u8, 3i32 as u8, 3i32 as u8, 4i32 as u8, 4i32 as u8, 4i32 as u8, 4i32 as u8,
-  5i32 as u8, 5i32 as u8, 5i32 as u8, 5i32 as u8, 0 as u8,
+  0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 1i32 as u8, 1i32 as u8,
+  1i32 as u8, 1i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8, 2i32 as u8, 3i32 as u8, 3i32 as u8,
+  3i32 as u8, 3i32 as u8, 4i32 as u8, 4i32 as u8, 4i32 as u8, 4i32 as u8, 5i32 as u8, 5i32 as u8,
+  5i32 as u8, 5i32 as u8, 0 as u8,
 ];
 /* extra bits for each distance code */
 static mut extra_dbits: [u8; 30] = [
@@ -648,9 +648,8 @@ static mut extra_dbits: [u8; 30] = [
 ];
 /* extra bits for each bit length code */
 static mut extra_blbits: [u8; 19] = [
-  0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8,
-  0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8,
-  2i32 as u8, 3i32 as u8, 7i32 as u8,
+  0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8,
+  0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 0 as u8, 2i32 as u8, 3i32 as u8, 7i32 as u8,
 ];
 /* number of codes at each bit length for an optimal tree */
 static mut bl_order: [u8; 19] = [
@@ -1343,9 +1342,7 @@ unsafe extern "C" fn ct_tally(mut dist: libc::c_int, mut lc: libc::c_int) -> lib
     (*(ptr_to_globals as *mut globals2)).flag_bit = 1i32 as uch
   }
   /* Try to guess if it is profitable to stop the current block here */
-  if (*(ptr_to_globals as *mut globals2)).last_lit & 0xfffi32 as libc::c_uint
-    == 0 as libc::c_uint
-  {
+  if (*(ptr_to_globals as *mut globals2)).last_lit & 0xfffi32 as libc::c_uint == 0 as libc::c_uint {
     /* Compute an upper bound for the compressed length */
     let mut out_length: ulg =
       ((*(ptr_to_globals as *mut globals2)).last_lit as libc::c_long * 8i64) as ulg;

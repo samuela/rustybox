@@ -708,13 +708,7 @@ unsafe extern "C" fn env_matches(mut e: *mut envmatch) -> libc::c_int {
     if val.is_null() {
       return 0;
     }
-    r = regexec(
-      &mut (*e).match_0,
-      val,
-      0 as size_t,
-      0 as *mut regmatch_t,
-      0,
-    );
+    r = regexec(&mut (*e).match_0, val, 0 as size_t, 0 as *mut regmatch_t, 0);
     if r != 0 {
       /* no match */
       return 0;

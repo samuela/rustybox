@@ -1276,12 +1276,8 @@ unsafe extern "C" fn common_ping_main(
   }
   if opt & OPT_p as libc::c_int != 0 {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pattern =
-      crate::libbb::xatonum::xstrtou_range(
-        str_p,
-        16i32,
-        0 as libc::c_uint,
-        255i32 as libc::c_uint,
-      ) as u8
+      crate::libbb::xatonum::xstrtou_range(str_p, 16i32, 0 as libc::c_uint, 255i32 as libc::c_uint)
+        as u8
   }
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).deadline_us != 0 {
     let mut d: libc::c_uint = if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).deadline_us

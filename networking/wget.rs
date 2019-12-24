@@ -1116,8 +1116,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
            * fread does not distinguish between EOF and error.
            */
           /* EOF, not error */
-          } else if crate::libbb::safe_poll::safe_poll(&mut polldata, 1i32 as nfds_t, 1000i32)
-            == 0
+          } else if crate::libbb::safe_poll::safe_poll(&mut polldata, 1i32 as nfds_t, 1000i32) == 0
           {
             if second_cnt != 0 as libc::c_uint && {
               second_cnt = second_cnt.wrapping_sub(1);

@@ -91,8 +91,7 @@ pub unsafe extern "C" fn bb_verror_msg(
    * malloc()[in vasprintf]+realloc()+memmove()+free() in 99% of cases.
    * ~40% speedup.
    */
-  if ::std::mem::size_of::<[libc::c_char; 80]>() as libc::c_ulong as libc::c_int - applet_len > 0
-  {
+  if ::std::mem::size_of::<[libc::c_char; 80]>() as libc::c_ulong as libc::c_int - applet_len > 0 {
     let mut p2: ::std::ffi::VaListImpl;
     /* It is not portable to use va_list twice, need to va_copy it */
     p2 = p.clone();

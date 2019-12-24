@@ -97827,9 +97827,8 @@ pub unsafe extern "C" fn vi_main(
       99 => {
         // cmd line vi command
         if *optarg != 0 {
-          (*ptr_to_globals).initial_cmds[((*ptr_to_globals).initial_cmds[0]
-            != std::ptr::null_mut())
-            as libc::c_int as usize] =
+          (*ptr_to_globals).initial_cmds
+            [((*ptr_to_globals).initial_cmds[0] != std::ptr::null_mut()) as libc::c_int as usize] =
             crate::libbb::xfuncs_printf::xstrndup(optarg, MAX_INPUT_LEN as libc::c_int)
         }
         current_block_18 = 2668756484064249700;

@@ -400,11 +400,9 @@ pub unsafe extern "C" fn hexedit_main(
     crate::libbb::xfuncs_printf::fflush_all();
     (*ptr_to_globals).in_read_key = 1i32 as smallint;
     if bb_got_signal == 0 {
-      key = crate::libbb::read_key::read_key(
-        0,
-        (*ptr_to_globals).read_key_buffer.as_mut_ptr(),
-        -1i32,
-      ) as i32
+      key =
+        crate::libbb::read_key::read_key(0, (*ptr_to_globals).read_key_buffer.as_mut_ptr(), -1i32)
+          as i32
     }
     (*ptr_to_globals).in_read_key = 0 as smallint;
     if bb_got_signal != 0 {

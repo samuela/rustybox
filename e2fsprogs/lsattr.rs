@@ -68,11 +68,9 @@ unsafe extern "C" fn list_attributes(mut name: *const libc::c_char) {
   let mut current_block: u64;
   let mut fsflags: libc::c_ulong = 0;
   let mut generation: libc::c_ulong = 0;
-  if !(crate::e2fsprogs::e2fs_lib::fgetsetflags(name, &mut fsflags, 0 as libc::c_ulong) != 0)
-  {
+  if !(crate::e2fsprogs::e2fs_lib::fgetsetflags(name, &mut fsflags, 0 as libc::c_ulong) != 0) {
     if option_mask32 & OPT_GENERATION as libc::c_int as libc::c_uint != 0 {
-      if crate::e2fsprogs::e2fs_lib::fgetsetversion(name, &mut generation, 0 as libc::c_ulong)
-        != 0
+      if crate::e2fsprogs::e2fs_lib::fgetsetversion(name, &mut generation, 0 as libc::c_ulong) != 0
       {
         current_block = 3114758340063453716;
       } else {

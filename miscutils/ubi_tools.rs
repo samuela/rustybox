@@ -504,10 +504,7 @@ pub unsafe extern "C" fn ubi_tools_main(
       }
       if *(*argv).offset(0) as libc::c_int != '-' as i32 || *(*argv).offset(1) as libc::c_int != 0 {
         /* mtd-utils supports "-" as stdin */
-        crate::libbb::xfuncs_printf::xmove_fd(
-          crate::libbb::xfuncs_printf::xopen(*argv, 0),
-          0,
-        );
+        crate::libbb::xfuncs_printf::xmove_fd(crate::libbb::xfuncs_printf::xopen(*argv, 0), 0);
       }
       if opts & (1i32 << 4i32) as libc::c_uint == 0 {
         let mut st: stat = std::mem::zeroed();

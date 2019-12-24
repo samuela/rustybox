@@ -496,10 +496,7 @@ pub unsafe extern "C" fn tcpudpsvd_main(
           });
         }
       }
-      crate::libbb::xfuncs_printf::xmove_fd(
-        if tcp as libc::c_int != 0 { conn } else { sock },
-        0,
-      );
+      crate::libbb::xfuncs_printf::xmove_fd(if tcp as libc::c_int != 0 { conn } else { sock }, 0);
       if !((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_per_host != 0) {
         break;
       }

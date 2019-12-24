@@ -75,10 +75,8 @@ pub unsafe extern "C" fn shred_main(
   zero_fd =
     crate::libbb::xfuncs_printf::xopen(b"/dev/zero\x00" as *const u8 as *const libc::c_char, 0);
   if num_iter != 0 as libc::c_uint {
-    rand_fd = crate::libbb::xfuncs_printf::xopen(
-      b"/dev/urandom\x00" as *const u8 as *const libc::c_char,
-      0,
-    )
+    rand_fd =
+      crate::libbb::xfuncs_printf::xopen(b"/dev/urandom\x00" as *const u8 as *const libc::c_char, 0)
   }
   if (*argv).is_null() {
     crate::libbb::appletlib::bb_show_usage();

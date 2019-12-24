@@ -209,8 +209,7 @@ pub unsafe extern "C" fn adduser_main(
     &mut skel as *mut *const libc::c_char,
   );
   if opts & (1i32 << 7i32) as libc::c_uint != 0 {
-    pw.pw_uid =
-      crate::libbb::xatonum::xatou_range(uid, 0 as libc::c_uint, 60000i32 as libc::c_uint)
+    pw.pw_uid = crate::libbb::xatonum::xatou_range(uid, 0 as libc::c_uint, 60000i32 as libc::c_uint)
   }
   argv = argv.offset(optind as isize);
   pw.pw_name = *argv.offset(0);

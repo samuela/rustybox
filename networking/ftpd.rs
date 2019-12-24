@@ -450,8 +450,7 @@ unsafe extern "C" fn timeout_handler(mut _sig: libc::c_int) {
     >= 0)
   {
     if !((*ptr_to_globals).local_file_fd == 0) {
-      pos =
-        crate::libbb::xfuncs_printf::xlseek((*ptr_to_globals).local_file_fd, 0 as off_t, 1i32);
+      pos = crate::libbb::xfuncs_printf::xlseek((*ptr_to_globals).local_file_fd, 0 as off_t, 1i32);
       if !(pos == (*ptr_to_globals).local_file_pos) {
         (*ptr_to_globals).local_file_pos = pos;
         alarm((*ptr_to_globals).timeout);
@@ -553,8 +552,7 @@ unsafe extern "C" fn handle_feat(mut status: libc::c_uint) {
 /* Download commands */
 #[inline]
 unsafe extern "C" fn port_active() -> libc::c_int {
-  return ((*ptr_to_globals).port_addr != std::ptr::null_mut())
-    as libc::c_int;
+  return ((*ptr_to_globals).port_addr != std::ptr::null_mut()) as libc::c_int;
 }
 #[inline]
 unsafe extern "C" fn pasv_active() -> libc::c_int {
@@ -639,10 +637,7 @@ unsafe extern "C" fn bind_for_passive_mode() -> libc::c_uint {
   );
   (*ptr_to_globals).pasv_listen_fd = fd;
   crate::libbb::xconnect::setsockopt_reuseaddr(fd);
-  crate::libbb::xconnect::set_nport(
-    &mut (*(*ptr_to_globals).local_addr).u.sa,
-    0 as libc::c_uint,
-  );
+  crate::libbb::xconnect::set_nport(&mut (*(*ptr_to_globals).local_addr).u.sa, 0 as libc::c_uint);
   crate::libbb::xfuncs_printf::xbind(
     fd,
     &mut (*(*ptr_to_globals).local_addr).u.sa,

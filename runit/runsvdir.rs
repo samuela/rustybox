@@ -324,8 +324,7 @@ pub unsafe extern "C" fn runsvdir_main(
   argv = argv.offset(optind as isize);
   i_am_init = getpid() == 1i32;
   crate::libbb::signals::bb_signals(
-    0
-      | 1i32 << 15i32
+    0 | 1i32 << 15i32
       | 1i32 << 1i32
       | (if i_am_init as libc::c_int != 0 {
         (1i32 << 10i32 | 1i32 << 12i32) | 1i32 << 2i32
@@ -338,10 +337,7 @@ pub unsafe extern "C" fn runsvdir_main(
   argv = argv.offset(1);
   let ref mut fresh4 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).svdir;
   *fresh4 = *fresh3;
-  curdir = open(
-    b".\x00" as *const u8 as *const libc::c_char,
-    0 | 0o4000i32,
-  );
+  curdir = open(b".\x00" as *const u8 as *const libc::c_char, 0 | 0o4000i32);
   if curdir == -1i32 {
     fatal2_cannot(
       b"open current directory\x00" as *const u8 as *const libc::c_char,

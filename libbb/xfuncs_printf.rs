@@ -1111,10 +1111,7 @@ pub unsafe extern "C" fn generate_uuid(mut buf: *mut u8) {
    */
   let mut pid: pid_t = 0;
   let mut i: libc::c_int = 0;
-  i = open(
-    b"/dev/urandom\x00" as *const u8 as *const libc::c_char,
-    0,
-  );
+  i = open(b"/dev/urandom\x00" as *const u8 as *const libc::c_char, 0);
   if i >= 0 {
     read(i, buf as *mut libc::c_void, 16i32 as size_t);
     close(i);

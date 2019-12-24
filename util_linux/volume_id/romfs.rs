@@ -127,9 +127,8 @@ pub struct romfs_super {
 pub unsafe extern "C" fn volume_id_probe_romfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut rfs: *mut romfs_super = std::ptr::null_mut();
-  rfs =
-    crate::util_linux::volume_id::util::volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t)
-      as *mut romfs_super;
+  rfs = crate::util_linux::volume_id::util::volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t)
+    as *mut romfs_super;
   if rfs.is_null() {
     return -1i32;
   }

@@ -318,9 +318,7 @@ unsafe extern "C" fn ask(mut string: *const libc::c_char, mut def: libc::c_int) 
  * 1994 Theodore Ts'o.  Also licensed under GPL.
  */
 unsafe extern "C" fn check_mount() {
-  if !crate::libbb::find_mount_point::find_mount_point((*ptr_to_globals).device_name, 0)
-    .is_null()
-  {
+  if !crate::libbb::find_mount_point::find_mount_point((*ptr_to_globals).device_name, 0).is_null() {
     let mut cont: libc::c_int = 0;
     printf(
       b"%s is mounted. \x00" as *const u8 as *const libc::c_char,
@@ -607,11 +605,7 @@ unsafe extern "C" fn write_superblock() {
     (*ptr_to_globals).u.Super.s_state =
       ((*ptr_to_globals).u.Super.s_state as libc::c_int & !(MINIX_ERROR_FS as libc::c_int)) as u16
   }
-  crate::libbb::xfuncs_printf::xlseek(
-    dev_fd as libc::c_int,
-    BLOCK_SIZE as libc::c_int as off_t,
-    0,
-  );
+  crate::libbb::xfuncs_printf::xlseek(dev_fd as libc::c_int, BLOCK_SIZE as libc::c_int as off_t, 0);
   if BLOCK_SIZE as libc::c_int as libc::c_long
     != crate::libbb::full_write::full_write(
       dev_fd as libc::c_int,
@@ -707,11 +701,7 @@ unsafe extern "C" fn get_dirsize() {
 }
 
 unsafe extern "C" fn read_superblock() {
-  crate::libbb::xfuncs_printf::xlseek(
-    dev_fd as libc::c_int,
-    BLOCK_SIZE as libc::c_int as off_t,
-    0,
-  );
+  crate::libbb::xfuncs_printf::xlseek(dev_fd as libc::c_int, BLOCK_SIZE as libc::c_int as off_t, 0);
   if BLOCK_SIZE
     != crate::libbb::read::full_read(
       dev_fd as libc::c_int,

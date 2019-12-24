@@ -1250,9 +1250,7 @@ unsafe extern "C" fn kmsg_init() {
    * kernel < 3.5 expects single char printk KERN_* priority prefix,
    * from 3.5 onwards the full syslog facility/priority format is supported
    */
-  if crate::libbb::kernel_version::get_linux_version_code()
-    < (3i32 << 16i32) + (5i32 << 8i32) + 0
-  {
+  if crate::libbb::kernel_version::get_linux_version_code() < (3i32 << 16i32) + (5i32 << 8i32) + 0 {
     (*ptr_to_globals).primask = 0x7i32
   } else {
     (*ptr_to_globals).primask = -1i32

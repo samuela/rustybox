@@ -151,8 +151,7 @@ unsafe extern "C" fn change_attributes(mut name: *const libc::c_char, mut gp: *m
     return;
   }
   if (*gp).flags & 8i32 != 0 {
-    if crate::e2fsprogs::e2fs_lib::fgetsetversion(name, 0 as *mut libc::c_ulong, (*gp).version)
-      != 0
+    if crate::e2fsprogs::e2fs_lib::fgetsetversion(name, 0 as *mut libc::c_ulong, (*gp).version) != 0
     {
       crate::libbb::perror_msg::bb_perror_msg(
         b"setting version on %s\x00" as *const u8 as *const libc::c_char,
@@ -163,9 +162,7 @@ unsafe extern "C" fn change_attributes(mut name: *const libc::c_char, mut gp: *m
   if (*gp).flags & 4i32 != 0 {
     fsflags = (*gp).af;
     current_block = 12124785117276362961;
-  } else if crate::e2fsprogs::e2fs_lib::fgetsetflags(name, &mut fsflags, 0 as libc::c_ulong)
-    != 0
-  {
+  } else if crate::e2fsprogs::e2fs_lib::fgetsetflags(name, &mut fsflags, 0 as libc::c_ulong) != 0 {
     crate::libbb::perror_msg::bb_perror_msg(
       b"reading flags on %s\x00" as *const u8 as *const libc::c_char,
       name,

@@ -596,8 +596,7 @@ pub unsafe extern "C" fn bootchartd_main(
     /* child */
     let mut tempdir: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     crate::libbb::signals::bb_signals(
-      0
-        + (1i32 << 10i32)
+      0 + (1i32 << 10i32)
         + (1i32 << 12i32)
         + (1i32 << 15i32)
         + (1i32 << 3i32)

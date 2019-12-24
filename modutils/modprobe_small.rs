@@ -464,8 +464,7 @@ unsafe extern "C" fn parse_module(
   }
   free(module_image as *mut libc::c_void);
   (*info).deps = copy_stringbuf();
-  (*info).open_read_failed =
-    (module_image == std::ptr::null_mut()) as libc::c_int as smallint;
+  (*info).open_read_failed = (module_image == std::ptr::null_mut()) as libc::c_int as smallint;
   return (*info).open_read_failed as libc::c_int;
 }
 unsafe extern "C" fn fileAction(

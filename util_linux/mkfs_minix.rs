@@ -201,11 +201,7 @@ unsafe extern "C" fn write_tables() {
     512i32 as size_t,
   );
   msg_eol = b"seek to BLOCK_SIZE failed\x00" as *const u8 as *const libc::c_char;
-  crate::libbb::xfuncs_printf::xlseek(
-    dev_fd as libc::c_int,
-    BLOCK_SIZE as libc::c_int as off_t,
-    0,
-  );
+  crate::libbb::xfuncs_printf::xlseek(dev_fd as libc::c_int, BLOCK_SIZE as libc::c_int as off_t, 0);
   msg_eol = b"can\'t write superblock\x00" as *const u8 as *const libc::c_char;
   crate::libbb::xfuncs_printf::xwrite(
     dev_fd as libc::c_int,
@@ -1057,9 +1053,7 @@ pub unsafe extern "C" fn mkfs_minix_main(
     crate::libbb::appletlib::bb_show_usage();
   }
   /* Check if it is mounted */
-  if !crate::libbb::find_mount_point::find_mount_point((*ptr_to_globals).device_name, 0)
-    .is_null()
-  {
+  if !crate::libbb::find_mount_point::find_mount_point((*ptr_to_globals).device_name, 0).is_null() {
     crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"can\'t format mounted filesystem\x00" as *const u8 as *const libc::c_char,
     );

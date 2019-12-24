@@ -1617,8 +1617,7 @@ pub unsafe extern "C" fn od_main(
     decode_format_string(b"d2\x00" as *const u8 as *const libc::c_char);
   }
   if opt & OPT_j as libc::c_int as libc::c_uint != 0 {
-    n_bytes_to_skip =
-      crate::libbb::xatonum::xstrtoull_sfx(str_j, 0, bkm_suffixes.as_ptr()) as off_t
+    n_bytes_to_skip = crate::libbb::xatonum::xstrtoull_sfx(str_j, 0, bkm_suffixes.as_ptr()) as off_t
   }
   if opt & OPT_l as libc::c_int as libc::c_uint != 0 {
     decode_format_string(b"d4\x00" as *const u8 as *const libc::c_char);

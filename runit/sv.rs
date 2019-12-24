@@ -608,10 +608,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
     (time(0 as *mut time_t) as libc::c_ulonglong).wrapping_add(0x400000000000000au64) as u64;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tstart =
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tnow;
-  curdir = open(
-    b".\x00" as *const u8 as *const libc::c_char,
-    0 | 0o4000i32,
-  );
+  curdir = open(b".\x00" as *const u8 as *const libc::c_char, 0 | 0o4000i32);
   if curdir == -1i32 {
     fatal_cannot(b"open current directory\x00" as *const u8 as *const libc::c_char);
   }

@@ -53,11 +53,9 @@ pub unsafe extern "C" fn setlogcons_main(
     init
   };
   if !(*argv.offset(1)).is_null() {
-    arg.subarg = crate::libbb::xatonum::xatou_range(
-      *argv.offset(1),
-      0 as libc::c_uint,
-      63i32 as libc::c_uint,
-    ) as libc::c_char
+    arg.subarg =
+      crate::libbb::xatonum::xatou_range(*argv.offset(1), 0 as libc::c_uint, 63i32 as libc::c_uint)
+        as libc::c_char
   }
   /* Can just call it on "/dev/tty1" always, but...
    * in my testing, inactive (never opened) VTs are not

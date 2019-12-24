@@ -1921,8 +1921,7 @@ unsafe extern "C" fn iproute_get(mut argv: *mut *mut libc::c_char) -> libc::c_in
     }
     req.n.nlmsg_flags = 0x1i32 as __u16;
     req.n.nlmsg_type = RTM_GETROUTE as libc::c_int as __u16;
-    if crate::networking::libiproute::libnetlink::rtnl_talk(&mut rth, &mut req.n, &mut req.n) < 0
-    {
+    if crate::networking::libiproute::libnetlink::rtnl_talk(&mut rth, &mut req.n, &mut req.n) < 0 {
       return 2i32;
     }
   }

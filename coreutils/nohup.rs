@@ -90,10 +90,7 @@ pub unsafe extern "C" fn nohup_main(
           0o400i32 | 0o200i32,
         );
       } else {
-        crate::libbb::xfuncs_printf::xopen(
-          b"/dev/null\x00" as *const u8 as *const libc::c_char,
-          0,
-        );
+        crate::libbb::xfuncs_printf::xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0);
         /* will be fd 1 */
       }
     }

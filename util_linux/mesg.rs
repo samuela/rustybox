@@ -31,11 +31,7 @@ pub unsafe extern "C" fn mesg_main(
       b"not a tty\x00" as *const u8 as *const libc::c_char,
     );
   }
-  crate::libbb::xfuncs_printf::xfstat(
-    0,
-    &mut sb,
-    b"stdin\x00" as *const u8 as *const libc::c_char,
-  );
+  crate::libbb::xfuncs_printf::xfstat(0, &mut sb, b"stdin\x00" as *const u8 as *const libc::c_char);
   if c as libc::c_int == 0 {
     puts(
       if sb.st_mode & (0o200i32 >> 3i32 | 0o200i32 >> 3i32 >> 3i32) as libc::c_uint != 0 {

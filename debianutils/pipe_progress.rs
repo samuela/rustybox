@@ -23,11 +23,8 @@ pub unsafe extern "C" fn pipe_progress_main(
   let mut t: time_t = time(0 as *mut time_t);
   let mut len: libc::c_int = 0;
   loop {
-    len = crate::libbb::read::safe_read(
-      0,
-      buf.as_mut_ptr() as *mut libc::c_void,
-      4096i32 as size_t,
-    ) as libc::c_int;
+    len = crate::libbb::read::safe_read(0, buf.as_mut_ptr() as *mut libc::c_void, 4096i32 as size_t)
+      as libc::c_int;
     if !(len > 0) {
       break;
     }

@@ -553,8 +553,7 @@ pub unsafe extern "C" fn shell_builtin_read(
          * echo "X:Y:"    | (read x y; echo "|$x|$y|") # |X|Y|, not |X|Y:|
          * echo "X:Y  : " | (read x y; echo "|$x|$y|") # |X|Y|
          */
-        if bufpos >= 0 && !strchr(ifs, *buffer.offset(bufpos as isize) as libc::c_int).is_null()
-        {
+        if bufpos >= 0 && !strchr(ifs, *buffer.offset(bufpos as isize) as libc::c_int).is_null() {
           loop
           /* There _is_ a non-whitespace IFS char */
           /* Skip whitespace IFS char before it */

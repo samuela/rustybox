@@ -88,9 +88,8 @@ pub unsafe extern "C" fn devmem_main(
     crate::libbb::appletlib::bb_show_usage(); /* allows hex, oct etc */
   }
   *bb_errno = 0;
-  target =
-    crate::libbb::bb_strtonum::bb_strtoull(*argv.offset(1), 0 as *mut *mut libc::c_char, 0)
-      as off_t;
+  target = crate::libbb::bb_strtonum::bb_strtoull(*argv.offset(1), 0 as *mut *mut libc::c_char, 0)
+    as off_t;
   /* WIDTH */
   if !(*argv.offset(2)).is_null() {
     if (*(*argv.offset(2)).offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int

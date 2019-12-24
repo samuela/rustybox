@@ -1382,11 +1382,7 @@ pub unsafe extern "C" fn top_main(
     option_mask32 |= OPT_EOF as libc::c_int as libc::c_uint
   } else {
     /* Turn on unbuffered input; turn off echoing, ^C ^Z etc */
-    crate::libbb::xfuncs::set_termios_to_raw(
-      0,
-      &mut (*ptr_to_globals).initial_settings,
-      1i32 << 0,
-    );
+    crate::libbb::xfuncs::set_termios_to_raw(0, &mut (*ptr_to_globals).initial_settings, 1i32 << 0);
     die_func = Some(reset_term as unsafe extern "C" fn() -> ())
   }
   crate::libbb::signals::bb_signals(

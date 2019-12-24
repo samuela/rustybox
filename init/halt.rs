@@ -205,15 +205,10 @@ unsafe extern "C" fn init_was_not_there() -> libc::c_int {
    * mounting of /proc, happened. By that time init should be ready
    * for signals.
    */
-  while access(
-    b"/proc/meminfo\x00" as *const u8 as *const libc::c_char,
-    0,
-  ) != 0
-    && {
-      cnt -= 1;
-      (cnt) >= 0
-    }
-  {
+  while access(b"/proc/meminfo\x00" as *const u8 as *const libc::c_char, 0) != 0 && {
+    cnt -= 1;
+    (cnt) >= 0
+  } {
     sleep(1i32 as libc::c_uint);
   }
   /* Does it look like init wasn't there? */

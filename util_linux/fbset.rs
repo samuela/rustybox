@@ -539,8 +539,7 @@ unsafe extern "C" fn read_mode_db(
     b"# \t\r\x00" as *const u8 as *const libc::c_char,
   ) != 0
   {
-    if strcmp(token[0], b"mode\x00" as *const u8 as *const libc::c_char) != 0
-      || token[1].is_null()
+    if strcmp(token[0], b"mode\x00" as *const u8 as *const libc::c_char) != 0 || token[1].is_null()
     {
       continue;
     }

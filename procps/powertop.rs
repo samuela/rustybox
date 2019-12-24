@@ -686,11 +686,7 @@ pub unsafe extern "C" fn powertop_main(
   (*ptr_to_globals).total_cpus = crate::libbb::get_cpu_count::get_cpu_count();
   puts(b"Collecting data for 10 seconds\x00" as *const u8 as *const libc::c_char);
   /* Turn on unbuffered input; turn off echoing, ^C ^Z etc */
-  crate::libbb::xfuncs::set_termios_to_raw(
-    0,
-    &mut (*ptr_to_globals).init_settings,
-    1i32 << 0,
-  );
+  crate::libbb::xfuncs::set_termios_to_raw(0, &mut (*ptr_to_globals).init_settings, 1i32 << 0);
   crate::libbb::signals::bb_signals(
     BB_FATAL_SIGS as libc::c_int,
     Some(sig_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
@@ -736,8 +732,7 @@ pub unsafe extern "C" fn powertop_main(
         b"/proc/timer_stats\x00" as *const u8 as *const libc::c_char,
         b"1\n\x00" as *const u8 as *const libc::c_char,
       )) as smallint; /* 1 on error */
-    if crate::libbb::safe_poll::safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, 10i32 * 1000i32) > 0
-    {
+    if crate::libbb::safe_poll::safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, 10i32 * 1000i32) > 0 {
       let mut c: libc::c_uchar = 0;
       if crate::libbb::read::safe_read(
         0,

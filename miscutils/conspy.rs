@@ -503,11 +503,8 @@ pub unsafe extern "C" fn conspy_main(
   argv = argv.offset(optind as isize);
   ttynum = 0 as libc::c_uint;
   if !(*argv.offset(0)).is_null() {
-    ttynum = crate::libbb::xatonum::xatou_range(
-      *argv.offset(0),
-      0 as libc::c_uint,
-      63i32 as libc::c_uint,
-    );
+    ttynum =
+      crate::libbb::xatonum::xatou_range(*argv.offset(0), 0 as libc::c_uint, 63i32 as libc::c_uint);
     sprintf(
       (*ptr_to_globals)
         .vcsa_name
