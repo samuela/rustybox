@@ -31,6 +31,16 @@ testing "test a: should be true (0)" \
 	"0\n" \
 	"" ""
 
+testing "[ --help ]: should be true (0)" \
+	"rustybox [ --help ]; echo \$?" \
+	"0\n" \
+	"" ""
+
+testing "[[ --help ]]: should be true (0)" \
+	"rustybox [[ --help ]]; echo \$?" \
+	"0\n" \
+	"" ""
+
 testing "test --help: should be true (0)" \
 	"rustybox test --help; echo \$?" \
 	"0\n" \
