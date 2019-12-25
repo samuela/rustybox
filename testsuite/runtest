@@ -2,15 +2,17 @@
 # Usage:
 # runtest [applet1] [applet2...]
 
-# Build the rustybox binary.
-cargo build --all-features
+# A temp directory to dump the rustybox binary into.
+bindir="$(mktemp -d)"
+
+# Build the rustybox binary. --out-dir is technically an unstable option. For
+# some reason using target/debug/rustybox doesn't work as of cargo
+# 1.41.0-nightly (626f0f40e 2019-12-03).
+cargo build --all-features -Z unstable-options --out-dir "$bindir"
 
 # The testsuite dir.
 lcwd=$(pwd)
 [ x"$tsdir" != x"" ] || tsdir="$lcwd"
-
-# TODO: figure out a way to avoid hard-coding the target directory.
-bindir="${lcwd%/*}/target/debug"	# one directory up from $lcwd
 
 # Why is this necessary?
 PATH="$bindir:$PATH"
@@ -154,6 +156,7 @@ for applet in $applets; do
 done
 
 # Clean up after ourselves.
+rm -rf "$bindir"
 rm -rf "$LINKSDIR"
 
 if [ $status -ne 0 ] && [ x"$VERBOSE" = x ]; then
