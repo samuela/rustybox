@@ -631,16 +631,14 @@ unsafe fn run_applet_no_and_exit(applet_no: usize, name: &str, argv: &[&str]) ->
    * "-/sbin/halt" -> "halt", for example. */
   applet_name = str_to_ptr(name);
 
-  /* Special case. POSIX says "test --help"
-   * should be no different from e.g. "test --foo".
-   * Thus for "test", we skip --help check.
-   * "true" and "false" are also special.
-   */
-  // TODO: get rid of these magic numbers.
-  if applet_no != 332 && applet_no != 342 && applet_no != 82 {
+  // Special case. POSIX says "test --help" should be no different from e.g.
+  // "test --foo". Thus for "test", we skip --help check. "true" and "false" are
+  // also special.
+  let main_name = applets[applet_no].main;
+  if main_name != "test" && main_name != "true" && main_name != "false" {
     if argc == 2 && argv[1] == "--help" {
       /* Make "foo --help" exit with 0: */
-      xfunc_error_retval = 0 as u8;
+      xfunc_error_retval = 0;
       bb_show_usage();
     }
   }
