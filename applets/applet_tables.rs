@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use crate::archival::bbunzip::bunzip2_main;
 use crate::archival::bbunzip::gunzip_main;
 use crate::archival::bbunzip::unlzma_main;
