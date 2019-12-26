@@ -1,1048 +1,369 @@
+#![allow(unused_imports)]
+use crate::archival::bbunzip::bunzip2_main;
+use crate::archival::bbunzip::gunzip_main;
+use crate::archival::bbunzip::unlzma_main;
+use crate::archival::bbunzip::unxz_main;
+use crate::archival::bzip2::bzip2_main;
+use crate::archival::cpio::cpio_main;
+use crate::archival::dpkg::dpkg_main;
+use crate::archival::dpkg_deb::dpkg_deb_main;
+use crate::archival::gzip::gzip_main;
+use crate::archival::lzop::lzop_main;
+use crate::archival::rpm::rpm2cpio_main;
+use crate::archival::rpm::rpm_main;
+use crate::archival::tar::tar_main;
+use crate::archival::unzip::unzip_main;
+use crate::console_tools::chvt::chvt_main;
+use crate::console_tools::clear::clear_main;
+use crate::console_tools::deallocvt::deallocvt_main;
+use crate::console_tools::dumpkmap::dumpkmap_main;
+use crate::console_tools::fgconsole::fgconsole_main;
+use crate::console_tools::kbd_mode::kbd_mode_main;
+use crate::console_tools::loadfont::loadfont_main;
+use crate::console_tools::loadfont::setfont_main;
+use crate::console_tools::loadkmap::loadkmap_main;
+use crate::console_tools::openvt::openvt_main;
+use crate::console_tools::reset::reset_main;
+use crate::console_tools::resize::resize_main;
+use crate::console_tools::setconsole::setconsole_main;
+use crate::console_tools::setkeycodes::setkeycodes_main;
+use crate::console_tools::setlogcons::setlogcons_main;
+use crate::console_tools::showkey::showkey_main;
+use crate::coreutils::basename::basename_main;
+use crate::coreutils::cat::cat_main;
+use crate::coreutils::chgrp::chgrp_main;
+use crate::coreutils::chmod::chmod_main;
+use crate::coreutils::chown::chown_main;
+use crate::coreutils::chroot::chroot_main;
+use crate::coreutils::cksum::cksum_main;
+use crate::coreutils::comm::comm_main;
+use crate::coreutils::cp::cp_main;
+use crate::coreutils::cut::cut_main;
+use crate::coreutils::date::date_main;
+use crate::coreutils::dd::dd_main;
+use crate::coreutils::df::df_main;
+use crate::coreutils::dirname::dirname_main;
+use crate::coreutils::dos2unix::dos2unix_main;
+use crate::coreutils::du::du_main;
+use crate::coreutils::echo::echo_main;
+use crate::coreutils::env::env_main;
+use crate::coreutils::expand::expand_main;
+use crate::coreutils::expr::expr_main;
+use crate::coreutils::factor::factor_main;
+use crate::coreutils::fold::fold_main;
+use crate::coreutils::head::head_main;
+use crate::coreutils::hostid::hostid_main;
+use crate::coreutils::id::id_main;
+use crate::coreutils::install::install_main;
+use crate::coreutils::link::link_main;
+use crate::coreutils::ln::ln_main;
+use crate::coreutils::logname::logname_main;
+use crate::coreutils::ls::ls_main;
+use crate::coreutils::md5_sha1_sum::md5_sha1_sum_main;
+use crate::coreutils::mkdir::mkdir_main;
+use crate::coreutils::mkfifo::mkfifo_main;
+use crate::coreutils::mknod::mknod_main;
+use crate::coreutils::mktemp::mktemp_main;
+use crate::coreutils::mv::mv_main;
+use crate::coreutils::nice::nice_main;
+use crate::coreutils::nl::nl_main;
+use crate::coreutils::nohup::nohup_main;
+use crate::coreutils::nproc::nproc_main;
+use crate::coreutils::od::od_main;
+use crate::coreutils::paste::paste_main;
+use crate::coreutils::printenv::printenv_main;
+use crate::coreutils::printf::printf_main;
+use crate::coreutils::pwd::pwd_main;
+use crate::coreutils::r#false::false_main;
+use crate::coreutils::r#true::true_main;
+use crate::coreutils::readlink::readlink_main;
+use crate::coreutils::realpath::realpath_main;
+use crate::coreutils::rm::rm_main;
+use crate::coreutils::rmdir::rmdir_main;
+use crate::coreutils::seq::seq_main;
+use crate::coreutils::shred::shred_main;
+use crate::coreutils::shuf::shuf_main;
+use crate::coreutils::sleep::sleep_main;
+use crate::coreutils::sort::sort_main;
+use crate::coreutils::split::split_main;
+use crate::coreutils::stat::stat_main;
+use crate::coreutils::stty::stty_main;
+use crate::coreutils::sum::sum_main;
+use crate::coreutils::sync::fsync_main;
+use crate::coreutils::sync::sync_main;
+use crate::coreutils::tac::tac_main;
+use crate::coreutils::tail::tail_main;
+use crate::coreutils::tee::tee_main;
+use crate::coreutils::test::test_main;
+use crate::coreutils::timeout::timeout_main;
+use crate::coreutils::touch::touch_main;
+use crate::coreutils::tr::tr_main;
+use crate::coreutils::truncate::truncate_main;
+use crate::coreutils::tty::tty_main;
+use crate::coreutils::uname::uname_main;
+use crate::coreutils::uniq::uniq_main;
+use crate::coreutils::unlink::unlink_main;
+use crate::coreutils::usleep::usleep_main;
+use crate::coreutils::uudecode::base64_main;
+use crate::coreutils::uudecode::uudecode_main;
+use crate::coreutils::uuencode::uuencode_main;
+use crate::coreutils::wc::wc_main;
+use crate::coreutils::who::who_main;
+use crate::coreutils::whoami::whoami_main;
+use crate::coreutils::yes::yes_main;
+use crate::debianutils::pipe_progress::pipe_progress_main;
+use crate::debianutils::run_parts::run_parts_main;
+use crate::debianutils::start_stop_daemon::start_stop_daemon_main;
+use crate::debianutils::which::which_main;
+use crate::e2fsprogs::chattr::chattr_main;
+use crate::e2fsprogs::fsck::fsck_main;
+use crate::e2fsprogs::lsattr::lsattr_main;
+use crate::editors::awk::awk_main;
+use crate::editors::cmp::cmp_main;
+use crate::editors::diff::diff_main;
+use crate::editors::ed::ed_main;
+use crate::editors::patch::patch_main;
+use crate::editors::sed::sed_main;
+use crate::editors::vi::vi_main;
+use crate::findutils::find::find_main;
+use crate::findutils::grep::grep_main;
+use crate::findutils::xargs::xargs_main;
+use crate::init::bootchartd::bootchartd_main;
+use crate::init::halt::halt_main;
+use crate::init::init::init_main;
+use crate::klibc_utils::nuke::nuke_main;
+use crate::klibc_utils::resume::resume_main;
+use crate::loginutils::add_remove_shell::add_remove_shell_main;
+use crate::loginutils::addgroup::addgroup_main;
+use crate::loginutils::adduser::adduser_main;
+use crate::loginutils::chpasswd::chpasswd_main;
+use crate::loginutils::cryptpw::cryptpw_main;
+use crate::loginutils::deluser::deluser_main;
+use crate::loginutils::getty::getty_main;
+/* Needs to be run by root or be suid root - needs to change uid and gid: */
+use crate::loginutils::login::login_main;
+/* Needs to be run by root or be suid root - needs to change /etc/{passwd,shadow}: */
+use crate::loginutils::passwd::passwd_main;
+/* Needs to be run by root or be suid root - needs to change uid and gid: */
+use crate::loginutils::su::su_main;
+use crate::loginutils::sulogin::sulogin_main;
+/* Needs to be run by root or be suid root - needs to change uid and gid: */
+use crate::loginutils::vlock::vlock_main;
+use crate::mailutils::makemime::makemime_main;
+use crate::mailutils::popmaildir::popmaildir_main;
+use crate::mailutils::reformime::reformime_main;
+use crate::mailutils::sendmail::sendmail_main;
+use crate::miscutils::adjtimex::adjtimex_main;
+use crate::miscutils::bc::bc_main;
+use crate::miscutils::bc::dc_main;
+use crate::miscutils::beep::beep_main;
+use crate::miscutils::chat::chat_main;
+use crate::miscutils::conspy::conspy_main;
+use crate::miscutils::crond::crond_main;
+use crate::miscutils::crontab::crontab_main;
+use crate::miscutils::devmem::devmem_main;
+use crate::miscutils::fbsplash::fbsplash_main;
+use crate::miscutils::hdparm::hdparm_main;
+use crate::miscutils::hexedit::hexedit_main;
+use crate::miscutils::i2c_tools::i2cdetect_main;
+use crate::miscutils::i2c_tools::i2cdump_main;
+use crate::miscutils::i2c_tools::i2cget_main;
+use crate::miscutils::i2c_tools::i2cset_main;
+use crate::miscutils::i2c_tools::i2ctransfer_main;
+use crate::miscutils::less::less_main;
+use crate::miscutils::lsscsi::lsscsi_main;
+use crate::miscutils::makedevs::makedevs_main;
+use crate::miscutils::man::man_main;
+use crate::miscutils::microcom::microcom_main;
+use crate::miscutils::mt::mt_main;
+use crate::miscutils::nandwrite::nandwrite_main;
+use crate::miscutils::partprobe::partprobe_main;
+use crate::miscutils::raidautorun::raidautorun_main;
+use crate::miscutils::readahead::readahead_main;
+use crate::miscutils::runlevel::runlevel_main;
+use crate::miscutils::rx::rx_main;
+use crate::miscutils::setfattr::setfattr_main;
+use crate::miscutils::setserial::setserial_main;
+use crate::miscutils::strings::strings_main;
+use crate::miscutils::time::time_main;
+use crate::miscutils::ts::ts_main;
+use crate::miscutils::ttysize::ttysize_main;
+use crate::miscutils::ubi_tools::ubi_tools_main;
+use crate::miscutils::ubirename::ubirename_main;
+use crate::miscutils::volname::volname_main;
+use crate::miscutils::watchdog::watchdog_main;
+use crate::modutils::modinfo::modinfo_main;
+use crate::modutils::modprobe_small::lsmod_main;
+use crate::modutils::modprobe_small::modprobe_main;
+use crate::networking::arp::arp_main;
+use crate::networking::arping::arping_main;
+use crate::networking::brctl::brctl_main;
+use crate::networking::dnsd::dnsd_main;
+use crate::networking::ether_wake::ether_wake_main;
+use crate::networking::ftpd::ftpd_main;
+use crate::networking::ftpgetput::ftpgetput_main;
+use crate::networking::hostname::hostname_main;
+use crate::networking::httpd::httpd_main;
+use crate::networking::ifconfig::ifconfig_main;
+use crate::networking::ifenslave::ifenslave_main;
+use crate::networking::ifplugd::ifplugd_main;
+use crate::networking::ifupdown::ifupdown_main;
+use crate::networking::inetd::inetd_main;
+use crate::networking::ip::ip_main;
+use crate::networking::ip::ipaddr_main;
+use crate::networking::ip::iplink_main;
+use crate::networking::ip::ipneigh_main;
+use crate::networking::ip::iproute_main;
+use crate::networking::ip::iprule_main;
+use crate::networking::ip::iptunnel_main;
+use crate::networking::ipcalc::ipcalc_main;
+use crate::networking::isrv_identd::fakeidentd_main;
+use crate::networking::nameif::nameif_main;
+use crate::networking::nbd_client::nbdclient_main;
+use crate::networking::nc::nc_main;
+use crate::networking::netstat::netstat_main;
+use crate::networking::nslookup::nslookup_main;
+use crate::networking::ntpd::ntpd_main;
+use crate::networking::ping::ping6_main;
+use crate::networking::ping::ping_main;
+use crate::networking::pscan::pscan_main;
+use crate::networking::route::route_main;
+use crate::networking::slattach::slattach_main;
+use crate::networking::ssl_client::ssl_client_main;
+use crate::networking::tc::tc_main;
+use crate::networking::tcpudp::tcpudpsvd_main;
+use crate::networking::telnet::telnet_main;
+use crate::networking::telnetd::telnetd_main;
+use crate::networking::tftp::tftp_main;
+use crate::networking::tftp::tftpd_main;
+use crate::networking::traceroute::traceroute6_main;
+use crate::networking::traceroute::traceroute_main;
+use crate::networking::tunctl::tunctl_main;
+use crate::networking::udhcp::d6_dhcpc::udhcpc6_main;
+use crate::networking::udhcp::dhcpc::udhcpc_main;
+use crate::networking::udhcp::dhcpd::udhcpd_main;
+use crate::networking::udhcp::dhcprelay::dhcprelay_main;
+use crate::networking::udhcp::dumpleases::dumpleases_main;
+use crate::networking::vconfig::vconfig_main;
+use crate::networking::wget::wget_main;
+use crate::networking::whois::whois_main;
+use crate::networking::zcip::zcip_main;
+use crate::printutils::lpd::lpd_main;
+use crate::printutils::lpr::lpqr_main;
+use crate::procps::free::free_main;
+use crate::procps::fuser::fuser_main;
+use crate::procps::iostat::iostat_main;
+use crate::procps::kill::kill_main;
+use crate::procps::lsof::lsof_main;
+use crate::procps::mpstat::mpstat_main;
+use crate::procps::nmeter::nmeter_main;
+use crate::procps::pgrep::pgrep_main;
+use crate::procps::pidof::pidof_main;
+use crate::procps::pmap::pmap_main;
+use crate::procps::powertop::powertop_main;
+use crate::procps::ps::ps_main;
+use crate::procps::pstree::pstree_main;
+use crate::procps::pwdx::pwdx_main;
+use crate::procps::smemcap::smemcap_main;
+use crate::procps::sysctl::sysctl_main;
+use crate::procps::top::top_main;
+use crate::procps::uptime::uptime_main;
+use crate::procps::watch::watch_main;
+use crate::runit::chpst::chpst_main;
+use crate::runit::runsv::runsv_main;
+use crate::runit::runsvdir::runsvdir_main;
+use crate::runit::sv::sv_main;
+use crate::runit::sv::svc_main;
+use crate::runit::sv::svok_main;
+use crate::runit::svlogd::svlogd_main;
+use crate::shell::ash::ash_main;
+use crate::shell::cttyhack::cttyhack_main;
+use crate::shell::hush::hush_main;
+use crate::sysklogd::klogd::klogd_main;
+use crate::sysklogd::logread::logread_main;
+use crate::sysklogd::syslogd_and_logger::logger_main;
+use crate::sysklogd::syslogd_and_logger::syslogd_main;
+use crate::util_linux::acpid::acpid_main;
+use crate::util_linux::blkdiscard::blkdiscard_main;
+use crate::util_linux::blkid::blkid_main;
+use crate::util_linux::blockdev::blockdev_main;
+use crate::util_linux::cal::cal_main;
+use crate::util_linux::chrt::chrt_main;
+use crate::util_linux::dmesg::dmesg_main;
+use crate::util_linux::eject::eject_main;
+use crate::util_linux::fallocate::fallocate_main;
+use crate::util_linux::fatattr::fatattr_main;
+use crate::util_linux::fbset::fbset_main;
+use crate::util_linux::fdformat::fdformat_main;
+use crate::util_linux::fdisk::fdisk_main;
+use crate::util_linux::findfs::findfs_main;
+use crate::util_linux::flock::flock_main;
+use crate::util_linux::freeramdisk::freeramdisk_main;
+use crate::util_linux::fsck_minix::fsck_minix_main;
+use crate::util_linux::fsfreeze::fsfreeze_main;
+use crate::util_linux::fstrim::fstrim_main;
+use crate::util_linux::getopt::getopt_main;
+use crate::util_linux::hexdump::hexdump_main;
+use crate::util_linux::hexdump_xxd::xxd_main;
+use crate::util_linux::hwclock::hwclock_main;
+use crate::util_linux::ionice::ionice_main;
+use crate::util_linux::ipcrm::ipcrm_main;
+use crate::util_linux::ipcs::ipcs_main;
+use crate::util_linux::last_fancy::last_main;
+use crate::util_linux::losetup::losetup_main;
+use crate::util_linux::lspci::lspci_main;
+use crate::util_linux::lsusb::lsusb_main;
+use crate::util_linux::mdev::mdev_main;
+use crate::util_linux::mesg::mesg_main;
+use crate::util_linux::mkfs_ext2::mkfs_ext2_main;
+use crate::util_linux::mkfs_minix::mkfs_minix_main;
+use crate::util_linux::mkfs_vfat::mkfs_vfat_main;
+use crate::util_linux::mkswap::mkswap_main;
+use crate::util_linux::more::more_main;
+use crate::util_linux::mount::mount_main;
+use crate::util_linux::mountpoint::mountpoint_main;
+use crate::util_linux::nsenter::nsenter_main;
+use crate::util_linux::pivot_root::pivot_root_main;
+use crate::util_linux::rdate::rdate_main;
+use crate::util_linux::rdev::rdev_main;
+use crate::util_linux::readprofile::readprofile_main;
+use crate::util_linux::renice::renice_main;
+use crate::util_linux::rev::rev_main;
+use crate::util_linux::rtcwake::rtcwake_main;
+use crate::util_linux::script::script_main;
+use crate::util_linux::scriptreplay::scriptreplay_main;
+use crate::util_linux::setarch::setarch_main;
+use crate::util_linux::setpriv::setpriv_main;
+use crate::util_linux::setsid::setsid_main;
+use crate::util_linux::swaponoff::swap_on_off_main;
+use crate::util_linux::switch_root::switch_root_main;
+use crate::util_linux::taskset::taskset_main;
+use crate::util_linux::uevent::uevent_main;
+use crate::util_linux::umount::umount_main;
+use crate::util_linux::unshare::unshare_main;
+use crate::util_linux::wall::wall_main;
 use libc;
-extern "C" {
-  /*
-   * applets.h - a listing of all busybox applets.
-   *
-   * If you write a new applet, you need to add an entry to this list to make
-   * busybox aware of it.
-   */
-  /*
-  name  - applet name as it is typed on command line
-  help  - applet name, converted to C (ether-wake: help = ether_wake)
-  main  - corresponding <applet>_main to call (bzcat: main = bunzip2)
-  l     - location to install link to: [/usr]/[s]bin
-  s     - suid type:
-          SUID_REQUIRE: will complain if busybox isn't suid
-          and is run by non-root (applet_main() will not be called at all)
-          SUID_DROP: will drop suid prior to applet_main()
-          SUID_MAYBE: neither of the above
-          (every instance of SUID_REQUIRE and SUID_MAYBE
-          needs to be justified in comment)
-          NB: please update FEATURE_SUID help text whenever you add/remove
-          SUID_REQUIRE or SUID_MAYBE applet.
-  */
 
-  #[no_mangle]
-  fn gunzip_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn test_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ash_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn printf_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ls_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn kill_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn bunzip2_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn chown_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn echo_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn hush_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn unlzma_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn unxz_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn bzip2_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn cpio_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn dpkg_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn dpkg_deb_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn gzip_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn lzop_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn rpm_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn rpm2cpio_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn tar_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn unzip_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn chvt_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn clear_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn deallocvt_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn dumpkmap_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fgconsole_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn kbd_mode_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn loadfont_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn setfont_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn loadkmap_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn openvt_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn reset_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn resize_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn setconsole_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn setkeycodes_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn setlogcons_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn showkey_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn basename_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn cat_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn chgrp_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn chmod_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn chroot_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn cksum_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn comm_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn cp_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn cut_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn date_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn dd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn df_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn dirname_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn dos2unix_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn du_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn env_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn expand_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn expr_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn factor_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn false_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fold_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn head_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn hostid_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn id_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn install_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn link_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ln_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn logname_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn md5_sha1_sum_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn mkdir_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn mkfifo_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn mknod_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn mktemp_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn mv_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn nice_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn nl_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn nohup_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn nproc_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn od_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn paste_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn printenv_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn pwd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn readlink_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn realpath_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn rm_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn rmdir_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn seq_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn shred_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn shuf_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn sleep_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn sort_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn split_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn stat_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn stty_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn sum_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn sync_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fsync_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn tac_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn tail_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn tee_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn timeout_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn touch_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn tr_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn true_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn truncate_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn tty_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn uname_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn uniq_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn unlink_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn usleep_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn uudecode_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn base64_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn uuencode_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn wc_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn who_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn whoami_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn yes_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn pipe_progress_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn run_parts_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn start_stop_daemon_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn which_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn chattr_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fsck_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn lsattr_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn awk_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn cmp_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn diff_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ed_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn patch_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn sed_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn vi_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn find_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn grep_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn xargs_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn bootchartd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn halt_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn init_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn nuke_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn resume_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn add_remove_shell_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn addgroup_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn adduser_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn chpasswd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn cryptpw_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn deluser_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn getty_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  /* Needs to be run by root or be suid root - needs to change uid and gid: */
-  #[no_mangle]
-  fn login_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  /* Needs to be run by root or be suid root - needs to change /etc/{passwd,shadow}: */
-  #[no_mangle]
-  fn passwd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  /* Needs to be run by root or be suid root - needs to change uid and gid: */
-  #[no_mangle]
-  fn su_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn sulogin_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  /* Needs to be run by root or be suid root - needs to change uid and gid: */
-  #[no_mangle]
-  fn vlock_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn makemime_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn popmaildir_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn reformime_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn sendmail_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn adjtimex_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn bc_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn dc_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn beep_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn chat_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn conspy_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn crond_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn crontab_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn devmem_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fbsplash_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn hdparm_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn hexedit_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn i2cget_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn i2cset_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn i2cdump_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn i2cdetect_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn i2ctransfer_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn less_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn lsscsi_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn makedevs_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn man_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn microcom_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn mt_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn nandwrite_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn partprobe_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn raidautorun_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn readahead_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn runlevel_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn rx_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn setfattr_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn setserial_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn strings_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn time_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ts_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ttysize_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ubi_tools_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ubirename_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn volname_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn watchdog_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn modinfo_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn lsmod_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn modprobe_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn arp_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn arping_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn brctl_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn dnsd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ether_wake_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ftpd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ftpgetput_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn hostname_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn httpd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ifconfig_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ifenslave_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ifplugd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ifupdown_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn inetd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ip_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ipaddr_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn iplink_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn iproute_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn iprule_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn iptunnel_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ipneigh_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ipcalc_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fakeidentd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn nameif_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn nbdclient_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn nc_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn netstat_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn nslookup_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ntpd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ping_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ping6_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn pscan_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn route_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn slattach_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ssl_client_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn tc_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn tcpudpsvd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn telnet_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn telnetd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn tftp_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn tftpd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn traceroute_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn traceroute6_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn tunctl_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn vconfig_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn wget_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn whois_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn zcip_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn lpd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn lpqr_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn free_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fuser_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn iostat_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn lsof_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn mpstat_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn nmeter_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn pgrep_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn pidof_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn pmap_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn powertop_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ps_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn pstree_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn pwdx_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn smemcap_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn sysctl_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn top_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn uptime_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn watch_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn chpst_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn runsv_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn runsvdir_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn sv_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn svc_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn svok_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn svlogd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn cttyhack_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn klogd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn logger_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn logread_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn syslogd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn acpid_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn blkdiscard_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn blkid_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn blockdev_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn cal_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn chrt_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn dmesg_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn eject_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fallocate_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fatattr_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fbset_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fdformat_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fdisk_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn findfs_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn flock_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn freeramdisk_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fsck_minix_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fsfreeze_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn fstrim_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn getopt_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn hexdump_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn xxd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn hwclock_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ionice_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ipcrm_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn ipcs_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn last_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn losetup_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn lspci_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn lsusb_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn mdev_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn mesg_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn mkfs_ext2_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn mkfs_minix_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn mkfs_vfat_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn mkswap_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn more_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn mount_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn mountpoint_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn nsenter_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn pivot_root_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn rdate_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn rdev_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn readprofile_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn renice_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn rev_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn rtcwake_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn script_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn scriptreplay_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn setarch_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn setpriv_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn setsid_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn swap_on_off_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn switch_root_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn taskset_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn uevent_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn umount_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn unshare_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn wall_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn udhcpc6_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn udhcpc_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn udhcpd_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn dhcprelay_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  fn dumpleases_main(argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int;
-}
+/* * applets.h - a listing of all busybox applets.
+*
+* If you write a new applet, you need to add an entry to this list to make
+* busybox aware of it.
+*/
+/*
+name  - applet name as it is typed on command line
+help  - applet name, converted to C (ether-wake: help = ether_wake)
+main  - corresponding <applet>_main to call (bzcat: main = bunzip2)
+l     - location to install link to: [/usr]/[s]bin
+s     - suid type:
+        SUID_REQUIRE: will complain if busybox isn't suid
+        and is run by non-root (applet_main() will not be called at all)
+        SUID_DROP: will drop suid prior to applet_main()
+        SUID_MAYBE: neither of the above
+        (every instance of SUID_REQUIRE and SUID_MAYBE
+        needs to be justified in comment)
+        NB: please update FEATURE_SUID help text whenever you add/remove
+        SUID_REQUIRE or SUID_MAYBE applet.
+*/
 
 #[derive(Copy, Clone)]
 pub enum InstallLoc {
