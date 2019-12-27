@@ -23,7 +23,13 @@ Check out [the contributing doc](CONTRIBUTING.md) for more info!
 
 And of course please test out rustybox and report [any and all](https://pointersgonewild.com/2019/11/02/they-might-never-tell-you-its-broken/) issues, concerns, and comments!
 
-## Customizing your rustybox distribution
+## Building rustybox
+
+Rustybox requires a Linux system to build. Developing in Docker works just as well on macOS and Windows. You'll need GCC and its development headers (esp. `quadmath.h`) in order to build the f128 dependency. Running `sudo apt install build-essential` should do the trick on Ubuntu/Debian.
+
+Please open an issue if you have trouble building!
+
+### Customizing your rustybox distribution
 
 Chances are you don't actually need or want _everything_ in rustybox. By design, the default distribution includes a relatively conservative set of utilities and it's expected that you customize your build of rustybox for your specific use-case. If you'd like to build rustybox with the default utilities and some extras,
 
