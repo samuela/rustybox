@@ -15,9 +15,6 @@ use libc::winsize;
 extern "C" {
 
   #[no_mangle]
-  fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
-
-  #[no_mangle]
   fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
   #[no_mangle]
@@ -170,25 +167,25 @@ pub type C2RustUnnamed = libc::c_uint;
 /* Turn on nonblocking I/O on a fd */
 #[no_mangle]
 pub unsafe extern "C" fn ndelay_on(mut fd: libc::c_int) -> libc::c_int {
-  let mut flags: libc::c_int = fcntl(fd, 3i32);
+  let mut flags: libc::c_int = libc::fcntl(fd, 3i32);
   if flags & 0o4000i32 != 0 {
     return flags;
   }
-  fcntl(fd, 4i32, flags | 0o4000i32);
+  libc::fcntl(fd, 4i32, flags | 0o4000i32);
   return flags;
 }
 #[no_mangle]
 pub unsafe extern "C" fn ndelay_off(mut fd: libc::c_int) -> libc::c_int {
-  let mut flags: libc::c_int = fcntl(fd, 3i32);
+  let mut flags: libc::c_int = libc::fcntl(fd, 3i32);
   if flags & 0o4000i32 == 0 {
     return flags;
   }
-  fcntl(fd, 4i32, flags & !0o4000i32);
+  libc::fcntl(fd, 4i32, flags & !0o4000i32);
   return flags;
 }
 #[no_mangle]
 pub unsafe extern "C" fn close_on_exec_on(mut fd: libc::c_int) {
-  fcntl(fd, 2i32, 1i32);
+  libc::fcntl(fd, 2i32, 1i32);
 }
 #[no_mangle]
 pub unsafe extern "C" fn strncpy_IFNAMSIZ(

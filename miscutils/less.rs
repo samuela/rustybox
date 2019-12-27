@@ -33,9 +33,6 @@ extern "C" {
   fn exit(_: libc::c_int) -> !;
 
   #[no_mangle]
-  fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
-
-  #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
 
   #[no_mangle]
@@ -453,7 +450,7 @@ unsafe extern "C" fn read_lines() {
           }
           sched_yield();
         }
-        fcntl(0i32, 4i32, flags);
+        libc::fcntl(0i32, 4i32, flags);
         (*ptr_to_globals).readpos = 0 as ssize_t;
         (*ptr_to_globals).readeof = (*ptr_to_globals).eof_error;
         if (*ptr_to_globals).eof_error <= 0 {

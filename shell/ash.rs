@@ -94,9 +94,6 @@ extern "C" {
   fn tcsetpgrp(__fd: libc::c_int, __pgrp_id: pid_t) -> libc::c_int;
 
   #[no_mangle]
-  fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
-
-  #[no_mangle]
   fn _setjmp(_: *mut __jmp_buf_tag) -> libc::c_int;
   #[no_mangle]
   fn longjmp(_: *mut __jmp_buf_tag, _: libc::c_int) -> !;
@@ -3200,7 +3197,7 @@ unsafe extern "C" fn setjobctl(mut on: libc::c_int) {
     }
     match current_block {
       1394248824506584008 => {
-        fd = fcntl(fd, 1030i32, 10i32);
+        fd = libc::fcntl(fd, 1030i32, 10i32);
         if ofd >= 0 {
           close(ofd);
         }
@@ -4703,7 +4700,7 @@ unsafe extern "C" fn openredirect(mut redir: *mut node) -> libc::c_int {
 unsafe extern "C" fn savefd(mut from: libc::c_int) -> libc::c_int {
   let mut newfd: libc::c_int = 0;
   let mut err: libc::c_int = 0;
-  newfd = fcntl(from, 1030i32, 10i32);
+  newfd = libc::fcntl(from, 1030i32, 10i32);
   err = if newfd < 0 { *bb_errno } else { 0 };
   if err != 9i32 {
     if err != 0 {
@@ -4727,7 +4724,7 @@ unsafe extern "C" fn dup2_or_raise(mut from: libc::c_int, mut to: libc::c_int) -
 unsafe extern "C" fn dup_CLOEXEC(mut fd: libc::c_int, mut avoid_fd: libc::c_int) -> libc::c_int {
   let mut newfd: libc::c_int = 0;
   loop {
-    newfd = fcntl(fd, 1030i32, avoid_fd + 1i32);
+    newfd = libc::fcntl(fd, 1030i32, avoid_fd + 1i32);
     if newfd >= 0 {
       if 1030i32 == 0 {
         crate::libbb::xfuncs::close_on_exec_on(newfd);
@@ -4750,7 +4747,7 @@ unsafe extern "C" fn xdup_CLOEXEC_and_close(
 ) -> libc::c_int {
   let mut newfd: libc::c_int = 0;
   loop {
-    newfd = fcntl(fd, 1030i32, avoid_fd + 1i32);
+    newfd = libc::fcntl(fd, 1030i32, avoid_fd + 1i32);
     if newfd < 0 {
       if *bb_errno == 16i32 {
         continue;

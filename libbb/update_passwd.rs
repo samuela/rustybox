@@ -30,8 +30,6 @@ extern "C" {
 
   #[no_mangle]
   fn fsync(__fd: libc::c_int) -> libc::c_int;
-  #[no_mangle]
-  fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
 
   #[no_mangle]
   fn fflush(__stream: *mut FILE) -> libc::c_int;
@@ -694,7 +692,7 @@ pub unsafe extern "C" fn update_passwd(
         lock.l_whence = 0 as libc::c_short;
         lock.l_start = 0 as off64_t;
         lock.l_len = 0 as off64_t;
-        if fcntl(old_fd, 6i32, &mut lock as *mut flock) < 0 {
+        if libc::fcntl(old_fd, 6i32, &mut lock as *mut flock) < 0 {
           crate::libbb::perror_msg::bb_perror_msg(
             b"warning: can\'t lock \'%s\'\x00" as *const u8 as *const libc::c_char,
             filename,
@@ -874,7 +872,7 @@ pub unsafe extern "C" fn update_passwd(
             changed_lines += 1
           }
         }
-        fcntl(old_fd, 6i32, &mut lock as *mut flock);
+        libc::fcntl(old_fd, 6i32, &mut lock as *mut flock);
         /* We do want all of them to execute, thus | instead of || */
         *bb_errno = 0;
         if ferror_unlocked(old_fp) | fflush(new_fp) | fsync(new_fd) | fclose(new_fp) != 0

@@ -21,8 +21,6 @@ extern "C" {
   pub type sockaddr_ax25;
   pub type sockaddr_at;
   #[no_mangle]
-  fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
-  #[no_mangle]
   fn select(
     __nfds: libc::c_int,
     __readfds: *mut fd_set,
@@ -315,7 +313,7 @@ unsafe extern "C" fn handle_accept(mut state: *mut isrv_state_t, mut fd: libc::c
   let mut n: libc::c_int = 0;
   let mut newfd: libc::c_int = 0;
   /* suppress gcc warning "cast from ptr to int of different size" */
-  fcntl(
+  libc::fcntl(
     fd,
     4i32,
     *(*state).param_tbl.offset(0) as ptrdiff_t as libc::c_int | 0o4000i32,
@@ -327,7 +325,7 @@ unsafe extern "C" fn handle_accept(mut state: *mut isrv_state_t, mut fd: libc::c
     },
     0 as *mut socklen_t,
   );
-  fcntl(
+  libc::fcntl(
     fd,
     4i32,
     *(*state).param_tbl.offset(0) as ptrdiff_t as libc::c_int,
@@ -460,7 +458,7 @@ pub unsafe extern "C" fn isrv_run(
   /* remember flags to make blocking<->nonblocking switch faster */
   /* (suppress gcc warning "cast from ptr to int of different size") */
   let ref mut fresh4 = *(*state).param_tbl.offset(0);
-  *fresh4 = fcntl(listen_fd, 3i32) as ptrdiff_t as *mut libc::c_void;
+  *fresh4 = libc::fcntl(listen_fd, 3i32) as ptrdiff_t as *mut libc::c_void;
   loop {
     let mut tv: timeval = timeval {
       tv_sec: 0,
