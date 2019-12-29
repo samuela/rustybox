@@ -23,9 +23,6 @@ extern "C" {
   fn getchar_unlocked() -> libc::c_int;
 
   #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
-
-  #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
 
   #[no_mangle]
@@ -619,50 +616,45 @@ unsafe extern "C" fn write_superblock() {
 
 unsafe extern "C" fn write_tables() {
   write_superblock();
-  if ((*ptr_to_globals).u.Super.s_imap_blocks as libc::c_uint)
-    .wrapping_mul(BLOCK_SIZE as libc::c_int as libc::c_uint) as libc::c_long
-    != write(
+
+  let imap_size = (*ptr_to_globals).u.Super.s_imap_blocks as isize * BLOCK_SIZE as isize;
+  if imap_size
+    != libc::write(
       dev_fd as libc::c_int,
       (*ptr_to_globals).inode_map as *const libc::c_void,
-      ((*ptr_to_globals).u.Super.s_imap_blocks as libc::c_uint)
-        .wrapping_mul(BLOCK_SIZE as libc::c_int as libc::c_uint) as size_t,
-    ) as i64
+      imap_size as usize,
+    )
   {
     die(b"can\'t write inode map\x00" as *const u8 as *const libc::c_char);
   }
-  if ((*ptr_to_globals).u.Super.s_zmap_blocks as libc::c_uint)
-    .wrapping_mul(BLOCK_SIZE as libc::c_int as libc::c_uint) as libc::c_long
-    != write(
+
+  let zmap_size = (*ptr_to_globals).u.Super.s_zmap_blocks as isize * BLOCK_SIZE as isize;
+  if zmap_size
+    != libc::write(
       dev_fd as libc::c_int,
       (*ptr_to_globals).zone_map as *const libc::c_void,
-      ((*ptr_to_globals).u.Super.s_zmap_blocks as libc::c_uint)
-        .wrapping_mul(BLOCK_SIZE as libc::c_int as libc::c_uint) as size_t,
-    ) as i64
+      zmap_size as usize,
+    )
   {
     die(b"can\'t write zone map\x00" as *const u8 as *const libc::c_char);
   }
-  if div_roundup(
-    (*ptr_to_globals).u.Super.s_ninodes as libc::c_uint,
-    (if (*ptr_to_globals).version2 as libc::c_int != 0 {
-      MINIX2_INODES_PER_BLOCK as libc::c_int
-    } else {
-      MINIX1_INODES_PER_BLOCK as libc::c_int
-    }) as libc::c_uint,
-  )
-  .wrapping_mul(BLOCK_SIZE as libc::c_int as libc::c_uint) as libc::c_long
-    != write(
+
+  let minix_inodes_per_block = if (*ptr_to_globals).version2 != 0 {
+    MINIX2_INODES_PER_BLOCK
+  } else {
+    MINIX1_INODES_PER_BLOCK
+  };
+  let inode_blocks = div_roundup(
+    (*ptr_to_globals).u.Super.s_ninodes as u32,
+    minix_inodes_per_block,
+  );
+  let inode_buffer_size = inode_blocks as isize * BLOCK_SIZE as isize;
+  if inode_buffer_size
+    != libc::write(
       dev_fd as libc::c_int,
       (*ptr_to_globals).inode_buffer as *const libc::c_void,
-      div_roundup(
-        (*ptr_to_globals).u.Super.s_ninodes as libc::c_uint,
-        (if (*ptr_to_globals).version2 as libc::c_int != 0 {
-          MINIX2_INODES_PER_BLOCK as libc::c_int
-        } else {
-          MINIX1_INODES_PER_BLOCK as libc::c_int
-        }) as libc::c_uint,
-      )
-      .wrapping_mul(BLOCK_SIZE as libc::c_int as libc::c_uint) as size_t,
-    ) as i64
+      inode_buffer_size as usize,
+    )
   {
     die(b"can\'t write inodes\x00" as *const u8 as *const libc::c_char);
   };

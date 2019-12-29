@@ -1,25 +1,13 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 
-use libc;
-extern "C" {
-  #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
-
-}
-
 use crate::librb::fd_pair;
 use crate::librb::size_t;
+use libc;
 use libc::pollfd;
-use libc::ssize_t;
 unsafe extern "C" fn signal_handler(mut sig: libc::c_int) {
   let mut sv: libc::c_int = *bb_errno; /* use char, avoid dealing with partial writes */
   let mut ch: libc::c_uchar = sig as libc::c_uchar;
-  if write(
-    4i32,
-    &mut ch as *mut libc::c_uchar as *const libc::c_void,
-    1i32 as size_t,
-  ) != 1
-  {
+  if libc::write(4, &mut ch as *mut libc::c_uchar as *const libc::c_void, 1) != 1 {
     crate::libbb::perror_msg::bb_simple_perror_msg(
       b"can\'t send signal\x00" as *const u8 as *const libc::c_char,
     );

@@ -21,9 +21,6 @@ extern "C" {
   fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t, __stream: *mut FILE) -> size_t;
 
   #[no_mangle]
-  fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
-
-  #[no_mangle]
   static ptr_to_globals: *mut globals;
 
   #[no_mangle]
@@ -228,14 +225,10 @@ unsafe extern "C" fn encode_n_base64(
       text = text.offset(size as isize);
       len = (len as libc::c_ulong).wrapping_sub(size) as size_t as size_t
     }
-    fwrite(
+    libc::fwrite(
       dst_buf.as_mut_ptr() as *const libc::c_void,
-      1i32 as size_t,
-      (4i32 as libc::c_ulong).wrapping_mul(
-        size
-          .wrapping_add(2i32 as libc::c_ulong)
-          .wrapping_div(3i32 as libc::c_ulong),
-      ),
+      1,
+      4 * ((size as usize + 2) / 3),
       stdout,
     );
   }

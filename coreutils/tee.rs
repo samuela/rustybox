@@ -15,8 +15,6 @@ extern "C" {
   #[no_mangle]
   fn setbuf(__stream: *mut FILE, __buf: *mut libc::c_char);
   #[no_mangle]
-  fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
-  #[no_mangle]
   static bb_msg_standard_input: [libc::c_char; 0];
 
   #[no_mangle]
@@ -149,10 +147,10 @@ pub unsafe extern "C" fn tee_main(
     }
     fp = files;
     loop {
-      fwrite(
+      libc::fwrite(
         bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,
-        1i32 as size_t,
-        c as size_t,
+        1,
+        c as usize,
         *fp,
       );
       fp = fp.offset(1);

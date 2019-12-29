@@ -30,7 +30,6 @@ use libc::sigprocmask;
 use libc::sigset_t;
 use libc::sprintf;
 use libc::sscanf;
-use libc::ssize_t;
 use libc::stat;
 use libc::strchr;
 use libc::strcmp;
@@ -63,9 +62,6 @@ extern "C" {
   fn times(__buffer: *mut tms) -> clock_t;
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
-
-  #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
   #[no_mangle]
   fn dup(__fd: libc::c_int) -> libc::c_int;
@@ -2331,10 +2327,10 @@ unsafe extern "C" fn get_user_input(mut i: *mut in_str) -> libc::c_int {
     }
     /* ^C or SIGINT: repeat */
     /* bash prints ^C even on real SIGINT (non-kbd generated) */
-    write(
-      1i32,
+    libc::write(
+      1,
       b"^C\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
-      2i32 as size_t,
+      2,
     );
     (*ptr_to_globals).last_exitcode = (128i32 + 2i32) as smalluint
   }
@@ -8604,7 +8600,7 @@ unsafe extern "C" fn setup_heredoc(mut redir: *mut redir_struct) {
    * dynamically growing pipes. Must use non-blocking write! */
   crate::libbb::xfuncs::ndelay_on(pair.wr);
   loop {
-    written = write(pair.wr, heredoc as *const libc::c_void, len as size_t) as libc::c_int;
+    written = libc::write(pair.wr, heredoc as *const libc::c_void, len as usize) as libc::c_int;
     if written <= 0 {
       break;
     }

@@ -7,13 +7,9 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
-  #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
 }
 
-use crate::librb::size_t;
-use libc::ssize_t;
 use libc::useconds_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
@@ -26,11 +22,7 @@ pub const DAEMON_DEVNULL_STDIO: C2RustUnnamed_0 = 2;
 pub const DAEMON_CHDIR_ROOT: C2RustUnnamed_0 = 1;
 unsafe extern "C" fn shutdown_watchdog() {
   static mut V: libc::c_char = 'V' as i32 as libc::c_char; /* Magic, see watchdog-api.txt in kernel */
-  write(
-    3i32,
-    &V as *const libc::c_char as *const libc::c_void,
-    1i32 as size_t,
-  );
+  libc::write(3, &V as *const libc::c_char as *const libc::c_void, 1);
   close(3i32);
 }
 unsafe extern "C" fn shutdown_on_signal(mut _sig: libc::c_int) {
@@ -145,10 +137,10 @@ pub unsafe extern "C" fn watchdog_main(
      * Make sure we clear the counter before sleeping,
      * as the counter value is undefined at this point -- PFM
      */
-    write(
-      3i32,
+    libc::write(
+      3,
       b"\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
-      1i32 as size_t,
+      1,
     ); /* write zero byte */
     usleep((stimer_duration as libc::c_long * 1000i64) as useconds_t);
   }

@@ -1,5 +1,4 @@
 use crate::libbb::appletlib::applet_name;
-use crate::librb::size_t;
 use crate::librb::smallint;
 use crate::librb::socklen_t;
 use libc;
@@ -7,13 +6,10 @@ use libc::close;
 use libc::fprintf;
 use libc::printf;
 use libc::sockaddr;
-use libc::ssize_t;
 use libc::strcmp;
 use libc::FILE;
 extern "C" {
 
-  #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
   #[no_mangle]
   static mut stderr: *mut FILE;
 
@@ -1411,10 +1407,10 @@ unsafe extern "C" fn iproute_flush_cache() {
   if flush_fd < 0 {
     return;
   }
-  if write(
+  if libc::write(
     flush_fd,
     b"-1\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
-    2i32 as size_t,
+    2,
   ) < 2
   {
     crate::libbb::perror_msg::bb_simple_perror_msg(

@@ -19,8 +19,6 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
@@ -391,10 +389,10 @@ pub unsafe extern "C" fn lpqr_main(
           b"local file changed size?!\x00" as *const u8 as *const libc::c_char,
         ); // send ACK
       }
-      write(
+      libc::write(
         fd,
         b"\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
-        1i32 as size_t,
+        1,
       );
       get_response_or_say_and_die(
         fd,

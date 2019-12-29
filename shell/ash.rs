@@ -61,8 +61,6 @@ extern "C" {
   fn uname(__name: *mut utsname) -> libc::c_int;
 
   #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
-  #[no_mangle]
   fn pipe(__pipedes: *mut libc::c_int) -> libc::c_int;
 
   #[no_mangle]
@@ -10316,10 +10314,10 @@ unsafe extern "C" fn preadfd() -> libc::c_int {
       );
       if nr == 0 {
         /* ^C pressed, "convert" to SIGINT */
-        write(
-          1i32,
+        libc::write(
+          1,
           b"^C\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
-          2i32 as size_t,
+          2,
         );
         if !(*ash_ptr_to_globals_misc).trap[2].is_null() {
           *buf.offset(0) = '\n' as i32 as libc::c_char;

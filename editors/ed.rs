@@ -9,7 +9,6 @@ use libc::mode_t;
 use libc::open;
 use libc::printf;
 use libc::puts;
-use libc::ssize_t;
 use libc::strchr;
 use libc::strcpy;
 use libc::FILE;
@@ -26,9 +25,6 @@ extern "C" {
 
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
-
-  #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
@@ -624,10 +620,10 @@ unsafe extern "C" fn printLines(
   }
   while num1 <= num2 {
     if expandFlag == 0 {
-      write(
-        1i32,
+      libc::write(
+        1,
         (*lp).data.as_ptr() as *const libc::c_void,
-        (*lp).len as size_t,
+        (*lp).len as usize,
       );
       let fresh4 = num1;
       num1 = num1 + 1;

@@ -18,9 +18,6 @@ extern "C" {
   fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
 
   #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
-
-  #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn strncpy(_: *mut libc::c_char, _: *const libc::c_char, _: libc::c_ulong) -> *mut libc::c_char;
@@ -364,11 +361,7 @@ pub unsafe extern "C" fn hex2bin(
 /* Return how long the file at fd is, if there's any way to determine it. */
 #[no_mangle]
 pub unsafe extern "C" fn bb_putchar_stderr(mut ch: libc::c_char) -> libc::c_int {
-  return write(
-    2i32,
-    &mut ch as *mut libc::c_char as *const libc::c_void,
-    1i32 as size_t,
-  ) as libc::c_int;
+  return libc::write(2, &mut ch as *mut libc::c_char as *const libc::c_void, 1) as libc::c_int;
 }
 
 #[no_mangle]

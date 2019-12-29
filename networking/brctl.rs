@@ -21,8 +21,6 @@ extern "C" {
 
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
-  #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
   #[no_mangle]
   fn memcmp(_: *const libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> libc::c_int;
@@ -336,10 +334,10 @@ unsafe extern "C" fn write_uint(
     b"%u\n\x00" as *const u8 as *const libc::c_char,
     val,
   );
-  if write(
+  if libc::write(
     fd,
     bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,
-    n as size_t,
+    n as usize,
   ) < 0
   {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(name);
