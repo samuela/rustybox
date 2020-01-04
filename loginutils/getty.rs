@@ -33,8 +33,6 @@ extern "C" {
   fn tcsetpgrp(__fd: libc::c_int, __pgrp_id: pid_t) -> libc::c_int;
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
 
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
@@ -210,7 +208,7 @@ unsafe extern "C" fn open_tty() {
      * Standard input should already be connected to an open port.
      * Make sure it is open for read/write.
      */
-    if fcntl(0i32, 3i32) & (0o2i32 | 0 | 0o1i32) != 0o2i32 {
+    if libc::fcntl(0i32, 3i32) & (0o2i32 | 0 | 0o1i32) != 0o2i32 {
       crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"stdin is not open for read/write\x00" as *const u8 as *const libc::c_char,
       );

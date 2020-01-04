@@ -34,9 +34,6 @@ use libc::FILE;
 extern "C" {
 
   #[no_mangle]
-  fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
-
-  #[no_mangle]
   fn flock(__fd: libc::c_int, __operation: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
@@ -1284,11 +1281,11 @@ unsafe extern "C" fn ndelay_read(
   mut count: size_t,
 ) -> ssize_t {
   if (*ptr_to_globals).fl_flag_0 & 0o4000i32 == 0 {
-    fcntl(fd, 4i32, (*ptr_to_globals).fl_flag_0 | 0o4000i32);
+    libc::fcntl(fd, 4i32, (*ptr_to_globals).fl_flag_0 | 0o4000i32);
   }
   count = crate::libbb::read::safe_read(fd, buf, count) as size_t;
   if (*ptr_to_globals).fl_flag_0 & 0o4000i32 == 0 {
-    fcntl(fd, 4i32, (*ptr_to_globals).fl_flag_0);
+    libc::fcntl(fd, 4i32, (*ptr_to_globals).fl_flag_0);
   }
   return count as ssize_t;
 }
@@ -1577,7 +1574,7 @@ pub unsafe extern "C" fn svlogd_main(
   /* We cannot set NONBLOCK on fd #0 permanently - this setting
    * _isn't_ per-process! It is shared among all other processes
    * with the same stdin */
-  (*ptr_to_globals).fl_flag_0 = fcntl(0i32, 3i32);
+  (*ptr_to_globals).fl_flag_0 = libc::fcntl(0i32, 3i32);
   sigemptyset(&mut (*ptr_to_globals).blocked_sigset);
   sigaddset(&mut (*ptr_to_globals).blocked_sigset, 15i32);
   sigaddset(&mut (*ptr_to_globals).blocked_sigset, 17i32);

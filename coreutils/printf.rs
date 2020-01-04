@@ -15,9 +15,6 @@ extern "C" {
   fn strtod(__nptr: *const libc::c_char, __endptr: *mut *mut libc::c_char) -> libc::c_double;
 
   #[no_mangle]
-  fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
-
-  #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 
 /* Non-aborting kind of convertors: bb_strto[u][l]l */
@@ -521,7 +518,7 @@ pub unsafe extern "C" fn printf_main(
    * to output data no matter what. So it will try later,
    * and possibly will clobber future output. Not good. */
   // TODO: check fcntl() & O_ACCMODE == O_WRONLY or O_RDWR?
-  if fcntl(1, 3) == -1 {
+  if libc::fcntl(1, 3) == -1 {
     return 1;
   } /* match coreutils 6.10 (sans error msg to stderr) */
   //if (dup2(1, 1) != 1) - old way
