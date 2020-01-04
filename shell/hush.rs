@@ -99,9 +99,6 @@ extern "C" {
   static mut optopt: libc::c_int;
 
   #[no_mangle]
-  fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
-
-  #[no_mangle]
   fn raise(__sig: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn sigfillset(__set: *mut sigset_t) -> libc::c_int;
@@ -1456,11 +1453,11 @@ unsafe extern "C" fn free_strings(mut strings: *mut *mut libc::c_char) {
 unsafe extern "C" fn dup_CLOEXEC(mut fd: libc::c_int, mut avoid_fd: libc::c_int) -> libc::c_int {
   let mut newfd: libc::c_int = 0;
   loop {
-    newfd = fcntl(fd, 1030i32, avoid_fd + 1i32);
+    newfd = libc::fcntl(fd, 1030i32, avoid_fd + 1i32);
     if newfd >= 0 {
       if 1030i32 == 0 {
         /* if old libc (w/o F_DUPFD_CLOEXEC) */
-        fcntl(newfd, 2i32, 1i32);
+        libc::fcntl(newfd, 2i32, 1i32);
       }
       break;
     } else {
@@ -1480,7 +1477,7 @@ unsafe extern "C" fn xdup_CLOEXEC_and_close(
 ) -> libc::c_int {
   let mut newfd: libc::c_int = 0;
   loop {
-    newfd = fcntl(fd, 1030i32, avoid_fd + 1i32);
+    newfd = libc::fcntl(fd, 1030i32, avoid_fd + 1i32);
     if newfd < 0 {
       if *bb_errno == 16i32 {
         continue;
@@ -1496,7 +1493,7 @@ unsafe extern "C" fn xdup_CLOEXEC_and_close(
     } else {
       if 1030i32 == 0 {
         /* if old libc (w/o F_DUPFD_CLOEXEC) */
-        fcntl(newfd, 2i32, 1i32);
+        libc::fcntl(newfd, 2i32, 1i32);
       }
       close(fd);
       return newfd;

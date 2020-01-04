@@ -16,8 +16,6 @@ extern "C" {
 
   #[no_mangle]
   static mut optind: libc::c_int;
-  #[no_mangle]
-  fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
 
   #[no_mangle]
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
@@ -204,7 +202,7 @@ pub unsafe extern "C" fn microcom_main(
   // open device
   sfd = crate::libbb::xfuncs_printf::open_or_warn(*argv.offset(0), 0o2i32 | 0o400i32 | 0o4000i32);
   if !(sfd < 0) {
-    fcntl(sfd, 4i32, 0o2i32);
+    libc::fcntl(sfd, 4i32, 0o2i32);
     // put device to "raw mode"
     xget1(sfd, &mut tio, &mut tiosfd);
     // set device speed

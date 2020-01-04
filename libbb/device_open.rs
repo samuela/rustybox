@@ -1,10 +1,5 @@
 use libc;
 use libc::open;
-extern "C" {
-  #[no_mangle]
-  fn fcntl(__fd: libc::c_int, __cmd: libc::c_int, _: ...) -> libc::c_int;
-
-}
 
 /*
  * Busybox main internal header file
@@ -145,7 +140,7 @@ pub unsafe extern "C" fn device_open(
   }
   /* Reset original flags. */
   if m != mode {
-    fcntl(fd, 4i32, mode);
+    libc::fcntl(fd, 4i32, mode);
   }
   return fd;
 }
