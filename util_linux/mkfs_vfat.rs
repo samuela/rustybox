@@ -643,7 +643,7 @@ pub unsafe extern "C" fn mkfs_vfat_main(
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
     (*boot_blk).fat32_root_cluster = 2i32 as u16 as u32
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*boot_blk).fat32_root_cluster = 2i32 as u8 as u32
+    (*boot_blk).fat32_root_cluster = 2u8 as u32
   } else {
     BUG_wrong_field_size();
   }
@@ -667,11 +667,11 @@ pub unsafe extern "C" fn mkfs_vfat_main(
   }
   //STORE_LE(boot_blk->reserved2[3], 0,0,0);
   if ::std::mem::size_of::<u8>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*boot_blk).vi.ext_boot_sign = 0x29i32 as u32 as u8
+    (*boot_blk).vi.ext_boot_sign = 0x29u8
   } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*boot_blk).vi.ext_boot_sign = 0x29i32 as u16 as u8
+    (*boot_blk).vi.ext_boot_sign = 0x29u8
   } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*boot_blk).vi.ext_boot_sign = 0x29i32 as u8
+    (*boot_blk).vi.ext_boot_sign = 0x29u8
   } else {
     BUG_wrong_field_size();
   }
@@ -700,29 +700,29 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     ::std::mem::size_of::<[libc::c_char; 59]>() as libc::c_ulong,
   );
   if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*boot_blk).boot_sign = 0xaa55i32 as u32 as u16
+    (*boot_blk).boot_sign = 0xaa55u16
   } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*boot_blk).boot_sign = 0xaa55i32 as u16
+    (*boot_blk).boot_sign = 0xaa55u16
   } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*boot_blk).boot_sign = 0xaa55i32 as u8 as u16
+    (*boot_blk).boot_sign = 85u8 as u16 // 0xaa55u8 as u16
   } else {
     BUG_wrong_field_size();
   }
   if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*info).signature1 = 0x41615252i32 as u32
+    (*info).signature1 = 0x41615252u32
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*info).signature1 = 0x41615252i32 as u16 as u32
+    (*info).signature1 = 21074u16 as u32 // 0x41615252u16 as u32
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*info).signature1 = 0x41615252i32 as u8 as u32
+    (*info).signature1 = 82u8 as u32 // 0x41615252u8 as u32
   } else {
     BUG_wrong_field_size();
   }
   if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*info).signature2 = 0x61417272i32 as u32
+    (*info).signature2 = 0x61417272u32
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*info).signature2 = 0x61417272i32 as u16 as u32
+    (*info).signature2 = 29298u16 as u32 // 0x61417272u16 as u32
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*info).signature2 = 0x61417272i32 as u8 as u32
+    (*info).signature2 = 114u8 as u32 // 0x61417272u8 as u32
   } else {
     BUG_wrong_field_size();
   }
@@ -737,20 +737,20 @@ pub unsafe extern "C" fn mkfs_vfat_main(
     BUG_wrong_field_size();
   }
   if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*info).next_cluster = 2i32 as u32
+    (*info).next_cluster = 2u32
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*info).next_cluster = 2i32 as u16 as u32
+    (*info).next_cluster = 2u16 as u32
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*info).next_cluster = 2i32 as u8 as u32
+    (*info).next_cluster = 2u8 as u32
   } else {
     BUG_wrong_field_size();
   }
   if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*info).boot_sign = 0xaa55i32 as u32 as u16
+    (*info).boot_sign = 0xaa55u32 as u16
   } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*info).boot_sign = 0xaa55i32 as u16
+    (*info).boot_sign = 0xaa55u16
   } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*info).boot_sign = 0xaa55i32 as u8 as u16
+    (*info).boot_sign = 85u8 as u16 // 0xaa55u8 as u16
   } else {
     BUG_wrong_field_size();
   }
