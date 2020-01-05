@@ -786,20 +786,20 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   // fill the superblock
   sb = crate::libbb::xfuncs_printf::xzalloc(1024i32 as size_t) as *mut ext2_super_block; // revision 1 filesystem
   if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_rev_level = 1i32 as u32
+    (*sb).s_rev_level = 1
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_rev_level = 1i32 as u16 as u32
+    (*sb).s_rev_level = 1
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_rev_level = 1i32 as u8 as u32
+    (*sb).s_rev_level = 1
   } else {
     BUG_wrong_field_size();
   }
   if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_magic = 0xef53i32 as u32 as u16
+    (*sb).s_magic = 0xef53u32 as u16
   } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_magic = 0xef53i32 as u16
+    (*sb).s_magic = 0xef53u16
   } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_magic = 0xef53i32 as u8 as u16
+    (*sb).s_magic = 83u8 as u16 // 0xef53u8 as u16
   } else {
     BUG_wrong_field_size();
   }
@@ -815,30 +815,30 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   // set "Required extra isize" and "Desired extra isize" fields to 28
   if inodesize as libc::c_ulong != ::std::mem::size_of::<ext2_inode>() as libc::c_ulong {
     if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
-      (*sb).s_min_extra_isize = 0x1ci32 as u32 as u16
+      (*sb).s_min_extra_isize = 0x1cu32 as u16
     } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
-      (*sb).s_min_extra_isize = 0x1ci32 as u16
+      (*sb).s_min_extra_isize = 0x1cu16
     } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
-      (*sb).s_min_extra_isize = 0x1ci32 as u8 as u16
+      (*sb).s_min_extra_isize = 0x1cu8 as u16
     } else {
       BUG_wrong_field_size();
     }
     if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
-      (*sb).s_want_extra_isize = 0x1ci32 as u32 as u16
+      (*sb).s_want_extra_isize = 0x1cu32 as u16
     } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
-      (*sb).s_want_extra_isize = 0x1ci32 as u16
+      (*sb).s_want_extra_isize = 0x1cu16
     } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
-      (*sb).s_want_extra_isize = 0x1ci32 as u8 as u16
+      (*sb).s_want_extra_isize = 0x1cu8 as u16
     } else {
       BUG_wrong_field_size();
     }
   }
   if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_first_ino = 11i32 as u32
+    (*sb).s_first_ino = 11
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_first_ino = 11i32 as u16 as u32
+    (*sb).s_first_ino = 11
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_first_ino = 11i32 as u8 as u32
+    (*sb).s_first_ino = 11
   } else {
     BUG_wrong_field_size();
   }
@@ -975,38 +975,38 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   }
   // misc. Values are chosen to match mke2fs 1.41.9
   if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_state = 1i32 as u32 as u16
+    (*sb).s_state = 1
   } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_state = 1i32 as u16
+    (*sb).s_state = 1
   } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_state = 1i32 as u8 as u16
+    (*sb).s_state = 1
   } else {
     BUG_wrong_field_size(); // TODO: what's 1?
   } // 180 days
   if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_creator_os = 0 as u32
+    (*sb).s_creator_os = 0
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_creator_os = 0 as u16 as u32
+    (*sb).s_creator_os = 0
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_creator_os = 0 as u8 as u32
+    (*sb).s_creator_os = 0
   } else {
     BUG_wrong_field_size();
   }
   if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_checkinterval = (24i32 * 60i32 * 60i32 * 180i32) as u32
+    (*sb).s_checkinterval = (24 * 60 * 60 * 180) as u32
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_checkinterval = (24i32 * 60i32 * 60i32 * 180i32) as u16 as u32
+    (*sb).s_checkinterval = std::u16::MAX as u32 // (24 * 60 * 60 * 180) as u16 as u32
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_checkinterval = (24i32 * 60i32 * 60i32 * 180i32) as u8 as u32
+    (*sb).s_checkinterval = std::u8::MAX as u32 // (24 * 60 * 60 * 180) as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
   if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_errors = 1i32 as u32 as u16
+    (*sb).s_errors = 1
   } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_errors = 1i32 as u16
+    (*sb).s_errors = 1
   } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_errors = 1i32 as u8 as u16
+    (*sb).s_errors = 1
   } else {
     BUG_wrong_field_size();
   }
@@ -1024,39 +1024,39 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     BUG_wrong_field_size();
   }
   if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_feature_incompat = 0x2i32 as u32
+    (*sb).s_feature_incompat = 0x2
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_feature_incompat = 0x2i32 as u16 as u32
+    (*sb).s_feature_incompat = 0x2
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_feature_incompat = 0x2i32 as u8 as u32
+    (*sb).s_feature_incompat = 0x2
   } else {
     BUG_wrong_field_size();
   }
   if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_feature_ro_compat = 0x1i32 as u32
+    (*sb).s_feature_ro_compat = 0x1
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_feature_ro_compat = 0x1i32 as u16 as u32
+    (*sb).s_feature_ro_compat = 0x1
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_feature_ro_compat = 0x1i32 as u8 as u32
+    (*sb).s_feature_ro_compat = 0x1
   } else {
     BUG_wrong_field_size();
   }
   if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_flags = (0x2i32 * 1i32) as u32
+    (*sb).s_flags = 2 * 1
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_flags = (0x2i32 * 1i32) as u16 as u32
+    (*sb).s_flags = 2 * 1
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_flags = (0x2i32 * 1i32) as u8 as u32
+    (*sb).s_flags = 2 * 1
   } else {
     BUG_wrong_field_size();
   }
   crate::libbb::xfuncs_printf::generate_uuid((*sb).s_uuid.as_mut_ptr());
   if ::std::mem::size_of::<u8>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_def_hash_version = 1i32 as u32 as u8
+    (*sb).s_def_hash_version = 1
   } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_def_hash_version = 1i32 as u16 as u8
+    (*sb).s_def_hash_version = 1
   } else if ::std::mem::size_of::<u8>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_def_hash_version = 1i32 as u8
+    (*sb).s_def_hash_version = 1
   } else {
     BUG_wrong_field_size();
   }
@@ -1325,12 +1325,13 @@ pub unsafe extern "C" fn mkfs_ext2_main(
       | 0o100i32 >> 3i32
       | 0o100i32 >> 3i32 >> 3i32) as u16
   } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*inode).i_mode = (0o40000i32
-      | (0o400i32 | 0o200i32 | 0o100i32)
-      | 0o400i32 >> 3i32
-      | 0o400i32 >> 3i32 >> 3i32
-      | 0o100i32 >> 3i32
-      | 0o100i32 >> 3i32 >> 3i32) as u8 as u16
+    (*inode).i_mode = std::u8::MAX as u16
+  // (0o40000i32
+  // | (0o400i32 | 0o200i32 | 0o100i32)
+  // | 0o400i32 >> 3i32
+  // | 0o400i32 >> 3i32 >> 3i32
+  // | 0o100i32 >> 3i32
+  // | 0o100i32 >> 3i32 >> 3i32) as u8 as u16
   } else {
     BUG_wrong_field_size();
   }
