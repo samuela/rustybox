@@ -60,7 +60,7 @@ pub unsafe extern "C" fn bb_make_directory(
     //		if (path[1] == '.' && path[2] == '\0')
     //			return 0; /* ".." */
   } /* while (1) */
-  cur_mask = -1i64 as mode_t;
+  cur_mask = std::u32::MAX;
   org_mask = cur_mask;
   s = path;
   loop {
@@ -86,7 +86,7 @@ pub unsafe extern "C" fn bb_make_directory(
     }
     if c as libc::c_int != '\u{0}' as i32 {
       /* Intermediate dirs: must have wx for user */
-      if cur_mask == -1i64 as mode_t {
+      if cur_mask == std::u32::MAX {
         /* wasn't done yet? */
         let mut new_mask: mode_t = 0;
         org_mask = umask(0i32 as mode_t);
