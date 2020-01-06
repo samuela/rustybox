@@ -795,11 +795,11 @@ pub unsafe extern "C" fn mkfs_ext2_main(
     BUG_wrong_field_size();
   }
   if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
-    (*sb).s_magic = 0xef53u32 as u16
+    (*sb).s_magic = 0xef53
   } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_magic = 0xef53u16
+    (*sb).s_magic = 0xef53
   } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_magic = 83u8 as u16 // 0xef53u8 as u16
+    (*sb).s_magic = 83 // 0xef53u8 as u16
   } else {
     BUG_wrong_field_size();
   }
@@ -815,20 +815,20 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   // set "Required extra isize" and "Desired extra isize" fields to 28
   if inodesize as libc::c_ulong != ::std::mem::size_of::<ext2_inode>() as libc::c_ulong {
     if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
-      (*sb).s_min_extra_isize = 0x1cu32 as u16
+      (*sb).s_min_extra_isize = 0x1c
     } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
-      (*sb).s_min_extra_isize = 0x1cu16
+      (*sb).s_min_extra_isize = 0x1c
     } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
-      (*sb).s_min_extra_isize = 0x1cu8 as u16
+      (*sb).s_min_extra_isize = 0x1c
     } else {
       BUG_wrong_field_size();
     }
     if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
-      (*sb).s_want_extra_isize = 0x1cu32 as u16
+      (*sb).s_want_extra_isize = 0x1c
     } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
-      (*sb).s_want_extra_isize = 0x1cu16
+      (*sb).s_want_extra_isize = 0x1c
     } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
-      (*sb).s_want_extra_isize = 0x1cu8 as u16
+      (*sb).s_want_extra_isize = 0x1c
     } else {
       BUG_wrong_field_size();
     }
