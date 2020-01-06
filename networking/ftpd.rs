@@ -471,8 +471,8 @@ unsafe extern "C" fn handle_pwd() {
   if cwd.is_null() {
     cwd = crate::libbb::xfuncs_printf::xstrdup(b"\x00" as *const u8 as *const libc::c_char)
   }
-  /* We have to promote each " to "" */
 
+  // We have to promote each " to ""
   response = escape_text(
     b" \"\x00" as *const u8 as *const libc::c_char,
     cwd,
