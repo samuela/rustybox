@@ -995,9 +995,9 @@ pub unsafe extern "C" fn mkfs_ext2_main(
   if ::std::mem::size_of::<u32>() as libc::c_ulong == 4i32 as libc::c_ulong {
     (*sb).s_checkinterval = (24 * 60 * 60 * 180) as u32
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 2i32 as libc::c_ulong {
-    (*sb).s_checkinterval = std::u16::MAX as u32 // (24 * 60 * 60 * 180) as u16 as u32
+    (*sb).s_checkinterval = 19968 // (24 * 60 * 60 * 180) as u16 as u32
   } else if ::std::mem::size_of::<u32>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*sb).s_checkinterval = std::u8::MAX as u32 // (24 * 60 * 60 * 180) as u8 as u32
+    (*sb).s_checkinterval = 0 // (24 * 60 * 60 * 180) as u8 as u32
   } else {
     BUG_wrong_field_size();
   }
@@ -1325,7 +1325,7 @@ pub unsafe extern "C" fn mkfs_ext2_main(
       | 0o100i32 >> 3i32
       | 0o100i32 >> 3i32 >> 3i32) as u16
   } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
-    (*inode).i_mode = std::u8::MAX as u16
+    (*inode).i_mode = 237
   // (0o40000i32
   // | (0o400i32 | 0o200i32 | 0o100i32)
   // | 0o400i32 >> 3i32
