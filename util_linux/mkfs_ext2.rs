@@ -1161,11 +1161,11 @@ pub unsafe extern "C" fn mkfs_ext2_main(
         as u32 as u32;
       // ... and 2 used directories
       if ::std::mem::size_of::<u16>() as libc::c_ulong == 4i32 as libc::c_ulong {
-        (*gd.offset(i as isize)).bg_used_dirs_count = 2i32 as u32 as u16
+        (*gd.offset(i as isize)).bg_used_dirs_count = 2
       } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 2i32 as libc::c_ulong {
-        (*gd.offset(i as isize)).bg_used_dirs_count = 2i32 as u16
+        (*gd.offset(i as isize)).bg_used_dirs_count = 2
       } else if ::std::mem::size_of::<u16>() as libc::c_ulong == 1i32 as libc::c_ulong {
-        (*gd.offset(i as isize)).bg_used_dirs_count = 2i32 as u8 as u16
+        (*gd.offset(i as isize)).bg_used_dirs_count = 2
       } else {
         BUG_wrong_field_size();
       }
