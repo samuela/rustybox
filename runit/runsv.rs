@@ -329,7 +329,7 @@ unsafe extern "C" fn update_status(mut s: *mut svdir) {
   sz = libc::write(
     fd,
     &mut status as *mut svstatus_t as *const libc::c_void,
-    ::std::mem::size_of::<svstatus_t>() as usize,
+    ::std::mem::size_of::<svstatus_t>(),
   );
   close(fd);
   if sz as libc::c_ulong != ::std::mem::size_of::<svstatus_t>() as libc::c_ulong {
