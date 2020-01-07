@@ -630,14 +630,14 @@ pub unsafe extern "C" fn start_stop_daemon_main(
   if opt & OPT_c as libc::c_int as libc::c_uint != 0 {
     let mut ugid: bb_uidgid_t = bb_uidgid_t { uid: 0, gid: 0 };
     crate::libpwdgrp::uidgid_get::parse_chown_usergroup_or_die(&mut ugid, chuid);
-    if ugid.uid != -1i64 as uid_t {
+    if ugid.uid != std::u32::MAX {
       let mut pw: *mut passwd = crate::libbb::bb_pwd::xgetpwuid(ugid.uid);
-      if ugid.gid != -1i64 as gid_t {
+      if ugid.gid != std::u32::MAX {
         (*pw).pw_gid = ugid.gid
       }
       /* initgroups, setgid, setuid: */
       crate::libbb::change_identity::change_identity(pw);
-    } else if ugid.gid != -1i64 as gid_t {
+    } else if ugid.gid != std::u32::MAX {
       crate::libbb::xfuncs_printf::xsetgid(ugid.gid);
       setgroups(1i32 as size_t, &mut ugid.gid);
     }

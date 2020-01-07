@@ -102,12 +102,12 @@ unsafe extern "C" fn fileAction(
   mut vparam: *mut libc::c_void,
   mut _depth: libc::c_int,
 ) -> libc::c_int {
-  let mut u: uid_t = if (*(vparam as *mut param_t)).ugid.uid == -1i64 as uid_t {
+  let mut u: uid_t = if (*(vparam as *mut param_t)).ugid.uid == std::u32::MAX {
     (*statbuf).st_uid
   } else {
     (*(vparam as *mut param_t)).ugid.uid
   };
-  let mut g: gid_t = if (*(vparam as *mut param_t)).ugid.gid == -1i64 as gid_t {
+  let mut g: gid_t = if (*(vparam as *mut param_t)).ugid.gid == std::u32::MAX {
     (*statbuf).st_gid
   } else {
     (*(vparam as *mut param_t)).ugid.gid

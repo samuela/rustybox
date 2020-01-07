@@ -160,7 +160,7 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
         if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
           .owner_ugid
           .uid
-          != -1i64 as uid_t
+          != std::u32::MAX
         {
           st.st_uid = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
             .owner_ugid
@@ -169,7 +169,7 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
         if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
           .owner_ugid
           .gid
-          != -1i64 as gid_t
+          != std::u32::MAX
         {
           st.st_gid = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
             .owner_ugid

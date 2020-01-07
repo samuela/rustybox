@@ -85,10 +85,10 @@ pub unsafe extern "C" fn get_header_cpio(
     }
     (*file_header).mode = mode as mode_t;
     /* "cpio -R USER:GRP" support: */
-    if (*archive_handle).cpio__owner.uid != -1i64 as uid_t {
+    if (*archive_handle).cpio__owner.uid != std::u32::MAX {
       uid = (*archive_handle).cpio__owner.uid
     } /* paranoia: limit names to 8k chars */
-    if (*archive_handle).cpio__owner.gid != -1i64 as gid_t {
+    if (*archive_handle).cpio__owner.gid != std::u32::MAX {
       gid = (*archive_handle).cpio__owner.gid
     }
     (*file_header).uid = uid;

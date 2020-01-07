@@ -3839,7 +3839,7 @@ pub unsafe extern "C" fn read_line_input(
   let mut n: libc::c_int = 0;
   let mut timeout: libc::c_int = 0;
   let mut lastWasTab: smallint = 0 as smallint;
-  let mut break_out: smallint = 0 as smallint;
+  let mut break_out = 0;
   let mut initial_settings: termios = termios {
     c_iflag: 0,
     c_oflag: 0,
@@ -3968,7 +3968,7 @@ pub unsafe extern "C" fn read_line_input(
         10 | 13 => {
           /* Enter */
           goto_new_line();
-          break_out = 1i32 as smallint;
+          break_out = 1;
           current_block = 14184516523743666873;
           break;
         }
@@ -4253,7 +4253,7 @@ pub unsafe extern "C" fn read_line_input(
       15417752026496523887 => {
         /* Ctrl-C (usually) - stop gathering input */
         (*lineedit_ptr_to_statics).command_len = 0; /* "do not append '\n'" */
-        break_out = -1i32 as smallint;
+        break_out = -1;
         current_block = 14184516523743666873;
       }
       9430418855388998878 => {
@@ -4339,7 +4339,7 @@ pub unsafe extern "C" fn read_line_input(
       6027889462055013191 => {
         /* error (e.g. EIO when tty is destroyed) */
         (*lineedit_ptr_to_statics).command_len = -1i32;
-        break_out = (*lineedit_ptr_to_statics).command_len as smallint
+        break_out = (*lineedit_ptr_to_statics).command_len
       }
       _ => {}
     }
@@ -4361,7 +4361,7 @@ pub unsafe extern "C" fn read_line_input(
   if (*lineedit_ptr_to_statics).command_len > 0 {
     remember_in_history(command);
   }
-  if break_out as libc::c_int > 0 {
+  if break_out > 0 {
     let fresh25 = (*lineedit_ptr_to_statics).command_len;
     (*lineedit_ptr_to_statics).command_len = (*lineedit_ptr_to_statics).command_len + 1;
     *command.offset(fresh25 as isize) = '\n' as i32 as libc::c_char;
