@@ -471,8 +471,8 @@ unsafe extern "C" fn handle_pwd() {
   if cwd.is_null() {
     cwd = crate::libbb::xfuncs_printf::xstrdup(b"\x00" as *const u8 as *const libc::c_char)
   }
-  /* We have to promote each " to "" */
-  
+
+  // We have to promote each " to ""
   response = escape_text(
     b" \"\x00" as *const u8 as *const libc::c_char,
     cwd,
@@ -1391,10 +1391,8 @@ unsafe extern "C" fn cmdio_get_cmd_and_arg() -> u32 {
   while *cmd != 0 {
     let fresh10 = cmd;
     cmd = cmd.offset(1);
-    cmdval = (cmdval << 8i32).wrapping_add(
-      (*fresh10 as libc::c_uchar as libc::c_int & !0x20i32 as libc::c_uchar as libc::c_int)
-        as libc::c_uint,
-    )
+    cmdval = (cmdval << 8i32)
+      .wrapping_add((*fresh10 as libc::c_uchar as libc::c_int & !0x20u8 as i32) as libc::c_uint)
   }
   return cmdval;
 }

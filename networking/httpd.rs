@@ -2284,7 +2284,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
   let mut prequest: *const libc::c_char = std::ptr::null();
   let mut length: libc::c_ulong = 0 as libc::c_ulong;
   let mut cgi_type: CGI_type = CGI_NONE;
-  let mut authorized: smallint = -1i32 as smallint;
+  let mut authorized: smallint = -1;
   let mut HTTP_slash: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Allocation of iobuf is postponed until now
    * (IOW, server process doesn't need to waste 8k) */

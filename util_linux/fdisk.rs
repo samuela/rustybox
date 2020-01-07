@@ -490,7 +490,7 @@ unsafe extern "C" fn bb_BLKGETSIZE_sectors(mut fd: libc::c_int) -> sector_t {
         b"device has more than 2^32 sectors, can\'t use all of them\x00" as *const u8
           as *const libc::c_char,
       );
-      v64 = -1i64 as u32 as u64
+      v64 = std::u32::MAX as u64
     }
     _ => {}
   }

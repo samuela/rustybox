@@ -300,7 +300,7 @@ pub unsafe extern "C" fn copy_file(
   /* NB: each struct stat is ~100 bytes */
   let mut source_stat: stat = std::mem::zeroed();
   let mut dest_stat: stat = std::mem::zeroed();
-  let mut retval: smallint = 0 as smallint;
+  let mut retval = 0;
   let mut dest_exists: smallint = 0 as smallint;
   let mut ovr: smallint = 0;
   /* Inverse of cp -d ("cp without -d") */
@@ -410,7 +410,7 @@ pub unsafe extern "C" fn copy_file(
       /* Recursively copy files in SOURCE */
       dp = opendir(source);
       if dp.is_null() {
-        retval = -1i32 as smallint
+        retval = -1
       } else {
         loop {
           d = readdir(dp);
@@ -434,7 +434,7 @@ pub unsafe extern "C" fn copy_file(
             flags & !(FILEUTILS_DEREFERENCE_L0 as libc::c_int),
           ) < 0
           {
-            retval = -1i32 as smallint
+            retval = -1
           }
           free(new_source as *mut libc::c_void);
           free(new_dest as *mut libc::c_void);
@@ -557,8 +557,8 @@ pub unsafe extern "C" fn copy_file(
                   | (9i32 << 0) as libc::c_uint) as libc::c_ulong
                   | (::std::mem::size_of::<libc::c_int>() as libc::c_ulong) << 0 + 8i32 + 8i32,
                 src_fd,
-              ) as smallint;
-              if retval as libc::c_int == 0 {
+              );
+              if retval == 0 {
                 current_block = 10903821241939442503;
               } else if flags & FILEUTILS_REFLINK_ALWAYS as libc::c_int != 0 {
                 crate::libbb::perror_msg::bb_perror_msg(
@@ -570,7 +570,7 @@ pub unsafe extern "C" fn copy_file(
               } else {
                 /* reflink did not work */
                 /* fall through to standard copy */
-                retval = 0 as smallint;
+                retval = 0;
                 current_block = 3921975509081277429;
               }
             } else {
@@ -579,7 +579,7 @@ pub unsafe extern "C" fn copy_file(
             match current_block {
               3921975509081277429 => {
                 if crate::libbb::copyfd::bb_copyfd_eof(src_fd, dst_fd) == -1i32 as libc::c_long {
-                  retval = -1i32 as smallint
+                  retval = -1
                 }
               }
               _ => {}
@@ -590,14 +590,14 @@ pub unsafe extern "C" fn copy_file(
                 b"error writing to \'%s\'\x00" as *const u8 as *const libc::c_char,
                 dest,
               );
-              retval = -1i32 as smallint
+              retval = -1
             }
             /* ...but read size is already checked by bb_copyfd_eof */
             close(src_fd);
             /* "cp /dev/something new_file" should not
              * copy mode of /dev/something */
             if !(source_stat.st_mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint) {
-              return retval as libc::c_int;
+              return retval;
             }
             current_block = 16682393968998137680;
           }
@@ -726,7 +726,7 @@ pub unsafe extern "C" fn copy_file(
             dest,
           );
         }
-        return retval as libc::c_int;
+        return retval;
       }
     }
   }

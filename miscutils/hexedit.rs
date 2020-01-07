@@ -406,7 +406,7 @@ pub unsafe extern "C" fn hexedit_main(
     }
     (*ptr_to_globals).in_read_key = 0 as smallint;
     if bb_got_signal != 0 {
-      key = 'X' as i32 & !0x60i32 as u8 as libc::c_int
+      key = 'X' as i32 & !0x60
     }
     cnt = 1i32 as libc::c_uint;
     if (key - 'A' as i32) as libc::c_uint <= ('Z' as i32 - 'A' as i32) as libc::c_uint {

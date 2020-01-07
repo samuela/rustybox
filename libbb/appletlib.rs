@@ -214,7 +214,7 @@ unsafe fn parse_config_file() {
           errmsg = b"section header\x00" as *const u8 as *const libc::c_char;
           break;
         } else if strcasecmp(s, b"SUID\x00" as *const u8 as *const libc::c_char) == 0 {
-          section = 1i32 as smallint
+          section = 1
         } else {
           /* Right now we only have one section so just check it.
            * If more sections are added in the future, please don't
@@ -222,7 +222,7 @@ unsafe fn parse_config_file() {
            * That kind of bloated code is all too common.  A loop
            * and a string table would be a better choice unless the
            * number of sections is very small. */
-          section = -1i32 as smallint
+          section = -1
         }
       } else if section as libc::c_int == 1i32 {
         /* Unknown section so set to skip. */

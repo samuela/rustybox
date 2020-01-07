@@ -302,7 +302,7 @@ pub unsafe extern "C" fn base64_main(
   }
   src_stream = crate::libbb::wfopen_input::xfopen_stdin(*argv.offset(0));
   if opts != 0 {
-    crate::libbb::uuencode::read_base64(src_stream, stdout, -1i32 as libc::c_char as libc::c_int);
+    crate::libbb::uuencode::read_base64(src_stream, stdout, -1);
   } else {
     let mut src_buf: [libc::c_char; 57] = [0; 57];
     let mut dst_buf: [libc::c_char; 77] = [0; 77];

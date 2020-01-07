@@ -520,7 +520,7 @@ pub const FLAG_NO_AUTO: C2RustUnnamed_8 = 1;
 pub type C2RustUnnamed_9 = libc::c_int;
 pub const IFSTATUS_UP: C2RustUnnamed_9 = 1;
 pub const IFSTATUS_DOWN: C2RustUnnamed_9 = 0;
-pub const IFSTATUS_ERR: C2RustUnnamed_9 = -1;
+pub const IFSTATUS_ERR: smallint = -1;
 pub type C2RustUnnamed_10 = libc::c_uint;
 pub const netlink_fd: C2RustUnnamed_10 = 4;
 pub const ioctl_fd: C2RustUnnamed_10 = 3;
@@ -599,7 +599,7 @@ unsafe extern "C" fn detect_link_mii() -> smallint {
     b"SIOCGMIIPHY\x00" as *const u8 as *const libc::c_char,
   ) < 0
   {
-    return IFSTATUS_ERR as libc::c_int as smallint;
+    return IFSTATUS_ERR;
   }
   (*mii).reg_num = 1i32 as __u16;
   if network_ioctl(
@@ -608,7 +608,7 @@ unsafe extern "C" fn detect_link_mii() -> smallint {
     b"SIOCGMIIREG\x00" as *const u8 as *const libc::c_char,
   ) < 0
   {
-    return IFSTATUS_ERR as libc::c_int as smallint;
+    return IFSTATUS_ERR;
   }
   return if (*mii).val_out as libc::c_int & 0x4i32 != 0 {
     IFSTATUS_UP as libc::c_int
@@ -629,7 +629,7 @@ unsafe extern "C" fn detect_link_priv() -> smallint {
     b"SIOCDEVPRIVATE\x00" as *const u8 as *const libc::c_char,
   ) < 0
   {
-    return IFSTATUS_ERR as libc::c_int as smallint;
+    return IFSTATUS_ERR;
   }
   (*mii).reg_num = 1i32 as __u16;
   if network_ioctl(
@@ -638,7 +638,7 @@ unsafe extern "C" fn detect_link_priv() -> smallint {
     b"SIOCDEVPRIVATE+1\x00" as *const u8 as *const libc::c_char,
   ) < 0
   {
-    return IFSTATUS_ERR as libc::c_int as smallint;
+    return IFSTATUS_ERR;
   }
   return if (*mii).val_out as libc::c_int & 0x4i32 != 0 {
     IFSTATUS_UP as libc::c_int
@@ -666,7 +666,7 @@ unsafe extern "C" fn detect_link_ethtool() -> smallint {
     b"ETHTOOL_GLINK\x00" as *const u8 as *const libc::c_char,
   ) < 0
   {
-    return IFSTATUS_ERR as libc::c_int as smallint;
+    return IFSTATUS_ERR;
   }
   return if edata.data != 0 {
     IFSTATUS_UP as libc::c_int
@@ -691,7 +691,7 @@ unsafe extern "C" fn detect_link_iff() -> smallint {
     b"SIOCGIFFLAGS\x00" as *const u8 as *const libc::c_char,
   ) < 0
   {
-    return IFSTATUS_ERR as libc::c_int as smallint;
+    return IFSTATUS_ERR;
   }
   /* If IFF_UP is not set (interface is down), IFF_RUNNING is never set
    * regardless of link status. Simply continue to report last status -
@@ -732,7 +732,7 @@ unsafe extern "C" fn detect_link_wlan() -> smallint {
     b"SIOCGIWAP\x00" as *const u8 as *const libc::c_char,
   ) < 0
   {
-    return IFSTATUS_ERR as libc::c_int as smallint;
+    return IFSTATUS_ERR;
   }
   memcpy(
     mac.as_mut_ptr() as *mut libc::c_void,
