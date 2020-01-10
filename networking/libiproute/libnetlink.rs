@@ -27,10 +27,6 @@ extern "C" {
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
-  #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
-
 }
 
 #[repr(C)]
@@ -212,7 +208,7 @@ pub unsafe extern "C" fn rtnl_send_check(
   let mut h: *mut nlmsghdr = std::ptr::null_mut();
   let mut status: libc::c_int = 0;
   let mut resp: [libc::c_char; 1024] = [0; 1024];
-  status = write((*rth).fd, buf, len as size_t) as libc::c_int;
+  status = libc::write((*rth).fd, buf, len as usize) as libc::c_int;
   if status < 0 {
     return status;
   }

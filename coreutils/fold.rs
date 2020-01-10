@@ -12,8 +12,6 @@ extern "C" {
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
 
   #[no_mangle]
-  fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
-  #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 
   #[no_mangle]
@@ -59,7 +57,7 @@ unsafe extern "C" fn adjust_column(mut column: libc::c_uint, mut c: libc::c_char
 }
 /* Note that this function can write NULs, unlike fputs etc. */
 unsafe extern "C" fn write2stdout(mut buf: *const libc::c_void, mut size: libc::c_uint) {
-  fwrite(buf, 1i32 as size_t, size as size_t, stdout);
+  libc::fwrite(buf, 1, size as usize, stdout);
 }
 #[no_mangle]
 pub unsafe extern "C" fn fold_main(

@@ -7,8 +7,6 @@ extern "C" {
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
-  fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
-  #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 
   #[no_mangle]
@@ -918,10 +916,10 @@ pub unsafe extern "C" fn read_base64(
     }
     out_tail = out_buf.as_mut_ptr();
     in_tail = decode_base64(&mut out_tail, in_buf.as_mut_ptr());
-    fwrite(
+    libc::fwrite(
       out_buf.as_mut_ptr() as *const libc::c_void,
-      out_tail.wrapping_offset_from(out_buf.as_mut_ptr()) as libc::c_long as size_t,
-      1i32 as size_t,
+      out_tail.wrapping_offset_from(out_buf.as_mut_ptr()) as usize,
+      1,
       dst_stream,
     );
     if term_seen != 0 {

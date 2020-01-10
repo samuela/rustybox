@@ -78,8 +78,6 @@ extern "C" {
   ) -> libc::c_int;
 
   #[no_mangle]
-  fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
-  #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
 
   #[no_mangle]
@@ -851,10 +849,10 @@ unsafe extern "C" fn refresh(mut full_screen: libc::c_int) {
       );
       place_cursor(li, cs);
       // write line out to terminal
-      fwrite(
+      libc::fwrite(
         &mut *sp.offset(cs as isize) as *mut libc::c_char as *const libc::c_void,
-        (ce - cs + 1i32) as size_t,
-        1i32 as size_t,
+        (ce - cs + 1) as usize,
+        1,
         stdout,
       );
     }

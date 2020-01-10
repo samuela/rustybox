@@ -39,8 +39,6 @@ extern "C" {
   fn fchdir(__fd: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
-  #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
 
   #[no_mangle]
@@ -145,22 +143,22 @@ unsafe extern "C" fn warn_cannot(mut m: *const libc::c_char) {
   warn2_cannot(m, b"\x00" as *const u8 as *const libc::c_char);
 }
 unsafe extern "C" fn s_child(mut _sig_no: libc::c_int) {
-  write(
+  libc::write(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .selfpipe
       .wr,
     b"\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
-    1i32 as size_t,
+    1,
   );
 }
 unsafe extern "C" fn s_term(mut _sig_no: libc::c_int) {
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).sigterm = 1i32 as smallint;
-  write(
+  libc::write(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .selfpipe
       .wr,
     b"\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
-    1i32 as size_t,
+    1,
   );
   /* XXX */
 }
@@ -220,7 +218,7 @@ unsafe extern "C" fn update_status(mut s: *mut svdir) {
         b"%u\n\x00" as *const u8 as *const libc::c_char,
         (*s).pid as libc::c_uint,
       );
-      write(fd, spid.as_mut_ptr() as *const libc::c_void, size as size_t);
+      libc::write(fd, spid.as_mut_ptr() as *const libc::c_void, size as usize);
     }
     close(fd);
     if crate::libbb::xfuncs_printf::rename_or_warn(fpidnew, fpid) != 0 {
@@ -257,10 +255,10 @@ unsafe extern "C" fn update_status(mut s: *mut svdir) {
   let fresh0 = p;
   p = p.offset(1);
   *fresh0 = '\n' as i32 as libc::c_char;
-  write(
+  libc::write(
     fd,
     stat_buf.as_mut_ptr() as *const libc::c_void,
-    p.wrapping_offset_from(stat_buf.as_mut_ptr()) as libc::c_long as size_t,
+    p.wrapping_offset_from(stat_buf.as_mut_ptr()) as usize,
   );
   close(fd);
   crate::libbb::xfuncs_printf::rename_or_warn(fstatnew, f_stat);
@@ -328,10 +326,10 @@ unsafe extern "C" fn update_status(mut s: *mut svdir) {
   if fd < 0 {
     return;
   }
-  sz = write(
+  sz = libc::write(
     fd,
     &mut status as *mut svstatus_t as *const libc::c_void,
-    ::std::mem::size_of::<svstatus_t>() as libc::c_ulong,
+    ::std::mem::size_of::<svstatus_t>(),
   );
   close(fd);
   if sz as libc::c_ulong != ::std::mem::size_of::<svstatus_t>() as libc::c_ulong {

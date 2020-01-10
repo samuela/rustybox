@@ -1,6 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::len_and_sockaddr;
-use crate::librb::size_t;
 use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
@@ -10,7 +9,6 @@ use libc::printf;
 use libc::sockaddr;
 use libc::sockaddr_in;
 use libc::sockaddr_in6;
-use libc::ssize_t;
 use libc::useconds_t;
 extern "C" {
   pub type sockaddr_x25;
@@ -32,9 +30,6 @@ extern "C" {
   fn connect(__fd: libc::c_int, __addr: __CONST_SOCKADDR_ARG, __len: socklen_t) -> libc::c_int;
   #[no_mangle]
   fn getservbyport(__port: libc::c_int, __proto: *const libc::c_char) -> *mut servent;
-
-  #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
 /* Version which dies on error */
 
@@ -300,10 +295,10 @@ pub unsafe extern "C" fn pscan_main(
         /* Unlikely, for me even localhost fails :) */
         {
           diff = (crate::libbb::time::monotonic_us() as libc::c_uint).wrapping_sub(start);
-          if !(write(
+          if !(libc::write(
             s,
             b" \x00" as *const u8 as *const libc::c_char as *const libc::c_void,
-            1i32 as size_t,
+            1,
           ) >= 0)
           {
             current_block_42 = 17281240262373992796;

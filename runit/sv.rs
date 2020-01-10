@@ -28,8 +28,6 @@ extern "C" {
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
-  #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
 
   #[no_mangle]
@@ -543,7 +541,7 @@ unsafe extern "C" fn control(mut a: *const libc::c_char) -> libc::c_int {
     return -1i32;
   }
   l = strlen(a) as libc::c_int;
-  r = write(fd, a as *const libc::c_void, l as size_t) as libc::c_int;
+  r = libc::write(fd, a as *const libc::c_void, l as usize) as libc::c_int;
   close(fd);
   if r != l {
     warn(b"can\'t write to supervise/control\x00" as *const u8 as *const libc::c_char);

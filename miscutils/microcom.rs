@@ -19,8 +19,6 @@ extern "C" {
 
   #[no_mangle]
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
-  #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
 
   #[no_mangle]
   fn poll(__fds: *mut pollfd, __nfds: nfds_t, __timeout: libc::c_int) -> libc::c_int;
@@ -273,11 +271,7 @@ pub unsafe extern "C" fn microcom_main(
                 match current_block {
                   13460095289871124136 => {}
                   _ => {
-                    write(
-                      sfd,
-                      &mut c as *mut libc::c_char as *const libc::c_void,
-                      1i32 as size_t,
-                    );
+                    libc::write(sfd, &mut c as *mut libc::c_char as *const libc::c_void, 1);
                     if delay >= 0 {
                       crate::libbb::safe_poll::safe_poll(pfd.as_mut_ptr(), 1i32 as nfds_t, delay);
                     }

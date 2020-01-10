@@ -59,8 +59,6 @@ extern "C" {
   static mut stderr: *mut FILE;
 
   #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
-  #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
 
   #[no_mangle]
@@ -714,10 +712,10 @@ trick for getting the RTT.  [I got that idea from pluvius, and warped it.]
 Return either the original fd, or clean up and return -1. */
 unsafe extern "C" fn udptest() -> libc::c_int {
   let mut rr: libc::c_int = 0; // can be interrupted! while (t) nanosleep(&t)?
-  rr = write(
+  rr = libc::write(
     netfd as libc::c_int,
     (*ptr_to_globals).bigbuf_in.as_mut_ptr() as *const libc::c_void,
-    1i32 as size_t,
+    1,
   ) as libc::c_int;
   if rr != 1i32 {
     crate::libbb::perror_msg::bb_simple_perror_msg(
@@ -762,10 +760,10 @@ unsafe extern "C" fn udptest() -> libc::c_int {
     close(rr);
     (*ptr_to_globals).o_wait = 0 as libc::c_uint
   }
-  rr = write(
+  rr = libc::write(
     netfd as libc::c_int,
     (*ptr_to_globals).bigbuf_in.as_mut_ptr() as *const libc::c_void,
-    1i32 as size_t,
+    1,
   ) as libc::c_int;
   return (rr != 1i32) as libc::c_int;
   /* don't need to restore themaddr's port, it's not used anymore */
@@ -1000,7 +998,7 @@ unsafe extern "C" fn readwrite() -> libc::c_int {
     not sure if the order of this matters, but write net -> stdout first. */
     {
       if rnleft != 0 {
-        rr = write(1i32, np as *const libc::c_void, rnleft as size_t) as libc::c_int;
+        rr = libc::write(1, np as *const libc::c_void, rnleft as usize) as libc::c_int;
         if rr > 0 {
           if option_mask32 & OPT_o as libc::c_int as libc::c_uint != 0 {
             /* log the stdout */
@@ -1021,11 +1019,8 @@ unsafe extern "C" fn readwrite() -> libc::c_int {
         } else {
           rr = rzleft as libc::c_int
         } /* one line, or the whole buffer */
-        rr = write(
-          netfd as libc::c_int,
-          zp as *const libc::c_void,
-          rr as size_t,
-        ) as libc::c_int;
+        rr =
+          libc::write(netfd as libc::c_int, zp as *const libc::c_void, rr as usize) as libc::c_int;
         if rr > 0 {
           if option_mask32 & OPT_o as libc::c_int as libc::c_uint != 0 {
             /* log what got sent */

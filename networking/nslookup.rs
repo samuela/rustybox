@@ -112,8 +112,6 @@ extern "C" {
 
   #[no_mangle]
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
-  #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
   /* { "-", NULL } */
   #[no_mangle]
   static mut option_mask32: u32;
@@ -833,7 +831,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
       .qlen
         == 0 as libc::c_uint)
       {
-        if write(
+        if libc::write(
           pfd.fd,
           (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
             .query
@@ -843,7 +841,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
           (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
             .query
             .offset(qn as isize))
-          .qlen as size_t,
+          .qlen as usize,
         ) < 0
         {
           crate::libbb::perror_msg::bb_perror_msg(
@@ -944,7 +942,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
                     //UNUSED: ns->failures++;
                     if servfail_retry != 0 {
                       servfail_retry -= 1;
-                      write(
+                      libc::write(
                         pfd.fd,
                         (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                           .query
@@ -954,7 +952,7 @@ unsafe extern "C" fn send_queries(mut ns: *mut ns) -> libc::c_int {
                         (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
                           .query
                           .offset(qn as isize))
-                        .qlen as size_t,
+                        .qlen as usize,
                       );
                       current_block = 6236198777448170658;
                     } else {

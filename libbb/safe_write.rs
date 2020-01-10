@@ -2,11 +2,6 @@ use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
 use libc;
 use libc::ssize_t;
-extern "C" {
-  #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
-
-}
 
 /*
  * Busybox main internal header file
@@ -265,7 +260,7 @@ pub unsafe extern "C" fn safe_write(
 ) -> ssize_t {
   let mut n: ssize_t = 0;
   loop {
-    n = write(fd, buf, count);
+    n = libc::write(fd, buf, count as usize);
     if n >= 0 || *bb_errno != 4i32 {
       break;
     }

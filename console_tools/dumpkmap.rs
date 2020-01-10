@@ -1,10 +1,5 @@
-use crate::librb::size_t;
 use libc;
-use libc::ssize_t;
 extern "C" {
-  #[no_mangle]
-  fn write(__fd: libc::c_int, __buf: *const libc::c_void, __n: size_t) -> ssize_t;
-
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 
@@ -74,10 +69,10 @@ pub unsafe extern "C" fn dumpkmap_main(
       as *const libc::c_char as *const libc::c_void,
     ::std::mem::size_of::<[libc::c_char; 21]>() as libc::c_ulong,
   );
-  write(
+  libc::write(
     1i32,
     bb_common_bufsiz1.as_mut_ptr() as *const libc::c_void,
-    (7i32 + 256i32) as size_t,
+    7 + 256,
   );
   i = 0;
   while i < 13i32 {
@@ -95,10 +90,10 @@ pub unsafe extern "C" fn dumpkmap_main(
           i,
         ) == 0
         {
-          write(
-            1i32,
+          libc::write(
+            1,
             &mut ke.kb_value as *mut libc::c_ushort as *const libc::c_void,
-            2i32 as size_t,
+            2,
           );
         }
         j += 1

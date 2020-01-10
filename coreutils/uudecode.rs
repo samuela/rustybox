@@ -12,8 +12,6 @@ extern "C" {
   #[no_mangle]
   fn fflush(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
-  fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
-  #[no_mangle]
   fn fileno_unlocked(__stream: *mut FILE) -> libc::c_int;
 
   /* Guaranteed to NOT be a macro (smallest code). Saves nearly 2k on uclibc.
@@ -165,10 +163,10 @@ unsafe extern "C" fn read_stduu(
           break;
         }
       }
-      fwrite(
+      libc::fwrite(
         line as *const libc::c_void,
-        1i32 as size_t,
-        dst.wrapping_offset_from(line) as libc::c_long as size_t,
+        1,
+        dst.wrapping_offset_from(line) as usize,
         dst_stream,
       );
       free(line as *mut libc::c_void);

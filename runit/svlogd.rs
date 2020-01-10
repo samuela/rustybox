@@ -57,8 +57,6 @@ extern "C" {
   #[no_mangle]
   fn asprintf(__ptr: *mut *mut libc::c_char, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
   #[no_mangle]
-  fn fwrite(__ptr: *const libc::c_void, __size: size_t, __n: size_t, __s: *mut FILE) -> size_t;
-  #[no_mangle]
   static mut optind: libc::c_int;
 
   #[no_mangle]
@@ -818,12 +816,7 @@ unsafe extern "C" fn buffer_pwrite(
   loop {
     // //i = full_write(ld->fdcur, s, len);
     // //if (i != -1) break;
-    i = fwrite(
-      s as *const libc::c_void,
-      1i32 as size_t,
-      len as size_t,
-      (*ld).filecur,
-    ) as libc::c_int; /* impossible */
+    i = libc::fwrite(s as *const libc::c_void, 1, len as usize, (*ld).filecur) as libc::c_int; /* impossible */
     if i as libc::c_uint == len {
       break;
     }
@@ -1734,10 +1727,10 @@ pub unsafe extern "C" fn svlogd_main(
               if (*ld).matcherr as libc::c_int == 'e' as i32 {
                 /* runit-1.8.0 compat: if timestamping, do it on stderr too */
                 // //full_write(STDERR_FILENO, printptr, printlen);
-                fwrite(
+                libc::fwrite(
                   printptr as *const libc::c_void,
-                  1i32 as size_t,
-                  printlen as size_t,
+                  1,
+                  printlen as usize,
                   stderr,
                 );
               }
@@ -1785,10 +1778,10 @@ pub unsafe extern "C" fn svlogd_main(
                 if (*(*ptr_to_globals).dir.offset(i as isize)).matcherr as libc::c_int == 'e' as i32
                 {
                   // //full_write(STDERR_FILENO, lineptr, linelen);
-                  fwrite(
+                  libc::fwrite(
                     lineptr as *const libc::c_void,
-                    1i32 as size_t,
-                    (*ptr_to_globals).linelen as size_t,
+                    1,
+                    (*ptr_to_globals).linelen as usize,
                     stderr,
                   );
                 }
