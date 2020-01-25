@@ -1,4 +1,5 @@
 use crate::applets::applet_tables::applets;
+use crate::applets::applet_tables::Entrypoint;
 use crate::applets::applet_tables::InstallLoc;
 use crate::applets::applet_tables::SUID;
 use crate::libbb::llist::llist_t;
@@ -644,10 +645,16 @@ unsafe fn run_applet_no_and_exit(applet_no: usize, name: &str, argv: &[&str]) ->
   }
 
   check_suid(applet_no);
-  xfunc_error_retval = (applets[applet_no].entrypoint)(argc, str_vec_to_ptrs(argv)) as u8;
 
-  /* Note: applet_main() may also not return (die on a xfunc or such) */
-  crate::libbb::xfunc_die::xfunc_die();
+  match applets[applet_no].entrypoint {
+    Entrypoint::CStyle(f) => {
+      xfunc_error_retval = f(argc, str_vec_to_ptrs(argv)) as u8;
+
+      /* Note: applet_main() may also not return (die on a xfunc or such) */
+      crate::libbb::xfunc_die::xfunc_die();
+    }
+    Entrypoint::SafeStyle(f) => f(argv),
+  }
 }
 
 unsafe fn run_applet_and_exit(name: &str, argv: &[&str]) -> ! {
