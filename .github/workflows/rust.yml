@@ -407,7 +407,6 @@ jobs:
                                       xxd \
                                       xz \
                                       xzcat \
-                                      yes \
                                       zcat \
                                       zcip
 
