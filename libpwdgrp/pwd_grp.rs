@@ -463,8 +463,7 @@ unsafe extern "C" fn getXXnam_r(
   return massage_data_for_r_func(db, buffer, buflen, result as *mut *mut libc::c_void, buf);
 }
 /* Reentrant versions of some of the functions above. */
-#[no_mangle]
-pub unsafe extern "C" fn bb_internal_getpwnam_r(
+pub unsafe fn bb_internal_getpwnam_r(
   mut name: *const libc::c_char,
   mut struct_buf: *mut passwd,
   mut buffer: *mut libc::c_char,
@@ -515,8 +514,7 @@ Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 /* Reserved */
 /* All function names below should be remapped by #defines above
  * in order to not collide with libc names. */
-#[no_mangle]
-pub unsafe extern "C" fn bb_internal_getspnam_r(
+pub unsafe fn bb_internal_getspnam_r(
   mut name: *const libc::c_char,
   mut struct_buf: *mut spwd,
   mut buffer: *mut libc::c_char,
@@ -549,8 +547,7 @@ unsafe extern "C" fn getXXent(mut db_idx: uintptr_t) -> *mut libc::c_void {
   buf = parse_common((*db).fp, db, 0 as *const libc::c_char, -1i32);
   return massage_data_for_non_r_func(db, buf);
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_internal_getpwent() -> *mut passwd {
+pub unsafe fn bb_internal_getpwent() -> *mut passwd {
   return getXXent(0i32 as uintptr_t) as *mut passwd;
 }
 /* ***** getXXnam/id */
@@ -571,25 +568,21 @@ unsafe extern "C" fn getXXnam(
   return massage_data_for_non_r_func(db, buf);
 }
 /* Search for an entry with a matching username.  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_internal_getpwnam(mut name: *const libc::c_char) -> *mut passwd {
+pub unsafe fn bb_internal_getpwnam(mut name: *const libc::c_char) -> *mut passwd {
   return getXXnam(name, ((0i32 << 2i32) + 0) as libc::c_uint) as *mut passwd;
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_internal_getgrnam(mut name: *const libc::c_char) -> *mut group {
+pub unsafe fn bb_internal_getgrnam(mut name: *const libc::c_char) -> *mut group {
   return getXXnam(name, ((1i32 << 2i32) + 0) as libc::c_uint) as *mut group;
 }
 /* Read an entry from the password-file stream, opening it if necessary.  */
 /* Search for an entry with a matching user ID.  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_internal_getpwuid(mut id: uid_t) -> *mut passwd {
+pub unsafe fn bb_internal_getpwuid(mut id: uid_t) -> *mut passwd {
   return getXXnam(
     crate::libbb::xfuncs::utoa(id),
     ((0i32 << 2i32) + 2i32) as libc::c_uint,
   ) as *mut passwd;
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_internal_getgrgid(mut id: gid_t) -> *mut group {
+pub unsafe fn bb_internal_getgrgid(mut id: gid_t) -> *mut group {
   return getXXnam(
     crate::libbb::xfuncs::utoa(id),
     ((1i32 << 2i32) + 2i32) as libc::c_uint,
@@ -597,8 +590,7 @@ pub unsafe extern "C" fn bb_internal_getgrgid(mut id: gid_t) -> *mut group {
 }
 /* Close the password-file stream.  */
 /* ***** end/setXXend */
-#[no_mangle]
-pub unsafe extern "C" fn bb_internal_endpwent() {
+pub unsafe fn bb_internal_endpwent() {
   if !ptr_to_statics.is_null() && !(*ptr_to_statics).db[0].fp.is_null() {
     fclose((*ptr_to_statics).db[0].fp);
     (*ptr_to_statics).db[0].fp = std::ptr::null_mut()
@@ -632,14 +624,12 @@ Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 /* All function names below should be remapped by #defines above
  * in order to not collide with libc names. */
 /* Rewind the password-file stream.  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_internal_setpwent() {
+pub unsafe fn bb_internal_setpwent() {
   if !ptr_to_statics.is_null() && !(*ptr_to_statics).db[0].fp.is_null() {
     rewind((*ptr_to_statics).db[0].fp);
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_internal_endgrent() {
+pub unsafe fn bb_internal_endgrent() {
   if !ptr_to_statics.is_null() && !(*ptr_to_statics).db[1].fp.is_null() {
     fclose((*ptr_to_statics).db[1].fp);
     (*ptr_to_statics).db[1].fp = std::ptr::null_mut()
@@ -705,11 +695,7 @@ unsafe extern "C" fn getgrouplist_internal(
 /* Initialize the group set for the current user
 by reading the group database and using all groups
 of which USER is a member.  Also include GROUP.  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_internal_initgroups(
-  mut user: *const libc::c_char,
-  mut gid: gid_t,
-) -> libc::c_int {
+pub unsafe fn bb_internal_initgroups(mut user: *const libc::c_char, mut gid: gid_t) -> libc::c_int {
   let mut ngroups: libc::c_int = 0;
   let mut group_list: *mut gid_t = getgrouplist_internal(&mut ngroups, user, gid);
   ngroups = setgroups(ngroups as size_t, group_list);
@@ -751,8 +737,7 @@ pub unsafe extern "C" fn bb_internal_initgroups(
 /* Store at most *NGROUPS members of the group set for USER into
 *GROUPS.  Also include GROUP.  The actual number of groups found is
 returned in *NGROUPS.  Return -1 if the if *NGROUPS is too small.  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_internal_getgrouplist(
+pub unsafe fn bb_internal_getgrouplist(
   mut user: *const libc::c_char,
   mut gid: gid_t,
   mut groups: *mut gid_t,

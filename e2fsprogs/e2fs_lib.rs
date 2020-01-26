@@ -35,8 +35,7 @@ unsafe extern "C" fn close_silently(mut fd: libc::c_int) {
   *bb_errno = e;
 }
 /* Iterate a function on each entry of a directory */
-#[no_mangle]
-pub unsafe extern "C" fn iterate_on_dir(
+pub unsafe fn iterate_on_dir(
   mut dir_name: *const libc::c_char,
   mut func: Option<
     unsafe extern "C" fn(
@@ -64,8 +63,7 @@ pub unsafe extern "C" fn iterate_on_dir(
   return 0;
 }
 /* Get/set a file version on an ext2 file system */
-#[no_mangle]
-pub unsafe extern "C" fn fgetsetversion(
+pub unsafe fn fgetsetversion(
   mut name: *const libc::c_char,
   mut get_version: *mut libc::c_ulong,
   mut set_version: libc::c_ulong,
@@ -115,8 +113,7 @@ pub unsafe extern "C" fn fgetsetversion(
 /* Get/set a file version on an ext2 file system */
 /* Get/set a file flags on an ext2 file system */
 /* Get/set a file flags on an ext2 file system */
-#[no_mangle]
-pub unsafe extern "C" fn fgetsetflags(
+pub unsafe fn fgetsetflags(
   mut name: *const libc::c_char,
   mut get_flags: *mut libc::c_ulong,
   mut set_flags: libc::c_ulong,
@@ -197,12 +194,7 @@ static mut e2attr_flags_lname: [libc::c_char; 214] = [
 ];
 /* Print file attributes on an ext2 file system */
 /* Another trailing NUL is added by compiler */
-#[no_mangle]
-pub unsafe extern "C" fn print_e2flags(
-  mut f: *mut FILE,
-  mut flags: libc::c_ulong,
-  mut options: libc::c_uint,
-) {
+pub unsafe fn print_e2flags(mut f: *mut FILE, mut flags: libc::c_ulong, mut options: libc::c_uint) {
   let mut fv: *const u32 = std::ptr::null();
   let mut fn_0: *const libc::c_char = std::ptr::null();
   fv = e2attr_flags_value.as_ptr();
