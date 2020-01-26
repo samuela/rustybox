@@ -69,8 +69,7 @@ pub unsafe fn string_array_len(argv: *mut *mut libc::c_char) -> libc::c_uint {
   return current.wrapping_offset_from(start) as libc::c_long as libc::c_uint;
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn bb_show_usage() -> ! {
+pub unsafe fn bb_show_usage() -> ! {
   let aname = ptr_to_str(applet_name);
   let usage_msg = usage(&aname).expect("Applet usage failed.");
   println!("Usage: {} {}", aname, usage_msg);
