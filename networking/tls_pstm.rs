@@ -21,8 +21,7 @@ pub struct pstm_int {
 /*
  init an pstm_int for a given size
 */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_init_size(mut a: *mut pstm_int, mut size: uint32) -> int32 {
+pub unsafe fn pstm_init_size(mut a: *mut pstm_int, mut size: uint32) -> int32 {
   //bbox
   //	uint16		x;
   /*
@@ -78,8 +77,7 @@ unsafe extern "C" fn pstm_init(mut a: *mut pstm_int) -> int32 {
 /*
  Grow as required
 */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_grow(mut a: *mut pstm_int, mut size: libc::c_int) -> int32 {
+pub unsafe fn pstm_grow(mut a: *mut pstm_int, mut size: libc::c_int) -> int32 {
   let mut i: libc::c_int = 0; //bbox: was int16
   let mut tmp: *mut pstm_digit = std::ptr::null_mut();
   /*
@@ -116,8 +114,7 @@ pub unsafe extern "C" fn pstm_grow(mut a: *mut pstm_int, mut size: libc::c_int) 
 /*
  copy, b = a (b must be pre-allocated)
 */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_copy(mut a: *mut pstm_int, mut b: *mut pstm_int) -> int32 {
+pub unsafe fn pstm_copy(mut a: *mut pstm_int, mut b: *mut pstm_int) -> int32 {
   let mut res: int32 = 0;
   let mut n: int32 = 0;
   /*
@@ -178,8 +175,7 @@ pub unsafe extern "C" fn pstm_copy(mut a: *mut pstm_int, mut b: *mut pstm_int) -
   leading "used" digit will be non-zero. Typically very fast.  Also fixes
   the sign if there are no more leading digits
 */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_clamp(mut a: *mut pstm_int) {
+pub unsafe fn pstm_clamp(mut a: *mut pstm_int) {
   /*	decrease used while the most significant digit is zero. */
   while (*a).used > 0 && *(*a).dp.offset(((*a).used - 1i32) as isize) == 0 as libc::c_uint {
     (*a).used -= 1
@@ -193,8 +189,7 @@ pub unsafe extern "C" fn pstm_clamp(mut a: *mut pstm_int) {
 /*
  clear one (frees).
 */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_clear(mut a: *mut pstm_int) {
+pub unsafe fn pstm_clear(mut a: *mut pstm_int) {
   let mut i: int32 = 0;
   /*
    only do anything if a hasn't been freed previously
@@ -245,8 +240,7 @@ unsafe extern "C" fn pstm_zero(mut a: *mut pstm_int) {
 /*
  Compare maginitude of two ints (unsigned).
 */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_cmp_mag(mut a: *mut pstm_int, mut b: *mut pstm_int) -> int32 {
+pub unsafe fn pstm_cmp_mag(mut a: *mut pstm_int, mut b: *mut pstm_int) -> int32 {
   let mut n: libc::c_int = 0; //bbox: was int16
   let mut tmpa: *mut pstm_digit = std::ptr::null_mut();
   let mut tmpb: *mut pstm_digit = std::ptr::null_mut();
@@ -284,8 +278,7 @@ pub unsafe extern "C" fn pstm_cmp_mag(mut a: *mut pstm_int, mut b: *mut pstm_int
 /*
  Compare two ints (signed)
 */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_cmp(mut a: *mut pstm_int, mut b: *mut pstm_int) -> int32 {
+pub unsafe fn pstm_cmp(mut a: *mut pstm_int, mut b: *mut pstm_int) -> int32 {
   /*
    compare based on sign
   */
@@ -311,11 +304,7 @@ pub unsafe extern "C" fn pstm_cmp(mut a: *mut pstm_int, mut b: *mut pstm_int) ->
   pstm_ints can be initialized more precisely when they will populated
   using pstm_read_unsigned_bin since the length of the byte stream is known
 */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_init_for_read_unsigned_bin(
-  mut a: *mut pstm_int,
-  mut len: uint32,
-) -> int32 {
+pub unsafe fn pstm_init_for_read_unsigned_bin(mut a: *mut pstm_int, mut len: uint32) -> int32 {
   let mut size: int32 = 0;
   /*
     Need to set this based on how many words max it will take to store the bin.
@@ -339,8 +328,7 @@ pub unsafe extern "C" fn pstm_init_for_read_unsigned_bin(
   called pstm_init_for_read_unsigned_bin first.  There is some grow logic
   here if the default pstm_init was used but we don't really want to hit it.
 */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_read_unsigned_bin(
+pub unsafe fn pstm_read_unsigned_bin(
   mut a: *mut pstm_int,
   mut b: *mut libc::c_uchar,
   mut c: int32,
@@ -405,8 +393,7 @@ unsafe extern "C" fn pstm_count_bits(mut a: *mut pstm_int) -> libc::c_int {
   return r;
 }
 /* *****************************************************************************/
-#[no_mangle]
-pub unsafe extern "C" fn pstm_unsigned_bin_size(mut a: *mut pstm_int) -> int32 {
+pub unsafe fn pstm_unsigned_bin_size(mut a: *mut pstm_int) -> int32 {
   let mut size: int32 = pstm_count_bits(a);
   return size / 8i32 + (if size & 7i32 != 0 { 1i32 } else { 0 });
 }
@@ -534,8 +521,7 @@ unsafe extern "C" fn pstm_2expt(mut a: *mut pstm_int, mut b: libc::c_int) -> int
 /*
 
 */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_mul_2(mut a: *mut pstm_int, mut b: *mut pstm_int) -> int32 {
+pub unsafe fn pstm_mul_2(mut a: *mut pstm_int, mut b: *mut pstm_int) -> int32 {
   let mut res: int32 = 0; //bbox: was int16
   let mut x: libc::c_int = 0;
   let mut oldused: libc::c_int = 0;
@@ -607,8 +593,7 @@ pub unsafe extern "C" fn pstm_mul_2(mut a: *mut pstm_int, mut b: *mut pstm_int) 
 /*
   unsigned subtraction ||a|| >= ||b|| ALWAYS!
 */
-#[no_mangle]
-pub unsafe extern "C" fn s_pstm_sub(
+pub unsafe fn s_pstm_sub(
   mut a: *mut pstm_int,
   mut b: *mut pstm_int,
   mut c: *mut pstm_int,
@@ -721,12 +706,7 @@ unsafe extern "C" fn s_pstm_add(
 /*
 
 */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_sub(
-  mut a: *mut pstm_int,
-  mut b: *mut pstm_int,
-  mut c: *mut pstm_int,
-) -> int32 {
+pub unsafe fn pstm_sub(mut a: *mut pstm_int, mut b: *mut pstm_int, mut c: *mut pstm_int) -> int32 {
   let mut res: int32 = 0; //bbox: was int16
   let mut sa: libc::c_int = 0;
   let mut sb: libc::c_int = 0;
@@ -1517,8 +1497,7 @@ unsafe extern "C" fn pstm_mod(
 /*
   d = a * b (mod c)
 */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_mulmod(
+pub unsafe fn pstm_mulmod(
   mut a: *mut pstm_int,
   mut b: *mut pstm_int,
   mut c: *mut pstm_int,
@@ -1561,8 +1540,7 @@ pub unsafe extern "C" fn pstm_mulmod(
  *	y = g**x (mod b)
  *	Some restrictions... x must be positive and < b
  */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_exptmod(
+pub unsafe fn pstm_exptmod(
   mut G: *mut pstm_int,
   mut X: *mut pstm_int,
   mut P: *mut pstm_int,
@@ -1956,12 +1934,7 @@ pub unsafe extern "C" fn pstm_exptmod(
 /*
 
 */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_add(
-  mut a: *mut pstm_int,
-  mut b: *mut pstm_int,
-  mut c: *mut pstm_int,
-) -> int32 {
+pub unsafe fn pstm_add(mut a: *mut pstm_int, mut b: *mut pstm_int, mut c: *mut pstm_int) -> int32 {
   let mut res: int32 = 0; //bbox: was int16
   let mut sa: libc::c_int = 0;
   let mut sb: libc::c_int = 0;
@@ -2132,11 +2105,7 @@ unsafe extern "C" fn pstm_reverse(mut s: *mut libc::c_uchar, mut len: libc::c_in
 /*
 
 */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_to_unsigned_bin(
-  mut a: *mut pstm_int,
-  mut b: *mut libc::c_uchar,
-) -> int32 {
+pub unsafe fn pstm_to_unsigned_bin(mut a: *mut pstm_int, mut b: *mut libc::c_uchar) -> int32 {
   let mut res: int32 = 0; //bbox: was int16
   let mut x: libc::c_int = 0;
   let mut t: pstm_int = std::mem::zeroed();

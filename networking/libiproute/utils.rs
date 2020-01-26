@@ -64,8 +64,7 @@ pub struct inet_prefix {
  *
  * Rani Assaf <rani@magic.metawire.com> 980929: resolve addresses
  */
-#[no_mangle]
-pub unsafe extern "C" fn get_hz() -> libc::c_uint {
+pub unsafe fn get_hz() -> libc::c_uint {
   static mut hz_internal: libc::c_uint = 0;
   let mut fp: *mut FILE = std::ptr::null_mut();
   if hz_internal != 0 {
@@ -95,8 +94,7 @@ pub unsafe extern "C" fn get_hz() -> libc::c_uint {
   }
   return hz_internal;
 }
-#[no_mangle]
-pub unsafe extern "C" fn get_unsigned(
+pub unsafe fn get_unsigned(
   mut arg: *mut libc::c_char,
   mut errmsg: *const libc::c_char,
 ) -> libc::c_uint {
@@ -117,11 +115,7 @@ pub unsafe extern "C" fn get_unsigned(
   invarg_1_to_2(arg, errmsg);
   /* does not return */
 }
-#[no_mangle]
-pub unsafe extern "C" fn get_u32(
-  mut arg: *mut libc::c_char,
-  mut errmsg: *const libc::c_char,
-) -> u32 {
+pub unsafe fn get_u32(mut arg: *mut libc::c_char, mut errmsg: *const libc::c_char) -> u32 {
   let mut res: libc::c_ulong = 0;
   let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if *arg != 0 {
@@ -134,11 +128,7 @@ pub unsafe extern "C" fn get_u32(
   invarg_1_to_2(arg, errmsg);
   /* does not return */
 }
-#[no_mangle]
-pub unsafe extern "C" fn get_u16(
-  mut arg: *mut libc::c_char,
-  mut errmsg: *const libc::c_char,
-) -> u16 {
+pub unsafe fn get_u16(mut arg: *mut libc::c_char, mut errmsg: *const libc::c_char) -> u16 {
   let mut res: libc::c_ulong = 0;
   let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if *arg != 0 {
@@ -151,8 +141,7 @@ pub unsafe extern "C" fn get_u16(
   invarg_1_to_2(arg, errmsg);
   /* does not return */
 }
-#[no_mangle]
-pub unsafe extern "C" fn get_addr_1(
+pub unsafe fn get_addr_1(
   mut addr: *mut inet_prefix,
   mut name: *mut libc::c_char,
   mut family: libc::c_int,
@@ -329,8 +318,7 @@ unsafe extern "C" fn get_prefix_1(
     *slash = '/' as i32 as libc::c_char
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn get_addr(
+pub unsafe fn get_addr(
   mut dst: *mut inet_prefix,
   mut arg: *mut libc::c_char,
   mut family: libc::c_int,
@@ -353,8 +341,7 @@ pub unsafe extern "C" fn get_addr(
   }
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn get_prefix(
+pub unsafe fn get_prefix(
   mut dst: *mut inet_prefix,
   mut arg: *mut libc::c_char,
   mut family: libc::c_int,
@@ -369,8 +356,7 @@ pub unsafe extern "C" fn get_prefix(
   }
   get_prefix_1(dst, arg, family);
 }
-#[no_mangle]
-pub unsafe extern "C" fn get_addr32(mut name: *mut libc::c_char) -> u32 {
+pub unsafe fn get_addr32(mut name: *mut libc::c_char) -> u32 {
   let mut addr: inet_prefix = inet_prefix {
     family: 0,
     bytelen: 0,
@@ -387,8 +373,7 @@ pub unsafe extern "C" fn get_addr32(mut name: *mut libc::c_char) -> u32 {
   }
   return addr.data[0];
 }
-#[no_mangle]
-pub unsafe extern "C" fn next_arg(mut argv: *mut *mut libc::c_char) -> *mut *mut libc::c_char {
+pub unsafe fn next_arg(mut argv: *mut *mut libc::c_char) -> *mut *mut libc::c_char {
   argv = argv.offset(1);
   if (*argv).is_null() {
     crate::libbb::verror_msg::bb_simple_error_msg_and_die(
@@ -397,31 +382,24 @@ pub unsafe extern "C" fn next_arg(mut argv: *mut *mut libc::c_char) -> *mut *mut
   }
   return argv;
 }
-#[no_mangle]
-pub unsafe extern "C" fn invarg_1_to_2(
-  mut arg: *const libc::c_char,
-  mut opt: *const libc::c_char,
-) -> ! {
+pub unsafe fn invarg_1_to_2(mut arg: *const libc::c_char, mut opt: *const libc::c_char) -> ! {
   crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_invalid_arg_to.as_ptr(), arg, opt);
 }
-#[no_mangle]
-pub unsafe extern "C" fn duparg(mut key: *const libc::c_char, mut arg: *const libc::c_char) -> ! {
+pub unsafe fn duparg(mut key: *const libc::c_char, mut arg: *const libc::c_char) -> ! {
   crate::libbb::verror_msg::bb_error_msg_and_die(
     b"duplicate \"%s\": \"%s\" is the second value\x00" as *const u8 as *const libc::c_char,
     key,
     arg,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn duparg2(mut key: *const libc::c_char, mut arg: *const libc::c_char) -> ! {
+pub unsafe fn duparg2(mut key: *const libc::c_char, mut arg: *const libc::c_char) -> ! {
   crate::libbb::verror_msg::bb_error_msg_and_die(
     b"either \"%s\" is duplicate, or \"%s\" is garbage\x00" as *const u8 as *const libc::c_char,
     key,
     arg,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn inet_addr_match(
+pub unsafe fn inet_addr_match(
   mut a: *const inet_prefix,
   mut b: *const inet_prefix,
   mut bits: libc::c_int,
@@ -476,11 +454,7 @@ pub unsafe extern "C" fn inet_addr_match(
 /* UNUSED */
 /* UNUSED */
 /*void get_prefix_1(inet_prefix *dst, char *arg, int family) FAST_FUNC;*/
-#[no_mangle]
-pub unsafe extern "C" fn rt_addr_n2a(
-  mut af: libc::c_int,
-  mut addr: *mut libc::c_void,
-) -> *const libc::c_char {
+pub unsafe fn rt_addr_n2a(mut af: libc::c_int, mut addr: *mut libc::c_void) -> *const libc::c_char {
   match af {
     2 | 10 => {
       return inet_ntop(

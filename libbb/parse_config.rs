@@ -73,8 +73,7 @@ pub struct parser_t {
 //usage:       "[-x] [-n MAXTOKENS] [-m MINTOKENS] [-d DELIMS] [-f FLAGS] FILE..."
 //usage:#define parse_full_usage "\n\n"
 //usage:       "	-x	Suppress output (for benchmarking)"
-#[no_mangle]
-pub unsafe extern "C" fn config_open2(
+pub unsafe fn config_open2(
   mut filename: *const libc::c_char,
   mut fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
 ) -> *mut parser_t {
@@ -89,8 +88,7 @@ pub unsafe extern "C" fn config_open2(
   (*parser).fp = fp;
   return parser;
 }
-#[no_mangle]
-pub unsafe extern "C" fn config_open(mut filename: *const libc::c_char) -> *mut parser_t {
+pub unsafe fn config_open(mut filename: *const libc::c_char) -> *mut parser_t {
   return config_open2(
     filename,
     Some(
@@ -99,8 +97,7 @@ pub unsafe extern "C" fn config_open(mut filename: *const libc::c_char) -> *mut 
     ),
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn config_close(mut parser: *mut parser_t) {
+pub unsafe fn config_close(mut parser: *mut parser_t) {
   if !parser.is_null() {
     if PARSE_KEEP_COPY as libc::c_int != 0 {
       /* compile-time constant */
@@ -608,8 +605,7 @@ unsafe extern "C" fn get_line_with_continuation(mut parser: *mut parser_t) -> li
 mintokens > 0 make config_read() print error message if less than mintokens
 (but more than 0) are found. Empty lines are always skipped (not warned about).
 */
-#[no_mangle]
-pub unsafe extern "C" fn config_read(
+pub unsafe fn config_read(
   mut parser: *mut parser_t,
   mut tokens: *mut *mut libc::c_char,
   mut flags: libc::c_uint,

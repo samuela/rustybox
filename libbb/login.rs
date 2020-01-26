@@ -65,11 +65,7 @@ pub struct utsname {
  */
 /* After libbb.h, since it needs sys/types.h on some systems */
 static mut fmtstr_d: [libc::c_char; 13] = [37, 65, 44, 32, 37, 100, 32, 37, 66, 32, 37, 89, 0];
-#[no_mangle]
-pub unsafe extern "C" fn print_login_issue(
-  mut issue_file: *const libc::c_char,
-  mut tty: *const libc::c_char,
-) {
+pub unsafe fn print_login_issue(mut issue_file: *const libc::c_char, mut tty: *const libc::c_char) {
   let mut fp: *mut FILE = std::ptr::null_mut(); /* start a new line */
   let mut c: libc::c_int = 0;
   let mut buf: [libc::c_char; 257] = [0; 257];
@@ -324,8 +320,7 @@ pub unsafe extern "C" fn print_login_issue(
 /*, int rnd*/
 /* "$N$" + sha_salt_16_bytes + NUL */
 /* Returns number of lines changed, or -1 on error */
-#[no_mangle]
-pub unsafe extern "C" fn print_login_prompt() {
+pub unsafe fn print_login_prompt() {
   let mut hostname: *mut libc::c_char = crate::libbb::safe_gethostname::safe_gethostname();
   fputs_unlocked(hostname, stdout);
   fputs_unlocked(b" login: \x00" as *const u8 as *const libc::c_char, stdout);
@@ -693,8 +688,7 @@ static mut forbid: [libc::c_char; 150] = [
 /* internal use */
 //DAEMON_DOUBLE_FORK     = 1 << 4, /* double fork to avoid controlling tty */
 /* Clear dangerous stuff, set PATH. Return 1 if was run by different user. */
-#[no_mangle]
-pub unsafe extern "C" fn sanitize_env_if_suid() -> libc::c_int {
+pub unsafe fn sanitize_env_if_suid() -> libc::c_int {
   let mut p: *const libc::c_char = std::ptr::null();
   if getuid() == geteuid() {
     return 0;

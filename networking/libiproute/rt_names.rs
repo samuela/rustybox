@@ -130,11 +130,7 @@ unsafe extern "C" fn rtnl_rtprot_initialize() {
   );
 }
 /* UNUSED */
-#[no_mangle]
-pub unsafe extern "C" fn rtnl_rtprot_a2n(
-  mut id: *mut u32,
-  mut arg: *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn rtnl_rtprot_a2n(mut id: *mut u32, mut arg: *mut libc::c_char) -> libc::c_int {
   rtnl_rtprot_initialize();
   return rtnl_a2n(rtnl_rtprot_tab, id, arg, 0);
 }
@@ -156,8 +152,7 @@ unsafe extern "C" fn rtnl_rtscope_initialize() {
     (*rtnl_rtscope_tab).tab.as_mut_ptr(),
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn rtnl_rtscope_n2a(mut id: libc::c_int) -> *const libc::c_char {
+pub unsafe fn rtnl_rtscope_n2a(mut id: libc::c_int) -> *const libc::c_char {
   if id < 0 || id > 1023i32 {
     return crate::libbb::xfuncs::itoa(id);
   }
@@ -167,11 +162,7 @@ pub unsafe extern "C" fn rtnl_rtscope_n2a(mut id: libc::c_int) -> *const libc::c
   }
   return crate::libbb::xfuncs::itoa(id);
 }
-#[no_mangle]
-pub unsafe extern "C" fn rtnl_rtscope_a2n(
-  mut id: *mut u32,
-  mut arg: *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn rtnl_rtscope_a2n(mut id: *mut u32, mut arg: *mut libc::c_char) -> libc::c_int {
   rtnl_rtscope_initialize();
   return rtnl_a2n(rtnl_rtscope_tab, id, arg, 0);
 }
@@ -189,16 +180,11 @@ unsafe extern "C" fn rtnl_rtrealm_initialize() {
     (*rtnl_rtrealm_tab).tab.as_mut_ptr(),
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn rtnl_rtrealm_a2n(
-  mut id: *mut u32,
-  mut arg: *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn rtnl_rtrealm_a2n(mut id: *mut u32, mut arg: *mut libc::c_char) -> libc::c_int {
   rtnl_rtrealm_initialize();
   return rtnl_a2n(rtnl_rtrealm_tab, id, arg, 0);
 }
-#[no_mangle]
-pub unsafe extern "C" fn rtnl_rtrealm_n2a(mut id: libc::c_int) -> *const libc::c_char {
+pub unsafe fn rtnl_rtrealm_n2a(mut id: libc::c_int) -> *const libc::c_char {
   if id < 0 || id > 1023i32 {
     return crate::libbb::xfuncs::itoa(id);
   }
@@ -222,8 +208,7 @@ unsafe extern "C" fn rtnl_rtdsfield_initialize() {
     (*rtnl_rtdsfield_tab).tab.as_mut_ptr(),
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn rtnl_dsfield_n2a(mut id: libc::c_int) -> *const libc::c_char {
+pub unsafe fn rtnl_dsfield_n2a(mut id: libc::c_int) -> *const libc::c_char {
   if id < 0 || id > 1023i32 {
     return crate::libbb::xfuncs::itoa(id);
   }
@@ -233,11 +218,7 @@ pub unsafe extern "C" fn rtnl_dsfield_n2a(mut id: libc::c_int) -> *const libc::c
   }
   return crate::libbb::xfuncs::itoa(id);
 }
-#[no_mangle]
-pub unsafe extern "C" fn rtnl_dsfield_a2n(
-  mut id: *mut u32,
-  mut arg: *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn rtnl_dsfield_a2n(mut id: *mut u32, mut arg: *mut libc::c_char) -> libc::c_int {
   rtnl_rtdsfield_initialize();
   return rtnl_a2n(rtnl_rtdsfield_tab, id, arg, 16i32);
 }
@@ -258,8 +239,7 @@ unsafe extern "C" fn rtnl_rttable_initialize() {
     (*rtnl_rttable_tab).tab.as_mut_ptr(),
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn rtnl_rttable_n2a(mut id: libc::c_int) -> *const libc::c_char {
+pub unsafe fn rtnl_rttable_n2a(mut id: libc::c_int) -> *const libc::c_char {
   if id < 0 || id > 1023i32 {
     return crate::libbb::xfuncs::itoa(id);
   }
@@ -269,11 +249,7 @@ pub unsafe extern "C" fn rtnl_rttable_n2a(mut id: libc::c_int) -> *const libc::c
   }
   return crate::libbb::xfuncs::itoa(id);
 }
-#[no_mangle]
-pub unsafe extern "C" fn rtnl_rttable_a2n(
-  mut id: *mut u32,
-  mut arg: *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn rtnl_rttable_a2n(mut id: *mut u32, mut arg: *mut libc::c_char) -> libc::c_int {
   rtnl_rttable_initialize();
   return rtnl_a2n(rtnl_rttable_tab, id, arg, 0);
 }

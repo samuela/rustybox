@@ -202,8 +202,7 @@ pub type nfds_t = libc::c_ulong;
  * which detects EAGAIN and uses poll() to wait on the fd.
  * Thankfully, poll() doesn't care about O_NONBLOCK flag.
  */
-#[no_mangle]
-pub unsafe extern "C" fn nonblock_immune_read(
+pub unsafe fn nonblock_immune_read(
   mut fd: libc::c_int,
   mut buf: *mut libc::c_void,
   mut count: size_t,
@@ -229,11 +228,7 @@ pub unsafe extern "C" fn nonblock_immune_read(
 // Reads one line a-la fgets (but doesn't save terminating '\n').
 // Reads byte-by-byte. Useful when it is important to not read ahead.
 // Bytes are appended to pfx (which must be malloced, or NULL).
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_reads(
-  mut fd: libc::c_int,
-  mut maxsz_p: *mut size_t,
-) -> *mut libc::c_char {
+pub unsafe fn xmalloc_reads(mut fd: libc::c_int, mut maxsz_p: *mut size_t) -> *mut libc::c_char {
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sz: size_t = 0 as size_t;
@@ -281,8 +276,7 @@ pub unsafe extern "C" fn xmalloc_reads(
 }
 // Read (potentially big) files in one go. File size is estimated
 // by stat. Extra '\0' byte is appended.
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_read_with_initial_buf(
+pub unsafe fn xmalloc_read_with_initial_buf(
   mut fd: libc::c_int,
   mut maxsz_p: *mut size_t,
   mut buf: *mut libc::c_char,
@@ -344,11 +338,7 @@ pub unsafe extern "C" fn xmalloc_read_with_initial_buf(
   }
   return buf as *mut libc::c_void;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_read(
-  mut fd: libc::c_int,
-  mut maxsz_p: *mut size_t,
-) -> *mut libc::c_void {
+pub unsafe fn xmalloc_read(mut fd: libc::c_int, mut maxsz_p: *mut size_t) -> *mut libc::c_void {
   return xmalloc_read_with_initial_buf(
     fd,
     maxsz_p,
@@ -358,8 +348,7 @@ pub unsafe extern "C" fn xmalloc_read(
 }
 // Read (potentially big) files in one go. File size is estimated
 // by stat.
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_open_read_close(
+pub unsafe fn xmalloc_open_read_close(
   mut filename: *const libc::c_char,
   mut maxsz_p: *mut size_t,
 ) -> *mut libc::c_void {
@@ -374,8 +363,7 @@ pub unsafe extern "C" fn xmalloc_open_read_close(
   return buf as *mut libc::c_void;
 }
 /* Die with an error message if we can't read the entire buffer. */
-#[no_mangle]
-pub unsafe extern "C" fn xread(mut fd: libc::c_int, mut buf: *mut libc::c_void, mut count: size_t) {
+pub unsafe fn xread(mut fd: libc::c_int, mut buf: *mut libc::c_void, mut count: size_t) {
   if count != 0 {
     let mut size: ssize_t = crate::libbb::read::full_read(fd, buf, count);
     if size as size_t != count {
@@ -386,8 +374,7 @@ pub unsafe extern "C" fn xread(mut fd: libc::c_int, mut buf: *mut libc::c_void, 
   };
 }
 /* Die with an error message if we can't read one character. */
-#[no_mangle]
-pub unsafe extern "C" fn xread_char(mut fd: libc::c_int) -> libc::c_uchar {
+pub unsafe fn xread_char(mut fd: libc::c_int) -> libc::c_uchar {
   let mut tmp: libc::c_char = 0;
   xread(
     fd,
@@ -634,8 +621,7 @@ pub unsafe extern "C" fn xread_char(mut fd: libc::c_int) -> libc::c_uchar {
 /* Reads block up to *maxsz_p (default: INT_MAX - 4095) */
 /* Returns NULL if file can't be opened (default max size: INT_MAX - 4095) */
 /* Never returns NULL */
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_xopen_read_close(
+pub unsafe fn xmalloc_xopen_read_close(
   mut filename: *const libc::c_char,
   mut maxsz_p: *mut size_t,
 ) -> *mut libc::c_void {

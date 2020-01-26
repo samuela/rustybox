@@ -113,8 +113,7 @@ unsafe extern "C" fn clear_cache(mut cp: *mut cache_t) {
   (*cp).cache = std::ptr::null_mut();
   (*cp).size = 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn clear_username_cache() {
+pub unsafe fn clear_username_cache() {
   clear_cache(&mut username);
   clear_cache(&mut groupname);
 }
@@ -150,8 +149,7 @@ unsafe extern "C" fn get_cached(
   );
   return (*(*cp).cache.offset(i as isize)).name.as_mut_ptr();
 }
-#[no_mangle]
-pub unsafe extern "C" fn get_cached_username(mut uid: uid_t) -> *const libc::c_char {
+pub unsafe fn get_cached_username(mut uid: uid_t) -> *const libc::c_char {
   return get_cached(
     &mut username,
     uid,
@@ -160,8 +158,7 @@ pub unsafe extern "C" fn get_cached_username(mut uid: uid_t) -> *const libc::c_c
     ),
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn get_cached_groupname(mut gid: gid_t) -> *const libc::c_char {
+pub unsafe fn get_cached_groupname(mut gid: gid_t) -> *const libc::c_char {
   return get_cached(
     &mut groupname,
     gid,
@@ -204,8 +201,7 @@ unsafe extern "C" fn alloc_procps_scan() -> *mut procps_status_t {
   (*sp).shift_pages_to_kb = ((*sp).shift_pages_to_bytes as libc::c_int - 10i32) as u8;
   return sp;
 }
-#[no_mangle]
-pub unsafe extern "C" fn free_procps_scan(mut sp: *mut procps_status_t) {
+pub unsafe fn free_procps_scan(mut sp: *mut procps_status_t) {
   closedir((*sp).dir);
   if !(*sp).task_dir.is_null() {
     closedir((*sp).task_dir);
@@ -279,8 +275,7 @@ unsafe extern "C" fn skip_fields(
   }
   return str;
 }
-#[no_mangle]
-pub unsafe extern "C" fn procps_read_smaps(
+pub unsafe fn procps_read_smaps(
   mut pid: pid_t,
   mut total: *mut smaprec,
   mut cb: Option<unsafe extern "C" fn(_: *mut smaprec, _: *mut libc::c_void) -> ()>,
@@ -462,8 +457,7 @@ pub unsafe extern "C" fn procps_read_smaps(
   }
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn procps_scan(
+pub unsafe fn procps_scan(
   mut sp: *mut procps_status_t,
   mut flags: libc::c_int,
 ) -> *mut procps_status_t {
@@ -1280,8 +1274,7 @@ pub unsafe extern "C" fn procps_scan(
 //procps_status_t* alloc_procps_scan(void) FAST_FUNC;
 /* Format cmdline (up to col chars) into char buf[size] */
 /* Puts [comm] if cmdline is empty (-> process is a kernel thread) */
-#[no_mangle]
-pub unsafe extern "C" fn read_cmdline(
+pub unsafe fn read_cmdline(
   mut buf: *mut libc::c_char,
   mut col: libc::c_int,
   mut pid: libc::c_uint,

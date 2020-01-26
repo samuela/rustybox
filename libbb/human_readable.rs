@@ -30,8 +30,7 @@ use libc;
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn make_human_readable_str(
+pub unsafe fn make_human_readable_str(
   mut val: libc::c_ulonglong,
   mut block_size: libc::c_ulong,
   mut display_unit: libc::c_ulong,
@@ -100,8 +99,7 @@ pub unsafe extern "C" fn make_human_readable_str(
 /* vda's implementations of the similar idea */
 /* Convert unsigned long long value into compact 5-char representation.
  * String is not terminated (buf[5] is untouched) */
-#[no_mangle]
-pub unsafe extern "C" fn smart_ulltoa5(
+pub unsafe fn smart_ulltoa5(
   mut ul: libc::c_ulonglong,
   mut buf: *mut libc::c_char,
   mut scale: *const libc::c_char,
@@ -471,8 +469,7 @@ pub unsafe extern "C" fn smart_ulltoa5(
 /* Convert unsigned long long value into compact 4-char
  * representation. Examples: "1234", "1.2k", " 27M", "123T"
  * String is not terminated (buf[4] is untouched) */
-#[no_mangle]
-pub unsafe extern "C" fn smart_ulltoa4(
+pub unsafe fn smart_ulltoa4(
   mut ul: libc::c_ulonglong,
   mut buf: *mut libc::c_char,
   mut scale: *const libc::c_char,

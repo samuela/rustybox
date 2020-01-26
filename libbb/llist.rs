@@ -11,11 +11,7 @@ pub struct llist_t {
 }
 
 /* Add data to the start of the linked list.  */
-#[no_mangle]
-pub unsafe extern "C" fn llist_add_to(
-  mut old_head: *mut *mut llist_t,
-  mut data: *mut libc::c_void,
-) {
+pub unsafe fn llist_add_to(mut old_head: *mut *mut llist_t, mut data: *mut libc::c_void) {
   let mut new_head: *mut llist_t =
     xmalloc(::std::mem::size_of::<llist_t>() as libc::c_ulong) as *mut llist_t;
   (*new_head).data = data as *mut libc::c_char;
@@ -24,11 +20,7 @@ pub unsafe extern "C" fn llist_add_to(
 }
 
 /* Add data to the end of the linked list.  */
-#[no_mangle]
-pub unsafe extern "C" fn llist_add_to_end(
-  mut list_head: *mut *mut llist_t,
-  mut data: *mut libc::c_void,
-) {
+pub unsafe fn llist_add_to_end(mut list_head: *mut *mut llist_t, mut data: *mut libc::c_void) {
   while !(*list_head).is_null() {
     list_head = &mut (**list_head).link
   }
@@ -40,8 +32,7 @@ pub unsafe extern "C" fn llist_add_to_end(
 }
 
 /* Remove first element from the list and return it */
-#[no_mangle]
-pub unsafe extern "C" fn llist_pop(mut head: *mut *mut llist_t) -> *mut libc::c_void {
+pub unsafe fn llist_pop(mut head: *mut *mut llist_t) -> *mut libc::c_void {
   let mut data: *mut libc::c_void = std::ptr::null_mut();
   let mut temp: *mut llist_t = *head;
   if !temp.is_null() {
@@ -53,8 +44,7 @@ pub unsafe extern "C" fn llist_pop(mut head: *mut *mut llist_t) -> *mut libc::c_
 }
 
 /* Unlink arbitrary given element from the list */
-#[no_mangle]
-pub unsafe extern "C" fn llist_unlink(mut head: *mut *mut llist_t, mut elm: *mut llist_t) {
+pub unsafe fn llist_unlink(mut head: *mut *mut llist_t, mut elm: *mut llist_t) {
   if elm.is_null() {
     return;
   }
@@ -70,8 +60,7 @@ pub unsafe extern "C" fn llist_unlink(mut head: *mut *mut llist_t, mut elm: *mut
 
 /* Recursively free all elements in the linked list.  If freeit != NULL
  * call it on each datum in the list */
-#[no_mangle]
-pub unsafe extern "C" fn llist_free(
+pub unsafe fn llist_free(
   mut elm: *mut llist_t,
   mut freeit: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
 ) {
@@ -84,8 +73,7 @@ pub unsafe extern "C" fn llist_free(
 }
 
 /* Reverse list order. */
-#[no_mangle]
-pub unsafe extern "C" fn llist_rev(mut list: *mut llist_t) -> *mut llist_t {
+pub unsafe fn llist_rev(mut list: *mut llist_t) -> *mut llist_t {
   let mut rev: *mut llist_t = std::ptr::null_mut();
   while !list.is_null() {
     let mut next: *mut llist_t = (*list).link;
@@ -96,11 +84,7 @@ pub unsafe extern "C" fn llist_rev(mut list: *mut llist_t) -> *mut llist_t {
   return rev;
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn llist_find_str(
-  mut list: *mut llist_t,
-  mut str: *const libc::c_char,
-) -> *mut llist_t {
+pub unsafe fn llist_find_str(mut list: *mut llist_t, mut str: *const libc::c_char) -> *mut llist_t {
   while !list.is_null() {
     if strcmp((*list).data, str) == 0 {
       break;

@@ -50,8 +50,7 @@ pub struct loop_info64 {
 }
 pub type __u64 = libc::c_ulonglong;
 pub type u32 = libc::c_uint;
-#[no_mangle]
-pub unsafe extern "C" fn query_loop(mut device: *const libc::c_char) -> *mut libc::c_char {
+pub unsafe fn query_loop(mut device: *const libc::c_char) -> *mut libc::c_char {
   let mut fd: libc::c_int = 0;
   let mut loopinfo: bb_loop_info = bb_loop_info {
     lo_device: 0,
@@ -87,8 +86,7 @@ pub unsafe extern "C" fn query_loop(mut device: *const libc::c_char) -> *mut lib
   }
   return dev;
 }
-#[no_mangle]
-pub unsafe extern "C" fn del_loop(mut device: *const libc::c_char) -> libc::c_int {
+pub unsafe fn del_loop(mut device: *const libc::c_char) -> libc::c_int {
   let mut fd: libc::c_int = 0;
   let mut rc: libc::c_int = 0;
   fd = open(device, 0);
@@ -100,8 +98,7 @@ pub unsafe extern "C" fn del_loop(mut device: *const libc::c_char) -> libc::c_in
   return rc;
 }
 /* Obtain an unused loop device number */
-#[no_mangle]
-pub unsafe extern "C" fn get_free_loop() -> libc::c_int {
+pub unsafe fn get_free_loop() -> libc::c_int {
   let mut fd: libc::c_int = 0; /* -2: "no /dev/loop-control" */
   let mut loopdevno: libc::c_int = 0;
   fd = open(
@@ -521,8 +518,7 @@ pub unsafe extern "C" fn get_free_loop() -> libc::c_int {
  * search will re-use an existing loop device already bound to that
  * file/offset if it finds one.
  */
-#[no_mangle]
-pub unsafe extern "C" fn set_loop(
+pub unsafe fn set_loop(
   mut device: *mut *mut libc::c_char,
   mut file: *const libc::c_char,
   mut offset: libc::c_ulonglong,

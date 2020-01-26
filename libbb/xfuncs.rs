@@ -161,8 +161,7 @@ pub type C2RustUnnamed = libc::c_uint;
  * TODO: move xmalloc() and xatonum() here.
  */
 /* Turn on nonblocking I/O on a fd */
-#[no_mangle]
-pub unsafe extern "C" fn ndelay_on(mut fd: libc::c_int) -> libc::c_int {
+pub unsafe fn ndelay_on(mut fd: libc::c_int) -> libc::c_int {
   let mut flags: libc::c_int = libc::fcntl(fd, 3i32);
   if flags & 0o4000i32 != 0 {
     return flags;
@@ -170,8 +169,7 @@ pub unsafe extern "C" fn ndelay_on(mut fd: libc::c_int) -> libc::c_int {
   libc::fcntl(fd, 4i32, flags | 0o4000i32);
   return flags;
 }
-#[no_mangle]
-pub unsafe extern "C" fn ndelay_off(mut fd: libc::c_int) -> libc::c_int {
+pub unsafe fn ndelay_off(mut fd: libc::c_int) -> libc::c_int {
   let mut flags: libc::c_int = libc::fcntl(fd, 3i32);
   if flags & 0o4000i32 == 0 {
     return flags;
@@ -179,12 +177,10 @@ pub unsafe extern "C" fn ndelay_off(mut fd: libc::c_int) -> libc::c_int {
   libc::fcntl(fd, 4i32, flags & !0o4000i32);
   return flags;
 }
-#[no_mangle]
-pub unsafe extern "C" fn close_on_exec_on(mut fd: libc::c_int) {
+pub unsafe fn close_on_exec_on(mut fd: libc::c_int) {
   libc::fcntl(fd, 2i32, 1i32);
 }
-#[no_mangle]
-pub unsafe extern "C" fn strncpy_IFNAMSIZ(
+pub unsafe fn strncpy_IFNAMSIZ(
   mut dst: *mut libc::c_char,
   mut src: *const libc::c_char,
 ) -> *mut libc::c_char {
@@ -194,8 +190,7 @@ pub unsafe extern "C" fn strncpy_IFNAMSIZ(
  * A truncated result contains the first few digits of the result ala strncpy.
  * Returns a pointer past last generated digit, does _not_ store NUL.
  */
-#[no_mangle]
-pub unsafe extern "C" fn utoa_to_buf(
+pub unsafe fn utoa_to_buf(
   mut n: libc::c_uint,
   mut buf: *mut libc::c_char,
   mut buflen: libc::c_uint,
@@ -229,8 +224,7 @@ pub unsafe extern "C" fn utoa_to_buf(
   return buf;
 }
 /* Convert signed integer to ascii, like utoa_to_buf() */
-#[no_mangle]
-pub unsafe extern "C" fn itoa_to_buf(
+pub unsafe fn itoa_to_buf(
   mut n: libc::c_int,
   mut buf: *mut libc::c_char,
   mut buflen: libc::c_uint,
@@ -256,8 +250,7 @@ pub unsafe extern "C" fn itoa_to_buf(
 static mut local_buf: [libc::c_char; 12] = [0; 12];
 
 /* Convert unsigned integer to ascii using a static buffer (returned). */
-#[no_mangle]
-pub unsafe extern "C" fn utoa(mut n: libc::c_uint) -> *mut libc::c_char {
+pub unsafe fn utoa(mut n: libc::c_uint) -> *mut libc::c_char {
   *utoa_to_buf(
     n,
     local_buf.as_mut_ptr(),
@@ -268,8 +261,7 @@ pub unsafe extern "C" fn utoa(mut n: libc::c_uint) -> *mut libc::c_char {
 }
 
 /* Convert signed integer to ascii using a static buffer (returned). */
-#[no_mangle]
-pub unsafe extern "C" fn itoa(mut n: libc::c_int) -> *mut libc::c_char {
+pub unsafe fn itoa(mut n: libc::c_int) -> *mut libc::c_char {
   *itoa_to_buf(
     n,
     local_buf.as_mut_ptr(),
@@ -280,8 +272,7 @@ pub unsafe extern "C" fn itoa(mut n: libc::c_int) -> *mut libc::c_char {
 }
 
 /* Emit a string of hex representation of bytes */
-#[no_mangle]
-pub unsafe extern "C" fn bin2hex(
+pub unsafe fn bin2hex(
   mut p: *mut libc::c_char,
   mut cp: *const libc::c_char,
   mut count: libc::c_int,
@@ -309,8 +300,7 @@ pub unsafe extern "C" fn bin2hex(
 }
 
 /* Convert "[x]x[:][x]x[:][x]x[:][x]x" hex string to binary, no more than COUNT bytes */
-#[no_mangle]
-pub unsafe extern "C" fn hex2bin(
+pub unsafe fn hex2bin(
   mut dst: *mut libc::c_char,
   mut str: *const libc::c_char,
   mut count: libc::c_int,
@@ -355,18 +345,15 @@ pub unsafe extern "C" fn hex2bin(
 }
 
 /* Return how long the file at fd is, if there's any way to determine it. */
-#[no_mangle]
-pub unsafe extern "C" fn bb_putchar_stderr(mut ch: libc::c_char) -> libc::c_int {
+pub unsafe fn bb_putchar_stderr(mut ch: libc::c_char) -> libc::c_int {
   return libc::write(2, &mut ch as *mut libc::c_char as *const libc::c_void, 1) as libc::c_int;
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn full_write1_str(mut string: *const libc::c_char) -> ssize_t {
+pub unsafe fn full_write1_str(mut string: *const libc::c_char) -> ssize_t {
   return crate::libbb::full_write::full_write(1i32, string as *const libc::c_void, strlen(string));
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn full_write2_str(mut string: *const libc::c_char) -> ssize_t {
+pub unsafe fn full_write2_str(mut string: *const libc::c_char) -> ssize_t {
   return crate::libbb::full_write::full_write(2i32, string as *const libc::c_void, strlen(string));
 }
 
@@ -403,8 +390,7 @@ unsafe extern "C" fn wh_helper(
 }
 /* It is perfectly ok to pass in a NULL for either width or for
  * height, in which case that value will not be set.  */
-#[no_mangle]
-pub unsafe extern "C" fn get_terminal_width_height(
+pub unsafe fn get_terminal_width_height(
   mut fd: libc::c_int,
   mut width: *mut libc::c_uint,
   mut height: *mut libc::c_uint,
@@ -456,18 +442,15 @@ pub unsafe extern "C" fn get_terminal_width_height(
   }
   return err;
 }
-#[no_mangle]
-pub unsafe extern "C" fn get_terminal_width(mut fd: libc::c_int) -> libc::c_int {
+pub unsafe fn get_terminal_width(mut fd: libc::c_int) -> libc::c_int {
   let mut width: libc::c_uint = 0;
   get_terminal_width_height(fd, &mut width, 0 as *mut libc::c_uint);
   return width as libc::c_int;
 }
-#[no_mangle]
-pub unsafe extern "C" fn tcsetattr_stdin_TCSANOW(mut tp: *const termios) -> libc::c_int {
+pub unsafe fn tcsetattr_stdin_TCSANOW(mut tp: *const termios) -> libc::c_int {
   return tcsetattr(0i32, 0, tp);
 }
-#[no_mangle]
-pub unsafe extern "C" fn get_termios_and_make_raw(
+pub unsafe fn get_termios_and_make_raw(
   mut fd: libc::c_int,
   mut newterm: *mut termios,
   mut oldterm: *mut termios,
@@ -682,8 +665,7 @@ pub unsafe extern "C" fn get_termios_and_make_raw(
 /* "$N$" + sha_salt_16_bytes + NUL */
 /* Returns number of lines changed, or -1 on error */
 /* NB: typically you want to pass fd 0, not 1. Think 'applet | grep something' */
-#[no_mangle]
-pub unsafe extern "C" fn set_termios_to_raw(
+pub unsafe fn set_termios_to_raw(
   mut fd: libc::c_int,
   mut oldterm: *mut termios,
   mut flags: libc::c_int,
@@ -701,8 +683,7 @@ pub unsafe extern "C" fn set_termios_to_raw(
   get_termios_and_make_raw(fd, &mut newterm, oldterm, flags);
   return tcsetattr(fd, 0, &mut newterm);
 }
-#[no_mangle]
-pub unsafe extern "C" fn safe_waitpid(
+pub unsafe fn safe_waitpid(
   mut pid: pid_t,
   mut wstat: *mut libc::c_int,
   mut options: libc::c_int,
@@ -716,13 +697,11 @@ pub unsafe extern "C" fn safe_waitpid(
   }
   return r;
 }
-#[no_mangle]
-pub unsafe extern "C" fn wait_any_nohang(mut wstat: *mut libc::c_int) -> pid_t {
+pub unsafe fn wait_any_nohang(mut wstat: *mut libc::c_int) -> pid_t {
   return safe_waitpid(-1i32, wstat, 1i32);
 }
 // Wait for the specified child PID to exit, returning child's error return.
-#[no_mangle]
-pub unsafe extern "C" fn wait4pid(mut pid: pid_t) -> libc::c_int {
+pub unsafe fn wait4pid(mut pid: pid_t) -> libc::c_int {
   let mut status: libc::c_int = 0;
   if pid <= 0 {
     /*errno = ECHILD; -- wrong. */
@@ -940,8 +919,7 @@ pub unsafe extern "C" fn wait4pid(mut pid: pid_t) -> libc::c_int {
  */
 // Useful when we do know that pid is valid, and we just want to wait
 // for it to exit. Not existing pid is fatal. waitpid() status is not returned.
-#[no_mangle]
-pub unsafe extern "C" fn wait_for_exitstatus(mut pid: pid_t) -> libc::c_int {
+pub unsafe fn wait_for_exitstatus(mut pid: pid_t) -> libc::c_int {
   let mut exit_status: libc::c_int = 0;
   let mut n: libc::c_int = 0;
   n = safe_waitpid(pid, &mut exit_status, 0);

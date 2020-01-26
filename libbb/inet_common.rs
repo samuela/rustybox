@@ -102,8 +102,7 @@ pub struct addr {
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn INET_resolve(
+pub unsafe fn INET_resolve(
   mut name: *const libc::c_char,
   mut s_in: *mut sockaddr_in,
   mut hostfirst: libc::c_int,
@@ -153,8 +152,7 @@ pub unsafe extern "C" fn INET_resolve(
  *          & 0x4000: host instead of net,
  *          & 0x0fff: don't resolve
  */
-#[no_mangle]
-pub unsafe extern "C" fn INET_rresolve(
+pub unsafe fn INET_rresolve(
   mut s_in: *mut sockaddr_in,
   mut numeric: libc::c_int,
   mut netmask: u32,
@@ -216,8 +214,7 @@ pub unsafe extern "C" fn INET_rresolve(
  *          & 0x4000: host instead of net,
  *          & 0x0fff: don't resolve
  */
-#[no_mangle]
-pub unsafe extern "C" fn INET6_resolve(
+pub unsafe fn INET6_resolve(
   mut name: *const libc::c_char,
   mut sin6: *mut sockaddr_in6,
 ) -> libc::c_int {
@@ -247,8 +244,7 @@ pub unsafe extern "C" fn INET6_resolve(
   freeaddrinfo(ai);
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn INET6_rresolve(
+pub unsafe fn INET6_rresolve(
   mut sin6: *mut sockaddr_in6,
   mut numeric: libc::c_int,
 ) -> *mut libc::c_char {

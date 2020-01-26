@@ -45,16 +45,14 @@ pub const XZ_MAGIC1a: C2RustUnnamed_0 = 1484404733;
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn init_transformer_state(mut xstate: *mut transformer_state_t) {
+pub unsafe fn init_transformer_state(mut xstate: *mut transformer_state_t) {
   memset(
     xstate as *mut libc::c_void,
     0,
     ::std::mem::size_of::<transformer_state_t>() as libc::c_ulong,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn check_signature16(
+pub unsafe fn check_signature16(
   mut xstate: *mut transformer_state_t,
   mut magic16: libc::c_uint,
 ) -> libc::c_int {
@@ -76,8 +74,7 @@ pub unsafe extern "C" fn check_signature16(
   }
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn transformer_write(
+pub unsafe fn transformer_write(
   mut xstate: *mut transformer_state_t,
   mut buf: *const libc::c_void,
   mut bufsize: size_t,
@@ -121,8 +118,7 @@ pub unsafe extern "C" fn transformer_write(
   }
   return nwrote;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xtransformer_write(
+pub unsafe fn xtransformer_write(
   mut xstate: *mut transformer_state_t,
   mut buf: *const libc::c_void,
   mut bufsize: size_t,
@@ -133,8 +129,7 @@ pub unsafe extern "C" fn xtransformer_write(
   }
   return nwrote;
 }
-#[no_mangle]
-pub unsafe extern "C" fn check_errors_in_children(mut signo: libc::c_int) {
+pub unsafe fn check_errors_in_children(mut signo: libc::c_int) {
   let mut current_block: u64;
   let mut status: libc::c_int = 0;
   if signo == 0 {
@@ -179,8 +174,7 @@ pub unsafe extern "C" fn check_errors_in_children(mut signo: libc::c_int) {
   }
 }
 /* transformer(), more than meets the eye */
-#[no_mangle]
-pub unsafe extern "C" fn fork_transformer(
+pub unsafe fn fork_transformer(
   mut fd: libc::c_int,
   mut signature_skipped: libc::c_int,
   mut transformer: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong>,
@@ -303,8 +297,7 @@ unsafe extern "C" fn fork_transformer_and_free(mut xstate: *mut transformer_stat
 /* Used by e.g. rpm which gives us a fd without filename,
  * thus we can't guess the format from filename's extension.
  */
-#[no_mangle]
-pub unsafe extern "C" fn setup_unzip_on_fd(
+pub unsafe fn setup_unzip_on_fd(
   mut fd: libc::c_int,
   mut fail_if_not_compressed: libc::c_int,
 ) -> libc::c_int {
@@ -318,8 +311,7 @@ pub unsafe extern "C" fn setup_unzip_on_fd(
 }
 /* lzma has no signature, need a little helper. NB: exist only for ENABLE_FEATURE_SEAMLESS_LZMA=y */
 /* ...and custom version for LZMA */
-#[no_mangle]
-pub unsafe extern "C" fn setup_lzma_on_fd(mut fd: libc::c_int) {
+pub unsafe fn setup_lzma_on_fd(mut fd: libc::c_int) {
   let mut xstate: *mut transformer_state_t = crate::libbb::xfuncs_printf::xzalloc(
     ::std::mem::size_of::<transformer_state_t>() as libc::c_ulong,
   ) as *mut transformer_state_t;
@@ -360,8 +352,7 @@ unsafe extern "C" fn open_transformer(
   xstate = setup_transformer_on_fd(fd, fail_if_not_compressed);
   return xstate;
 }
-#[no_mangle]
-pub unsafe extern "C" fn open_zipped(
+pub unsafe fn open_zipped(
   mut fname: *const libc::c_char,
   mut fail_if_not_compressed: libc::c_int,
 ) -> libc::c_int {
@@ -627,8 +618,7 @@ pub unsafe extern "C" fn open_zipped(
 /* Else use variable one (a bit more expensive) */
 /* Autodetects gzip/bzip2 formats. fd may be in the middle of the file! */
 /* Autodetects .gz etc */
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_open_zipped_read_close(
+pub unsafe fn xmalloc_open_zipped_read_close(
   mut fname: *const libc::c_char,
   mut maxsz_p: *mut size_t,
 ) -> *mut libc::c_void {

@@ -1461,8 +1461,7 @@ unsafe extern "C" fn input_tab(mut lastWasTab: *mut smallint) {
   free(match_buf as *mut libc::c_void);
 }
 /* FEATURE_TAB_COMPLETION */
-#[no_mangle]
-pub unsafe extern "C" fn new_line_input_t(mut flags: libc::c_int) -> *mut line_input_t {
+pub unsafe fn new_line_input_t(mut flags: libc::c_int) -> *mut line_input_t {
   let mut n: *mut line_input_t = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<
     line_input_t,
   >() as libc::c_ulong) as *mut line_input_t;
@@ -1471,8 +1470,7 @@ pub unsafe extern "C" fn new_line_input_t(mut flags: libc::c_int) -> *mut line_i
   (*n).max_history = 255i32 + 0;
   return n;
 }
-#[no_mangle]
-pub unsafe extern "C" fn size_from_HISTFILESIZE(mut hp: *const libc::c_char) -> libc::c_uint {
+pub unsafe fn size_from_HISTFILESIZE(mut hp: *const libc::c_char) -> libc::c_uint {
   let mut size: libc::c_int = 255i32 + 0;
   if !hp.is_null() {
     size = atoi(hp);
@@ -1524,8 +1522,7 @@ unsafe extern "C" fn get_next_history() -> libc::c_int {
   return 0;
 }
 /* Lists command history. Used by shell 'history' builtins */
-#[no_mangle]
-pub unsafe extern "C" fn show_history(mut st: *const line_input_t) {
+pub unsafe fn show_history(mut st: *const line_input_t) {
   let mut i: libc::c_int = 0;
   if st.is_null() {
     return;
@@ -1540,8 +1537,7 @@ pub unsafe extern "C" fn show_history(mut st: *const line_input_t) {
     i += 1
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn free_line_input_t(mut n: *mut line_input_t) {
+pub unsafe fn free_line_input_t(mut n: *mut line_input_t) {
   let mut i: libc::c_int = (*n).cnt_history;
   while i > 0 {
     i -= 1;
@@ -3827,8 +3823,7 @@ unsafe extern "C" fn sigaction2(mut sig: libc::c_int, mut act: *mut sigaction) {
  * (in both cases the cursor remains on the input line, '\n' is not printed)
  * >0 length of input string, including terminating '\n'
  */
-#[no_mangle]
-pub unsafe extern "C" fn read_line_input(
+pub unsafe fn read_line_input(
   mut st: *mut line_input_t,
   mut prompt: *const libc::c_char,
   mut command: *mut libc::c_char,

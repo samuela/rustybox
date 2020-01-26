@@ -143,8 +143,7 @@ unsafe extern "C" fn rtnl_send(
  *
  * Authors: Alexey Kuznetsov, <kuznet@ms2.inr.ac.ru>
  */
-#[no_mangle]
-pub unsafe extern "C" fn xrtnl_open(mut rth: *mut rtnl_handle)
+pub unsafe fn xrtnl_open(mut rth: *mut rtnl_handle)
 /*, unsigned subscriptions*/
 {
   memset(
@@ -175,8 +174,7 @@ pub unsafe extern "C" fn xrtnl_open(mut rth: *mut rtnl_handle)
   */
   (*rth).seq = time(0 as *mut time_t) as u32;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xrtnl_wilddump_request(
+pub unsafe fn xrtnl_wilddump_request(
   mut rth: *mut rtnl_handle,
   mut family: libc::c_int,
   mut type_0: libc::c_int,
@@ -199,8 +197,7 @@ pub unsafe extern "C" fn xrtnl_wilddump_request(
 /* A version which checks for e.g. EPERM errors.
  * Try: setuidgid 1:1 ip addr flush dev eth0
  */
-#[no_mangle]
-pub unsafe extern "C" fn rtnl_send_check(
+pub unsafe fn rtnl_send_check(
   mut rth: *mut rtnl_handle,
   mut buf: *const libc::c_void,
   mut len: libc::c_int,
@@ -274,8 +271,7 @@ pub unsafe extern "C" fn rtnl_send_check(
   }
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn rtnl_dump_request(
+pub unsafe fn rtnl_dump_request(
   mut rth: *mut rtnl_handle,
   mut type_0: libc::c_int,
   mut req: *mut libc::c_void,
@@ -480,8 +476,7 @@ unsafe extern "C" fn rtnl_dump_filter(
   free(buf as *mut libc::c_void);
   return retval;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xrtnl_dump_filter(
+pub unsafe fn xrtnl_dump_filter(
   mut rth: *mut rtnl_handle,
   mut filter: Option<
     unsafe extern "C" fn(
@@ -500,8 +495,7 @@ pub unsafe extern "C" fn xrtnl_dump_filter(
   }
   return ret;
 }
-#[no_mangle]
-pub unsafe extern "C" fn rtnl_talk(
+pub unsafe fn rtnl_talk(
   mut rtnl: *mut rtnl_handle,
   mut n: *mut nlmsghdr,
   mut answer: *mut nlmsghdr,
@@ -695,8 +689,7 @@ pub unsafe extern "C" fn rtnl_talk(
   free(buf as *mut libc::c_void);
   return retval;
 }
-#[no_mangle]
-pub unsafe extern "C" fn addattr32(
+pub unsafe fn addattr32(
   mut n: *mut nlmsghdr,
   mut maxlen: libc::c_int,
   mut type_0: libc::c_int,
@@ -742,8 +735,7 @@ pub unsafe extern "C" fn addattr32(
     & !4u32.wrapping_sub(1i32 as libc::c_uint);
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn addattr_l(
+pub unsafe fn addattr_l(
   mut n: *mut nlmsghdr,
   mut maxlen: libc::c_int,
   mut type_0: libc::c_int,
@@ -794,8 +786,7 @@ pub unsafe extern "C" fn addattr_l(
     & !4u32.wrapping_sub(1i32 as libc::c_uint);
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn rta_addattr32(
+pub unsafe fn rta_addattr32(
   mut rta: *mut rtattr,
   mut maxlen: libc::c_int,
   mut type_0: libc::c_int,
@@ -836,8 +827,7 @@ pub unsafe extern "C" fn rta_addattr32(
     & !4u32.wrapping_sub(1i32 as libc::c_uint)) as libc::c_ushort;
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn rta_addattr_l(
+pub unsafe fn rta_addattr_l(
   mut rta: *mut rtattr,
   mut maxlen: libc::c_int,
   mut type_0: libc::c_int,
@@ -897,8 +887,7 @@ pub unsafe extern "C" fn rta_addattr_l(
 //return send(rth->fd, buf, len, 0);
 // We are using even shorter:
 // and convert to void, inline.
-#[no_mangle]
-pub unsafe extern "C" fn parse_rtattr(
+pub unsafe fn parse_rtattr(
   mut tb: *mut *mut rtattr,
   mut max: libc::c_int,
   mut rta: *mut rtattr,
