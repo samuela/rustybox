@@ -44,9 +44,6 @@ extern "C" {
 
   #[no_mangle]
   static mut xfunc_error_retval: u8;
-
-/* A bit of bunzip2 internals are exposed for compressed help support: */
-
 }
 
 // This struct is actually defined in appletlib.c.
