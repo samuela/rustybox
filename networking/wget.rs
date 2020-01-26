@@ -787,7 +787,7 @@ unsafe extern "C" fn spawn_ssl_client(
   pid = if 1i32 != 0 {
     crate::libbb::xfuncs_printf::xfork()
   } else {
-    ({
+    {
       let mut bb__xvfork_pid: pid_t = vfork();
       if bb__xvfork_pid < 0 {
         crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
@@ -795,7 +795,7 @@ unsafe extern "C" fn spawn_ssl_client(
         );
       }
       bb__xvfork_pid
-    })
+    }
   };
   if pid == 0 {
     /* Child */

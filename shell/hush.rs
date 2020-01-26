@@ -8441,7 +8441,7 @@ unsafe extern "C" fn generate_stream_from_string(
   pid = if 1i32 != 0 {
     crate::libbb::xfuncs_printf::xfork()
   } else {
-    ({
+    {
       let mut bb__xvfork_pid: pid_t = vfork();
       if bb__xvfork_pid < 0 {
         crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
@@ -8449,7 +8449,7 @@ unsafe extern "C" fn generate_stream_from_string(
         );
       }
       bb__xvfork_pid
-    })
+    }
   };
   if pid == 0 {
     /* child */
@@ -8633,7 +8633,7 @@ unsafe extern "C" fn setup_heredoc(mut redir: *mut redir_struct) {
     pid = if 1i32 != 0 {
       crate::libbb::xfuncs_printf::xfork()
     } else {
-      ({
+      {
         let mut bb__xvfork_pid: pid_t = vfork();
         if bb__xvfork_pid < 0 {
           crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
@@ -8641,7 +8641,7 @@ unsafe extern "C" fn setup_heredoc(mut redir: *mut redir_struct) {
           );
         }
         bb__xvfork_pid
-      })
+      }
     };
     if pid != 0 {
       _exit(0i32);

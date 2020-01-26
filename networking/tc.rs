@@ -1038,11 +1038,11 @@ pub unsafe extern "C" fn tc_main(
       if obj == OBJ_qdisc as libc::c_int {
         RTM_GETQDISC as libc::c_int
       } else {
-        (if obj == OBJ_class as libc::c_int {
+        if obj == OBJ_class as libc::c_int {
           RTM_GETTCLASS as libc::c_int
         } else {
           RTM_GETTFILTER as libc::c_int
-        })
+        }
       },
       &mut msg as *mut tcmsg as *mut libc::c_void,
       ::std::mem::size_of::<tcmsg>() as libc::c_ulong as libc::c_int,

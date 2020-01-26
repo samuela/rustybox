@@ -1386,11 +1386,11 @@ unsafe extern "C" fn process_files() {
           }
           (*sed_cmd).set_in_match(
             !((if (*sed_cmd).end_line != 0 {
-              (if (*sed_cmd).end_line == -1i32 {
+              if (*sed_cmd).end_line == -1i32 {
                 next_line.is_null() as libc::c_int
               } else {
                 ((*sed_cmd).end_line <= linenum) as libc::c_int
-              })
+              }
             } else {
               (*sed_cmd).end_match.is_null() as libc::c_int
             }) != 0

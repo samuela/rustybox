@@ -618,7 +618,7 @@ unsafe extern "C" fn KeyExpansion(
     *RoundKey.offset(i as isize) = {
       let mut v: u32 = 0;
       v = *((key as *mut u32).offset(i as isize) as *mut bb__aliased_u32);
-      ({
+      {
         let mut __v: libc::c_uint = 0;
         let mut __x: libc::c_uint = v;
         if false {
@@ -635,7 +635,7 @@ unsafe extern "C" fn KeyExpansion(
           c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
         }
         __v
-      })
+      }
     };
     i += 1
   }
