@@ -22,6 +22,9 @@ f128 = "0.2.6"
 libc = "0.2"
 lazy_static = "1.4"
 
+[dev-dependencies]
+duct = "0.13.3"
+
 # See https://github.com/johnthagen/min-sized-rust
 [profile.release]
 opt-level = 'z'  # Optimize for size.

@@ -9,7 +9,6 @@ pub fn yes_main(args: &[&str]) -> ! {
 
   // This nonsense is necessary in order to prevent a panic with things like
   // `yes | head`. See https://github.com/BurntSushi/advent-of-code/issues/17.
-  loop {
-    writeln!(std::io::stdout(), "{}", line).unwrap_or_else(|_| std::process::exit(1));
-  }
+  while let Ok(_) = writeln!(std::io::stdout(), "{}", line) {}
+  std::process::exit(0);
 }
