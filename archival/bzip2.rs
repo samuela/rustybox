@@ -2805,11 +2805,7 @@ unsafe extern "C" fn compressStream(mut _xstate: *mut transformer_state_t) -> li
   free(iobuf as *mut libc::c_void);
   return total;
 }
-#[no_mangle]
-pub unsafe extern "C" fn bzip2_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn bzip2_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
   /* standard bzip2 flags
    * -d --decompress force decompression

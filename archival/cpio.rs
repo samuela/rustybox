@@ -312,11 +312,7 @@ unsafe extern "C" fn cpio_o() -> libc::c_int {
   }
   /* end of "while (1)" */
 }
-#[no_mangle]
-pub unsafe extern "C" fn cpio_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn cpio_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut archive_handle: *mut archive_handle_t = std::ptr::null_mut();
   let mut cpio_filename: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

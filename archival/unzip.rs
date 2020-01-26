@@ -539,11 +539,7 @@ unsafe extern "C" fn get_lstat_mode(mut dst_fn: *const libc::c_char) -> libc::c_
   } /* must match size used by my_fgets80 */
   return stat_buf.st_mode as libc::c_int;
 }
-#[no_mangle]
-pub unsafe extern "C" fn unzip_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn unzip_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut mode_0: libc::c_int = 0;
   let mut current_block: u64;
   let mut opts: libc::c_uint = 0;

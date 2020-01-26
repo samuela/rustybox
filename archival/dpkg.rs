@@ -2434,11 +2434,7 @@ unsafe extern "C" fn configure_package(mut deb_file: *mut deb_file_t) {
     3i32,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn dpkg_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn dpkg_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut deb_file: *mut *mut deb_file_t = std::ptr::null_mut();
   let mut status_node: *mut status_node_t = std::ptr::null_mut();
   let mut str_f: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

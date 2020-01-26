@@ -653,11 +653,7 @@ unsafe extern "C" fn extract_cpio(mut fd: libc::c_int, mut source_rpm: *const li
  * Looks like we can switch to getopt32 here: in practice, people
  * do place -q first if they intend to use it (misinterpreting "-piq" wouldn't matter).
  */
-#[no_mangle]
-pub unsafe extern "C" fn rpm_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn rpm_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opt: libc::c_int = 0;
   let mut func: libc::c_int = 0;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).pagesize = getpagesize() as libc::c_uint;
@@ -941,8 +937,7 @@ pub unsafe extern "C" fn rpm_main(
 //usage:#define rpm2cpio_full_usage "\n\n"
 //usage:       "Output a cpio archive of the rpm file"
 /* No getopt required */
-#[no_mangle]
-pub unsafe extern "C" fn rpm2cpio_main(
+pub unsafe fn rpm2cpio_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

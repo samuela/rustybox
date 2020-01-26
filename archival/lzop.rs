@@ -1719,11 +1719,7 @@ unsafe extern "C" fn pack_lzop(mut _xstate: *mut transformer_state_t) -> libc::c
   }
   return do_lzo_compress() as libc::c_longlong;
 }
-#[no_mangle]
-pub unsafe extern "C" fn lzop_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn lzop_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   crate::libbb::getopt32::getopt32(
     argv,
     b"cfUvqdt123456789CFk\x00" as *const u8 as *const libc::c_char,
