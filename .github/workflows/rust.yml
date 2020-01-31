@@ -412,7 +412,7 @@ jobs:
                                       zcip
 
       - name: cargo test
-        run: cargo test --verbose
+        run: cargo test --verbose --all-features
 
       - name: rustfmt
         run: |
