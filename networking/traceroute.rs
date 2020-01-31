@@ -1593,15 +1593,13 @@ unsafe extern "C" fn common_traceroute_main(
   }
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn traceroute_main(
+pub unsafe fn traceroute_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return common_traceroute_main(0i32, argv);
 }
-#[no_mangle]
-pub unsafe extern "C" fn traceroute6_main(
+pub unsafe fn traceroute6_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

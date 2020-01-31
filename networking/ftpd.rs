@@ -1396,11 +1396,7 @@ unsafe extern "C" fn cmdio_get_cmd_and_arg() -> u32 {
   }
   return cmdval;
 }
-#[no_mangle]
-pub unsafe extern "C" fn ftpd_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn ftpd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut pw: *mut passwd = std::ptr::null_mut();
   let mut anon_opt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut abs_timeout: libc::c_uint = 0;

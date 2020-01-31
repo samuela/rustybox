@@ -2299,8 +2299,7 @@ unsafe extern "C" fn client_background() {
 //usage:     "\nSignals:"
 //usage:     "\n	USR1	Renew lease"
 //usage:     "\n	USR2	Release lease"
-#[no_mangle]
-pub unsafe extern "C" fn udhcpc6_main(
+pub unsafe fn udhcpc6_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

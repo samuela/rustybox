@@ -97777,8 +97777,7 @@ unsafe extern "C" fn edit_file(mut fn_0: *mut libc::c_char) {
   go_bottom_and_clear_to_eol();
   cookmode();
 }
-#[no_mangle]
-pub unsafe extern "C" fn vi_main(
+pub unsafe fn vi_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

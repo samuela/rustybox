@@ -1984,11 +1984,7 @@ unsafe extern "C" fn send_inform(mut oldpacket: *mut dhcp_packet) {
   send_packet(&mut packet, 0);
   // or maybe? send_packet_verbose(&packet, "sending ACK to %s");
 }
-#[no_mangle]
-pub unsafe extern "C" fn udhcpd_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn udhcpd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut server_socket: libc::c_int = -1i32;
   let mut retval: libc::c_int = 0;

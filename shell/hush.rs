@@ -10901,11 +10901,7 @@ unsafe extern "C" fn set_mode(
   }
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn hush_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn hush_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut flags: libc::c_uint = 0;
   let mut builtin_argc: libc::c_uint = 0;

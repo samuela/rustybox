@@ -988,8 +988,7 @@ unsafe extern "C" fn setup_tables() {
     }
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn mkfs_minix_main(
+pub unsafe fn mkfs_minix_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

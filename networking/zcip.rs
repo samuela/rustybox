@@ -440,11 +440,7 @@ unsafe extern "C" fn random_delay_ms(mut secs: libc::c_uint) -> libc::c_uint {
 /* *
  * main program
  */
-#[no_mangle]
-pub unsafe extern "C" fn zcip_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn zcip_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut r_opt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut l_opt: *const libc::c_char = b"169.254.0.0\x00" as *const u8 as *const libc::c_char;

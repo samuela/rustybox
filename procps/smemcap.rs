@@ -215,8 +215,7 @@ unsafe extern "C" fn archivejoin(mut sub: *const libc::c_char, mut name: *const 
 //usage:#define smemcap_trivial_usage ">SMEMDATA.TAR"
 //usage:#define smemcap_full_usage "\n\n"
 //usage:       "Collect memory usage data in /proc and write it to stdout"
-#[no_mangle]
-pub unsafe extern "C" fn smemcap_main(
+pub unsafe fn smemcap_main(
   mut _argc: libc::c_int,
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

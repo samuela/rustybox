@@ -1067,11 +1067,7 @@ unsafe extern "C" fn readwrite() -> libc::c_int {
 }
 /* readwrite */
 /* main: now we pull it all together... */
-#[no_mangle]
-pub unsafe extern "C" fn nc_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn nc_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64; /* for compiler */
   let mut str_p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut str_s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

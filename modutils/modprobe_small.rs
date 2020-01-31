@@ -124,11 +124,7 @@ pub const DEPMOD_OPT_n: C2RustUnnamed_0 = 1;
 unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
-#[no_mangle]
-pub unsafe extern "C" fn lsmod_main(
-  mut _argc: libc::c_int,
-  mut _argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn lsmod_main(mut _argc: libc::c_int, mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   crate::libbb::xfuncs_printf::xprint_and_close_file(crate::libbb::wfopen::xfopen_for_read(
     b"/proc/modules\x00" as *const u8 as *const libc::c_char,
   ));
@@ -1181,8 +1177,7 @@ The following options are useful for people managing distributions:
 //usage:       "	-r	Remove MODULE"
 //usage:     "\n	-q	Quiet"
 //usage:#endif
-#[no_mangle]
-pub unsafe extern "C" fn modprobe_main(
+pub unsafe fn modprobe_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

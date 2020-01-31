@@ -767,8 +767,7 @@ unsafe extern "C" fn get_drv_info(mut master_ifname: *mut libc::c_char) {
     );
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn ifenslave_main(
+pub unsafe fn ifenslave_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

@@ -3057,11 +3057,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
   );
   //TODO: free unused elements of key_entries?
 }
-#[no_mangle]
-pub unsafe extern "C" fn ntpd_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn ntpd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut G: globals = globals {
     cur_time: 0.,

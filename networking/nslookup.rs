@@ -1278,8 +1278,7 @@ unsafe extern "C" fn make_ptr(mut addrstr: *const libc::c_char) -> *mut libc::c_
   }
   return std::ptr::null_mut::<libc::c_char>();
 }
-#[no_mangle]
-pub unsafe extern "C" fn nslookup_main(
+pub unsafe fn nslookup_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

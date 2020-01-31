@@ -361,11 +361,7 @@ unsafe extern "C" fn limit(mut what: libc::c_int, mut l: libc::c_long) {
     );
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn chpst_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn chpst_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut ugid: bb_uidgid_t = bb_uidgid_t { uid: 0, gid: 0 };
   let mut set_user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   set_user = set_user;

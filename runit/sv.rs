@@ -917,11 +917,7 @@ unsafe extern "C" fn sv(mut argv: *mut *mut libc::c_char) -> libc::c_int {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).rc
   } as libc::c_int;
 }
-#[no_mangle]
-pub unsafe extern "C" fn sv_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn sv_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   return sv(argv);
 }
 //usage:#define svc_trivial_usage
@@ -934,11 +930,7 @@ pub unsafe extern "C" fn sv_main(
 //usage:   "\n""	-o	Once: if service is not running, start it; do not restart it"
 //usage:   "\n""	-pchaitk Send STOP, CONT, HUP, ALRM, INT, TERM, KILL signal to service"
 //usage:   "\n""	-x	Exit: runsv will exit as soon as the service is down"
-#[no_mangle]
-pub unsafe extern "C" fn svc_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn svc_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut command: [libc::c_char; 2] = [0; 2];
   let mut optstring: *const libc::c_char = std::ptr::null();
   let mut opts: libc::c_uint = 0;
@@ -986,11 +978,7 @@ pub unsafe extern "C" fn svc_main(
 //usage:       "Check whether runsv supervisor is running.\n"
 //usage:       "Exit code is 0 if it does, 100 if it does not,\n"
 //usage:       "111 (with error message) if SERVICE_DIR does not exist."
-#[no_mangle]
-pub unsafe extern "C" fn svok_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn svok_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut dir: *const libc::c_char = *argv.offset(1);
   if dir.is_null() {
     crate::libbb::appletlib::bb_show_usage();

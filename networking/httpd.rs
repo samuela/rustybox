@@ -2949,11 +2949,7 @@ unsafe extern "C" fn sighup_handler(mut _sig: libc::c_int) {
   );
   *bb_errno = sv;
 }
-#[no_mangle]
-pub unsafe extern "C" fn httpd_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn httpd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut server_socket: libc::c_int = 0;
   server_socket = server_socket;
   let mut opt: libc::c_uint = 0;

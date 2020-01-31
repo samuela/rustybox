@@ -994,11 +994,7 @@ unsafe extern "C" fn tftp_protocol(
   );
   return 1i32;
 }
-#[no_mangle]
-pub unsafe extern "C" fn tftp_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn tftp_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut peer_lsa: *mut len_and_sockaddr = std::ptr::null_mut();
   let mut local_file: *const libc::c_char = std::ptr::null();
   let mut remote_file: *const libc::c_char = std::ptr::null();
@@ -1114,11 +1110,7 @@ pub unsafe extern "C" fn tftp_main(
   return result;
 }
 /* ENABLE_TFTP */
-#[no_mangle]
-pub unsafe extern "C" fn tftpd_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn tftpd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut our_lsa: *mut len_and_sockaddr = std::ptr::null_mut();
   let mut peer_lsa: *mut len_and_sockaddr = std::ptr::null_mut();

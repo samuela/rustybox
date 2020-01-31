@@ -259,11 +259,7 @@ static mut name_types: [libc::c_char; 76] = [
   'D' as i32 as libc::c_char,
   0 as libc::c_char,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn vconfig_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn vconfig_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut ifr: vlan_ioctl_args = vlan_ioctl_args {
     cmd: 0,
     device1: [0; 24],

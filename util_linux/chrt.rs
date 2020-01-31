@@ -94,11 +94,7 @@ unsafe extern "C" fn show_min_max(mut pol: libc::c_int) {
   }
   printf(fmt, policy_name(pol), min, max);
 }
-#[no_mangle]
-pub unsafe extern "C" fn chrt_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn chrt_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut pol: libc::c_int = 0;
   let mut current_block: u64;
   let mut pid: pid_t = 0;

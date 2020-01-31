@@ -360,8 +360,7 @@ static mut OptArray: [options; 24] = [options {
   flags_arg_flags: [0; 2],
   selector: 0,
 }; 24];
-#[no_mangle]
-pub unsafe extern "C" fn ifconfig_main(
+pub unsafe fn ifconfig_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

@@ -1081,11 +1081,7 @@ static mut init_functions: [Option<unsafe extern "C" fn(_: *const libc::c_char) 
   Some(init_cr as unsafe extern "C" fn(_: *const libc::c_char) -> *mut s_stat),
 ];
 
-#[no_mangle]
-pub unsafe extern "C" fn nmeter_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn nmeter_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut buf: [libc::c_char; 32] = [0; 32];
   let mut first: *mut s_stat = std::ptr::null_mut();
   let mut last: *mut s_stat = std::ptr::null_mut();

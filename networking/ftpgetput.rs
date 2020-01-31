@@ -375,8 +375,7 @@ static mut ftpgetput_longopts: [libc::c_char; 51] = [
   117, 115, 101, 114, 110, 97, 109, 101, 0, 1, 117, 112, 97, 115, 115, 119, 111, 114, 100, 0, 1,
   112, 112, 111, 114, 116, 0, 1, 80, 0,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn ftpgetput_main(
+pub unsafe fn ftpgetput_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

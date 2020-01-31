@@ -27,8 +27,7 @@ fn get_users() -> u32 {
 
 /* nr of bits of precision */
 /* 1.0 as fixed-point */
-#[no_mangle]
-pub extern "C" fn uptime_main(mut _argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int {
+pub fn uptime_main(_argc: libc::c_int, argv: *mut *mut libc::c_char) -> libc::c_int {
   let opts = unsafe { getopt32(argv, b"s\x00" as *const u8 as *const libc::c_char) };
 
   let mut current_secs = unsafe { time(std::ptr::null_mut()) };

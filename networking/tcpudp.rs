@@ -285,8 +285,7 @@ unsafe extern "C" fn sig_child_handler(mut _sig: libc::c_int) {
     connection_status();
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn tcpudpsvd_main(
+pub unsafe fn tcpudpsvd_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

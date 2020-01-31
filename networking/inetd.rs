@@ -1548,11 +1548,7 @@ unsafe extern "C" fn clean_up_and_exit(mut _sig: libc::c_int) {
   );
   exit(0i32);
 }
-#[no_mangle]
-pub unsafe extern "C" fn inetd_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn inetd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut sa: sigaction = std::mem::zeroed();
   let mut saved_pipe_handler: sigaction = std::mem::zeroed();

@@ -412,8 +412,7 @@ unsafe extern "C" fn pass_to_client(
   /* remove xid entry */
   xid_del((*p).xid);
 }
-#[no_mangle]
-pub unsafe extern "C" fn dhcprelay_main(
+pub unsafe fn dhcprelay_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

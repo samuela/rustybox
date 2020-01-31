@@ -942,8 +942,7 @@ unsafe extern "C" fn do_info(
   }
   fclose(procinfo);
 }
-#[no_mangle]
-pub unsafe extern "C" fn netstat_main(
+pub unsafe fn netstat_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

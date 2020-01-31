@@ -160,11 +160,7 @@ unsafe extern "C" fn act(
     kill(pid as pid_t, signo);
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn pgrep_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn pgrep_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut pid: libc::c_uint = 0;
   let mut signo: libc::c_int = 0;

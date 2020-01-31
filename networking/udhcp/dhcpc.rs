@@ -2314,11 +2314,7 @@ unsafe extern "C" fn client_background() {
 //usage:     "\nSignals:"
 //usage:     "\n	USR1	Renew lease"
 //usage:     "\n	USR2	Release lease"
-#[no_mangle]
-pub unsafe extern "C" fn udhcpc_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn udhcpc_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64; /* for compiler */
   let mut message: *mut u8 = std::ptr::null_mut(); /* for compiler */
   let mut str_V: *const libc::c_char = std::ptr::null(); /* must be signed */

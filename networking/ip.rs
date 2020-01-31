@@ -325,37 +325,28 @@ unsafe fn ip_do(ip_func: ip_func_ptr_t, mut argv: *mut *mut libc::c_char) -> lib
   argv = crate::networking::libiproute::ip_parse_common_args::ip_parse_common_args(argv.offset(1));
   return ip_func(argv);
 }
-pub unsafe extern "C" fn ipaddr_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn ipaddr_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   return ip_do(crate::networking::libiproute::ipaddress::do_ipaddr, argv);
 }
-pub unsafe extern "C" fn iplink_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn iplink_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   return ip_do(crate::networking::libiproute::iplink::do_iplink, argv);
 }
-pub unsafe extern "C" fn iproute_main(
+pub unsafe fn iproute_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return ip_do(crate::networking::libiproute::iproute::do_iproute, argv);
 }
-pub unsafe extern "C" fn iprule_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn iprule_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   return ip_do(crate::networking::libiproute::iprule::do_iprule, argv);
 }
-pub unsafe extern "C" fn iptunnel_main(
+pub unsafe fn iptunnel_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   return ip_do(crate::networking::libiproute::iptunnel::do_iptunnel, argv);
 }
-pub unsafe extern "C" fn ipneigh_main(
+pub unsafe fn ipneigh_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -364,10 +355,7 @@ pub unsafe extern "C" fn ipneigh_main(
 unsafe fn ip_print_help(_argv: *mut *mut libc::c_char) -> libc::c_int {
   crate::libbb::appletlib::bb_show_usage();
 }
-pub unsafe extern "C" fn ip_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn ip_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   static mut keywords: [libc::c_char; 45] = [
     97, 100, 100, 114, 101, 115, 115, 0, 114, 111, 117, 116, 101, 0, 114, 0, 108, 105, 110, 107, 0,
     116, 117, 110, 110, 101, 108, 0, 116, 117, 110, 108, 0, 114, 117, 108, 101, 0, 110, 101, 105,

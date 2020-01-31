@@ -438,11 +438,7 @@ unsafe extern "C" fn parse_map_file(mut filename: *const libc::c_char) {
 /*
  * acpid [-c conf_dir] [-r conf_file ] [-a map_file ] [-l log_file] [-e proc_event_file]
  */
-#[no_mangle]
-pub unsafe extern "C" fn acpid_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn acpid_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut nfd: libc::c_int = 0;
   let mut opts: libc::c_int = 0;
   let mut pfd: *mut pollfd = std::ptr::null_mut();
