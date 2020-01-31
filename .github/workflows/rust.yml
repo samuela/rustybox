@@ -12,7 +12,7 @@ jobs:
         run: |
           rustc --version --verbose
           cargo --version --verbose
-          RUSTFLAGS="-D warnings" cargo build
+          RUSTFLAGS="-D warnings" cargo build --all-features
 
       # Need to be fixed: du, gzip, seq, strings, unzip
       - name: test suite
