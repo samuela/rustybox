@@ -40,8 +40,7 @@ pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-pub type stat_func =
-  Option<unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int>;
+pub type stat_func = Option<unsafe fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int>;
 
 /*
  * Mini mv implementation for busybox
@@ -74,11 +73,7 @@ pub type stat_func =
 //usage:
 //usage:#define mv_example_usage
 //usage:       "$ mv /tmp/foo /bin/bar\n"
-#[no_mangle]
-pub unsafe extern "C" fn mv_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn mv_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut source_stat: stat = std::mem::zeroed();
   let mut source_exists: libc::c_int = 0;
   let mut current_block: u64;
@@ -168,10 +163,7 @@ pub unsafe extern "C" fn mv_main(
                 source_exists = crate::coreutils::libcoreutils::cp_mv_stat::cp_mv_stat2(
                   *argv,
                   &mut source_stat,
-                  Some(
-                    lstat
-                      as unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int,
-                  ),
+                  lstat,
                 );
                 (source_exists) < 1i32
               } {

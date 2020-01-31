@@ -56,8 +56,7 @@ pub type __priority_which_t = __priority_which;
 //usage:     "\n	-p	Process ids (default)"
 //usage:     "\n	-g	Process group ids"
 //usage:     "\n	-u	Process user names"
-#[no_mangle]
-pub unsafe extern "C" fn renice_main(
+pub unsafe fn renice_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

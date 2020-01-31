@@ -249,7 +249,7 @@ pub const BINOP: C2RustUnnamed = 1;
 pub const UNOP: C2RustUnnamed = 0;
 pub type C2RustUnnamed = libc::c_uint;
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 static mut ops_table: [operator_t; 40] = [
@@ -543,7 +543,7 @@ static mut ops_texts: [libc::c_char; 124] = [
   116, 0, 45, 110, 116, 0, 45, 111, 116, 0, 45, 101, 102, 0, 33, 0, 45, 97, 0, 45, 111, 0, 40, 0,
   41, 0, 0,
 ];
-unsafe extern "C" fn syntax(mut op: *const libc::c_char, mut msg: *const libc::c_char) -> ! {
+unsafe fn syntax(mut op: *const libc::c_char, mut msg: *const libc::c_char) -> ! {
   if !op.is_null() && *op as libc::c_int != 0 {
     crate::libbb::verror_msg::bb_error_msg(
       b"%s: %s\x00" as *const u8 as *const libc::c_char,
@@ -560,7 +560,7 @@ unsafe extern "C" fn syntax(mut op: *const libc::c_char, mut msg: *const libc::c
 }
 /* atoi with error detection */
 //XXX: FIXME: duplicate of existing libbb function?
-unsafe extern "C" fn getn(mut s: *const libc::c_char) -> number_t {
+unsafe fn getn(mut s: *const libc::c_char) -> number_t {
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut r: libc::c_longlong = 0;
   *bb_errno = 0;
@@ -599,7 +599,7 @@ static int equalf(const char *f1, const char *f2)
       b1.st_dev == b2.st_dev && b1.st_ino == b2.st_ino);
 }
 */
-unsafe extern "C" fn check_operator(mut s: *const libc::c_char) -> token {
+unsafe fn check_operator(mut s: *const libc::c_char) -> token {
   static mut no_op: operator_t = {
     let mut init = operator_t {
       op_num: -1i32 as libc::c_uchar,
@@ -620,7 +620,7 @@ unsafe extern "C" fn check_operator(mut s: *const libc::c_char) -> token {
     &*ops_table.as_ptr().offset(n as isize) as *const operator_t;
   return ops_table[n as usize].op_num as token;
 }
-unsafe extern "C" fn binop() -> libc::c_int {
+unsafe fn binop() -> libc::c_int {
   let mut opnd1: *const libc::c_char = std::ptr::null();
   let mut opnd2: *const libc::c_char = std::ptr::null();
   let mut op: *const operator_t = std::ptr::null();
@@ -692,7 +692,7 @@ unsafe extern "C" fn binop() -> libc::c_int {
   return (b1.st_dev == b2.st_dev && b1.st_ino == b2.st_ino) as libc::c_int;
   /*return 1; - NOTREACHED */
 }
-unsafe extern "C" fn initialize_group_array() {
+unsafe fn initialize_group_array() {
   (*test_ptr_to_statics).group_array =
     crate::libbb::bb_getgroups::bb_getgroups(&mut (*test_ptr_to_statics).ngroups, 0 as *mut gid_t);
 }
@@ -700,7 +700,7 @@ unsafe extern "C" fn initialize_group_array() {
 //XXX: FIXME: duplicate of existing libbb function?
 // see toplevel TODO file:
 // possible code duplication ingroup() and is_a_group_member()
-unsafe extern "C" fn is_a_group_member(mut gid: gid_t) -> libc::c_int {
+unsafe fn is_a_group_member(mut gid: gid_t) -> libc::c_int {
   let mut i: libc::c_int = 0;
   /* Short-circuit if possible, maybe saving a call to getgroups(). */
   if gid == getgid() || gid == getegid() {
@@ -722,7 +722,7 @@ unsafe extern "C" fn is_a_group_member(mut gid: gid_t) -> libc::c_int {
 /* Do the same thing access(2) does, but use the effective uid and gid,
 and don't make the mistake of telling root that any file is
 executable. */
-unsafe extern "C" fn test_eaccess(mut st: *mut stat, mut mode: libc::c_int) -> libc::c_int {
+unsafe fn test_eaccess(mut st: *mut stat, mut mode: libc::c_int) -> libc::c_int {
   let mut euid: libc::c_uint = geteuid();
   if euid == 0 as libc::c_uint {
     /* Root can read or write any file. */
@@ -747,7 +747,7 @@ unsafe extern "C" fn test_eaccess(mut st: *mut stat, mut mode: libc::c_int) -> l
   }
   return -1i32;
 }
-unsafe extern "C" fn filstat(mut nm: *mut libc::c_char, mut mode: token) -> libc::c_int {
+unsafe fn filstat(mut nm: *mut libc::c_char, mut mode: token) -> libc::c_int {
   let mut s: stat = std::mem::zeroed();
   let mut i: libc::c_uint = 0;
   i = i;
@@ -832,7 +832,7 @@ unsafe extern "C" fn filstat(mut nm: *mut libc::c_char, mut mode: token) -> libc
   return (s.st_mode & 0o170000i32 as libc::c_uint == i) as libc::c_int;
   /* NOTREACHED */
 }
-unsafe extern "C" fn nexpr(mut n: token) -> number_t {
+unsafe fn nexpr(mut n: token) -> number_t {
   let mut res: number_t = 0;
   if n as libc::c_uint == UNOT as libc::c_int as libc::c_uint {
     (*test_ptr_to_statics).args = (*test_ptr_to_statics).args.offset(1);
@@ -849,7 +849,7 @@ unsafe extern "C" fn nexpr(mut n: token) -> number_t {
   res = primary(n);
   return res;
 }
-unsafe extern "C" fn aexpr(mut n: token) -> number_t {
+unsafe fn aexpr(mut n: token) -> number_t {
   let mut res: number_t = 0;
   res = nexpr(n);
   (*test_ptr_to_statics).args = (*test_ptr_to_statics).args.offset(1);
@@ -864,7 +864,7 @@ unsafe extern "C" fn aexpr(mut n: token) -> number_t {
   (*test_ptr_to_statics).args = (*test_ptr_to_statics).args.offset(-1);
   return res;
 }
-unsafe extern "C" fn oexpr(mut n: token) -> number_t {
+unsafe fn oexpr(mut n: token) -> number_t {
   let mut res: number_t = 0;
   res = aexpr(n);
   (*test_ptr_to_statics).args = (*test_ptr_to_statics).args.offset(1);
@@ -879,7 +879,7 @@ unsafe extern "C" fn oexpr(mut n: token) -> number_t {
   (*test_ptr_to_statics).args = (*test_ptr_to_statics).args.offset(-1);
   return res;
 }
-unsafe extern "C" fn primary(mut n: token) -> number_t {
+unsafe fn primary(mut n: token) -> number_t {
   let mut res: number_t = 0;
   let mut args0_op: *const operator_t = std::ptr::null();
   if n as libc::c_uint == EOI as libc::c_int as libc::c_uint {
@@ -1332,11 +1332,7 @@ unsafe extern "C" fn primary(mut n: token) -> number_t {
 /* Embedded script support */
 /* Applets which are useful from another applets */
 /* If shell needs them, they exist even if not enabled as applets */
-#[no_mangle]
-pub unsafe extern "C" fn test_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn test_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64; /* assuming "[[" */
   let mut res: libc::c_int = 0;
   let mut arg0: *const libc::c_char = std::ptr::null();

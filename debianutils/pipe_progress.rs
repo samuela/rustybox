@@ -14,8 +14,7 @@ extern "C" {
 /* Read a block of data from stdin, write it to stdout.
  * Activity is indicated by a '.' to stderr
  */
-#[no_mangle]
-pub unsafe extern "C" fn pipe_progress_main(
+pub unsafe fn pipe_progress_main(
   mut _argc: libc::c_int,
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

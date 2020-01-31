@@ -71,11 +71,7 @@ pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 // "exit-nopipe" does not exit on EPIPE and does not set exitcode to 1 too.
 //	-p	diagnose errors writing to non pipes
 // ^^^^ this should set SIGPIPE to SIG_IGN. EPIPE is ignored (same as "warn-nopipe")
-#[no_mangle]
-pub unsafe extern "C" fn tee_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn tee_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut mode: *const libc::c_char = b"w\x00a\x00" as *const u8 as *const libc::c_char;
   let mut files: *mut *mut FILE = std::ptr::null_mut();
   let mut fp: *mut *mut FILE = std::ptr::null_mut();

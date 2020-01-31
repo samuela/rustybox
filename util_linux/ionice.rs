@@ -45,14 +45,14 @@ pub const OPT_n: C2RustUnnamed_1 = 1;
 //usage:       "Change I/O priority and class\n"
 //usage:     "\n	-c	Class. 1:realtime 2:best-effort 3:idle"
 //usage:     "\n	-n	Priority"
-unsafe extern "C" fn ioprio_set(
+unsafe fn ioprio_set(
   mut which: libc::c_int,
   mut who: libc::c_int,
   mut ioprio: libc::c_int,
 ) -> libc::c_int {
   return syscall(251i32 as libc::c_long, which, who, ioprio) as libc::c_int;
 }
-unsafe extern "C" fn ioprio_get(mut which: libc::c_int, mut who: libc::c_int) -> libc::c_int {
+unsafe fn ioprio_get(mut which: libc::c_int, mut who: libc::c_int) -> libc::c_int {
   return syscall(252i32 as libc::c_long, which, who) as libc::c_int;
 }
 static mut to_prio: [libc::c_char; 31] = [
@@ -60,8 +60,7 @@ static mut to_prio: [libc::c_char; 31] = [
   102, 111, 114, 116, 0, 105, 100, 108, 101, 0,
 ];
 
-#[no_mangle]
-pub unsafe extern "C" fn ionice_main(
+pub unsafe fn ionice_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

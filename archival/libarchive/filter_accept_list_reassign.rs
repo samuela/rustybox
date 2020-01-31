@@ -53,8 +53,7 @@ use crate::archival::libarchive::bb_archive::archive_handle_t;
  * e.g. if its a .tar.gz modify archive_handle->sub_archive to process a .tar.gz
  * or if its a .tar.bz2 make archive_handle->sub_archive handle that
  */
-#[no_mangle]
-pub unsafe extern "C" fn filter_accept_list_reassign(
+pub unsafe fn filter_accept_list_reassign(
   mut archive_handle: *mut archive_handle_t,
 ) -> libc::c_char {
   /* Check the file entry is in the accept list */
@@ -75,35 +74,35 @@ pub unsafe extern "C" fn filter_accept_list_reassign(
     if strcmp(name_ptr, b"tar\x00" as *const u8 as *const libc::c_char) == 0 {
       (*archive_handle).dpkg__action_data_subarchive = Some(
         crate::archival::libarchive::get_header_tar::get_header_tar
-          as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+          as unsafe fn(_: *mut archive_handle_t) -> libc::c_char,
       );
       return 0 as libc::c_char;
     }
     if 1i32 != 0 && strcmp(name_ptr, b"gz\x00" as *const u8 as *const libc::c_char) == 0 {
       (*archive_handle).dpkg__action_data_subarchive = Some(
         crate::archival::libarchive::get_header_tar_gz::get_header_tar_gz
-          as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+          as unsafe fn(_: *mut archive_handle_t) -> libc::c_char,
       );
       return 0 as libc::c_char;
     }
     if 1i32 != 0 && strcmp(name_ptr, b"bz2\x00" as *const u8 as *const libc::c_char) == 0 {
       (*archive_handle).dpkg__action_data_subarchive = Some(
         crate::archival::libarchive::get_header_tar_bz2::get_header_tar_bz2
-          as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+          as unsafe fn(_: *mut archive_handle_t) -> libc::c_char,
       );
       return 0 as libc::c_char;
     }
     if 1i32 != 0 && strcmp(name_ptr, b"lzma\x00" as *const u8 as *const libc::c_char) == 0 {
       (*archive_handle).dpkg__action_data_subarchive = Some(
         crate::archival::libarchive::get_header_tar_lzma::get_header_tar_lzma
-          as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+          as unsafe fn(_: *mut archive_handle_t) -> libc::c_char,
       );
       return 0 as libc::c_char;
     }
     if 1i32 != 0 && strcmp(name_ptr, b"xz\x00" as *const u8 as *const libc::c_char) == 0 {
       (*archive_handle).dpkg__action_data_subarchive = Some(
         crate::archival::libarchive::get_header_tar_xz::get_header_tar_xz
-          as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+          as unsafe fn(_: *mut archive_handle_t) -> libc::c_char,
       );
       return 0 as libc::c_char;
     }

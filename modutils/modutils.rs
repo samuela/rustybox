@@ -92,22 +92,19 @@ unsafe extern "C" fn helper_get_module(
   (*e).dnext = (*e).dprev;
   return e;
 }
-#[no_mangle]
-pub unsafe extern "C" fn moddb_get(
+pub unsafe fn moddb_get(
   mut db: *mut module_db,
   mut module: *const libc::c_char,
 ) -> *mut module_entry {
   return helper_get_module(db, module, 0);
 }
-#[no_mangle]
-pub unsafe extern "C" fn moddb_get_or_create(
+pub unsafe fn moddb_get_or_create(
   mut db: *mut module_db,
   mut module: *const libc::c_char,
 ) -> *mut module_entry {
   return helper_get_module(db, module, 1i32);
 }
-#[no_mangle]
-pub unsafe extern "C" fn moddb_free(mut db: *mut module_db) {
+pub unsafe fn moddb_free(mut db: *mut module_db) {
   let mut e: *mut module_entry = std::ptr::null_mut();
   let mut n: *mut module_entry = std::ptr::null_mut();
   let mut i: libc::c_uint = 0;
@@ -124,8 +121,7 @@ pub unsafe extern "C" fn moddb_free(mut db: *mut module_db) {
     i = i.wrapping_add(1)
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn replace(
+pub unsafe fn replace(
   mut s: *mut libc::c_char,
   mut what: libc::c_char,
   mut with: libc::c_char,
@@ -137,8 +133,7 @@ pub unsafe extern "C" fn replace(
     s = s.offset(1)
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn string_to_llist(
+pub unsafe fn string_to_llist(
   mut string: *mut libc::c_char,
   mut llist: *mut *mut llist_t,
   mut delim: *const libc::c_char,
@@ -161,8 +156,7 @@ pub unsafe extern "C" fn string_to_llist(
   }
   return len;
 }
-#[no_mangle]
-pub unsafe extern "C" fn filename2modname(
+pub unsafe fn filename2modname(
   mut filename: *const libc::c_char,
   mut modname: *mut libc::c_char,
 ) -> *mut libc::c_char {
@@ -198,8 +192,7 @@ pub unsafe extern "C" fn filename2modname(
   }
   return modname;
 }
-#[no_mangle]
-pub unsafe extern "C" fn parse_cmdline_module_options(
+pub unsafe fn parse_cmdline_module_options(
   mut argv: *mut *mut libc::c_char,
   mut quote_spaces: libc::c_int,
 ) -> *mut libc::c_char {
@@ -256,8 +249,7 @@ pub unsafe extern "C" fn parse_cmdline_module_options(
  * -errno on open/read error,
  * errno on init_module() error
  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_init_module(
+pub unsafe fn bb_init_module(
   mut filename: *const libc::c_char,
   mut options: *const libc::c_char,
 ) -> libc::c_int {
@@ -308,8 +300,7 @@ pub unsafe extern "C" fn bb_init_module(
   }
   return rc;
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_delete_module(
+pub unsafe fn bb_delete_module(
   mut module: *const libc::c_char,
   mut flags: libc::c_uint,
 ) -> libc::c_int {
@@ -346,8 +337,7 @@ pub unsafe extern "C" fn bb_delete_module(
  * "Other modules depend on us". So far we don't do such
  * translation and don't use moderror() for removal errors.
  */
-#[no_mangle]
-pub unsafe extern "C" fn moderror(mut err: libc::c_int) -> *const libc::c_char {
+pub unsafe fn moderror(mut err: libc::c_int) -> *const libc::c_char {
   match err {
     -1 => {
       /* btw: it's -EPERM */

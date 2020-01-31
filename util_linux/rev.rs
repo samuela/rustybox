@@ -47,7 +47,7 @@ pub type wchar_t = libc::c_int;
 //usage:#define rev_full_usage "\n\n"
 //usage:	"Reverse lines of FILE"
 /* In-place invert */
-unsafe extern "C" fn strrev(mut s: *mut wchar_t, mut len: libc::c_int) {
+unsafe fn strrev(mut s: *mut wchar_t, mut len: libc::c_int) {
   let mut i: libc::c_int = 0;
   if len != 0 {
     len -= 1;
@@ -64,11 +64,7 @@ unsafe extern "C" fn strrev(mut s: *mut wchar_t, mut len: libc::c_int) {
     len -= 1
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn rev_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn rev_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut retval: libc::c_int = 0;
   let mut bufsize: size_t = 0;
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

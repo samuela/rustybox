@@ -7,8 +7,7 @@ extern "C" {
   static bb_argv_dash: [*const libc::c_char; 0];
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn bb_cat(mut argv: *mut *mut libc::c_char) -> libc::c_int {
+pub unsafe fn bb_cat(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut fd: libc::c_int = 0;
   let mut retval: libc::c_int = 0;
   if (*argv).is_null() {

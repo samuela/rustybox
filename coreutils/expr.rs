@@ -103,7 +103,7 @@ pub type VALUE = valinfo;
 pub const NMATCH: C2RustUnnamed_2 = 2;
 pub type C2RustUnnamed_2 = libc::c_uint;
 /* Return a VALUE for I.  */
-unsafe extern "C" fn int_value(mut i: arith_t) -> *mut VALUE {
+unsafe fn int_value(mut i: arith_t) -> *mut VALUE {
   let mut v: *mut VALUE = std::ptr::null_mut();
   v = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<VALUE>() as libc::c_ulong)
     as *mut VALUE;
@@ -115,7 +115,7 @@ unsafe extern "C" fn int_value(mut i: arith_t) -> *mut VALUE {
   return v;
 }
 /* Return a VALUE for S.  */
-unsafe extern "C" fn str_value(mut s: *const libc::c_char) -> *mut VALUE {
+unsafe fn str_value(mut s: *const libc::c_char) -> *mut VALUE {
   let mut v: *mut VALUE = std::ptr::null_mut();
   v = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<VALUE>() as libc::c_ulong)
     as *mut VALUE;
@@ -127,14 +127,14 @@ unsafe extern "C" fn str_value(mut s: *const libc::c_char) -> *mut VALUE {
   return v;
 }
 /* Free VALUE V, including structure components.  */
-unsafe extern "C" fn freev(mut v: *mut VALUE) {
+unsafe fn freev(mut v: *mut VALUE) {
   if (*v).type_0 as libc::c_int == STRING as libc::c_int {
     free((*v).u.s as *mut libc::c_void);
   }
   free(v as *mut libc::c_void);
 }
 /* Return nonzero if V is a null-string or zero-number.  */
-unsafe extern "C" fn null(mut v: *mut VALUE) -> libc::c_int {
+unsafe fn null(mut v: *mut VALUE) -> libc::c_int {
   if (*v).type_0 as libc::c_int == INTEGER as libc::c_int {
     return ((*v).u.i == 0) as libc::c_int;
   }
@@ -144,7 +144,7 @@ unsafe extern "C" fn null(mut v: *mut VALUE) -> libc::c_int {
     as libc::c_int;
 }
 /* Coerce V to a STRING value (can't fail).  */
-unsafe extern "C" fn tostring(mut v: *mut VALUE) {
+unsafe fn tostring(mut v: *mut VALUE) {
   if (*v).type_0 as libc::c_int == INTEGER as libc::c_int {
     (*v).u.s = crate::libbb::xfuncs_printf::xasprintf(
       b"%lld\x00" as *const u8 as *const libc::c_char,
@@ -154,7 +154,7 @@ unsafe extern "C" fn tostring(mut v: *mut VALUE) {
   };
 }
 /* Coerce V to an INTEGER value.  Return 1 on success, 0 on failure.  */
-unsafe extern "C" fn toarith(mut v: *mut VALUE) -> bool {
+unsafe fn toarith(mut v: *mut VALUE) -> bool {
   if (*v).type_0 as libc::c_int == STRING as libc::c_int {
     let mut i: arith_t = 0;
     let mut e: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -172,7 +172,7 @@ unsafe extern "C" fn toarith(mut v: *mut VALUE) -> bool {
 }
 /* Return str[0]+str[1] if the next token matches STR exactly.
 STR must not be NULL.  */
-unsafe extern "C" fn nextarg(mut str: *const libc::c_char) -> libc::c_int {
+unsafe fn nextarg(mut str: *const libc::c_char) -> libc::c_int {
   if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args).is_null()
     || strcmp(
       *(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args,
@@ -185,7 +185,7 @@ unsafe extern "C" fn nextarg(mut str: *const libc::c_char) -> libc::c_int {
     + *str.offset(1) as libc::c_uchar as libc::c_int;
 }
 /* The comparison operator handling functions.  */
-unsafe extern "C" fn cmp_common(
+unsafe fn cmp_common(
   mut l: *mut VALUE,
   mut r: *mut VALUE,
   mut op: libc::c_int,
@@ -223,7 +223,7 @@ unsafe extern "C" fn cmp_common(
   return (ll >= rr) as libc::c_int;
 }
 /* The arithmetic operator handling functions.  */
-unsafe extern "C" fn arithmetic_common(
+unsafe fn arithmetic_common(
   mut l: *mut VALUE,
   mut r: *mut VALUE,
   mut op: libc::c_int,
@@ -259,7 +259,7 @@ unsafe extern "C" fn arithmetic_common(
 /* Do the : operator.
 SV is the VALUE for the lhs (the string),
 PV is the VALUE for the rhs (the pattern).  */
-unsafe extern "C" fn docolon(mut sv: *mut VALUE, mut pv: *mut VALUE) -> *mut VALUE {
+unsafe fn docolon(mut sv: *mut VALUE, mut pv: *mut VALUE) -> *mut VALUE {
   let mut v: *mut VALUE = std::ptr::null_mut();
   let mut re_buffer: regex_t = std::mem::zeroed();
   let mut re_regs: [regmatch_t; 2] = [regmatch_t { rm_so: 0, rm_eo: 0 }; 2];
@@ -308,7 +308,7 @@ unsafe extern "C" fn docolon(mut sv: *mut VALUE, mut pv: *mut VALUE) -> *mut VAL
 }
 /* Match failed -- return the right kind of null.  */
 /* Handle bare operands and ( expr ) syntax.  */
-unsafe extern "C" fn eval7() -> *mut VALUE {
+unsafe fn eval7() -> *mut VALUE {
   let mut v: *mut VALUE = std::ptr::null_mut();
   if (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args).is_null() {
     crate::libbb::verror_msg::bb_simple_error_msg_and_die(
@@ -339,7 +339,7 @@ unsafe extern "C" fn eval7() -> *mut VALUE {
   return str_value(*fresh3);
 }
 /* Handle match, substr, index, length, and quote keywords.  */
-unsafe extern "C" fn eval6() -> *mut VALUE {
+unsafe fn eval6() -> *mut VALUE {
   static mut keywords: [libc::c_char; 33] = [
     113, 117, 111, 116, 101, 0, 108, 101, 110, 103, 116, 104, 0, 109, 97, 116, 99, 104, 0, 105,
     110, 100, 101, 120, 0, 115, 117, 98, 115, 116, 114, 0, 0,
@@ -434,7 +434,7 @@ unsafe extern "C" fn eval6() -> *mut VALUE {
 }
 /* Handle : operator (pattern matching).
 Calls docolon to do the real work.  */
-unsafe extern "C" fn eval5() -> *mut VALUE {
+unsafe fn eval5() -> *mut VALUE {
   let mut l: *mut VALUE = std::ptr::null_mut();
   let mut r: *mut VALUE = std::ptr::null_mut();
   let mut v: *mut VALUE = std::ptr::null_mut();
@@ -451,7 +451,7 @@ unsafe extern "C" fn eval5() -> *mut VALUE {
   return l;
 }
 /* Handle *, /, % operators.  */
-unsafe extern "C" fn eval4() -> *mut VALUE {
+unsafe fn eval4() -> *mut VALUE {
   let mut l: *mut VALUE = std::ptr::null_mut();
   let mut r: *mut VALUE = std::ptr::null_mut();
   let mut op: libc::c_int = 0;
@@ -478,7 +478,7 @@ unsafe extern "C" fn eval4() -> *mut VALUE {
   }
 }
 /* Handle +, - operators.  */
-unsafe extern "C" fn eval3() -> *mut VALUE {
+unsafe fn eval3() -> *mut VALUE {
   let mut l: *mut VALUE = std::ptr::null_mut();
   let mut r: *mut VALUE = std::ptr::null_mut();
   let mut op: libc::c_int = 0;
@@ -502,7 +502,7 @@ unsafe extern "C" fn eval3() -> *mut VALUE {
   }
 }
 /* Handle comparisons.  */
-unsafe extern "C" fn eval2() -> *mut VALUE {
+unsafe fn eval2() -> *mut VALUE {
   let mut l: *mut VALUE = std::ptr::null_mut();
   let mut r: *mut VALUE = std::ptr::null_mut();
   let mut op: libc::c_int = 0;
@@ -543,7 +543,7 @@ unsafe extern "C" fn eval2() -> *mut VALUE {
   }
 }
 /* Handle &.  */
-unsafe extern "C" fn eval1() -> *mut VALUE {
+unsafe fn eval1() -> *mut VALUE {
   let mut l: *mut VALUE = std::ptr::null_mut();
   let mut r: *mut VALUE = std::ptr::null_mut();
   l = eval2();
@@ -564,7 +564,7 @@ unsafe extern "C" fn eval1() -> *mut VALUE {
 /* NB: noexec applet - globals not zeroed */
 /* forward declarations */
 /* Handle |.  */
-unsafe extern "C" fn eval() -> *mut VALUE {
+unsafe fn eval() -> *mut VALUE {
   let mut l: *mut VALUE = std::ptr::null_mut(); /* coreutils compat */
   let mut r: *mut VALUE = std::ptr::null_mut();
   l = eval1();
@@ -581,11 +581,7 @@ unsafe extern "C" fn eval() -> *mut VALUE {
   }
   return l;
 }
-#[no_mangle]
-pub unsafe extern "C" fn expr_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn expr_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut v: *mut VALUE = std::ptr::null_mut();
   xfunc_error_retval = 2i32 as u8;
   let ref mut fresh13 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).args;

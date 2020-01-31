@@ -23,8 +23,7 @@ extern "C" {
 //usage:       "--[un]freeze MOUNTPOINT"
 //usage:#define fsfreeze_full_usage "\n\n"
 //usage:	"Flush and halt writes to MOUNTPOINT"
-#[no_mangle]
-pub unsafe extern "C" fn fsfreeze_main(
+pub unsafe fn fsfreeze_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

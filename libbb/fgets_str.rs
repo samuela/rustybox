@@ -85,16 +85,14 @@ unsafe extern "C" fn xmalloc_fgets_internal(
  * including terminating string.
  * Non-terminated string can be returned if EOF is reached.
  * Return NULL if EOF is reached immediately.  */
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_fgets_str(
+pub unsafe fn xmalloc_fgets_str(
   mut file: *mut FILE,
   mut terminating_string: *const libc::c_char,
 ) -> *mut libc::c_char {
   let mut maxsz: size_t = (2147483647i32 - 4095i32) as size_t;
   return xmalloc_fgets_internal(file, terminating_string, 0, &mut maxsz);
 }
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_fgets_str_len(
+pub unsafe fn xmalloc_fgets_str_len(
   mut file: *mut FILE,
   mut terminating_string: *const libc::c_char,
   mut maxsz_p: *mut size_t,
@@ -360,8 +358,7 @@ pub unsafe extern "C" fn xmalloc_fgets_str_len(
 /* Reads up to (and including) TERMINATING_STRING: */
 /* Same, with limited max size, and returns the length (excluding NUL): */
 /* Chops off TERMINATING_STRING from the end: */
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_fgetline_str(
+pub unsafe fn xmalloc_fgetline_str(
   mut file: *mut FILE,
   mut terminating_string: *const libc::c_char,
 ) -> *mut libc::c_char {

@@ -63,7 +63,7 @@ extern "C" {
  * the permissions of the pointed-to file. In contrast, chmod ignores
  * symbolic links encountered during recursive directory traversals.
  */
-unsafe extern "C" fn fileAction(
+unsafe fn fileAction(
   mut fileName: *const libc::c_char,
   mut statbuf: *mut stat,
   mut param: *mut libc::c_void,
@@ -114,11 +114,7 @@ unsafe extern "C" fn fileAction(
   }
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn chmod_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn chmod_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut retval: libc::c_int = 0;
   let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut argp: *mut *mut libc::c_char = std::ptr::null_mut();
@@ -170,7 +166,7 @@ pub unsafe extern "C" fn chmod_main(
       option_mask32 & 1i32 as libc::c_uint,
       Some(
         fileAction
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *const libc::c_char,
             _: *mut stat,
             _: *mut libc::c_void,
@@ -179,7 +175,7 @@ pub unsafe extern "C" fn chmod_main(
       ),
       Some(
         fileAction
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *const libc::c_char,
             _: *mut stat,
             _: *mut libc::c_void,

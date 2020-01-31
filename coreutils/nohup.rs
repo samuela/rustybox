@@ -58,11 +58,7 @@ nohup: redirecting stderr to stdout
   (nothing)
 #
 */
-#[no_mangle]
-pub unsafe extern "C" fn nohup_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn nohup_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut nohupout: *const libc::c_char = std::ptr::null();
   let mut home: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   xfunc_error_retval = 127i32 as u8;

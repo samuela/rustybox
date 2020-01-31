@@ -47,8 +47,7 @@ extern "C" {
 //usage:       "/proc is not a mountpoint\n"
 //usage:       "$ mountpoint /sys\n"
 //usage:       "/sys is a mountpoint\n"
-#[no_mangle]
-pub unsafe extern "C" fn mountpoint_main(
+pub unsafe fn mountpoint_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

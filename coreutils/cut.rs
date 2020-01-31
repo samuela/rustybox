@@ -7,25 +7,20 @@ use libc::puts;
 use libc::strchr;
 use libc::FILE;
 extern "C" {
-
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
   static mut stdout: *mut FILE;
-
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
-
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn strsep(__stringp: *mut *mut libc::c_char, __delim: *const libc::c_char) -> *mut libc::c_char;
-
   #[no_mangle]
   static mut option_mask32: u32;
-
 }
 
 #[repr(C)]
@@ -44,7 +39,7 @@ unsafe extern "C" fn cmpfunc(
 ) -> libc::c_int {
   return (*(a as *mut cut_list)).startpos - (*(b as *mut cut_list)).startpos; /* keep these zero-based to be consistent */
 }
-unsafe extern "C" fn cut_file(
+unsafe fn cut_file(
   mut file: *mut FILE,
   mut delim: libc::c_char,
   mut cut_lists: *const cut_list,
@@ -198,11 +193,7 @@ unsafe extern "C" fn cut_file(
     free(orig_line as *mut libc::c_void);
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn cut_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn cut_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   /* growable array holding a series of lists */
   let mut cut_lists: *mut cut_list = std::ptr::null_mut(); /* number of elements in above list */
   let mut nlists: libc::c_uint = 0 as libc::c_uint; /* delimiter, default is tab */

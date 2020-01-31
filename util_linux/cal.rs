@@ -75,7 +75,7 @@ static mut sep1752: [libc::c_uchar; 19] = [
 ];
 /* Set to 0 or 1 in main */
 /* leap year -- account for Gregorian reformation in 1752 */
-unsafe extern "C" fn leap_year(mut yr: libc::c_uint) -> libc::c_int {
+unsafe fn leap_year(mut yr: libc::c_uint) -> libc::c_int {
   if yr <= 1752i32 as libc::c_uint {
     return (yr.wrapping_rem(4i32 as libc::c_uint) == 0) as libc::c_int;
   }
@@ -84,8 +84,7 @@ unsafe extern "C" fn leap_year(mut yr: libc::c_uint) -> libc::c_int {
     || yr.wrapping_rem(400i32 as libc::c_uint) == 0) as libc::c_int;
 }
 /* spaces between day headings */
-#[no_mangle]
-pub unsafe extern "C" fn cal_main(
+pub unsafe fn cal_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -310,7 +309,7 @@ pub unsafe extern "C" fn cal_main(
  *	out end to end.  You would have 42 numbers or spaces.  This routine
  *	builds that array for any month from Jan. 1 through Dec. 9999.
  */
-unsafe extern "C" fn day_array(
+unsafe fn day_array(
   mut month: libc::c_uint,
   mut year: libc::c_uint,
   mut days: *mut libc::c_uint,
@@ -415,7 +414,7 @@ unsafe extern "C" fn day_array(
     }
   }
 }
-unsafe extern "C" fn trim_trailing_spaces_and_print(mut s: *mut libc::c_char) {
+unsafe fn trim_trailing_spaces_and_print(mut s: *mut libc::c_char) {
   let mut p: *mut libc::c_char = s;
   while *p != 0 {
     p = p.offset(1)
@@ -438,7 +437,7 @@ unsafe extern "C" fn trim_trailing_spaces_and_print(mut s: *mut libc::c_char) {
 /* number of centuries since 1700, not inclusive */
 /* number of centuries since 1700 whose modulo of 400 is 0 */
 /* number of leap years between year 1 and this year, not inclusive */
-unsafe extern "C" fn center(
+unsafe fn center(
   mut str: *mut libc::c_char,
   mut len: libc::c_uint,
   mut separate: libc::c_uint,
@@ -456,11 +455,11 @@ unsafe extern "C" fn center(
     b"\x00" as *const u8 as *const libc::c_char,
   );
 }
-unsafe extern "C" fn blank_string(mut buf: *mut libc::c_char, mut buflen: size_t) {
+unsafe fn blank_string(mut buf: *mut libc::c_char, mut buflen: size_t) {
   memset(buf as *mut libc::c_void, ' ' as i32, buflen);
   *buf.offset(buflen.wrapping_sub(1i32 as libc::c_ulong) as isize) = '\u{0}' as i32 as libc::c_char;
 }
-unsafe extern "C" fn build_row(
+unsafe fn build_row(
   mut p: *mut libc::c_char,
   mut dp: *mut libc::c_uint,
 ) -> *mut libc::c_char {

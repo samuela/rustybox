@@ -47,8 +47,7 @@ extern "C" {
 //usage:       "$ basename /foo/bar.txt .txt\n"
 //usage:       "bar"
 /* This is a NOFORK applet. Be very careful! */
-#[no_mangle]
-pub unsafe extern "C" fn basename_main(
+pub unsafe fn basename_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

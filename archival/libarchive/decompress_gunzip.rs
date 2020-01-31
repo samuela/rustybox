@@ -343,7 +343,7 @@ static mut border: [u8; 19] = [
  * each table.
  * t: table to free
  */
-unsafe extern "C" fn huft_free(mut p: *mut huft_t) {
+unsafe fn huft_free(mut p: *mut huft_t) {
   let mut q: *mut huft_t = std::ptr::null_mut();
   /* Go through linked list, freeing from the malloced (t[-1]) address. */
   while !p.is_null() {
@@ -353,17 +353,17 @@ unsafe extern "C" fn huft_free(mut p: *mut huft_t) {
     p = q
   }
 }
-unsafe extern "C" fn huft_free_all(mut state: *mut state_t) {
+unsafe fn huft_free_all(mut state: *mut state_t) {
   huft_free((*state).inflate_codes_tl);
   huft_free((*state).inflate_codes_td);
   (*state).inflate_codes_tl = std::ptr::null_mut();
   (*state).inflate_codes_td = std::ptr::null_mut();
 }
-unsafe extern "C" fn abort_unzip(mut state: *mut state_t) -> ! {
+unsafe fn abort_unzip(mut state: *mut state_t) -> ! {
   huft_free_all(state);
   longjmp((*state).error_jmp.as_mut_ptr(), 1i32);
 }
-unsafe extern "C" fn fill_bitbuffer(
+unsafe fn fill_bitbuffer(
   mut state: *mut state_t,
   mut bitbuffer: libc::c_uint,
   mut current: *mut libc::c_uint,
@@ -403,7 +403,7 @@ unsafe extern "C" fn fill_bitbuffer(
   } /* table level */
   return bitbuffer; /* counter, current code */
 }
-unsafe extern "C" fn huft_build(
+unsafe fn huft_build(
   mut b: *const libc::c_uint,
   n: libc::c_uint,
   s: libc::c_uint,
@@ -693,7 +693,7 @@ unsafe extern "C" fn huft_build(
  */
 /* called once from inflate_block */
 /* map formerly local static variables to globals */
-unsafe extern "C" fn inflate_codes_setup(
+unsafe fn inflate_codes_setup(
   mut state: *mut state_t,
   mut my_bl: libc::c_uint,
   mut my_bd: libc::c_uint,
@@ -710,7 +710,7 @@ unsafe extern "C" fn inflate_codes_setup(
 }
 /* called once from inflate_get_next_window */
 #[inline(never)]
-unsafe extern "C" fn inflate_codes(mut state: *mut state_t) -> libc::c_int {
+unsafe fn inflate_codes(mut state: *mut state_t) -> libc::c_int {
   let mut current_block: u64; /* table entry flag/number of extra bits */
   let mut e: libc::c_uint = 0; /* pointer to table entry */
   let mut t: *mut huft_t = std::ptr::null_mut();
@@ -935,7 +935,7 @@ unsafe extern "C" fn inflate_codes(mut state: *mut state_t) -> libc::c_int {
   return 0;
 }
 /* called once from inflate_block */
-unsafe extern "C" fn inflate_stored_setup(
+unsafe fn inflate_stored_setup(
   mut state: *mut state_t,
   mut my_n: libc::c_int,
   mut my_b: libc::c_int,
@@ -948,7 +948,7 @@ unsafe extern "C" fn inflate_stored_setup(
   (*state).inflate_stored_w = (*state).gunzip_outbuf_count;
 }
 /* called once from inflate_get_next_window */
-unsafe extern "C" fn inflate_stored(mut state: *mut state_t) -> libc::c_int {
+unsafe fn inflate_stored(mut state: *mut state_t) -> libc::c_int {
   loop
   /* read and output the compressed data */
   {
@@ -993,7 +993,7 @@ unsafe extern "C" fn inflate_stored(mut state: *mut state_t) -> libc::c_int {
  */
 /* Return values: -1 = inflate_stored, -2 = inflate_codes */
 /* One callsite in inflate_get_next_window */
-unsafe extern "C" fn inflate_block(mut state: *mut state_t, mut e: *mut smallint) -> libc::c_int {
+unsafe fn inflate_block(mut state: *mut state_t, mut e: *mut smallint) -> libc::c_int {
   let mut ll: [libc::c_uint; 316] = [0; 316]; /* literal/length and distance code lengths */
   let mut t: libc::c_uint = 0; /* block type */
   let mut b: libc::c_uint = 0; /* bit buffer */
@@ -1297,7 +1297,7 @@ unsafe extern "C" fn inflate_block(mut state: *mut state_t, mut e: *mut smallint
 /* set up data for inflate_codes() */
 /* huft_free code moved into inflate_codes */
 /* Two callsites, both in inflate_get_next_window */
-unsafe extern "C" fn calculate_gunzip_crc(mut state: *mut state_t) {
+unsafe fn calculate_gunzip_crc(mut state: *mut state_t) {
   (*state).gunzip_crc = crate::libbb::crc32::crc32_block_endian0(
     (*state).gunzip_crc,
     (*state).gunzip_window as *const libc::c_void,
@@ -1307,7 +1307,7 @@ unsafe extern "C" fn calculate_gunzip_crc(mut state: *mut state_t) {
   (*state).gunzip_bytes_out += (*state).gunzip_outbuf_count as libc::c_long;
 }
 /* One callsite in inflate_unzip_internal */
-unsafe extern "C" fn inflate_get_next_window(mut state: *mut state_t) -> libc::c_int {
+unsafe fn inflate_get_next_window(mut state: *mut state_t) -> libc::c_int {
   (*state).gunzip_outbuf_count = 0 as libc::c_uint;
   loop {
     let mut ret: libc::c_int = 0;
@@ -1341,7 +1341,7 @@ unsafe extern "C" fn inflate_get_next_window(mut state: *mut state_t) -> libc::c
   /* Doesnt get here */
 }
 /* Called from unpack_gz_stream() and inflate_unzip() */
-unsafe extern "C" fn inflate_unzip_internal(
+unsafe fn inflate_unzip_internal(
   mut state: *mut state_t,
   mut xstate: *mut transformer_state_t,
 ) -> libc::c_longlong {
@@ -1412,8 +1412,7 @@ unsafe extern "C" fn inflate_unzip_internal(
 }
 /* External entry points */
 /* For unzip */
-#[no_mangle]
-pub unsafe extern "C" fn inflate_unzip(mut xstate: *mut transformer_state_t) -> libc::c_longlong {
+pub unsafe fn inflate_unzip(mut xstate: *mut transformer_state_t) -> libc::c_longlong {
   let mut n: libc::c_longlong = 0;
   let mut state: *mut state_t = std::ptr::null_mut();
   state = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<state_t>() as libc::c_ulong)
@@ -1432,7 +1431,7 @@ pub unsafe extern "C" fn inflate_unzip(mut xstate: *mut transformer_state_t) -> 
 /* For gunzip */
 /* helpers first */
 /* Top up the input buffer with at least n bytes. */
-unsafe extern "C" fn top_up(mut state: *mut state_t, mut n: libc::c_uint) -> libc::c_int {
+unsafe fn top_up(mut state: *mut state_t, mut n: libc::c_uint) -> libc::c_int {
   let mut count: libc::c_int = (*state)
     .bytebuffer_size
     .wrapping_sub((*state).bytebuffer_offset) as libc::c_int;
@@ -1464,7 +1463,7 @@ unsafe extern "C" fn top_up(mut state: *mut state_t, mut n: libc::c_uint) -> lib
   }
   return 1i32;
 }
-unsafe extern "C" fn buffer_read_le_u16(mut state: *mut state_t) -> u16 {
+unsafe fn buffer_read_le_u16(mut state: *mut state_t) -> u16 {
   let mut res: u16 = 0;
   res = *(&mut *(*state)
     .bytebuffer
@@ -1475,7 +1474,7 @@ unsafe extern "C" fn buffer_read_le_u16(mut state: *mut state_t) -> u16 {
     .wrapping_add(2i32 as libc::c_uint);
   return res;
 }
-unsafe extern "C" fn buffer_read_le_u32(mut state: *mut state_t) -> u32 {
+unsafe fn buffer_read_le_u32(mut state: *mut state_t) -> u32 {
   let mut res: u32 = 0;
   res = *(&mut *(*state)
     .bytebuffer
@@ -1486,7 +1485,7 @@ unsafe extern "C" fn buffer_read_le_u32(mut state: *mut state_t) -> u32 {
     .wrapping_add(4i32 as libc::c_uint);
   return res;
 }
-unsafe extern "C" fn check_header_gzip(
+unsafe fn check_header_gzip(
   mut state: *mut state_t,
   mut xstate: *mut transformer_state_t,
 ) -> libc::c_int {
@@ -1569,10 +1568,7 @@ unsafe extern "C" fn check_header_gzip(
   }
   return 1i32;
 }
-#[no_mangle]
-pub unsafe extern "C" fn unpack_gz_stream(
-  mut xstate: *mut transformer_state_t,
-) -> libc::c_longlong {
+pub unsafe fn unpack_gz_stream(mut xstate: *mut transformer_state_t) -> libc::c_longlong {
   let mut v32: u32 = 0;
   let mut total: libc::c_longlong = 0;
   let mut n: libc::c_longlong = 0;

@@ -404,8 +404,7 @@ use libc::sockaddr;
 /* Convert Ethernet address from "XX[:]XX[:]XX[:]XX[:]XX[:]XX" to sockaddr.
  * Return nonzero on error.
  */
-#[no_mangle]
-pub unsafe extern "C" fn in_ether(
+pub unsafe fn in_ether(
   mut bufp: *const libc::c_char,
   mut sap: *mut sockaddr,
 ) -> libc::c_int {

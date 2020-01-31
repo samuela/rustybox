@@ -179,8 +179,7 @@ unsafe extern "C" fn get_attr_volume_id(
 /*,u64 off*/
 /*,u64 off*/
 /*,u64 off*/
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c_int
+pub unsafe fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c_int
 /*,u64 fat_partition_off*/ {
   let mut current_block: u64;
   let mut vs: *mut vfat_super_block = std::ptr::null_mut();

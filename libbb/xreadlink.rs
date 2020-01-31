@@ -34,8 +34,7 @@ pub type C2RustUnnamed = libc::c_uint;
  * NOTE: This function returns a malloced char* that you will have to free
  * yourself.
  */
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_readlink(mut path: *const libc::c_char) -> *mut libc::c_char {
+pub unsafe fn xmalloc_readlink(mut path: *const libc::c_char) -> *mut libc::c_char {
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* how large we will grow strings by */
   let mut bufsize: libc::c_int = 0;
   let mut readsize: libc::c_int = 0;
@@ -66,8 +65,7 @@ pub unsafe extern "C" fn xmalloc_readlink(mut path: *const libc::c_char) -> *mut
  * those at the tail.
  * A malloced char* is returned, which must be freed by the caller.
  */
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_follow_symlinks(
+pub unsafe fn xmalloc_follow_symlinks(
   mut path: *const libc::c_char,
 ) -> *mut libc::c_char {
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -110,8 +108,7 @@ pub unsafe extern "C" fn xmalloc_follow_symlinks(
     return std::ptr::null_mut::<libc::c_char>();
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_readlink_or_warn(
+pub unsafe fn xmalloc_readlink_or_warn(
   mut path: *const libc::c_char,
 ) -> *mut libc::c_char {
   let mut buf: *mut libc::c_char = xmalloc_readlink(path);
@@ -130,8 +127,7 @@ pub unsafe extern "C" fn xmalloc_readlink_or_warn(
   }
   return buf;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_realpath(mut path: *const libc::c_char) -> *mut libc::c_char {
+pub unsafe fn xmalloc_realpath(mut path: *const libc::c_char) -> *mut libc::c_char {
   /* NB: uclibc also defines __GLIBC__
    * Therefore the test "if glibc, or uclibc >= 0.9.31" looks a bit weird:
    */
@@ -259,8 +255,7 @@ pub unsafe extern "C" fn xmalloc_realpath(mut path: *const libc::c_char) -> *mut
 /* "abc/def/" -> "" and it never modifies 'path' */
 /* Simpler version: does not special case "/" string */
 /* NB: can violate const-ness (similarly to strchr) */
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_realpath_coreutils(
+pub unsafe fn xmalloc_realpath_coreutils(
   mut path: *const libc::c_char,
 ) -> *mut libc::c_char {
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

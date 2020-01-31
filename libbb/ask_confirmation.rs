@@ -12,8 +12,7 @@ extern "C" {
 /* Read a line from fp.  If the first non-whitespace char is 'y' or 'Y',
  * return 1.  Otherwise return 0.
  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_ask_y_confirmation_FILE(mut fp: *mut FILE) -> libc::c_int {
+pub unsafe fn bb_ask_y_confirmation_FILE(mut fp: *mut FILE) -> libc::c_int {
   let mut first: libc::c_char = 0 as libc::c_char;
   let mut c: libc::c_int = 0;
   crate::libbb::xfuncs_printf::fflush_all();
@@ -35,7 +34,6 @@ pub unsafe extern "C" fn bb_ask_y_confirmation_FILE(mut fp: *mut FILE) -> libc::
   return (first as libc::c_int == 'y' as i32) as libc::c_int;
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn bb_ask_y_confirmation() -> libc::c_int {
+pub unsafe fn bb_ask_y_confirmation() -> libc::c_int {
   return bb_ask_y_confirmation_FILE(stdin);
 }

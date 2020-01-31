@@ -468,11 +468,7 @@ extern "C" {
  * Solaris has fpurge which discards buffered input. glibc has __fpurge.
  * But this function is not standard.
  */
-#[no_mangle]
-pub unsafe extern "C" fn echo_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn echo_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64; /* not an option arg, echo it */
   let mut pp: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut arg: *const libc::c_char = std::ptr::null();

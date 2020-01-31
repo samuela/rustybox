@@ -59,11 +59,7 @@ static mut sizes: [u8; 5] = [0; 5];
 //usage:     "\n	ADDRESS	Address to act upon"
 //usage:     "\n	WIDTH	Width (8/16/...)"
 //usage:     "\n	VALUE	Data to be written"
-#[no_mangle]
-pub unsafe extern "C" fn devmem_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn devmem_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut map_base: *mut libc::c_void = std::ptr::null_mut(); /* for compiler */
   let mut virt_addr: *mut libc::c_void = std::ptr::null_mut();
   let mut read_result: u64 = 0;
@@ -193,7 +189,7 @@ pub unsafe extern "C" fn devmem_main(
   }
   return 0;
 }
-unsafe extern "C" fn run_static_initializers() {
+unsafe fn run_static_initializers() {
   sizes = [
     (8i32 as libc::c_ulong).wrapping_mul(::std::mem::size_of::<libc::c_char>() as libc::c_ulong)
       as u8,
@@ -210,4 +206,4 @@ unsafe extern "C" fn run_static_initializers() {
 #[cfg_attr(target_os = "linux", link_section = ".init_array")]
 #[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
 #[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
-static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];
+static INIT_ARRAY: [unsafe fn(); 1] = [run_static_initializers];

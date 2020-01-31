@@ -39,7 +39,7 @@ use libc::strchr;
  */
 static mut bit_to_char: [libc::c_char; 10] = [114, 104, 115, 118, 100, 97, 54, 55, 32, 0];
 #[inline]
-unsafe extern "C" fn get_flag(mut c: libc::c_char) -> libc::c_ulong {
+unsafe fn get_flag(mut c: libc::c_char) -> libc::c_ulong {
   let mut fp: *const libc::c_char = strchr(bit_to_char.as_ptr(), c as libc::c_int);
   if fp.is_null() {
     crate::libbb::verror_msg::bb_error_msg_and_die(
@@ -49,7 +49,7 @@ unsafe extern "C" fn get_flag(mut c: libc::c_char) -> libc::c_ulong {
   }
   return (1i32 << fp.wrapping_offset_from(bit_to_char.as_ptr()) as libc::c_long) as libc::c_ulong;
 }
-unsafe extern "C" fn decode_arg(mut arg: *const libc::c_char) -> libc::c_uint {
+unsafe fn decode_arg(mut arg: *const libc::c_char) -> libc::c_uint {
   let mut fl: libc::c_uint = 0 as libc::c_uint;
   loop {
     arg = arg.offset(1);
@@ -60,8 +60,7 @@ unsafe extern "C" fn decode_arg(mut arg: *const libc::c_char) -> libc::c_uint {
   }
   return fl;
 }
-#[no_mangle]
-pub unsafe extern "C" fn fatattr_main(
+pub unsafe fn fatattr_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

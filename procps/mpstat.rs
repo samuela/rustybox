@@ -145,13 +145,13 @@ pub const OPT_INTS: C2RustUnnamed_0 = 2;
 pub const OPT_ALL: C2RustUnnamed_0 = 1;
 pub type C2RustUnnamed_0 = libc::c_uint;
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 /* -u */
 /* Is option on? */
 #[inline(always)]
-unsafe extern "C" fn display_opt(mut opt: libc::c_int) -> libc::c_int {
+unsafe fn display_opt(mut opt: libc::c_int) -> libc::c_int {
   return (opt as libc::c_uint & (*ptr_to_globals).options) as libc::c_int;
 }
 /*
@@ -160,7 +160,7 @@ unsafe extern "C" fn display_opt(mut opt: libc::c_int) -> libc::c_int {
  */
 /* Surprisingly, on 32bit inlining is a size win */
 #[inline(always)]
-unsafe extern "C" fn overflow_safe_sub(mut prev: data_t, mut curr: data_t) -> data_t {
+unsafe fn overflow_safe_sub(mut prev: data_t, mut curr: data_t) -> data_t {
   let mut v: data_t = curr.wrapping_sub(prev);
   if (v as idata_t) < 0 as libc::c_longlong && prev <= 0xffffffffu32 as libc::c_ulonglong {
     /* kernel uses 32bit value for the counter? */
@@ -171,25 +171,17 @@ unsafe extern "C" fn overflow_safe_sub(mut prev: data_t, mut curr: data_t) -> da
   }
   return v;
 }
-unsafe extern "C" fn percent_value(
-  mut prev: data_t,
-  mut curr: data_t,
-  mut itv: data_t,
-) -> libc::c_double {
+unsafe fn percent_value(mut prev: data_t, mut curr: data_t, mut itv: data_t) -> libc::c_double {
   return overflow_safe_sub(prev, curr) as libc::c_double / itv as libc::c_double
     * 100i32 as libc::c_double;
 }
-unsafe extern "C" fn hz_value(
-  mut prev: data_t,
-  mut curr: data_t,
-  mut itv: data_t,
-) -> libc::c_double {
+unsafe fn hz_value(mut prev: data_t, mut curr: data_t, mut itv: data_t) -> libc::c_double {
   //bb_error_msg("curr:%lld prev:%lld G.hz:%u", curr, prev, G.hz);
   return overflow_safe_sub(prev, curr) as libc::c_double / itv as libc::c_double
     * (*ptr_to_globals).hz as libc::c_double;
 }
 #[inline(always)]
-unsafe extern "C" fn jiffies_diff(mut old: data_t, mut new: data_t) -> data_t {
+unsafe fn jiffies_diff(mut old: data_t, mut new: data_t) -> data_t {
   let mut diff: data_t = new.wrapping_sub(old);
   return if diff == 0 as libc::c_ulonglong {
     1i32 as libc::c_ulonglong
@@ -197,11 +189,11 @@ unsafe extern "C" fn jiffies_diff(mut old: data_t, mut new: data_t) -> data_t {
     diff
   };
 }
-unsafe extern "C" fn is_cpu_in_bitmap(mut cpu: libc::c_uint) -> libc::c_int {
+unsafe fn is_cpu_in_bitmap(mut cpu: libc::c_uint) -> libc::c_int {
   return *(*ptr_to_globals).cpu_bitmap.offset((cpu >> 3i32) as isize) as libc::c_int
     & 1i32 << (cpu & 7i32 as libc::c_uint);
 }
-unsafe extern "C" fn write_irqcpu_stats(
+unsafe fn write_irqcpu_stats(
   mut per_cpu_stats: *mut *mut stats_irqcpu,
   mut total_irqs: libc::c_int,
   mut itv: data_t,
@@ -329,10 +321,7 @@ unsafe extern "C" fn write_irqcpu_stats(
     cpu += 1
   }
 }
-unsafe extern "C" fn get_per_cpu_interval(
-  mut scc: *const stats_cpu,
-  mut scp: *const stats_cpu,
-) -> data_t {
+unsafe fn get_per_cpu_interval(mut scc: *const stats_cpu, mut scp: *const stats_cpu) -> data_t {
   return (*scc)
     .cpu_user
     .wrapping_add((*scc).cpu_nice)
@@ -354,7 +343,7 @@ unsafe extern "C" fn get_per_cpu_interval(
         .wrapping_add((*scp).cpu_softirq),
     );
 }
-unsafe extern "C" fn print_stats_cpu_struct(
+unsafe fn print_stats_cpu_struct(
   mut p: *const stats_cpu,
   mut c: *const stats_cpu,
   mut itv: data_t,
@@ -377,7 +366,7 @@ unsafe extern "C" fn print_stats_cpu_struct(
     percent_value((*p).cpu_idle, (*c).cpu_idle, itv),
   );
 }
-unsafe extern "C" fn write_stats_core(
+unsafe fn write_stats_core(
   mut prev: libc::c_int,
   mut current: libc::c_int,
   mut prev_str: *const libc::c_char,
@@ -593,7 +582,7 @@ unsafe extern "C" fn write_stats_core(
 /*
  * Print the statistics
  */
-unsafe extern "C" fn write_stats(mut current: libc::c_int) {
+unsafe fn write_stats(mut current: libc::c_int) {
   let mut prev_time: [libc::c_char; 16] = [0; 16];
   let mut curr_time: [libc::c_char; 16] = [0; 16];
   strftime(
@@ -621,7 +610,7 @@ unsafe extern "C" fn write_stats(mut current: libc::c_int) {
     curr_time.as_mut_ptr(),
   );
 }
-unsafe extern "C" fn write_stats_avg(mut current: libc::c_int) {
+unsafe fn write_stats_avg(mut current: libc::c_int) {
   write_stats_core(
     2i32,
     current,
@@ -632,11 +621,7 @@ unsafe extern "C" fn write_stats_avg(mut current: libc::c_int) {
 /*
  * Read CPU statistics
  */
-unsafe extern "C" fn get_cpu_statistics(
-  mut cpu: *mut stats_cpu,
-  mut up: *mut data_t,
-  mut up0: *mut data_t,
-) {
+unsafe fn get_cpu_statistics(mut cpu: *mut stats_cpu, mut up: *mut data_t, mut up0: *mut data_t) {
   let mut fp: *mut FILE = std::ptr::null_mut(); /* not "cpu" */
   let mut buf: [libc::c_char; 1024] = [0; 1024]; /* for "cpu " case */
   fp = crate::libbb::wfopen::xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);
@@ -717,7 +702,7 @@ unsafe extern "C" fn get_cpu_statistics(
 /*
  * Read IRQs from /proc/stat
  */
-unsafe extern "C" fn get_irqs_from_stat(mut irq: *mut stats_irq) {
+unsafe fn get_irqs_from_stat(mut irq: *mut stats_irq) {
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 1024] = [0; 1024];
   fp = crate::libbb::wfopen::xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);
@@ -748,7 +733,7 @@ unsafe extern "C" fn get_irqs_from_stat(mut irq: *mut stats_irq) {
 /*
  * Read stats from /proc/interrupts or /proc/softirqs
  */
-unsafe extern "C" fn get_irqs_from_interrupts(
+unsafe fn get_irqs_from_interrupts(
   mut fname: *const libc::c_char,
   mut per_cpu_stats: *mut *mut stats_irqcpu,
   mut irqs_per_cpu: libc::c_int,
@@ -865,7 +850,7 @@ unsafe extern "C" fn get_irqs_from_interrupts(
     irq = irq.wrapping_add(1)
   }
 }
-unsafe extern "C" fn get_uptime(mut uptime: *mut data_t) {
+unsafe fn get_uptime(mut uptime: *mut data_t) {
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 52] = [0; 52];
   let mut uptime_sec: libc::c_ulong = 0;
@@ -897,19 +882,16 @@ unsafe extern "C" fn get_uptime(mut uptime: *mut data_t) {
   }
   fclose(fp);
 }
-unsafe extern "C" fn get_localtime(mut tm: *mut tm) {
+unsafe fn get_localtime(mut tm: *mut tm) {
   let mut timer: time_t = 0;
   time(&mut timer);
   localtime_r(&mut timer, tm);
 }
 unsafe extern "C" fn alarm_handler(mut _sig: libc::c_int) {
-  signal(
-    14i32,
-    Some(alarm_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  signal(14i32, Some(alarm_handler));
   alarm((*ptr_to_globals).interval as libc::c_uint);
 }
-unsafe extern "C" fn main_loop() {
+unsafe fn main_loop() {
   let mut current: libc::c_uint = 0;
   let mut cpus: libc::c_uint = 0;
   /* Read the stats */
@@ -1087,7 +1069,7 @@ unsafe extern "C" fn main_loop() {
   write_stats_avg(current as libc::c_int);
 }
 /* Initialization */
-unsafe extern "C" fn alloc_struct(mut cpus: libc::c_int) {
+unsafe fn alloc_struct(mut cpus: libc::c_int) {
   let mut i: libc::c_int = 0;
   i = 0;
   while i < 3i32 {
@@ -1114,7 +1096,7 @@ unsafe extern "C" fn alloc_struct(mut cpus: libc::c_int) {
     crate::libbb::xfuncs_printf::xzalloc((*ptr_to_globals).cpu_bitmap_len as size_t)
       as *mut libc::c_uchar;
 }
-unsafe extern "C" fn print_header(mut t: *mut tm) {
+unsafe fn print_header(mut t: *mut tm) {
   let mut cur_date: [libc::c_char; 16] = [0; 16];
   let mut uts: utsname = utsname {
     sysname: [0; 65],
@@ -1145,10 +1127,7 @@ unsafe extern "C" fn print_header(mut t: *mut tm) {
 /*
  * Get number of interrupts available per processor
  */
-unsafe extern "C" fn get_irqcpu_nr(
-  mut f: *const libc::c_char,
-  mut max_irqs: libc::c_int,
-) -> libc::c_int {
+unsafe fn get_irqcpu_nr(mut f: *const libc::c_char, mut max_irqs: libc::c_int) -> libc::c_int {
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut linelen: libc::c_uint = 0;
@@ -1183,11 +1162,7 @@ unsafe extern "C" fn get_irqcpu_nr(
 //usage:     "\n	-I SUM|CPU|ALL|SCPU	Report interrupt statistics"
 //usage:     "\n	-P num|ALL		Processor to monitor"
 //usage:     "\n	-u			Report CPU utilization"
-#[no_mangle]
-pub unsafe extern "C" fn mpstat_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn mpstat_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opt_irq_fmt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt_set_cpu: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_int = 0;

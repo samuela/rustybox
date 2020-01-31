@@ -625,7 +625,7 @@ unsafe extern "C" fn load_regexes_from_file(mut fopt: *mut llist_t) {
     crate::libbb::fclose_nonstdin::fclose_if_not_stdin(fp);
   }
 }
-unsafe extern "C" fn file_action_grep(
+unsafe fn file_action_grep(
   mut filename: *const libc::c_char,
   mut statbuf: *mut stat,
   mut matched: *mut libc::c_void,
@@ -669,26 +669,14 @@ unsafe extern "C" fn grep_dir(mut dir: *const libc::c_char) -> libc::c_int {
     (ACTION_RECURSE as libc::c_int
       | ACTION_FOLLOWLINKS_L0 as libc::c_int
       | ACTION_DEPTHFIRST as libc::c_int) as libc::c_uint,
-    Some(
-      file_action_grep
-        as unsafe extern "C" fn(
-          _: *const libc::c_char,
-          _: *mut stat,
-          _: *mut libc::c_void,
-          _: libc::c_int,
-        ) -> libc::c_int,
-    ),
+    Some(file_action_grep),
     None,
     &mut matched as *mut libc::c_int as *mut libc::c_void,
     0 as libc::c_uint,
   );
   return matched;
 }
-#[no_mangle]
-pub unsafe extern "C" fn grep_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn grep_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut file: *mut FILE = std::ptr::null_mut();
   let mut matched: libc::c_int = 0;
   let mut fopt: *mut llist_t = std::ptr::null_mut();

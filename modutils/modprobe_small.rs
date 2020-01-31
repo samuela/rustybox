@@ -467,7 +467,7 @@ unsafe extern "C" fn parse_module(
   (*info).open_read_failed = (module_image == std::ptr::null_mut()) as libc::c_int as smallint;
   return (*info).open_read_failed as libc::c_int;
 }
-unsafe extern "C" fn fileAction(
+unsafe fn fileAction(
   mut pathname: *const libc::c_char,
   mut _sb: *mut stat,
   mut modname_to_match: *mut libc::c_void,
@@ -974,15 +974,7 @@ unsafe extern "C" fn process_module(
     crate::libbb::recursive_action::recursive_action(
       b".\x00" as *const u8 as *const libc::c_char,
       ACTION_RECURSE as libc::c_int as libc::c_uint,
-      Some(
-        fileAction
-          as unsafe extern "C" fn(
-            _: *const libc::c_char,
-            _: *mut stat,
-            _: *mut libc::c_void,
-            _: libc::c_int,
-          ) -> libc::c_int,
-      ),
+      Some(fileAction),
       None,
       name as *mut libc::c_void,
       0 as libc::c_uint,

@@ -50,8 +50,7 @@ pub union C2RustUnnamed {
 pub type in_port_t = u16;
 pub type in_addr_t = u32;
 
-#[no_mangle]
-pub unsafe extern "C" fn bb_getsockname(
+pub unsafe fn bb_getsockname(
   mut sockfd: libc::c_int,
   mut addr: *mut libc::c_void,
   mut addrlen: socklen_t,

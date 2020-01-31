@@ -71,7 +71,7 @@ pub const DST_BUF_SIZE: C2RustUnnamed_0 = 76;
 //usage:       "$ uudecode -o busybox busybox.uu\n"
 //usage:       "$ ls -l busybox\n"
 //usage:       "-rwxr-xr-x   1 ams      ams        245264 Jun  7 21:35 busybox\n"
-unsafe extern "C" fn read_stduu(
+unsafe fn read_stduu(
   mut src_stream: *mut FILE,
   mut dst_stream: *mut FILE,
   mut _flags: libc::c_int,
@@ -176,8 +176,7 @@ unsafe extern "C" fn read_stduu(
     b"short file\x00" as *const u8 as *const libc::c_char,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn uudecode_main(
+pub unsafe fn uudecode_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -203,7 +202,7 @@ pub unsafe extern "C" fn uudecode_main(
       break;
     }
     let mut decode_fn_ptr: Option<
-      unsafe extern "C" fn(_: *mut FILE, _: *mut FILE, _: libc::c_int) -> (),
+      unsafe fn(_: *mut FILE, _: *mut FILE, _: libc::c_int) -> (),
     > = None;
     let mut line_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut dst_stream: *mut FILE = std::ptr::null_mut();
@@ -217,7 +216,7 @@ pub unsafe extern "C" fn uudecode_main(
       line_ptr = line.offset(13);
       decode_fn_ptr = Some(
         crate::libbb::uuencode::read_base64
-          as unsafe extern "C" fn(_: *mut FILE, _: *mut FILE, _: libc::c_int) -> (),
+          as unsafe fn(_: *mut FILE, _: *mut FILE, _: libc::c_int) -> (),
       )
     } else if !crate::libbb::compare_string_array::is_prefixed_with(
       line,
@@ -227,7 +226,7 @@ pub unsafe extern "C" fn uudecode_main(
     {
       line_ptr = line.offset(6);
       decode_fn_ptr =
-        Some(read_stduu as unsafe extern "C" fn(_: *mut FILE, _: *mut FILE, _: libc::c_int) -> ())
+        Some(read_stduu as unsafe fn(_: *mut FILE, _: *mut FILE, _: libc::c_int) -> ())
     } else {
       free(line as *mut libc::c_void);
       continue;
@@ -286,11 +285,7 @@ pub unsafe extern "C" fn uudecode_main(
 //usage:     "\n	-d	Decode data"
 // //usage:     "\n	-w COL	Wrap lines at COL (default 76, 0 disables)"
 // //usage:     "\n	-i	When decoding, ignore non-alphabet characters"
-#[no_mangle]
-pub unsafe extern "C" fn base64_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn base64_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut src_stream: *mut FILE = std::ptr::null_mut();
   let mut opts: libc::c_uint = 0;
   opts =

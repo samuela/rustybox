@@ -17,7 +17,7 @@ pub type uintptr_t = libc::c_ulong;
 /*
  * Use the Fisher-Yates shuffle algorithm on an array of lines.
  */
-unsafe extern "C" fn shuffle_lines(mut lines: *mut *mut libc::c_char, mut numlines: libc::c_uint) {
+unsafe fn shuffle_lines(mut lines: *mut *mut libc::c_char, mut numlines: libc::c_uint) {
   let mut i: libc::c_uint = 0;
   let mut r: libc::c_uint = 0;
   let mut tmp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -38,11 +38,7 @@ unsafe extern "C" fn shuffle_lines(mut lines: *mut *mut libc::c_char, mut numlin
     i = i.wrapping_sub(1)
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn shuf_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn shuf_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opts: libc::c_uint = 0;
   let mut opt_i_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt_n_str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

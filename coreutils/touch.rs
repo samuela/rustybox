@@ -102,11 +102,7 @@ pub const OPT_r: C2RustUnnamed = 2;
  * --time=WORD
  *      change the specified time: WORD is access, atime, or use
  */
-#[no_mangle]
-pub unsafe extern "C" fn touch_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn touch_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut fd: libc::c_int = 0;
   let mut status: libc::c_int = 0;
   let mut opts: libc::c_int = 0;
@@ -177,14 +173,11 @@ pub unsafe extern "C" fn touch_main(
   let mut current_block_24: u64;
   loop {
     let mut result: libc::c_int = 0;
-    result = if opts & OPT_h as libc::c_int != 0 {
-      Some(
-        lutimes as unsafe extern "C" fn(_: *const libc::c_char, _: *const timeval) -> libc::c_int,
-      )
+    result = (if opts & OPT_h as libc::c_int != 0 {
+      lutimes
     } else {
-      Some(utimes as unsafe extern "C" fn(_: *const libc::c_char, _: *const timeval) -> libc::c_int)
-    }
-    .expect("non-null function pointer")(
+      utimes
+    })(
       *argv,
       if !reference_file.is_null() || !date_str.is_null() {
         timebuf.as_mut_ptr()

@@ -41,12 +41,12 @@ static mut tar_var: [*const libc::c_char; 8] = [
   b"UID\x00" as *const u8 as *const libc::c_char,
   b"GID\x00" as *const u8 as *const libc::c_char,
 ];
-unsafe extern "C" fn xputenv(mut str: *mut libc::c_char) {
+unsafe fn xputenv(mut str: *mut libc::c_char) {
   if putenv(str) != 0 {
     crate::libbb::xfuncs_printf::bb_die_memory_exhausted();
   };
 }
-unsafe extern "C" fn str2env(
+unsafe fn str2env(
   mut env: *mut *mut libc::c_char,
   mut idx: libc::c_int,
   mut str: *const libc::c_char,
@@ -59,7 +59,7 @@ unsafe extern "C" fn str2env(
   );
   xputenv(*env.offset(idx as isize));
 }
-unsafe extern "C" fn dec2env(
+unsafe fn dec2env(
   mut env: *mut *mut libc::c_char,
   mut idx: libc::c_int,
   mut val: libc::c_ulonglong,
@@ -72,7 +72,7 @@ unsafe extern "C" fn dec2env(
   );
   xputenv(*env.offset(idx as isize));
 }
-unsafe extern "C" fn oct2env(
+unsafe fn oct2env(
   mut env: *mut *mut libc::c_char,
   mut idx: libc::c_int,
   mut val: libc::c_ulong,
@@ -85,8 +85,7 @@ unsafe extern "C" fn oct2env(
   );
   xputenv(*env.offset(idx as isize));
 }
-#[no_mangle]
-pub unsafe extern "C" fn data_extract_to_command(mut archive_handle: *mut archive_handle_t) {
+pub unsafe fn data_extract_to_command(mut archive_handle: *mut archive_handle_t) {
   let mut file_header: *mut file_header_t = (*archive_handle).file_header;
   /* do we need this? ENABLE_FEATURE_TAR_SELINUX */
   if (*file_header).mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint {

@@ -20,8 +20,7 @@ use libc::umask;
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-#[no_mangle]
-pub unsafe extern "C" fn getopt_mk_fifo_nod(mut argv: *mut *mut libc::c_char) -> mode_t {
+pub unsafe fn getopt_mk_fifo_nod(mut argv: *mut *mut libc::c_char) -> mode_t {
   let mut mode: mode_t = 0o666i32 as mode_t;
   let mut smode: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;

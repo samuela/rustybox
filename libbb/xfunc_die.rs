@@ -8,10 +8,9 @@ extern "C" {
  * Try building busybox with only "true" enabled... */
 
 #[no_mangle]
-pub static mut die_func: Option<unsafe extern "C" fn() -> ()> = None;
+pub static mut die_func: Option<unsafe fn() -> ()> = None;
 
-#[no_mangle]
-pub unsafe extern "C" fn xfunc_die() -> ! {
+pub unsafe fn xfunc_die() -> ! {
   if die_func.is_some() {
     die_func.expect("non-null function pointer")();
   }

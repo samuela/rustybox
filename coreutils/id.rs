@@ -87,7 +87,7 @@ pub const JUST_GROUP: C2RustUnnamed = 8;
 pub const JUST_USER: C2RustUnnamed = 4;
 pub const NAME_NOT_NUMBER: C2RustUnnamed = 2;
 pub const PRINT_REAL: C2RustUnnamed = 1;
-unsafe extern "C" fn print_common(
+unsafe fn print_common(
   mut id: libc::c_uint,
   mut name: *const libc::c_char,
   mut prefix: *const libc::c_char,
@@ -118,10 +118,10 @@ unsafe extern "C" fn print_common(
   }
   return 0;
 }
-unsafe extern "C" fn print_group(mut id: gid_t, mut prefix: *const libc::c_char) -> libc::c_int {
+unsafe fn print_group(mut id: gid_t, mut prefix: *const libc::c_char) -> libc::c_int {
   return print_common(id, crate::libbb::bb_pwd::gid2group(id), prefix);
 }
-unsafe extern "C" fn print_user(mut id: uid_t, mut prefix: *const libc::c_char) -> libc::c_int {
+unsafe fn print_user(mut id: uid_t, mut prefix: *const libc::c_char) -> libc::c_int {
   return print_common(id, crate::libbb::bb_pwd::uid2uname(id), prefix);
 }
 /* Don't set error status flag in default mode */
@@ -130,7 +130,7 @@ unsafe extern "C" fn print_user(mut id: uid_t, mut prefix: *const libc::c_char) 
  * (ok to trash groups[] in both cases)
  * Otherwise fill in groups[] and return >= 0
  */
-unsafe extern "C" fn get_groups(
+unsafe fn get_groups(
   mut username: *const libc::c_char,
   mut rgid: gid_t,
   mut groups: *mut gid_t,
@@ -162,11 +162,7 @@ unsafe extern "C" fn get_groups(
   /* if *n >= 0, return -1 (got new *n), else return 0 (error): */
   return -((*n >= 0) as libc::c_int);
 }
-#[no_mangle]
-pub unsafe extern "C" fn id_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn id_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut ruid: uid_t = 0;
   let mut rgid: gid_t = 0;
   let mut euid: uid_t = 0;

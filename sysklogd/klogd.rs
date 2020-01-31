@@ -106,20 +106,20 @@ pub const KLOGD_LOGBUF_SIZE: C2RustUnnamed_2 = 1024;
 /* The Linux-specific klogctl(3) interface does not rely on the filesystem and
  * allows us to change the console loglevel. Alternatively, we read the
  * messages from _PATH_KLOG. */
-unsafe extern "C" fn klogd_open() {
+unsafe fn klogd_open() {
   /* "Open the log. Currently a NOP" */
   klogctl(1i32, std::ptr::null_mut::<libc::c_char>(), 0);
 }
-unsafe extern "C" fn klogd_setloglevel(mut lvl: libc::c_int) {
+unsafe fn klogd_setloglevel(mut lvl: libc::c_int) {
   /* "printk() prints a message on the console only if it has a loglevel
    * less than console_loglevel". Here we set console_loglevel = lvl. */
   klogctl(8i32, std::ptr::null_mut::<libc::c_char>(), lvl);
 }
-unsafe extern "C" fn klogd_read(mut bufp: *mut libc::c_char, mut len: libc::c_int) -> libc::c_int {
+unsafe fn klogd_read(mut bufp: *mut libc::c_char, mut len: libc::c_int) -> libc::c_int {
   /* "2 -- Read from the log." */
   return klogctl(2i32, bufp, len);
 }
-unsafe extern "C" fn klogd_close() {
+unsafe fn klogd_close() {
   /* FYI: cmd 7 is equivalent to setting console_loglevel to 7
    * via klogctl(8, NULL, 7). */
   klogctl(7i32, std::ptr::null_mut::<libc::c_char>(), 0); /* "7 -- Enable printk's to console" */
@@ -138,11 +138,7 @@ unsafe extern "C" fn klogd_close() {
  * Convincing glibc maintainers otherwise is, as usual, nearly impossible.
  * Should we open-code syslog() here to use correct facility?
  */
-#[no_mangle]
-pub unsafe extern "C" fn klogd_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn klogd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut i: libc::c_int = 0;
   let mut opt_c: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;
@@ -208,7 +204,7 @@ pub unsafe extern "C" fn klogd_main(
   /* We want klogd_read to not be restarted, thus _norestart: */
   crate::libbb::signals::bb_signals_recursive_norestart(
     BB_FATAL_SIGS as libc::c_int,
-    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo),
   );
   syslog(
     5i32,

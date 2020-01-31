@@ -106,10 +106,10 @@ pub struct svstatus_t {
   pub got_term: u8,
   pub run_or_finish: u8,
 }
-unsafe extern "C" fn gettimeofday_ns(mut ts: *mut timespec) {
+unsafe fn gettimeofday_ns(mut ts: *mut timespec) {
   clock_gettime(0i32, ts);
 }
-unsafe extern "C" fn fatal2_cannot(mut m1: *const libc::c_char, mut m2: *const libc::c_char) {
+unsafe fn fatal2_cannot(mut m1: *const libc::c_char, mut m2: *const libc::c_char) {
   crate::libbb::perror_msg::bb_perror_msg_and_die(
     b"%s: fatal: can\'t %s%s\x00" as *const u8 as *const libc::c_char,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).dir,
@@ -118,11 +118,11 @@ unsafe extern "C" fn fatal2_cannot(mut m1: *const libc::c_char, mut m2: *const l
   );
   /* was exiting 111 */
 }
-unsafe extern "C" fn fatal_cannot(mut m: *const libc::c_char) {
+unsafe fn fatal_cannot(mut m: *const libc::c_char) {
   fatal2_cannot(m, b"\x00" as *const u8 as *const libc::c_char);
   /* was exiting 111 */
 }
-unsafe extern "C" fn fatal2x_cannot(mut m1: *const libc::c_char, mut m2: *const libc::c_char) {
+unsafe fn fatal2x_cannot(mut m1: *const libc::c_char, mut m2: *const libc::c_char) {
   crate::libbb::verror_msg::bb_error_msg_and_die(
     b"%s: fatal: can\'t %s%s\x00" as *const u8 as *const libc::c_char,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).dir,
@@ -131,7 +131,7 @@ unsafe extern "C" fn fatal2x_cannot(mut m1: *const libc::c_char, mut m2: *const 
   );
   /* was exiting 111 */
 }
-unsafe extern "C" fn warn2_cannot(mut m1: *const libc::c_char, mut m2: *const libc::c_char) {
+unsafe fn warn2_cannot(mut m1: *const libc::c_char, mut m2: *const libc::c_char) {
   crate::libbb::perror_msg::bb_perror_msg(
     b"%s: warning: can\'t %s%s\x00" as *const u8 as *const libc::c_char,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).dir,
@@ -139,7 +139,7 @@ unsafe extern "C" fn warn2_cannot(mut m1: *const libc::c_char, mut m2: *const li
     m2,
   );
 }
-unsafe extern "C" fn warn_cannot(mut m: *const libc::c_char) {
+unsafe fn warn_cannot(mut m: *const libc::c_char) {
   warn2_cannot(m, b"\x00" as *const u8 as *const libc::c_char);
 }
 unsafe extern "C" fn s_child(mut _sig_no: libc::c_int) {
@@ -162,7 +162,7 @@ unsafe extern "C" fn s_term(mut _sig_no: libc::c_int) {
   );
   /* XXX */
 }
-unsafe extern "C" fn open_trunc_or_warn(mut name: *const libc::c_char) -> libc::c_int {
+unsafe fn open_trunc_or_warn(mut name: *const libc::c_char) -> libc::c_int {
   /* Why O_NDELAY? */
   let mut fd: libc::c_int = open(name, 0o1i32 | 0o4000i32 | 0o1000i32 | 0o100i32, 0o644i32);
   if fd < 0 {
@@ -174,7 +174,7 @@ unsafe extern "C" fn open_trunc_or_warn(mut name: *const libc::c_char) -> libc::
   }
   return fd;
 }
-unsafe extern "C" fn update_status(mut s: *mut svdir) {
+unsafe fn update_status(mut s: *mut svdir) {
   let mut sz: ssize_t = 0;
   let mut fd: libc::c_int = 0;
   let mut status: svstatus_t = svstatus_t {
@@ -342,7 +342,7 @@ unsafe extern "C" fn update_status(mut s: *mut svdir) {
   }
   crate::libbb::xfuncs_printf::rename_or_warn(fstatusnew, fstatus);
 }
-unsafe extern "C" fn custom(mut s: *mut svdir, mut c: libc::c_char) -> libc::c_uint {
+unsafe fn custom(mut s: *mut svdir, mut c: libc::c_char) -> libc::c_uint {
   let mut pid: pid_t = 0;
   let mut w: libc::c_int = 0;
   let mut a: [libc::c_char; 10] = [0; 10];
@@ -408,7 +408,7 @@ unsafe extern "C" fn custom(mut s: *mut svdir, mut c: libc::c_char) -> libc::c_u
   }
   return 0 as libc::c_uint;
 }
-unsafe extern "C" fn stopservice(mut s: *mut svdir) {
+unsafe fn stopservice(mut s: *mut svdir) {
   if (*s).pid != 0 && custom(s, 't' as i32 as libc::c_char) == 0 {
     kill((*s).pid, 15i32);
     (*s).ctrl = ((*s).ctrl as libc::c_int | 1i32) as smallint;
@@ -424,7 +424,7 @@ unsafe extern "C" fn stopservice(mut s: *mut svdir) {
     custom(s, 'x' as i32 as libc::c_char);
   };
 }
-unsafe extern "C" fn startservice(mut s: *mut svdir) {
+unsafe fn startservice(mut s: *mut svdir) {
   let mut p: libc::c_int = 0;
   let mut arg: [*const libc::c_char; 4] = [0 as *const libc::c_char; 4];
   let mut exitcode: [libc::c_char; 14] = [0; 14];
@@ -528,7 +528,7 @@ unsafe extern "C" fn startservice(mut s: *mut svdir) {
   (*s).ctrl = 0 as smallint;
   update_status(s);
 }
-unsafe extern "C" fn ctrl(mut s: *mut svdir, mut c: libc::c_char) -> libc::c_int {
+unsafe fn ctrl(mut s: *mut svdir, mut c: libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut sig: libc::c_int = 0;
   match c as libc::c_int {
@@ -651,7 +651,7 @@ unsafe extern "C" fn ctrl(mut s: *mut svdir, mut c: libc::c_char) -> libc::c_int
   }
   return 1i32;
 }
-unsafe extern "C" fn open_control(mut f: *const libc::c_char, mut s: *mut svdir) {
+unsafe fn open_control(mut f: *const libc::c_char, mut s: *mut svdir) {
   let mut st: stat = std::mem::zeroed();
   mkfifo(f, 0o600i32 as mode_t);
   if stat(f, &mut st) == -1i32 {
@@ -670,11 +670,7 @@ unsafe extern "C" fn open_control(mut f: *const libc::c_char, mut s: *mut svdir)
   crate::libbb::xfuncs::close_on_exec_on((*s).fdcontrolwrite);
   update_status(s);
 }
-#[no_mangle]
-pub unsafe extern "C" fn runsv_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn runsv_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut s: stat = std::mem::zeroed();
   let mut fd: libc::c_int = 0;
   let mut r: libc::c_int = 0;
@@ -708,15 +704,9 @@ pub unsafe extern "C" fn runsv_main(
       .wr,
   );
   crate::libbb::signals::sig_block(17i32);
-  crate::libbb::signals::bb_signals_recursive_norestart(
-    1i32 << 17i32,
-    Some(s_child as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  crate::libbb::signals::bb_signals_recursive_norestart(1i32 << 17i32, Some(s_child));
   crate::libbb::signals::sig_block(15i32);
-  crate::libbb::signals::bb_signals_recursive_norestart(
-    1i32 << 15i32,
-    Some(s_term as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  crate::libbb::signals::bb_signals_recursive_norestart(1i32 << 15i32, Some(s_term));
   crate::libbb::xfuncs_printf::xchdir((*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).dir);
   /* bss: svd[0].pid = 0; */
   /* otherwise already 0 (bss) */

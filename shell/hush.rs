@@ -11318,39 +11318,19 @@ unsafe extern "C" fn builtin_true(mut _argv: *mut *mut libc::c_char) -> libc::c_
 }
 unsafe extern "C" fn run_applet_main(
   mut argv: *mut *mut libc::c_char,
-  mut applet_main_func: Option<
-    unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-  >,
+  mut applet_main_func: unsafe fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
 ) -> libc::c_int {
   let mut argc: libc::c_int = crate::libbb::appletlib::string_array_len(argv) as libc::c_int;
-  return applet_main_func.expect("non-null function pointer")(argc, argv);
+  return applet_main_func(argc, argv);
 }
 unsafe extern "C" fn builtin_test(mut argv: *mut *mut libc::c_char) -> libc::c_int {
-  return run_applet_main(
-    argv,
-    Some(
-      crate::coreutils::test::test_main
-        as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-    ),
-  );
+  return run_applet_main(argv, crate::coreutils::test::test_main);
 }
 unsafe extern "C" fn builtin_echo(mut argv: *mut *mut libc::c_char) -> libc::c_int {
-  return run_applet_main(
-    argv,
-    Some(
-      crate::coreutils::echo::echo_main
-        as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-    ),
-  );
+  return run_applet_main(argv, crate::coreutils::echo::echo_main);
 }
 unsafe extern "C" fn builtin_printf(mut argv: *mut *mut libc::c_char) -> libc::c_int {
-  return run_applet_main(
-    argv,
-    Some(
-      crate::coreutils::printf::printf_main
-        as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-    ),
-  );
+  return run_applet_main(argv, crate::coreutils::printf::printf_main);
 }
 unsafe extern "C" fn builtin_help(mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut x: *const built_in_command = std::ptr::null();
@@ -12690,13 +12670,7 @@ unsafe extern "C" fn builtin_kill(mut argv: *mut *mut libc::c_char) -> libc::c_i
     }
   }
   if !(*argv.offset(1)).is_null() || ret == 0 {
-    ret = run_applet_main(
-      argv,
-      Some(
-        crate::procps::kill::kill_main
-          as unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-      ),
-    )
+    ret = run_applet_main(argv, crate::procps::kill::kill_main)
   }
   /* else: ret = 1, "kill %bad_jobspec" case */
   return ret;

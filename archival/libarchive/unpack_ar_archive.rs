@@ -5,8 +5,7 @@ use libc;
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn unpack_ar_archive(mut ar_archive: *mut archive_handle_t) {
+pub unsafe fn unpack_ar_archive(mut ar_archive: *mut archive_handle_t) {
   let mut magic: [libc::c_char; 7] = [0; 7];
   crate::libbb::read_printf::xread(
     (*ar_archive).src_fd,

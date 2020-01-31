@@ -111,11 +111,7 @@ pub const OPT_f: C2RustUnnamed_1 = 1;
 //usage:       "# tunctl\n"
 //usage:       "# tunctl -d tun0\n"
 /* TUNSETGROUP appeared in 2.6.23 */
-#[no_mangle]
-pub unsafe extern "C" fn tunctl_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn tunctl_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut ifr: ifreq = ifreq {
     ifr_ifrn: C2RustUnnamed_0 { ifrn_name: [0; 16] },
     ifr_ifru: C2RustUnnamed {

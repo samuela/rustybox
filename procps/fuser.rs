@@ -94,7 +94,7 @@ pub const ROOT_LINK: C2RustUnnamed_1 = 2;
 pub const EXE_LINK: C2RustUnnamed_1 = 1;
 pub const CWD_LINK: C2RustUnnamed_1 = 0;
 pub type C2RustUnnamed_1 = libc::c_uint;
-unsafe extern "C" fn add_inode(mut st: *const stat) {
+unsafe fn add_inode(mut st: *const stat) {
   let mut curr: *mut *mut inode_list =
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).inode_list_head;
   while !(*curr).is_null() {
@@ -108,7 +108,7 @@ unsafe extern "C" fn add_inode(mut st: *const stat) {
   (**curr).dev = (*st).st_dev;
   (**curr).inode = (*st).st_ino;
 }
-unsafe extern "C" fn search_dev_inode(mut st: *const stat) -> smallint {
+unsafe fn search_dev_inode(mut st: *const stat) -> smallint {
   let mut ilist: *mut inode_list =
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).inode_list_head;
   while !ilist.is_null() {
@@ -124,7 +124,7 @@ unsafe extern "C" fn search_dev_inode(mut st: *const stat) -> smallint {
   }
   return 0 as smallint;
 }
-unsafe extern "C" fn scan_proc_net_or_maps(
+unsafe fn scan_proc_net_or_maps(
   mut path: *const libc::c_char,
   mut port: libc::c_uint,
 ) -> smallint {
@@ -206,7 +206,7 @@ unsafe extern "C" fn scan_proc_net_or_maps(
   fclose(f);
   return retval;
 }
-unsafe extern "C" fn scan_recursive(mut path: *const libc::c_char) -> smallint {
+unsafe fn scan_recursive(mut path: *const libc::c_char) -> smallint {
   let mut d: *mut DIR = std::ptr::null_mut();
   let mut d_ent: *mut dirent = std::ptr::null_mut();
   let mut stop_scan: smallint = 0;
@@ -343,11 +343,7 @@ unsafe extern "C" fn scan_recursive(mut path: *const libc::c_char) -> smallint {
   *fresh1 -= 1;
   return retval;
 }
-#[no_mangle]
-pub unsafe extern "C" fn fuser_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn fuser_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut pp: *mut *mut libc::c_char = std::ptr::null_mut();
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).mypid = getpid();
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).killsig = 9i32;

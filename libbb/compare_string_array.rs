@@ -18,8 +18,7 @@ extern "C" {
  * first character in string after the prefix key. If key is an empty string,
  * return pointer to the beginning of string.
  */
-#[no_mangle]
-pub unsafe extern "C" fn is_prefixed_with(
+pub unsafe fn is_prefixed_with(
   mut string: *const libc::c_char,
   mut key: *const libc::c_char,
 ) -> *mut libc::c_char {
@@ -39,8 +38,7 @@ pub unsafe extern "C" fn is_prefixed_with(
  * beginning of prefix key in string. If key is an empty string return pointer
  * to the end of string.
  */
-#[no_mangle]
-pub unsafe extern "C" fn is_suffixed_with(
+pub unsafe fn is_suffixed_with(
   mut string: *const libc::c_char,
   mut key: *const libc::c_char,
 ) -> *mut libc::c_char {
@@ -56,8 +54,7 @@ pub unsafe extern "C" fn is_suffixed_with(
 }
 /* returns the array index of the string */
 /* (index of first match is returned, or -1) */
-#[no_mangle]
-pub unsafe extern "C" fn index_in_str_array(
+pub unsafe fn index_in_str_array(
   mut string_array: *const *const libc::c_char,
   mut key: *const libc::c_char,
 ) -> libc::c_int {
@@ -71,8 +68,7 @@ pub unsafe extern "C" fn index_in_str_array(
   }
   return -1i32;
 }
-#[no_mangle]
-pub unsafe extern "C" fn index_in_strings(
+pub unsafe fn index_in_strings(
   mut strings: *const libc::c_char,
   mut key: *const libc::c_char,
 ) -> libc::c_int {
@@ -88,8 +84,7 @@ pub unsafe extern "C" fn index_in_strings(
 }
 /* returns the array index of the string, even if it matches only a beginning */
 /* (index of first match is returned, or -1) */
-#[no_mangle]
-pub unsafe extern "C" fn index_in_substrings(
+pub unsafe fn index_in_substrings(
   mut strings: *const libc::c_char,
   mut key: *const libc::c_char,
 ) -> libc::c_int {
@@ -579,8 +574,7 @@ pub unsafe extern "C" fn index_in_substrings(
 /*, int rnd*/
 /* "$N$" + sha_salt_16_bytes + NUL */
 /* Returns number of lines changed, or -1 on error */
-#[no_mangle]
-pub unsafe extern "C" fn nth_string(
+pub unsafe fn nth_string(
   mut strings: *const libc::c_char,
   mut n: libc::c_int,
 ) -> *const libc::c_char {

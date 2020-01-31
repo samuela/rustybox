@@ -44,11 +44,7 @@ pub struct lstring {
   pub size: libc::c_int,
   pub buf: [libc::c_char; 1],
 }
-#[no_mangle]
-pub unsafe extern "C" fn tac_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn tac_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut name: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut f: *mut FILE = std::ptr::null_mut();
   let mut line: *mut lstring = std::ptr::null_mut();

@@ -1,3 +1,5 @@
+use crate::librb::signal::__sighandler_t;
+use crate::librb::signal::sigaction;
 use crate::librb::smallint;
 use libc;
 use libc::pid_t;
@@ -16,13 +18,10 @@ extern "C" {
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
   #[no_mangle]
   fn raise(__sig: libc::c_int) -> libc::c_int;
-
   #[no_mangle]
   fn sigfillset(__set: *mut sigset_t) -> libc::c_int;
-
   #[no_mangle]
   fn sigsuspend(__set: *const sigset_t) -> libc::c_int;
-
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 }
@@ -109,8 +108,6 @@ pub struct C2RustUnnamed_8 {
   pub si_pid: pid_t,
   pub si_uid: uid_t,
 }
-use crate::librb::signal::__sighandler_t;
-use crate::librb::signal::sigaction;
 /*
  * Utility routines.
  *
@@ -120,24 +117,20 @@ use crate::librb::signal::sigaction;
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
+
 /* All known arches use small ints for signals */
 #[no_mangle]
 pub static mut bb_got_signal: smallint = 0;
+
 /* Standard handler which just records signo */
-#[no_mangle]
-pub unsafe extern "C" fn record_signo(mut signo: libc::c_int) {
+pub unsafe extern "C" fn record_signo(signo: libc::c_int) {
   bb_got_signal = signo as smallint;
 }
 /* Saves 2 bytes on x86! Oh my... */
-#[no_mangle]
-pub unsafe extern "C" fn sigaction_set(
-  mut signum: libc::c_int,
-  mut act: *const sigaction,
-) -> libc::c_int {
+pub unsafe fn sigaction_set(mut signum: libc::c_int, mut act: *const sigaction) -> libc::c_int {
   return sigaction(signum, act, 0 as *mut sigaction);
 }
-#[no_mangle]
-pub unsafe extern "C" fn sigprocmask_allsigs(mut how: libc::c_int) -> libc::c_int {
+pub unsafe fn sigprocmask_allsigs(mut how: libc::c_int) -> libc::c_int {
   let mut set: sigset_t = std::mem::zeroed();
   sigfillset(&mut set);
   return sigprocmask(how, &mut set, 0 as *mut sigset_t);
@@ -145,8 +138,7 @@ pub unsafe extern "C" fn sigprocmask_allsigs(mut how: libc::c_int) -> libc::c_in
 /* Will do sigaction(signum, act, NULL): */
 /* SIG_BLOCK/SIG_UNBLOCK all signals: */
 /* Return old set in the same set: */
-#[no_mangle]
-pub unsafe extern "C" fn sigprocmask2(mut how: libc::c_int, mut set: *mut sigset_t) -> libc::c_int {
+pub unsafe fn sigprocmask2(mut how: libc::c_int, mut set: *mut sigset_t) -> libc::c_int {
   // Grr... gcc 8.1.1:
   // "passing argument 3 to restrict-qualified parameter aliases with argument 2"
   // dance around that...
@@ -154,8 +146,7 @@ pub unsafe extern "C" fn sigprocmask2(mut how: libc::c_int, mut set: *mut sigset
   oset = set;
   return sigprocmask(how, set, oset);
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_signals(
+pub unsafe fn bb_signals(
   mut sigs: libc::c_int,
   mut f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
 ) {
@@ -170,8 +161,7 @@ pub unsafe extern "C" fn bb_signals(
     bit <<= 1i32
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_signals_recursive_norestart(
+pub unsafe fn bb_signals_recursive_norestart(
   mut sigs: libc::c_int,
   mut f: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
 ) {
@@ -195,29 +185,25 @@ pub unsafe extern "C" fn bb_signals_recursive_norestart(
     bit <<= 1i32
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn sig_block(mut sig: libc::c_int) {
+pub unsafe fn sig_block(mut sig: libc::c_int) {
   let mut ss: sigset_t = std::mem::zeroed();
   sigemptyset(&mut ss);
   sigaddset(&mut ss, sig);
   sigprocmask(0i32, &mut ss, 0 as *mut sigset_t);
 }
-#[no_mangle]
-pub unsafe extern "C" fn sig_unblock(mut sig: libc::c_int) {
+pub unsafe fn sig_unblock(mut sig: libc::c_int) {
   let mut ss: sigset_t = std::mem::zeroed();
   sigemptyset(&mut ss);
   sigaddset(&mut ss, sig);
   sigprocmask(1i32, &mut ss, 0 as *mut sigset_t);
 }
-#[no_mangle]
-pub unsafe extern "C" fn wait_for_any_sig() {
+pub unsafe fn wait_for_any_sig() {
   let mut ss: sigset_t = std::mem::zeroed();
   sigemptyset(&mut ss);
   sigsuspend(&mut ss);
 }
 /* Assuming the sig is fatal */
-#[no_mangle]
-pub unsafe extern "C" fn kill_myself_with_sig(mut sig: libc::c_int) -> ! {
+pub unsafe fn kill_myself_with_sig(mut sig: libc::c_int) -> ! {
   signal(sig, None);
   sig_unblock(sig);
   raise(sig);
@@ -225,8 +211,7 @@ pub unsafe extern "C" fn kill_myself_with_sig(mut sig: libc::c_int) -> ! {
   /* Should not reach it */
 }
 /* syscalls like read() won't be interrupted (though select/poll will be): */
-#[no_mangle]
-pub unsafe extern "C" fn signal_SA_RESTART_empty_mask(
+pub unsafe fn signal_SA_RESTART_empty_mask(
   mut sig: libc::c_int,
   mut handler: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
 ) {
@@ -388,8 +373,7 @@ pub unsafe extern "C" fn signal_SA_RESTART_empty_mask(
  * and in a way that while signal handler is run, no other signals
  * will be blocked; syscalls will not be restarted: */
 /* syscalls like read() will be interrupted with EINTR: */
-#[no_mangle]
-pub unsafe extern "C" fn signal_no_SA_RESTART_empty_mask(
+pub unsafe fn signal_no_SA_RESTART_empty_mask(
   mut sig: libc::c_int,
   mut handler: Option<unsafe extern "C" fn(_: libc::c_int) -> ()>,
 ) {

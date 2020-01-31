@@ -50,8 +50,7 @@ pub const LE: endian = 0;
  *	License along with this library; if not, write to the Free Software
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_set_unicode16(
+pub unsafe fn volume_id_set_unicode16(
   mut str: *mut libc::c_char,
   mut len: size_t,
   mut buf: *const u8,
@@ -108,8 +107,7 @@ pub unsafe extern "C" fn volume_id_set_unicode16(
   }
   *str.offset(j as isize) = '\u{0}' as i32 as libc::c_char;
 }
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_set_label_string(
+pub unsafe fn volume_id_set_label_string(
   mut id: *mut volume_id,
   mut buf: *const u8,
   mut count: size_t,
@@ -140,8 +138,7 @@ pub unsafe extern "C" fn volume_id_set_label_string(
   }
   (*id).label[i.wrapping_add(1i32 as libc::c_uint) as usize] = '\u{0}' as i32 as libc::c_char;
 }
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_set_label_unicode16(
+pub unsafe fn volume_id_set_label_unicode16(
   mut id: *mut volume_id,
   mut buf: *const u8,
   mut endianess: endian,
@@ -155,8 +152,7 @@ pub unsafe extern "C" fn volume_id_set_label_unicode16(
     count,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_set_uuid(
+pub unsafe fn volume_id_set_uuid(
   mut id: *mut volume_id,
   mut buf: *const u8,
   mut format: uuid_format,
@@ -252,8 +248,7 @@ pub unsafe extern "C" fn volume_id_set_uuid(
 /* Do not use xlseek here. With it, single corrupted filesystem
  * may result in attempt to seek past device -> exit.
  * It's better to ignore such fs and continue.  */
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_get_buffer(
+pub unsafe fn volume_id_get_buffer(
   mut id: *mut volume_id,
   mut off: u64,
   mut len: size_t,
@@ -380,8 +375,7 @@ pub unsafe extern "C" fn volume_id_get_buffer(
 //void volume_id_set_usage(struct volume_id *id, enum volume_id_usage usage_id);
 //void volume_id_set_usage_part(struct volume_id_partition *part, enum volume_id_usage usage_id);
 //void volume_id_set_label_raw(struct volume_id *id, const u8 *buf, size_t count);
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_free_buffer(mut id: *mut volume_id) {
+pub unsafe fn volume_id_free_buffer(mut id: *mut volume_id) {
   free((*id).sbbuf as *mut libc::c_void);
   (*id).sbbuf = std::ptr::null_mut();
   (*id).sbbuf_len = 0 as size_t;

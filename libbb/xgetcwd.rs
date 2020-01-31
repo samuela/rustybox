@@ -145,8 +145,7 @@ extern "C" {
    Return NULL and set errno on error.
    If argument is not NULL (previous usage allocate memory), call free()
 */
-#[no_mangle]
-pub unsafe extern "C" fn xrealloc_getcwd_or_warn(mut cwd: *mut libc::c_char) -> *mut libc::c_char {
+pub unsafe fn xrealloc_getcwd_or_warn(mut cwd: *mut libc::c_char) -> *mut libc::c_char {
   let mut ret: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* 128 + 64 should be enough for 99% of cases */
   let mut path_max: libc::c_uint = 0;
   path_max = 128i32 as libc::c_uint;

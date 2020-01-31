@@ -28,8 +28,7 @@ extern "C" {
 // partprobe (GNU parted) 3.2:
 // -d, --dry-run	Don't update the kernel
 // -s, --summary	Show a summary of devices and their partitions
-#[no_mangle]
-pub unsafe extern "C" fn partprobe_main(
+pub unsafe fn partprobe_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

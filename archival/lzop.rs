@@ -136,7 +136,7 @@ pub const LZO_BASE: C2RustUnnamed_2 = 65521;
  * 255n(n+1)/2 + (n+1)(BASE-1) <= 2^32-1 */
 pub const LZO_NMAX: C2RustUnnamed_2 = 5552;
 pub type C2RustUnnamed_2 = libc::c_uint;
-unsafe extern "C" fn copy2(mut ip: *mut u8, mut m_pos: *const u8, mut off: libc::c_uint) {
+unsafe fn copy2(mut ip: *mut u8, mut m_pos: *const u8, mut off: libc::c_uint) {
   *ip.offset(0) = *m_pos.offset(0);
   if off == 1i32 as libc::c_uint {
     *ip.offset(1) = *m_pos.offset(0)
@@ -144,7 +144,7 @@ unsafe extern "C" fn copy2(mut ip: *mut u8, mut m_pos: *const u8, mut off: libc:
     *ip.offset(1) = *m_pos.offset(1)
   };
 }
-unsafe extern "C" fn copy3(mut ip: *mut u8, mut m_pos: *const u8, mut off: libc::c_uint) {
+unsafe fn copy3(mut ip: *mut u8, mut m_pos: *const u8, mut off: libc::c_uint) {
   *ip.offset(0) = *m_pos.offset(0);
   if off == 1i32 as libc::c_uint {
     let ref mut fresh0 = *ip.offset(1);
@@ -159,7 +159,7 @@ unsafe extern "C" fn copy3(mut ip: *mut u8, mut m_pos: *const u8, mut off: libc:
   };
 }
 #[inline(never)]
-unsafe extern "C" fn lzo1x_optimize(
+unsafe fn lzo1x_optimize(
   mut in_0: *mut u8,
   mut in_len: libc::c_uint,
   mut out: *mut u8,
@@ -651,7 +651,7 @@ unsafe extern "C" fn lzo1x_optimize(
 // adapted from free code by Mark Adler <madler@alumni.caltech.edu>
 // see http://www.zlib.org/
 /* *********************************************************************/
-unsafe extern "C" fn lzo_adler32(mut adler: u32, mut buf: *const u8, mut len: libc::c_uint) -> u32 {
+unsafe fn lzo_adler32(mut adler: u32, mut buf: *const u8, mut len: libc::c_uint) -> u32 {
   let mut s1: u32 = adler & 0xffffi32 as libc::c_uint;
   let mut s2: u32 = adler >> 16i32 & 0xffffi32 as libc::c_uint;
   let mut k: libc::c_uint = 0;
@@ -682,7 +682,7 @@ unsafe extern "C" fn lzo_adler32(mut adler: u32, mut buf: *const u8, mut len: li
   }
   return s2 << 16i32 | s1;
 }
-unsafe extern "C" fn lzo_crc32(mut c: u32, mut buf: *const u8, mut len: libc::c_uint) -> u32 {
+unsafe fn lzo_crc32(mut c: u32, mut buf: *const u8, mut len: libc::c_uint) -> u32 {
   //if (buf == NULL) - impossible
   //	return 0;
   return !crate::libbb::crc32::crc32_block_endian0(
@@ -693,7 +693,7 @@ unsafe extern "C" fn lzo_crc32(mut c: u32, mut buf: *const u8, mut len: libc::c_
   );
 }
 /* *********************************************************************/
-unsafe extern "C" fn init_chksum() {
+unsafe fn init_chksum() {
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .chksum
     .f_adler32 = 1i32 as u32;
@@ -701,7 +701,7 @@ unsafe extern "C" fn init_chksum() {
     .chksum
     .f_crc32 = 0 as u32;
 }
-unsafe extern "C" fn add_bytes_to_chksum(mut buf: *const libc::c_void, mut cnt: libc::c_int) {
+unsafe fn add_bytes_to_chksum(mut buf: *const libc::c_void, mut cnt: libc::c_int) {
   /* We need to handle the two checksums at once, because at the
    * beginning of the header, we don't know yet which one we'll
    * eventually need */
@@ -724,7 +724,7 @@ unsafe extern "C" fn add_bytes_to_chksum(mut buf: *const libc::c_void, mut cnt: 
     cnt as libc::c_uint,
   );
 }
-unsafe extern "C" fn chksum_getresult(mut h_flags32: u32) -> u32 {
+unsafe fn chksum_getresult(mut h_flags32: u32) -> u32 {
   return if h_flags32 as libc::c_long & 0x1000i64 != 0 {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .chksum
@@ -736,7 +736,7 @@ unsafe extern "C" fn chksum_getresult(mut h_flags32: u32) -> u32 {
   };
 }
 /* *********************************************************************/
-unsafe extern "C" fn read32() -> u32 {
+unsafe fn read32() -> u32 {
   let mut v: u32 = 0;
   crate::libbb::read_printf::xread(0, &mut v as *mut u32 as *mut libc::c_void, 4i32 as size_t);
   return {
@@ -758,7 +758,7 @@ unsafe extern "C" fn read32() -> u32 {
     __v
   };
 }
-unsafe extern "C" fn f_read(mut buf: *mut libc::c_void, mut cnt: libc::c_int) {
+unsafe fn f_read(mut buf: *mut libc::c_void, mut cnt: libc::c_int) {
   crate::libbb::read_printf::xread(0i32, buf, cnt as size_t);
   add_bytes_to_chksum(buf, cnt);
 }
@@ -774,7 +774,7 @@ unsafe extern "C" fn f_read(mut buf: *mut libc::c_void, mut cnt: libc::c_int) {
 //	f_read(&v, 2);
 //	return ntohs(v);
 //}
-unsafe extern "C" fn f_read32() -> u32 {
+unsafe fn f_read32() -> u32 {
   let mut v: u32 = 0;
   f_read(&mut v as *mut u32 as *mut libc::c_void, 4i32);
   return {
@@ -796,7 +796,7 @@ unsafe extern "C" fn f_read32() -> u32 {
     __v
   };
 }
-unsafe extern "C" fn write32(mut v: u32) {
+unsafe fn write32(mut v: u32) {
   v = {
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = v;
@@ -821,7 +821,7 @@ unsafe extern "C" fn write32(mut v: u32) {
     4i32 as size_t,
   );
 }
-unsafe extern "C" fn f_write(mut buf: *const libc::c_void, mut cnt: libc::c_int) {
+unsafe fn f_write(mut buf: *const libc::c_void, mut cnt: libc::c_int) {
   crate::libbb::xfuncs_printf::xwrite(1i32, buf, cnt as size_t);
   add_bytes_to_chksum(buf, cnt);
 }
@@ -831,7 +831,7 @@ unsafe extern "C" fn f_write(mut buf: *const libc::c_void, mut cnt: libc::c_int)
 // compress a file
 /* *********************************************************************/
 #[inline(never)]
-unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
+unsafe fn lzo_compress(mut h: *const header_t) -> libc::c_int {
   let mut block_size: libc::c_uint = (256i32 as libc::c_long * 1024i64) as libc::c_uint; /* LZO_E_OK */
   let mut r: libc::c_int = 0;
   let b1: *mut u8 = crate::libbb::xfuncs_printf::xzalloc(block_size as size_t) as *mut u8;
@@ -1101,11 +1101,11 @@ unsafe extern "C" fn lzo_compress(mut h: *const header_t) -> libc::c_int {
   free(b2 as *mut libc::c_void);
   return 1i32;
 }
-unsafe extern "C" fn lzo_check(
+unsafe fn lzo_check(
   mut init: u32,
   mut buf: *mut u8,
   mut len: libc::c_uint,
-  mut fn_0: Option<unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32>,
+  mut fn_0: Option<unsafe fn(_: u32, _: *const u8, _: libc::c_uint) -> u32>,
   mut ref_0: u32,
 ) {
   /* This function, by having the same order of parameters
@@ -1125,7 +1125,7 @@ unsafe extern "C" fn lzo_check(
 // used to have "const header_t *h" parameter, but since it uses
 // only flags32 field, changed to receive only that.
 #[inline(never)]
-unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
+unsafe fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
   let mut block_size: libc::c_uint = (256i32 as libc::c_long * 1024i64) as libc::c_uint;
   let mut r: libc::c_int = 0;
   let mut src_len: u32 = 0;
@@ -1211,7 +1211,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
             1i32 as u32,
             b1,
             src_len,
-            Some(lzo_adler32 as unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32),
+            Some(lzo_adler32 as unsafe fn(_: u32, _: *const u8, _: libc::c_uint) -> u32),
             c_adler32,
           );
         }
@@ -1220,7 +1220,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
             0 as u32,
             b1,
             src_len,
-            Some(lzo_crc32 as unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32),
+            Some(lzo_crc32 as unsafe fn(_: u32, _: *const u8, _: libc::c_uint) -> u32),
             c_crc32,
           );
         }
@@ -1247,7 +1247,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
           1i32 as u32,
           dst,
           dst_len,
-          Some(lzo_adler32 as unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32),
+          Some(lzo_adler32 as unsafe fn(_: u32, _: *const u8, _: libc::c_uint) -> u32),
           d_adler32,
         );
       }
@@ -1256,7 +1256,7 @@ unsafe extern "C" fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
           0 as u32,
           dst,
           dst_len,
-          Some(lzo_crc32 as unsafe extern "C" fn(_: u32, _: *const u8, _: libc::c_uint) -> u32),
+          Some(lzo_crc32 as unsafe fn(_: u32, _: *const u8, _: libc::c_uint) -> u32),
           d_crc32,
         );
       }
@@ -1307,7 +1307,7 @@ static mut lzop_magic: [libc::c_uchar; 9] = [
   0xai32 as libc::c_uchar,
 ];
 /* This coding is derived from Alexander Lehmann's pngcheck code. */
-unsafe extern "C" fn check_magic() {
+unsafe fn check_magic() {
   let mut magic: [libc::c_uchar; 9] = [0; 9];
   crate::libbb::read_printf::xread(
     0,
@@ -1328,7 +1328,7 @@ unsafe extern "C" fn check_magic() {
 /* *********************************************************************/
 // lzop file header
 /* *********************************************************************/
-unsafe extern "C" fn write_header(mut h: *mut header_t) {
+unsafe fn write_header(mut h: *mut header_t) {
   let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   crate::libbb::xfuncs_printf::xwrite(
     1i32,
@@ -1365,7 +1365,7 @@ unsafe extern "C" fn write_header(mut h: *mut header_t) {
   };
   write32(chksum_getresult((*h).flags32));
 }
-unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
+unsafe fn read_header(mut h: *mut header_t) -> libc::c_int {
   let mut l: libc::c_int = 0;
   let mut checksum: u32 = 0;
   /* As it stands now, only h->flags32 is used by our caller.
@@ -1514,7 +1514,7 @@ unsafe extern "C" fn read_header(mut h: *mut header_t) -> libc::c_int {
 /* *********************************************************************/
 // compress
 /* *********************************************************************/
-unsafe extern "C" fn lzo_set_method(mut h: *mut header_t) {
+unsafe fn lzo_set_method(mut h: *mut header_t) {
   let mut level: smallint = 0;
   /* levels 2..6 or none (defaults to level 3) */
   (*h).method = M_LZO1X_1 as libc::c_int as u8; /* levels 2-6 are actually the same */
@@ -1530,7 +1530,7 @@ unsafe extern "C" fn lzo_set_method(mut h: *mut header_t) {
   }
   (*h).level = level as u8;
 }
-unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
+unsafe fn do_lzo_compress() -> libc::c_int {
   let mut header: header_t = header_t {
     version_be16: 0,
     lib_version_be16: 0,
@@ -1664,7 +1664,7 @@ unsafe extern "C" fn do_lzo_compress() -> libc::c_int {
 /* *********************************************************************/
 // decompress
 /* *********************************************************************/
-unsafe extern "C" fn do_lzo_decompress() -> libc::c_int {
+unsafe fn do_lzo_decompress() -> libc::c_int {
   let mut r: libc::c_int = 0;
   let mut header: header_t = header_t {
     version_be16: 0,
@@ -1688,7 +1688,7 @@ unsafe extern "C" fn do_lzo_decompress() -> libc::c_int {
   }
   return lzo_decompress(header.flags32);
 }
-unsafe extern "C" fn make_new_name_lzop(
+unsafe fn make_new_name_lzop(
   mut filename: *mut libc::c_char,
   mut _expected_ext: *const libc::c_char,
 ) -> *mut libc::c_char {
@@ -1713,7 +1713,7 @@ unsafe extern "C" fn make_new_name_lzop(
     filename,
   );
 }
-unsafe extern "C" fn pack_lzop(mut _xstate: *mut transformer_state_t) -> libc::c_longlong {
+unsafe fn pack_lzop(mut _xstate: *mut transformer_state_t) -> libc::c_longlong {
   if option_mask32 & OPT_DECOMPRESS as libc::c_int as libc::c_uint != 0 {
     return do_lzo_decompress() as libc::c_longlong;
   }
@@ -1743,10 +1743,10 @@ pub unsafe fn lzop_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
   crate::libbb::crc32::global_crc32_new_table_le();
   return crate::archival::bbunzip::bbunpack(
     argv,
-    Some(pack_lzop as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong),
+    Some(pack_lzop as unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong),
     Some(
       make_new_name_lzop
-        as unsafe extern "C" fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
+        as unsafe fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
     ),
     0 as *const libc::c_char,
   );

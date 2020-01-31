@@ -7,6 +7,7 @@ use libc::free;
 use libc::printf;
 use libc::strchr;
 use libc::strcmp;
+use libc::tm;
 use libc::FILE;
 extern "C" {
   #[no_mangle]
@@ -19,15 +20,12 @@ extern "C" {
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_ulong;
-
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
   static mut stderr: *mut FILE;
-
   #[no_mangle]
   fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
-
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
@@ -38,16 +36,12 @@ extern "C" {
     __fmt: *const libc::c_char,
     __tp: *mut tm,
   ) -> *mut libc::c_char;
-
   #[no_mangle]
   static mut option_mask32: u32;
-
   #[no_mangle]
   static mut xfunc_error_retval: u8;
-
 }
 
-use libc::tm;
 /*
  * SuS3 compliant sort implementation for busybox
  *
@@ -186,7 +180,7 @@ pub struct sort_key {
 pub const FLAG_allowed_for_k: C2RustUnnamed_0 = 7943;
 pub type C2RustUnnamed_0 = libc::c_uint;
 #[inline(always)]
-unsafe extern "C" fn bb_ascii_toupper(mut a: libc::c_uchar) -> libc::c_uchar {
+unsafe fn bb_ascii_toupper(mut a: libc::c_uchar) -> libc::c_uchar {
   let mut b: libc::c_uchar = (a as libc::c_int - 'a' as i32) as libc::c_uchar;
   if b as libc::c_int <= 'z' as i32 - 'a' as i32 {
     a = (a as libc::c_int - ('a' as i32 - 'A' as i32)) as libc::c_uchar
@@ -194,7 +188,7 @@ unsafe extern "C" fn bb_ascii_toupper(mut a: libc::c_uchar) -> libc::c_uchar {
   return a;
 }
 #[inline(always)]
-unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
+unsafe fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   let mut b: libc::c_uchar = (a as libc::c_int - '0' as i32) as libc::c_uchar;
   if b as libc::c_int <= 9i32 {
     return (b as libc::c_int <= 9i32) as libc::c_int;
@@ -217,7 +211,7 @@ static mut key_list: *mut sort_key = std::ptr::null_mut();
 /* Force uppercase */
 /* Ignore !isprint() */
 /* This is a NOEXEC applet. Be very careful! */
-unsafe extern "C" fn get_key(
+unsafe fn get_key(
   mut str: *mut libc::c_char,
   mut key: *mut sort_key,
   mut flags: libc::c_int,
@@ -403,7 +397,7 @@ unsafe extern "C" fn get_key(
   }
   return str;
 }
-unsafe extern "C" fn add_key() -> *mut sort_key {
+unsafe fn add_key() -> *mut sort_key {
   let mut pkey: *mut *mut sort_key = &mut key_list;
   while !(*pkey).is_null() {
     pkey = &mut (**pkey).next_key
@@ -584,7 +578,7 @@ unsafe extern "C" fn compare_keys(
   }
   return retval;
 }
-unsafe extern "C" fn str2u(mut str: *mut *mut libc::c_char) -> libc::c_uint {
+unsafe fn str2u(mut str: *mut *mut libc::c_char) -> libc::c_uint {
   let mut lu: libc::c_ulong = 0;
   if !((*(*str).offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32) {
     crate::libbb::verror_msg::bb_simple_error_msg_and_die(
@@ -603,11 +597,7 @@ unsafe extern "C" fn str2u(mut str: *mut *mut libc::c_char) -> libc::c_uint {
   }
   return lu as libc::c_uint;
 }
-#[no_mangle]
-pub unsafe extern "C" fn sort_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn sort_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut lines: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut str_ignored: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut str_o: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -787,10 +777,7 @@ pub unsafe extern "C" fn sort_main(
     lines as *mut libc::c_void,
     linecount as size_t,
     ::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong,
-    Some(
-      compare_keys
-        as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int,
-    ),
+    Some(compare_keys),
   );
   /* Handle -u */
   if option_mask32 & FLAG_u as libc::c_int as libc::c_uint != 0 {

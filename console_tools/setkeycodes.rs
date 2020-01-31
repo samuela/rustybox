@@ -38,7 +38,7 @@ pub struct kbkeycode {
 pub type C2RustUnnamed = libc::c_uint;
 pub const KDSETKEYCODE: C2RustUnnamed = 19277;
 #[inline(always)]
-unsafe extern "C" fn xstrtoul_range(
+unsafe fn xstrtoul_range(
   mut str: *const libc::c_char,
   mut b: libc::c_int,
   mut l: libc::c_ulong,
@@ -51,8 +51,7 @@ unsafe extern "C" fn xstrtoul_range(
     u as libc::c_ulonglong,
   ) as libc::c_ulong;
 }
-#[no_mangle]
-pub unsafe extern "C" fn setkeycodes_main(
+pub unsafe fn setkeycodes_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

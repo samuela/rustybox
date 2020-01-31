@@ -463,8 +463,7 @@ use libc::passwd;
  * SUCH DAMAGE.
  */
 /* Become the user and group(s) specified by PW.  */
-#[no_mangle]
-pub unsafe extern "C" fn change_identity(mut pw: *const passwd) {
+pub unsafe fn change_identity(mut pw: *const passwd) {
   let mut res: libc::c_int = 0; /* helps to close a fd used internally by libc */
   res = crate::libpwdgrp::pwd_grp::bb_internal_initgroups((*pw).pw_name, (*pw).pw_gid);
   crate::libpwdgrp::pwd_grp::bb_internal_endgrent();

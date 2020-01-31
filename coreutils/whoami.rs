@@ -24,8 +24,7 @@ use libc::geteuid;
 //usage:       ""
 //usage:#define whoami_full_usage "\n\n"
 //usage:       "Print the user name associated with the current effective user id"
-#[no_mangle]
-pub unsafe extern "C" fn whoami_main(mut _argc: c_int, mut argv: *mut *mut c_char) -> c_int {
+pub unsafe fn whoami_main(mut _argc: c_int, mut argv: *mut *mut c_char) -> c_int {
   if !(*argv.offset(1)).is_null() {
     bb_show_usage();
   }

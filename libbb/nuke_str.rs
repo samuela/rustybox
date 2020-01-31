@@ -184,8 +184,7 @@ use libc;
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 //kbuild:lib-y += nuke_str.o
-#[no_mangle]
-pub unsafe extern "C" fn nuke_str(mut str: *mut libc::c_char) {
+pub unsafe fn nuke_str(mut str: *mut libc::c_char) {
   if !str.is_null() {
     while *str != 0 {
       let fresh0 = str;

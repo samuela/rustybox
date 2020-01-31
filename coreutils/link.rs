@@ -26,11 +26,7 @@ extern "C" {
 //usage:#define link_full_usage "\n\n"
 //usage:       "Create hard LINK to FILE"
 /* This is a NOFORK applet. Be very careful! */
-#[no_mangle]
-pub unsafe extern "C" fn link_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn link_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   crate::libbb::getopt32::getopt32(argv, b"^\x00=2\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   if link(*argv.offset(0), *argv.offset(1)) != 0 {

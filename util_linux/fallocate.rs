@@ -82,8 +82,7 @@ use crate::librb::suffix_mult;
 //    blocks at the either end of the range), and I/O is (otherwise) required
 //    only to update metadata.
 //    Option --keep-size can be specified to prevent file length modification.
-#[no_mangle]
-pub unsafe extern "C" fn fallocate_main(
+pub unsafe fn fallocate_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

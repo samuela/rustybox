@@ -469,8 +469,7 @@ extern "C" {
 /* Run SHELL, or DEFAULT_SHELL if SHELL is "" or NULL.
  * If ADDITIONAL_ARGS is not NULL, pass them to the shell.
  */
-#[no_mangle]
-pub unsafe extern "C" fn run_shell(
+pub unsafe fn run_shell(
   mut shell: *const libc::c_char,
   mut loginshell: libc::c_int,
   mut additional_args: *mut *const libc::c_char,

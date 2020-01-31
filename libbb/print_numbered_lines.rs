@@ -421,8 +421,7 @@ pub struct number_state {
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 //kbuild:lib-y += print_numbered_lines.o
-#[no_mangle]
-pub unsafe extern "C" fn print_numbered_lines(
+pub unsafe fn print_numbered_lines(
   mut ns: *mut number_state,
   mut filename: *const libc::c_char,
 ) -> libc::c_int {

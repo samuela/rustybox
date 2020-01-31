@@ -1,7 +1,9 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
+use crate::librb::size_t;
 use libc;
 use libc::alarm;
+use libc::ssize_t;
+use libc::termios;
 extern "C" {
 
   #[no_mangle]
@@ -22,9 +24,6 @@ extern "C" {
 
 }
 
-use crate::librb::size_t;
-use libc::ssize_t;
-use libc::termios;
 unsafe extern "C" fn read_byte(mut timeout: libc::c_uint) -> libc::c_int {
   let mut buf: libc::c_uchar = 0;
   let mut n: libc::c_int = 0;
@@ -465,11 +464,7 @@ unsafe extern "C" fn receive(mut file_fd: libc::c_int) -> libc::c_int {
   /* for (;;) */
 }
 unsafe extern "C" fn sigalrm_handler(mut _signum: libc::c_int) {}
-#[no_mangle]
-pub unsafe extern "C" fn rx_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn rx_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut tty: termios = termios {
     c_iflag: 0,
     c_oflag: 0,
@@ -509,10 +504,7 @@ pub unsafe extern "C" fn rx_main(
     tcsetattr(0i32, 2i32, &mut tty);
   }
   /* No SA_RESTART: we want ALRM to interrupt read() */
-  crate::libbb::signals::signal_no_SA_RESTART_empty_mask(
-    14i32,
-    Some(sigalrm_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  crate::libbb::signals::signal_no_SA_RESTART_empty_mask(14i32, Some(sigalrm_handler));
   n = receive(file_fd);
   if termios_err == 0 {
     tcsetattr(0i32, 2i32, &mut orig_tty);

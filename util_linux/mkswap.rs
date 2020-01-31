@@ -70,8 +70,7 @@ pub struct swap_header_v1 {
 }
 /* Stored without terminating NUL */
 static mut SWAPSPACE2: [libc::c_char; 10] = [83, 87, 65, 80, 83, 80, 65, 67, 69, 50];
-#[no_mangle]
-pub unsafe extern "C" fn mkswap_main(
+pub unsafe fn mkswap_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

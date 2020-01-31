@@ -1,3 +1,4 @@
+use crate::librb::size_t;
 use libc;
 extern "C" {
   #[no_mangle]
@@ -24,10 +25,8 @@ extern "C" {
   static mut optind: libc::c_int;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
 }
 
-use crate::librb::size_t;
 pub const OPT_h: C2RustUnnamed = 1;
 pub const OPT_x: C2RustUnnamed = 2;
 pub type C2RustUnnamed = libc::c_uint;
@@ -54,8 +53,7 @@ pub type C2RustUnnamed = libc::c_uint;
 //usage:     "\n	-x ATTR		Remove attribute ATTR"
 //usage:     "\n	-n ATTR		Set attribute ATTR to VALUE"
 //usage:     "\n	-v VALUE	(default: empty)"
-#[no_mangle]
-pub unsafe extern "C" fn setfattr_main(
+pub unsafe fn setfattr_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -75,49 +73,17 @@ pub unsafe extern "C" fn setfattr_main(
   loop {
     let mut r: libc::c_int = 0;
     if opt & OPT_x as libc::c_int != 0 {
-      r = if opt & OPT_h as libc::c_int != 0 {
-        Some(
-          lremovexattr
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int,
-        )
+      r = (if opt & OPT_h as libc::c_int != 0 {
+        lremovexattr
       } else {
-        Some(
-          removexattr
-            as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int,
-        )
-      }
-      .expect("non-null function pointer")(*argv, name)
+        removexattr
+      })(*argv, name)
     } else {
-      r = if opt & OPT_h as libc::c_int != 0 {
-        Some(
-          lsetxattr
-            as unsafe extern "C" fn(
-              _: *const libc::c_char,
-              _: *const libc::c_char,
-              _: *const libc::c_void,
-              _: size_t,
-              _: libc::c_int,
-            ) -> libc::c_int,
-        )
+      r = (if opt & OPT_h as libc::c_int != 0 {
+        lsetxattr
       } else {
-        Some(
-          setxattr
-            as unsafe extern "C" fn(
-              _: *const libc::c_char,
-              _: *const libc::c_char,
-              _: *const libc::c_void,
-              _: size_t,
-              _: libc::c_int,
-            ) -> libc::c_int,
-        )
-      }
-      .expect("non-null function pointer")(
-        *argv,
-        name,
-        value as *const libc::c_void,
-        strlen(value),
-        0,
-      )
+        setxattr
+      })(*argv, name, value as *const libc::c_void, strlen(value), 0)
     }
     if r != 0 {
       crate::libbb::perror_msg::bb_simple_perror_msg(*argv);

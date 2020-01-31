@@ -64,7 +64,7 @@ pub const OPT_PF_LONG: C2RustUnnamed = 8;
 pub const OPT_DIRS_OPT: C2RustUnnamed = 4;
 pub const OPT_ALL: C2RustUnnamed = 2;
 pub const OPT_RECUR: C2RustUnnamed = 1;
-unsafe extern "C" fn list_attributes(mut name: *const libc::c_char) {
+unsafe fn list_attributes(mut name: *const libc::c_char) {
   let mut current_block: u64;
   let mut fsflags: libc::c_ulong = 0;
   let mut generation: libc::c_ulong = 0;
@@ -100,7 +100,7 @@ unsafe extern "C" fn list_attributes(mut name: *const libc::c_char) {
     name,
   );
 }
-unsafe extern "C" fn lsattr_dir_proc(
+unsafe fn lsattr_dir_proc(
   mut dir_name: *const libc::c_char,
   mut de: *mut dirent,
   mut _private: *mut libc::c_void,
@@ -128,7 +128,7 @@ unsafe extern "C" fn lsattr_dir_proc(
         path,
         Some(
           lsattr_dir_proc
-            as unsafe extern "C" fn(
+            as unsafe fn(
               _: *const libc::c_char,
               _: *mut dirent,
               _: *mut libc::c_void,
@@ -142,7 +142,7 @@ unsafe extern "C" fn lsattr_dir_proc(
   free(path as *mut libc::c_void);
   return 0;
 }
-unsafe extern "C" fn lsattr_args(mut name: *const libc::c_char) {
+unsafe fn lsattr_args(mut name: *const libc::c_char) {
   let mut st: stat = std::mem::zeroed();
   if lstat(name, &mut st) == -1i32 {
     crate::libbb::perror_msg::bb_perror_msg(
@@ -152,27 +152,12 @@ unsafe extern "C" fn lsattr_args(mut name: *const libc::c_char) {
   } else if st.st_mode & 0o170000i32 as libc::c_uint == 0o40000i32 as libc::c_uint
     && option_mask32 & OPT_DIRS_OPT as libc::c_int as libc::c_uint == 0
   {
-    crate::e2fsprogs::e2fs_lib::iterate_on_dir(
-      name,
-      Some(
-        lsattr_dir_proc
-          as unsafe extern "C" fn(
-            _: *const libc::c_char,
-            _: *mut dirent,
-            _: *mut libc::c_void,
-          ) -> libc::c_int,
-      ),
-      0 as *mut libc::c_void,
-    );
+    crate::e2fsprogs::e2fs_lib::iterate_on_dir(name, Some(lsattr_dir_proc), 0 as *mut libc::c_void);
   } else {
     list_attributes(name);
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn lsattr_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn lsattr_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   crate::libbb::getopt32::getopt32(argv, b"Radlv\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   if (*argv).is_null() {

@@ -22,8 +22,7 @@ extern "C" {
 use crate::librb::size_t;
 use libc::off_t;
 use libc::FILE;
-#[no_mangle]
-pub unsafe extern "C" fn strings_main(
+pub unsafe fn strings_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

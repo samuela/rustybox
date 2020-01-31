@@ -100,12 +100,12 @@ pub struct globals {
   pub line_buf: [libc::c_char; 128],
 }
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 /* -n */
 /* convert speed string to speed code; return <= 0 on failure */
-unsafe extern "C" fn bcode(mut s: *const libc::c_char) -> libc::c_int {
+unsafe fn bcode(mut s: *const libc::c_char) -> libc::c_int {
   let mut value: libc::c_int =
     crate::libbb::bb_strtonum::bb_strtou(s, 0 as *mut *mut libc::c_char, 10i32) as libc::c_int; /* yes, int is intended! */
   if value < 0 {
@@ -115,7 +115,7 @@ unsafe extern "C" fn bcode(mut s: *const libc::c_char) -> libc::c_int {
   return crate::libbb::speed_table::tty_value_to_baud(value as libc::c_uint) as libc::c_int;
 }
 /* parse alternate baud rates */
-unsafe extern "C" fn parse_speeds(mut arg: *mut libc::c_char) {
+unsafe fn parse_speeds(mut arg: *mut libc::c_char) {
   let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* NB: at least one iteration is always done */
   loop {
@@ -140,7 +140,7 @@ unsafe extern "C" fn parse_speeds(mut arg: *mut libc::c_char) {
   }
 }
 /* parse command-line arguments */
-unsafe extern "C" fn parse_args(mut argv: *mut *mut libc::c_char) {
+unsafe fn parse_args(mut argv: *mut *mut libc::c_char) {
   let mut ts: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut flags: libc::c_int = 0;
   flags = crate::libbb::getopt32::getopt32(
@@ -182,7 +182,7 @@ unsafe extern "C" fn parse_args(mut argv: *mut *mut libc::c_char) {
   };
 }
 /* set up tty as standard input, output, error */
-unsafe extern "C" fn open_tty() {
+unsafe fn open_tty() {
   /* Set up new standard input, unless we are given an already opened port */
   if *(*ptr_to_globals).tty_name.offset(0) as libc::c_int != '-' as i32
     || *(*ptr_to_globals).tty_name.offset(1) as libc::c_int != 0
@@ -224,7 +224,7 @@ unsafe extern "C" fn open_tty() {
     crate::libbb::skip_whitespace::skip_dev_pfx((*ptr_to_globals).tty_name),
   );
 }
-unsafe extern "C" fn set_tty_attrs() {
+unsafe fn set_tty_attrs() {
   if crate::libbb::xfuncs::tcsetattr_stdin_TCSANOW(&mut (*ptr_to_globals).tty_attrs) < 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
       b"tcsetattr\x00" as *const u8 as *const libc::c_char,
@@ -238,7 +238,7 @@ unsafe extern "C" fn set_tty_attrs() {
  * - finalize_tty_attrs again modifies some parts and sets tty attrs before
  *   execing login
  */
-unsafe extern "C" fn init_tty_attrs(mut speed: libc::c_int) {
+unsafe fn init_tty_attrs(mut speed: libc::c_int) {
   /* Try to drain output buffer, with 5 sec timeout.
    * Added on request from users of ~600 baud serial interface
    * with biggish buffer on a 90MHz CPU.
@@ -247,7 +247,7 @@ unsafe extern "C" fn init_tty_attrs(mut speed: libc::c_int) {
    */
   crate::libbb::signals::signal_no_SA_RESTART_empty_mask(
     14i32,
-    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo),
   );
   alarm(5i32 as libc::c_uint);
   tcdrain(0i32);
@@ -294,7 +294,7 @@ unsafe extern "C" fn init_tty_attrs(mut speed: libc::c_int) {
   (*ptr_to_globals).tty_attrs.c_line = 0 as cc_t;
   set_tty_attrs();
 }
-unsafe extern "C" fn finalize_tty_attrs() {
+unsafe fn finalize_tty_attrs() {
   /* software flow control on output (stop sending if XOFF is recvd);
    * and on input (send XOFF when buffer is full)
    */
@@ -369,7 +369,7 @@ unsafe extern "C" fn finalize_tty_attrs() {
   );
 }
 /* extract baud rate from modem status message */
-unsafe extern "C" fn auto_baud() {
+unsafe fn auto_baud() {
   let mut nread: libc::c_int = 0;
   /*
    * This works only if the modem produces its status code AFTER raising
@@ -427,7 +427,7 @@ unsafe extern "C" fn auto_baud() {
 /* get user name, establish parity, speed, erase, kill, eol;
  * return NULL on BREAK, logname on success
  */
-unsafe extern "C" fn get_logname() -> *mut libc::c_char {
+unsafe fn get_logname() -> *mut libc::c_char {
   let mut bp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut c: libc::c_char = 0;
   /* Flush pending input (esp. after parsing or switching the baud rate) */
@@ -531,16 +531,12 @@ unsafe extern "C" fn get_logname() -> *mut libc::c_char {
 }
 unsafe extern "C" fn alarm_handler(mut _sig: libc::c_int) {
   finalize_tty_attrs();
-  _exit(0i32);
+  _exit(0);
 }
 unsafe extern "C" fn sleep10() {
-  sleep(10i32 as libc::c_uint);
+  sleep(10);
 }
-#[no_mangle]
-pub unsafe extern "C" fn getty_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn getty_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut n: libc::c_int = 0;
   let mut pid: pid_t = 0;
   let mut tsid: pid_t = 0;
@@ -629,7 +625,7 @@ pub unsafe extern "C" fn getty_main(
     close(fresh2);
   }
   /* Logging. We want special flavor of error_msg_and_die */
-  die_func = Some(sleep10 as unsafe extern "C" fn() -> ());
+  die_func = Some(sleep10);
   msg_eol = b"\r\n\x00" as *const u8 as *const libc::c_char;
   /* most likely will internally use fd #3 in CLOEXEC mode: */
   openlog(applet_name, 0x1i32, 4i32 << 3i32);
@@ -686,10 +682,7 @@ pub unsafe extern "C" fn getty_main(
     auto_baud();
   }
   /* Set the optional timer */
-  signal(
-    14i32,
-    Some(alarm_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  ); /* if 0, alarm is not set */
+  signal(14i32, Some(alarm_handler)); /* if 0, alarm is not set */
   alarm((*ptr_to_globals).timeout);
   /* Optionally wait for CR or LF before writing /etc/issue */
   if option_mask32 & (1i32 << 9i32) as libc::c_uint != 0 {

@@ -15,8 +15,7 @@ pub const c: C2RustUnnamed = 3;
 pub const MASK: C2RustUnnamed_0 = 2147483659;
 pub type C2RustUnnamed = libc::c_uint;
 pub type C2RustUnnamed_0 = libc::c_uint;
-#[no_mangle]
-pub unsafe extern "C" fn next_random(mut rnd: *mut random_t) -> u32 {
+pub unsafe fn next_random(mut rnd: *mut random_t) -> u32 {
   /* Galois LFSR parameter:
    * Taps at 32 31 29 1:
    */

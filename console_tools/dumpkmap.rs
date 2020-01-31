@@ -40,8 +40,7 @@ pub struct kbentry {
   pub kb_index: libc::c_uchar,
   pub kb_value: libc::c_ushort,
 }
-#[no_mangle]
-pub unsafe extern "C" fn dumpkmap_main(
+pub unsafe fn dumpkmap_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

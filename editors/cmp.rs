@@ -26,7 +26,7 @@ pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;
 pub const LOGMODE_STDIO: C2RustUnnamed = 1;
 pub const LOGMODE_NONE: C2RustUnnamed = 0;
 #[inline(always)]
-unsafe extern "C" fn xatoul_range(
+unsafe fn xatoul_range(
   mut str: *const libc::c_char,
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
@@ -70,11 +70,7 @@ static mut fmt_differ: [libc::c_char; 33] = [
 static mut fmt_l_opt: [libc::c_char; 21] = [
   37, 46, 48, 115, 37, 46, 48, 115, 37, 108, 117, 32, 37, 51, 111, 32, 37, 51, 111, 10, 0,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn cmp_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn cmp_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut fp1: *mut FILE = std::ptr::null_mut(); /* Hopefully won't overflow... */
   let mut fp2: *mut FILE = std::ptr::null_mut(); /* missing file results in exitcode 2 */
   let mut outfile: *mut FILE = stdout; /* -s suppresses open error messages */

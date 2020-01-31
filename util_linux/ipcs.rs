@@ -185,7 +185,7 @@ pub union semun {
   pub array: *mut libc::c_ushort,
   pub __buf: *mut seminfo,
 }
-unsafe extern "C" fn print_perms(mut id: libc::c_int, mut ipcp: *mut ipc_perm) {
+unsafe fn print_perms(mut id: libc::c_int, mut ipcp: *mut ipc_perm) {
   let mut pw: *mut passwd = std::ptr::null_mut();
   let mut gr: *mut group = std::ptr::null_mut();
   printf(
@@ -243,7 +243,7 @@ unsafe extern "C" fn print_perms(mut id: libc::c_int, mut ipcp: *mut ipc_perm) {
   };
 }
 #[inline(never)]
-unsafe extern "C" fn do_shm(mut format: libc::c_int) {
+unsafe fn do_shm(mut format: libc::c_int) {
   let mut maxid: libc::c_int = 0;
   let mut shmid: libc::c_int = 0;
   let mut id: libc::c_int = 0;
@@ -506,7 +506,7 @@ unsafe extern "C" fn do_shm(mut format: libc::c_int) {
   }
 }
 #[inline(never)]
-unsafe extern "C" fn do_sem(mut format: libc::c_int) {
+unsafe fn do_sem(mut format: libc::c_int) {
   let mut maxid: libc::c_int = 0;
   let mut semid: libc::c_int = 0;
   let mut id: libc::c_int = 0;
@@ -702,7 +702,7 @@ unsafe extern "C" fn do_sem(mut format: libc::c_int) {
   }
 }
 #[inline(never)]
-unsafe extern "C" fn do_msg(mut format: libc::c_int) {
+unsafe fn do_msg(mut format: libc::c_int) {
   let mut maxid: libc::c_int = 0;
   let mut msqid: libc::c_int = 0;
   let mut id: libc::c_int = 0;
@@ -945,7 +945,7 @@ unsafe extern "C" fn do_msg(mut format: libc::c_int) {
     id += 1
   }
 }
-unsafe extern "C" fn print_shm(mut shmid: libc::c_int) {
+unsafe fn print_shm(mut shmid: libc::c_int) {
   let mut shmds: shmid_ds = shmid_ds {
     shm_perm: ipc_perm {
       __key: 0,
@@ -1005,7 +1005,7 @@ unsafe extern "C" fn print_shm(mut shmid: libc::c_int) {
     ctime(&mut shmds.shm_ctime),
   );
 }
-unsafe extern "C" fn print_msg(mut msqid: libc::c_int) {
+unsafe fn print_msg(mut msqid: libc::c_int) {
   let mut buf: msqid_ds = msqid_ds {
     msg_perm: ipc_perm {
       __key: 0,
@@ -1069,7 +1069,7 @@ unsafe extern "C" fn print_msg(mut msqid: libc::c_int) {
     },
   );
 }
-unsafe extern "C" fn print_sem(mut semid: libc::c_int) {
+unsafe fn print_sem(mut semid: libc::c_int) {
   let mut semds: semid_ds = semid_ds {
     sem_perm: ipc_perm {
       __key: 0,
@@ -1163,8 +1163,7 @@ unsafe extern "C" fn print_sem(mut semid: libc::c_int) {
 //usage:     "\n	-p	Pid"
 //usage:     "\n	-l	Limits"
 //usage:     "\n	-u	Summary"
-#[no_mangle]
-pub unsafe extern "C" fn ipcs_main(
+pub unsafe fn ipcs_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

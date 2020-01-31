@@ -3,8 +3,7 @@ use libc::sleep;
 use libc::time;
 use libc::time_t;
 
-#[no_mangle]
-pub unsafe extern "C" fn bb_do_delay(mut seconds: libc::c_int) {
+pub unsafe fn bb_do_delay(mut seconds: libc::c_int) {
   let mut start: time_t = 0;
   let mut now: time_t = 0;
   start = time(0 as *mut time_t);

@@ -181,7 +181,7 @@ pub const OPT_WATCHCHILD: C2RustUnnamed_3 = 4;
  * Update wridx1 and size1. Return < 0 on error.
  * Buggy if IAC is present but incomplete: skips them.
  */
-unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssize_t {
+unsafe fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssize_t {
   let mut current_block: u64;
   let mut wr: libc::c_uint = 0;
   let mut rc: ssize_t = 0;
@@ -409,7 +409,7 @@ unsafe extern "C" fn safe_write_to_pty_decode_iac(mut ts: *mut tsession) -> ssiz
 /*
  * Converting single IAC into double on output
  */
-unsafe extern "C" fn safe_write_double_iac(
+unsafe fn safe_write_double_iac(
   mut fd: libc::c_int,
   mut buf: *const libc::c_char,
   mut count: size_t,
@@ -463,7 +463,7 @@ unsafe extern "C" fn safe_write_double_iac(
   }
   return total.wrapping_add(rc);
 }
-unsafe extern "C" fn make_new_session(mut sock: libc::c_int) -> *mut tsession {
+unsafe fn make_new_session(mut sock: libc::c_int) -> *mut tsession {
   let mut login_argv: [*const libc::c_char; 2] = [0 as *const libc::c_char; 2];
   let mut termbuf: termios = termios {
     c_iflag: 0,
@@ -617,7 +617,7 @@ unsafe extern "C" fn make_new_session(mut sock: libc::c_int) -> *mut tsession {
    * to remote clients anyway */
   /*bb_perror_msg_and_die("execv %s", G.loginpath);*/
 }
-unsafe extern "C" fn free_session(mut ts: *mut tsession) {
+unsafe fn free_session(mut ts: *mut tsession) {
   let mut t: *mut tsession = std::ptr::null_mut();
   if option_mask32 & OPT_INETD as libc::c_int as libc::c_uint != 0 {
     exit(0i32);
@@ -677,8 +677,7 @@ unsafe extern "C" fn handle_sigchld(mut _sig: libc::c_int) {
   }
   *bb_errno = save_errno;
 }
-#[no_mangle]
-pub unsafe extern "C" fn telnetd_main(
+pub unsafe fn telnetd_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -759,10 +758,7 @@ pub unsafe extern "C" fn telnetd_main(
     ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),
   );
   if opt & OPT_WATCHCHILD as libc::c_int as libc::c_uint != 0 {
-    signal(
-      17i32,
-      Some(handle_sigchld as unsafe extern "C" fn(_: libc::c_int) -> ()),
-    );
+    signal(17i32, Some(handle_sigchld));
   } else {
     /* prevent dead children from becoming zombies */
     signal(

@@ -169,7 +169,7 @@ pub struct ethtool_cmd {
   pub reserved: [u32; 3],
 }
 /* Get driver info. */
-unsafe extern "C" fn nameif_parse_selector(
+unsafe fn nameif_parse_selector(
   mut ch: *mut ethtable_t,
   mut selector: *mut libc::c_char,
 ) {
@@ -248,7 +248,7 @@ unsafe extern "C" fn nameif_parse_selector(
     );
   };
 }
-unsafe extern "C" fn prepend_new_eth_table(
+unsafe fn prepend_new_eth_table(
   mut clist: *mut *mut ethtable_t,
   mut ifname: *mut libc::c_char,
   mut selector: *mut libc::c_char,
@@ -270,11 +270,7 @@ unsafe extern "C" fn prepend_new_eth_table(
   }
   *clist = ch;
 }
-#[no_mangle]
-pub unsafe extern "C" fn nameif_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn nameif_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut clist: *mut ethtable_t = std::ptr::null_mut();
   let mut fname: *const libc::c_char = b"/etc/mactab\x00" as *const u8 as *const libc::c_char;
   let mut ctl_sk: libc::c_int = 0;
@@ -324,7 +320,7 @@ pub unsafe extern "C" fn nameif_main(
     b"/proc/net/dev\x00" as *const u8 as *const libc::c_char,
     Some(
       crate::libbb::wfopen::xfopen_for_read
-        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+        as unsafe fn(_: *const libc::c_char) -> *mut FILE,
     ),
   );
   let mut current_block_42: u64;

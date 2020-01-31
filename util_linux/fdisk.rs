@@ -349,12 +349,12 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 pub type C2RustUnnamed_1 = libc::c_uint;
 
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 
 #[inline(always)]
-unsafe extern "C" fn bb_strtoul(
+unsafe fn bb_strtoul(
   mut arg: *const libc::c_char,
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
@@ -432,7 +432,7 @@ static mut i386_sys_types: [*const libc::c_char; 49] = [
 /* TODO: return unsigned long long, FEATURE_FDISK_BLKSIZE _can_ handle
  * disks > 2^32 sectors
  */
-unsafe extern "C" fn bb_BLKGETSIZE_sectors(mut fd: libc::c_int) -> sector_t {
+unsafe fn bb_BLKGETSIZE_sectors(mut fd: libc::c_int) -> sector_t {
   let mut current_block: u64;
   let mut v64: u64 = 0;
   let mut longsectors: libc::c_ulong = 0;
@@ -496,7 +496,7 @@ unsafe extern "C" fn bb_BLKGETSIZE_sectors(mut fd: libc::c_int) -> sector_t {
   }
   return v64 as sector_t;
 }
-unsafe extern "C" fn close_dev_fd() {
+unsafe fn close_dev_fd() {
   /* Not really closing, but making sure it is open, and to harmless place */
   crate::libbb::xfuncs_printf::xmove_fd(
     crate::libbb::xfuncs_printf::xopen(b"/dev/null\x00" as *const u8 as *const libc::c_char, 0),
@@ -504,7 +504,7 @@ unsafe extern "C" fn close_dev_fd() {
   );
 }
 /* Return partition name */
-unsafe extern "C" fn partname(
+unsafe fn partname(
   mut dev: *const libc::c_char,
   mut pno: libc::c_int,
   mut lth: libc::c_int,
@@ -561,25 +561,25 @@ unsafe extern "C" fn partname(
   return bufp;
 }
 #[inline(always)]
-unsafe extern "C" fn str_units() -> *const libc::c_char {
+unsafe fn str_units() -> *const libc::c_char {
   return if (*ptr_to_globals).display_in_cyl_units as libc::c_int != 0 {
     b"cylinder\x00" as *const u8 as *const libc::c_char
   } else {
     b"sector\x00" as *const u8 as *const libc::c_char
   };
 }
-unsafe extern "C" fn valid_part_table_flag(mut mbuffer: *const libc::c_char) -> libc::c_int {
+unsafe fn valid_part_table_flag(mut mbuffer: *const libc::c_char) -> libc::c_int {
   return (*mbuffer.offset(510) as libc::c_int == 0x55i32
     && *mbuffer.offset(511) as u8 as libc::c_int == 0xaai32) as libc::c_int;
 }
-unsafe extern "C" fn fdisk_fatal(mut why: *const libc::c_char) {
+unsafe fn fdisk_fatal(mut why: *const libc::c_char) {
   if (*ptr_to_globals).listing != 0 {
     close_dev_fd();
     longjmp((*ptr_to_globals).listingbuf.as_mut_ptr(), 1i32);
   }
   crate::libbb::verror_msg::bb_error_msg_and_die(why, (*ptr_to_globals).disk_device);
 }
-unsafe extern "C" fn seek_sector(mut secno: sector_t) {
+unsafe fn seek_sector(mut secno: sector_t) {
   let mut off: u64 = (secno as u64).wrapping_mul((*ptr_to_globals).sector_size as libc::c_ulong);
   if off
     > (if -1i32 as off_t > 0 {
@@ -595,7 +595,7 @@ unsafe extern "C" fn seek_sector(mut secno: sector_t) {
     fdisk_fatal(b"can\'t seek on %s\x00" as *const u8 as *const libc::c_char);
   };
 }
-unsafe extern "C" fn set_all_unchanged() {
+unsafe fn set_all_unchanged() {
   let mut i: libc::c_int = 0;
   i = 0;
   while i < 60i32 {
@@ -604,16 +604,16 @@ unsafe extern "C" fn set_all_unchanged() {
   }
 }
 #[inline(always)]
-unsafe extern "C" fn set_changed(mut i: libc::c_int) {
+unsafe fn set_changed(mut i: libc::c_int) {
   (*ptr_to_globals).ptes[i as usize].changed = 1i32 as libc::c_char;
 }
 #[inline(always)]
-unsafe extern "C" fn write_part_table_flag(mut b: *mut libc::c_char) {
+unsafe fn write_part_table_flag(mut b: *mut libc::c_char) {
   *b.offset(510) = 0x55i32 as libc::c_char;
   *b.offset(511) = 0xaai32 as libc::c_char;
 }
 /* Read line; return 0 or first printable non-space char */
-unsafe extern "C" fn read_line(mut prompt: *const libc::c_char) -> libc::c_int {
+unsafe fn read_line(mut prompt: *const libc::c_char) -> libc::c_int {
   let mut sz: libc::c_int = 0; /* Ctrl-D or Ctrl-C */
   sz = crate::libbb::lineedit::read_line_input(
     0 as *mut line_input_t,
@@ -636,11 +636,11 @@ unsafe extern "C" fn read_line(mut prompt: *const libc::c_char) -> libc::c_int {
   }
   return *(*ptr_to_globals).line_ptr as libc::c_int;
 }
-unsafe extern "C" fn read_nonempty(mut mesg: *const libc::c_char) -> libc::c_char {
+unsafe fn read_nonempty(mut mesg: *const libc::c_char) -> libc::c_char {
   while read_line(mesg) == 0 {}
   return *(*ptr_to_globals).line_ptr;
 }
-unsafe extern "C" fn read_maybe_empty(mut mesg: *const libc::c_char) -> libc::c_char {
+unsafe fn read_maybe_empty(mut mesg: *const libc::c_char) -> libc::c_char {
   if read_line(mesg) == 0 {
     (*ptr_to_globals).line_ptr = (*ptr_to_globals).line_buffer.as_mut_ptr();
     *(*ptr_to_globals).line_ptr.offset(0) = '\n' as i32 as libc::c_char;
@@ -648,7 +648,7 @@ unsafe extern "C" fn read_maybe_empty(mut mesg: *const libc::c_char) -> libc::c_
   }
   return *(*ptr_to_globals).line_ptr.offset(0);
 }
-unsafe extern "C" fn read_hex(mut sys: *const *const libc::c_char) -> libc::c_int {
+unsafe fn read_hex(mut sys: *const *const libc::c_char) -> libc::c_int {
   let mut v: libc::c_ulong = 0;
   loop {
     read_nonempty(b"Hex code (type L to list codes): \x00" as *const u8 as *const libc::c_char);
@@ -666,7 +666,7 @@ unsafe extern "C" fn read_hex(mut sys: *const *const libc::c_char) -> libc::c_in
     }
   }
 }
-unsafe extern "C" fn write_sector(mut secno: sector_t, mut buf: *const libc::c_void) {
+unsafe fn write_sector(mut secno: sector_t, mut buf: *const libc::c_void) {
   seek_sector(secno);
   crate::libbb::xfuncs_printf::xwrite(
     dev_fd as libc::c_int,
@@ -675,32 +675,32 @@ unsafe extern "C" fn write_sector(mut secno: sector_t, mut buf: *const libc::c_v
   );
 }
 #[inline(always)]
-unsafe extern "C" fn read4_little_endian(mut cp: *const libc::c_uchar) -> libc::c_uint {
+unsafe fn read4_little_endian(mut cp: *const libc::c_uchar) -> libc::c_uint {
   let mut v: u32 = 0;
   v = *(cp as *mut bb__aliased_u32);
   return v;
 }
-unsafe extern "C" fn get_start_sect(mut p: *const partition) -> sector_t {
+unsafe fn get_start_sect(mut p: *const partition) -> sector_t {
   return read4_little_endian((*p).start4.as_ptr());
 }
-unsafe extern "C" fn get_nr_sects(mut p: *const partition) -> sector_t {
+unsafe fn get_nr_sects(mut p: *const partition) -> sector_t {
   return read4_little_endian((*p).size4.as_ptr());
 }
 /* start_sect and nr_sects are stored little endian on all machines */
 /* moreover, they are not aligned correctly */
 #[inline(always)]
-unsafe extern "C" fn store4_little_endian(mut cp: *mut libc::c_uchar, mut val: libc::c_uint) {
+unsafe fn store4_little_endian(mut cp: *mut libc::c_uchar, mut val: libc::c_uint) {
   let mut v: u32 = val;
   *(cp as *mut bb__aliased_u32) = v;
 }
-unsafe extern "C" fn set_start_sect(mut p: *mut partition, mut start_sect: libc::c_uint) {
+unsafe fn set_start_sect(mut p: *mut partition, mut start_sect: libc::c_uint) {
   store4_little_endian((*p).start4.as_mut_ptr(), start_sect);
 }
-unsafe extern "C" fn set_nr_sects(mut p: *mut partition, mut nr_sects: libc::c_uint) {
+unsafe fn set_nr_sects(mut p: *mut partition, mut nr_sects: libc::c_uint) {
   store4_little_endian((*p).size4.as_mut_ptr(), nr_sects);
 }
 /* Allocate a buffer and read a partition table sector */
-unsafe extern "C" fn read_pte(mut pe: *mut pte, mut offset: sector_t) {
+unsafe fn read_pte(mut pe: *mut pte, mut offset: sector_t) {
   (*pe).offset_from_dev_start = offset;
   (*pe).sectorbuffer = crate::libbb::xfuncs_printf::xzalloc((*ptr_to_globals).sector_size as size_t)
     as *mut libc::c_char;
@@ -718,7 +718,7 @@ unsafe extern "C" fn read_pte(mut pe: *mut pte, mut offset: sector_t) {
   (*pe).ext_pointer = std::ptr::null_mut();
   (*pe).part_table = (*pe).ext_pointer;
 }
-unsafe extern "C" fn get_partition_start_from_dev_start(mut pe: *const pte) -> sector_t {
+unsafe fn get_partition_start_from_dev_start(mut pe: *const pte) -> sector_t {
   return (*pe)
     .offset_from_dev_start
     .wrapping_add(get_start_sect((*pe).part_table));
@@ -729,7 +729,7 @@ unsafe extern "C" fn get_partition_start_from_dev_start(mut pe: *const pte) -> s
  * We might also do the opposite and warn in all cases except
  * for "is probably nondos partition".
  */
-unsafe extern "C" fn menu() {
+unsafe fn menu() {
   puts(b"Command Action\x00" as *const u8 as *const libc::c_char); /* sun */
   puts(b"a\ttoggle a bootable flag\x00" as *const u8 as *const libc::c_char);
   puts(b"b\tedit bsd disklabel\x00" as *const u8 as *const libc::c_char);
@@ -748,7 +748,7 @@ unsafe extern "C" fn menu() {
   puts(b"x\textra functionality (experts only)\x00" as *const u8 as *const libc::c_char);
 }
 /* FEATURE_FDISK_WRITABLE */
-unsafe extern "C" fn xmenu() {
+unsafe fn xmenu() {
   puts(b"Command Action\x00" as *const u8 as *const libc::c_char); /* !sun */
   puts(b"b\tmove beginning of data in a partition\x00" as *const u8 as *const libc::c_char); /* !sun */
   puts(b"c\tchange number of cylinders\x00" as *const u8 as *const libc::c_char); /* !sun, !aix, !sgi */
@@ -764,7 +764,7 @@ unsafe extern "C" fn xmenu() {
   puts(b"w\twrite table to disk and exit\x00" as *const u8 as *const libc::c_char);
 }
 /* ADVANCED mode */
-unsafe extern "C" fn get_sys_types() -> *const *const libc::c_char {
+unsafe fn get_sys_types() -> *const *const libc::c_char {
   // This was originally
   // return (
   //   LABEL_IS_SUN ? sun_sys_types :
@@ -772,7 +772,7 @@ unsafe extern "C" fn get_sys_types() -> *const *const libc::c_char {
   //   i386_sys_types);
   return i386_sys_types.as_ptr();
 }
-unsafe extern "C" fn partition_type(mut type_0: libc::c_uchar) -> *const libc::c_char {
+unsafe fn partition_type(mut type_0: libc::c_uchar) -> *const libc::c_char {
   let mut i: libc::c_int = 0;
   let mut types: *const *const libc::c_char = get_sys_types();
   i = 0;
@@ -786,7 +786,7 @@ unsafe extern "C" fn partition_type(mut type_0: libc::c_uchar) -> *const libc::c
   }
   return b"Unknown\x00" as *const u8 as *const libc::c_char;
 }
-unsafe extern "C" fn is_cleared_partition(mut p: *const partition) -> libc::c_int {
+unsafe fn is_cleared_partition(mut p: *const partition) -> libc::c_int {
   /* We consider partition "cleared" only if it has only zeros */
   let mut cp: *const libc::c_char = p as *const libc::c_char;
   let mut cnt: libc::c_int = ::std::mem::size_of::<partition>() as libc::c_ulong as libc::c_int;
@@ -802,7 +802,7 @@ unsafe extern "C" fn is_cleared_partition(mut p: *const partition) -> libc::c_in
   }
   return (bits as libc::c_int == 0) as libc::c_int;
 }
-unsafe extern "C" fn clear_partition(mut p: *mut partition) {
+unsafe fn clear_partition(mut p: *mut partition) {
   if !p.is_null() {
     memset(
       p as *mut libc::c_void,
@@ -811,14 +811,14 @@ unsafe extern "C" fn clear_partition(mut p: *mut partition) {
     );
   };
 }
-unsafe extern "C" fn get_sysid(mut i: libc::c_int) -> libc::c_int {
+unsafe fn get_sysid(mut i: libc::c_int) -> libc::c_int {
   // This was originally
   // return LABEL_IS_SUN ? sunlabel->infos[i].id :
   //         (LABEL_IS_SGI ? sgi_get_sysid(i) :
   //           ptes[i].part_table->sys_ind);
   return (*(*ptr_to_globals).ptes[i as usize].part_table).sys_ind as libc::c_int;
 }
-unsafe extern "C" fn list_types(mut sys: *const *const libc::c_char) {
+unsafe fn list_types(mut sys: *const *const libc::c_char) {
   let mut last: [libc::c_uint; 3] = [0; 3];
   let mut done: libc::c_uint = 0;
   let mut next: libc::c_uint = 0;
@@ -864,7 +864,7 @@ unsafe extern "C" fn list_types(mut sys: *const *const libc::c_char) {
   }
   crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
 }
-unsafe extern "C" fn set_hsc_start_end(
+unsafe fn set_hsc_start_end(
   mut p: *mut partition,
   mut start: sector_t,
   mut stop: sector_t,
@@ -914,7 +914,7 @@ unsafe extern "C" fn set_hsc_start_end(
   (*p).end_sector =
     ((*p).end_sector as libc::c_uint | stop >> 2i32 & 0xc0i32 as libc::c_uint) as libc::c_uchar;
 }
-unsafe extern "C" fn set_partition(
+unsafe fn set_partition(
   mut i: libc::c_int,
   mut doext: libc::c_int,
   mut start: sector_t,
@@ -940,7 +940,7 @@ unsafe extern "C" fn set_partition(
   set_hsc_start_end(p, start, stop);
   (*ptr_to_globals).ptes[i as usize].changed = 1i32 as libc::c_char;
 }
-unsafe extern "C" fn warn_geometry() -> libc::c_int {
+unsafe fn warn_geometry() -> libc::c_int {
   if (*ptr_to_globals).g_heads != 0
     && (*ptr_to_globals).g_sectors != 0
     && (*ptr_to_globals).g_cylinders != 0
@@ -960,7 +960,7 @@ unsafe extern "C" fn warn_geometry() -> libc::c_int {
   puts(b" (settable in the extra functions menu)\x00" as *const u8 as *const libc::c_char);
   return 1i32;
 }
-unsafe extern "C" fn update_units() {
+unsafe fn update_units() {
   let mut cyl_units: libc::c_int = (*ptr_to_globals)
     .g_heads
     .wrapping_mul((*ptr_to_globals).g_sectors) as libc::c_int;
@@ -971,7 +971,7 @@ unsafe extern "C" fn update_units() {
   };
   /* in sectors */
 }
-unsafe extern "C" fn warn_cylinders() {
+unsafe fn warn_cylinders() {
   if LABEL_DOS as libc::c_int == (*ptr_to_globals).current_label_type as libc::c_int
     && (*ptr_to_globals).g_cylinders > 1024i32 as libc::c_uint
     && (*ptr_to_globals).nowarn == 0
@@ -981,7 +981,7 @@ unsafe extern "C" fn warn_cylinders() {
                (*ptr_to_globals).g_cylinders);
   };
 }
-unsafe extern "C" fn read_extended(mut ext: libc::c_int) {
+unsafe fn read_extended(mut ext: libc::c_int) {
   let mut i: libc::c_int = 0;
   let mut pex: *mut pte = std::ptr::null_mut();
   let mut p: *mut partition = std::ptr::null_mut();
@@ -1109,7 +1109,7 @@ unsafe extern "C" fn read_extended(mut ext: libc::c_int) {
     }
   }
 }
-unsafe extern "C" fn create_doslabel() {
+unsafe fn create_doslabel() {
   printf(
     msg_building_new_label.as_ptr(),
     b"DOS disklabel\x00" as *const u8 as *const libc::c_char,
@@ -1130,7 +1130,7 @@ unsafe extern "C" fn create_doslabel() {
   set_changed(0i32);
   get_boot(CREATE_EMPTY_DOS);
 }
-unsafe extern "C" fn get_sectorsize() {
+unsafe fn get_sectorsize() {
   if (*ptr_to_globals).user_set_sector_size == 0 {
     let mut arg: libc::c_int = 0;
     if ioctl(
@@ -1152,7 +1152,7 @@ unsafe extern "C" fn get_sectorsize() {
     }
   };
 }
-unsafe extern "C" fn get_kernel_geometry() {
+unsafe fn get_kernel_geometry() {
   let mut geometry: hd_geometry = hd_geometry {
     heads: 0,
     sectors: 0,
@@ -1170,7 +1170,7 @@ unsafe extern "C" fn get_kernel_geometry() {
     /* never use geometry.cylinders - it is truncated */
   };
 }
-unsafe extern "C" fn get_partition_table_geometry() {
+unsafe fn get_partition_table_geometry() {
   let mut bufp: *const libc::c_uchar =
     (*ptr_to_globals).MBRbuffer.as_mut_ptr() as *const libc::c_uchar;
   let mut p: *mut partition = std::ptr::null_mut();
@@ -1210,7 +1210,7 @@ unsafe extern "C" fn get_partition_table_geometry() {
     (*ptr_to_globals).pt_sectors = ss as libc::c_uint
   };
 }
-unsafe extern "C" fn get_geometry() {
+unsafe fn get_geometry() {
   let mut sec_fac: libc::c_int = 0;
   get_sectorsize();
   sec_fac = (*ptr_to_globals)
@@ -1277,7 +1277,7 @@ unsafe extern "C" fn get_geometry() {
  *    0: found or created label
  *    1: I/O error
  */
-unsafe extern "C" fn get_boot(mut what: action) -> libc::c_int {
+unsafe fn get_boot(mut what: action) -> libc::c_int {
   let mut i: libc::c_int = 0;
   let mut fd: libc::c_int = 0;
   (*ptr_to_globals).g_partitions = 4i32;
@@ -1397,7 +1397,7 @@ unsafe extern "C" fn get_boot(mut what: action) -> libc::c_int {
  *
  * There is no default if DFLT is not between LOW and HIGH.
  */
-unsafe extern "C" fn read_int(
+unsafe fn read_int(
   mut low: sector_t,
   mut dflt: sector_t,
   mut high: sector_t,
@@ -1560,7 +1560,7 @@ unsafe extern "C" fn read_int(
   }
   return value;
 }
-unsafe extern "C" fn get_partition(mut warn: libc::c_int, mut max: libc::c_uint) -> libc::c_uint {
+unsafe fn get_partition(mut warn: libc::c_int, mut max: libc::c_uint) -> libc::c_uint {
   let mut pe: *mut pte = std::ptr::null_mut();
   let mut i: libc::c_uint = 0;
   i = read_int(
@@ -1592,7 +1592,7 @@ unsafe extern "C" fn get_partition(mut warn: libc::c_int, mut max: libc::c_uint)
   }
   return i;
 }
-unsafe extern "C" fn get_existing_partition(
+unsafe fn get_existing_partition(
   mut warn: libc::c_int,
   mut max: libc::c_uint,
 ) -> libc::c_int {
@@ -1631,7 +1631,7 @@ unsafe extern "C" fn get_existing_partition(
     }
   };
 }
-unsafe extern "C" fn get_nonexisting_partition() -> libc::c_int {
+unsafe fn get_nonexisting_partition() -> libc::c_int {
   let mut current_block: u64;
   let max: libc::c_int = 4i32;
   let mut pno: libc::c_int = -1i32;
@@ -1671,7 +1671,7 @@ unsafe extern "C" fn get_nonexisting_partition() -> libc::c_int {
     }
   };
 }
-unsafe extern "C" fn change_units() {
+unsafe fn change_units() {
   (*ptr_to_globals).display_in_cyl_units =
     ((*ptr_to_globals).display_in_cyl_units == 0) as libc::c_int as smallint;
   update_units();
@@ -1680,7 +1680,7 @@ unsafe extern "C" fn change_units() {
     str_units(),
   );
 }
-unsafe extern "C" fn toggle_active(mut i: libc::c_int) {
+unsafe fn toggle_active(mut i: libc::c_int) {
   let mut pe: *mut pte = &mut *(*ptr_to_globals).ptes.as_mut_ptr().offset(i as isize) as *mut pte;
   let mut p: *mut partition = (*pe).part_table;
   if ((*p).sys_ind as libc::c_int == 0x5i32
@@ -1700,7 +1700,7 @@ unsafe extern "C" fn toggle_active(mut i: libc::c_int) {
   } as libc::c_uchar;
   (*pe).changed = 1i32 as libc::c_char;
 }
-unsafe extern "C" fn toggle_dos_compatibility_flag() {
+unsafe fn toggle_dos_compatibility_flag() {
   (*ptr_to_globals).dos_compatible_flag =
     (1i32 - (*ptr_to_globals).dos_compatible_flag as libc::c_int) as smallint;
   if (*ptr_to_globals).dos_compatible_flag != 0 {
@@ -1717,7 +1717,7 @@ unsafe extern "C" fn toggle_dos_compatibility_flag() {
     );
   };
 }
-unsafe extern "C" fn delete_partition(mut i: libc::c_int) {
+unsafe fn delete_partition(mut i: libc::c_int) {
   let mut pe: *mut pte = &mut *(*ptr_to_globals).ptes.as_mut_ptr().offset(i as isize) as *mut pte;
   let mut p: *mut partition = (*pe).part_table;
   let mut q: *mut partition = (*pe).ext_pointer;
@@ -1783,7 +1783,7 @@ unsafe extern "C" fn delete_partition(mut i: libc::c_int) {
     }
   };
 }
-unsafe extern "C" fn change_sysid() {
+unsafe fn change_sysid() {
   let mut i: libc::c_int = 0;
   let mut sys: libc::c_int = 0;
   let mut origsys: libc::c_int = 0;
@@ -1853,7 +1853,7 @@ unsafe extern "C" fn change_sysid() {
  * faith@cs.unc.edu, based on code fragments from pfdisk by Gordon W. Ross,
  * Jan.  1990 (version 1.2.1 by Gordon W. Ross Aug. 1990; Modified by S.
  * Lubkin Oct.  1991). */
-unsafe extern "C" fn linear2chs(
+unsafe fn linear2chs(
   mut ls: libc::c_uint,
   mut c: *mut libc::c_uint,
   mut h: *mut libc::c_uint,
@@ -1870,7 +1870,7 @@ unsafe extern "C" fn linear2chs(
     .wrapping_add(1i32 as libc::c_uint);
   /* sectors count from 1 */
 }
-unsafe extern "C" fn check_consistency(mut p: *const partition, mut partition: libc::c_int) {
+unsafe fn check_consistency(mut p: *const partition, mut partition: libc::c_int) {
   let mut pbc: libc::c_uint = 0; /* physical beginning c, h, s */
   let mut pbh: libc::c_uint = 0; /* physical ending c, h, s */
   let mut pbs: libc::c_uint = 0; /* logical beginning c, h, s */
@@ -1950,7 +1950,7 @@ unsafe extern "C" fn check_consistency(mut p: *const partition, mut partition: l
     );
   };
 }
-unsafe extern "C" fn list_disk_geometry() {
+unsafe fn list_disk_geometry() {
   let mut xbytes: ullong = (*ptr_to_globals)
     .total_number_of_sectors
     .wrapping_div((1024i32 * 1024i32 / 512i32) as libc::c_uint)
@@ -1979,7 +1979,7 @@ unsafe extern "C" fn list_disk_geometry() {
  * Return 0 if OK. Return i if partition i should have been earlier.
  * Two separate checks: primary and logical partitions.
  */
-unsafe extern "C" fn wrong_p_order(mut prev: *mut libc::c_int) -> libc::c_int {
+unsafe fn wrong_p_order(mut prev: *mut libc::c_int) -> libc::c_int {
   let mut pe: *const pte = std::ptr::null();
   let mut p: *const partition = std::ptr::null();
   let mut last_p_start_pos: sector_t = 0 as sector_t;
@@ -2022,7 +2022,7 @@ unsafe extern "C" fn wrong_p_order(mut prev: *mut libc::c_int) -> libc::c_int {
  *   sfdisk /dev/hda > ohda; sfdisk /dev/hda < ohda
  * may help.
  */
-unsafe extern "C" fn fix_chain_of_logicals() {
+unsafe fn fix_chain_of_logicals() {
   let mut j: libc::c_int = 0;
   let mut oj: libc::c_int = 0;
   let mut ojj: libc::c_int = 0;
@@ -2117,7 +2117,7 @@ unsafe extern "C" fn fix_chain_of_logicals() {
     j += 1
   }
 }
-unsafe extern "C" fn fix_partition_table_order() {
+unsafe fn fix_partition_table_order() {
   let mut pei: *mut pte = std::ptr::null_mut();
   let mut pek: *mut pte = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
@@ -2178,7 +2178,7 @@ unsafe extern "C" fn fix_partition_table_order() {
   }
   puts(b"Done\x00" as *const u8 as *const libc::c_char);
 }
-unsafe extern "C" fn chs_string11(
+unsafe fn chs_string11(
   mut cyl: libc::c_uint,
   mut head: libc::c_uint,
   mut sect: libc::c_uint,
@@ -2198,7 +2198,7 @@ unsafe extern "C" fn chs_string11(
   );
   return buf;
 }
-unsafe extern "C" fn list_table(mut _xtra: libc::c_int) {
+unsafe fn list_table(mut _xtra: libc::c_int) {
   let mut i: libc::c_int = 0;
   let mut w: libc::c_int = 0;
   list_disk_geometry();
@@ -2301,7 +2301,7 @@ unsafe extern "C" fn list_table(mut _xtra: libc::c_int) {
     ); /* 48 does not suffice in Japanese */
   };
 }
-unsafe extern "C" fn x_list_table(mut extend: libc::c_int) {
+unsafe fn x_list_table(mut extend: libc::c_int) {
   let mut pe: *const pte = std::ptr::null();
   let mut p: *const partition = std::ptr::null();
   let mut i: libc::c_int = 0;
@@ -2346,7 +2346,7 @@ unsafe extern "C" fn x_list_table(mut extend: libc::c_int) {
     i += 1
   }
 }
-unsafe extern "C" fn fill_bounds(mut first: *mut sector_t, mut last: *mut sector_t) {
+unsafe fn fill_bounds(mut first: *mut sector_t, mut last: *mut sector_t) {
   let mut i: libc::c_uint = 0;
   let mut pe: *const pte = &mut *(*ptr_to_globals).ptes.as_mut_ptr().offset(0) as *mut pte;
   let mut p: *const partition = std::ptr::null();
@@ -2370,7 +2370,7 @@ unsafe extern "C" fn fill_bounds(mut first: *mut sector_t, mut last: *mut sector
     i = i.wrapping_add(1)
   }
 }
-unsafe extern "C" fn check(
+unsafe fn check(
   mut n: libc::c_int,
   mut h: libc::c_uint,
   mut s: libc::c_uint,
@@ -2428,7 +2428,7 @@ unsafe extern "C" fn check(
     );
   };
 }
-unsafe extern "C" fn verify() {
+unsafe fn verify() {
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   let mut total: sector_t = 1i32 as sector_t;
@@ -2556,7 +2556,7 @@ unsafe extern "C" fn verify() {
     }
   };
 }
-unsafe extern "C" fn add_partition(mut n: libc::c_int, mut sys: libc::c_int) {
+unsafe fn add_partition(mut n: libc::c_int, mut sys: libc::c_int) {
   let mut mesg: [libc::c_char; 256] = [0; 256];
   let mut i: libc::c_int = 0;
   let mut num_read: libc::c_int = 0;
@@ -2829,7 +2829,7 @@ unsafe extern "C" fn add_partition(mut n: libc::c_int, mut sys: libc::c_int) {
     (*ptr_to_globals).g_partitions = 5i32
   };
 }
-unsafe extern "C" fn add_logical() {
+unsafe fn add_logical() {
   if (*ptr_to_globals).g_partitions > 5i32
     || (*(*ptr_to_globals).ptes[4].part_table).sys_ind as libc::c_int != 0
   {
@@ -2851,7 +2851,7 @@ unsafe extern "C" fn add_logical() {
   }
   add_partition((*ptr_to_globals).g_partitions - 1i32, 0x83i32);
 }
-unsafe extern "C" fn new_partition() {
+unsafe fn new_partition() {
   let mut i: libc::c_int = 0;
   let mut free_primary: libc::c_int = 0;
   if warn_geometry() != 0 {
@@ -2919,7 +2919,7 @@ unsafe extern "C" fn new_partition() {
     }
   };
 }
-unsafe extern "C" fn reread_partition_table(mut leave: libc::c_int) {
+unsafe fn reread_partition_table(mut leave: libc::c_int) {
   let mut i: libc::c_int = 0;
   puts(b"Calling ioctl() to re-read partition table\x00" as *const u8 as *const libc::c_char);
   sync();
@@ -2941,7 +2941,7 @@ unsafe extern "C" fn reread_partition_table(mut leave: libc::c_int) {
     exit((i != 0) as libc::c_int);
   };
 }
-unsafe extern "C" fn write_table() {
+unsafe fn write_table() {
   let mut i: libc::c_int = 0;
   if LABEL_DOS as libc::c_int == (*ptr_to_globals).current_label_type as libc::c_int {
     i = 0;
@@ -2968,7 +2968,7 @@ unsafe extern "C" fn write_table() {
   puts(b"The partition table has been altered.\x00" as *const u8 as *const libc::c_char);
   reread_partition_table(1i32);
 }
-unsafe extern "C" fn print_buffer(mut pbuffer: *mut libc::c_char) {
+unsafe fn print_buffer(mut pbuffer: *mut libc::c_char) {
   let mut i: libc::c_int = 0;
   let mut l: libc::c_int = 0;
   i = 0;
@@ -2993,7 +2993,7 @@ unsafe extern "C" fn print_buffer(mut pbuffer: *mut libc::c_char) {
   }
   crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
 }
-unsafe extern "C" fn print_raw() {
+unsafe fn print_raw() {
   let mut i: libc::c_int = 0;
   printf(
     b"Device: %s\n\x00" as *const u8 as *const libc::c_char,
@@ -3009,7 +3009,7 @@ unsafe extern "C" fn print_raw() {
     }
   };
 }
-unsafe extern "C" fn move_begin(mut i: libc::c_uint) {
+unsafe fn move_begin(mut i: libc::c_uint) {
   let mut pe: *mut pte = &mut *(*ptr_to_globals).ptes.as_mut_ptr().offset(i as isize) as *mut pte;
   let mut p: *mut partition = (*pe).part_table;
   let mut new: sector_t = 0;
@@ -3060,7 +3060,7 @@ unsafe extern "C" fn move_begin(mut i: libc::c_uint) {
     (*pe).changed = 1i32 as libc::c_char
   };
 }
-unsafe extern "C" fn xselect() {
+unsafe fn xselect() {
   let mut c: libc::c_char = 0;
   loop {
     crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
@@ -3153,7 +3153,7 @@ unsafe extern "C" fn xselect() {
   }
 }
 /* ADVANCED mode */
-unsafe extern "C" fn is_ide_cdrom_or_tape(mut device: *const libc::c_char) -> libc::c_int {
+unsafe fn is_ide_cdrom_or_tape(mut device: *const libc::c_char) -> libc::c_int {
   let mut procf: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 100] = [0; 100];
   let mut statbuf: stat = std::mem::zeroed();
@@ -3205,7 +3205,7 @@ unsafe extern "C" fn is_ide_cdrom_or_tape(mut device: *const libc::c_char) -> li
   }
   return is_ide;
 }
-unsafe extern "C" fn open_list_and_close(
+unsafe fn open_list_and_close(
   mut device: *const libc::c_char,
   mut user_specified: libc::c_int,
 ) {
@@ -3254,7 +3254,7 @@ unsafe extern "C" fn open_list_and_close(
 }
 /* Is it a whole disk? The digit check is still useful
 for Xen devices for example. */
-unsafe extern "C" fn is_whole_disk(mut disk: *const libc::c_char) -> libc::c_int {
+unsafe fn is_whole_disk(mut disk: *const libc::c_char) -> libc::c_int {
   let mut len: libc::c_uint = 0;
   let mut fd: libc::c_int = open(disk, 0);
   if fd != -1i32 {
@@ -3288,7 +3288,7 @@ unsafe extern "C" fn is_whole_disk(mut disk: *const libc::c_char) -> libc::c_int
 }
 /* for fdisk -l: try all things in /proc/partitions
 that look like a partition name (do not end in a digit) */
-unsafe extern "C" fn list_devs_in_proc_partititons() {
+unsafe fn list_devs_in_proc_partititons() {
   let mut procpt: *mut FILE = std::ptr::null_mut();
   let mut line: [libc::c_char; 100] = [0; 100];
   let mut ptname: [libc::c_char; 100] = [0; 100];
@@ -3328,14 +3328,13 @@ unsafe extern "C" fn list_devs_in_proc_partititons() {
     }
   }
 }
-unsafe extern "C" fn unknown_command(mut c: libc::c_int) {
+unsafe fn unknown_command(mut c: libc::c_int) {
   printf(
     b"%c: unknown command\n\x00" as *const u8 as *const libc::c_char,
     c,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn fdisk_main(
+pub unsafe fn fdisk_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

@@ -283,8 +283,7 @@ pub type nfds_t = libc::c_ulong;
 /* Wrapper which restarts poll on EINTR or ENOMEM.
  * On other errors does perror("poll") and returns.
  * Warning! May take longer than timeout_ms to return! */
-#[no_mangle]
-pub unsafe extern "C" fn safe_poll(
+pub unsafe fn safe_poll(
   mut ufds: *mut pollfd,
   mut nfds: nfds_t,
   mut timeout: libc::c_int,

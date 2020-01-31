@@ -85,8 +85,7 @@ pub const OPT_r: C2RustUnnamed = 256;
 //usage:     "\n	-s		Print individual counters within functions"
 //usage:     "\n	-r		Reset all the counters (root only)"
 //usage:     "\n	-n		Disable byte order auto-detection"
-#[no_mangle]
-pub unsafe extern "C" fn readprofile_main(
+pub unsafe fn readprofile_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

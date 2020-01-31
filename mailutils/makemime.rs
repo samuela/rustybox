@@ -53,7 +53,7 @@ pub const OPT_C: C2RustUnnamed = 8;
 pub const OPT_e: C2RustUnnamed = 2;
 pub const OPT_c: C2RustUnnamed = 1;
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 
@@ -211,8 +211,7 @@ Content-Transfer-Encoding: 7bit
  * Our current behavior is a mutant "-m + -c + -j" one: we create multipart MIME
  * and we put "-c" encoded FILEs into many multipart sections.
  */
-#[no_mangle]
-pub unsafe extern "C" fn makemime_main(
+pub unsafe fn makemime_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

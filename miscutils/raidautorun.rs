@@ -23,8 +23,7 @@ use libc;
 //usage:
 //usage:#define raidautorun_example_usage
 //usage:       "$ raidautorun /dev/md0"
-#[no_mangle]
-pub unsafe extern "C" fn raidautorun_main(
+pub unsafe fn raidautorun_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

@@ -717,11 +717,7 @@ unsafe extern "C" fn recv_pack(
     option_mask32 |= UNICASTING as libc::c_int as libc::c_uint
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn arping_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn arping_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut device: *const libc::c_char = b"eth0\x00" as *const u8 as *const libc::c_char;
   let mut source: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut target: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

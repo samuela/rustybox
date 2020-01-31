@@ -75,7 +75,7 @@ pub struct parser_t {
 //usage:       "	-x	Suppress output (for benchmarking)"
 pub unsafe fn config_open2(
   mut filename: *const libc::c_char,
-  mut fopen_func: Option<unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE>,
+  mut fopen_func: Option<unsafe fn(_: *const libc::c_char) -> *mut FILE>,
 ) -> *mut parser_t {
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut parser: *mut parser_t = std::ptr::null_mut();
@@ -91,10 +91,7 @@ pub unsafe fn config_open2(
 pub unsafe fn config_open(mut filename: *const libc::c_char) -> *mut parser_t {
   return config_open2(
     filename,
-    Some(
-      crate::libbb::wfopen_input::fopen_or_warn_stdin
-        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
-    ),
+    Some(crate::libbb::wfopen_input::fopen_or_warn_stdin),
   );
 }
 pub unsafe fn config_close(mut parser: *mut parser_t) {
@@ -114,7 +111,7 @@ pub unsafe fn config_close(mut parser: *mut parser_t) {
  * Trailing '\' is recognized as line continuation.
  * Returns -1 if EOF/error.
  */
-unsafe extern "C" fn get_line_with_continuation(mut parser: *mut parser_t) -> libc::c_int {
+unsafe fn get_line_with_continuation(mut parser: *mut parser_t) -> libc::c_int {
   let mut len: ssize_t = 0;
   let mut nlen: ssize_t = 0;
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

@@ -119,7 +119,7 @@ pub struct line {
   pub count: libc::c_int,
 }
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 unsafe extern "C" fn reset_term() {
@@ -129,7 +129,7 @@ unsafe extern "C" fn sig_handler(mut _signo: libc::c_int) {
   reset_term();
   _exit(1i32);
 }
-unsafe extern "C" fn write_str_to_file(
+unsafe fn write_str_to_file(
   mut fname: *const libc::c_char,
   mut str: *const libc::c_char,
 ) -> libc::c_int {
@@ -143,7 +143,7 @@ unsafe extern "C" fn write_str_to_file(
 }
 /* Make it more readable */
 #[inline(never)]
-unsafe extern "C" fn clear_lines() {
+unsafe fn clear_lines() {
   let mut i: libc::c_int = 0;
   if !(*ptr_to_globals).lines.is_null() {
     i = 0;
@@ -156,7 +156,7 @@ unsafe extern "C" fn clear_lines() {
     (*ptr_to_globals).lines = std::ptr::null_mut()
   };
 }
-unsafe extern "C" fn update_lines_cumulative_count() {
+unsafe fn update_lines_cumulative_count() {
   let mut i: libc::c_int = 0;
   i = 0;
   while i < (*ptr_to_globals).lines_cnt {
@@ -172,19 +172,16 @@ unsafe extern "C" fn line_compare(
   let mut b: *const line = p2 as *const line;
   return (*b).count - (*a).count;
 }
-unsafe extern "C" fn sort_lines() {
+unsafe fn sort_lines() {
   qsort(
     (*ptr_to_globals).lines as *mut libc::c_void,
     (*ptr_to_globals).lines_cnt as size_t,
     ::std::mem::size_of::<line>() as libc::c_ulong,
-    Some(
-      line_compare
-        as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int,
-    ),
+    Some(line_compare),
   );
 }
 /* Save C-state usage and duration. Also update maxcstate. */
-unsafe extern "C" fn read_cstate_counts(mut usage: *mut ullong, mut duration: *mut ullong) {
+unsafe fn read_cstate_counts(mut usage: *mut ullong, mut duration: *mut ullong) {
   let mut dir: *mut DIR = std::ptr::null_mut(); /* "CPUnn" */
   let mut d: *mut dirent = std::ptr::null_mut();
   dir = opendir(b"/proc/acpi/processor\x00" as *const u8 as *const libc::c_char);
@@ -271,7 +268,7 @@ unsafe extern "C" fn read_cstate_counts(mut usage: *mut ullong, mut duration: *m
   closedir(dir);
 }
 /* Add line and/or update count */
-unsafe extern "C" fn save_line(mut string: *const libc::c_char, mut count: libc::c_int) {
+unsafe fn save_line(mut string: *const libc::c_char, mut count: libc::c_int) {
   let mut i: libc::c_int = 0;
   i = 0;
   while i < (*ptr_to_globals).lines_cnt {
@@ -301,7 +298,7 @@ unsafe extern "C" fn save_line(mut string: *const libc::c_char, mut count: libc:
   /*G.lines[G.lines_cnt].disk_count = 0;*/
   (*ptr_to_globals).lines_cnt += 1;
 }
-unsafe extern "C" fn is_hpet_irq(mut name: *const libc::c_char) -> libc::c_int {
+unsafe fn is_hpet_irq(mut name: *const libc::c_char) -> libc::c_int {
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   //TODO: optimize
   p = strstr(name, b"hpet\x00" as *const u8 as *const libc::c_char);
@@ -315,7 +312,7 @@ unsafe extern "C" fn is_hpet_irq(mut name: *const libc::c_char) -> libc::c_int {
   return 1i32;
 }
 /* Save new IRQ count, return delta from old one */
-unsafe extern "C" fn save_irq_count(mut irq: libc::c_int, mut count: ullong) -> libc::c_int {
+unsafe fn save_irq_count(mut irq: libc::c_int, mut count: ullong) -> libc::c_int {
   let mut unused: libc::c_int = 40i32;
   let mut i: libc::c_int = 0;
   i = 0;
@@ -340,7 +337,7 @@ unsafe extern "C" fn save_irq_count(mut irq: libc::c_int, mut count: ullong) -> 
   return count as libc::c_int;
 }
 /* Read /proc/interrupts, save IRQ counts and IRQ description */
-unsafe extern "C" fn process_irq_counts() {
+unsafe fn process_irq_counts() {
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 128] = [0; 128];
   /* Reset values */
@@ -449,7 +446,7 @@ unsafe extern "C" fn process_irq_counts() {
 }
 /* !ENABLE_FEATURE_POWERTOP_PROCIRQ */
 #[inline(never)]
-unsafe extern "C" fn process_timer_stats() -> libc::c_int {
+unsafe fn process_timer_stats() -> libc::c_int {
   let mut buf: [libc::c_char; 128] = [0; 128];
   let mut line: [libc::c_char; 146] = [0; 146];
   let mut n: libc::c_int = 0;
@@ -587,7 +584,7 @@ unsafe extern "C" fn process_timer_stats() -> libc::c_int {
   }
   return n;
 }
-unsafe extern "C" fn show_timerstats() {
+unsafe fn show_timerstats() {
   let mut lines: libc::c_uint = 0;
   /* Get terminal height */
   crate::libbb::xfuncs::get_terminal_width_height(1i32, 0 as *mut libc::c_uint, &mut lines);
@@ -656,8 +653,7 @@ unsafe extern "C" fn show_timerstats() {
 //usage:       ""
 //usage:#define powertop_full_usage "\n\n"
 //usage:       "Analyze power consumption on Intel-based laptops"
-#[no_mangle]
-pub unsafe extern "C" fn powertop_main(
+pub unsafe fn powertop_main(
   mut _argc: libc::c_int,
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -687,12 +683,9 @@ pub unsafe extern "C" fn powertop_main(
   puts(b"Collecting data for 10 seconds\x00" as *const u8 as *const libc::c_char);
   /* Turn on unbuffered input; turn off echoing, ^C ^Z etc */
   crate::libbb::xfuncs::set_termios_to_raw(0, &mut (*ptr_to_globals).init_settings, 1i32 << 0);
-  crate::libbb::signals::bb_signals(
-    BB_FATAL_SIGS as libc::c_int,
-    Some(sig_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  crate::libbb::signals::bb_signals(BB_FATAL_SIGS as libc::c_int, Some(sig_handler));
   /* So we don't forget to reset term settings */
-  die_func = Some(reset_term as unsafe extern "C" fn() -> ());
+  die_func = Some(reset_term);
   /* Collect initial data */
   process_irq_counts();
   /* Read initial usage and duration */

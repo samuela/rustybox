@@ -62,7 +62,7 @@ pub const BBUNPK_OPT_QUIET: C2RustUnnamed_0 = 16;
 //kbuild:lib-$(CONFIG_BZIP2) += bbunzip.o
 /* gzip_main() too: */
 //kbuild:lib-$(CONFIG_GZIP) += bbunzip.o
-unsafe extern "C" fn open_to_or_warn(
+unsafe fn open_to_or_warn(
   mut to_fd: libc::c_int,
   mut filename: *const libc::c_char,
   mut flags: libc::c_int,
@@ -75,8 +75,7 @@ unsafe extern "C" fn open_to_or_warn(
   crate::libbb::xfuncs_printf::xmove_fd(fd, to_fd);
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn append_ext(
+pub unsafe fn append_ext(
   mut filename: *mut libc::c_char,
   mut expected_ext: *const libc::c_char,
 ) -> *mut libc::c_char {
@@ -86,12 +85,11 @@ pub unsafe extern "C" fn append_ext(
     expected_ext,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn bbunpack(
+pub unsafe fn bbunpack(
   mut argv: *mut *mut libc::c_char,
-  mut unpacker: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong>,
+  mut unpacker: Option<unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong>,
   mut make_new_name: Option<
-    unsafe extern "C" fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
+    unsafe fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
   >,
   mut expected_ext: *const libc::c_char,
 ) -> libc::c_int {
@@ -325,7 +323,7 @@ pub unsafe extern "C" fn bbunpack(
   }
   return exitcode as libc::c_int;
 }
-unsafe extern "C" fn make_new_name_generic(
+unsafe fn make_new_name_generic(
   mut filename: *mut libc::c_char,
   mut expected_ext: *const libc::c_char,
 ) -> *mut libc::c_char {
@@ -424,7 +422,7 @@ unsafe extern "C" fn make_new_name_generic(
 //applet:IF_GUNZIP(APPLET(gunzip, BB_DIR_BIN, SUID_DROP))
 //               APPLET_ODDNAME:name  main    location    suid_type     help
 //applet:IF_ZCAT(APPLET_ODDNAME(zcat, gunzip, BB_DIR_BIN, SUID_DROP, zcat))
-unsafe extern "C" fn make_new_name_gunzip(
+unsafe fn make_new_name_gunzip(
   mut filename: *mut libc::c_char,
   mut _expected_ext: *const libc::c_char,
 ) -> *mut libc::c_char {
@@ -467,11 +465,7 @@ static mut gunzip_longopts: [libc::c_char; 47] = [
  * gzip: always save the original file name and time stamp (this is the default)
  * gunzip: restore the original file name and time stamp if present.
  */
-#[no_mangle]
-pub unsafe extern "C" fn gunzip_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn gunzip_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   crate::libbb::getopt32::getopt32long(
     argv,
     b"cfkvqdtn\x00" as *const u8 as *const libc::c_char,
@@ -490,11 +484,11 @@ pub unsafe extern "C" fn gunzip_main(
     argv,
     Some(
       crate::archival::libarchive::decompress_gunzip::unpack_gz_stream
-        as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
+        as unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong,
     ),
     Some(
       make_new_name_gunzip
-        as unsafe extern "C" fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
+        as unsafe fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
     ),
     0 as *const libc::c_char,
   );
@@ -929,8 +923,7 @@ pub unsafe extern "C" fn gunzip_main(
 //applet:IF_BUNZIP2(APPLET(bunzip2, BB_DIR_USR_BIN, SUID_DROP))
 //                APPLET_ODDNAME:name   main     location        suid_type     help
 //applet:IF_BZCAT(APPLET_ODDNAME(bzcat, bunzip2, BB_DIR_USR_BIN, SUID_DROP, bzcat))
-#[no_mangle]
-pub unsafe extern "C" fn bunzip2_main(
+pub unsafe fn bunzip2_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -945,7 +938,7 @@ pub unsafe extern "C" fn bunzip2_main(
     Some(crate::archival::libarchive::decompress_bunzip2::unpack_bz2_stream),
     Some(
       make_new_name_generic
-        as unsafe extern "C" fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
+        as unsafe fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
     ),
     b"bz2\x00" as *const u8 as *const libc::c_char,
   );
@@ -1007,11 +1000,7 @@ pub unsafe extern "C" fn bunzip2_main(
 //kbuild:lib-$(CONFIG_UNLZMA) += bbunzip.o
 //kbuild:lib-$(CONFIG_LZCAT) += bbunzip.o
 //kbuild:lib-$(CONFIG_LZMA) += bbunzip.o
-#[no_mangle]
-pub unsafe extern "C" fn unlzma_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn unlzma_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opts: libc::c_int =
     crate::libbb::getopt32::getopt32(argv, b"cfkvqdt\x00" as *const u8 as *const libc::c_char)
       as libc::c_int;
@@ -1030,11 +1019,11 @@ pub unsafe extern "C" fn unlzma_main(
     argv,
     Some(
       crate::archival::libarchive::decompress_unlzma::unpack_lzma_stream
-        as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
+        as unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong,
     ),
     Some(
       make_new_name_generic
-        as unsafe extern "C" fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
+        as unsafe fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
     ),
     b"lzma\x00" as *const u8 as *const libc::c_char,
   );
@@ -1085,11 +1074,7 @@ pub unsafe extern "C" fn unlzma_main(
 //kbuild:lib-$(CONFIG_UNXZ) += bbunzip.o
 //kbuild:lib-$(CONFIG_XZCAT) += bbunzip.o
 //kbuild:lib-$(CONFIG_XZ) += bbunzip.o
-#[no_mangle]
-pub unsafe extern "C" fn unxz_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn unxz_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opts: libc::c_int =
     crate::libbb::getopt32::getopt32(argv, b"cfkvqdt\x00" as *const u8 as *const libc::c_char)
       as libc::c_int;
@@ -1108,11 +1093,11 @@ pub unsafe extern "C" fn unxz_main(
     argv,
     Some(
       crate::archival::libarchive::decompress_unxz::unpack_xz_stream
-        as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
+        as unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong,
     ),
     Some(
       make_new_name_generic
-        as unsafe extern "C" fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
+        as unsafe fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
     ),
     b"xz\x00" as *const u8 as *const libc::c_char,
   );

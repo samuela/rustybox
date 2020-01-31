@@ -106,7 +106,7 @@ pub struct linux_rtc_time {
  * and hw clock. It is useful, but not compatible with standard hwclock.
  * Thus disabled.
  */
-unsafe extern "C" fn read_rtc(
+unsafe fn read_rtc(
   mut pp_rtcname: *mut *const libc::c_char,
   mut utc: libc::c_int,
 ) -> time_t {
@@ -116,7 +116,7 @@ unsafe extern "C" fn read_rtc(
   crate::libbb::rtc::rtc_read_tm(&mut tm_time, fd);
   return crate::libbb::rtc::rtc_tm2time(&mut tm_time, utc);
 }
-unsafe extern "C" fn show_clock(mut pp_rtcname: *mut *const libc::c_char, mut utc: libc::c_int) {
+unsafe fn show_clock(mut pp_rtcname: *mut *const libc::c_char, mut utc: libc::c_int) {
   let mut t: time_t = read_rtc(pp_rtcname, utc);
   let mut cp: *mut libc::c_char = ctime(&mut t);
   crate::libbb::chomp::chomp(cp);
@@ -125,7 +125,7 @@ unsafe extern "C" fn show_clock(mut pp_rtcname: *mut *const libc::c_char, mut ut
     cp,
   );
 }
-unsafe extern "C" fn to_sys_clock(mut pp_rtcname: *mut *const libc::c_char, mut utc: libc::c_int) {
+unsafe fn to_sys_clock(mut pp_rtcname: *mut *const libc::c_char, mut utc: libc::c_int) {
   let mut tv: timeval = timeval {
     tv_sec: 0,
     tv_usec: 0,
@@ -148,7 +148,7 @@ unsafe extern "C" fn to_sys_clock(mut pp_rtcname: *mut *const libc::c_char, mut 
     );
   };
 }
-unsafe extern "C" fn from_sys_clock(
+unsafe fn from_sys_clock(
   mut pp_rtcname: *mut *const libc::c_char,
   mut utc: libc::c_int,
 ) {
@@ -199,7 +199,7 @@ unsafe extern "C" fn from_sys_clock(
  * This is an alternate option to --hctosys that does not read the
  * hardware clock.
  */
-unsafe extern "C" fn set_system_clock_timezone(mut utc: libc::c_int) {
+unsafe fn set_system_clock_timezone(mut utc: libc::c_int) {
   let mut tv: timeval = timeval {
     tv_sec: 0,
     tv_usec: 0,
@@ -226,8 +226,7 @@ unsafe extern "C" fn set_system_clock_timezone(mut utc: libc::c_int) {
     );
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn hwclock_main(
+pub unsafe fn hwclock_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

@@ -9,8 +9,7 @@ extern "C" {
 
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn ubi_devnum_from_devname(mut str: *const libc::c_char) -> libc::c_uint {
+pub unsafe fn ubi_devnum_from_devname(mut str: *const libc::c_char) -> libc::c_uint {
   let mut ubi_devnum: libc::c_uint = 0;
   if sscanf(
     str,
@@ -576,8 +575,7 @@ pub unsafe extern "C" fn ubi_devnum_from_devname(mut str: *const libc::c_char) -
 /* always correctly aligned for uint64_t */
 /* TLS benefits from knowing that sha1 and sha256 share these. Give them "agnostic" names too */
 /*unsigned last_eta;*/
-#[no_mangle]
-pub unsafe extern "C" fn ubi_get_volid_by_name(
+pub unsafe fn ubi_get_volid_by_name(
   mut ubi_devnum: libc::c_uint,
   mut vol_name: *const libc::c_char,
 ) -> libc::c_int {

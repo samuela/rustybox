@@ -884,7 +884,7 @@ unsafe extern "C" fn func_links(
     _ => return ((*statbuf).st_nlink == (*ap).links_count as libc::c_ulong) as libc::c_int,
   };
 }
-unsafe extern "C" fn fileAction(
+unsafe fn fileAction(
   mut fileName: *const libc::c_char,
   mut statbuf: *mut stat,
   mut _userData: *mut libc::c_void,
@@ -1812,11 +1812,7 @@ unsafe extern "C" fn parse_params(mut argv: *mut *mut libc::c_char) -> *mut *mut
   }
   return ppl.appp;
 }
-#[no_mangle]
-pub unsafe extern "C" fn find_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn find_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut i: libc::c_int = 0;
   let mut firstopt: libc::c_int = 0;
   let mut past_HLP: *mut *mut libc::c_char = std::ptr::null_mut();
@@ -1939,24 +1935,8 @@ pub unsafe extern "C" fn find_main(
     if crate::libbb::recursive_action::recursive_action(
       *argv.offset(i as isize),
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).recurse_flags as libc::c_uint,
-      Some(
-        fileAction
-          as unsafe extern "C" fn(
-            _: *const libc::c_char,
-            _: *mut stat,
-            _: *mut libc::c_void,
-            _: libc::c_int,
-          ) -> libc::c_int,
-      ),
-      Some(
-        fileAction
-          as unsafe extern "C" fn(
-            _: *const libc::c_char,
-            _: *mut stat,
-            _: *mut libc::c_void,
-            _: libc::c_int,
-          ) -> libc::c_int,
-      ),
+      Some(fileAction),
+      Some(fileAction),
       0 as *mut libc::c_void,
       0 as libc::c_uint,
     ) == 0

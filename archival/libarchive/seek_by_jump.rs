@@ -8,8 +8,7 @@ extern "C" {
 
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn seek_by_jump(mut fd: libc::c_int, mut amount: off_t) {
+pub unsafe fn seek_by_jump(mut fd: libc::c_int, mut amount: off_t) {
   if amount != 0 && lseek(fd, amount, 1i32) == -1i32 as off_t {
     if *bb_errno == 29i32 {
       crate::archival::libarchive::seek_by_read::seek_by_read(fd, amount);

@@ -253,8 +253,7 @@ pub struct sockaddr_ll {
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn d6_dump_packet(mut packet: *mut d6_packet) {
+pub unsafe fn d6_dump_packet(mut packet: *mut d6_packet) {
   if dhcp_verbose < 2i32 as libc::c_uint {
     return;
   }
@@ -265,8 +264,7 @@ pub unsafe extern "C" fn d6_dump_packet(mut packet: *mut d6_packet) {
   //*bin2hex(buf, (void *) packet->chaddr, sizeof(packet->chaddr)) = '\0';
   //bb_error_msg(" chaddr %s", buf);
 }
-#[no_mangle]
-pub unsafe extern "C" fn d6_recv_kernel_packet(
+pub unsafe fn d6_recv_kernel_packet(
   mut _peer_ipv6: *mut in6_addr,
   mut packet: *mut d6_packet,
   mut fd: libc::c_int,
@@ -307,8 +305,7 @@ pub unsafe extern "C" fn d6_recv_kernel_packet(
   return bytes;
 }
 /* Construct a ipv6+udp header for a packet, send packet */
-#[no_mangle]
-pub unsafe extern "C" fn d6_send_raw_packet(
+pub unsafe fn d6_send_raw_packet(
   mut d6_pkt: *mut d6_packet,
   mut d6_pkt_size: libc::c_uint,
   mut src_ipv6: *mut in6_addr,
@@ -501,8 +498,7 @@ pub unsafe extern "C" fn d6_send_raw_packet(
   return result;
 }
 /* Let the kernel do all the work for packet generation */
-#[no_mangle]
-pub unsafe extern "C" fn d6_send_kernel_packet(
+pub unsafe fn d6_send_kernel_packet(
   mut d6_pkt: *mut d6_packet,
   mut d6_pkt_size: libc::c_uint,
   mut src_ipv6: *mut in6_addr,

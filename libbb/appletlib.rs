@@ -349,7 +349,7 @@ unsafe fn parse_config_file() {
   );
 
   /* Release any allocated memory before returning. */
-  crate::libbb::llist::llist_free(sct_head as *mut llist_t, None);
+  crate::libbb::llist::llist_free(sct_head as *mut llist_t);
 }
 
 /* check if u is member of group g */
@@ -478,7 +478,7 @@ unsafe fn check_suid(applet_no: usize) {
     }
     _ => {}
   }
-  crate::libbb::llist::llist_free(suid_config as *mut llist_t, None);
+  crate::libbb::llist::llist_free(suid_config as *mut llist_t);
 }
 
 /* create (sym)links for each applet */

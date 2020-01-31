@@ -872,11 +872,7 @@ unsafe extern "C" fn process_packet(
   };
   return answb.wrapping_offset_from(buf) as libc::c_long as libc::c_int;
 }
-#[no_mangle]
-pub unsafe extern "C" fn dnsd_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn dnsd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut listen_interface: *const libc::c_char =
     b"0.0.0.0\x00" as *const u8 as *const libc::c_char;
   let mut fileconf: *const libc::c_char = b"/etc/dnsd.conf\x00" as *const u8 as *const libc::c_char;

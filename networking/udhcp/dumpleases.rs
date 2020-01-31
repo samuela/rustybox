@@ -77,8 +77,7 @@ pub const OPT_r: C2RustUnnamed = 2;
 //usage:     "\n	-a	Show expiration time"
 //usage:     "\n	-d	Show time in seconds"
 //usage:	)
-#[no_mangle]
-pub unsafe extern "C" fn dumpleases_main(
+pub unsafe fn dumpleases_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

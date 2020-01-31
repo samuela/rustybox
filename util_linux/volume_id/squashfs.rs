@@ -112,8 +112,7 @@ pub struct squashfs_superblock {
 /*,u64 off*/
 /*,u64 off*/
 /*,u64 off*/
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_probe_squashfs(mut id: *mut volume_id) -> libc::c_int
+pub unsafe fn volume_id_probe_squashfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut sb: *mut squashfs_superblock = std::ptr::null_mut();
   sb = crate::util_linux::volume_id::util::volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t)

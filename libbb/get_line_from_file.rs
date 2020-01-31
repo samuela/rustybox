@@ -16,8 +16,7 @@ extern "C" {
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_get_chunk_from_file(
+pub unsafe fn bb_get_chunk_from_file(
   mut file: *mut FILE,
   mut end: *mut size_t,
 ) -> *mut libc::c_char {
@@ -68,8 +67,7 @@ pub unsafe extern "C" fn bb_get_chunk_from_file(
   return linebuf;
 }
 /* Get line, including trailing \n if any */
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_fgets(mut file: *mut FILE) -> *mut libc::c_char {
+pub unsafe fn xmalloc_fgets(mut file: *mut FILE) -> *mut libc::c_char {
   let mut i: size_t = 0;
   return bb_get_chunk_from_file(file, &mut i);
 }
@@ -330,8 +328,7 @@ pub unsafe extern "C" fn xmalloc_fgets(mut file: *mut FILE) -> *mut libc::c_char
 /* Reads up to (and including) "\n" or NUL byte: */
 /* Chops off '\n' from the end, unlike fgets: */
 /* Get line.  Remove trailing \n */
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_fgetline(mut file: *mut FILE) -> *mut libc::c_char {
+pub unsafe fn xmalloc_fgetline(mut file: *mut FILE) -> *mut libc::c_char {
   let mut i: size_t = 0;
   let mut c: *mut libc::c_char = bb_get_chunk_from_file(file, &mut i);
   if i != 0 && {

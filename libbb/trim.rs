@@ -15,8 +15,7 @@ extern "C" {
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn trim(mut s: *mut libc::c_char) -> *mut libc::c_char {
+pub unsafe fn trim(mut s: *mut libc::c_char) -> *mut libc::c_char {
   let mut len: size_t = strlen(s);
   let mut old: size_t = len;
   /* trim trailing whitespace */

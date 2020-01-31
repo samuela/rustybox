@@ -339,7 +339,7 @@ pub const MDEV_OPT_FOREGROUND: C2RustUnnamed_14 = 4;
 pub const MDEV_OPT_DAEMON: C2RustUnnamed_14 = 2;
 pub type C2RustUnnamed_14 = libc::c_uint;
 static mut keywords: [libc::c_char; 12] = [97, 100, 100, 0, 114, 101, 109, 111, 118, 101, 0, 0];
-unsafe extern "C" fn make_default_cur_rule() {
+unsafe fn make_default_cur_rule() {
   memset(
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur_rule as *mut rule
       as *mut libc::c_void,
@@ -353,7 +353,7 @@ unsafe extern "C" fn make_default_cur_rule() {
     .cur_rule
     .mode = 0o660i32 as mode_t;
 }
-unsafe extern "C" fn clean_up_cur_rule() {
+unsafe fn clean_up_cur_rule() {
   let mut e: *mut envmatch = std::ptr::null_mut();
   free(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -390,7 +390,7 @@ unsafe extern "C" fn clean_up_cur_rule() {
   }
   make_default_cur_rule();
 }
-unsafe extern "C" fn parse_envmatch_pfx(mut val: *mut libc::c_char) -> *mut libc::c_char {
+unsafe fn parse_envmatch_pfx(mut val: *mut libc::c_char) -> *mut libc::c_char {
   let mut nextp: *mut *mut envmatch = &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .cur_rule
     .envmatch;
@@ -424,7 +424,7 @@ unsafe extern "C" fn parse_envmatch_pfx(mut val: *mut libc::c_char) -> *mut libc
     val = semicolon.offset(1)
   }
 }
-unsafe extern "C" fn parse_next_rule() {
+unsafe fn parse_next_rule() {
   let mut current_block: u64;
   loop
   /* Note: on entry, G.cur_rule is set to default */
@@ -622,7 +622,7 @@ unsafe extern "C" fn parse_next_rule() {
  * Otherwise, there is no point in doing it, and we just
  * save only one parsed rule in G.cur_rule.
  */
-unsafe extern "C" fn next_rule() -> *const rule {
+unsafe fn next_rule() -> *const rule {
   let mut rule: *mut rule = std::ptr::null_mut();
   /* Open conf file if we didn't do it yet */
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -635,10 +635,7 @@ unsafe extern "C" fn next_rule() -> *const rule {
     let ref mut fresh4 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).parser;
     *fresh4 = crate::libbb::parse_config::config_open2(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filename,
-      Some(
-        crate::libbb::wfopen::fopen_for_read
-          as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
-      ),
+      Some(crate::libbb::wfopen::fopen_for_read as unsafe fn(_: *const libc::c_char) -> *mut FILE),
     );
     let ref mut fresh5 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).filename;
     *fresh5 = std::ptr::null()
@@ -701,7 +698,7 @@ unsafe extern "C" fn next_rule() -> *const rule {
   }
   return rule;
 }
-unsafe extern "C" fn env_matches(mut e: *mut envmatch) -> libc::c_int {
+unsafe fn env_matches(mut e: *mut envmatch) -> libc::c_int {
   while !e.is_null() {
     let mut r: libc::c_int = 0;
     let mut val: *mut libc::c_char = getenv((*e).envname);
@@ -717,7 +714,7 @@ unsafe extern "C" fn env_matches(mut e: *mut envmatch) -> libc::c_int {
   }
   return 1i32;
 }
-unsafe extern "C" fn mkdir_recursive(mut name: *mut libc::c_char) {
+unsafe fn mkdir_recursive(mut name: *mut libc::c_char) {
   /* if name has many levels ("dir1/dir2"),
    * bb_make_directory() will create dir1 according to umask,
    * not according to its "mode" parameter.
@@ -735,7 +732,7 @@ unsafe extern "C" fn mkdir_recursive(mut name: *mut libc::c_char) {
  * This function potentionally reallocates the alias parameter.
  * Only used for ENABLE_FEATURE_MDEV_RENAME
  */
-unsafe extern "C" fn build_alias(
+unsafe fn build_alias(
   mut alias: *mut libc::c_char,
   mut device_name: *const libc::c_char,
 ) -> *mut libc::c_char {
@@ -765,7 +762,7 @@ unsafe extern "C" fn build_alias(
  * device_name = $DEVNAME (may be NULL)
  * path        = /sys/$DEVPATH
  */
-unsafe extern "C" fn make_device(
+unsafe fn make_device(
   mut device_name: *mut libc::c_char,
   mut path: *mut libc::c_char,
   mut operation: libc::c_int,
@@ -1122,7 +1119,7 @@ unsafe extern "C" fn make_device(
   }
   /* for (;;) */
 }
-unsafe extern "C" fn readlink2(mut buf: *mut libc::c_char, mut bufsize: size_t) -> ssize_t {
+unsafe fn readlink2(mut buf: *mut libc::c_char, mut bufsize: size_t) -> ssize_t {
   // Grr... gcc 8.1.1:
   // "passing argument 2 to restrict-qualified parameter aliases with argument 1"
   // dance around that...
@@ -1133,7 +1130,7 @@ unsafe extern "C" fn readlink2(mut buf: *mut libc::c_char, mut bufsize: size_t) 
 /* File callback for /sys/ traversal.
  * We act only on "/sys/.../dev" (pseudo)file
  */
-unsafe extern "C" fn fileAction(
+unsafe fn fileAction(
   mut fileName: *const libc::c_char,
   mut _statbuf: *mut stat,
   mut userData: *mut libc::c_void,
@@ -1204,7 +1201,7 @@ unsafe extern "C" fn fileAction(
   return 1i32;
 }
 /* Directory callback for /sys/ traversal */
-unsafe extern "C" fn dirAction(
+unsafe fn dirAction(
   mut _fileName: *const libc::c_char,
   mut _statbuf: *mut stat,
   mut _userData: *mut libc::c_void,
@@ -1223,7 +1220,7 @@ unsafe extern "C" fn dirAction(
  * - userspace writes "0" (worked) or "-1" (failed) to /sys/$DEVPATH/loading
  * - kernel loads firmware into device
  */
-unsafe extern "C" fn load_firmware(
+unsafe fn load_firmware(
   mut firmware: *const libc::c_char,
   mut sysfs_path: *const libc::c_char,
 ) {
@@ -1306,7 +1303,7 @@ unsafe extern "C" fn load_firmware(
   }
   crate::libbb::xfuncs_printf::xchdir(b"/dev\x00" as *const u8 as *const libc::c_char);
 }
-unsafe extern "C" fn curtime() -> *mut libc::c_char {
+unsafe fn curtime() -> *mut libc::c_char {
   let mut tv: timeval = timeval {
     tv_sec: 0,
     tv_usec: 0,
@@ -1327,7 +1324,7 @@ unsafe extern "C" fn curtime() -> *mut libc::c_char {
     .timestr
     .as_mut_ptr();
 }
-unsafe extern "C" fn open_mdev_log(mut seq: *const libc::c_char, mut my_pid: libc::c_uint) {
+unsafe fn open_mdev_log(mut seq: *const libc::c_char, mut my_pid: libc::c_uint) {
   let mut logfd: libc::c_int = open(
     b"mdev.log\x00" as *const u8 as *const libc::c_char,
     0o1i32 | 0o2000i32,
@@ -1351,7 +1348,7 @@ unsafe extern "C" fn open_mdev_log(mut seq: *const libc::c_char, mut my_pid: lib
  * in parallel, and we need to wait.
  * Active mdev pokes us with SIGCHLD to check the new file.
  */
-unsafe extern "C" fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c_int {
+unsafe fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c_int {
   /* We time out after 2 sec */
   static mut ts: timespec = {
     let mut init = timespec {
@@ -1447,7 +1444,7 @@ unsafe extern "C" fn wait_for_seqfile(mut expected_seq: libc::c_uint) -> libc::c
   sigprocmask(1i32, &mut set_CHLD, 0 as *mut sigset_t);
   return seq_fd;
 }
-unsafe extern "C" fn signal_mdevs(mut my_pid: libc::c_uint) {
+unsafe fn signal_mdevs(mut my_pid: libc::c_uint) {
   let mut p: *mut procps_status_t = std::ptr::null_mut();
   loop {
     p = crate::libbb::procps::procps_scan(p, PSSCAN_ARGV0 as libc::c_int);
@@ -1465,7 +1462,7 @@ unsafe extern "C" fn signal_mdevs(mut my_pid: libc::c_uint) {
     }
   }
 }
-unsafe extern "C" fn process_action(mut temp: *mut libc::c_char, mut my_pid: libc::c_uint) {
+unsafe fn process_action(mut temp: *mut libc::c_char, mut my_pid: libc::c_uint) {
   let mut fw: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut seq: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut action: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -1549,7 +1546,7 @@ unsafe extern "C" fn process_action(mut temp: *mut libc::c_char, mut my_pid: lib
     signal_mdevs(my_pid);
   };
 }
-unsafe extern "C" fn initial_scan(mut temp: *mut libc::c_char) {
+unsafe fn initial_scan(mut temp: *mut libc::c_char) {
   let mut st: stat = std::mem::zeroed();
   crate::libbb::xfuncs_printf::xstat(b"/\x00" as *const u8 as *const libc::c_char, &mut st);
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).root_major =
@@ -1563,7 +1560,7 @@ unsafe extern "C" fn initial_scan(mut temp: *mut libc::c_char) {
     (ACTION_RECURSE as libc::c_int | ACTION_FOLLOWLINKS as libc::c_int) as libc::c_uint,
     Some(
       fileAction
-        as unsafe extern "C" fn(
+        as unsafe fn(
           _: *const libc::c_char,
           _: *mut stat,
           _: *mut libc::c_void,
@@ -1572,7 +1569,7 @@ unsafe extern "C" fn initial_scan(mut temp: *mut libc::c_char) {
     ),
     Some(
       dirAction
-        as unsafe extern "C" fn(
+        as unsafe fn(
           _: *const libc::c_char,
           _: *mut stat,
           _: *mut libc::c_void,
@@ -1583,7 +1580,7 @@ unsafe extern "C" fn initial_scan(mut temp: *mut libc::c_char) {
     0 as libc::c_uint,
   );
 }
-unsafe extern "C" fn daemon_loop(mut temp: *mut libc::c_char, mut fd: libc::c_int) {
+unsafe fn daemon_loop(mut temp: *mut libc::c_char, mut fd: libc::c_int) {
   loop {
     let mut netbuf: [libc::c_char; 2048] = [0; 2048];
     let mut env: [*mut libc::c_char; 32] = [0 as *mut libc::c_char; 32];
@@ -1622,11 +1619,7 @@ unsafe extern "C" fn daemon_loop(mut temp: *mut libc::c_char, mut fd: libc::c_in
     }
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn mdev_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn mdev_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opt: libc::c_int = 0;
   let mut temp: *mut libc::c_char = xmalloc((4096i32 + 128i32) as size_t) as *mut libc::c_char;
   /* We can be called as hotplug helper */

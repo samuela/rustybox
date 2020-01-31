@@ -212,7 +212,7 @@ static mut keywords: [libc::c_char; 134] = [
   0, 100, 101, 118, 0, 105, 105, 102, 0, 110, 97, 116, 0, 109, 97, 112, 45, 116, 111, 0, 116, 121,
   112, 101, 0, 104, 101, 108, 112, 0, 0,
 ];
-unsafe extern "C" fn print_rule(
+unsafe fn print_rule(
   mut _who: *const sockaddr_nl,
   mut n: *mut nlmsghdr,
   mut _arg: *mut libc::c_void,
@@ -529,14 +529,7 @@ unsafe extern "C" fn iprule_list(mut argv: *mut *mut libc::c_char) -> libc::c_in
   );
   crate::networking::libiproute::libnetlink::xrtnl_dump_filter(
     &mut rth,
-    Some(
-      print_rule
-        as unsafe extern "C" fn(
-          _: *const sockaddr_nl,
-          _: *mut nlmsghdr,
-          _: *mut libc::c_void,
-        ) -> libc::c_int,
-    ),
+    Some(print_rule),
     0 as *mut libc::c_void,
   );
   return 0;
@@ -849,8 +842,7 @@ unsafe extern "C" fn iprule_modify(
 //int FAST_FUNC iproute_monitor(char **argv);
 //void FAST_FUNC ipneigh_reset_filter(void);
 /* Return value becomes exitcode. It's okay to not return at all */
-#[no_mangle]
-pub unsafe extern "C" fn do_iprule(mut argv: *mut *mut libc::c_char) -> libc::c_int {
+pub unsafe fn do_iprule(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   static mut ip_rule_commands: [libc::c_char; 22] = [
     97, 100, 100, 0, 100, 101, 108, 101, 116, 101, 0, 108, 105, 115, 116, 0, 115, 104, 111, 119, 0,
     0,

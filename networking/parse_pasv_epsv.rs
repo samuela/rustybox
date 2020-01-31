@@ -240,8 +240,7 @@ extern "C" {
 //kbuild:lib-$(CONFIG_FTPGET) += parse_pasv_epsv.o
 //kbuild:lib-$(CONFIG_FTPPUT) += parse_pasv_epsv.o
 //kbuild:lib-$(CONFIG_WGET) += parse_pasv_epsv.o
-#[no_mangle]
-pub unsafe extern "C" fn parse_pasv_epsv(mut buf: *mut libc::c_char) -> libc::c_int {
+pub unsafe fn parse_pasv_epsv(mut buf: *mut libc::c_char) -> libc::c_int {
   /*
    * PASV command will not work for IPv6. RFC2428 describes
    * IPv6-capable "extended PASV" - EPSV.

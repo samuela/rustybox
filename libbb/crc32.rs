@@ -18,11 +18,7 @@ use libc;
  */
 #[no_mangle]
 pub static mut global_crc32_table: *mut u32 = std::ptr::null_mut();
-#[no_mangle]
-pub unsafe extern "C" fn crc32_filltable(
-  mut crc_table: *mut u32,
-  mut endian: libc::c_int,
-) -> *mut u32 {
+pub unsafe fn crc32_filltable(mut crc_table: *mut u32, mut endian: libc::c_int) -> *mut u32 {
   let mut polynomial: u32 = if endian != 0 {
     0x4c11db7i32 as libc::c_uint
   } else {
@@ -64,17 +60,14 @@ pub unsafe extern "C" fn crc32_filltable(
   return crc_table.offset(-256);
 }
 /* Common uses: */
-#[no_mangle]
-pub unsafe extern "C" fn crc32_new_table_le() -> *mut u32 {
+pub unsafe fn crc32_new_table_le() -> *mut u32 {
   return crc32_filltable(0 as *mut u32, 0);
 }
-#[no_mangle]
-pub unsafe extern "C" fn global_crc32_new_table_le() -> *mut u32 {
+pub unsafe fn global_crc32_new_table_le() -> *mut u32 {
   global_crc32_table = crc32_new_table_le();
   return global_crc32_table;
 }
-#[no_mangle]
-pub unsafe extern "C" fn crc32_block_endian1(
+pub unsafe fn crc32_block_endian1(
   mut val: u32,
   mut buf: *const libc::c_void,
   mut len: libc::c_uint,
@@ -638,8 +631,7 @@ pub unsafe extern "C" fn crc32_block_endian1(
 /* must be directly before hash[] */
 /* always correctly aligned for uint64_t */
 /* TLS benefits from knowing that sha1 and sha256 share these. Give them "agnostic" names too */
-#[no_mangle]
-pub unsafe extern "C" fn crc32_block_endian0(
+pub unsafe fn crc32_block_endian0(
   mut val: u32,
   mut buf: *const libc::c_void,
   mut len: libc::c_uint,

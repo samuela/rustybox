@@ -39,8 +39,7 @@ pub struct C2RustUnnamed {
  * return value) means no redirection (i.e. always printed on the currently
  * active console).
  */
-#[no_mangle]
-pub unsafe extern "C" fn setlogcons_main(
+pub unsafe fn setlogcons_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

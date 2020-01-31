@@ -59,8 +59,7 @@ pub type duration_t = libc::c_double;
 //usage:#define timeout_full_usage "\n\n"
 //usage:       "Runs PROG. Sends SIG to it if it is not gone in SECS seconds.\n"
 //usage:       "Default SIG: TERM."
-#[no_mangle]
-pub unsafe extern "C" fn timeout_main(
+pub unsafe fn timeout_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

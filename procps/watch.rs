@@ -51,11 +51,7 @@ pub type duration_t = libc::c_double;
 //   [--differences[=cumulative]] [--interval=seconds] [--no-title] command
 //
 // (procps 3.x and procps 2.x are forks, not newer/older versions of the same)
-#[no_mangle]
-pub unsafe extern "C" fn watch_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn watch_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut period: duration_t = 0.;
   let mut period_str: *mut libc::c_char =
     b"2\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;

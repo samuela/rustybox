@@ -324,11 +324,7 @@ pub unsafe fn rtnl_dump_request(
 unsafe extern "C" fn rtnl_dump_filter(
   mut rth: *mut rtnl_handle,
   mut filter: Option<
-    unsafe extern "C" fn(
-      _: *const sockaddr_nl,
-      _: *mut nlmsghdr,
-      _: *mut libc::c_void,
-    ) -> libc::c_int,
+    unsafe fn(_: *const sockaddr_nl, _: *mut nlmsghdr, _: *mut libc::c_void) -> libc::c_int,
   >,
   mut arg1: *mut libc::c_void,
 ) -> libc::c_int
@@ -479,11 +475,7 @@ unsafe extern "C" fn rtnl_dump_filter(
 pub unsafe fn xrtnl_dump_filter(
   mut rth: *mut rtnl_handle,
   mut filter: Option<
-    unsafe extern "C" fn(
-      _: *const sockaddr_nl,
-      _: *mut nlmsghdr,
-      _: *mut libc::c_void,
-    ) -> libc::c_int,
+    unsafe fn(_: *const sockaddr_nl, _: *mut nlmsghdr, _: *mut libc::c_void) -> libc::c_int,
   >,
   mut arg1: *mut libc::c_void,
 ) -> libc::c_int {

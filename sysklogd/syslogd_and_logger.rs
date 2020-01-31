@@ -518,7 +518,7 @@ pub const OPTBIT_mark: C2RustUnnamed_6 = 0;
 pub type C2RustUnnamed_7 = libc::c_uint;
 pub const KEY_ID: C2RustUnnamed_7 = 1095648583;
 #[inline(always)]
-unsafe extern "C" fn xatoul_range(
+unsafe fn xatoul_range(
   mut str: *const libc::c_char,
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
@@ -527,7 +527,7 @@ unsafe extern "C" fn xatoul_range(
     as libc::c_ulong;
 }
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 #[no_mangle]
@@ -806,10 +806,7 @@ pub static mut facilitynames: [CODE; 23] = [
  */
 static mut bb_prioritynames: *const CODE = unsafe { prioritynames.as_ptr() as *mut _ };
 static mut bb_facilitynames: *const CODE = unsafe { facilitynames.as_ptr() as *mut _ };
-unsafe extern "C" fn find_by_name(
-  mut name: *mut libc::c_char,
-  mut c_set: *const CODE,
-) -> *const CODE {
+unsafe fn find_by_name(mut name: *mut libc::c_char, mut c_set: *const CODE) -> *const CODE {
   while !(*c_set).c_name.is_null() {
     if strcmp(name, (*c_set).c_name) == 0 {
       return c_set;
@@ -818,7 +815,7 @@ unsafe extern "C" fn find_by_name(
   }
   return std::ptr::null();
 }
-unsafe extern "C" fn find_by_val(mut val: libc::c_int, mut c_set: *const CODE) -> *const CODE {
+unsafe fn find_by_val(mut val: libc::c_int, mut c_set: *const CODE) -> *const CODE {
   while !(*c_set).c_name.is_null() {
     if (*c_set).c_val == val {
       return c_set;
@@ -827,7 +824,7 @@ unsafe extern "C" fn find_by_val(mut val: libc::c_int, mut c_set: *const CODE) -
   }
   return std::ptr::null();
 }
-unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
+unsafe fn parse_syslogdcfg(mut file: *const libc::c_char) {
   let mut current_block: u64;
   let mut t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pp_rule: *mut *mut logRule_t = std::ptr::null_mut();
@@ -843,15 +840,9 @@ unsafe extern "C" fn parse_syslogdcfg(mut file: *const libc::c_char) {
       b"/etc/syslog.conf\x00" as *const u8 as *const libc::c_char
     },
     if !file.is_null() {
-      Some(
-        crate::libbb::wfopen::xfopen_for_read
-          as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
-      )
+      Some(crate::libbb::wfopen::xfopen_for_read)
     } else {
-      Some(
-        crate::libbb::wfopen::fopen_for_read
-          as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
-      )
+      Some(crate::libbb::wfopen::fopen_for_read)
     },
   );
   if parser.is_null() {
@@ -1123,7 +1114,7 @@ static mut init_data: init_globals = {
   init
 };
 /* "GENA" */
-unsafe extern "C" fn ipcsyslog_cleanup() {
+unsafe fn ipcsyslog_cleanup() {
   if (*ptr_to_globals).shmid != -1i32 {
     shmdt((*ptr_to_globals).shbuf as *const libc::c_void);
   }
@@ -1134,7 +1125,7 @@ unsafe extern "C" fn ipcsyslog_cleanup() {
     semctl((*ptr_to_globals).s_semid, 0, 0, 0);
   };
 }
-unsafe extern "C" fn ipcsyslog_init() {
+unsafe fn ipcsyslog_init() {
   (*ptr_to_globals).shmid = shmget(
     KEY_ID as libc::c_int,
     (*ptr_to_globals).shm_size as size_t,
@@ -1177,7 +1168,7 @@ unsafe extern "C" fn ipcsyslog_init() {
   };
 }
 /* Write message to shared mem buffer */
-unsafe extern "C" fn log_to_shmem(mut msg: *const libc::c_char) {
+unsafe fn log_to_shmem(mut msg: *const libc::c_char) {
   let mut old_tail: libc::c_int = 0;
   let mut new_tail: libc::c_int = 0;
   let mut len: libc::c_int = 0;
@@ -1241,7 +1232,7 @@ unsafe extern "C" fn log_to_shmem(mut msg: *const libc::c_char) {
   };
 }
 /* FEATURE_IPC_SYSLOG */
-unsafe extern "C" fn kmsg_init() {
+unsafe fn kmsg_init() {
   (*ptr_to_globals).kmsgfd = crate::libbb::xfuncs_printf::xopen(
     b"/dev/kmsg\x00" as *const u8 as *const libc::c_char,
     0o1i32,
@@ -1256,9 +1247,9 @@ unsafe extern "C" fn kmsg_init() {
     (*ptr_to_globals).primask = -1i32
   };
 }
-unsafe extern "C" fn kmsg_cleanup() {}
+unsafe fn kmsg_cleanup() {}
 /* Write message to /dev/kmsg */
-unsafe extern "C" fn log_to_kmsg(mut pri: libc::c_int, mut msg: *const libc::c_char) {
+unsafe fn log_to_kmsg(mut pri: libc::c_int, mut msg: *const libc::c_char) {
   /*
    * kernel < 3.5 expects single char printk KERN_* priority prefix,
    * from 3.5 onwards the full syslog facility/priority format is supported
@@ -1277,11 +1268,7 @@ unsafe extern "C" fn log_to_kmsg(mut pri: libc::c_int, mut msg: *const libc::c_c
 }
 /* FEATURE_KMSG_SYSLOG */
 /* Print a message to the log file. */
-unsafe extern "C" fn log_locally(
-  mut now: time_t,
-  mut msg: *mut libc::c_char,
-  mut log_file: *mut logFile_t,
-) {
+unsafe fn log_locally(mut now: time_t, mut msg: *mut libc::c_char, mut log_file: *mut logFile_t) {
   let mut current_block: u64;
   let mut len: libc::c_int = strlen(msg) as libc::c_int;
   /* fd can't be 0 (we connect fd 0 to /dev/log socket) */
@@ -1414,7 +1401,7 @@ unsafe extern "C" fn log_locally(
     (*log_file).size = (*log_file).size.wrapping_add(len as libc::c_uint)
   };
 }
-unsafe extern "C" fn parse_fac_prio_20(mut pri: libc::c_int, mut res20: *mut libc::c_char) {
+unsafe fn parse_fac_prio_20(mut pri: libc::c_int, mut res20: *mut libc::c_char) {
   let mut c_pri: *const CODE = std::ptr::null();
   let mut c_fac: *const CODE = std::ptr::null();
   c_fac = find_by_val((pri & 0x3f8i32) >> 3i32 << 3i32, bb_facilitynames);
@@ -1441,7 +1428,7 @@ unsafe extern "C" fn parse_fac_prio_20(mut pri: libc::c_int, mut res20: *mut lib
 /* len parameter is used only for "is there a timestamp?" check.
  * NB: some callers cheat and supply len==0 when they know
  * that there is no timestamp, short-circuiting the test. */
-unsafe extern "C" fn timestamp_and_log(
+unsafe fn timestamp_and_log(
   mut pri: libc::c_int,
   mut msg: *mut libc::c_char,
   mut len: libc::c_int,
@@ -1525,7 +1512,7 @@ unsafe extern "C" fn timestamp_and_log(
     );
   };
 }
-unsafe extern "C" fn timestamp_and_log_internal(mut msg: *const libc::c_char) {
+unsafe fn timestamp_and_log_internal(mut msg: *const libc::c_char) {
   /* -L, or no -R */
   if 1i32 != 0 && option_mask32 & OPT_locallog as libc::c_int as libc::c_uint == 0 {
     return;
@@ -1535,7 +1522,7 @@ unsafe extern "C" fn timestamp_and_log_internal(mut msg: *const libc::c_char) {
 /* tmpbuf[len] is a NUL byte (set by caller), but there can be other,
  * embedded NULs. Split messages on each of these NULs, parse prio,
  * escape control chars and log each locally. */
-unsafe extern "C" fn split_escape_and_log(mut tmpbuf: *mut libc::c_char, mut len: libc::c_int) {
+unsafe fn split_escape_and_log(mut tmpbuf: *mut libc::c_char, mut len: libc::c_int) {
   let mut p: *mut libc::c_char = tmpbuf;
   tmpbuf = tmpbuf.offset(len as isize);
   while p < tmpbuf {
@@ -1586,7 +1573,7 @@ unsafe extern "C" fn split_escape_and_log(mut tmpbuf: *mut libc::c_char, mut len
 /* Don't inline: prevent struct sockaddr_un to take up space on stack
  * permanently */
 #[inline(never)]
-unsafe extern "C" fn create_socket() -> libc::c_int {
+unsafe fn create_socket() -> libc::c_int {
   let mut sunx: sockaddr_un = sockaddr_un {
     sun_family: 0,
     sun_path: [0; 108],
@@ -1629,7 +1616,7 @@ unsafe extern "C" fn create_socket() -> libc::c_int {
   );
   return sock_fd;
 }
-unsafe extern "C" fn try_to_resolve_remote(mut rh: *mut remoteHost_t) -> libc::c_int {
+unsafe fn try_to_resolve_remote(mut rh: *mut remoteHost_t) -> libc::c_int {
   if (*rh).remoteAddr.is_null() {
     let mut now: libc::c_uint = crate::libbb::time::monotonic_sec();
     /* Don't resolve name too often - DNS timeouts can be big */
@@ -1648,7 +1635,7 @@ unsafe extern "C" fn try_to_resolve_remote(mut rh: *mut remoteHost_t) -> libc::c
     0,
   );
 }
-unsafe extern "C" fn do_syslogd() -> ! {
+unsafe fn do_syslogd() -> ! {
   let mut item: *mut llist_t = std::ptr::null_mut();
   let mut last_sz: libc::c_int = -1i32;
   let mut last_buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -1656,11 +1643,11 @@ unsafe extern "C" fn do_syslogd() -> ! {
   /* Set up signal handlers (so that they interrupt read()) */
   crate::libbb::signals::signal_no_SA_RESTART_empty_mask(
     15i32,
-    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo),
   );
   crate::libbb::signals::signal_no_SA_RESTART_empty_mask(
     2i32,
-    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo),
   );
   //signal_no_SA_RESTART_empty_mask(SIGQUIT, record_signo);
   signal(
@@ -1814,8 +1801,7 @@ unsafe extern "C" fn do_syslogd() -> ! {
   }
   crate::libbb::signals::kill_myself_with_sig(bb_got_signal as libc::c_int);
 }
-#[no_mangle]
-pub unsafe extern "C" fn syslogd_main(
+pub unsafe fn syslogd_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -1954,7 +1940,7 @@ pub unsafe extern "C" fn syslogd_main(
  *
  * Original copyright notice is retained at the end of this file.
  */
-unsafe extern "C" fn decode(mut name: *mut libc::c_char, mut codetab: *const CODE) -> libc::c_int {
+unsafe fn decode(mut name: *mut libc::c_char, mut codetab: *const CODE) -> libc::c_int {
   let mut c: *const CODE = std::ptr::null();
   if (*name as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
     return atoi(name);
@@ -1975,7 +1961,7 @@ unsafe extern "C" fn decode(mut name: *mut libc::c_char, mut codetab: *const COD
  *
  * Original copyright notice is retained at the end of this file.
  */
-unsafe extern "C" fn pencode(mut s: *mut libc::c_char) -> libc::c_int {
+unsafe fn pencode(mut s: *mut libc::c_char) -> libc::c_int {
   let mut save: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut lev: libc::c_int = 0;
   let mut fac: libc::c_int = 1i32 << 3i32;
@@ -2009,11 +1995,7 @@ unsafe extern "C" fn pencode(mut s: *mut libc::c_char) -> libc::c_int {
   }
   return lev & 0x7i32 | fac & 0x3f8i32;
 }
-#[no_mangle]
-pub unsafe extern "C" fn logger_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn logger_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut str_p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut str_t: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;

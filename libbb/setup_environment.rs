@@ -495,8 +495,7 @@ extern "C" {
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#[no_mangle]
-pub unsafe extern "C" fn setup_environment(
+pub unsafe fn setup_environment(
   mut shell: *const libc::c_char,
   mut flags: libc::c_int,
   mut pw: *const passwd,

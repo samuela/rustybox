@@ -41,11 +41,7 @@ static mut utsname_offset: [libc::c_ushort; 8] = [
   455u64 as libc::c_ushort,
   520u64 as libc::c_ushort,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn uname_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn uname_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut uname_info: uname_info_t = uname_info_t {
     name: utsname {
       sysname: [0; 65],

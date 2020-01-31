@@ -143,14 +143,14 @@ pub struct globals2 {
   //	ulg compressed_len;      /* total bit length of compressed file */
 }
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 /* ===========================================================================
  * Write the output buffer outbuf[0..outcnt-1] and update bytes_out.
  * (used for the compressed data only)
  */
-unsafe extern "C" fn flush_outbuf() {
+unsafe fn flush_outbuf() {
   if (*ptr_to_globals.offset(-1)).outcnt == 0 as libc::c_uint {
     return;
   }
@@ -165,7 +165,7 @@ unsafe extern "C" fn flush_outbuf() {
  */
 /* put_8bit is used for the compressed output */
 /* Output a 16 bit value, lsb first */
-unsafe extern "C" fn put_16bit(mut w: ush) {
+unsafe fn put_16bit(mut w: ush) {
   /* GCC 4.2.1 won't optimize out redundant loads of G1.outcnt
    * (probably because of fear of aliasing with G1.outbuf[]
    * stores), do it explicitly:
@@ -197,7 +197,7 @@ unsafe extern "C" fn put_16bit(mut w: ush) {
   };
   /* or here */
 }
-unsafe extern "C" fn put_32bit(mut n: ulg) {
+unsafe fn put_32bit(mut n: ulg) {
   if 0 > 0 && 1i32 != 0 && 1i32 != 0 {
     let mut outcnt: libc::c_uint = (*ptr_to_globals.offset(-1)).outcnt;
     if outcnt < (8192i32 - 4i32) as libc::c_uint {
@@ -214,7 +214,7 @@ unsafe extern "C" fn put_32bit(mut n: ulg) {
   put_16bit((n >> 16i32) as ush);
 }
 #[inline(always)]
-unsafe extern "C" fn flush_outbuf_if_32bit_optimized() {
+unsafe fn flush_outbuf_if_32bit_optimized() {
   /* If put_32bit() performs 32bit stores && it is used in send_bits() */
   if 0 > 0
     && 1i32 != 0
@@ -231,7 +231,7 @@ unsafe extern "C" fn flush_outbuf_if_32bit_optimized() {
  * pointer, then initialize the crc shift register contents instead.
  * Return the current crc in either case.
  */
-unsafe extern "C" fn updcrc(mut s: *mut uch, mut n: libc::c_uint) {
+unsafe fn updcrc(mut s: *mut uch, mut n: libc::c_uint) {
   (*ptr_to_globals.offset(-1)).crc = crate::libbb::crc32::crc32_block_endian0(
     (*ptr_to_globals.offset(-1)).crc,
     s as *const libc::c_void,
@@ -244,7 +244,7 @@ unsafe extern "C" fn updcrc(mut s: *mut uch, mut n: libc::c_uint) {
  * translation, and update the crc and input file size.
  * IN assertion: size >= 2 (for end-of-line translation)
  */
-unsafe extern "C" fn file_read(mut buf: *mut libc::c_void, mut size: libc::c_uint) -> libc::c_uint {
+unsafe fn file_read(mut buf: *mut libc::c_void, mut size: libc::c_uint) -> libc::c_uint {
   let mut len: libc::c_uint = 0;
   len = crate::libbb::read::safe_read(0i32, buf, size as size_t) as libc::c_uint;
   if len == -1i32 as libc::c_uint || len == 0 as libc::c_uint {
@@ -259,7 +259,7 @@ unsafe extern "C" fn file_read(mut buf: *mut libc::c_void, mut size: libc::c_uin
  * Send a value on a given number of bits.
  * IN assertion: length <= 16 and value fits in length bits.
  */
-unsafe extern "C" fn send_bits(mut value: libc::c_uint, mut length: libc::c_uint) {
+unsafe fn send_bits(mut value: libc::c_uint, mut length: libc::c_uint) {
   let mut new_buf: libc::c_uint = 0;
   new_buf = (*ptr_to_globals.offset(-1)).bi_buf | value << (*ptr_to_globals.offset(-1)).bi_valid;
   /* NB: the above may sometimes do "<< 32" shift (undefined)
@@ -300,7 +300,7 @@ unsafe extern "C" fn send_bits(mut value: libc::c_uint, mut length: libc::c_uint
  * method would use a table)
  * IN assertion: 1 <= len <= 15
  */
-unsafe extern "C" fn bi_reverse(mut code: libc::c_uint, mut len: libc::c_int) -> libc::c_uint {
+unsafe fn bi_reverse(mut code: libc::c_uint, mut len: libc::c_int) -> libc::c_uint {
   let mut res: libc::c_uint = 0 as libc::c_uint;
   loop {
     res |= code & 1i32 as libc::c_uint;
@@ -315,7 +315,7 @@ unsafe extern "C" fn bi_reverse(mut code: libc::c_uint, mut len: libc::c_int) ->
 /* ===========================================================================
  * Write out any remaining bits in an incomplete byte.
  */
-unsafe extern "C" fn bi_windup() {
+unsafe fn bi_windup() {
   let mut bits: libc::c_uint = (*ptr_to_globals.offset(-1)).bi_buf;
   let mut cnt: libc::c_int = (*ptr_to_globals.offset(-1)).bi_valid as libc::c_int;
   while cnt > 0 {
@@ -336,7 +336,7 @@ unsafe extern "C" fn bi_windup() {
  * Copy a stored block to the zip file, storing first the length and its
  * one's complement if requested.
  */
-unsafe extern "C" fn copy_block(
+unsafe fn copy_block(
   mut buf: *const libc::c_char,
   mut len: libc::c_uint,
   mut header: libc::c_int,
@@ -376,7 +376,7 @@ unsafe extern "C" fn copy_block(
  *    file reads are performed for at least two bytes (required for the
  *    translate_eol option).
  */
-unsafe extern "C" fn fill_window() {
+unsafe fn fill_window() {
   let mut n: libc::c_uint = 0;
   let mut m: libc::c_uint = 0;
   let mut more: libc::c_uint = (WINDOW_SIZE as libc::c_int as libc::c_uint)
@@ -459,7 +459,7 @@ unsafe extern "C" fn fill_window() {
   };
 }
 /* Both users fill window with the same loop: */
-unsafe extern "C" fn fill_window_if_needed() {
+unsafe fn fill_window_if_needed() {
   while (*ptr_to_globals.offset(-1)).lookahead < (258i32 + 3i32 + 1i32) as libc::c_uint
     && (*ptr_to_globals.offset(-1)).eofile == 0
   {
@@ -478,7 +478,7 @@ unsafe extern "C" fn fill_window_if_needed() {
  * match.s. The code is functionally equivalent, so you can use the C version
  * if desired.
  */
-unsafe extern "C" fn longest_match(mut cur_match: IPos) -> libc::c_int {
+unsafe fn longest_match(mut cur_match: IPos) -> libc::c_int {
   let mut chain_length: libc::c_uint = max_chain_length as libc::c_int as libc::c_uint; /* max hash chain length */
   let mut scan: *mut uch = (*ptr_to_globals.offset(-1))
     .window
@@ -684,7 +684,7 @@ static mut bl_order: [u8; 19] = [
 /* ===========================================================================
  * Initialize a new block.
  */
-unsafe extern "C" fn init_block() {
+unsafe fn init_block() {
   let mut n: libc::c_int = 0; /* iterates over tree elements */
   /* Initialize the trees. */
   n = 0;
@@ -728,7 +728,7 @@ unsafe extern "C" fn init_block() {
  */
 /* Compares to subtrees, using the tree depth as tie breaker when
  * the subtrees have equal frequency. This minimizes the worst case length. */
-unsafe extern "C" fn pqdownheap(mut tree: *const ct_data, mut k: libc::c_int) {
+unsafe fn pqdownheap(mut tree: *const ct_data, mut k: libc::c_int) {
   let mut v: libc::c_int = (*(ptr_to_globals as *mut globals2)).heap[k as usize] as libc::c_int; /* left son of k */
   let mut j: libc::c_int = k << 1i32;
   while j <= (*(ptr_to_globals as *mut globals2)).heap_len {
@@ -790,7 +790,7 @@ unsafe extern "C" fn pqdownheap(mut tree: *const ct_data, mut k: libc::c_int) {
  *     The length opt_len is updated; static_len is also updated if stree is
  *     not null.
  */
-unsafe extern "C" fn gen_bitlen(mut desc: *const tree_desc) {
+unsafe fn gen_bitlen(mut desc: *const tree_desc) {
   let mut h: libc::c_int = 0; /* heap index */
   let mut n: libc::c_int = 0; /* iterate over the tree elements */
   let mut m: libc::c_int = 0; /* bit length */
@@ -914,7 +914,7 @@ unsafe extern "C" fn gen_bitlen(mut desc: *const tree_desc) {
  * OUT assertion: the field code is set for all tree elements of non
  *     zero code length.
  */
-unsafe extern "C" fn gen_codes(mut tree: *mut ct_data, mut max_code: libc::c_int) {
+unsafe fn gen_codes(mut tree: *mut ct_data, mut max_code: libc::c_int) {
   /* next_code[] and code used to be "ush", but "unsigned" results in smaller code */
   let mut next_code: [libc::c_uint; 16] = [0; 16]; /* next code value for each bit length */
   let mut code: libc::c_uint = 0 as libc::c_uint; /* running code value */
@@ -946,7 +946,7 @@ unsafe extern "C" fn gen_codes(mut tree: *mut ct_data, mut max_code: libc::c_int
   }
 }
 /* Index within the heap array of least frequent node in the Huffman tree */
-unsafe extern "C" fn build_tree(mut desc: *mut tree_desc) {
+unsafe fn build_tree(mut desc: *mut tree_desc) {
   let mut tree: *mut ct_data = (*desc).dyn_tree; /* iterate over heap elements */
   let mut stree: *mut ct_data = (*desc).static_tree; /* largest code with non zero frequency */
   let mut elems: libc::c_int = (*desc).elems; /* next internal node of the tree */
@@ -1070,7 +1070,7 @@ unsafe extern "C" fn build_tree(mut desc: *mut tree_desc) {
  * counts. (The contribution of the bit length codes will be added later
  * during the construction of bl_tree.)
  */
-unsafe extern "C" fn scan_tree(mut tree: *mut ct_data, mut max_code: libc::c_int) {
+unsafe fn scan_tree(mut tree: *mut ct_data, mut max_code: libc::c_int) {
   let mut n: libc::c_int = 0; /* iterates over all tree elements */
   let mut prevlen: libc::c_int = -1i32; /* last emitted length */
   let mut curlen: libc::c_int = 0; /* length of current code */
@@ -1129,7 +1129,7 @@ unsafe extern "C" fn scan_tree(mut tree: *mut ct_data, mut max_code: libc::c_int
  * Send a literal or distance tree in compressed form, using the codes in
  * bl_tree.
  */
-unsafe extern "C" fn send_tree(mut tree: *const ct_data, mut max_code: libc::c_int) {
+unsafe fn send_tree(mut tree: *const ct_data, mut max_code: libc::c_int) {
   let mut n: libc::c_int = 0; /* iterates over all tree elements */
   let mut prevlen: libc::c_int = -1i32; /* last emitted length */
   let mut curlen: libc::c_int = 0; /* length of current code */
@@ -1214,7 +1214,7 @@ unsafe extern "C" fn send_tree(mut tree: *const ct_data, mut max_code: libc::c_i
  * Construct the Huffman tree for the bit lengths and return the index in
  * bl_order of the last bit length code to send.
  */
-unsafe extern "C" fn build_bl_tree() -> libc::c_int {
+unsafe fn build_bl_tree() -> libc::c_int {
   let mut max_blindex: libc::c_int = 0; /* index of last bit length code of non zero freq */
   /* Determine the bit length frequencies for literal and distance trees */
   scan_tree(
@@ -1257,7 +1257,7 @@ unsafe extern "C" fn build_bl_tree() -> libc::c_int {
  * lengths of the bit length codes, the literal tree and the distance tree.
  * IN assertion: lcodes >= 257, dcodes >= 1, blcodes >= 4.
  */
-unsafe extern "C" fn send_all_trees(
+unsafe fn send_all_trees(
   mut lcodes: libc::c_int,
   mut dcodes: libc::c_int,
   mut blcodes: libc::c_int,
@@ -1289,7 +1289,7 @@ unsafe extern "C" fn send_all_trees(
  * Save the match info and tally the frequency counts. Return true if
  * the current block must be flushed.
  */
-unsafe extern "C" fn ct_tally(mut dist: libc::c_int, mut lc: libc::c_int) -> libc::c_int {
+unsafe fn ct_tally(mut dist: libc::c_int, mut lc: libc::c_int) -> libc::c_int {
   let ref mut fresh42 = (*(ptr_to_globals as *mut globals2)).last_lit;
   let fresh43 = *fresh42;
   *fresh42 = (*fresh42).wrapping_add(1);
@@ -1380,7 +1380,7 @@ unsafe extern "C" fn ct_tally(mut dist: libc::c_int, mut lc: libc::c_int) -> lib
 /* ===========================================================================
  * Send the block data compressed using the given Huffman trees
  */
-unsafe extern "C" fn compress_block(mut ltree: *const ct_data, mut dtree: *const ct_data) {
+unsafe fn compress_block(mut ltree: *const ct_data, mut dtree: *const ct_data) {
   let mut dist: libc::c_uint = 0; /* distance of matched string */
   let mut lc: libc::c_int = 0; /* match length or unmatched char (if dist == 0) */
   let mut lx: libc::c_uint = 0 as libc::c_uint; /* running index in l_buf */
@@ -1468,7 +1468,7 @@ unsafe extern "C" fn compress_block(mut ltree: *const ct_data, mut dtree: *const
  * trees or store, and output the encoded block to the zip file. This function
  * returns the total compressed length for the file so far.
  */
-unsafe extern "C" fn flush_block(
+unsafe fn flush_block(
   mut buf: *const libc::c_char,
   mut stored_len: ulg,
   mut eof: libc::c_int,
@@ -1586,7 +1586,7 @@ unsafe extern "C" fn flush_block(
  *    input characters and the first MIN_MATCH bytes of s are valid
  *    (except for the last MIN_MATCH-1 bytes of the input file). */
 #[inline(never)]
-unsafe extern "C" fn deflate() {
+unsafe fn deflate() {
   let mut hash_head: IPos = 0; /* head of hash chain */
   let mut prev_match: IPos = 0; /* previous match */
   let mut flush: libc::c_int = 0; /* set if current block must be flushed */
@@ -1814,7 +1814,7 @@ unsafe extern "C" fn deflate() {
 /* ===========================================================================
  * Initialize the bit string routines.
  */
-unsafe extern "C" fn bi_init() {
+unsafe fn bi_init() {
   //G1.bi_buf = 0; // globals are zeroed in pack_gzip()
   //G1.bi_valid = 0; // globals are zeroed in pack_gzip()
   //DEBUG_bits_sent(= 0L); // globals are zeroed in pack_gzip()
@@ -1822,7 +1822,7 @@ unsafe extern "C" fn bi_init() {
 /* ===========================================================================
  * Initialize the "longest match" routines for a new file
  */
-unsafe extern "C" fn lm_init() {
+unsafe fn lm_init() {
   let mut j: libc::c_uint = 0;
   /* Initialize the hash table. */
   memset(
@@ -1874,7 +1874,7 @@ unsafe extern "C" fn lm_init() {
  * (DEFLATE/STORE).
  * One callsite in zip()
  */
-unsafe extern "C" fn ct_init() {
+unsafe fn ct_init() {
   let mut n: libc::c_int = 0; /* iterates over tree elements */
   let mut length: libc::c_int = 0; /* length value */
   let mut code: libc::c_int = 0; /* code value */
@@ -1997,7 +1997,7 @@ unsafe extern "C" fn ct_init() {
  * Deflate in to out.
  * IN assertions: the input and output buffers are cleared.
  */
-unsafe extern "C" fn zip() {
+unsafe fn zip() {
   let mut deflate_flags: libc::c_uint = 0;
   //G1.outcnt = 0; // globals are zeroed in pack_gzip()
   /* Write the header to the gzip file. See algorithm.doc for the format */
@@ -2022,7 +2022,7 @@ unsafe extern "C" fn zip() {
   flush_outbuf();
 }
 /* ======================================================================== */
-unsafe extern "C" fn pack_gzip(mut _xstate: *mut transformer_state_t) -> libc::c_longlong {
+unsafe fn pack_gzip(mut _xstate: *mut transformer_state_t) -> libc::c_longlong {
   /* Reinit G1.xxx except pointers to allocated buffers, and entire G2 */
   memset(
     &mut (*ptr_to_globals.offset(-1)).crc as *mut u32 as *mut libc::c_void,
@@ -2090,11 +2090,7 @@ static mut gzip_longopts: [libc::c_char; 105] = [
  * gzip: always save the original file name and time stamp (this is the default)
  * gunzip: restore the original file name and time stamp if present.
  */
-#[no_mangle]
-pub unsafe extern "C" fn gzip_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn gzip_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
   let ref mut fresh80 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
@@ -2156,10 +2152,10 @@ pub unsafe extern "C" fn gzip_main(
   argv = argv.offset(optind as isize);
   return crate::archival::bbunzip::bbunpack(
     argv,
-    Some(pack_gzip as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong),
+    Some(pack_gzip as unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong),
     Some(
       crate::archival::bbunzip::append_ext
-        as unsafe extern "C" fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
+        as unsafe fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
     ),
     b"gz\x00" as *const u8 as *const libc::c_char,
   );

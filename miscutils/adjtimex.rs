@@ -58,7 +58,7 @@ pub struct timex {
 pub const OPT_quiet: C2RustUnnamed = 1;
 pub type C2RustUnnamed = libc::c_uint;
 #[inline(always)]
-unsafe extern "C" fn xatol(mut str: *const libc::c_char) -> libc::c_long {
+unsafe fn xatol(mut str: *const libc::c_char) -> libc::c_long {
   return crate::libbb::xatonum::xatoll(str) as libc::c_long;
 }
 
@@ -123,8 +123,7 @@ static mut ret_code_descript: [libc::c_char; 129] = [
   114, 101, 100, 0, 99, 108, 111, 99, 107, 32, 110, 111, 116, 32, 115, 121, 110, 99, 104, 114, 111,
   110, 105, 122, 101, 100, 0,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn adjtimex_main(
+pub unsafe fn adjtimex_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

@@ -67,7 +67,7 @@ use libc::uid_t;
 //usage:     "\n	-s SH	Shell to use instead of user's default"
 /* Return 1 if SHELL is a restricted shell (one not returned by
  * getusershell), else 0, meaning it is a standard shell.  */
-unsafe extern "C" fn restricted_shell(mut shell: *const libc::c_char) -> libc::c_int {
+unsafe fn restricted_shell(mut shell: *const libc::c_char) -> libc::c_int {
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut result: libc::c_int = 1i32;
   loop
@@ -85,8 +85,7 @@ unsafe extern "C" fn restricted_shell(mut shell: *const libc::c_char) -> libc::c
   }
   return result;
 }
-#[no_mangle]
-pub unsafe extern "C" fn su_main(
+pub unsafe fn su_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

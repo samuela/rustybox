@@ -33,7 +33,7 @@ extern "C" {
 
 use crate::librb::suffix_mult;
 #[inline(always)]
-unsafe extern "C" fn xatoul_sfx(
+unsafe fn xatoul_sfx(
   mut str: *const libc::c_char,
   mut sfx: *const suffix_mult,
 ) -> libc::c_ulong {
@@ -83,7 +83,7 @@ unsafe extern "C" fn xatoul_sfx(
 //usage:       "root:x:0:0:root:/root:/bin/bash\n"
 //usage:       "daemon:x:1:1:daemon:/usr/sbin:/bin/sh\n"
 /* This is a NOEXEC applet. Be very careful! */
-unsafe extern "C" fn print_first_N(
+unsafe fn print_first_N(
   mut fp: *mut FILE,
   mut count: libc::c_ulong,
   mut count_bytes: bool,
@@ -99,7 +99,7 @@ unsafe extern "C" fn print_first_N(
     putchar_unlocked(c);
   }
 }
-unsafe extern "C" fn print_except_N_last_bytes(mut fp: *mut FILE, mut count: libc::c_uint) {
+unsafe fn print_except_N_last_bytes(mut fp: *mut FILE, mut count: libc::c_uint) {
   let mut current_block: u64;
   count = count.wrapping_add(1);
   let mut circle: *mut libc::c_uchar = xmalloc(count as size_t) as *mut libc::c_uchar;
@@ -143,7 +143,7 @@ unsafe extern "C" fn print_except_N_last_bytes(mut fp: *mut FILE, mut count: lib
     }
   }
 }
-unsafe extern "C" fn print_except_N_last_lines(mut fp: *mut FILE, mut count: libc::c_uint) {
+unsafe fn print_except_N_last_lines(mut fp: *mut FILE, mut count: libc::c_uint) {
   let mut current_block: u64;
   count = count.wrapping_add(1);
   let mut circle: *mut *mut libc::c_char = crate::libbb::xfuncs_printf::xzalloc(
@@ -203,7 +203,7 @@ unsafe extern "C" fn print_except_N_last_lines(mut fp: *mut FILE, mut count: lib
   }
   free(circle as *mut libc::c_void);
 }
-unsafe extern "C" fn eat_num(
+unsafe fn eat_num(
   mut negative_N: *mut bool,
   mut p: *const libc::c_char,
 ) -> libc::c_ulong {
@@ -214,11 +214,7 @@ unsafe extern "C" fn eat_num(
   return xatoul_sfx(p, bkm_suffixes.as_ptr());
 }
 static mut head_opts: [libc::c_char; 7] = [110, 58, 99, 58, 113, 118, 0];
-#[no_mangle]
-pub unsafe extern "C" fn head_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn head_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut count: libc::c_ulong = 10i32 as libc::c_ulong;
   let mut header_threshhold: libc::c_int = 1i32;

@@ -79,8 +79,7 @@ static mut capabilities: [*const libc::c_char; 38] = [
   b"audit_read\x00" as *const u8 as *const libc::c_char,
 ];
 
-#[no_mangle]
-pub unsafe extern "C" fn cap_name_to_number(mut cap: *const libc::c_char) -> libc::c_uint {
+pub unsafe fn cap_name_to_number(mut cap: *const libc::c_char) -> libc::c_uint {
   let mut current_block: u64;
   let mut i: libc::c_uint = 0;
   let mut n: libc::c_uint = 0;
@@ -127,8 +126,7 @@ pub unsafe extern "C" fn cap_name_to_number(mut cap: *const libc::c_char) -> lib
   return i;
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn printf_cap(mut pfx: *const libc::c_char, mut cap_no: libc::c_uint) {
+pub unsafe fn printf_cap(mut pfx: *const libc::c_char, mut cap_no: libc::c_uint) {
   if cap_no
     < (::std::mem::size_of::<[*const libc::c_char; 38]>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<*const libc::c_char>() as libc::c_ulong)
@@ -584,8 +582,7 @@ pub unsafe extern "C" fn printf_cap(mut pfx: *const libc::c_char, mut cap_no: li
  */
 /* Structures inside "struct caps" are Linux-specific and libcap-specific: */
 
-#[no_mangle]
-pub unsafe extern "C" fn getcaps(mut arg: *mut libc::c_void) {
+pub unsafe fn getcaps(mut arg: *mut libc::c_void) {
   let mut current_block: u64;
   static mut versions: [u8; 3] = [2i32 as u8, 2i32 as u8, 1i32 as u8];
   let mut i: libc::c_int = 0;

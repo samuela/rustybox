@@ -44,7 +44,7 @@ pub const OPT_L_follow_links: C2RustUnnamed = 8;
 pub const OPT_k_kbytes: C2RustUnnamed = 4;
 pub const OPT_H_follow_links: C2RustUnnamed = 2;
 pub const OPT_a_files_too: C2RustUnnamed = 1;
-unsafe extern "C" fn print(mut size: libc::c_ulonglong, mut filename: *const libc::c_char) {
+unsafe fn print(mut size: libc::c_ulonglong, mut filename: *const libc::c_char) {
   /* TODO - May not want to defer error checking here. */
   /* ~30 bytes of code for extra comtat:
    * coreutils' du rounds sizes up:
@@ -72,7 +72,7 @@ unsafe extern "C" fn print(mut size: libc::c_ulonglong, mut filename: *const lib
   );
 }
 /* tiny recursive du */
-unsafe extern "C" fn du(mut filename: *const libc::c_char) -> libc::c_ulonglong {
+unsafe fn du(mut filename: *const libc::c_char) -> libc::c_ulonglong {
   let mut statbuf: stat = std::mem::zeroed();
   let mut sum: libc::c_ulonglong = 0;
   if lstat(filename, &mut statbuf) != 0 {
@@ -155,11 +155,7 @@ unsafe extern "C" fn du(mut filename: *const libc::c_char) -> libc::c_ulonglong 
   }
   return sum;
 }
-#[no_mangle]
-pub unsafe extern "C" fn du_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn du_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut total: libc::c_ulonglong = 0;
   let mut slink_depth_save: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;

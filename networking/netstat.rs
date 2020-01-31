@@ -368,7 +368,7 @@ unsafe extern "C" fn extract_socket_inode(mut lname: *const libc::c_char) -> lib
   /* bb_strtol returns all-ones bit pattern on ERANGE anyway */
   return inode; /* continue looking one level below /proc */
 }
-unsafe extern "C" fn add_to_prg_cache_if_socket(
+unsafe fn add_to_prg_cache_if_socket(
   mut fileName: *const libc::c_char,
   mut _statbuf: *mut stat,
   mut pid_slash_progname: *mut libc::c_void,
@@ -386,7 +386,7 @@ unsafe extern "C" fn add_to_prg_cache_if_socket(
   }
   return 1i32;
 }
-unsafe extern "C" fn dir_act(
+unsafe fn dir_act(
   mut fileName: *const libc::c_char,
   mut _statbuf: *mut stat,
   mut _userData: *mut libc::c_void,
@@ -440,15 +440,7 @@ unsafe extern "C" fn dir_act(
   n = crate::libbb::recursive_action::recursive_action(
     proc_pid_fname.as_mut_ptr(),
     (ACTION_RECURSE as libc::c_int | ACTION_QUIET as libc::c_int) as libc::c_uint,
-    Some(
-      add_to_prg_cache_if_socket
-        as unsafe extern "C" fn(
-          _: *const libc::c_char,
-          _: *mut stat,
-          _: *mut libc::c_void,
-          _: libc::c_int,
-        ) -> libc::c_int,
-    ),
+    Some(add_to_prg_cache_if_socket),
     None,
     pid_slash_progname as *mut libc::c_void,
     0 as libc::c_uint,
@@ -467,15 +459,7 @@ unsafe extern "C" fn prg_cache_load() {
     b"/proc\x00" as *const u8 as *const libc::c_char,
     (ACTION_RECURSE as libc::c_int | ACTION_QUIET as libc::c_int) as libc::c_uint,
     None,
-    Some(
-      dir_act
-        as unsafe extern "C" fn(
-          _: *const libc::c_char,
-          _: *mut stat,
-          _: *mut libc::c_void,
-          _: libc::c_int,
-        ) -> libc::c_int,
-    ),
+    Some(dir_act),
     0 as *mut libc::c_void,
     0 as libc::c_uint,
   );

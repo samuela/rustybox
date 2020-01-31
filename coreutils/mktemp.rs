@@ -74,11 +74,7 @@ pub type C2RustUnnamed = libc::c_uint;
 //usage:       "/tmp/temp.mWiLjM\n"
 //usage:       "$ ls -la /tmp/temp.mWiLjM\n"
 //usage:       "-rw-------    1 andersen andersen        0 Apr 25 17:10 /tmp/temp.mWiLjM\n"
-#[no_mangle]
-pub unsafe extern "C" fn mktemp_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn mktemp_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut path: *const libc::c_char = std::ptr::null();
   let mut chp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

@@ -1,7 +1,6 @@
 use libc;
 /* Usual "this only works for ascii compatible encodings" disclaimer. */
-#[no_mangle]
-pub unsafe extern "C" fn bb_process_escape_sequence(
+pub unsafe fn bb_process_escape_sequence(
   mut ptr: *mut *const libc::c_char,
 ) -> libc::c_char {
   let mut q: *const libc::c_char = std::ptr::null();
@@ -224,8 +223,7 @@ pub unsafe extern "C" fn bb_process_escape_sequence(
 /* bb_copyfd_XX print read/write errors and return -1 if they occur */
 /* "short" copy can be detected by return value < size */
 /* this helper yells "short read!" if param is not -1 */
-#[no_mangle]
-pub unsafe extern "C" fn strcpy_and_process_escape_sequences(
+pub unsafe fn strcpy_and_process_escape_sequences(
   mut dst: *mut libc::c_char,
   mut src: *const libc::c_char,
 ) -> *mut libc::c_char {

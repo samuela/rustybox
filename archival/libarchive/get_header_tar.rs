@@ -96,7 +96,7 @@ pub struct tar_header_t {
  */
 pub type aliased_u32 = u32;
 /* NB: _DESTROYS_ str[len] character! */
-unsafe extern "C" fn getOctal(
+unsafe fn getOctal(
   mut str: *mut libc::c_char,
   mut len: libc::c_int,
 ) -> libc::c_ulonglong {
@@ -148,7 +148,7 @@ unsafe extern "C" fn getOctal(
   return v;
 }
 /* "global" is 0 or 1 */
-unsafe extern "C" fn process_pax_hdr(
+unsafe fn process_pax_hdr(
   mut archive_handle: *mut archive_handle_t,
   mut sz: libc::c_uint,
   mut global: libc::c_int,
@@ -227,8 +227,7 @@ unsafe extern "C" fn process_pax_hdr(
   }
   free(buf as *mut libc::c_void);
 }
-#[no_mangle]
-pub unsafe extern "C" fn get_header_tar(mut archive_handle: *mut archive_handle_t) -> libc::c_char {
+pub unsafe fn get_header_tar(mut archive_handle: *mut archive_handle_t) -> libc::c_char {
   let mut current_block: u64;
   let mut file_header: *mut file_header_t = (*archive_handle).file_header;
   let mut tar: tar_header_t = tar_header_t {

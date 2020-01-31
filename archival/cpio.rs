@@ -100,7 +100,7 @@ pub struct name_s {
   pub name: [libc::c_char; 1],
 }
 
-unsafe extern "C" fn cpio_pad4(mut size: off_t) -> off_t {
+unsafe fn cpio_pad4(mut size: off_t) -> off_t {
   let mut i: libc::c_int = 0;
   i = (-size & 3i32 as libc::c_long) as libc::c_int;
   size += i as libc::c_long;
@@ -116,7 +116,7 @@ unsafe extern "C" fn cpio_pad4(mut size: off_t) -> off_t {
 /* Return value will become exit code.
  * It's ok to exit instead of return. */
 #[inline(never)]
-unsafe extern "C" fn cpio_o() -> libc::c_int {
+unsafe fn cpio_o() -> libc::c_int {
   let mut links: *mut inodes_s = std::ptr::null_mut(); /* output bytes count */
   let mut bytes: off_t = 0 as off_t; /* line == NULL: EOF */
   let mut current_block_47: u64;
@@ -425,18 +425,18 @@ pub unsafe fn cpio_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
         opt &= !(OPT_EXTRACT as libc::c_int) as libc::c_uint;
         (*archive_handle).action_header = Some(
           crate::archival::libarchive::header_list::header_list
-            as unsafe extern "C" fn(_: *const file_header_t) -> (),
+            as unsafe fn(_: *const file_header_t) -> (),
         )
       }
       if opt & OPT_EXTRACT as libc::c_int as libc::c_uint != 0 {
         (*archive_handle).action_data = Some(
           crate::archival::libarchive::data_extract_all::data_extract_all
-            as unsafe extern "C" fn(_: *mut archive_handle_t) -> (),
+            as unsafe fn(_: *mut archive_handle_t) -> (),
         );
         if opt & OPT_2STDOUT as libc::c_int as libc::c_uint != 0 {
           (*archive_handle).action_data = Some(
             crate::archival::libarchive::data_extract_to_stdout::data_extract_to_stdout
-              as unsafe extern "C" fn(_: *mut archive_handle_t) -> (),
+              as unsafe fn(_: *mut archive_handle_t) -> (),
           )
         }
       }
@@ -448,17 +448,17 @@ pub unsafe fn cpio_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
         if (*archive_handle).action_header
           == Some(
             crate::archival::libarchive::header_list::header_list
-              as unsafe extern "C" fn(_: *const file_header_t) -> (),
+              as unsafe fn(_: *const file_header_t) -> (),
           )
         {
           (*archive_handle).action_header = Some(
             crate::archival::libarchive::header_verbose_list::header_verbose_list
-              as unsafe extern "C" fn(_: *const file_header_t) -> (),
+              as unsafe fn(_: *const file_header_t) -> (),
           )
         } else {
           (*archive_handle).action_header = Some(
             crate::archival::libarchive::header_list::header_list
-              as unsafe extern "C" fn(_: *const file_header_t) -> (),
+              as unsafe fn(_: *const file_header_t) -> (),
           )
         }
       }
@@ -471,7 +471,7 @@ pub unsafe fn cpio_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
       while !(*argv).is_null() {
         (*archive_handle).filter = Some(
           crate::archival::libarchive::filter_accept_list::filter_accept_list
-            as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+            as unsafe fn(_: *mut archive_handle_t) -> libc::c_char,
         );
         crate::libbb::llist::llist_add_to(
           &mut (*archive_handle).accept,

@@ -97,7 +97,7 @@ pub const OPT_d: C2RustUnnamed_0 = 2;
 pub const OPT_b: C2RustUnnamed_0 = 1;
 
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 
@@ -160,7 +160,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
 //usage:#define popmaildir_example_usage
 //usage:       "$ popmaildir -k ~/Maildir -- nc pop.drvv.ru 110 [<password_file]\n"
 //usage:       "$ popmaildir ~/Maildir -- openssl s_client -quiet -connect pop.gmail.com:995 [<password_file]\n"
-unsafe extern "C" fn pop3_checkr(
+unsafe fn pop3_checkr(
   mut fmt: *const libc::c_char,
   mut param: *const libc::c_char,
   mut ret: *mut *mut libc::c_char,
@@ -191,11 +191,10 @@ unsafe extern "C" fn pop3_checkr(
     answer,
   );
 }
-unsafe extern "C" fn pop3_check(mut fmt: *const libc::c_char, mut param: *const libc::c_char) {
+unsafe fn pop3_check(mut fmt: *const libc::c_char, mut param: *const libc::c_char) {
   pop3_checkr(fmt, param, 0 as *mut *mut libc::c_char);
 }
-#[no_mangle]
-pub unsafe extern "C" fn popmaildir_main(
+pub unsafe fn popmaildir_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

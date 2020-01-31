@@ -92,7 +92,7 @@ use crate::librb::sha1_ctx_t;
 /* static const u8 ascii64[] ALIGN1 =
  * "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
  */
-unsafe extern "C" fn i64c(mut i: libc::c_int) -> libc::c_int {
+unsafe fn i64c(mut i: libc::c_int) -> libc::c_int {
   i &= 0x3fi32;
   if i == 0 {
     return '.' as i32;
@@ -108,8 +108,7 @@ unsafe extern "C" fn i64c(mut i: libc::c_int) -> libc::c_int {
   }
   return 'a' as i32 - 38i32 + i;
 }
-#[no_mangle]
-pub unsafe extern "C" fn crypt_make_salt(
+pub unsafe fn crypt_make_salt(
   mut p: *mut libc::c_char,
   mut cnt: libc::c_int,
 ) -> libc::c_int
@@ -153,8 +152,7 @@ pub unsafe extern "C" fn crypt_make_salt(
  */
 /*, int rnd*/
 /* "$N$" + sha_salt_16_bytes + NUL */
-#[no_mangle]
-pub unsafe extern "C" fn crypt_make_pw_salt(
+pub unsafe fn crypt_make_pw_salt(
   mut salt: *mut libc::c_char,
   mut algo: *const libc::c_char,
 ) -> *mut libc::c_char {
@@ -186,7 +184,7 @@ pub unsafe extern "C" fn crypt_make_pw_salt(
   crypt_make_salt(salt_ptr, len);
   return salt_ptr;
 }
-unsafe extern "C" fn to64(
+unsafe fn to64(
   mut s: *mut libc::c_char,
   mut v: libc::c_uint,
   mut n: libc::c_int,
@@ -797,7 +795,7 @@ static mut bits8: [u8; 8] = [
   0x2i32 as u8,
   0x1i32 as u8,
 ];
-unsafe extern "C" fn ascii_to_bin(mut ch: libc::c_char) -> libc::c_int {
+unsafe fn ascii_to_bin(mut ch: libc::c_char) -> libc::c_int {
   if ch as libc::c_int > 'z' as i32 {
     return 0;
   }
@@ -818,7 +816,7 @@ unsafe extern "C" fn ascii_to_bin(mut ch: libc::c_char) -> libc::c_int {
   }
   return 0;
 }
-unsafe extern "C" fn const_des_init() -> *mut const_des_ctx {
+unsafe fn const_des_init() -> *mut const_des_ctx {
   let mut i: libc::c_uint = 0;
   let mut j: libc::c_uint = 0;
   let mut b: libc::c_uint = 0;
@@ -863,7 +861,7 @@ unsafe extern "C" fn const_des_init() -> *mut const_des_ctx {
   }
   return cctx;
 }
-unsafe extern "C" fn des_init(
+unsafe fn des_init(
   mut ctx: *mut des_ctx,
   mut cctx: *const const_des_ctx,
 ) -> *mut des_ctx {
@@ -1008,7 +1006,7 @@ unsafe extern "C" fn des_init(
   }
   return ctx;
 }
-unsafe extern "C" fn setup_salt(mut ctx: *mut des_ctx, mut salt: u32) {
+unsafe fn setup_salt(mut ctx: *mut des_ctx, mut salt: u32) {
   let mut obit: u32 = 0;
   let mut saltbit: u32 = 0;
   let mut i: libc::c_int = 0;
@@ -1025,7 +1023,7 @@ unsafe extern "C" fn setup_salt(mut ctx: *mut des_ctx, mut salt: u32) {
     i += 1
   }
 }
-unsafe extern "C" fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_char) {
+unsafe fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_char) {
   let mut k0: u32 = 0;
   let mut k1: u32 = 0;
   let mut rawkey0: u32 = 0;
@@ -1119,7 +1117,7 @@ unsafe extern "C" fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_c
     round += 1
   }
 }
-unsafe extern "C" fn do_des(
+unsafe fn do_des(
   mut ctx: *mut des_ctx,
   mut l_out: *mut u32,
   mut r_out: *mut u32,
@@ -1213,7 +1211,7 @@ unsafe extern "C" fn do_des(
     | (*ctx).fp_maskr[6][(r >> 8i32 & 0xffi32 as libc::c_uint) as usize]
     | (*ctx).fp_maskr[7][(r & 0xffi32 as libc::c_uint) as usize]; /* bits 17..12 */
 }
-unsafe extern "C" fn to64_msb_first(mut s: *mut libc::c_char, mut v: libc::c_uint) {
+unsafe fn to64_msb_first(mut s: *mut libc::c_char, mut v: libc::c_uint) {
   let fresh14 = s; /* bits 11..6 */
   s = s.offset(1);
   *fresh14 = i64c((v >> 18i32) as libc::c_int) as libc::c_char;
@@ -1227,7 +1225,7 @@ unsafe extern "C" fn to64_msb_first(mut s: *mut libc::c_char, mut v: libc::c_uin
   /* bits 5..0 */
 }
 #[inline(never)]
-unsafe extern "C" fn des_crypt(
+unsafe fn des_crypt(
   mut ctx: *mut des_ctx,
   mut output: *mut libc::c_char,
   mut key: *const libc::c_uchar,
@@ -1287,7 +1285,7 @@ unsafe extern "C" fn des_crypt(
   return output;
 }
 #[inline(never)]
-unsafe extern "C" fn md5_crypt(
+unsafe fn md5_crypt(
   mut result: *mut libc::c_char,
   mut pw: *const libc::c_uchar,
   mut salt: *const libc::c_uchar,
@@ -1431,16 +1429,16 @@ unsafe extern "C" fn md5_crypt(
 /* Prefix for optional rounds specification.  */
 static mut str_rounds: [libc::c_char; 11] = [114, 111, 117, 110, 100, 115, 61, 37, 117, 36, 0];
 #[inline(never)]
-unsafe extern "C" fn sha_crypt(
+unsafe fn sha_crypt(
   mut key_data: *mut libc::c_char,
   mut salt_data: *mut libc::c_char,
 ) -> *mut libc::c_char {
-  let mut sha_begin: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()> = None;
+  let mut sha_begin: Option<unsafe fn(_: *mut libc::c_void) -> ()> = None;
   let mut sha_hash: Option<
-    unsafe extern "C" fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> (),
+    unsafe fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> (),
   > = None;
   let mut sha_end: Option<
-    unsafe extern "C" fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint,
+    unsafe fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint,
   > = None;
   let mut _32or64: libc::c_int = 0;
   let mut result: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -1532,62 +1530,62 @@ unsafe extern "C" fn sha_crypt(
   /* Which flavor of SHAnnn ops to use? */
   sha_begin = ::std::mem::transmute::<
     *mut libc::c_void,
-    Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
+    Option<unsafe fn(_: *mut libc::c_void) -> ()>,
   >(::std::mem::transmute::<
-    Option<unsafe extern "C" fn(_: *mut sha256_ctx_t) -> ()>,
+    Option<unsafe fn(_: *mut sha256_ctx_t) -> ()>,
     *mut libc::c_void,
   >(Some(
-    crate::libbb::hash_md5_sha::sha256_begin as unsafe extern "C" fn(_: *mut sha256_ctx_t) -> (),
+    crate::libbb::hash_md5_sha::sha256_begin as unsafe fn(_: *mut sha256_ctx_t) -> (),
   )));
   sha_hash = ::std::mem::transmute::<
     *mut libc::c_void,
-    Option<unsafe extern "C" fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()>,
+    Option<unsafe fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()>,
   >(::std::mem::transmute::<
-    Option<unsafe extern "C" fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> ()>,
+    Option<unsafe fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> ()>,
     *mut libc::c_void,
   >(Some(
     crate::libbb::hash_md5_sha::md5_hash
-      as unsafe extern "C" fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> (),
+      as unsafe fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> (),
   )));
   sha_end = ::std::mem::transmute::<
     *mut libc::c_void,
-    Option<unsafe extern "C" fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint>,
+    Option<unsafe fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint>,
   >(::std::mem::transmute::<
-    Option<unsafe extern "C" fn(_: *mut sha1_ctx_t, _: *mut libc::c_void) -> libc::c_uint>,
+    Option<unsafe fn(_: *mut sha1_ctx_t, _: *mut libc::c_void) -> libc::c_uint>,
     *mut libc::c_void,
   >(Some(
     crate::libbb::hash_md5_sha::sha1_end
-      as unsafe extern "C" fn(_: *mut sha1_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
+      as unsafe fn(_: *mut sha1_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
   )));
   if _32or64 != 32i32 {
     sha_begin = ::std::mem::transmute::<
       *mut libc::c_void,
-      Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
+      Option<unsafe fn(_: *mut libc::c_void) -> ()>,
     >(::std::mem::transmute::<
-      Option<unsafe extern "C" fn(_: *mut sha512_ctx_t) -> ()>,
+      Option<unsafe fn(_: *mut sha512_ctx_t) -> ()>,
       *mut libc::c_void,
     >(Some(
-      crate::libbb::hash_md5_sha::sha512_begin as unsafe extern "C" fn(_: *mut sha512_ctx_t) -> (),
+      crate::libbb::hash_md5_sha::sha512_begin as unsafe fn(_: *mut sha512_ctx_t) -> (),
     )));
     sha_hash = ::std::mem::transmute::<
       *mut libc::c_void,
-      Option<unsafe extern "C" fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()>,
+      Option<unsafe fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()>,
     >(::std::mem::transmute::<
-      Option<unsafe extern "C" fn(_: *mut sha512_ctx_t, _: *const libc::c_void, _: size_t) -> ()>,
+      Option<unsafe fn(_: *mut sha512_ctx_t, _: *const libc::c_void, _: size_t) -> ()>,
       *mut libc::c_void,
     >(Some(
       crate::libbb::hash_md5_sha::sha512_hash
-        as unsafe extern "C" fn(_: *mut sha512_ctx_t, _: *const libc::c_void, _: size_t) -> (),
+        as unsafe fn(_: *mut sha512_ctx_t, _: *const libc::c_void, _: size_t) -> (),
     )));
     sha_end = ::std::mem::transmute::<
       *mut libc::c_void,
-      Option<unsafe extern "C" fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint>,
+      Option<unsafe fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint>,
     >(::std::mem::transmute::<
-      Option<unsafe extern "C" fn(_: *mut sha512_ctx_t, _: *mut libc::c_void) -> libc::c_uint>,
+      Option<unsafe fn(_: *mut sha512_ctx_t, _: *mut libc::c_void) -> libc::c_uint>,
       *mut libc::c_void,
     >(Some(
       crate::libbb::hash_md5_sha::sha512_end
-        as unsafe extern "C" fn(_: *mut sha512_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
+        as unsafe fn(_: *mut sha512_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
     )))
   }
   /* Add KEY, SALT.  */
@@ -1900,7 +1898,7 @@ unsafe extern "C" fn sha_crypt(
 static mut des_cctx: *mut const_des_ctx = std::ptr::null_mut();
 static mut des_ctx: *mut des_ctx = std::ptr::null_mut();
 /* my_crypt returns malloc'ed data */
-unsafe extern "C" fn my_crypt(
+unsafe fn my_crypt(
   mut key: *const libc::c_char,
   mut salt: *const libc::c_char,
 ) -> *mut libc::c_char {
@@ -1933,7 +1931,7 @@ unsafe extern "C" fn my_crypt(
   );
 }
 /* So far nobody wants to have it public */
-unsafe extern "C" fn my_crypt_cleanup() {
+unsafe fn my_crypt_cleanup() {
   free(des_cctx as *mut libc::c_void);
   free(des_ctx as *mut libc::c_void);
   des_cctx = std::ptr::null_mut();
@@ -2394,8 +2392,7 @@ unsafe extern "C" fn my_crypt_cleanup() {
  * If setup_environment() is used is vforked child, this leaks memory _in parent too_!
  */
 /* Returns a malloced string */
-#[no_mangle]
-pub unsafe extern "C" fn pw_encrypt(
+pub unsafe fn pw_encrypt(
   mut clear: *const libc::c_char,
   mut salt: *const libc::c_char,
   mut cleanup: libc::c_int,

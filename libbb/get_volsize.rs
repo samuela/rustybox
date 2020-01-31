@@ -21,7 +21,7 @@ extern "C" {
 /* (useful for mapping them to the type of the same width) */
 /* If long == long long, then just map them one-to-one */
 #[inline(always)]
-unsafe extern "C" fn xatoul_range(
+unsafe fn xatoul_range(
   mut str: *const libc::c_char,
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
@@ -190,8 +190,7 @@ unsafe extern "C" fn xatoul_range(
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn get_volume_size_in_bytes(
+pub unsafe fn get_volume_size_in_bytes(
   mut fd: libc::c_int,
   mut override_0: *const libc::c_char,
   mut override_units: libc::c_uint,

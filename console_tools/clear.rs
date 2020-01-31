@@ -19,11 +19,7 @@ use libc;
 //usage:#define clear_full_usage "\n\n"
 //usage:       "Clear screen"
 
-#[no_mangle]
-pub unsafe extern "C" fn clear_main(
-  mut _argc: libc::c_int,
-  mut _argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn clear_main(mut _argc: libc::c_int, mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   /* home; clear to the end of screen */
   return (crate::libbb::xfuncs::full_write1_str(
     b"\x1b[H\x1b[J\x00" as *const u8 as *const libc::c_char,

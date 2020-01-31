@@ -101,8 +101,7 @@ pub struct iso_volume_descriptor {
 /*,u64 off*/
 /*,u64 off*/
 //int FAST_FUNC volume_id_probe_hpfs(struct volume_id *id /*,u64 off*/);
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc::c_int
+pub unsafe fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut buf: *mut u8 = std::ptr::null_mut();
   let mut is: *mut iso_volume_descriptor = std::ptr::null_mut();

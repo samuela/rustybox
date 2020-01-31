@@ -27,7 +27,7 @@ extern "C" {
 }
 
 #[inline(always)]
-unsafe extern "C" fn bb_strtoul(
+unsafe fn bb_strtoul(
   mut arg: *const libc::c_char,
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
@@ -61,7 +61,7 @@ unsafe extern "C" fn bb_strtoul(
  * - /dev/ram (alias to /dev/ram0)
  * - /dev/mtd
  */
-unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> libc::dev_t {
+unsafe fn name_to_dev_t(mut devname: *const libc::c_char) -> libc::dev_t {
   let mut devfile: [libc::c_char; 28] = [0; 28];
   let mut sysname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut major_num: libc::c_uint = 0;
@@ -138,8 +138,7 @@ unsafe extern "C" fn name_to_dev_t(mut devname: *const libc::c_char) -> libc::de
 //usage:       "BLOCKDEV [OFFSET]"
 //usage:#define resume_full_usage "\n"
 //usage:   "\n""Restore system state from 'suspend-to-disk' data in BLOCKDEV"
-#[no_mangle]
-pub unsafe extern "C" fn resume_main(
+pub unsafe fn resume_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

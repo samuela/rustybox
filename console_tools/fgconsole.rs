@@ -33,8 +33,7 @@ pub struct vt_stat {
 pub type C2RustUnnamed = libc::c_uint;
 pub const VT_GETSTATE: C2RustUnnamed = 22019;
 /* get global vt state info */
-#[no_mangle]
-pub unsafe extern "C" fn fgconsole_main(
+pub unsafe fn fgconsole_main(
   mut _argc: libc::c_int,
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

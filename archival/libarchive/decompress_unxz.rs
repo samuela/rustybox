@@ -439,7 +439,7 @@ pub struct xz_buf {
  */
 /* Skip check (rather than fail) of unsupported hash functions */
 /* We use our own crc32 function */
-unsafe extern "C" fn xz_crc32(mut buf: *const u8, mut size: size_t, mut crc: u32) -> u32 {
+unsafe fn xz_crc32(mut buf: *const u8, mut size: size_t, mut crc: u32) -> u32 {
   return !crate::libbb::crc32::crc32_block_endian0(
     !crc,
     buf as *const libc::c_void,
@@ -449,7 +449,7 @@ unsafe extern "C" fn xz_crc32(mut buf: *const u8, mut size: size_t, mut crc: u32
 }
 /* Indicate that the latest symbol was a literal. */
 #[inline]
-unsafe extern "C" fn lzma_state_literal(mut state: *mut lzma_state) {
+unsafe fn lzma_state_literal(mut state: *mut lzma_state) {
   if *state as libc::c_uint <= STATE_SHORTREP_LIT_LIT as libc::c_int as libc::c_uint {
     *state = STATE_LIT_LIT
   } else if *state as libc::c_uint <= STATE_LIT_SHORTREP as libc::c_int as libc::c_uint {
@@ -464,7 +464,7 @@ unsafe extern "C" fn lzma_state_literal(mut state: *mut lzma_state) {
 }
 /* Indicate that the latest symbol was a match. */
 #[inline]
-unsafe extern "C" fn lzma_state_match(mut state: *mut lzma_state) {
+unsafe fn lzma_state_match(mut state: *mut lzma_state) {
   *state = if (*state as libc::c_uint) < 7i32 as libc::c_uint {
     STATE_LIT_MATCH as libc::c_int
   } else {
@@ -473,7 +473,7 @@ unsafe extern "C" fn lzma_state_match(mut state: *mut lzma_state) {
 }
 /* Indicate that the latest state was a long repeated match. */
 #[inline]
-unsafe extern "C" fn lzma_state_long_rep(mut state: *mut lzma_state) {
+unsafe fn lzma_state_long_rep(mut state: *mut lzma_state) {
   *state = if (*state as libc::c_uint) < 7i32 as libc::c_uint {
     STATE_LIT_LONGREP as libc::c_int
   } else {
@@ -482,7 +482,7 @@ unsafe extern "C" fn lzma_state_long_rep(mut state: *mut lzma_state) {
 }
 /* Indicate that the latest symbol was a short match. */
 #[inline]
-unsafe extern "C" fn lzma_state_short_rep(mut state: *mut lzma_state) {
+unsafe fn lzma_state_short_rep(mut state: *mut lzma_state) {
   *state = if (*state as libc::c_uint) < 7i32 as libc::c_uint {
     STATE_LIT_SHORTREP as libc::c_int
   } else {
@@ -491,7 +491,7 @@ unsafe extern "C" fn lzma_state_short_rep(mut state: *mut lzma_state) {
 }
 /* Test if the previous symbol was a literal. */
 #[inline]
-unsafe extern "C" fn lzma_state_is_literal(mut state: lzma_state) -> bool {
+unsafe fn lzma_state_is_literal(mut state: lzma_state) -> bool {
   return (state as libc::c_uint) < 7i32 as libc::c_uint;
 }
 /*
@@ -499,7 +499,7 @@ unsafe extern "C" fn lzma_state_is_literal(mut state: lzma_state) -> bool {
  * the distance slot.
  */
 #[inline]
-unsafe extern "C" fn lzma_get_dist_state(mut len: u32) -> u32 {
+unsafe fn lzma_get_dist_state(mut len: u32) -> u32 {
   return if len < (4i32 + 2i32) as libc::c_uint {
     len.wrapping_sub(2i32 as libc::c_uint)
   } else {
@@ -514,14 +514,14 @@ unsafe extern "C" fn lzma_get_dist_state(mut len: u32) -> u32 {
  * of the dictionary to point to the actual output buffer.
  */
 /* Set dictionary write limit */
-unsafe extern "C" fn dict_limit(mut dict: *mut dictionary, mut out_max: size_t) {
+unsafe fn dict_limit(mut dict: *mut dictionary, mut out_max: size_t) {
   if (*dict).end.wrapping_sub((*dict).pos) <= out_max {
     (*dict).limit = (*dict).end
   } else {
     (*dict).limit = (*dict).pos.wrapping_add(out_max)
   };
 }
-unsafe extern "C" fn dict_reset(mut dict: *mut dictionary, mut _b: *mut xz_buf) {
+unsafe fn dict_reset(mut dict: *mut dictionary, mut _b: *mut xz_buf) {
   (*dict).start = 0 as size_t;
   (*dict).pos = 0 as size_t;
   (*dict).limit = 0 as size_t;
@@ -580,7 +580,7 @@ unsafe extern "C" fn dict_reset(mut dict: *mut dictionary, mut _b: *mut xz_buf) 
  * LZMA *
  ********/
 /* Get pointer to literal coder probability array. */
-unsafe extern "C" fn lzma_literal_probs(mut s: *mut xz_dec_lzma2) -> *mut u16 {
+unsafe fn lzma_literal_probs(mut s: *mut xz_dec_lzma2) -> *mut u16 {
   let mut prev_byte: u32 = dict_get(&mut (*s).dict, 0 as u32);
   let mut low: u32 = prev_byte >> (8i32 as libc::c_uint).wrapping_sub((*s).lzma.lc);
   let mut high: u32 =
@@ -588,10 +588,10 @@ unsafe extern "C" fn lzma_literal_probs(mut s: *mut xz_dec_lzma2) -> *mut u16 {
   return (*s).lzma.literal[low.wrapping_add(high) as usize].as_mut_ptr();
 }
 #[inline]
-unsafe extern "C" fn rc_is_finished(mut rc: *const rc_dec) -> bool {
+unsafe fn rc_is_finished(mut rc: *const rc_dec) -> bool {
   return (*rc).code == 0 as libc::c_uint;
 }
-unsafe extern "C" fn dict_repeat(
+unsafe fn dict_repeat(
   mut dict: *mut dictionary,
   mut len: *mut u32,
   mut dist: u32,
@@ -633,12 +633,12 @@ unsafe extern "C" fn dict_repeat(
   }
   return 1i32 != 0;
 }
-unsafe extern "C" fn rc_reset(mut rc: *mut rc_dec) {
+unsafe fn rc_reset(mut rc: *mut rc_dec) {
   (*rc).range = -1i32 as u32;
   (*rc).code = 0 as u32;
   (*rc).init_bytes_left = 5i32 as u32;
 }
-unsafe extern "C" fn dict_uncompressed(
+unsafe fn dict_uncompressed(
   mut dict: *mut dictionary,
   mut b: *mut xz_buf,
   mut left: *mut u32,
@@ -681,7 +681,7 @@ unsafe extern "C" fn dict_uncompressed(
   }
 }
 #[inline(always)]
-unsafe extern "C" fn rc_bittree_reverse(
+unsafe fn rc_bittree_reverse(
   mut rc: *mut rc_dec,
   mut probs: *mut u16,
   mut dest: *mut u32,
@@ -703,7 +703,7 @@ unsafe extern "C" fn rc_bittree_reverse(
   }
 }
 #[inline(always)]
-unsafe extern "C" fn rc_bit(mut rc: *mut rc_dec, mut prob: *mut u16) -> libc::c_int {
+unsafe fn rc_bit(mut rc: *mut rc_dec, mut prob: *mut u16) -> libc::c_int {
   let mut bound: u32 = 0;
   let mut bit: libc::c_int = 0;
   rc_normalize(rc);
@@ -721,7 +721,7 @@ unsafe extern "C" fn rc_bit(mut rc: *mut rc_dec, mut prob: *mut u16) -> libc::c_
   return bit;
 }
 #[inline]
-unsafe extern "C" fn rc_direct(mut rc: *mut rc_dec, mut dest: *mut u32, mut limit: u32) {
+unsafe fn rc_direct(mut rc: *mut rc_dec, mut dest: *mut u32, mut limit: u32) {
   let mut mask: u32 = 0;
   loop {
     rc_normalize(rc);
@@ -736,7 +736,7 @@ unsafe extern "C" fn rc_direct(mut rc: *mut rc_dec, mut dest: *mut u32, mut limi
     }
   }
 }
-unsafe extern "C" fn rc_read_init(mut rc: *mut rc_dec, mut b: *mut xz_buf) -> bool {
+unsafe fn rc_read_init(mut rc: *mut rc_dec, mut b: *mut xz_buf) -> bool {
   while (*rc).init_bytes_left > 0 as libc::c_uint {
     if (*b).in_pos == (*b).in_size {
       return 0 != 0;
@@ -750,11 +750,11 @@ unsafe extern "C" fn rc_read_init(mut rc: *mut rc_dec, mut b: *mut xz_buf) -> bo
   return 1i32 != 0;
 }
 #[inline(always)]
-unsafe extern "C" fn dict_has_space(mut dict: *const dictionary) -> bool {
+unsafe fn dict_has_space(mut dict: *const dictionary) -> bool {
   return (*dict).pos < (*dict).limit;
 }
 #[inline(always)]
-unsafe extern "C" fn rc_normalize(mut rc: *mut rc_dec) {
+unsafe fn rc_normalize(mut rc: *mut rc_dec) {
   if (*rc).range < (1i32 << 24i32) as libc::c_uint {
     (*rc).range <<= 8i32;
     let fresh3 = (*rc).in_pos;
@@ -764,7 +764,7 @@ unsafe extern "C" fn rc_normalize(mut rc: *mut rc_dec) {
   };
 }
 #[inline]
-unsafe extern "C" fn dict_put(mut dict: *mut dictionary, mut byte: u8) {
+unsafe fn dict_put(mut dict: *mut dictionary, mut byte: u8) {
   let fresh4 = (*dict).pos;
   (*dict).pos = (*dict).pos.wrapping_add(1);
   *(*dict).buf.offset(fresh4 as isize) = byte;
@@ -773,7 +773,7 @@ unsafe extern "C" fn dict_put(mut dict: *mut dictionary, mut byte: u8) {
   };
 }
 #[inline(always)]
-unsafe extern "C" fn dict_get(mut dict: *const dictionary, mut dist: u32) -> u32 {
+unsafe fn dict_get(mut dict: *const dictionary, mut dist: u32) -> u32 {
   let mut offset: size_t = (*dict)
     .pos
     .wrapping_sub(dist as libc::c_ulong)
@@ -788,7 +788,7 @@ unsafe extern "C" fn dict_get(mut dict: *const dictionary, mut dist: u32) -> u32
   } as u32;
 }
 #[inline(always)]
-unsafe extern "C" fn rc_bittree(mut rc: *mut rc_dec, mut probs: *mut u16, mut limit: u32) -> u32 {
+unsafe fn rc_bittree(mut rc: *mut rc_dec, mut probs: *mut u16, mut limit: u32) -> u32 {
   let mut symbol: u32 = 1i32 as u32;
   loop {
     if rc_bit(rc, &mut *probs.offset(symbol as isize)) != 0 {
@@ -802,7 +802,7 @@ unsafe extern "C" fn rc_bittree(mut rc: *mut rc_dec, mut probs: *mut u16, mut li
   }
   return symbol;
 }
-unsafe extern "C" fn dict_flush(mut dict: *mut dictionary, mut b: *mut xz_buf) -> u32 {
+unsafe fn dict_flush(mut dict: *mut dictionary, mut b: *mut xz_buf) -> u32 {
   let mut copy_size: size_t = (*dict).pos.wrapping_sub((*dict).start);
   if (*dict).pos == (*dict).end {
     (*dict).pos = 0 as size_t
@@ -817,11 +817,11 @@ unsafe extern "C" fn dict_flush(mut dict: *mut dictionary, mut b: *mut xz_buf) -
   return copy_size as u32;
 }
 #[inline]
-unsafe extern "C" fn rc_limit_exceeded(mut rc: *const rc_dec) -> bool {
+unsafe fn rc_limit_exceeded(mut rc: *const rc_dec) -> bool {
   return (*rc).in_pos > (*rc).in_limit;
 }
 /* Decode a literal (one 8-bit byte) */
-unsafe extern "C" fn lzma_literal(mut s: *mut xz_dec_lzma2) {
+unsafe fn lzma_literal(mut s: *mut xz_dec_lzma2) {
   let mut probs: *mut u16 = std::ptr::null_mut();
   let mut symbol: u32 = 0;
   let mut match_byte: u32 = 0;
@@ -855,7 +855,7 @@ unsafe extern "C" fn lzma_literal(mut s: *mut xz_dec_lzma2) {
   lzma_state_literal(&mut (*s).lzma.state);
 }
 /* Decode the length of the match into s->lzma.len. */
-unsafe extern "C" fn lzma_len(
+unsafe fn lzma_len(
   mut s: *mut xz_dec_lzma2,
   mut l: *mut lzma_len_dec,
   mut pos_state: u32,
@@ -880,7 +880,7 @@ unsafe extern "C" fn lzma_len(
     as u32 as u32;
 }
 /* Decode a match. The distance will be stored in s->lzma.rep0. */
-unsafe extern "C" fn lzma_match(mut s: *mut xz_dec_lzma2, mut pos_state: u32) {
+unsafe fn lzma_match(mut s: *mut xz_dec_lzma2, mut pos_state: u32) {
   let mut probs: *mut u16 = std::ptr::null_mut();
   let mut dist_slot: u32 = 0;
   let mut limit: u32 = 0;
@@ -927,7 +927,7 @@ unsafe extern "C" fn lzma_match(mut s: *mut xz_dec_lzma2, mut pos_state: u32) {
  * Decode a repeated match. The distance is one of the four most recently
  * seen matches. The distance will be stored in s->lzma.rep0.
  */
-unsafe extern "C" fn lzma_rep_match(mut s: *mut xz_dec_lzma2, mut pos_state: u32) {
+unsafe fn lzma_rep_match(mut s: *mut xz_dec_lzma2, mut pos_state: u32) {
   let mut tmp: u32 = 0;
   if rc_bit(
     &mut (*s).rc,
@@ -988,7 +988,7 @@ unsafe extern "C" fn lzma_rep_match(mut s: *mut xz_dec_lzma2, mut pos_state: u32
   lzma_len(s, &mut (*s).lzma.rep_len_dec, pos_state);
 }
 /* LZMA decoder core */
-unsafe extern "C" fn lzma_main(mut s: *mut xz_dec_lzma2) -> bool {
+unsafe fn lzma_main(mut s: *mut xz_dec_lzma2) -> bool {
   let mut pos_state: u32 = 0;
   /*
    * If the dictionary was reached during the previous call, try to
@@ -1045,7 +1045,7 @@ unsafe extern "C" fn lzma_main(mut s: *mut xz_dec_lzma2) -> bool {
  * Reset the LZMA decoder and range decoder state. Dictionary is nore reset
  * here, because LZMA state may be reset without resetting the dictionary.
  */
-unsafe extern "C" fn lzma_reset(mut s: *mut xz_dec_lzma2) {
+unsafe fn lzma_reset(mut s: *mut xz_dec_lzma2) {
   let mut probs: *mut u16 = std::ptr::null_mut();
   let mut i: size_t = 0;
   (*s).lzma.state = STATE_LIT_LIT;
@@ -1075,7 +1075,7 @@ unsafe extern "C" fn lzma_reset(mut s: *mut xz_dec_lzma2) {
  * from the decoded lp and pb values. On success, the LZMA decoder state is
  * reset and true is returned.
  */
-unsafe extern "C" fn lzma_props(mut s: *mut xz_dec_lzma2, mut props: u8) -> bool {
+unsafe fn lzma_props(mut s: *mut xz_dec_lzma2, mut props: u8) -> bool {
   if props as libc::c_int > (4i32 * 5i32 + 4i32) * 9i32 + 8i32 {
     return 0 != 0;
   }
@@ -1113,7 +1113,7 @@ unsafe extern "C" fn lzma_props(mut s: *mut xz_dec_lzma2, mut props: u8) -> bool
  * function. We decode a few bytes from the temporary buffer so that we can
  * continue decoding from the caller-supplied input buffer again.
  */
-unsafe extern "C" fn lzma2_lzma(mut s: *mut xz_dec_lzma2, mut b: *mut xz_buf) -> bool {
+unsafe fn lzma2_lzma(mut s: *mut xz_dec_lzma2, mut b: *mut xz_buf) -> bool {
   let mut in_avail: size_t = 0;
   let mut tmp: u32 = 0;
   in_avail = (*b).in_size.wrapping_sub((*b).in_pos);
@@ -1226,7 +1226,7 @@ unsafe extern "C" fn lzma2_lzma(mut s: *mut xz_dec_lzma2, mut b: *mut xz_buf) ->
  * decoding or copying of uncompressed chunks to other functions.
  */
 #[inline(never)]
-unsafe extern "C" fn xz_dec_lzma2_run(mut s: *mut xz_dec_lzma2, mut b: *mut xz_buf) -> xz_ret {
+unsafe fn xz_dec_lzma2_run(mut s: *mut xz_dec_lzma2, mut b: *mut xz_buf) -> xz_ret {
   let mut tmp: u32 = 0;
   while (*b).in_pos < (*b).in_size
     || (*s).lzma2.sequence as libc::c_uint == SEQ_LZMA_RUN as libc::c_int as libc::c_uint
@@ -1454,7 +1454,7 @@ unsafe extern "C" fn xz_dec_lzma2_run(mut s: *mut xz_dec_lzma2, mut b: *mut xz_b
  * Allocate memory for LZMA2 decoder. xz_dec_lzma2_reset() must be used
  * before calling xz_dec_lzma2_run().
  */
-unsafe extern "C" fn xz_dec_lzma2_create(
+unsafe fn xz_dec_lzma2_create(
   mut mode: xz_mode,
   mut dict_max: u32,
 ) -> *mut xz_dec_lzma2 {
@@ -1471,7 +1471,7 @@ unsafe extern "C" fn xz_dec_lzma2_create(
   }
   return s;
 }
-unsafe extern "C" fn xz_dec_lzma2_reset(mut s: *mut xz_dec_lzma2, mut props: u8) -> xz_ret {
+unsafe fn xz_dec_lzma2_reset(mut s: *mut xz_dec_lzma2, mut props: u8) -> xz_ret {
   /* This limits dictionary size to 3 GiB to keep parsing simpler. */
   if props as libc::c_int > 39i32 {
     return XZ_OPTIONS_ERROR;
@@ -1499,7 +1499,7 @@ unsafe extern "C" fn xz_dec_lzma2_reset(mut s: *mut xz_dec_lzma2, mut props: u8)
   return XZ_OK;
 }
 /* Free the memory allocated for the LZMA2 decoder. */
-unsafe extern "C" fn xz_dec_lzma2_end(mut s: *mut xz_dec_lzma2) {
+unsafe fn xz_dec_lzma2_end(mut s: *mut xz_dec_lzma2) {
   free((*s).dict.buf as *mut libc::c_void);
   free(s as *mut libc::c_void);
 }
@@ -1661,7 +1661,7 @@ unsafe extern "C" fn xz_dec_lzma2_end(mut s: *mut xz_dec_lzma2) {
  * actually succeeds (that's the price to pay of using the output buffer as
  * the workspace).
  */
-unsafe extern "C" fn xz_dec_run(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret {
+unsafe fn xz_dec_run(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret {
   let mut in_start: size_t = 0;
   let mut out_start: size_t = 0;
   let mut ret: xz_ret = XZ_OK;
@@ -1681,7 +1681,7 @@ unsafe extern "C" fn xz_dec_run(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_re
   }
   return ret;
 }
-unsafe extern "C" fn dec_index(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret {
+unsafe fn dec_index(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret {
   let mut ret: xz_ret = XZ_OK;
   loop {
     ret = dec_vli(s, (*b).in_0, &mut (*b).in_pos, (*b).in_size);
@@ -1721,7 +1721,7 @@ unsafe extern "C" fn dec_index(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret
   }
   return XZ_STREAM_END;
 }
-unsafe extern "C" fn index_update(mut s: *mut xz_dec, mut b: *const xz_buf) {
+unsafe fn index_update(mut s: *mut xz_dec, mut b: *const xz_buf) {
   let mut in_used: size_t = (*b).in_pos.wrapping_sub((*s).in_start);
   (*s).index.size =
     ((*s).index.size as libc::c_ulong).wrapping_add(in_used) as vli_type as vli_type;
@@ -1731,7 +1731,7 @@ unsafe extern "C" fn index_update(mut s: *mut xz_dec, mut b: *const xz_buf) {
     (*s).crc32,
   );
 }
-unsafe extern "C" fn crc32_validate(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret {
+unsafe fn crc32_validate(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret {
   loop {
     if (*b).in_pos == (*b).in_size {
       return XZ_OK;
@@ -1752,7 +1752,7 @@ unsafe extern "C" fn crc32_validate(mut s: *mut xz_dec, mut b: *mut xz_buf) -> x
   (*s).pos = 0 as u32;
   return XZ_STREAM_END;
 }
-unsafe extern "C" fn dec_block_header(mut s: *mut xz_dec) -> xz_ret {
+unsafe fn dec_block_header(mut s: *mut xz_dec) -> xz_ret {
   let mut ret: xz_ret = XZ_OK;
   (*s).temp.size =
     ((*s).temp.size as libc::c_ulong).wrapping_sub(4i32 as libc::c_ulong) as size_t as size_t;
@@ -1833,7 +1833,7 @@ unsafe extern "C" fn dec_block_header(mut s: *mut xz_dec) -> xz_ret {
   (*s).block.uncompressed = 0 as vli_type;
   return XZ_OK;
 }
-unsafe extern "C" fn dec_stream_header(mut s: *mut xz_dec) -> xz_ret {
+unsafe fn dec_stream_header(mut s: *mut xz_dec) -> xz_ret {
   if !(memcmp(
     (*s).temp.buf.as_mut_ptr() as *const libc::c_void,
     b"\xfd7zXZ\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
@@ -1864,7 +1864,7 @@ unsafe extern "C" fn dec_stream_header(mut s: *mut xz_dec) -> xz_ret {
   }
   return XZ_OK;
 }
-unsafe extern "C" fn fill_temp(mut s: *mut xz_dec, mut b: *mut xz_buf) -> bool {
+unsafe fn fill_temp(mut s: *mut xz_dec, mut b: *mut xz_buf) -> bool {
   let mut copy_size: size_t =
     if (*b).in_size.wrapping_sub((*b).in_pos) < (*s).temp.size.wrapping_sub((*s).temp.pos) {
       (*b).in_size.wrapping_sub((*b).in_pos)
@@ -1884,7 +1884,7 @@ unsafe extern "C" fn fill_temp(mut s: *mut xz_dec, mut b: *mut xz_buf) -> bool {
   }
   return 0 != 0;
 }
-unsafe extern "C" fn dec_stream_footer(mut s: *mut xz_dec) -> xz_ret {
+unsafe fn dec_stream_footer(mut s: *mut xz_dec) -> xz_ret {
   if !(memcmp(
     (*s).temp.buf.as_mut_ptr().offset(10) as *const libc::c_void,
     b"YZ\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
@@ -1918,7 +1918,7 @@ unsafe extern "C" fn dec_stream_footer(mut s: *mut xz_dec) -> xz_ret {
   }
   return XZ_STREAM_END;
 }
-unsafe extern "C" fn dec_main(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret {
+unsafe fn dec_main(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret {
   let mut ret: xz_ret = XZ_OK;
   (*s).in_start = (*b).in_pos;
   loop {
@@ -2098,7 +2098,7 @@ unsafe extern "C" fn dec_main(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret 
     }
   }
 }
-unsafe extern "C" fn dec_block(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret {
+unsafe fn dec_block(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret {
   let mut ret: xz_ret = XZ_OK;
   (*s).in_start = (*b).in_pos;
   (*s).out_start = (*b).out_pos;
@@ -2168,7 +2168,7 @@ static mut check_sizes: [u8; 16] = [
   64i32 as u8,
   64i32 as u8,
 ];
-unsafe extern "C" fn dec_vli(
+unsafe fn dec_vli(
   mut s: *mut xz_dec,
   mut in_0: *const u8,
   mut in_pos: *mut size_t,
@@ -2202,7 +2202,7 @@ unsafe extern "C" fn dec_vli(
   }
   return XZ_OK;
 }
-unsafe extern "C" fn check_skip(mut s: *mut xz_dec, mut b: *mut xz_buf) -> bool {
+unsafe fn check_skip(mut s: *mut xz_dec, mut b: *mut xz_buf) -> bool {
   while (*s).pos < check_sizes[(*s).check_type as usize] as libc::c_uint {
     if (*b).in_pos == (*b).in_size {
       return 0 != 0;
@@ -2325,7 +2325,7 @@ unsafe extern "C" fn check_skip(mut s: *mut xz_dec, mut b: *mut xz_buf) -> bool 
  * ready to be used with xz_dec_run(). If memory allocation fails,
  * xz_dec_init() returns NULL.
  */
-unsafe extern "C" fn xz_dec_init(mut mode: xz_mode, mut dict_max: u32) -> *mut xz_dec {
+unsafe fn xz_dec_init(mut mode: xz_mode, mut dict_max: u32) -> *mut xz_dec {
   let mut s: *mut xz_dec = malloc(::std::mem::size_of::<xz_dec>() as libc::c_ulong) as *mut xz_dec;
   if s.is_null() {
     return std::ptr::null_mut();
@@ -2351,7 +2351,7 @@ unsafe extern "C" fn xz_dec_init(mut mode: xz_mode, mut dict_max: u32) -> *mut x
  * xz_dec_run(). Thus, explicit call to xz_dec_reset() is useful only in
  * multi-call mode.
  */
-unsafe extern "C" fn xz_dec_reset(mut s: *mut xz_dec) {
+unsafe fn xz_dec_reset(mut s: *mut xz_dec) {
   (*s).sequence = SEQ_STREAM_HEADER;
   (*s).allow_buf_error = 0 != 0;
   (*s).pos = 0 as u32;
@@ -2374,7 +2374,7 @@ unsafe extern "C" fn xz_dec_reset(mut s: *mut xz_dec) {
  * @s:          Decoder state allocated using xz_dec_init(). If s is NULL,
  *              this function does nothing.
  */
-unsafe extern "C" fn xz_dec_end(mut s: *mut xz_dec) {
+unsafe fn xz_dec_end(mut s: *mut xz_dec) {
   if !s.is_null() {
     xz_dec_lzma2_end((*s).lzma2);
     free(s as *mut libc::c_void);
@@ -2384,10 +2384,7 @@ unsafe extern "C" fn xz_dec_end(mut s: *mut xz_dec) {
  * They have been moved to libbb (proved to be useful elsewhere as well),
  * just check that we have them defined:
  */
-#[no_mangle]
-pub unsafe extern "C" fn unpack_xz_stream(
-  mut xstate: *mut transformer_state_t,
-) -> libc::c_longlong {
+pub unsafe fn unpack_xz_stream(mut xstate: *mut transformer_state_t) -> libc::c_longlong {
   let mut xz_result: xz_ret = XZ_OK; /* else: let xz code read & check it */
   let mut iobuf: xz_buf = std::mem::zeroed();
   let mut state: *mut xz_dec = std::ptr::null_mut();

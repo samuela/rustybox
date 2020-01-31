@@ -1133,8 +1133,7 @@ unsafe extern "C" fn do_add_or_delete(
 //int FAST_FUNC iproute_monitor(char **argv);
 //void FAST_FUNC ipneigh_reset_filter(void);
 /* Return value becomes exitcode. It's okay to not return at all */
-#[no_mangle]
-pub unsafe extern "C" fn do_iplink(mut argv: *mut *mut libc::c_char) -> libc::c_int {
+pub unsafe fn do_iplink(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   static mut keywords: [libc::c_char; 30] = [
     97, 100, 100, 0, 100, 101, 108, 101, 116, 101, 0, 115, 101, 116, 0, 115, 104, 111, 119, 0, 108,
     115, 116, 0, 108, 105, 115, 116, 0, 0,

@@ -54,7 +54,7 @@ pub type C2RustUnnamed = libc::c_uint;
 //usage:     "\n	-f	Sync filesystems underlying FILEs"
 //usage:    )
 /* This is a NOFORK applet. Be very careful! */
-unsafe extern "C" fn sync_common(
+unsafe fn sync_common(
   mut opts: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -92,11 +92,7 @@ unsafe extern "C" fn sync_common(
   }
   return ret;
 }
-#[no_mangle]
-pub unsafe extern "C" fn sync_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn sync_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opts: libc::c_uint = crate::libbb::getopt32::getopt32(
     argv,
     b"^df\x00d--f:f--d\x00" as *const u8 as *const libc::c_char,
@@ -128,11 +124,7 @@ pub unsafe extern "C" fn sync_main(
 //usage:#define fsync_full_usage "\n\n"
 //usage:       "Write all buffered blocks in FILEs to disk\n"
 //usage:     "\n	-d	Avoid syncing metadata"
-#[no_mangle]
-pub unsafe extern "C" fn fsync_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn fsync_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opts: libc::c_int =
     crate::libbb::getopt32::getopt32(argv, b"^d\x00-1\x00" as *const u8 as *const libc::c_char)
       as libc::c_int;

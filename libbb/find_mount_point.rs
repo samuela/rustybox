@@ -421,8 +421,7 @@ use libc::mntent;
  * Given any other file (or directory), find the mount table entry for its
  * filesystem.
  */
-#[no_mangle]
-pub unsafe extern "C" fn find_mount_point(
+pub unsafe fn find_mount_point(
   mut name: *const libc::c_char,
   mut subdir_too: libc::c_int,
 ) -> *mut mntent {

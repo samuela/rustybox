@@ -195,8 +195,7 @@ use crate::networking::tls_pstm::pstm_int;
 /* ISO C code */
 /* *****************************************************************************/
 /* computes x/R == x (mod N) via Montgomery Reduction */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_montgomery_reduce(
+pub unsafe fn pstm_montgomery_reduce(
   mut a: *mut pstm_int,
   mut m: *mut pstm_int,
   mut mp: pstm_digit,

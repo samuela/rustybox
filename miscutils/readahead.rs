@@ -42,8 +42,7 @@ use libc::ssize_t;
 //usage:       "[FILE]..."
 //usage:#define readahead_full_usage "\n\n"
 //usage:       "Preload FILEs to RAM"
-#[no_mangle]
-pub unsafe extern "C" fn readahead_main(
+pub unsafe fn readahead_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

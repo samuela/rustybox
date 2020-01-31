@@ -59,8 +59,7 @@ static mut syslog_level: smallint = 3i32 as smallint;
 pub static mut logmode: smallint = LOGMODE_STDIO as libc::c_int as smallint;
 #[no_mangle]
 pub static mut msg_eol: *const libc::c_char = b"\n\x00" as *const u8 as *const libc::c_char;
-#[no_mangle]
-pub unsafe extern "C" fn bb_verror_msg(
+pub unsafe fn bb_verror_msg(
   mut s: *const libc::c_char,
   mut p: ::std::ffi::VaList,
   mut strerr: *const libc::c_char,
@@ -192,37 +191,31 @@ pub unsafe extern "C" fn bb_verror_msg(
     free(msg as *mut libc::c_void);
   };
 }
-#[no_mangle]
 pub unsafe extern "C" fn bb_error_msg_and_die(mut s: *const libc::c_char, mut args: ...) -> ! {
   let mut p: ::std::ffi::VaListImpl;
   p = args.clone();
   bb_verror_msg(s, p.as_va_list(), 0 as *const libc::c_char);
   crate::libbb::xfunc_die::xfunc_die();
 }
-#[no_mangle]
 pub unsafe extern "C" fn bb_error_msg(mut s: *const libc::c_char, mut args: ...) {
   let mut p: ::std::ffi::VaListImpl;
   p = args.clone();
   bb_verror_msg(s, p.as_va_list(), 0 as *const libc::c_char);
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_vinfo_msg(mut s: *const libc::c_char, mut p: ::std::ffi::VaList) {
+pub unsafe fn bb_vinfo_msg(mut s: *const libc::c_char, mut p: ::std::ffi::VaList) {
   syslog_level = 6i32 as smallint;
   bb_verror_msg(s, p.as_va_list(), 0 as *const libc::c_char);
   syslog_level = 3i32 as smallint;
 }
-#[no_mangle]
 pub unsafe extern "C" fn bb_info_msg(mut s: *const libc::c_char, mut args: ...) {
   let mut p: ::std::ffi::VaListImpl;
   p = args.clone();
   bb_vinfo_msg(s, p.as_va_list());
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_simple_info_msg(mut s: *const libc::c_char) {
+pub unsafe fn bb_simple_info_msg(mut s: *const libc::c_char) {
   bb_info_msg(b"%s\x00" as *const u8 as *const libc::c_char, s);
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_simple_error_msg(mut s: *const libc::c_char) {
+pub unsafe fn bb_simple_error_msg(mut s: *const libc::c_char) {
   bb_error_msg(b"%s\x00" as *const u8 as *const libc::c_char, s);
 }
 
@@ -605,7 +598,6 @@ pub unsafe extern "C" fn bb_simple_error_msg(mut s: *const libc::c_char) {
 /* start_stop_daemon and udhcpc are special - they want
  * to create pidfiles regardless of FEATURE_PIDFILE */
 /* True only if we created pidfile which is *file*, not /dev/null etc */
-#[no_mangle]
-pub unsafe extern "C" fn bb_simple_error_msg_and_die(mut s: *const libc::c_char) -> ! {
+pub unsafe fn bb_simple_error_msg_and_die(mut s: *const libc::c_char) -> ! {
   bb_error_msg_and_die(b"%s\x00" as *const u8 as *const libc::c_char, s);
 }

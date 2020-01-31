@@ -59,8 +59,7 @@ pub type C2RustUnnamed = libc::c_uint;
 //usage:     "\n	-m MIN		Minimum extent length"
 //usage:     "\n	-v		Print number of discarded bytes"
 //usage:	)
-#[no_mangle]
-pub unsafe extern "C" fn fstrim_main(
+pub unsafe fn fstrim_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

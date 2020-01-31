@@ -134,8 +134,7 @@ extern "C" {
 /* Find out if the last character of a string matches the one given.
  * Don't underrun the buffer if the string length is 0.
  */
-#[no_mangle]
-pub unsafe extern "C" fn last_char_is(
+pub unsafe fn last_char_is(
   mut s: *const libc::c_char,
   mut c: libc::c_int,
 ) -> *mut libc::c_char {

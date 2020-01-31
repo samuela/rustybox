@@ -59,7 +59,7 @@ pub const OPT_a: C2RustUnnamed = 1;
 // pub const OPTBIT_e: C2RustUnnamed = 1;
 // pub const OPTBIT_a: C2RustUnnamed = 0;
 
-unsafe extern "C" fn swap_enable_disable(mut device: *mut libc::c_char) -> libc::c_int {
+unsafe fn swap_enable_disable(mut device: *mut libc::c_char) -> libc::c_int {
   let mut err: libc::c_int = 0;
   let mut quiet: libc::c_int = 0;
   crate::util_linux::volume_id::get_devname::resolve_mount_spec(&mut device);
@@ -101,7 +101,7 @@ unsafe extern "C" fn swap_enable_disable(mut device: *mut libc::c_char) -> libc:
   }
   return 0;
 }
-unsafe extern "C" fn set_discard_flag(mut s: *mut libc::c_char) {
+unsafe fn set_discard_flag(mut s: *mut libc::c_char) {
   /* Unset the flag first to allow fstab options to override */
   /* options set on the command line */
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).flags =
@@ -125,7 +125,7 @@ unsafe extern "C" fn set_discard_flag(mut s: *mut libc::c_char) {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).flags |= 0x40000i32
   };
 }
-unsafe extern "C" fn set_priority_flag(mut s: *mut libc::c_char) {
+unsafe fn set_priority_flag(mut s: *mut libc::c_char) {
   let mut prio: libc::c_uint = 0;
   /* For fstab parsing: remove other appended options */
   *strchrnul(s, ',' as i32) = '\u{0}' as i32 as libc::c_char;
@@ -144,7 +144,7 @@ unsafe extern "C" fn set_priority_flag(mut s: *mut libc::c_char) {
         })) as libc::c_int
   };
 }
-unsafe extern "C" fn do_em_all_in_fstab() -> libc::c_int {
+unsafe fn do_em_all_in_fstab() -> libc::c_int {
   let mut m: *mut mntent = std::ptr::null_mut();
   let mut err: libc::c_int = 0;
   let mut f: *mut FILE =
@@ -188,7 +188,7 @@ unsafe extern "C" fn do_em_all_in_fstab() -> libc::c_int {
   }
   return err;
 }
-unsafe extern "C" fn do_all_in_proc_swaps() -> libc::c_int {
+unsafe fn do_all_in_proc_swaps() -> libc::c_int {
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut err: libc::c_int = 0;
   let mut f: *mut FILE =
@@ -209,8 +209,7 @@ unsafe extern "C" fn do_all_in_proc_swaps() -> libc::c_int {
   }
   return err;
 }
-#[no_mangle]
-pub unsafe extern "C" fn swap_on_off_main(
+pub unsafe fn swap_on_off_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

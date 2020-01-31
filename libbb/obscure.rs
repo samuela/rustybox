@@ -54,7 +54,7 @@ extern "C" {
   some of our checks. We don't test for this special case as newer versions
   of crypt do not truncate passwords.
 */
-unsafe extern "C" fn string_checker_helper(
+unsafe fn string_checker_helper(
   mut p1: *const libc::c_char,
   mut p2: *const libc::c_char,
 ) -> libc::c_int {
@@ -66,7 +66,7 @@ unsafe extern "C" fn string_checker_helper(
   }
   return 0;
 }
-unsafe extern "C" fn string_checker(
+unsafe fn string_checker(
   mut p1: *const libc::c_char,
   mut p2: *const libc::c_char,
 ) -> libc::c_int {
@@ -96,7 +96,7 @@ unsafe extern "C" fn string_checker(
   free(p as *mut libc::c_void);
   return ret;
 }
-unsafe extern "C" fn obscure_msg(
+unsafe fn obscure_msg(
   mut old_p: *const libc::c_char,
   mut new_p: *const libc::c_char,
   mut pw: *const passwd,
@@ -648,8 +648,7 @@ unsafe extern "C" fn obscure_msg(
  * If setup_environment() is used is vforked child, this leaks memory _in parent too_!
  */
 /* Returns a malloced string */
-#[no_mangle]
-pub unsafe extern "C" fn obscure(
+pub unsafe fn obscure(
   mut old: *const libc::c_char,
   mut newval: *const libc::c_char,
   mut pw: *const passwd,

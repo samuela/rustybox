@@ -91,11 +91,7 @@ static mut install_longopts: [libc::c_char; 95] = [
   101, 0, 1, 109, 111, 119, 110, 101, 114, 0, 1, 111, 116, 97, 114, 103, 101, 116, 45, 100, 105,
   114, 101, 99, 116, 111, 114, 121, 0, 1, 116, 0,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn install_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn install_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut statbuf: stat = std::mem::zeroed();
   let mut mode: mode_t = 0;
@@ -139,24 +135,12 @@ pub unsafe extern "C" fn install_main(
     mode = crate::libbb::parse_mode::bb_parse_mode(mode_str, mode) as mode_t
   }
   uid = if opts & OPT_OWNER as libc::c_int != 0 {
-    crate::libbb::bb_pwd::get_ug_id(
-      uid_str,
-      Some(
-        crate::libbb::bb_pwd::xuname2uid
-          as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long,
-      ),
-    )
+    crate::libbb::bb_pwd::get_ug_id(uid_str, crate::libbb::bb_pwd::xuname2uid)
   } else {
     getuid() as libc::c_ulong
   } as uid_t;
   gid = if opts & OPT_GROUP as libc::c_int != 0 {
-    crate::libbb::bb_pwd::get_ug_id(
-      gid_str,
-      Some(
-        crate::libbb::bb_pwd::xgroup2gid
-          as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long,
-      ),
-    )
+    crate::libbb::bb_pwd::get_ug_id(gid_str, crate::libbb::bb_pwd::xgroup2gid)
   } else {
     getgid() as libc::c_ulong
   } as gid_t;

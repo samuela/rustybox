@@ -13,7 +13,6 @@ use libc::stat;
 use libc::strstr;
 use libc::timeval;
 use libc::unlink;
-use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -344,13 +343,8 @@ unsafe extern "C" fn find_action(
 unsafe extern "C" fn parse_conf_file(mut filename: *const libc::c_char) {
   let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut tokens: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
-  parser = crate::libbb::parse_config::config_open2(
-    filename,
-    Some(
-      crate::libbb::wfopen::fopen_for_read
-        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
-    ),
-  );
+  parser =
+    crate::libbb::parse_config::config_open2(filename, Some(crate::libbb::wfopen::fopen_for_read));
   if !parser.is_null() {
     while crate::libbb::parse_config::config_read(
       parser,
@@ -388,13 +382,8 @@ unsafe extern "C" fn parse_conf_file(mut filename: *const libc::c_char) {
 unsafe extern "C" fn parse_map_file(mut filename: *const libc::c_char) {
   let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut tokens: [*mut libc::c_char; 6] = [0 as *mut libc::c_char; 6];
-  parser = crate::libbb::parse_config::config_open2(
-    filename,
-    Some(
-      crate::libbb::wfopen::fopen_for_read
-        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
-    ),
-  );
+  parser =
+    crate::libbb::parse_config::config_open2(filename, Some(crate::libbb::wfopen::fopen_for_read));
   if !parser.is_null() {
     while crate::libbb::parse_config::config_read(
       parser,

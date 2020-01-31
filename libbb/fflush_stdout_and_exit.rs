@@ -326,8 +326,7 @@ extern "C" {
 /* Attempt to fflush(stdout), and exit with an error code if stdout is
  * in an error state.
  */
-#[no_mangle]
-pub unsafe extern "C" fn fflush_stdout_and_exit(mut retval: libc::c_int) -> ! {
+pub unsafe fn fflush_stdout_and_exit(mut retval: libc::c_int) -> ! {
   xfunc_error_retval = retval as u8;
   if fflush(stdout) != 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(bb_msg_standard_output.as_ptr());

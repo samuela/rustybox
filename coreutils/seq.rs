@@ -42,11 +42,7 @@ pub const OPT_s: C2RustUnnamed = 2;
 //usage:     "\n	-w	Pad to last with leading zeros"
 //usage:     "\n	-s SEP	String separator"
 /* This is a NOEXEC applet. Be very careful! */
-#[no_mangle]
-pub unsafe extern "C" fn seq_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn seq_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut first: libc::c_double = 0.;
   let mut last: libc::c_double = 0.;
   let mut increment: libc::c_double = 0.;

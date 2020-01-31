@@ -94,7 +94,7 @@ pub union C2RustUnnamed_1 {
 }
 /* Return the next nnn bits of input.  All reads from the compressed input
 are done through this function.  All reads are big endian */
-unsafe extern "C" fn get_bits(
+unsafe fn get_bits(
   mut bd: *mut bunzip_data,
   mut bits_wanted: libc::c_int,
 ) -> libc::c_uint {
@@ -139,7 +139,7 @@ unsafe extern "C" fn get_bits(
 }
 //#define get_bits(bd, n) (dbg("%d:get_bits()", __LINE__), get_bits(bd, n))
 /* Unpacks the next block and sets up for the inverse Burrows-Wheeler step. */
-unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
+unsafe fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
   let mut groupCount: libc::c_int = 0; /* for compiler */
   let mut selector: libc::c_int = 0;
   let mut i: libc::c_int = 0;
@@ -641,7 +641,7 @@ unsafe extern "C" fn get_next_block(mut bd: *mut bunzip_data) -> libc::c_int {
    in outbuf. IOW: on EOF returns len ("all bytes are not filled"), not 0.
    (Why? This allows to get rid of one local variable)
 */
-unsafe extern "C" fn read_bunzip(
+unsafe fn read_bunzip(
   mut bd: *mut bunzip_data,
   mut outbuf: *mut libc::c_char,
   mut len: libc::c_int,
@@ -783,7 +783,7 @@ ignored, and data is read from file handle into temporary buffer. */
 /* Because bunzip2 is used for help text unpacking, and because bb_show_usage()
 should work for NOFORK applets too, we must be extremely careful to not leak
 any allocations! */
-unsafe extern "C" fn start_bunzip(
+unsafe fn start_bunzip(
   mut jmpbuf: *mut libc::c_void,
   mut bdp: *mut *mut bunzip_data,
   mut in_fd: libc::c_int,
@@ -847,13 +847,12 @@ unsafe extern "C" fn start_bunzip(
   }
   return 0;
 }
-unsafe extern "C" fn dealloc_bunzip(mut bd: *mut bunzip_data) {
+unsafe fn dealloc_bunzip(mut bd: *mut bunzip_data) {
   free((*bd).dbuf as *mut libc::c_void);
   free(bd as *mut libc::c_void);
 }
 /* Decompress src_fd to dst_fd.  Stops at end of bzip data, not end of file. */
-#[no_mangle]
-pub unsafe extern "C" fn unpack_bz2_stream(
+pub unsafe fn unpack_bz2_stream(
   mut xstate: *mut transformer_state_t,
 ) -> libc::c_longlong {
   let mut total_written: libc::c_longlong = 0 as libc::c_longlong;
@@ -968,8 +967,7 @@ pub unsafe extern "C" fn unpack_bz2_stream(
   };
 }
 /* A bit of bunzip2 internals are exposed for compressed help support: */
-#[no_mangle]
-pub unsafe extern "C" fn unpack_bz2_data(
+pub unsafe fn unpack_bz2_data(
   mut packed: *const libc::c_char,
   mut packed_len: libc::c_int,
   mut unpacked_len: libc::c_int,

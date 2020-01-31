@@ -321,8 +321,7 @@ extern "C" {
  * is a command line arg.  Since often that arg is '-' (meaning stdin),
  * we avoid testing everywhere by consolidating things in this routine.
  */
-#[no_mangle]
-pub unsafe extern "C" fn fopen_or_warn_stdin(mut filename: *const libc::c_char) -> *mut FILE {
+pub unsafe fn fopen_or_warn_stdin(mut filename: *const libc::c_char) -> *mut FILE {
   let mut fp: *mut FILE = stdin;
   if filename != bb_msg_standard_input.as_ptr()
     && (*filename.offset(0) as libc::c_int != '-' as i32 || *filename.offset(1) as libc::c_int != 0)
@@ -438,8 +437,7 @@ pub unsafe extern "C" fn fopen_or_warn_stdin(mut filename: *const libc::c_char) 
 /* extern char *xmalloc_fgetline_fast(FILE *file) FAST_FUNC RETURNS_MALLOC; */
 /* Prints warning to stderr and returns NULL on failure: */
 /* "Opens" stdin if filename is special, else just opens file: */
-#[no_mangle]
-pub unsafe extern "C" fn xfopen_stdin(mut filename: *const libc::c_char) -> *mut FILE {
+pub unsafe fn xfopen_stdin(mut filename: *const libc::c_char) -> *mut FILE {
   let mut fp: *mut FILE = fopen_or_warn_stdin(filename);
   if !fp.is_null() {
     return fp;
@@ -447,8 +445,7 @@ pub unsafe extern "C" fn xfopen_stdin(mut filename: *const libc::c_char) -> *mut
   crate::libbb::xfunc_die::xfunc_die();
   /* We already output an error message. */
 }
-#[no_mangle]
-pub unsafe extern "C" fn open_or_warn_stdin(mut filename: *const libc::c_char) -> libc::c_int {
+pub unsafe fn open_or_warn_stdin(mut filename: *const libc::c_char) -> libc::c_int {
   let mut fd: libc::c_int = 0;
   if filename != bb_msg_standard_input.as_ptr()
     && (*filename.offset(0) as libc::c_int != '-' as i32 || *filename.offset(1) as libc::c_int != 0)
@@ -610,8 +607,7 @@ pub unsafe extern "C" fn open_or_warn_stdin(mut filename: *const libc::c_char) -
 /* Return old set in the same set: */
 /* Standard handler which just records signo */
 /* not FAST_FUNC! */
-#[no_mangle]
-pub unsafe extern "C" fn xopen_stdin(mut filename: *const libc::c_char) -> libc::c_int {
+pub unsafe fn xopen_stdin(mut filename: *const libc::c_char) -> libc::c_int {
   let mut fd: libc::c_int = open_or_warn_stdin(filename);
   if fd >= 0 {
     return fd;

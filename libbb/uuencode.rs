@@ -171,8 +171,7 @@ pub static mut bb_uuenc_tbl_std: [libc::c_char; 65] = [
  * buffer of at least 1+BASE64_LENGTH(length) bytes.
  * where BASE64_LENGTH(len) = (4 * ((LENGTH + 2) / 3))
  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_uuencode(
+pub unsafe fn bb_uuencode(
   mut p: *mut libc::c_char,
   mut src: *const libc::c_void,
   mut length: libc::c_int,
@@ -227,8 +226,7 @@ pub unsafe extern "C" fn bb_uuencode(
  * If points to '\0', then the source was fully decoded.
  * (*pp_dst): advanced past the last written byte.
  */
-#[no_mangle]
-pub unsafe extern "C" fn decode_base64(
+pub unsafe fn decode_base64(
   mut pp_dst: *mut *mut libc::c_char,
   mut src: *const libc::c_char,
 ) -> *const libc::c_char {
@@ -863,8 +861,7 @@ pub unsafe extern "C" fn decode_base64(
  * Can stop on EOF, specified char, or on uuencode-style "====" line:
  * flags argument controls it.
  */
-#[no_mangle]
-pub unsafe extern "C" fn read_base64(
+pub unsafe fn read_base64(
   mut src_stream: *mut FILE,
   mut dst_stream: *mut FILE,
   mut flags: libc::c_int,

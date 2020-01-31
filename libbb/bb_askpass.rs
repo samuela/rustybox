@@ -40,8 +40,7 @@ extern "C" {
 /* do nothing signal handler */
 unsafe extern "C" fn askpass_timeout(mut _ignore: libc::c_int) {}
 
-#[no_mangle]
-pub unsafe extern "C" fn bb_ask_noecho(
+pub unsafe fn bb_ask_noecho(
   mut fd: libc::c_int,
   mut timeout: libc::c_int,
   mut prompt: *const libc::c_char,
@@ -98,8 +97,7 @@ pub unsafe extern "C" fn bb_ask_noecho(
   );
   /* sa.sa_flags = 0; - no SA_RESTART! */
   /* SIGINT and SIGALRM will interrupt reads below */
-  sa.__sigaction_handler.sa_handler =
-    Some(askpass_timeout as unsafe extern "C" fn(_: libc::c_int) -> ());
+  sa.__sigaction_handler.sa_handler = Some(askpass_timeout);
   sigaction(2i32, &mut sa, &mut oldsa);
   if timeout != 0 {
     crate::libbb::signals::sigaction_set(14i32, &mut sa);
@@ -153,7 +151,6 @@ pub unsafe extern "C" fn bb_ask_noecho(
 }
 
 /* Like bb_ask_noecho, but asks on stdin with no timeout.  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_ask_noecho_stdin(mut prompt: *const libc::c_char) -> *mut libc::c_char {
+pub unsafe fn bb_ask_noecho_stdin(mut prompt: *const libc::c_char) -> *mut libc::c_char {
   return bb_ask_noecho(0i32, 0, prompt);
 }

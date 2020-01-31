@@ -167,7 +167,7 @@ pub const param_rows: C2RustUnnamed_4 = 130;
 pub const param_line: C2RustUnnamed_4 = 129;
 pub const param_need_arg: C2RustUnnamed_4 = 128;
 #[inline(always)]
-unsafe extern "C" fn xatoul_range_sfx(
+unsafe fn xatoul_range_sfx(
   mut str: *const libc::c_char,
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
@@ -181,16 +181,10 @@ unsafe extern "C" fn xatoul_range_sfx(
   ) as libc::c_ulong;
 }
 #[inline(always)]
-unsafe extern "C" fn xatoul_sfx(
-  mut str: *const libc::c_char,
-  mut sfx: *const suffix_mult,
-) -> libc::c_ulong {
+unsafe fn xatoul_sfx(mut str: *const libc::c_char, mut sfx: *const suffix_mult) -> libc::c_ulong {
   return crate::libbb::xatonum::xatoull_sfx(str, sfx) as libc::c_ulong;
 }
-unsafe extern "C" fn get_ptr_to_tcflag(
-  mut type_0: libc::c_uint,
-  mut mode: *const termios,
-) -> *mut tcflag_t {
+unsafe fn get_ptr_to_tcflag(mut type_0: libc::c_uint, mut mode: *const termios) -> *mut tcflag_t {
   static mut tcflag_offsets: [u8; 4] = [8u64 as u8, 0u64 as u8, 4u64 as u8, 12u64 as u8];
   if type_0 <= local as libc::c_int as libc::c_uint {
     return (mode as *mut libc::c_char)
@@ -1157,7 +1151,7 @@ static mut control_info: [control_info; 17] = [
   },
 ];
 /* we are noexec, must clear */
-unsafe extern "C" fn set_speed_or_die(
+unsafe fn set_speed_or_die(
   mut type_0: speed_setting,
   mut arg: *const libc::c_char,
   mut mode: *mut termios,
@@ -1173,13 +1167,13 @@ unsafe extern "C" fn set_speed_or_die(
     cfsetospeed(mode, baud);
   };
 }
-unsafe extern "C" fn perror_on_device_and_die(mut fmt: *const libc::c_char) -> ! {
+unsafe fn perror_on_device_and_die(mut fmt: *const libc::c_char) -> ! {
   crate::libbb::perror_msg::bb_perror_msg_and_die(
     fmt,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device_name,
   );
 }
-unsafe extern "C" fn perror_on_device(mut fmt: *const libc::c_char) {
+unsafe fn perror_on_device(mut fmt: *const libc::c_char) {
   crate::libbb::perror_msg::bb_perror_msg(
     fmt,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).device_name,
@@ -1229,12 +1223,12 @@ unsafe extern "C" fn wrapf(mut message: *const libc::c_char, mut args: ...) {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_col = 0 as libc::c_uint
   };
 }
-unsafe extern "C" fn newline() {
+unsafe fn newline() {
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_col != 0 as libc::c_uint {
     wrapf(b"\n\x00" as *const u8 as *const libc::c_char);
   };
 }
-unsafe extern "C" fn set_window_size(mut rows: libc::c_int, mut cols: libc::c_int) {
+unsafe fn set_window_size(mut rows: libc::c_int, mut cols: libc::c_int) {
   let mut current_block: u64;
   let mut win: winsize = {
     let mut init = winsize {
@@ -1287,7 +1281,7 @@ unsafe extern "C" fn set_window_size(mut rows: libc::c_int, mut cols: libc::c_in
     _ => {}
   };
 }
-unsafe extern "C" fn display_window_size(mut fancy: libc::c_int) {
+unsafe fn display_window_size(mut fancy: libc::c_int) {
   let mut fmt_str: *const libc::c_char =
     b"%s\x00%s: no size information for this device\x00" as *const u8 as *const libc::c_char;
   let mut width: libc::c_uint = 0;
@@ -1341,7 +1335,7 @@ static mut stty_suffixes: [suffix_mult; 4] = [
     init
   },
 ];
-unsafe extern "C" fn find_mode(mut name: *const libc::c_char) -> *const mode_info {
+unsafe fn find_mode(mut name: *const libc::c_char) -> *const mode_info {
   let mut i: libc::c_int =
     crate::libbb::compare_string_array::index_in_strings(mode_name.as_ptr(), name);
   return if i >= 0 {
@@ -1350,7 +1344,7 @@ unsafe extern "C" fn find_mode(mut name: *const libc::c_char) -> *const mode_inf
     0 as *const mode_info
   };
 }
-unsafe extern "C" fn find_control(mut name: *const libc::c_char) -> *const control_info {
+unsafe fn find_control(mut name: *const libc::c_char) -> *const control_info {
   let mut i: libc::c_int =
     crate::libbb::compare_string_array::index_in_strings(control_name.as_ptr(), name);
   return if i >= 0 {
@@ -1359,7 +1353,7 @@ unsafe extern "C" fn find_control(mut name: *const libc::c_char) -> *const contr
     0 as *const control_info
   };
 }
-unsafe extern "C" fn find_param(mut name: *const libc::c_char) -> libc::c_int {
+unsafe fn find_param(mut name: *const libc::c_char) -> libc::c_int {
   static mut params: [libc::c_char; 49] = [
     108, 105, 110, 101, 0, 114, 111, 119, 115, 0, 99, 111, 108, 115, 0, 99, 111, 108, 117, 109,
     110, 115, 0, 115, 105, 122, 101, 0, 115, 112, 101, 101, 100, 0, 105, 115, 112, 101, 101, 100,
@@ -1375,10 +1369,7 @@ unsafe extern "C" fn find_param(mut name: *const libc::c_char) -> libc::c_int {
   }
   return i;
 }
-unsafe extern "C" fn recover_mode(
-  mut arg: *const libc::c_char,
-  mut mode: *mut termios,
-) -> libc::c_int {
+unsafe fn recover_mode(mut arg: *const libc::c_char, mut mode: *mut termios) -> libc::c_int {
   let mut i: libc::c_int = 0;
   let mut n: libc::c_int = 0;
   let mut chr: libc::c_uint = 0;
@@ -1426,7 +1417,7 @@ unsafe extern "C" fn recover_mode(
   }
   return 1i32;
 }
-unsafe extern "C" fn display_recoverable(mut mode: *const termios, mut _dummy: libc::c_int) {
+unsafe fn display_recoverable(mut mode: *const termios, mut _dummy: libc::c_int) {
   let mut i: libc::c_int = 0;
   printf(
     b"%lx:%lx:%lx:%lx\x00" as *const u8 as *const libc::c_char,
@@ -1445,7 +1436,7 @@ unsafe extern "C" fn display_recoverable(mut mode: *const termios, mut _dummy: l
   }
   crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
 }
-unsafe extern "C" fn display_speed(mut mode: *const termios, mut fancy: libc::c_int) {
+unsafe fn display_speed(mut mode: *const termios, mut fancy: libc::c_int) {
   //____________________ 01234567 8 9
   let mut fmt_str: *const libc::c_char =
     b"%lu %lu\n\x00ispeed %lu baud; ospeed %lu baud;\x00" as *const u8 as *const libc::c_char; /* in case ispeed was 0 */
@@ -1467,7 +1458,7 @@ unsafe extern "C" fn display_speed(mut mode: *const termios, mut fancy: libc::c_
     crate::libbb::speed_table::tty_baud_to_value(ospeed as speed_t),
   );
 }
-unsafe extern "C" fn do_display(mut mode: *const termios, mut all: libc::c_int) {
+unsafe fn do_display(mut mode: *const termios, mut all: libc::c_int) {
   let mut i: libc::c_int = 0;
   let mut bitsp: *mut tcflag_t = std::ptr::null_mut();
   let mut mask: libc::c_ulong = 0;
@@ -1541,7 +1532,7 @@ unsafe extern "C" fn do_display(mut mode: *const termios, mut all: libc::c_int) 
   }
   newline();
 }
-unsafe extern "C" fn sane_mode(mut mode: *mut termios) {
+unsafe fn sane_mode(mut mode: *mut termios) {
   let mut i: libc::c_int = 0;
   i = 0;
   while i < NUM_control_info as libc::c_int {
@@ -1564,11 +1555,7 @@ unsafe extern "C" fn sane_mode(mut mode: *mut termios) {
     i += 1
   }
 }
-unsafe extern "C" fn set_mode(
-  mut info: *const mode_info,
-  mut reversed: libc::c_int,
-  mut mode: *mut termios,
-) {
+unsafe fn set_mode(mut info: *const mode_info, mut reversed: libc::c_int, mut mode: *mut termios) {
   let mut bitsp: *mut tcflag_t = std::ptr::null_mut();
   bitsp = get_ptr_to_tcflag((*info).type_0 as libc::c_uint, mode);
   if !bitsp.is_null() {
@@ -1737,7 +1724,7 @@ unsafe extern "C" fn set_mode(
     (*mode).c_iflag &= !0o4000i32 as libc::c_uint
   };
 }
-unsafe extern "C" fn set_control_char_or_die(
+unsafe fn set_control_char_or_die(
   mut info: *const control_info,
   mut arg: *const libc::c_char,
   mut mode: *mut termios,
@@ -1782,11 +1769,7 @@ unsafe extern "C" fn set_control_char_or_die(
   }
   (*mode).c_cc[(*info).offset as usize] = value;
 }
-#[no_mangle]
-pub unsafe extern "C" fn stty_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn stty_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut mode: termios = termios {
     c_iflag: 0,
@@ -1798,7 +1781,7 @@ pub unsafe extern "C" fn stty_main(
     c_ispeed: 0,
     c_ospeed: 0,
   };
-  let mut output_func: Option<unsafe extern "C" fn(_: *const termios, _: libc::c_int) -> ()> = None;
+  let mut output_func: Option<unsafe fn(_: *const termios, _: libc::c_int) -> ()> = None;
   let mut file_name: *const libc::c_char = std::ptr::null();
   let mut display_all: libc::c_int = 0;
   let mut stty_state: libc::c_int = 0;
@@ -1808,7 +1791,7 @@ pub unsafe extern "C" fn stty_main(
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).max_col = 80i32 as libc::c_uint;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_col = 0 as libc::c_uint;
   stty_state = 1i32 << 4i32;
-  output_func = Some(do_display as unsafe extern "C" fn(_: *const termios, _: libc::c_int) -> ());
+  output_func = Some(do_display as unsafe fn(_: *const termios, _: libc::c_int) -> ());
   /* First pass: only parse/verify command line params */
   k = 0;
   's_59: loop {
@@ -1840,16 +1823,13 @@ pub unsafe extern "C" fn stty_main(
           match *arg.offset(i as isize) as libc::c_int {
             97 => {
               stty_state |= 1i32 << 2i32;
-              output_func =
-                Some(do_display as unsafe extern "C" fn(_: *const termios, _: libc::c_int) -> ());
+              output_func = Some(do_display as unsafe fn(_: *const termios, _: libc::c_int) -> ());
               display_all = 1i32
             }
             103 => {
               stty_state |= 1i32 << 3i32;
-              output_func = Some(
-                display_recoverable
-                  as unsafe extern "C" fn(_: *const termios, _: libc::c_int) -> (),
-              )
+              output_func =
+                Some(display_recoverable as unsafe fn(_: *const termios, _: libc::c_int) -> ())
             }
             70 => {
               if !file_name.is_null() {

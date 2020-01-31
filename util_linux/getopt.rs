@@ -194,7 +194,7 @@ pub const OPT_q: C2RustUnnamed_0 = 4;
  * This function returns a pointer to a buffer that is overwritten by
  * each call.
  */
-unsafe extern "C" fn normalize(mut arg: *const libc::c_char) -> *const libc::c_char {
+unsafe fn normalize(mut arg: *const libc::c_char) -> *const libc::c_char {
   let mut bufptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut BUFFER: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if option_mask32 & OPT_u as libc::c_int as libc::c_uint != 0 {
@@ -299,7 +299,7 @@ unsafe extern "C" fn normalize(mut arg: *const libc::c_char) -> *const libc::c_c
  * optstr must contain the short options, and longopts the long options.
  * Other settings are found in global variables.
  */
-unsafe extern "C" fn generate_output(
+unsafe fn generate_output(
   mut argv: *mut *mut libc::c_char,
   mut argc: libc::c_int,
   mut optstr: *const libc::c_char,
@@ -387,7 +387,7 @@ unsafe extern "C" fn generate_output(
  * separated by commas or whitespace.
  * This nukes options!
  */
-unsafe extern "C" fn add_long_options(
+unsafe fn add_long_options(
   mut long_options: *mut option,
   mut options: *mut libc::c_char,
 ) -> *mut option {
@@ -439,7 +439,7 @@ unsafe extern "C" fn add_long_options(
   }
   return long_options;
 }
-unsafe extern "C" fn set_shell(mut new_shell: *const libc::c_char) {
+unsafe fn set_shell(mut new_shell: *const libc::c_char) {
   if strcmp(new_shell, b"bash\x00" as *const u8 as *const libc::c_char) == 0
     || strcmp(new_shell, b"sh\x00" as *const u8 as *const libc::c_char) == 0
   {
@@ -471,8 +471,7 @@ static mut getopt_longopts: [libc::c_char; 95] = [
   110, 113, 117, 111, 116, 101, 100, 0, 0, 117, 97, 108, 116, 101, 114, 110, 97, 116, 105, 118,
   101, 0, 0, 97, 110, 97, 109, 101, 0, 1, 110, 0,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn getopt_main(
+pub unsafe fn getopt_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

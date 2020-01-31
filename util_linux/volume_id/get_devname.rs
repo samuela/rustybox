@@ -54,7 +54,7 @@ static mut uuidCache: *mut uuidCache_s = std::ptr::null_mut();
  * Otherwise, returns malloc'ed strings for label and uuid
  * (and they can't be NULL, although they can be "").
  * NB: closes fd. */
-unsafe extern "C" fn get_label_uuid(
+unsafe fn get_label_uuid(
   mut fd: libc::c_int,
   mut label: *mut *mut libc::c_char,
   mut uuid: *mut *mut libc::c_char,
@@ -97,7 +97,7 @@ unsafe extern "C" fn get_label_uuid(
   return rv;
 }
 /* NB: we take ownership of (malloc'ed) label and uuid */
-unsafe extern "C" fn uuidcache_addentry(
+unsafe fn uuidcache_addentry(
   mut device: *mut libc::c_char,
   mut label: *mut libc::c_char,
   mut uuid: *mut libc::c_char,
@@ -130,7 +130,7 @@ unsafe extern "C" fn uuidcache_addentry(
 /* If get_label_uuid() on device_name returns success,
  * add a cache entry for this device.
  * If device node does not exist, it will be temporarily created. */
-unsafe extern "C" fn uuidcache_check_device(
+unsafe fn uuidcache_check_device(
   mut device: *const libc::c_char,
   mut statbuf: *mut stat,
   mut _userData: *mut libc::c_void,
@@ -158,7 +158,7 @@ unsafe extern "C" fn uuidcache_check_device(
   add_to_uuid_cache(device);
   return 1i32;
 }
-unsafe extern "C" fn uuidcache_init(mut scan_devices: libc::c_int) -> *mut uuidCache_s {
+unsafe fn uuidcache_init(mut scan_devices: libc::c_int) -> *mut uuidCache_s {
   if !uuidCache.is_null() {
     return uuidCache;
   }
@@ -178,7 +178,7 @@ unsafe extern "C" fn uuidcache_init(mut scan_devices: libc::c_int) -> *mut uuidC
       ACTION_RECURSE as libc::c_int as libc::c_uint,
       Some(
         uuidcache_check_device
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *const libc::c_char,
             _: *mut stat,
             _: *mut libc::c_void,
@@ -194,8 +194,7 @@ unsafe extern "C" fn uuidcache_init(mut scan_devices: libc::c_int) -> *mut uuidC
 }
 // UNUSED
 /* Used by blkid */
-#[no_mangle]
-pub unsafe extern "C" fn display_uuid_cache(mut scan_devices: libc::c_int) {
+pub unsafe fn display_uuid_cache(mut scan_devices: libc::c_int) {
   let mut uc: *mut uuidCache_s = std::ptr::null_mut(); /* for compiler */
   uc = uuidcache_init(scan_devices);
   while !uc.is_null() {
@@ -222,8 +221,7 @@ pub unsafe extern "C" fn display_uuid_cache(mut scan_devices: libc::c_int) {
     uc = (*uc).next
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn add_to_uuid_cache(mut device: *const libc::c_char) -> libc::c_int {
+pub unsafe fn add_to_uuid_cache(mut device: *const libc::c_char) -> libc::c_int {
   let mut uuid: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   uuid = uuid;
   let mut label: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -249,8 +247,7 @@ pub unsafe extern "C" fn add_to_uuid_cache(mut device: *const libc::c_char) -> l
   return 0;
 }
 /* Used by mount and findfs */
-#[no_mangle]
-pub unsafe extern "C" fn get_devname_from_label(
+pub unsafe fn get_devname_from_label(
   mut spec: *const libc::c_char,
 ) -> *mut libc::c_char {
   let mut uc: *mut uuidCache_s = std::ptr::null_mut();
@@ -263,8 +260,7 @@ pub unsafe extern "C" fn get_devname_from_label(
   }
   return std::ptr::null_mut::<libc::c_char>();
 }
-#[no_mangle]
-pub unsafe extern "C" fn get_devname_from_uuid(mut spec: *const libc::c_char) -> *mut libc::c_char {
+pub unsafe fn get_devname_from_uuid(mut spec: *const libc::c_char) -> *mut libc::c_char {
   let mut uc: *mut uuidCache_s = std::ptr::null_mut();
   uc = uuidcache_init(1i32);
   while !uc.is_null() {
@@ -300,8 +296,7 @@ pub unsafe extern "C" fn get_devname_from_uuid(mut spec: *const libc::c_char) ->
  * 1: UUID= or LABEL= prefix found. In this case,
  *    *fsname is replaced if device with such UUID or LABEL is found
  */
-#[no_mangle]
-pub unsafe extern "C" fn resolve_mount_spec(mut fsname: *mut *mut libc::c_char) -> libc::c_int {
+pub unsafe fn resolve_mount_spec(mut fsname: *mut *mut libc::c_char) -> libc::c_int {
   let mut tmp: *mut libc::c_char = *fsname; /* no UUID= or LABEL= prefix found */
   if !crate::libbb::compare_string_array::is_prefixed_with(
     *fsname,

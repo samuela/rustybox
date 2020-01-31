@@ -127,7 +127,7 @@ static mut bdcmd_flags: [u8; 11] = [
   (ARG_NONE as libc::c_int + FL_NORESULT as libc::c_int) as u8,
   (ARG_NONE as libc::c_int + FL_NORESULT as libc::c_int) as u8,
 ];
-unsafe extern "C" fn find_cmd(mut s: *const libc::c_char) -> libc::c_uint {
+unsafe fn find_cmd(mut s: *const libc::c_char) -> libc::c_uint {
   if *s.offset(0) as libc::c_int == '-' as i32 && *s.offset(1) as libc::c_int == '-' as i32 {
     let mut n: libc::c_int =
       crate::libbb::compare_string_array::index_in_strings(bdcmd_names.as_ptr(), s.offset(2));
@@ -137,8 +137,7 @@ unsafe extern "C" fn find_cmd(mut s: *const libc::c_char) -> libc::c_uint {
   }
   crate::libbb::appletlib::bb_show_usage();
 }
-#[no_mangle]
-pub unsafe extern "C" fn blockdev_main(
+pub unsafe fn blockdev_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

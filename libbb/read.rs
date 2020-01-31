@@ -18,8 +18,7 @@ extern "C" {
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn safe_read(
+pub unsafe fn safe_read(
   mut fd: libc::c_int,
   mut buf: *mut libc::c_void,
   mut count: size_t,
@@ -45,8 +44,7 @@ pub unsafe extern "C" fn safe_read(
  * Returns the amount read, or -1 on an error.
  * A short read is returned on an end of file.
  */
-#[no_mangle]
-pub unsafe extern "C" fn full_read(
+pub unsafe fn full_read(
   mut fd: libc::c_int,
   mut buf: *mut libc::c_void,
   mut len: size_t,
@@ -74,8 +72,7 @@ pub unsafe extern "C" fn full_read(
   }
   return total;
 }
-#[no_mangle]
-pub unsafe extern "C" fn read_close(
+pub unsafe fn read_close(
   mut fd: libc::c_int,
   mut buf: *mut libc::c_void,
   mut size: size_t,
@@ -319,8 +316,7 @@ pub unsafe extern "C" fn read_close(
  * Buffer must hold at least four characters. */
 // NB: will return short read on error, not -1,
 // if some data was read before error occurred
-#[no_mangle]
-pub unsafe extern "C" fn open_read_close(
+pub unsafe fn open_read_close(
   mut filename: *const libc::c_char,
   mut buf: *mut libc::c_void,
   mut size: size_t,

@@ -188,7 +188,7 @@ pub const FLAG_m: C2RustUnnamed_3 = 4;
 pub const FLAG_M: C2RustUnnamed_3 = 2;
 pub const FLAG_E: C2RustUnnamed_3 = 1;
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 /* This one is 100% not cached by compiler on read access */
@@ -197,7 +197,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
  * Pointer is adjusted so that flines[i] points directly past
  * line number. Accessor: */
 /* Reset terminal input to normal */
-unsafe extern "C" fn set_tty_cooked() {
+unsafe fn set_tty_cooked() {
   crate::libbb::xfuncs_printf::fflush_all();
   tcsetattr(
     (*ptr_to_globals).kbd_fd,
@@ -207,14 +207,14 @@ unsafe extern "C" fn set_tty_cooked() {
 }
 /* Move the cursor to a position (x,y), where (0,0) is the
 top-left corner of the console */
-unsafe extern "C" fn move_cursor(mut line: libc::c_int, mut col: libc::c_int) {
+unsafe fn move_cursor(mut line: libc::c_int, mut col: libc::c_int) {
   printf(
     b"\x1b[%u;%uH\x00" as *const u8 as *const libc::c_char,
     line,
     col,
   );
 }
-unsafe extern "C" fn clear_line() {
+unsafe fn clear_line() {
   printf(
     b"\x1b[%u;0H\x1b[K\x00" as *const u8 as *const libc::c_char,
     (*ptr_to_globals)
@@ -222,13 +222,13 @@ unsafe extern "C" fn clear_line() {
       .wrapping_add(2i32 as libc::c_uint),
   );
 }
-unsafe extern "C" fn print_hilite(mut str: *const libc::c_char) {
+unsafe fn print_hilite(mut str: *const libc::c_char) {
   printf(
     b"\x1b[7m%s\x1b[m\x00" as *const u8 as *const libc::c_char,
     str,
   );
 }
-unsafe extern "C" fn print_statusline(mut str: *const libc::c_char) {
+unsafe fn print_statusline(mut str: *const libc::c_char) {
   clear_line();
   printf(
     b"\x1b[7m%.*s\x1b[m\x00" as *const u8 as *const libc::c_char,
@@ -237,7 +237,7 @@ unsafe extern "C" fn print_statusline(mut str: *const libc::c_char) {
   );
 }
 /* Exit the program gracefully */
-unsafe extern "C" fn less_exit(mut code: libc::c_int) {
+unsafe fn less_exit(mut code: libc::c_int) {
   set_tty_cooked(); /* does not return */
   if (*ptr_to_globals).kbd_fd_orig_flags & 0o4000i32 == 0 {
     crate::libbb::xfuncs::ndelay_off((*ptr_to_globals).kbd_fd);
@@ -248,7 +248,7 @@ unsafe extern "C" fn less_exit(mut code: libc::c_int) {
   }
   exit(code);
 }
-unsafe extern "C" fn re_wrap() {
+unsafe fn re_wrap() {
   let mut sz: libc::c_int = 0;
   let mut w: libc::c_int = (*ptr_to_globals).width as libc::c_int;
   let mut new_line_pos: libc::c_int = 0;
@@ -343,7 +343,7 @@ unsafe extern "C" fn re_wrap() {
   /* max_lineno is screen-size independent */
   (*ptr_to_globals).pattern_valid = 0 as smallint;
 }
-unsafe extern "C" fn at_end() -> libc::c_int {
+unsafe fn at_end() -> libc::c_int {
   return if option_mask32 & FLAG_S as libc::c_int as libc::c_uint != 0 {
     !((*ptr_to_globals).cur_fline as libc::c_uint <= (*ptr_to_globals).max_fline
       && (*ptr_to_globals).max_lineno
@@ -384,7 +384,7 @@ unsafe extern "C" fn at_end() -> libc::c_int {
  * "git log -p | less -m" on the kernel git tree is a good test for EAGAINs,
  * "/search on very long input" and "reaching max line count" corner cases.
  */
-unsafe extern "C" fn read_lines() {
+unsafe fn read_lines() {
   let mut current_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut w: libc::c_int = (*ptr_to_globals).width as libc::c_int;
@@ -592,7 +592,7 @@ unsafe extern "C" fn read_lines() {
   /* prevent us from being stuck in search for a match */
   (*ptr_to_globals).wanted_match = -1i32;
 }
-unsafe extern "C" fn safe_lineno(mut fline: libc::c_int) -> libc::c_int {
+unsafe fn safe_lineno(mut fline: libc::c_int) -> libc::c_int {
   if fline as libc::c_uint >= (*ptr_to_globals).max_fline {
     fline = (*ptr_to_globals)
       .max_fline
@@ -606,7 +606,7 @@ unsafe extern "C" fn safe_lineno(mut fline: libc::c_int) -> libc::c_int {
     .wrapping_add(1i32 as libc::c_uint) as libc::c_int;
 }
 /* count number of lines in file */
-unsafe extern "C" fn update_num_lines() {
+unsafe fn update_num_lines() {
   let mut count: libc::c_int = 0;
   let mut fd: libc::c_int = 0;
   let mut stbuf: stat = std::mem::zeroed();
@@ -660,7 +660,7 @@ unsafe extern "C" fn update_num_lines() {
   };
 }
 /* Print a status line if -M was specified */
-unsafe extern "C" fn m_status_print() {
+unsafe fn m_status_print() {
   let mut first: libc::c_int = 0;
   let mut last: libc::c_int = 0;
   let mut percent: libc::c_uint = 0;
@@ -734,7 +734,7 @@ unsafe extern "C" fn m_status_print() {
   printf(b"\x1b[m\x00" as *const u8 as *const libc::c_char);
 }
 /* Print the status line */
-unsafe extern "C" fn status_print() {
+unsafe fn status_print() {
   let mut p: *const libc::c_char = std::ptr::null();
   if (*ptr_to_globals).less_gets_pos >= 0 {
     /* don't touch statusline while input is done! */
@@ -775,7 +775,7 @@ static mut ctrlconv: [libc::c_char; 33] = [
   64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 64, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87,
   88, 89, 90, 91, 92, 93, 94, 95, 0,
 ];
-unsafe extern "C" fn print_lineno(mut line: *const libc::c_char) {
+unsafe fn print_lineno(mut line: *const libc::c_char) {
   let mut fmt: *const libc::c_char = b"        \x00" as *const u8 as *const libc::c_char; /* for compiler */
   let mut n: libc::c_uint = 0;
   n = n;
@@ -790,7 +790,7 @@ unsafe extern "C" fn print_lineno(mut line: *const libc::c_char) {
   }
   printf(fmt, n);
 }
-unsafe extern "C" fn print_found(mut line: *const libc::c_char) {
+unsafe fn print_found(mut line: *const libc::c_char) {
   let mut new: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut match_status: libc::c_int = 0;
   let mut eflags: libc::c_int = 0;
@@ -870,7 +870,7 @@ unsafe extern "C" fn print_found(mut line: *const libc::c_char) {
   );
   free(growline as *mut libc::c_void);
 }
-unsafe extern "C" fn print_ascii(mut str: *const libc::c_char) {
+unsafe fn print_ascii(mut str: *const libc::c_char) {
   let vla = (*ptr_to_globals).width.wrapping_add(1i32 as libc::c_uint) as usize;
   let mut buf: Vec<libc::c_char> = ::std::vec::from_elem(0, vla);
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -918,7 +918,7 @@ unsafe extern "C" fn print_ascii(mut str: *const libc::c_char) {
   puts(str);
 }
 /* Print the buffer */
-unsafe extern "C" fn buffer_print() {
+unsafe fn buffer_print() {
   let mut i: libc::c_uint = 0;
   move_cursor(0i32, 0);
   i = 0 as libc::c_uint;
@@ -948,7 +948,7 @@ unsafe extern "C" fn buffer_print() {
   }
   status_print();
 }
-unsafe extern "C" fn buffer_fill_and_print() {
+unsafe fn buffer_fill_and_print() {
   let mut i: libc::c_uint = 0;
   let mut fpos: libc::c_int = (*ptr_to_globals).cur_fline;
   if option_mask32 & FLAG_S as libc::c_int as libc::c_uint != 0 {
@@ -988,7 +988,7 @@ unsafe extern "C" fn buffer_fill_and_print() {
   buffer_print();
 }
 /* move cur_fline to a given line number, reading lines if necessary */
-unsafe extern "C" fn goto_lineno(mut target: libc::c_int) {
+unsafe fn goto_lineno(mut target: libc::c_int) {
   if target <= 0 {
     (*ptr_to_globals).cur_fline = 0
   } else if target as libc::c_uint
@@ -1032,7 +1032,7 @@ unsafe extern "C" fn goto_lineno(mut target: libc::c_int) {
     }
   };
 }
-unsafe extern "C" fn cap_cur_fline() {
+unsafe fn cap_cur_fline() {
   if option_mask32 & FLAG_S as libc::c_int as libc::c_uint != 0 {
     if (*ptr_to_globals).cur_fline as libc::c_uint > (*ptr_to_globals).max_fline {
       (*ptr_to_globals).cur_fline = (*ptr_to_globals).max_fline as libc::c_int
@@ -1073,7 +1073,7 @@ unsafe extern "C" fn cap_cur_fline() {
   };
 }
 /* Move the buffer up and down in the file in order to scroll */
-unsafe extern "C" fn buffer_down(mut nlines: libc::c_int) {
+unsafe fn buffer_down(mut nlines: libc::c_int) {
   if option_mask32 & FLAG_S as libc::c_int as libc::c_uint != 0 {
     goto_lineno(
       (*((*(*ptr_to_globals)
@@ -1089,7 +1089,7 @@ unsafe extern "C" fn buffer_down(mut nlines: libc::c_int) {
   cap_cur_fline();
   buffer_fill_and_print();
 }
-unsafe extern "C" fn buffer_up(mut nlines: libc::c_int) {
+unsafe fn buffer_up(mut nlines: libc::c_int) {
   if option_mask32 & FLAG_S as libc::c_int as libc::c_uint != 0 {
     goto_lineno(
       (*((*(*ptr_to_globals)
@@ -1109,7 +1109,7 @@ unsafe extern "C" fn buffer_up(mut nlines: libc::c_int) {
 }
 /* display a given line where the argument can be either an index into
  * the flines array or a line number */
-unsafe extern "C" fn buffer_to_line(mut linenum: libc::c_int, mut is_lineno: libc::c_int) {
+unsafe fn buffer_to_line(mut linenum: libc::c_int, mut is_lineno: libc::c_int) {
   if linenum <= 0 {
     (*ptr_to_globals).cur_fline = 0
   } else if is_lineno != 0 {
@@ -1121,13 +1121,13 @@ unsafe extern "C" fn buffer_to_line(mut linenum: libc::c_int, mut is_lineno: lib
   cap_cur_fline();
   buffer_fill_and_print();
 }
-unsafe extern "C" fn buffer_line(mut linenum: libc::c_int) {
+unsafe fn buffer_line(mut linenum: libc::c_int) {
   buffer_to_line(linenum, 0);
 }
-unsafe extern "C" fn buffer_lineno(mut lineno: libc::c_int) {
+unsafe fn buffer_lineno(mut lineno: libc::c_int) {
   buffer_to_line(lineno, 1i32);
 }
-unsafe extern "C" fn open_file_and_read_lines() {
+unsafe fn open_file_and_read_lines() {
   if !(*ptr_to_globals).filename.is_null() {
     crate::libbb::xfuncs_printf::xmove_fd(
       crate::libbb::xfuncs_printf::xopen((*ptr_to_globals).filename, 0),
@@ -1148,7 +1148,7 @@ unsafe extern "C" fn open_file_and_read_lines() {
   read_lines();
 }
 /* Reinitialize everything for a new file - free the memory and start over */
-unsafe extern "C" fn reinitialize() {
+unsafe fn reinitialize() {
   let mut i: libc::c_uint = 0;
   if !(*ptr_to_globals).flines.is_null() {
     i = 0 as libc::c_uint;
@@ -1171,7 +1171,7 @@ unsafe extern "C" fn reinitialize() {
   }
   buffer_fill_and_print();
 }
-unsafe extern "C" fn getch_nowait() -> int64_t {
+unsafe fn getch_nowait() -> int64_t {
   let mut rd: libc::c_int = 0;
   let mut key64: int64_t = 0;
   let mut pfd: [pollfd; 2] = [pollfd {
@@ -1260,7 +1260,7 @@ unsafe extern "C" fn getch_nowait() -> int64_t {
 /* Grab a character from input without requiring the return key.
  * May return KEYCODE_xxx values.
  * Note that this function works best with raw input. */
-unsafe extern "C" fn less_getch(mut pos: libc::c_int) -> int64_t {
+unsafe fn less_getch(mut pos: libc::c_int) -> int64_t {
   let mut key64: int64_t = 0;
   let mut key: libc::c_int = 0;
   loop {
@@ -1278,7 +1278,7 @@ unsafe extern "C" fn less_getch(mut pos: libc::c_int) -> int64_t {
   }
   return key64;
 }
-unsafe extern "C" fn less_gets(mut sz: libc::c_int) -> *mut libc::c_char {
+unsafe fn less_gets(mut sz: libc::c_int) -> *mut libc::c_char {
   let mut c: libc::c_int = 0;
   let mut i: libc::c_uint = 0 as libc::c_uint;
   let mut result: *mut libc::c_char =
@@ -1322,7 +1322,7 @@ unsafe extern "C" fn less_gets(mut sz: libc::c_int) -> *mut libc::c_char {
     ) as *mut libc::c_char
   }
 }
-unsafe extern "C" fn examine_file() {
+unsafe fn examine_file() {
   let mut new_fname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   print_statusline(b"Examine: \x00" as *const u8 as *const libc::c_char);
   new_fname = less_gets(
@@ -1353,7 +1353,7 @@ unsafe extern "C" fn examine_file() {
  * -1: go back one file
  *  0: go to the first file
  *  1: go forward one file */
-unsafe extern "C" fn change_file(mut direction: libc::c_int) {
+unsafe fn change_file(mut direction: libc::c_int) {
   if (*ptr_to_globals).current_file
     != (if direction > 0 {
       (*ptr_to_globals).num_files
@@ -1385,7 +1385,7 @@ unsafe extern "C" fn change_file(mut direction: libc::c_int) {
     });
   };
 }
-unsafe extern "C" fn remove_current_file() {
+unsafe fn remove_current_file() {
   let mut i: libc::c_uint = 0;
   if (*ptr_to_globals).num_files < 2i32 as libc::c_uint {
     return;
@@ -1419,7 +1419,7 @@ unsafe extern "C" fn remove_current_file() {
     (*ptr_to_globals).current_file = (*ptr_to_globals).current_file.wrapping_sub(1)
   };
 }
-unsafe extern "C" fn colon_process() {
+unsafe fn colon_process() {
   let mut keypress: libc::c_int = 0;
   /* Clear the current line and print a prompt */
   print_statusline(b" :\x00" as *const u8 as *const libc::c_char);
@@ -1449,7 +1449,7 @@ unsafe extern "C" fn colon_process() {
     _ => {}
   };
 }
-unsafe extern "C" fn normalize_match_pos(mut match_0: libc::c_int) {
+unsafe fn normalize_match_pos(mut match_0: libc::c_int) {
   if match_0 >= (*ptr_to_globals).num_matches {
     match_0 = (*ptr_to_globals).num_matches - 1i32
   }
@@ -1458,7 +1458,7 @@ unsafe extern "C" fn normalize_match_pos(mut match_0: libc::c_int) {
   }
   (*ptr_to_globals).match_pos = match_0;
 }
-unsafe extern "C" fn goto_match(mut match_0: libc::c_int) {
+unsafe fn goto_match(mut match_0: libc::c_int) {
   if (*ptr_to_globals).pattern_valid == 0 {
     return;
   }
@@ -1481,7 +1481,7 @@ unsafe extern "C" fn goto_match(mut match_0: libc::c_int) {
     print_statusline(b"No matches found\x00" as *const u8 as *const libc::c_char);
   };
 }
-unsafe extern "C" fn fill_match_lines(mut pos: libc::c_uint) {
+unsafe fn fill_match_lines(mut pos: libc::c_uint) {
   if (*ptr_to_globals).pattern_valid == 0 {
     return;
   }
@@ -1514,7 +1514,7 @@ unsafe extern "C" fn fill_match_lines(mut pos: libc::c_uint) {
     pos = pos.wrapping_add(1)
   }
 }
-unsafe extern "C" fn regex_process() {
+unsafe fn regex_process() {
   let mut uncomp_regex: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut err: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Reset variables */
@@ -1578,7 +1578,7 @@ unsafe extern "C" fn regex_process() {
    * if needed */
   goto_match((*ptr_to_globals).match_pos); /* more than enough */
 }
-unsafe extern "C" fn number_process(mut first_digit: libc::c_int) {
+unsafe fn number_process(mut first_digit: libc::c_int) {
   let mut i: libc::c_uint = 0;
   let mut num: libc::c_int = 0;
   let mut keypress: libc::c_int = 0;
@@ -1650,7 +1650,7 @@ unsafe extern "C" fn number_process(mut first_digit: libc::c_int) {
     _ => {}
   };
 }
-unsafe extern "C" fn flag_change() {
+unsafe fn flag_change() {
   let mut keypress: libc::c_int = 0;
   clear_line();
   crate::libbb::xfuncs_printf::bb_putchar('-' as i32);
@@ -1673,7 +1673,7 @@ unsafe extern "C" fn flag_change() {
   };
 }
 /* ENABLE_FEATURE_LESS_DASHCMD */
-unsafe extern "C" fn save_input_to_file() {
+unsafe fn save_input_to_file() {
   let mut msg: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;
   let mut current_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_uint = 0;
@@ -1704,7 +1704,7 @@ unsafe extern "C" fn save_input_to_file() {
   print_statusline(msg);
   free(current_line as *mut libc::c_void);
 }
-unsafe extern "C" fn add_mark() {
+unsafe fn add_mark() {
   let mut letter: libc::c_int = 0;
   print_statusline(b"Mark: \x00" as *const u8 as *const libc::c_char);
   letter = less_getch(
@@ -1724,7 +1724,7 @@ unsafe extern "C" fn add_mark() {
     print_statusline(b"Invalid mark letter\x00" as *const u8 as *const libc::c_char);
   };
 }
-unsafe extern "C" fn goto_mark() {
+unsafe fn goto_mark() {
   let mut letter: libc::c_int = 0;
   let mut i: libc::c_int = 0;
   print_statusline(b"Go to mark: \x00" as *const u8 as *const libc::c_char);
@@ -1752,7 +1752,7 @@ unsafe extern "C" fn goto_mark() {
     print_statusline(b"Invalid mark letter\x00" as *const u8 as *const libc::c_char);
   };
 }
-unsafe extern "C" fn opp_bracket(mut bracket: libc::c_char) -> libc::c_char {
+unsafe fn opp_bracket(mut bracket: libc::c_char) -> libc::c_char {
   let mut current_block_3: u64;
   match bracket as libc::c_int {
     123 | 91 => {
@@ -1784,7 +1784,7 @@ unsafe extern "C" fn opp_bracket(mut bracket: libc::c_char) -> libc::c_char {
   }
   return bracket;
 }
-unsafe extern "C" fn match_right_bracket(mut bracket: libc::c_char) {
+unsafe fn match_right_bracket(mut bracket: libc::c_char) {
   let mut i: libc::c_uint = (*ptr_to_globals).cur_fline as libc::c_uint;
   if i >= (*ptr_to_globals).max_fline
     || strchr(
@@ -1815,7 +1815,7 @@ unsafe extern "C" fn match_right_bracket(mut bracket: libc::c_char) {
   }
   print_statusline(b"No matching bracket found\x00" as *const u8 as *const libc::c_char);
 }
-unsafe extern "C" fn match_left_bracket(mut bracket: libc::c_char) {
+unsafe fn match_left_bracket(mut bracket: libc::c_char) {
   let mut i: libc::c_int = ((*ptr_to_globals).cur_fline as libc::c_uint)
     .wrapping_add((*ptr_to_globals).max_displayed_line) as libc::c_int;
   if i as libc::c_uint >= (*ptr_to_globals).max_fline
@@ -1848,7 +1848,7 @@ unsafe extern "C" fn match_left_bracket(mut bracket: libc::c_char) {
   print_statusline(b"No matching bracket found\x00" as *const u8 as *const libc::c_char);
 }
 /* FEATURE_LESS_BRACKETS */
-unsafe extern "C" fn keypress_process(mut keypress: libc::c_int) {
+unsafe fn keypress_process(mut keypress: libc::c_int) {
   match keypress {
     -3 | 101 | 106 | 13 => {
       buffer_down(1i32);
@@ -1962,11 +1962,7 @@ unsafe extern "C" fn sig_catcher(mut sig: libc::c_int) {
 unsafe extern "C" fn sigwinch_handler(mut _sig: libc::c_int) {
   (*ptr_to_globals).winch_counter = (*ptr_to_globals).winch_counter.wrapping_add(1);
 }
-#[no_mangle]
-pub unsafe extern "C" fn less_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn less_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut tty_name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tty_fd: libc::c_int = 0;
@@ -2081,14 +2077,8 @@ pub unsafe extern "C" fn less_main(
     .max_displayed_line
     .wrapping_sub(2i32 as libc::c_uint);
   /* We want to restore term_orig on exit */
-  crate::libbb::signals::bb_signals(
-    BB_FATAL_SIGS as libc::c_int,
-    Some(sig_catcher as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  ); /* -1: do not position cursor */
-  signal(
-    28i32,
-    Some(sigwinch_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  crate::libbb::signals::bb_signals(BB_FATAL_SIGS as libc::c_int, Some(sig_catcher)); /* -1: do not position cursor */
+  signal(28i32, Some(sigwinch_handler));
   (*ptr_to_globals).buffer = xmalloc(
     ((*ptr_to_globals)
       .max_displayed_line

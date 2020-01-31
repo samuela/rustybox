@@ -1227,7 +1227,7 @@ pub unsafe extern "C" fn ifplugd_main(
   }
   crate::libbb::signals::bb_signals(
     0 | 1i32 << 2i32 | 1i32 << 15i32 | 1i32 << 3i32 | 1i32 << 1i32,
-    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo),
   );
   crate::libbb::verror_msg::bb_info_msg(
     b"started: %s\x00" as *const u8 as *const libc::c_char,

@@ -73,8 +73,7 @@ pub const LOGMODE_NONE: C2RustUnnamed = 0;
  * Unfortunately, there isn't a C lib function we can leverage to get this
  * behavior which means we'd have to implement the full stack ourselves :(.
  */
-#[no_mangle]
-pub unsafe extern "C" fn readlink_main(
+pub unsafe fn readlink_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

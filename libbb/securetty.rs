@@ -473,15 +473,14 @@ pub const PARSE_COLLAPSE: C2RustUnnamed = 65536;
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn is_tty_secure(mut short_tty: *const libc::c_char) -> libc::c_int {
+pub unsafe fn is_tty_secure(mut short_tty: *const libc::c_char) -> libc::c_int {
   let mut buf: *mut libc::c_char =
     b"/etc/securetty\x00" as *const u8 as *const libc::c_char as *mut libc::c_char; /* any non-NULL is ok */
   let mut parser: *mut parser_t = crate::libbb::parse_config::config_open2(
     b"/etc/securetty\x00" as *const u8 as *const libc::c_char,
     Some(
       crate::libbb::wfopen::fopen_for_read
-        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+        as unsafe fn(_: *const libc::c_char) -> *mut FILE,
     ),
   );
   while crate::libbb::parse_config::config_read(

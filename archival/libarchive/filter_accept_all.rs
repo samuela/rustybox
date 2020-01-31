@@ -7,10 +7,7 @@ use libc;
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
 /* Accept any non-null name, its not really a filter at all */
-#[no_mangle]
-pub unsafe extern "C" fn filter_accept_all(
-  mut archive_handle: *mut archive_handle_t,
-) -> libc::c_char {
+pub unsafe fn filter_accept_all(mut archive_handle: *mut archive_handle_t) -> libc::c_char {
   if !(*(*archive_handle).file_header).name.is_null() {
     return 0 as libc::c_char;
   }

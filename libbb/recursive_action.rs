@@ -34,7 +34,7 @@ pub const ACTION_RECURSE: C2RustUnnamed = 1;
  * and so isn't sufficiently portable to take over since glibc2.1
  * is so stinking huge.
  */
-unsafe extern "C" fn true_action(
+unsafe fn true_action(
   mut _fileName: *const libc::c_char,
   mut _statbuf: *mut stat,
   mut _userData: *mut libc::c_void,
@@ -184,12 +184,11 @@ unsafe extern "C" fn true_action(
  * 0: lstat(statbuf). Calls fileAction on link name even if points to dir.
  * 1: stat(statbuf). Calls dirAction and optionally recurse on link to dir.
  */
-#[no_mangle]
-pub unsafe extern "C" fn recursive_action(
+pub unsafe fn recursive_action(
   mut fileName: *const libc::c_char,
   mut flags: libc::c_uint,
   mut fileAction: Option<
-    unsafe extern "C" fn(
+    unsafe fn(
       _: *const libc::c_char,
       _: *mut stat,
       _: *mut libc::c_void,
@@ -197,7 +196,7 @@ pub unsafe extern "C" fn recursive_action(
     ) -> libc::c_int,
   >,
   mut dirAction: Option<
-    unsafe extern "C" fn(
+    unsafe fn(
       _: *const libc::c_char,
       _: *mut stat,
       _: *mut libc::c_void,
@@ -216,7 +215,7 @@ pub unsafe extern "C" fn recursive_action(
   if fileAction.is_none() {
     fileAction = Some(
       true_action
-        as unsafe extern "C" fn(
+        as unsafe fn(
           _: *const libc::c_char,
           _: *mut stat,
           _: *mut libc::c_void,
@@ -227,7 +226,7 @@ pub unsafe extern "C" fn recursive_action(
   if dirAction.is_none() {
     dirAction = Some(
       true_action
-        as unsafe extern "C" fn(
+        as unsafe fn(
           _: *const libc::c_char,
           _: *mut stat,
           _: *mut libc::c_void,
@@ -241,12 +240,7 @@ pub unsafe extern "C" fn recursive_action(
       (ACTION_FOLLOWLINKS as libc::c_int | ACTION_FOLLOWLINKS_L0 as libc::c_int) as libc::c_uint
   }
   follow &= flags;
-  status = if follow != 0 {
-    Some(stat as unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int)
-  } else {
-    Some(lstat as unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int)
-  }
-  .expect("non-null function pointer")(fileName, &mut statbuf);
+  status = (if follow != 0 { stat } else { lstat })(fileName, &mut statbuf);
   if status < 0 {
     if flags & ACTION_DANGLING_OK as libc::c_int as libc::c_uint != 0
       && *bb_errno == 2i32

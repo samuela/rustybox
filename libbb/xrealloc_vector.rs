@@ -45,8 +45,7 @@ extern "C" {
  * If you do not advance idx like above, you should be more careful.
  * Next call to xrealloc_vector(v, 4, idx) may or may not zero out v[idx].
  */
-#[no_mangle]
-pub unsafe extern "C" fn xrealloc_vector_helper(
+pub unsafe fn xrealloc_vector_helper(
   mut vector: *mut libc::c_void,
   mut sizeof_and_shift: libc::c_uint,
   mut idx: libc::c_int,

@@ -75,7 +75,7 @@ pub const CMD_SPD_VHI: C2RustUnnamed = 2;
 pub const CMD_SPD_HI: C2RustUnnamed = 1;
 pub const CMD_SPD_NORMAL: C2RustUnnamed = 0;
 #[inline(always)]
-unsafe extern "C" fn bb_strtol(
+unsafe fn bb_strtol(
   mut arg: *const libc::c_char,
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
@@ -104,13 +104,13 @@ static mut commands: [libc::c_char; 233] = [
   108, 111, 115, 105, 110, 103, 95, 119, 97, 105, 116, 0, 97, 117, 116, 111, 99, 111, 110, 102,
   105, 103, 0, 0,
 ];
-unsafe extern "C" fn cmd_noprint(mut cmd: libc::c_int) -> bool {
+unsafe fn cmd_noprint(mut cmd: libc::c_int) -> bool {
   return cmd >= CMD_FLAG_SKIP_TEST as libc::c_int && cmd <= CMD_FLAG_CALLOUT_NOHUP as libc::c_int;
 }
-unsafe extern "C" fn cmd_is_flag(mut cmd: libc::c_int) -> bool {
+unsafe fn cmd_is_flag(mut cmd: libc::c_int) -> bool {
   return cmd >= CMD_FLAG_FIRST as libc::c_int && cmd <= CMD_FLAG_LAST as libc::c_int;
 }
-unsafe extern "C" fn cmd_needs_arg(mut cmd: libc::c_int) -> bool {
+unsafe fn cmd_needs_arg(mut cmd: libc::c_int) -> bool {
   return cmd >= CMD_PORT as libc::c_int && cmd <= CMD_WAIT as libc::c_int;
 }
 static mut setbits: [u16; 16] = [
@@ -131,14 +131,14 @@ static mut setbits: [u16; 16] = [
   (1u32 << 10i32) as u16,
   (1u32 << 13i32) as u16,
 ];
-unsafe extern "C" fn uart_type(mut type_0: libc::c_int) -> *const libc::c_char {
+unsafe fn uart_type(mut type_0: libc::c_int) -> *const libc::c_char {
   if type_0 > 19i32 {
     return b"undefined\x00" as *const u8 as *const libc::c_char;
   }
   return crate::libbb::compare_string_array::nth_string(serial_types.as_ptr(), type_0);
 }
 /* libbb candidate */
-unsafe extern "C" fn index_in_strings_case_insensitive(
+unsafe fn index_in_strings_case_insensitive(
   mut strings: *const libc::c_char,
   mut key: *const libc::c_char,
 ) -> libc::c_int {
@@ -152,10 +152,10 @@ unsafe extern "C" fn index_in_strings_case_insensitive(
   }
   return -1i32;
 }
-unsafe extern "C" fn uart_id(mut name: *const libc::c_char) -> libc::c_int {
+unsafe fn uart_id(mut name: *const libc::c_char) -> libc::c_int {
   return index_in_strings_case_insensitive(serial_types.as_ptr(), name);
 }
-unsafe extern "C" fn get_spd(mut flags: libc::c_int, mut mode: print_mode) -> *const libc::c_char {
+unsafe fn get_spd(mut flags: libc::c_int, mut mode: print_mode) -> *const libc::c_char {
   let mut idx: libc::c_int = 0;
   match flags as libc::c_uint & (1u32 << 4i32 | 1u32 << 5i32 | 1u32 << 12i32) {
     16 => idx = CMD_SPD_HI as libc::c_int,
@@ -172,10 +172,10 @@ unsafe extern "C" fn get_spd(mut flags: libc::c_int, mut mode: print_mode) -> *c
   }
   return crate::libbb::compare_string_array::nth_string(commands.as_ptr(), idx);
 }
-unsafe extern "C" fn get_numeric(mut arg: *const libc::c_char) -> libc::c_int {
+unsafe fn get_numeric(mut arg: *const libc::c_char) -> libc::c_int {
   return bb_strtol(arg, 0 as *mut *mut libc::c_char, 0) as libc::c_int;
 }
-unsafe extern "C" fn get_wait(mut arg: *const libc::c_char) -> libc::c_int {
+unsafe fn get_wait(mut arg: *const libc::c_char) -> libc::c_int {
   if strcasecmp(arg, b"none\x00" as *const u8 as *const libc::c_char) == 0 {
     return 65535i32;
   }
@@ -184,7 +184,7 @@ unsafe extern "C" fn get_wait(mut arg: *const libc::c_char) -> libc::c_int {
   }
   return get_numeric(arg);
 }
-unsafe extern "C" fn get_uart(mut arg: *const libc::c_char) -> libc::c_int {
+unsafe fn get_uart(mut arg: *const libc::c_char) -> libc::c_int {
   let mut uart: libc::c_int = uart_id(arg);
   if uart < 0 {
     crate::libbb::verror_msg::bb_error_msg_and_die(
@@ -194,7 +194,7 @@ unsafe extern "C" fn get_uart(mut arg: *const libc::c_char) -> libc::c_int {
   }
   return uart;
 }
-unsafe extern "C" fn serial_open(mut dev: *const libc::c_char, mut quiet: bool) -> libc::c_int {
+unsafe fn serial_open(mut dev: *const libc::c_char, mut quiet: bool) -> libc::c_int {
   let mut fd: libc::c_int = 0;
   fd = crate::libbb::device_open::device_open(dev, 0o2i32 | 0o4000i32);
   if fd < 0 && !quiet {
@@ -202,7 +202,7 @@ unsafe extern "C" fn serial_open(mut dev: *const libc::c_char, mut quiet: bool) 
   }
   return fd;
 }
-unsafe extern "C" fn serial_ctl(
+unsafe fn serial_ctl(
   mut fd: libc::c_int,
   mut ops: libc::c_int,
   mut serinfo: *mut serial_struct,
@@ -267,7 +267,7 @@ unsafe extern "C" fn serial_ctl(
   }
   return ret;
 }
-unsafe extern "C" fn print_flag(
+unsafe fn print_flag(
   mut prefix: *mut *const libc::c_char,
   mut flag: *const libc::c_char,
 ) {
@@ -278,7 +278,7 @@ unsafe extern "C" fn print_flag(
   );
   *prefix = b" \x00" as *const u8 as *const libc::c_char;
 }
-unsafe extern "C" fn print_serial_flags(
+unsafe fn print_serial_flags(
   mut serial_flags: libc::c_int,
   mut mode: print_mode,
   mut prefix: *const libc::c_char,
@@ -310,7 +310,7 @@ unsafe extern "C" fn print_serial_flags(
     postfix
   });
 }
-unsafe extern "C" fn print_closing_wait(mut closing_wait: libc::c_uint) {
+unsafe fn print_closing_wait(mut closing_wait: libc::c_uint) {
   match closing_wait {
     65535 => {
       puts(b"none\x00" as *const u8 as *const libc::c_char);
@@ -326,7 +326,7 @@ unsafe extern "C" fn print_closing_wait(mut closing_wait: libc::c_uint) {
     }
   };
 }
-unsafe extern "C" fn serial_get(mut device: *const libc::c_char, mut mode: print_mode) {
+unsafe fn serial_get(mut device: *const libc::c_char, mut mode: print_mode) {
   let mut fd: libc::c_int = 0;
   let mut ret: libc::c_int = 0;
   let mut uart: *const libc::c_char = std::ptr::null();
@@ -406,7 +406,7 @@ unsafe extern "C" fn serial_get(mut device: *const libc::c_char, mut mode: print
   }
   print_serial_flags(serinfo.flags, mode, prefix, postfix);
 }
-unsafe extern "C" fn find_cmd(mut cmd: *const libc::c_char) -> libc::c_int {
+unsafe fn find_cmd(mut cmd: *const libc::c_char) -> libc::c_int {
   let mut idx: libc::c_int = 0;
   idx = index_in_strings_case_insensitive(commands.as_ptr(), cmd);
   if idx < 0 {
@@ -417,7 +417,7 @@ unsafe extern "C" fn find_cmd(mut cmd: *const libc::c_char) -> libc::c_int {
   }
   return idx;
 }
-unsafe extern "C" fn serial_set(mut arg: *mut *mut libc::c_char, mut opts: libc::c_int) {
+unsafe fn serial_set(mut arg: *mut *mut libc::c_char, mut opts: libc::c_int) {
   let mut serinfo: serial_struct = std::mem::zeroed();
   let mut fd: libc::c_int = 0;
   fd = serial_open(*arg, 0 != 0);
@@ -513,8 +513,7 @@ unsafe extern "C" fn serial_set(mut arg: *mut *mut libc::c_char, mut opts: libc:
   } /* force display */
   serial_ctl(fd, 1i32 << 0 | 1i32 << 3i32, &mut serinfo);
 }
-#[no_mangle]
-pub unsafe extern "C" fn setserial_main(
+pub unsafe fn setserial_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

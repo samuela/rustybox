@@ -18,8 +18,7 @@ use libc::ssize_t;
  * Returns the amount written, or -1 if error was seen
  * on the very first write.
  */
-#[no_mangle]
-pub unsafe extern "C" fn full_write(
+pub unsafe fn full_write(
   mut fd: libc::c_int,
   mut buf: *const libc::c_void,
   mut len: size_t,

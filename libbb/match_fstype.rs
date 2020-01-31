@@ -128,8 +128,7 @@ use libc::strchr;
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn fstype_matches(
+pub unsafe fn fstype_matches(
   mut fstype: *const libc::c_char,
   mut comma_list: *const libc::c_char,
 ) -> libc::c_int {

@@ -40,10 +40,10 @@ pub struct globals {
   pub recursive: smallint,
 }
 #[inline(always)]
-unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
+unsafe fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
   return crate::libbb::xatonum::xatoull(str) as libc::c_ulong; /* if (opt == '=') */
 }
-unsafe extern "C" fn get_flag(mut c: libc::c_char) -> libc::c_ulong {
+unsafe fn get_flag(mut c: libc::c_char) -> libc::c_ulong {
   let mut fp: *const libc::c_char =
     strchr(&*e2attr_flags_sname.as_ptr().offset(1), c as libc::c_int);
   if !fp.is_null() {
@@ -54,7 +54,7 @@ unsafe extern "C" fn get_flag(mut c: libc::c_char) -> libc::c_ulong {
   }
   crate::libbb::appletlib::bb_show_usage();
 }
-unsafe extern "C" fn decode_arg(
+unsafe fn decode_arg(
   mut argv: *mut *mut libc::c_char,
   mut gp: *mut globals,
 ) -> *mut *mut libc::c_char {
@@ -110,7 +110,7 @@ unsafe extern "C" fn decode_arg(
   }
   return argv;
 }
-unsafe extern "C" fn chattr_dir_proc(
+unsafe fn chattr_dir_proc(
   mut dir_name: *const libc::c_char,
   mut de: *mut dirent,
   mut gp: *mut libc::c_void,
@@ -124,7 +124,7 @@ unsafe extern "C" fn chattr_dir_proc(
   }
   return 0;
 }
-unsafe extern "C" fn change_attributes(mut name: *const libc::c_char, mut gp: *mut globals) {
+unsafe fn change_attributes(mut name: *const libc::c_char, mut gp: *mut globals) {
   let mut current_block: u64;
   let mut fsflags: libc::c_ulong = 0;
   let mut st: stat = std::mem::zeroed();
@@ -197,21 +197,13 @@ unsafe extern "C" fn change_attributes(mut name: *const libc::c_char, mut gp: *m
       name,
       Some(
         chattr_dir_proc
-          as unsafe extern "C" fn(
-            _: *const libc::c_char,
-            _: *mut dirent,
-            _: *mut libc::c_void,
-          ) -> libc::c_int,
+          as unsafe fn(_: *const libc::c_char, _: *mut dirent, _: *mut libc::c_void) -> libc::c_int,
       ),
       gp as *mut libc::c_void,
     );
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn chattr_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn chattr_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut g: globals = globals {
     version: 0,
     af: 0,

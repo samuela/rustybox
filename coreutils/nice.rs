@@ -35,11 +35,7 @@ pub type __priority_which_t = __priority_which;
 //usage:#define nice_full_usage "\n\n"
 //usage:       "Change scheduling priority, run PROG\n"
 //usage:     "\n	-n ADJUST	Adjust priority by ADJUST"
-#[no_mangle]
-pub unsafe extern "C" fn nice_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn nice_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut old_priority: libc::c_int = 0;
   let mut adjustment: libc::c_int = 0;
   old_priority = getpriority(PRIO_PROCESS, 0 as id_t);

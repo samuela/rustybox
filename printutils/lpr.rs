@@ -98,7 +98,7 @@ pub const OPT_P: C2RustUnnamed = 1;
  * LPD returns binary 0 on success.
  * Otherwise it returns error message.
  */
-unsafe extern "C" fn get_response_or_say_and_die(
+unsafe fn get_response_or_say_and_die(
   mut fd: libc::c_int,
   mut errmsg: *const libc::c_char,
 ) {
@@ -139,11 +139,7 @@ unsafe extern "C" fn get_response_or_say_and_die(
     crate::libbb::xfunc_die::xfunc_die();
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn lpqr_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn lpqr_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut tempfile: [libc::c_char; 15] = [0; 15];
   let mut job_title: *const libc::c_char = std::ptr::null();
   let mut printer_class: *const libc::c_char = b"\x00" as *const u8 as *const libc::c_char;

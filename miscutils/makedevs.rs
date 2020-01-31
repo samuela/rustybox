@@ -150,8 +150,7 @@ pub const PARSE_COLLAPSE: C2RustUnnamed_0 = 65536;
 //usage:       "/dev/hda[0-15]\n"
 //usage:#endif
 /* Licensed under GPLv2 or later, see file LICENSE in this source tree. */
-#[no_mangle]
-pub unsafe extern "C" fn makedevs_main(
+pub unsafe fn makedevs_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -225,24 +224,12 @@ pub unsafe extern "C" fn makedevs_main(
       ret = 1i32
     } else {
       gid = if *group.as_mut_ptr() as libc::c_int != 0 {
-        crate::libbb::bb_pwd::get_ug_id(
-          group.as_mut_ptr(),
-          Some(
-            crate::libbb::bb_pwd::xgroup2gid
-              as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long,
-          ),
-        )
+        crate::libbb::bb_pwd::get_ug_id(group.as_mut_ptr(), crate::libbb::bb_pwd::xgroup2gid)
       } else {
         getgid() as libc::c_ulong
       } as gid_t;
       uid = if *user.as_mut_ptr() as libc::c_int != 0 {
-        crate::libbb::bb_pwd::get_ug_id(
-          user.as_mut_ptr(),
-          Some(
-            crate::libbb::bb_pwd::xuname2uid
-              as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long,
-          ),
-        )
+        crate::libbb::bb_pwd::get_ug_id(user.as_mut_ptr(), crate::libbb::bb_pwd::xuname2uid)
       } else {
         getuid() as libc::c_ulong
       } as uid_t;

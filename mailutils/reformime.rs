@@ -67,7 +67,7 @@ pub const OPT_d: C2RustUnnamed = 4;
 pub const OPT_X: C2RustUnnamed = 2;
 pub const OPT_x: C2RustUnnamed = 1;
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 
@@ -93,7 +93,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
 //config:	other than -x and -X.
 //applet:IF_REFORMIME(APPLET(reformime, BB_DIR_BIN, SUID_DROP))
 //kbuild:lib-$(CONFIG_REFORMIME) += reformime.o mail.o
-unsafe extern "C" fn find_token(
+unsafe fn find_token(
   mut string_array: *const *const libc::c_char,
   mut key: *const libc::c_char,
   mut defvalue: *const libc::c_char,
@@ -111,7 +111,7 @@ unsafe extern "C" fn find_token(
   }
   return if !r.is_null() { r } else { defvalue };
 }
-unsafe extern "C" fn xfind_token(
+unsafe fn xfind_token(
   mut string_array: *const *const libc::c_char,
   mut key: *const libc::c_char,
 ) -> *const libc::c_char {
@@ -124,7 +124,7 @@ unsafe extern "C" fn xfind_token(
     key,
   );
 }
-unsafe extern "C" fn parse(
+unsafe fn parse(
   mut boundary: *const libc::c_char,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -400,8 +400,7 @@ Usage: reformime [options]
     -o "header" - encode unstructured header using RFC 2047.
     -O "header" - encode address list header using RFC 2047.
 */
-#[no_mangle]
-pub unsafe extern "C" fn reformime_main(
+pub unsafe fn reformime_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

@@ -136,8 +136,7 @@ use libc::FILE;
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn fopen_or_warn(
+pub unsafe fn fopen_or_warn(
   mut path: *const libc::c_char,
   mut mode: *const libc::c_char,
 ) -> *mut FILE {
@@ -148,23 +147,19 @@ pub unsafe extern "C" fn fopen_or_warn(
   }
   return fp;
 }
-#[no_mangle]
-pub unsafe extern "C" fn fopen_for_read(mut path: *const libc::c_char) -> *mut FILE {
+pub unsafe fn fopen_for_read(mut path: *const libc::c_char) -> *mut FILE {
   return fopen(path, b"r\x00" as *const u8 as *const libc::c_char);
 }
-#[no_mangle]
-pub unsafe extern "C" fn xfopen_for_read(mut path: *const libc::c_char) -> *mut FILE {
+pub unsafe fn xfopen_for_read(mut path: *const libc::c_char) -> *mut FILE {
   return crate::libbb::xfuncs_printf::xfopen(path, b"r\x00" as *const u8 as *const libc::c_char);
 }
-#[no_mangle]
-pub unsafe extern "C" fn fopen_for_write(mut path: *const libc::c_char) -> *mut FILE {
+pub unsafe fn fopen_for_write(mut path: *const libc::c_char) -> *mut FILE {
   return fopen(path, b"w\x00" as *const u8 as *const libc::c_char);
 }
-#[no_mangle]
-pub unsafe extern "C" fn xfopen_for_write(mut path: *const libc::c_char) -> *mut FILE {
+pub unsafe fn xfopen_for_write(mut path: *const libc::c_char) -> *mut FILE {
   return crate::libbb::xfuncs_printf::xfopen(path, b"w\x00" as *const u8 as *const libc::c_char);
 }
-unsafe extern "C" fn xfdopen_helper(mut fd_and_rw_bit: libc::c_uint) -> *mut FILE {
+unsafe fn xfdopen_helper(mut fd_and_rw_bit: libc::c_uint) -> *mut FILE {
   let mut fp: *mut FILE = fdopen(
     (fd_and_rw_bit >> 1i32) as libc::c_int,
     if fd_and_rw_bit & 1i32 as libc::c_uint != 0 {
@@ -178,8 +173,7 @@ unsafe extern "C" fn xfdopen_helper(mut fd_and_rw_bit: libc::c_uint) -> *mut FIL
   }
   return fp;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xfdopen_for_read(mut fd: libc::c_int) -> *mut FILE {
+pub unsafe fn xfdopen_for_read(mut fd: libc::c_int) -> *mut FILE {
   return xfdopen_helper((fd << 1i32) as libc::c_uint);
 }
 
@@ -442,7 +436,6 @@ pub unsafe extern "C" fn xfdopen_for_read(mut fd: libc::c_int) -> *mut FILE {
 /* extern char *xmalloc_fgetline_fast(FILE *file) FAST_FUNC RETURNS_MALLOC; */
 /* Prints warning to stderr and returns NULL on failure: */
 /* "Opens" stdin if filename is special, else just opens file: */
-#[no_mangle]
-pub unsafe extern "C" fn xfdopen_for_write(mut fd: libc::c_int) -> *mut FILE {
+pub unsafe fn xfdopen_for_write(mut fd: libc::c_int) -> *mut FILE {
   return xfdopen_helper(((fd << 1i32) + 1i32) as libc::c_uint);
 }

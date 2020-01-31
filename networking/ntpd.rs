@@ -3049,7 +3049,7 @@ unsafe extern "C" fn ntp_init(mut argv: *mut *mut libc::c_char) {
   }
   crate::libbb::signals::bb_signals(
     0 | 1i32 << 15i32 | 1i32 << 2i32 | 1i32 << 14i32,
-    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo),
   );
   crate::libbb::signals::bb_signals(
     0 | 1i32 << 13i32 | 1i32 << 17i32,

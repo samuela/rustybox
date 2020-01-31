@@ -66,7 +66,7 @@ pub const LOGMODE_STDIO: C2RustUnnamed_0 = 1;
 pub const LOGMODE_NONE: C2RustUnnamed_0 = 0;
 /* remix */
 /* recoded such that the uid may be passed in *p */
-unsafe extern "C" fn passwd_study(mut p: *mut passwd) {
+unsafe fn passwd_study(mut p: *mut passwd) {
   let mut max: libc::c_int = 60000i32;
   if !bb_internal_getpwnam((*p).pw_name).is_null() {
     crate::libbb::verror_msg::bb_error_msg_and_die(
@@ -118,7 +118,7 @@ unsafe extern "C" fn passwd_study(mut p: *mut passwd) {
     }
   };
 }
-unsafe extern "C" fn addgroup_wrapper(
+unsafe fn addgroup_wrapper(
   mut p: *mut passwd,
   mut group_name: *const libc::c_char,
 ) -> libc::c_int {
@@ -142,7 +142,7 @@ unsafe extern "C" fn addgroup_wrapper(
   }
   return crate::libbb::vfork_daemon_rexec::spawn_and_wait(argv.as_mut_ptr());
 }
-unsafe extern "C" fn passwd_wrapper(mut login_name: *const libc::c_char) -> ! {
+unsafe fn passwd_wrapper(mut login_name: *const libc::c_char) -> ! {
   execlp(
     b"passwd\x00" as *const u8 as *const libc::c_char,
     b"passwd\x00" as *const u8 as *const libc::c_char,
@@ -169,8 +169,7 @@ static mut adduser_longopts: [libc::c_char; 110] = [
  * home, shell, gecos:
  * can be customized via command-line parameters.
  */
-#[no_mangle]
-pub unsafe extern "C" fn adduser_main(
+pub unsafe fn adduser_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

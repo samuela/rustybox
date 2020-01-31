@@ -23,8 +23,7 @@ use libc::puts;
 //usage:       "FILE..."
 //usage:#define realpath_full_usage "\n\n"
 //usage:       "Return the absolute pathnames of given FILE"
-#[no_mangle]
-pub unsafe extern "C" fn realpath_main(
+pub unsafe fn realpath_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

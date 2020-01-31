@@ -82,14 +82,10 @@ pub const OPTBIT_OMIT: C2RustUnnamed = 1;
 pub const OPTBIT_SINGLE: C2RustUnnamed = 0;
 
 #[inline(always)]
-unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
+unsafe fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
   return crate::libbb::xatonum::xatoull(str) as libc::c_ulong; /* list of pids to omit */
 }
-#[no_mangle]
-pub unsafe extern "C" fn pidof_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn pidof_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut first: libc::c_uint = 1i32 as libc::c_uint;
   let mut opt: libc::c_uint = 0;
   let mut omits: *mut llist_t = std::ptr::null_mut();

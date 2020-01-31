@@ -51,7 +51,7 @@ pub struct archive_handle_t {
   pub src_fd: libc::c_int,
 
   /* Define if the header and data component should be processed */
-  pub filter: Option<unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char>,
+  pub filter: Option<unsafe fn(_: *mut archive_handle_t) -> libc::c_char>,
 
   /* List of files that have been accepted */
   pub accept: *mut llist_t,
@@ -67,13 +67,13 @@ pub struct archive_handle_t {
   pub link_placeholders: *mut llist_t,
 
   /* Process the header component, e.g. tar -t */
-  pub action_header: Option<unsafe extern "C" fn(_: *const file_header_t) -> ()>,
+  pub action_header: Option<unsafe fn(_: *const file_header_t) -> ()>,
 
   /* Process the data component, e.g. extract to filesystem */
-  pub action_data: Option<unsafe extern "C" fn(_: *mut archive_handle_t) -> ()>,
+  pub action_data: Option<unsafe fn(_: *mut archive_handle_t) -> ()>,
 
   /* Function that skips data */
-  pub seek: Option<unsafe extern "C" fn(_: libc::c_int, _: off_t) -> ()>,
+  pub seek: Option<unsafe fn(_: libc::c_int, _: off_t) -> ()>,
 
   /* Count processed bytes */
   pub offset: off_t,
@@ -94,7 +94,7 @@ pub struct archive_handle_t {
   pub dpkg__buffer: *mut libc::c_char,
   /* How to process any sub archive, e.g. get_header_tar_gz */
   pub dpkg__action_data_subarchive:
-    Option<unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char>,
+    Option<unsafe fn(_: *mut archive_handle_t) -> libc::c_char>,
   /* Contains the handle to a sub archive */
   pub dpkg__sub_archive: *mut archive_handle_t,
 }
@@ -109,7 +109,7 @@ pub static mut cpio_TRAILER: [libc::c_char; 11] = [84, 82, 65, 73, 76, 69, 82, 3
 pub struct transformer_state_t {
   pub signature_skipped: smallint,
 
-  pub xformer: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong>,
+  pub xformer: Option<unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong>,
 
   pub src_fd: libc::c_int,         /* Source */
   pub dst_fd: libc::c_int,         /* Output */

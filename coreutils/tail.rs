@@ -40,7 +40,7 @@ pub struct globals {
   pub from_top: bool,
   pub exitcode: bool,
 }
-unsafe extern "C" fn tail_xprint_header(
+unsafe fn tail_xprint_header(
   mut fmt: *const libc::c_char,
   mut filename: *const libc::c_char,
 ) {
@@ -48,7 +48,7 @@ unsafe extern "C" fn tail_xprint_header(
     crate::libbb::perror_nomsg_and_die::bb_perror_nomsg_and_die();
   };
 }
-unsafe extern "C" fn tail_read(
+unsafe fn tail_read(
   mut fd: libc::c_int,
   mut buf: *mut libc::c_char,
   mut count: size_t,
@@ -63,7 +63,7 @@ unsafe extern "C" fn tail_read(
   }
   return r;
 }
-unsafe extern "C" fn eat_num(mut p: *const libc::c_char) -> libc::c_uint {
+unsafe fn eat_num(mut p: *const libc::c_char) -> libc::c_uint {
   if *p as libc::c_int == '-' as i32 {
     p = p.offset(1)
   } else if *p as libc::c_int == '+' as i32 {
@@ -72,11 +72,7 @@ unsafe extern "C" fn eat_num(mut p: *const libc::c_char) -> libc::c_uint {
   }
   return crate::libbb::xatonum::xatou_sfx(p, bkm_suffixes.as_ptr());
 }
-#[no_mangle]
-pub unsafe extern "C" fn tail_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn tail_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut count: libc::c_uint = 10i32 as libc::c_uint;
   let mut sleep_period: libc::c_uint = 1i32 as libc::c_uint;
   let mut str_c: *const libc::c_char = std::ptr::null();

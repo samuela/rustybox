@@ -230,7 +230,7 @@ unsafe extern "C" fn nud_state_a2n(mut arg: *mut libc::c_char) -> libc::c_uint {
   }
   return nuds[id as usize] as libc::c_uint;
 }
-unsafe extern "C" fn print_neigh(
+unsafe fn print_neigh(
   mut _who: *const sockaddr_nl,
   mut n: *mut nlmsghdr,
   mut _arg: *mut libc::c_void,
@@ -683,14 +683,7 @@ unsafe extern "C" fn ipneigh_list_or_flush(
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut filter_t)).flushed = 0;
       if crate::networking::libiproute::libnetlink::xrtnl_dump_filter(
         &mut rth,
-        Some(
-          print_neigh
-            as unsafe extern "C" fn(
-              _: *const sockaddr_nl,
-              _: *mut nlmsghdr,
-              _: *mut libc::c_void,
-            ) -> libc::c_int,
-        ),
+        Some(print_neigh),
         0 as *mut libc::c_void,
       ) < 0
       {
@@ -739,14 +732,7 @@ unsafe extern "C" fn ipneigh_list_or_flush(
   }
   if crate::networking::libiproute::libnetlink::xrtnl_dump_filter(
     &mut rth,
-    Some(
-      print_neigh
-        as unsafe extern "C" fn(
-          _: *const sockaddr_nl,
-          _: *mut nlmsghdr,
-          _: *mut libc::c_void,
-        ) -> libc::c_int,
-    ),
+    Some(print_neigh),
     0 as *mut libc::c_void,
   ) < 0
   {
@@ -761,8 +747,7 @@ unsafe extern "C" fn ipneigh_list_or_flush(
 //int FAST_FUNC iproute_monitor(char **argv);
 //void FAST_FUNC ipneigh_reset_filter(void);
 /* Return value becomes exitcode. It's okay to not return at all */
-#[no_mangle]
-pub unsafe extern "C" fn do_ipneigh(mut argv: *mut *mut libc::c_char) -> libc::c_int {
+pub unsafe fn do_ipneigh(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   static mut ip_neigh_commands: [libc::c_char; 12] =
     [115, 104, 111, 119, 0, 102, 108, 117, 115, 104, 0, 0];
   let mut command_num: libc::c_int = 0;

@@ -100,11 +100,7 @@ static mut opcode_name: [libc::c_char; 213] = [
   117, 110, 108, 111, 97, 100, 0, 117, 110, 108, 111, 99, 107, 0, 101, 111, 102, 0, 119, 101, 111,
   102, 0, 0,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn mt_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn mt_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut file: *const libc::c_char = b"/dev/tape\x00" as *const u8 as *const libc::c_char; /* One, not zero, right? */
   let mut op: mtop = mtop {
     mt_op: 0,

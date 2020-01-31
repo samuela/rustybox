@@ -63,8 +63,7 @@ pub const STALLTIME: C2RustUnnamed = 5;
  * SUCH DAMAGE.
  */
 pub type C2RustUnnamed = libc::c_uint;
-#[no_mangle]
-pub unsafe extern "C" fn bb_progress_init(
+pub unsafe fn bb_progress_init(
   mut p: *mut bb_progress_t,
   mut curfile: *const libc::c_char,
 ) {
@@ -633,8 +632,7 @@ pub unsafe extern "C" fn bb_progress_init(
  * will be "totalsize" bytes.
  * If totalsize == 0, then it is unknown.
  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_progress_update(
+pub unsafe fn bb_progress_update(
   mut p: *mut bb_progress_t,
   mut beg_size: uoff_t,
   mut transferred: uoff_t,

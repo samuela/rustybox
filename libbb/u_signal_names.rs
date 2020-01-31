@@ -74,8 +74,7 @@ static mut signals: [[libc::c_char; 7]; 32] = [
   [83, 89, 83, 0, 0, 0, 0],
 ];
 // Convert signal name to number.
-#[no_mangle]
-pub unsafe extern "C" fn get_signum(mut name: *const libc::c_char) -> libc::c_int {
+pub unsafe fn get_signum(mut name: *const libc::c_char) -> libc::c_int {
   let mut i: libc::c_uint = 0;
   /* bb_strtou returns UINT_MAX on error. NSIG is smaller
    * than UINT_MAX on any sane Unix. Hence no need
@@ -155,8 +154,7 @@ pub unsafe extern "C" fn get_signum(mut name: *const libc::c_char) -> libc::c_in
   return -1i32;
 }
 // Convert signal number to name
-#[no_mangle]
-pub unsafe extern "C" fn get_signame(mut number: libc::c_int) -> *const libc::c_char {
+pub unsafe fn get_signame(mut number: libc::c_int) -> *const libc::c_char {
   if (number as libc::c_uint)
     < (::std::mem::size_of::<[[libc::c_char; 7]; 32]>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<[libc::c_char; 7]>() as libc::c_ulong)
@@ -600,8 +598,7 @@ pub unsafe extern "C" fn get_signame(mut number: libc::c_int) -> *const libc::c_
  * filename should not be NULL. */
 /* Returns NULL on . and .. */
 // Print the whole signal list
-#[no_mangle]
-pub unsafe extern "C" fn print_signames() {
+pub unsafe fn print_signames() {
   let mut signo: libc::c_uint = 0;
   signo = 1i32 as libc::c_uint;
   while signo

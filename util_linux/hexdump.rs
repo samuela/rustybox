@@ -90,7 +90,7 @@ pub struct FS {
 use crate::libbb::dump::dumper_t;
 
 #[inline(always)]
-unsafe extern "C" fn bb_ascii_isxdigit(mut a: libc::c_uchar) -> libc::c_int {
+unsafe fn bb_ascii_isxdigit(mut a: libc::c_uchar) -> libc::c_int {
   let mut b: libc::c_uchar = (a as libc::c_int - '0' as i32) as libc::c_uchar;
   if b as libc::c_int <= 9i32 {
     return (b as libc::c_int <= 9i32) as libc::c_int;
@@ -159,7 +159,7 @@ unsafe extern "C" fn bb_ascii_isxdigit(mut a: libc::c_uchar) -> libc::c_int {
 //usage:#define hd_full_usage "\n\n"
 //usage:       "hd is an alias for hexdump -C"
 /* This is a NOEXEC applet. Be very careful! */
-unsafe extern "C" fn bb_dump_addfile(mut dumper: *mut dumper_t, mut name: *mut libc::c_char) {
+unsafe fn bb_dump_addfile(mut dumper: *mut dumper_t, mut name: *mut libc::c_char) {
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -188,8 +188,7 @@ static mut add_first: [libc::c_char; 12] = [34, 37, 48, 55, 46, 55, 95, 65, 120,
 static mut hexdump_opts: [libc::c_char; 17] = [
   98, 99, 100, 111, 120, 67, 101, 58, 102, 58, 110, 58, 115, 58, 118, 82, 0,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn hexdump_main(
+pub unsafe fn hexdump_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

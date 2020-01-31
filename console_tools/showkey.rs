@@ -51,19 +51,19 @@ pub const OPT_a: C2RustUnnamed_0 = 1;
 pub type C2RustUnnamed_0 = libc::c_uint;
 
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 // display only the raw scan-codes
 // set raw tty mode
 // also used by microcom
 // libbb candidates?
-unsafe extern "C" fn xget1(mut t: *mut termios, mut oldt: *mut termios) {
+unsafe fn xget1(mut t: *mut termios, mut oldt: *mut termios) {
   tcgetattr(0i32, oldt);
   *t = *oldt;
   cfmakeraw(t);
 }
-unsafe extern "C" fn xset1(mut t: *mut termios) {
+unsafe fn xset1(mut t: *mut termios) {
   let mut ret: libc::c_int = tcsetattr(0i32, 2i32, t);
   if ret != 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg(
@@ -71,8 +71,7 @@ unsafe extern "C" fn xset1(mut t: *mut termios) {
     );
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn showkey_main(
+pub unsafe fn showkey_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -142,7 +141,7 @@ pub unsafe extern "C" fn showkey_main(
     // we should exit on any signal; signals should interrupt read
     crate::libbb::signals::bb_signals_recursive_norestart(
       BB_FATAL_SIGS as libc::c_int,
-      Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+      Some(crate::libbb::signals::record_signo),
     );
     // inform user that program ends after time of inactivity
     printf(

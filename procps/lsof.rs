@@ -70,11 +70,7 @@ pub const PSSCAN_PID: C2RustUnnamed = 1;
  * runsvdir  1116 root    3r   DIR                8,6     1560      58359 /.local/var/service
  * gpm       1128 root    4u  unix 0xffff88007c09ccc0                1302 /dev/gpmctl
  */
-#[no_mangle]
-pub unsafe extern "C" fn lsof_main(
-  mut _argc: libc::c_int,
-  mut _argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn lsof_main(mut _argc: libc::c_int, mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut proc_0: *mut procps_status_t = std::ptr::null_mut();
   loop {
     proc_0 = crate::libbb::procps::procps_scan(

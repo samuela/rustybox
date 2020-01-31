@@ -75,10 +75,10 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 pub const INITBUF_SIZE: C2RustUnnamed_0 = 1024;
 pub const USERSIZE: C2RustUnnamed_0 = 1023;
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
-unsafe extern "C" fn bad_nums(
+unsafe fn bad_nums(
   mut num1: libc::c_int,
   mut num2: libc::c_int,
   mut for_what: *const libc::c_char,
@@ -95,7 +95,7 @@ unsafe extern "C" fn bad_nums(
 /*
  * Return a pointer to the specified line number.
  */
-unsafe extern "C" fn findLine(mut num: libc::c_int) -> *mut LINE {
+unsafe fn findLine(mut num: libc::c_int) -> *mut LINE {
   let mut lp: *mut LINE = std::ptr::null_mut();
   let mut lnum: libc::c_int = 0;
   if num < 1i32 || num > (*ptr_to_globals).lastNum {
@@ -135,7 +135,7 @@ unsafe extern "C" fn findLine(mut num: libc::c_int) -> *mut LINE {
  * Search a line for the specified string starting at the specified
  * offset in the line.  Returns the offset of the found string, or -1.
  */
-unsafe extern "C" fn findString(
+unsafe fn findString(
   mut lp: *const LINE,
   mut str: *const libc::c_char,
   mut len: libc::c_int,
@@ -178,7 +178,7 @@ unsafe extern "C" fn findString(
  * with an error printed.
  */
 #[inline(never)]
-unsafe extern "C" fn searchLines(
+unsafe fn searchLines(
   mut str: *const libc::c_char,
   mut num1: libc::c_int,
   mut num2: libc::c_int,
@@ -231,7 +231,7 @@ unsafe extern "C" fn searchLines(
  * Returns NULL if there was a parsing error, with a message output.
  * Whether there was a number is returned indirectly, as is the number.
  */
-unsafe extern "C" fn getNum(
+unsafe fn getNum(
   mut cp: *const libc::c_char,
   mut retHaveNum: *mut smallint,
   mut retNum: *mut libc::c_int,
@@ -331,7 +331,7 @@ unsafe extern "C" fn getNum(
  * Set the current line number.
  * Returns TRUE if successful.
  */
-unsafe extern "C" fn setCurNum(mut num: libc::c_int) -> libc::c_int {
+unsafe fn setCurNum(mut num: libc::c_int) -> libc::c_int {
   let mut lp: *mut LINE = std::ptr::null_mut();
   lp = findLine(num);
   if lp.is_null() {
@@ -348,7 +348,7 @@ unsafe extern "C" fn setCurNum(mut num: libc::c_int) -> libc::c_int {
  * The inserted line is also set to become the current line.
  * Returns TRUE if successful.
  */
-unsafe extern "C" fn insertLine(
+unsafe fn insertLine(
   mut num: libc::c_int,
   mut data: *const libc::c_char,
   mut len: libc::c_int,
@@ -395,7 +395,7 @@ unsafe extern "C" fn insertLine(
  * The lines are terminated by a line containing a single dot (ugly!),
  * or by an end of file.
  */
-unsafe extern "C" fn addLines(mut num: libc::c_int) {
+unsafe fn addLines(mut num: libc::c_int) {
   let mut len: libc::c_int = 0;
   let mut buf: [libc::c_char; 1024] = [0; 1024];
   loop {
@@ -432,7 +432,7 @@ unsafe extern "C" fn addLines(mut num: libc::c_int) {
  * Read lines from a file at the specified line number.
  * Returns TRUE if the file was successfully read.
  */
-unsafe extern "C" fn readLines(mut file: *const libc::c_char, mut num: libc::c_int) -> libc::c_int {
+unsafe fn readLines(mut file: *const libc::c_char, mut num: libc::c_int) -> libc::c_int {
   let mut fd: libc::c_int = 0;
   let mut cc: libc::c_int = 0;
   let mut len: libc::c_int = 0;
@@ -539,7 +539,7 @@ unsafe extern "C" fn readLines(mut file: *const libc::c_char, mut num: libc::c_i
  * Write the specified lines out to the specified file.
  * Returns TRUE if successful, or FALSE on an error with a message output.
  */
-unsafe extern "C" fn writeLines(
+unsafe fn writeLines(
   mut file: *const libc::c_char,
   mut num1: libc::c_int,
   mut num2: libc::c_int,
@@ -602,7 +602,7 @@ unsafe extern "C" fn writeLines(
  * If expandFlag is TRUE, then the line is printed specially to
  * show magic characters.
  */
-unsafe extern "C" fn printLines(
+unsafe fn printLines(
   mut num1: libc::c_int,
   mut num2: libc::c_int,
   mut expandFlag: libc::c_int,
@@ -662,7 +662,7 @@ unsafe extern "C" fn printLines(
 /*
  * Delete lines from the given range.
  */
-unsafe extern "C" fn deleteLines(mut num1: libc::c_int, mut num2: libc::c_int) {
+unsafe fn deleteLines(mut num1: libc::c_int, mut num2: libc::c_int) {
   let mut lp: *mut LINE = std::ptr::null_mut();
   let mut nlp: *mut LINE = std::ptr::null_mut();
   let mut plp: *mut LINE = std::ptr::null_mut();
@@ -712,7 +712,7 @@ unsafe extern "C" fn deleteLines(mut num1: libc::c_int, mut num2: libc::c_int) {
  * Do the substitute command.
  * The current line is set to the last substitution done.
  */
-unsafe extern "C" fn subCommand(
+unsafe fn subCommand(
   mut cmd: *const libc::c_char,
   mut num1: libc::c_int,
   mut num2: libc::c_int,
@@ -926,7 +926,7 @@ unsafe extern "C" fn subCommand(
 /*
  * Read commands until we are told to stop.
  */
-unsafe extern "C" fn doCommands() {
+unsafe fn doCommands() {
   while 1i32 != 0 {
     let mut buf: [libc::c_char; 1023] = [0; 1023];
     let mut cp: *const libc::c_char = std::ptr::null();
@@ -1202,11 +1202,7 @@ unsafe extern "C" fn doCommands() {
     }
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn ed_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn ed_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let ref mut fresh14 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
       as *mut *mut globals);

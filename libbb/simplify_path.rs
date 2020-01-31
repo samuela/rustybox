@@ -10,8 +10,7 @@ use libc::free;
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_simplify_abs_path_inplace(
+pub unsafe fn bb_simplify_abs_path_inplace(
   mut start: *mut libc::c_char,
 ) -> *mut libc::c_char {
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -502,8 +501,7 @@ pub unsafe extern "C" fn bb_simplify_abs_path_inplace(
  * If path is NULL, it is assumed to be "/".
  * filename should not be NULL. */
 /* Returns NULL on . and .. */
-#[no_mangle]
-pub unsafe extern "C" fn bb_simplify_path(mut path: *const libc::c_char) -> *mut libc::c_char {
+pub unsafe fn bb_simplify_path(mut path: *const libc::c_char) -> *mut libc::c_char {
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if *path.offset(0) as libc::c_int == '/' as i32 {

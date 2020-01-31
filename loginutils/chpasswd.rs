@@ -64,8 +64,7 @@ static mut chpasswd_longopts: [libc::c_char; 41] = [
   101, 110, 99, 114, 121, 112, 116, 101, 100, 0, 0, 101, 109, 100, 53, 0, 0, 109, 99, 114, 121,
   112, 116, 45, 109, 101, 116, 104, 111, 100, 0, 1, 99, 114, 111, 111, 116, 0, 1, 82, 0,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn chpasswd_main(
+pub unsafe fn chpasswd_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

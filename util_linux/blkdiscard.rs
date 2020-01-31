@@ -42,8 +42,7 @@ pub const OPT_LENGTH: C2RustUnnamed = 2;
 //usage:
 //usage:#define blkdiscard_example_usage
 //usage:	"$ blkdiscard -o 0 -l 1G /dev/sdb"
-#[no_mangle]
-pub unsafe extern "C" fn blkdiscard_main(
+pub unsafe fn blkdiscard_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

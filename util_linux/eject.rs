@@ -39,7 +39,7 @@ pub struct sg_io_hdr {
 pub type sg_io_hdr_t = sg_io_hdr;
 /* Code taken from the original eject (http://eject.sourceforge.net/),
  * refactored it a bit for busybox (ne-bb@nicoerfurth.de) */
-unsafe extern "C" fn eject_scsi(mut dev: *const libc::c_char) {
+unsafe fn eject_scsi(mut dev: *const libc::c_char) {
   static mut sg_commands: [[libc::c_char; 6]; 3] = [
     [
       0x1ei32 as libc::c_char,
@@ -115,7 +115,7 @@ unsafe extern "C" fn eject_scsi(mut dev: *const libc::c_char) {
       | (0i32 << 0 + 8i32 + 8i32) as libc::c_uint) as libc::c_ulong,
   );
 }
-unsafe extern "C" fn eject_cdrom(mut flags: libc::c_uint, mut dev: *const libc::c_char) {
+unsafe fn eject_cdrom(mut flags: libc::c_uint, mut dev: *const libc::c_char) {
   let mut cmd: libc::c_int = 0x5309i32;
   if flags & 1i32 as libc::c_uint != 0
     || flags & 2i32 as libc::c_uint != 0 && ioctl(3i32, 0x5326i32 as libc::c_ulong) == 2i32
@@ -130,8 +130,7 @@ unsafe extern "C" fn eject_cdrom(mut flags: libc::c_uint, mut dev: *const libc::
     dev,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn eject_main(
+pub unsafe fn eject_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

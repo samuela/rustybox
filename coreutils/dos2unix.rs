@@ -78,7 +78,7 @@ pub type C2RustUnnamed = libc::c_uint;
 pub const CT_DOS2UNIX: C2RustUnnamed = 2;
 pub const CT_UNIX2DOS: C2RustUnnamed = 1;
 /* if fn is NULL then input is stdin and output is stdout */
-unsafe extern "C" fn convert(mut fn_0: *mut libc::c_char, mut conv_type: libc::c_int) {
+unsafe fn convert(mut fn_0: *mut libc::c_char, mut conv_type: libc::c_int) {
   let mut in_0: *mut FILE = std::ptr::null_mut(); /* for compiler */
   let mut out: *mut FILE = std::ptr::null_mut();
   let mut ch: libc::c_int = 0;
@@ -133,8 +133,7 @@ unsafe extern "C" fn convert(mut fn_0: *mut libc::c_char, mut conv_type: libc::c
     free(resolved_fn as *mut libc::c_void);
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn dos2unix_main(
+pub unsafe fn dos2unix_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

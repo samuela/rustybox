@@ -26,7 +26,7 @@ use libc::stat;
 //usage:#define pwd_example_usage
 //usage:       "$ pwd\n"
 //usage:       "/root\n"
-unsafe extern "C" fn logical_getcwd() -> libc::c_int {
+unsafe fn logical_getcwd() -> libc::c_int {
   let mut st1: stat = std::mem::zeroed();
   let mut st2: stat = std::mem::zeroed();
   let mut wd: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -71,11 +71,7 @@ unsafe extern "C" fn logical_getcwd() -> libc::c_int {
   puts(wd);
   return 1i32;
 }
-#[no_mangle]
-pub unsafe extern "C" fn pwd_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn pwd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
    * Rationale:

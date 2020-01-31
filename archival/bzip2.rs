@@ -233,7 +233,7 @@ This program is released under the terms of the license contained
 in the file LICENSE.
 ------------------------------------------------------------------ */
 /* #include "bzlib_private.h" */
-unsafe extern "C" fn mvswap(mut ptr: *mut u32, mut zzp1: i32, mut zzp2: i32, mut zzn: i32) {
+unsafe fn mvswap(mut ptr: *mut u32, mut zzp1: i32, mut zzp2: i32, mut zzn: i32) {
   while zzn > 0 {
     let mut zztmp: i32 = *ptr.offset(zzp1 as isize) as i32;
     *ptr.offset(zzp1 as isize) = *ptr.offset(zzp2 as isize);
@@ -244,7 +244,7 @@ unsafe extern "C" fn mvswap(mut ptr: *mut u32, mut zzp1: i32, mut zzp2: i32, mut
   }
 }
 #[inline(always)]
-unsafe extern "C" fn mmin(mut a: i32, mut b: i32) -> i32 {
+unsafe fn mmin(mut a: i32, mut b: i32) -> i32 {
   return if a < b { a } else { b };
 }
 /*---------------------------------------------*/
@@ -253,7 +253,7 @@ unsafe extern "C" fn mmin(mut a: i32, mut b: i32) -> i32 {
 /*---------------------------------------------*/
 /*---------------------------------------------*/
 #[inline]
-unsafe extern "C" fn fallbackSimpleSort(
+unsafe fn fallbackSimpleSort(
   mut fmap: *mut u32,
   mut eclass: *mut u32,
   mut lo: i32,
@@ -293,7 +293,7 @@ unsafe extern "C" fn fallbackSimpleSort(
     i -= 1
   }
 }
-unsafe extern "C" fn fallbackQSort3(
+unsafe fn fallbackQSort3(
   mut fmap: *mut u32,
   mut eclass: *mut u32,
   mut loSt: i32,
@@ -428,7 +428,7 @@ unsafe extern "C" fn fallbackQSort3(
  *	fmap [0 .. nblock-1] holds sorted order
  *	bhtab[0 .. 2+(nblock/32)] destroyed
 */
-unsafe extern "C" fn fallbackSort(mut state: *mut EState) {
+unsafe fn fallbackSort(mut state: *mut EState) {
   let mut ftab: [i32; 257] = [0; 257];
   let mut ftabCopy: [i32; 256] = [0; 256];
   let mut H: i32 = 0;
@@ -608,7 +608,7 @@ unsafe extern "C" fn fallbackSort(mut state: *mut EState) {
 /*---------------------------------------------*/
 /*---------------------------------------------*/
 #[inline(never)]
-unsafe extern "C" fn mainGtU(mut state: *mut EState, mut i1: u32, mut i2: u32) -> libc::c_int {
+unsafe fn mainGtU(mut state: *mut EState, mut i1: u32, mut i2: u32) -> libc::c_int {
   let mut k: i32 = 0;
   let mut c1: u8 = 0;
   let mut c2: u8 = 0;
@@ -841,7 +841,7 @@ static mut incs: [u32; 14] = [
   797161i32 as u32,
   2391484i32 as u32,
 ];
-unsafe extern "C" fn mainSimpleSort(mut state: *mut EState, mut lo: i32, mut hi: i32, mut d: i32) {
+unsafe fn mainSimpleSort(mut state: *mut EState, mut lo: i32, mut hi: i32, mut d: i32) {
   let ptr: *mut u32 = (*state).ptr;
   /* At which increment to start? */
   let mut hp: libc::c_int = 0;
@@ -901,7 +901,7 @@ unsafe extern "C" fn mainSimpleSort(mut state: *mut EState, mut lo: i32, mut hi:
  * Sedgewick and Jon L. Bentley.
  */
 #[inline(always)]
-unsafe extern "C" fn mmed3(mut a: u8, mut b: u8, mut c: u8) -> u8 {
+unsafe fn mmed3(mut a: u8, mut b: u8, mut c: u8) -> u8 {
   let mut t: u8 = 0;
   if a as libc::c_int > b as libc::c_int {
     t = a;
@@ -918,7 +918,7 @@ unsafe extern "C" fn mmed3(mut a: u8, mut b: u8, mut c: u8) -> u8 {
   return b;
 }
 #[inline(never)]
-unsafe extern "C" fn mainQSort3(mut state: *mut EState, mut loSt: i32, mut hiSt: i32)
+unsafe fn mainQSort3(mut state: *mut EState, mut loSt: i32, mut hiSt: i32)
 /*i32 dSt*/
 {
   let mut unLo: i32 = 0;
@@ -1085,7 +1085,7 @@ unsafe extern "C" fn mainQSort3(mut state: *mut EState, mut loSt: i32, mut hiSt:
   }
 }
 #[inline(never)]
-unsafe extern "C" fn mainSort(mut state: *mut EState) {
+unsafe fn mainSort(mut state: *mut EState) {
   let mut i: i32 = 0;
   let mut j: i32 = 0;
   let mut bigDone: [Bool; 256] = [0; 256];
@@ -1378,7 +1378,7 @@ unsafe extern "C" fn mainSort(mut state: *mut EState) {
  *	arr1[0 .. nblock-1] holds sorted order
  */
 #[inline(never)]
-unsafe extern "C" fn BZ2_blockSort(mut state: *mut EState) -> i32 {
+unsafe fn BZ2_blockSort(mut state: *mut EState) -> i32 {
   let mut current_block: u64;
   /* In original bzip2 1.0.4, it's a parameter, but 30
    * (which was the default) should work ok. */
@@ -1467,7 +1467,7 @@ in the file LICENSE.
 /*---------------------------------------------------*/
 /*---------------------------------------------------*/
 /*---------------------------------------------------*/
-unsafe extern "C" fn prepare_new_block(mut s: *mut EState) {
+unsafe fn prepare_new_block(mut s: *mut EState) {
   let mut i: libc::c_int = 0;
   (*s).nblock = 0;
   //indexes into s->zbits[], initialzation moved to init of s->zbits
@@ -1484,16 +1484,16 @@ unsafe extern "C" fn prepare_new_block(mut s: *mut EState) {
 }
 /*---------------------------------------------------*/
 #[inline(always)]
-unsafe extern "C" fn init_RL(mut s: *mut EState) {
+unsafe fn init_RL(mut s: *mut EState) {
   (*s).state_in_ch = 256i32 as u32;
   (*s).state_in_len = 0;
 }
-unsafe extern "C" fn isempty_RL(mut s: *mut EState) -> libc::c_int {
+unsafe fn isempty_RL(mut s: *mut EState) -> libc::c_int {
   return ((*s).state_in_ch >= 256i32 as libc::c_uint || (*s).state_in_len <= 0) as libc::c_int;
 }
 /*-- Core (low-level) library functions --*/
 /*---------------------------------------------------*/
-unsafe extern "C" fn BZ2_bzCompressInit(mut strm: *mut bz_stream, mut blockSize100k: libc::c_int) {
+unsafe fn BZ2_bzCompressInit(mut strm: *mut bz_stream, mut blockSize100k: libc::c_int) {
   let mut n: libc::c_uint = 0;
   let mut s: *mut EState = std::ptr::null_mut();
   s = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<EState>() as libc::c_ulong)
@@ -1525,7 +1525,7 @@ unsafe extern "C" fn BZ2_bzCompressInit(mut strm: *mut bz_stream, mut blockSize1
   prepare_new_block(s);
 }
 /*---------------------------------------------------*/
-unsafe extern "C" fn add_pair_to_block(mut s: *mut EState) {
+unsafe fn add_pair_to_block(mut s: *mut EState) {
   let mut i: i32 = 0;
   let mut ch: u8 = (*s).state_in_ch as u8;
   i = 0;
@@ -1586,7 +1586,7 @@ unsafe extern "C" fn add_pair_to_block(mut s: *mut EState) {
   };
 }
 /*---------------------------------------------------*/
-unsafe extern "C" fn flush_RL(mut s: *mut EState) {
+unsafe fn flush_RL(mut s: *mut EState) {
   if (*s).state_in_ch < 256i32 as libc::c_uint {
     add_pair_to_block(s);
   }
@@ -1596,7 +1596,7 @@ unsafe extern "C" fn flush_RL(mut s: *mut EState) {
 /*-- fast track the common case --*/
 /*-- general, uncommon cases --*/
 /*---------------------------------------------------*/
-unsafe extern "C" fn copy_input_until_stop(mut s: *mut EState) {
+unsafe fn copy_input_until_stop(mut s: *mut EState) {
   /*Bool progress_in = False;*/
   /*-- general, uncommon case --*/
   /*-- no input? --*/
@@ -1634,7 +1634,7 @@ unsafe extern "C" fn copy_input_until_stop(mut s: *mut EState) {
   /*return progress_in;*/
 }
 /*---------------------------------------------------*/
-unsafe extern "C" fn copy_output_until_stop(mut s: *mut EState) {
+unsafe fn copy_output_until_stop(mut s: *mut EState) {
   /*Bool progress_out = False;*/
   /*-- no output space? --*/
   while !((*(*s).strm).avail_out == 0 as libc::c_uint) {
@@ -1653,7 +1653,7 @@ unsafe extern "C" fn copy_output_until_stop(mut s: *mut EState) {
   /*return progress_out;*/
 }
 /*---------------------------------------------------*/
-unsafe extern "C" fn handle_compress(mut strm: *mut bz_stream) {
+unsafe fn handle_compress(mut strm: *mut bz_stream) {
   /*Bool progress_in  = False;*/
   /*Bool progress_out = False;*/
   let mut s: *mut EState = (*strm).state as *mut EState;
@@ -1693,7 +1693,7 @@ unsafe extern "C" fn handle_compress(mut strm: *mut bz_stream) {
   /*return progress_in || progress_out;*/
 }
 /*---------------------------------------------------*/
-unsafe extern "C" fn BZ2_bzCompress(
+unsafe fn BZ2_bzCompress(
   mut strm: *mut bz_stream,
   mut action: libc::c_int,
 ) -> libc::c_int {
@@ -1734,7 +1734,7 @@ unsafe extern "C" fn BZ2_bzCompress(
   /* return BZ_OK; --not reached--*/
 }
 /*---------------------------------------------------*/
-unsafe extern "C" fn BZ2_bzCompressEnd(mut strm: *mut bz_stream) {
+unsafe fn BZ2_bzCompressEnd(mut strm: *mut bz_stream) {
   let mut s: *mut EState = std::ptr::null_mut();
   s = (*strm).state as *mut EState;
   free((*s).arr1 as *mut libc::c_void);
@@ -1777,13 +1777,13 @@ in the file LICENSE.
 /*--- Bit stream I/O                              ---*/
 /*---------------------------------------------------*/
 /*---------------------------------------------------*/
-unsafe extern "C" fn BZ2_bsInitWrite(mut s: *mut EState) {
+unsafe fn BZ2_bsInitWrite(mut s: *mut EState) {
   (*s).bsLive = 0;
   (*s).bsBuff = 0 as u32;
 }
 /*---------------------------------------------------*/
 #[inline(never)]
-unsafe extern "C" fn bsFinishWrite(mut s: *mut EState) {
+unsafe fn bsFinishWrite(mut s: *mut EState) {
   while (*s).bsLive > 0 {
     let fresh10 = (*s).posZ;
     (*s).posZ = (*s).posZ.offset(1);
@@ -1793,7 +1793,7 @@ unsafe extern "C" fn bsFinishWrite(mut s: *mut EState) {
   }
 }
 /*---------------------------------------------------*/
-unsafe extern "C" fn bsW(mut s: *mut EState, mut n: i32, mut v: u32) {
+unsafe fn bsW(mut s: *mut EState, mut n: i32, mut v: u32) {
   while (*s).bsLive >= 8i32 {
     let fresh11 = (*s).posZ;
     (*s).posZ = (*s).posZ.offset(1);
@@ -1805,7 +1805,7 @@ unsafe extern "C" fn bsW(mut s: *mut EState, mut n: i32, mut v: u32) {
   (*s).bsLive += n;
 }
 /* Same with n == 16: */
-unsafe extern "C" fn bsW16(mut s: *mut EState, mut v: u32) {
+unsafe fn bsW16(mut s: *mut EState, mut v: u32) {
   while (*s).bsLive >= 8i32 {
     let fresh12 = (*s).posZ;
     (*s).posZ = (*s).posZ.offset(1);
@@ -1818,7 +1818,7 @@ unsafe extern "C" fn bsW16(mut s: *mut EState, mut v: u32) {
 }
 /* Same with n == 1: */
 #[inline(always)]
-unsafe extern "C" fn bsW1_1(mut s: *mut EState) {
+unsafe fn bsW1_1(mut s: *mut EState) {
   /* need space for only 1 bit, no need for loop freeing > 8 bits */
   if (*s).bsLive >= 8i32 {
     let fresh13 = (*s).posZ;
@@ -1830,7 +1830,7 @@ unsafe extern "C" fn bsW1_1(mut s: *mut EState) {
   (*s).bsBuff |= (1i32 << 31i32 - (*s).bsLive) as libc::c_uint;
   (*s).bsLive += 1i32;
 }
-unsafe extern "C" fn bsW1_0(mut s: *mut EState) {
+unsafe fn bsW1_0(mut s: *mut EState) {
   /* need space for only 1 bit, no need for loop freeing > 8 bits */
   if (*s).bsLive >= 8i32 {
     let fresh14 = (*s).posZ;
@@ -1844,11 +1844,11 @@ unsafe extern "C" fn bsW1_0(mut s: *mut EState) {
 }
 /*---------------------------------------------------*/
 #[inline(always)]
-unsafe extern "C" fn bsPutU16(mut s: *mut EState, mut u: libc::c_uint) {
+unsafe fn bsPutU16(mut s: *mut EState, mut u: libc::c_uint) {
   bsW16(s, u);
 }
 /*---------------------------------------------------*/
-unsafe extern "C" fn bsPutU32(mut s: *mut EState, mut u: libc::c_uint) {
+unsafe fn bsPutU32(mut s: *mut EState, mut u: libc::c_uint) {
   //bsW(s, 32, u); // can't use: may try "uint32 << -n"
   bsW16(s, u >> 16i32 & 0xffffi32 as libc::c_uint);
   bsW16(s, u & 0xffffi32 as libc::c_uint);
@@ -1857,7 +1857,7 @@ unsafe extern "C" fn bsPutU32(mut s: *mut EState, mut u: libc::c_uint) {
 /*--- The back end proper                         ---*/
 /*---------------------------------------------------*/
 /*---------------------------------------------------*/
-unsafe extern "C" fn makeMaps_e(mut s: *mut EState) {
+unsafe fn makeMaps_e(mut s: *mut EState) {
   let mut i: libc::c_int = 0;
   let mut cnt: libc::c_uint = 0 as libc::c_uint;
   i = 0;
@@ -1882,7 +1882,7 @@ unsafe extern "C" fn makeMaps_e(mut s: *mut EState) {
  * Therefore NOINLINE is enabled for the entire 32bit x86 arch for now,
  * without a check for gcc version.
  */
-unsafe extern "C" fn inner_loop(mut yy: *mut u8, mut ll_i: u8) -> libc::c_int {
+unsafe fn inner_loop(mut yy: *mut u8, mut ll_i: u8) -> libc::c_int {
   let mut rtmp: u8 = 0;
   let mut ryy_j: *mut u8 = std::ptr::null_mut();
   rtmp = *yy.offset(1);
@@ -1899,7 +1899,7 @@ unsafe extern "C" fn inner_loop(mut yy: *mut u8, mut ll_i: u8) -> libc::c_int {
   return ryy_j.wrapping_offset_from(&mut *yy.offset(0) as *mut u8) as libc::c_long as libc::c_int;
 }
 #[inline(never)]
-unsafe extern "C" fn generateMTFValues(mut s: *mut EState) {
+unsafe fn generateMTFValues(mut s: *mut EState) {
   let mut ll_i: u8 = 0;
   let mut j: i32 = 0;
   let mut current_block: u64;
@@ -2009,7 +2009,7 @@ unsafe extern "C" fn generateMTFValues(mut s: *mut EState) {
   (*s).nMTF = wr;
 }
 #[inline(never)]
-unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
+unsafe fn sendMTFValues(mut s: *mut EState) {
   let mut t: i32 = 0;
   let mut i: i32 = 0;
   let mut iter: libc::c_uint = 0;
@@ -2377,7 +2377,7 @@ unsafe extern "C" fn sendMTFValues(mut s: *mut EState) {
   }
 }
 /*---------------------------------------------------*/
-unsafe extern "C" fn BZ2_compressBlock(mut s: *mut EState, mut is_last_block: libc::c_int) {
+unsafe fn BZ2_compressBlock(mut s: *mut EState, mut is_last_block: libc::c_int) {
   let mut origPtr: i32 = 0; // was: s->numZ = 0;
   origPtr = origPtr;
   if (*s).nblock > 0 {
@@ -2470,7 +2470,7 @@ in the file LICENSE.
 /* 90 bytes, 0.3% of overall compress speed */
 /* macro works better than inline (gcc 4.2.1) */
 /*---------------------------------------------------*/
-unsafe extern "C" fn BZ2_hbMakeCodeLengths(
+unsafe fn BZ2_hbMakeCodeLengths(
   mut s: *mut EState,
   mut len: *mut u8,
   mut freq: *mut i32,
@@ -2674,7 +2674,7 @@ unsafe extern "C" fn BZ2_hbMakeCodeLengths(
   }
 }
 /*---------------------------------------------------*/
-unsafe extern "C" fn BZ2_hbAssignCodes(
+unsafe fn BZ2_hbAssignCodes(
   mut code: *mut i32,
   mut length: *mut u8,
   mut minLen: i32,
@@ -2707,7 +2707,7 @@ unsafe extern "C" fn BZ2_hbAssignCodes(
  * -1 on errors
  * total written bytes so far otherwise
  */
-unsafe extern "C" fn bz_write(
+unsafe fn bz_write(
   mut strm: *mut bz_stream,
   mut rbuf: *mut libc::c_void,
   mut rlen: ssize_t,
@@ -2753,7 +2753,7 @@ unsafe extern "C" fn bz_write(
   }
   return (0i32 as libc::c_ulonglong).wrapping_add((*strm).total_out) as libc::c_longlong;
 }
-unsafe extern "C" fn compressStream(mut _xstate: *mut transformer_state_t) -> libc::c_longlong {
+unsafe fn compressStream(mut _xstate: *mut transformer_state_t) -> libc::c_longlong {
   let mut total: libc::c_longlong = 0;
   let mut opt: libc::c_uint = 0;
   let mut level: libc::c_uint = 0;
@@ -2835,10 +2835,10 @@ pub unsafe fn bzip2_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char
   argv = argv.offset(optind as isize);
   return crate::archival::bbunzip::bbunpack(
     argv,
-    Some(compressStream as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong),
+    Some(compressStream as unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong),
     Some(
       crate::archival::bbunzip::append_ext
-        as unsafe extern "C" fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
+        as unsafe fn(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char,
     ),
     b"bz2\x00" as *const u8 as *const libc::c_char,
   );

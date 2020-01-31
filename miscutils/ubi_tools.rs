@@ -100,8 +100,7 @@ unsafe extern "C" fn get_num_from_file(
   }
   return num as libc::c_uint;
 }
-#[no_mangle]
-pub unsafe extern "C" fn ubi_tools_main(
+pub unsafe fn ubi_tools_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

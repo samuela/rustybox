@@ -155,8 +155,7 @@ static mut bcache_magic: [libc::c_char; 16] = [
 /* FS */
 /* supper block offset in kB */
 /* magic string offset within super block */
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_probe_bcache(mut id: *mut volume_id) -> libc::c_int
+pub unsafe fn volume_id_probe_bcache(mut id: *mut volume_id) -> libc::c_int
 /*,uint64_t off*/ {
   let mut sb: *mut bcache_super_block = std::ptr::null_mut();
   sb = crate::util_linux::volume_id::util::volume_id_get_buffer(

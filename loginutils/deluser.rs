@@ -74,8 +74,7 @@ pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
 //usage:#define delgroup_full_usage "\n\n"
 //usage:       "Delete group GROUP from the system"
 //usage:	IF_FEATURE_DEL_USER_FROM_GROUP(" or user USER from group GROUP")
-#[no_mangle]
-pub unsafe extern "C" fn deluser_main(
+pub unsafe fn deluser_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

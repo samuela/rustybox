@@ -23,8 +23,7 @@ extern "C" {
 //usage:	"FILE"
 //usage:#define unlink_full_usage "\n\n"
 //usage:	"Delete FILE by calling unlink()"
-#[no_mangle]
-pub unsafe extern "C" fn unlink_main(
+pub unsafe fn unlink_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

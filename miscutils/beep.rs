@@ -11,11 +11,7 @@ extern "C" {
 }
 use libc::useconds_t;
 pub type uintptr_t = libc::c_ulong;
-#[no_mangle]
-pub unsafe extern "C" fn beep_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn beep_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut speaker: libc::c_int = crate::libbb::get_console::get_console_fd_or_die(); /* for compiler */
   let mut tickrate_div_freq: libc::c_uint = 0;
   tickrate_div_freq = tickrate_div_freq;

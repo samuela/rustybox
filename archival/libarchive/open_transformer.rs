@@ -177,7 +177,7 @@ pub unsafe fn check_errors_in_children(mut signo: libc::c_int) {
 pub unsafe fn fork_transformer(
   mut fd: libc::c_int,
   mut signature_skipped: libc::c_int,
-  mut transformer: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong>,
+  mut transformer: Option<unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong>,
 ) {
   let mut fd_pipe: fd_pair = fd_pair { rd: 0, wr: 0 };
   let mut pid: libc::c_int = 0;
@@ -217,7 +217,7 @@ pub unsafe fn fork_transformer(
 /* Used by e.g. rpm which gives us a fd without filename,
  * thus we can't guess the format from filename's extension.
  */
-unsafe extern "C" fn setup_transformer_on_fd(
+unsafe fn setup_transformer_on_fd(
   mut fd: libc::c_int,
   mut fail_if_not_compressed: libc::c_int,
 ) -> *mut transformer_state_t {
@@ -238,14 +238,14 @@ unsafe extern "C" fn setup_transformer_on_fd(
   if 1i32 != 0 && (*xstate).magic.b16[0] as libc::c_int == GZIP_MAGIC as libc::c_int {
     (*xstate).xformer = Some(
       crate::archival::libarchive::decompress_gunzip::unpack_gz_stream
-        as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
+        as unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong,
     )
   } else if false && (*xstate).magic.b16[0] as libc::c_int == COMPRESS_MAGIC as libc::c_int {
     // Branch conditional was originally
     //    if (ENABLE_FEATURE_SEAMLESS_Z && xstate->magic.b16[0] == COMPRESS_MAGIC
 
     // (*xstate).xformer =
-    //   Some(unpack_Z_stream as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong)
+    //   Some(unpack_Z_stream as unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong)
   } else if 1i32 != 0 && (*xstate).magic.b16[0] as libc::c_int == BZIP2_MAGIC as libc::c_int {
     (*xstate).xformer = Some(crate::archival::libarchive::decompress_bunzip2::unpack_bz2_stream)
   } else {
@@ -261,7 +261,7 @@ unsafe extern "C" fn setup_transformer_on_fd(
       if v32 == XZ_MAGIC2 as libc::c_int as libc::c_uint {
         (*xstate).xformer = Some(
           crate::archival::libarchive::decompress_unxz::unpack_xz_stream
-            as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
+            as unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong,
         );
         current_block = 4138974559695082291;
       } else {
@@ -290,7 +290,7 @@ unsafe extern "C" fn setup_transformer_on_fd(
   //	USE_FOR_NOMMU(xstate->xformer_prog = "cat";)
   return xstate;
 }
-unsafe extern "C" fn fork_transformer_and_free(mut xstate: *mut transformer_state_t) {
+unsafe fn fork_transformer_and_free(mut xstate: *mut transformer_state_t) {
   fork_transformer((*xstate).src_fd, 1i32, (*xstate).xformer);
   free(xstate as *mut libc::c_void);
 }
@@ -318,11 +318,11 @@ pub unsafe fn setup_lzma_on_fd(mut fd: libc::c_int) {
   (*xstate).src_fd = fd;
   (*xstate).xformer = Some(
     crate::archival::libarchive::decompress_unlzma::unpack_lzma_stream
-      as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
+      as unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong,
   );
   fork_transformer_and_free(xstate);
 }
-unsafe extern "C" fn open_transformer(
+unsafe fn open_transformer(
   mut fname: *const libc::c_char,
   mut fail_if_not_compressed: libc::c_int,
 ) -> *mut transformer_state_t {
@@ -345,7 +345,7 @@ unsafe extern "C" fn open_transformer(
     (*xstate).src_fd = fd;
     (*xstate).xformer = Some(
       crate::archival::libarchive::decompress_unlzma::unpack_lzma_stream
-        as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
+        as unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong,
     );
     return xstate;
   }

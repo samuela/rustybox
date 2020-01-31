@@ -133,8 +133,7 @@ pub struct minix_super_block {
 /*,u64 off*/
 /*,u64 off*/
 //int FAST_FUNC volume_id_probe_mac_partition_map(struct volume_id *id /*,u64 off*/);
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_probe_minix(mut id: *mut volume_id) -> libc::c_int
+pub unsafe fn volume_id_probe_minix(mut id: *mut volume_id) -> libc::c_int
 /*, u64 off*/ {
   let mut ms: *mut minix_super_block = std::ptr::null_mut();
   let mut ms3: *mut minix3_super_block = std::ptr::null_mut();

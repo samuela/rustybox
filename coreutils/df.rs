@@ -60,7 +60,7 @@ pub const OPT_MEGA: C2RustUnnamed = 128;
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_KILO: C2RustUnnamed = 1;
 #[inline(always)]
-unsafe extern "C" fn xatoul_range_sfx(
+unsafe fn xatoul_range_sfx(
   mut str: *const libc::c_char,
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
@@ -146,11 +146,7 @@ unsafe extern "C" fn xatoul_range_sfx(
 //usage:       "$ POSIXLY_CORRECT=yep df -P /dev/sda3\n"
 //usage:       "Filesystem          512-blocks      Used Available Capacity Mounted on\n"
 //usage:       "/dev/sda3             17381728  17107080    274648      98% /\n"
-#[no_mangle]
-pub unsafe extern "C" fn df_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn df_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut df_disp_hr: libc::c_ulong = 1024i32 as libc::c_ulong;
   let mut status: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;

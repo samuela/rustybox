@@ -116,11 +116,7 @@ use libc::open;
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
 /* try to open up the specified device */
-#[no_mangle]
-pub unsafe extern "C" fn device_open(
-  mut device: *const libc::c_char,
-  mut mode: libc::c_int,
-) -> libc::c_int {
+pub unsafe fn device_open(mut device: *const libc::c_char, mut mode: libc::c_int) -> libc::c_int {
   let mut m: libc::c_int = 0;
   let mut f: libc::c_int = 0;
   let mut fd: libc::c_int = 0;

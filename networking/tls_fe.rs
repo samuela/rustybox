@@ -49,7 +49,7 @@ pub type word32 = u32;
  */
 /* Based from Daniel Beer's public domain work. */
 //UNUSED
-unsafe extern "C" fn lm_copy(mut x: *mut byte, mut a: *const byte) {
+unsafe fn lm_copy(mut x: *mut byte, mut a: *const byte) {
   memcpy(
     x as *mut libc::c_void,
     a as *const libc::c_void,
@@ -57,7 +57,7 @@ unsafe extern "C" fn lm_copy(mut x: *mut byte, mut a: *const byte) {
   );
 }
 //UNUSED
-unsafe extern "C" fn fe_select(
+unsafe fn fe_select(
   mut dst: *mut byte,
   mut zero: *const byte,
   mut one: *const byte,
@@ -81,7 +81,7 @@ unsafe extern "C" fn fe_select(
 //UNUSED
 //UNUSED
 //UNUSED
-unsafe extern "C" fn fe_normalize(mut x: *mut byte) {
+unsafe fn fe_normalize(mut x: *mut byte) {
   let mut minusp: [byte; 32] = [0; 32];
   let mut c: libc::c_uint = 0;
   let mut i: libc::c_int = 0;
@@ -118,7 +118,7 @@ unsafe extern "C" fn fe_normalize(mut x: *mut byte) {
     (c >> 15i32 & 1i32 as libc::c_uint) as byte,
   );
 }
-unsafe extern "C" fn lm_add(mut r: *mut byte, mut a: *const byte, mut b: *const byte) {
+unsafe fn lm_add(mut r: *mut byte, mut a: *const byte, mut b: *const byte) {
   let mut c: libc::c_uint = 0 as libc::c_uint;
   let mut i: libc::c_int = 0;
   /* Add */
@@ -143,7 +143,7 @@ unsafe extern "C" fn lm_add(mut r: *mut byte, mut a: *const byte, mut b: *const 
     i += 1
   }
 }
-unsafe extern "C" fn lm_sub(mut r: *mut byte, mut a: *const byte, mut b: *const byte) {
+unsafe fn lm_sub(mut r: *mut byte, mut a: *const byte, mut b: *const byte) {
   let mut c: word32 = 0 as word32;
   let mut i: libc::c_int = 0;
   /* Calculate a + 2p - b, to avoid underflow */
@@ -173,7 +173,7 @@ unsafe extern "C" fn lm_sub(mut r: *mut byte, mut a: *const byte, mut b: *const 
   }
 }
 //UNUSED
-unsafe extern "C" fn fe_mul__distinct(mut r: *mut byte, mut a: *const byte, mut b: *const byte) {
+unsafe fn fe_mul__distinct(mut r: *mut byte, mut a: *const byte, mut b: *const byte) {
   let mut c: word32 = 0 as word32;
   let mut i: libc::c_int = 0;
   i = 0;
@@ -210,7 +210,7 @@ unsafe extern "C" fn fe_mul__distinct(mut r: *mut byte, mut a: *const byte, mut 
   }
 }
 //UNUSED
-unsafe extern "C" fn fe_mul_c(mut r: *mut byte, mut a: *const byte, mut b: word32) {
+unsafe fn fe_mul_c(mut r: *mut byte, mut a: *const byte, mut b: word32) {
   let mut c: word32 = 0 as word32;
   let mut i: libc::c_int = 0;
   i = 0;
@@ -233,7 +233,7 @@ unsafe extern "C" fn fe_mul_c(mut r: *mut byte, mut a: *const byte, mut b: word3
     i += 1
   }
 }
-unsafe extern "C" fn fe_inv__distinct(mut r: *mut byte, mut x: *const byte) {
+unsafe fn fe_inv__distinct(mut r: *mut byte, mut x: *const byte) {
   let mut s: [byte; 32] = [0; 32];
   let mut i: libc::c_int = 0;
   /* This is a prime field, so by Fermat's little theorem:
@@ -279,7 +279,7 @@ unsafe extern "C" fn fe_inv__distinct(mut r: *mut byte, mut x: *const byte) {
 //UNUSED
 //UNUSED
 /* Differential addition */
-unsafe extern "C" fn xc_diffadd(
+unsafe fn xc_diffadd(
   mut x5: *mut byte,
   mut z5: *mut byte,
   mut x1: *const byte,
@@ -321,7 +321,7 @@ unsafe extern "C" fn xc_diffadd(
   fe_mul__distinct(z5, x1, b.as_mut_ptr());
 }
 /* Double an X-coordinate */
-unsafe extern "C" fn xc_double(
+unsafe fn xc_double(
   mut x3: *mut byte,
   mut z3: *mut byte,
   mut x1: *const byte,
@@ -354,8 +354,7 @@ unsafe extern "C" fn xc_double(
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn curve25519(mut result: *mut byte, mut e: *const byte, mut q: *const byte) {
+pub unsafe fn curve25519(mut result: *mut byte, mut e: *const byte, mut q: *const byte) {
   let mut i: libc::c_int = 0;
   let mut z: C2RustUnnamed = C2RustUnnamed {
     f25519_one: [0; 32],

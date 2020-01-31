@@ -252,8 +252,7 @@ use libc::ssize_t;
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn safe_write(
+pub unsafe fn safe_write(
   mut fd: libc::c_int,
   mut buf: *const libc::c_void,
   mut count: size_t,

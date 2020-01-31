@@ -14,8 +14,7 @@ use crate::libbb::llist::llist_t;
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
 /* Find a string in a shell pattern list */
-#[no_mangle]
-pub unsafe extern "C" fn find_list_entry(
+pub unsafe fn find_list_entry(
   mut list: *const llist_t,
   mut filename: *const libc::c_char,
 ) -> *const llist_t {
@@ -31,8 +30,7 @@ pub unsafe extern "C" fn find_list_entry(
 /* Same, but compares only path components present in pattern
  * (extra trailing path components in filename are assumed to match)
  */
-#[no_mangle]
-pub unsafe extern "C" fn find_list_entry2(
+pub unsafe fn find_list_entry2(
   mut list: *const llist_t,
   mut filename: *const libc::c_char,
 ) -> *const llist_t {

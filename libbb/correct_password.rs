@@ -68,8 +68,7 @@ unsafe extern "C" fn get_passwd(
  * 0 if not.
  * NULL pw means "just fake it for login with bad username"
  */
-#[no_mangle]
-pub unsafe extern "C" fn check_password(
+pub unsafe fn check_password(
   mut pw: *const passwd,
   mut plaintext: *const libc::c_char,
 ) -> libc::c_int {
@@ -95,8 +94,7 @@ pub unsafe extern "C" fn check_password(
  *
  * NULL pw means "just fake it for login with bad username"
  */
-#[no_mangle]
-pub unsafe extern "C" fn ask_and_check_password_extended(
+pub unsafe fn ask_and_check_password_extended(
   mut pw: *const passwd,
   mut timeout: libc::c_int,
   mut prompt: *const libc::c_char,
@@ -573,8 +571,7 @@ pub unsafe extern "C" fn ask_and_check_password_extended(
  * NB: CHANGEENV and CLEARENV use setenv() - this leaks memory!
  * If setup_environment() is used is vforked child, this leaks memory _in parent too_!
  */
-#[no_mangle]
-pub unsafe extern "C" fn ask_and_check_password(mut pw: *const passwd) -> libc::c_int {
+pub unsafe fn ask_and_check_password(mut pw: *const passwd) -> libc::c_int {
   return ask_and_check_password_extended(
     pw,
     0,

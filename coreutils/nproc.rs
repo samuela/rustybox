@@ -48,11 +48,7 @@ use libc::DIR;
 //usage:     "\n	--all		Number of installed CPUs"
 //usage:     "\n	--ignore=N	Exclude N CPUs"
 //usage:	)
-#[no_mangle]
-pub unsafe extern "C" fn nproc_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn nproc_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut mask: [libc::c_ulong; 1024] = [0; 1024];
   let mut count: libc::c_int = 0;
   let mut ignore: libc::c_int = 0;

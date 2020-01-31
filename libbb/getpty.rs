@@ -129,8 +129,7 @@ pub const GETPTY_BUFSIZE: C2RustUnnamed = 16;
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn xgetpty(mut line: *mut libc::c_char) -> libc::c_int {
+pub unsafe fn xgetpty(mut line: *mut libc::c_char) -> libc::c_int {
   let mut p: libc::c_int = 0; /* chmod+chown corresponding slave pty */
   p = open(b"/dev/ptmx\x00" as *const u8 as *const libc::c_char, 0o2i32); /* (what does this do?) */
   if p >= 0 {

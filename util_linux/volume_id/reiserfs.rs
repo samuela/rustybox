@@ -147,8 +147,7 @@ pub struct reiser4_super_block {
 /*,u64 off*/
 /*,u64 off*/
 /*,u64 off*/
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_probe_reiserfs(mut id: *mut volume_id) -> libc::c_int
+pub unsafe fn volume_id_probe_reiserfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut current_block: u64;
   let mut rs: *mut reiserfs_super_block = std::ptr::null_mut();

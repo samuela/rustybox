@@ -45,8 +45,7 @@ static mut ino_dev_hashtable: *mut *mut ino_dev_hashtable_bucket_t =
  * Return name if statbuf->st_ino && statbuf->st_dev are recorded in
  * ino_dev_hashtable, else return NULL
  */
-#[no_mangle]
-pub unsafe extern "C" fn is_in_ino_dev_hashtable(mut statbuf: *const stat) -> *mut libc::c_char {
+pub unsafe fn is_in_ino_dev_hashtable(mut statbuf: *const stat) -> *mut libc::c_char {
   let mut bucket: *mut ino_dev_hashtable_bucket_t = std::ptr::null_mut();
   if ino_dev_hashtable.is_null() {
     return std::ptr::null_mut::<libc::c_char>();
@@ -535,8 +534,7 @@ pub unsafe extern "C" fn is_in_ino_dev_hashtable(mut statbuf: *const stat) -> *m
 /* NB: typically you want to pass fd 0, not 1. Think 'applet | grep something' */
 /* NB: "unsigned request" is crucial! "int request" will break some arches! */
 /* Add statbuf to statbuf hash table */
-#[no_mangle]
-pub unsafe extern "C" fn add_to_ino_dev_hashtable(
+pub unsafe fn add_to_ino_dev_hashtable(
   mut statbuf: *const stat,
   mut name: *const libc::c_char,
 ) {

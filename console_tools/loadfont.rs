@@ -154,11 +154,11 @@ pub struct psf2_header {
   /* charsize = height * ((width + 7) / 8) */
 }
 #[inline(always)]
-unsafe extern "C" fn xstrtoul(mut str: *const libc::c_char, mut b: libc::c_int) -> libc::c_ulong {
+unsafe fn xstrtoul(mut str: *const libc::c_char, mut b: libc::c_int) -> libc::c_ulong {
   return crate::libbb::xatonum::xstrtoull(str, b) as libc::c_ulong;
 }
 /* ENABLE_FEATURE_LOADFONT_PSF2 */
-unsafe extern "C" fn do_loadfont(
+unsafe fn do_loadfont(
   mut fd: libc::c_int,
   mut inbuf: *mut libc::c_uchar,
   mut height: libc::c_int,
@@ -228,7 +228,7 @@ unsafe extern "C" fn do_loadfont(
  * Some font positions may be described by sequences only,
  * namely when there is no precomposed Unicode value for the glyph.
  */
-unsafe extern "C" fn do_loadtable(
+unsafe fn do_loadtable(
   mut fd: libc::c_int,
   mut inbuf: *mut libc::c_uchar,
   mut tailsz: libc::c_int,
@@ -342,7 +342,7 @@ unsafe extern "C" fn do_loadtable(
     b"PIO_UNIMAP\x00" as *const u8 as *const libc::c_char,
   );
 }
-unsafe extern "C" fn do_load(mut fd: libc::c_int, mut buffer: *mut libc::c_uchar, mut len: size_t) {
+unsafe fn do_load(mut fd: libc::c_int, mut buffer: *mut libc::c_uchar, mut len: size_t) {
   let mut height: libc::c_int = 0;
   let mut width: libc::c_int = 8i32;
   let mut charsize: libc::c_int = 0;
@@ -429,8 +429,7 @@ unsafe extern "C" fn do_load(mut fd: libc::c_int, mut buffer: *mut libc::c_uchar
 //usage:
 //usage:#define loadfont_example_usage
 //usage:       "$ loadfont < /etc/i18n/fontname\n"
-#[no_mangle]
-pub unsafe extern "C" fn loadfont_main(
+pub unsafe fn loadfont_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -499,7 +498,7 @@ setfont [-O font+umap.orig] [-o font.orig] [-om cmap.orig]
 //usage:
 //usage:#define setfont_example_usage
 //usage:       "$ setfont -m koi8-r /etc/i18n/fontname\n"
-unsafe extern "C" fn ctoi(mut s: *mut libc::c_char) -> libc::c_int {
+unsafe fn ctoi(mut s: *mut libc::c_char) -> libc::c_int {
   if *s.offset(0) as libc::c_int == '\'' as i32
     && *s.offset(1) as libc::c_int != '\u{0}' as i32
     && *s.offset(2) as libc::c_int == '\'' as i32
@@ -517,8 +516,7 @@ unsafe extern "C" fn ctoi(mut s: *mut libc::c_char) -> libc::c_int {
   }
   return xstrtoul(s, 0) as libc::c_int;
 }
-#[no_mangle]
-pub unsafe extern "C" fn setfont_main(
+pub unsafe fn setfont_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

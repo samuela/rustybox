@@ -10,10 +10,7 @@ use crate::archival::libarchive::bb_archive::archive_handle_t;
 /*
  * Accept names that are in the accept list and not in the reject list
  */
-#[no_mangle]
-pub unsafe extern "C" fn filter_accept_reject_list(
-  mut archive_handle: *mut archive_handle_t,
-) -> libc::c_char {
+pub unsafe fn filter_accept_reject_list(mut archive_handle: *mut archive_handle_t) -> libc::c_char {
   let mut key: *const libc::c_char = std::ptr::null();
   let mut reject_entry: *const llist_t = std::ptr::null();
   let mut accept_entry: *const llist_t = std::ptr::null();

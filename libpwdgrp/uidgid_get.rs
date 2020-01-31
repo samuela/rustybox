@@ -1,23 +1,14 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
-use libc;
-use libc::strchr;
-extern "C" {
-
-  /* Search for an entry with a matching user ID.  */
-
-  /* Search for an entry with a matching username.  */
-
-  /* Search for an entry with a matching group name.  */
-
-}
-
 use crate::librb::bb_uidgid_t;
 use crate::librb::size_t;
+use libc;
 use libc::gid_t;
 use libc::group;
 use libc::passwd;
+use libc::strchr;
 use libc::uid_t;
+
 /*
 Copyright (c) 2001-2006, Gerrit Pape
 All rights reserved.
@@ -45,11 +36,7 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /* Always sets uid and gid */
-#[no_mangle]
-pub unsafe extern "C" fn get_uidgid(
-  mut u: *mut bb_uidgid_t,
-  mut ug: *const libc::c_char,
-) -> libc::c_int {
+pub unsafe fn get_uidgid(mut u: *mut bb_uidgid_t, mut ug: *const libc::c_char) -> libc::c_int {
   let mut pwd: *mut passwd = std::ptr::null_mut();
   let mut gr: *mut group = std::ptr::null_mut();
   let mut user: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -95,8 +82,7 @@ pub unsafe extern "C" fn get_uidgid(
   }
   return 1i32;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xget_uidgid(mut u: *mut bb_uidgid_t, mut ug: *const libc::c_char) {
+pub unsafe fn xget_uidgid(mut u: *mut bb_uidgid_t, mut ug: *const libc::c_char) {
   if get_uidgid(u, ug) == 0 {
     crate::libbb::verror_msg::bb_error_msg_and_die(
       b"unknown user/group %s\x00" as *const u8 as *const libc::c_char,
@@ -405,8 +391,7 @@ pub unsafe extern "C" fn xget_uidgid(mut u: *mut bb_uidgid_t, mut ug: *const lib
  * "user:group" sets uid and gid
  * ('unset' uid or gid retains the value it has on entry)
  */
-#[no_mangle]
-pub unsafe extern "C" fn parse_chown_usergroup_or_die(
+pub unsafe fn parse_chown_usergroup_or_die(
   mut u: *mut bb_uidgid_t,
   mut user_group: *mut libc::c_char,
 ) {
@@ -423,22 +408,12 @@ pub unsafe extern "C" fn parse_chown_usergroup_or_die(
   /* Parse "user[:[group]]" */
   if group.is_null() {
     /* "user" */
-    (*u).uid = crate::libbb::bb_pwd::get_ug_id(
-      user_group,
-      Some(
-        crate::libbb::bb_pwd::xuname2uid
-          as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long,
-      ),
-    ) as uid_t
+    (*u).uid =
+      crate::libbb::bb_pwd::get_ug_id(user_group, crate::libbb::bb_pwd::xuname2uid) as uid_t
   } else if group == user_group {
     /* ":group" */
-    (*u).gid = crate::libbb::bb_pwd::get_ug_id(
-      group.offset(1),
-      Some(
-        crate::libbb::bb_pwd::xgroup2gid
-          as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long,
-      ),
-    ) as gid_t
+    (*u).gid =
+      crate::libbb::bb_pwd::get_ug_id(group.offset(1), crate::libbb::bb_pwd::xgroup2gid) as gid_t
   } else {
     if *group.offset(1) == 0 {
       /* "user:" */

@@ -29,7 +29,7 @@ pub const UNICODE_UNKNOWN: C2RustUnnamed = 0;
 /* Assuming the current column is COLUMN, return the column that
 printing C will move the cursor to.
 The first column is 0. */
-unsafe extern "C" fn adjust_column(mut column: libc::c_uint, mut c: libc::c_char) -> libc::c_int {
+unsafe fn adjust_column(mut column: libc::c_uint, mut c: libc::c_char) -> libc::c_int {
   if option_mask32 & 1i32 as libc::c_uint != 0 {
     column = column.wrapping_add(1);
     return column as libc::c_int;
@@ -56,14 +56,10 @@ unsafe extern "C" fn adjust_column(mut column: libc::c_uint, mut c: libc::c_char
   return column as libc::c_int;
 }
 /* Note that this function can write NULs, unlike fputs etc. */
-unsafe extern "C" fn write2stdout(mut buf: *const libc::c_void, mut size: libc::c_uint) {
+unsafe fn write2stdout(mut buf: *const libc::c_void, mut size: libc::c_uint) {
   libc::fwrite(buf, 1, size as usize, stdout);
 }
-#[no_mangle]
-pub unsafe extern "C" fn fold_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn fold_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut line_out: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut w_opt: *const libc::c_char = b"80\x00" as *const u8 as *const libc::c_char;
   let mut width: libc::c_uint = 0;

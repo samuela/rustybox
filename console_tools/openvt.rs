@@ -100,7 +100,7 @@ bbox:
 -ws: does NOT switch back
 */
 /* Helper: does this fd understand VT_xxx? */
-unsafe extern "C" fn not_vt_fd(mut fd: libc::c_int) -> libc::c_int {
+unsafe fn not_vt_fd(mut fd: libc::c_int) -> libc::c_int {
   let mut vtstat: vt_stat = vt_stat {
     v_active: 0,
     v_signal: 0,
@@ -110,7 +110,7 @@ unsafe extern "C" fn not_vt_fd(mut fd: libc::c_int) -> libc::c_int {
   /* !0: error, it's not VT fd */
 }
 /* Helper: get a fd suitable for VT_xxx */
-unsafe extern "C" fn get_vt_fd() -> libc::c_int {
+unsafe fn get_vt_fd() -> libc::c_int {
   let mut fd: libc::c_int = 0;
   /* Do we, by chance, already have it? */
   fd = 0;
@@ -131,7 +131,7 @@ unsafe extern "C" fn get_vt_fd() -> libc::c_int {
     b"can\'t find open VT\x00" as *const u8 as *const libc::c_char,
   );
 }
-unsafe extern "C" fn find_free_vtno() -> libc::c_int {
+unsafe fn find_free_vtno() -> libc::c_int {
   let mut vtno: libc::c_int = 0;
   let mut fd: libc::c_int = get_vt_fd();
   *bb_errno = 0;
@@ -157,7 +157,7 @@ unsafe extern "C" fn find_free_vtno() -> libc::c_int {
  * TODO: move to libbb; or adapt existing libbb's spawn().
  */
 #[inline(never)]
-unsafe extern "C" fn vfork_child(mut argv: *mut *mut libc::c_char) {
+unsafe fn vfork_child(mut argv: *mut *mut libc::c_char) {
   if vfork() == 0 {
     /* CHILD */
     /* Try to make this VT our controlling tty */
@@ -170,11 +170,7 @@ unsafe extern "C" fn vfork_child(mut argv: *mut *mut libc::c_char) {
     crate::libbb::executable::BB_EXECVP_or_die(argv);
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn openvt_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn openvt_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut vtname: [libc::c_char; 23] = [0; 23];
   let mut vtstat: vt_stat = vt_stat {
     v_active: 0,

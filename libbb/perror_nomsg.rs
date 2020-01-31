@@ -15,7 +15,6 @@ extern "C" {
 
 }
 /* suppress gcc "no previous prototype" warning */
-#[no_mangle]
-pub unsafe extern "C" fn bb_perror_nomsg() {
+pub unsafe fn bb_perror_nomsg() {
   crate::libbb::perror_msg::bb_simple_perror_msg(0 as *const libc::c_char);
 }

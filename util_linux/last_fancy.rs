@@ -3,7 +3,6 @@ use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
-use libc::free;
 use libc::fstat;
 use libc::kill;
 use libc::off_t;
@@ -67,7 +66,7 @@ pub type C2RustUnnamed_1 = libc::c_uint;
 // pub const LAST_OPT_f: C2RustUnnamed_1 = 2;
 pub const LAST_OPT_W: C2RustUnnamed_1 = 1;
 
-unsafe extern "C" fn show_entry(mut ut: *mut utmpx, mut state: libc::c_int, mut dur_secs: time_t) {
+unsafe fn show_entry(mut ut: *mut utmpx, mut state: libc::c_int, mut dur_secs: time_t) {
   let mut days: libc::c_uint = 0;
   let mut hours: libc::c_uint = 0;
   let mut mins: libc::c_uint = 0;
@@ -149,7 +148,7 @@ unsafe extern "C" fn show_entry(mut ut: *mut utmpx, mut state: libc::c_int, mut 
     duration_str,
   );
 }
-unsafe extern "C" fn get_ut_type(mut ut: *mut utmpx) -> libc::c_int {
+unsafe fn get_ut_type(mut ut: *mut utmpx) -> libc::c_int {
   if (*ut).ut_line[0] as libc::c_int == '~' as i32 {
     if strcmp(
       (*ut).ut_user.as_mut_ptr(),
@@ -201,17 +200,13 @@ unsafe extern "C" fn get_ut_type(mut ut: *mut utmpx) -> libc::c_int {
   }
   return (*ut).ut_type as libc::c_int;
 }
-unsafe extern "C" fn is_runlevel_shutdown(mut ut: *mut utmpx) -> libc::c_int {
+unsafe fn is_runlevel_shutdown(mut ut: *mut utmpx) -> libc::c_int {
   if (*ut).ut_pid & 255i32 == '0' as i32 || (*ut).ut_pid & 255i32 == '6' as i32 {
     return 1i32;
   }
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn last_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn last_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut ut: utmpx = std::mem::zeroed();
   let mut filename: *const libc::c_char = b"/var/log/wtmp\x00" as *const u8 as *const libc::c_char;
   let mut zlist: *mut llist_t = std::ptr::null_mut();
@@ -312,8 +307,8 @@ pub unsafe extern "C" fn last_main(
                 show = 0
               }
               crate::libbb::llist::llist_unlink(&mut zlist, el);
-              free((*el).data as *mut libc::c_void);
-              free(el as *mut libc::c_void);
+              libc::free((*el).data as *mut libc::c_void);
+              libc::free(el as *mut libc::c_void);
             }
             el = next
           }
@@ -342,10 +337,7 @@ pub unsafe extern "C" fn last_main(
     }
     if going_down != 0 {
       boot_time = ut.ut_tv.tv_sec as time_t;
-      crate::libbb::llist::llist_free(
-        zlist,
-        Some(free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
-      );
+      crate::libbb::llist::llist_free(zlist);
       zlist = std::ptr::null_mut();
       going_down = 0 as smallint
     }

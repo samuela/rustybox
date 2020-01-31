@@ -129,8 +129,9 @@ pub const OP_conv_noerror: C2RustUnnamed_2 = 2;
 pub const OP_conv_sync: C2RustUnnamed_2 = 1;
 /* Must be in the same order as FLAG_XXX! */
 pub const OP_conv_notrunc: C2RustUnnamed_2 = 0;
+
 #[inline(always)]
-unsafe extern "C" fn xatoul_range_sfx(
+unsafe fn xatoul_range_sfx(
   mut str: *const libc::c_char,
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
@@ -197,7 +198,7 @@ unsafe extern "C" fn dd_output_status(mut _cur_signal: libc::c_int) {
     ),
   );
 }
-unsafe extern "C" fn write_and_stats(
+unsafe fn write_and_stats(
   mut buf: *const libc::c_void,
   mut len: size_t,
   mut obs: size_t,
@@ -232,7 +233,7 @@ unsafe extern "C" fn write_and_stats(
   );
   return 1i32 != 0;
 }
-unsafe extern "C" fn parse_comma_flags(
+unsafe fn parse_comma_flags(
   mut val: *mut libc::c_char,
   mut words: *const libc::c_char,
   mut error_in: *const libc::c_char,
@@ -263,11 +264,7 @@ unsafe extern "C" fn parse_comma_flags(
   }
   return flags;
 }
-#[no_mangle]
-pub unsafe extern "C" fn dd_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn dd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   static mut keywords: [libc::c_char; 58] = [
     98, 115, 0, 99, 111, 117, 110, 116, 0, 115, 101, 101, 107, 0, 115, 107, 105, 112, 0, 105, 102,
@@ -437,10 +434,7 @@ pub unsafe extern "C" fn dd_main(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).flags |= FLAG_TWOBUFS as libc::c_int;
     obuf = xmalloc(obs) as *mut libc::c_char
   }
-  crate::libbb::signals::signal_SA_RESTART_empty_mask(
-    10i32,
-    Some(dd_output_status as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  crate::libbb::signals::signal_SA_RESTART_empty_mask(10i32, Some(dd_output_status));
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).begin_time_us =
     crate::libbb::time::monotonic_us();
   if !Z.infile.is_null() {

@@ -27,8 +27,7 @@ use libc::winsize;
 //usage:       "[w] [h]"
 //usage:#define ttysize_full_usage "\n\n"
 //usage:       "Print dimensions of stdin tty, or 80x24"
-#[no_mangle]
-pub unsafe extern "C" fn ttysize_main(
+pub unsafe fn ttysize_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

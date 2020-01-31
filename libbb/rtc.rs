@@ -56,8 +56,7 @@ pub struct linux_rtc_time {
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn rtc_adjtime_is_utc() -> libc::c_int {
+pub unsafe fn rtc_adjtime_is_utc() -> libc::c_int {
   let mut utc: libc::c_int = 0;
   let mut f: *mut FILE =
     crate::libbb::wfopen::fopen_for_read(b"/etc/adjtime\x00" as *const u8 as *const libc::c_char);
@@ -90,7 +89,7 @@ pub unsafe extern "C" fn rtc_adjtime_is_utc() -> libc::c_int {
  * Users wouldn't expect that to fail merely because /dev/rtc
  * was momentarily busy, let's try a bit harder on errno == EBUSY.
  */
-unsafe extern "C" fn open_loop_on_busy(
+unsafe fn open_loop_on_busy(
   mut name: *const libc::c_char,
   mut flags: libc::c_int,
 ) -> libc::c_int {
@@ -117,8 +116,7 @@ unsafe extern "C" fn open_loop_on_busy(
   }
 }
 /* Never fails */
-#[no_mangle]
-pub unsafe extern "C" fn rtc_xopen(
+pub unsafe fn rtc_xopen(
   mut default_rtc: *mut *const libc::c_char,
   mut flags: libc::c_int,
 ) -> libc::c_int {
@@ -152,8 +150,7 @@ pub unsafe extern "C" fn rtc_xopen(
     }
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn rtc_read_tm(mut ptm: *mut tm, mut fd: libc::c_int) {
+pub unsafe fn rtc_read_tm(mut ptm: *mut tm, mut fd: libc::c_int) {
   memset(
     ptm as *mut libc::c_void,
     0,
@@ -172,8 +169,7 @@ pub unsafe extern "C" fn rtc_read_tm(mut ptm: *mut tm, mut fd: libc::c_int) {
   (*ptm).tm_isdst = -1i32;
   /* "not known" */
 }
-#[no_mangle]
-pub unsafe extern "C" fn rtc_tm2time(mut ptm: *mut tm, mut utc: libc::c_int) -> time_t {
+pub unsafe fn rtc_tm2time(mut ptm: *mut tm, mut utc: libc::c_int) -> time_t {
   let mut oldtz: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* for compiler */
   oldtz = oldtz;
   let mut t: time_t = 0;

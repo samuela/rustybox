@@ -121,10 +121,7 @@ unsafe extern "C" fn do_sethostname(mut s: *mut libc::c_char, mut isfile: libc::
   if isfile != 0 {
     let mut parser: *mut parser_t = crate::libbb::parse_config::config_open2(
       s,
-      Some(
-        crate::libbb::wfopen::xfopen_for_read
-          as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
-      ),
+      Some(crate::libbb::wfopen::xfopen_for_read as unsafe fn(_: *const libc::c_char) -> *mut FILE),
     );
     while crate::libbb::parse_config::config_read(
       parser,
@@ -195,8 +192,7 @@ unsafe extern "C" fn do_sethostname(mut s: *mut libc::c_char, mut isfile: libc::
  *  Read the host name from the specified file. Comments (lines
  *  starting with a '#') are ignored.
  */
-#[no_mangle]
-pub unsafe extern "C" fn hostname_main(
+pub unsafe fn hostname_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

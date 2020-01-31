@@ -109,19 +109,19 @@ pub struct variable_t {
 pub struct method_t {
   pub name: *const libc::c_char,
   pub up: Option<
-    unsafe extern "C" fn(
+    unsafe fn(
       _: *mut interface_defn_t,
-      _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+      _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
     ) -> libc::c_int,
   >,
   pub down: Option<
-    unsafe extern "C" fn(
+    unsafe fn(
       _: *mut interface_defn_t,
-      _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+      _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
     ) -> libc::c_int,
   >,
 }
-pub type execfn = unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int;
+pub type execfn = unsafe fn(_: *mut libc::c_char) -> libc::c_int;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -161,7 +161,7 @@ pub const MAPPING: C2RustUnnamed_0 = 2;
 pub const IFACE: C2RustUnnamed_0 = 1;
 pub type C2RustUnnamed_0 = libc::c_uint;
 #[inline(always)]
-unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
+unsafe fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   let mut b: libc::c_uchar = (a as libc::c_int - '0' as i32) as libc::c_uchar;
   if b as libc::c_int <= 9i32 {
     return (b as libc::c_int <= 9i32) as libc::c_int;
@@ -173,7 +173,7 @@ static mut keywords_up_down: [libc::c_char; 26] = [
   117, 112, 0, 100, 111, 119, 110, 0, 112, 114, 101, 45, 117, 112, 0, 112, 111, 115, 116, 45, 100,
   111, 119, 110, 0, 0,
 ];
-unsafe extern "C" fn addstr(
+unsafe fn addstr(
   mut bufp: *mut *mut libc::c_char,
   mut str: *const libc::c_char,
   mut str_length: size_t,
@@ -196,7 +196,7 @@ unsafe extern "C" fn addstr(
   crate::libbb::safe_strncpy::safe_strncpy(buf.offset(len as isize), str, str_length);
   *bufp = buf;
 }
-unsafe extern "C" fn strncmpz(
+unsafe fn strncmpz(
   mut l: *const libc::c_char,
   mut r: *const libc::c_char,
   mut llen: size_t,
@@ -207,7 +207,7 @@ unsafe extern "C" fn strncmpz(
   }
   return i;
 }
-unsafe extern "C" fn get_var(
+unsafe fn get_var(
   mut id: *const libc::c_char,
   mut idlen: size_t,
   mut ifd: *mut interface_defn_t,
@@ -237,7 +237,7 @@ unsafe extern "C" fn get_var(
   }
   return std::ptr::null_mut::<libc::c_char>();
 }
-unsafe extern "C" fn count_netmask_bits(mut dotted_quad: *const libc::c_char) -> libc::c_int {
+unsafe fn count_netmask_bits(mut dotted_quad: *const libc::c_char) -> libc::c_int {
   //	int result;
   //	unsigned a, b, c, d;
   //	/* Found a netmask...  Check if it is dotted quad */
@@ -284,7 +284,7 @@ unsafe extern "C" fn count_netmask_bits(mut dotted_quad: *const libc::c_char) ->
   }
   return result;
 }
-unsafe extern "C" fn parse(
+unsafe fn parse(
   mut command: *const libc::c_char,
   mut ifd: *mut interface_defn_t,
 ) -> *mut libc::c_char {
@@ -421,10 +421,10 @@ unsafe extern "C" fn parse(
   return result;
 }
 /* execute() returns 1 for success and 0 for failure */
-unsafe extern "C" fn execute(
+unsafe fn execute(
   mut command: *const libc::c_char,
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   let mut out: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut ret: libc::c_int = 0;
@@ -446,9 +446,9 @@ unsafe extern "C" fn execute(
   return 1i32;
 }
 /* FEATURE_IFUPDOWN_IPV4 || FEATURE_IFUPDOWN_IPV6 */
-unsafe extern "C" fn loopback_up6(
+unsafe fn loopback_up6(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   let mut result: libc::c_int = 0;
   result = execute(
@@ -463,9 +463,9 @@ unsafe extern "C" fn loopback_up6(
   );
   return if result == 2i32 { 2i32 } else { 0 };
 }
-unsafe extern "C" fn loopback_down6(
+unsafe fn loopback_down6(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   return execute(
     b"ip link set %iface% down\x00" as *const u8 as *const libc::c_char,
@@ -473,15 +473,15 @@ unsafe extern "C" fn loopback_down6(
     exec,
   );
 }
-unsafe extern "C" fn manual_up_down6(
+unsafe fn manual_up_down6(
   mut _ifd: *mut interface_defn_t,
-  mut _exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut _exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   return 1i32;
 }
-unsafe extern "C" fn static_up6(
+unsafe fn static_up6(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   let mut result: libc::c_int = 0;
   result = execute(
@@ -505,9 +505,9 @@ unsafe extern "C" fn static_up6(
   ); /* already gone */
   return if result == 3i32 { 3i32 } else { 0 };
 }
-unsafe extern "C" fn static_down6(
+unsafe fn static_down6(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   if if_nametoindex((*ifd).iface) == 0 {
     return 1i32;
@@ -518,9 +518,9 @@ unsafe extern "C" fn static_down6(
     exec,
   );
 }
-unsafe extern "C" fn v4tunnel_up(
+unsafe fn v4tunnel_up(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   let mut result: libc::c_int = 0;
   result = execute(
@@ -547,9 +547,9 @@ unsafe extern "C" fn v4tunnel_up(
   );
   return if result == 4i32 { 4i32 } else { 0 };
 }
-unsafe extern "C" fn v4tunnel_down(
+unsafe fn v4tunnel_down(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   return execute(
     b"ip tunnel del %iface%\x00" as *const u8 as *const libc::c_char,
@@ -563,16 +563,16 @@ static mut methods6: [method_t; 4] = [
       name: b"v4tunnel\x00" as *const u8 as *const libc::c_char,
       up: Some(
         v4tunnel_up
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
       down: Some(
         v4tunnel_down
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
     };
@@ -583,16 +583,16 @@ static mut methods6: [method_t; 4] = [
       name: b"static\x00" as *const u8 as *const libc::c_char,
       up: Some(
         static_up6
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
       down: Some(
         static_down6
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
     };
@@ -603,16 +603,16 @@ static mut methods6: [method_t; 4] = [
       name: b"manual\x00" as *const u8 as *const libc::c_char,
       up: Some(
         manual_up_down6
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
       down: Some(
         manual_up_down6
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
     };
@@ -623,16 +623,16 @@ static mut methods6: [method_t; 4] = [
       name: b"loopback\x00" as *const u8 as *const libc::c_char,
       up: Some(
         loopback_up6
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
       down: Some(
         loopback_down6
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
     };
@@ -647,9 +647,9 @@ static mut addr_inet6: address_family_t = address_family_t {
   method: 0 as *const method_t,
 };
 /* FEATURE_IFUPDOWN_IPV6 */
-unsafe extern "C" fn loopback_up(
+unsafe fn loopback_up(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   let mut result: libc::c_int = 0; /* already gone */
   result = execute(
@@ -664,9 +664,9 @@ unsafe extern "C" fn loopback_up(
   );
   return if result == 2i32 { 2i32 } else { 0 };
 }
-unsafe extern "C" fn loopback_down(
+unsafe fn loopback_down(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   let mut result: libc::c_int = 0;
   result = execute(
@@ -681,9 +681,9 @@ unsafe extern "C" fn loopback_down(
   );
   return if result == 2i32 { 2i32 } else { 0 };
 }
-unsafe extern "C" fn static_up(
+unsafe fn static_up(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   let mut result: libc::c_int = 0;
   result =
@@ -703,9 +703,9 @@ unsafe extern "C" fn static_up(
   );
   return if result == 3i32 { 3i32 } else { 0 };
 }
-unsafe extern "C" fn static_down(
+unsafe fn static_down(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   let mut result: libc::c_int = 0;
   if if_nametoindex((*ifd).iface) == 0 {
@@ -727,9 +727,9 @@ unsafe extern "C" fn static_down(
   return if result == 2i32 { 2i32 } else { 0 };
 }
 /* FEATURE_IFUPDOWN_EXTERNAL_DHCPC */
-unsafe extern "C" fn dhcp_up(
+unsafe fn dhcp_up(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   /* ip doesn't up iface when it configures it (unlike ifconfig) */
   if execute(
@@ -743,9 +743,9 @@ unsafe extern "C" fn dhcp_up(
   return execute(b"udhcpc -R -n -p /var/run/udhcpc.%iface%.pid -i %iface%[[ -x hostname:%hostname%]][[ -c %client%]][[ -s %script%]][[ %udhcpc_opts%]]\x00"
                        as *const u8 as *const libc::c_char, ifd, exec);
 }
-unsafe extern "C" fn dhcp_down(
+unsafe fn dhcp_down(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   let mut result: libc::c_int = 0;
   result = execute(
@@ -763,22 +763,22 @@ unsafe extern "C" fn dhcp_down(
   result += static_down(ifd, exec);
   return if result == 3i32 { 3i32 } else { 0 };
 }
-unsafe extern "C" fn manual_up_down(
+unsafe fn manual_up_down(
   mut _ifd: *mut interface_defn_t,
-  mut _exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut _exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   return 1i32;
 }
-unsafe extern "C" fn bootp_up(
+unsafe fn bootp_up(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   return execute(b"bootpc[[ --bootfile %bootfile%]] --dev %iface%[[ --server %server%]][[ --hwaddr %hwaddr%]] --returniffail --serverbcast\x00"
                        as *const u8 as *const libc::c_char, ifd, exec);
 }
-unsafe extern "C" fn ppp_up(
+unsafe fn ppp_up(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   return execute(
     b"pon[[ %provider%]]\x00" as *const u8 as *const libc::c_char,
@@ -786,9 +786,9 @@ unsafe extern "C" fn ppp_up(
     exec,
   );
 }
-unsafe extern "C" fn ppp_down(
+unsafe fn ppp_down(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   return execute(
     b"poff[[ %provider%]]\x00" as *const u8 as *const libc::c_char,
@@ -796,9 +796,9 @@ unsafe extern "C" fn ppp_down(
     exec,
   );
 }
-unsafe extern "C" fn wvdial_up(
+unsafe fn wvdial_up(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   return execute(
     b"start-stop-daemon --start -x wvdial -p /var/run/wvdial.%iface% -b -m --[[ %provider%]]\x00"
@@ -807,9 +807,9 @@ unsafe extern "C" fn wvdial_up(
     exec,
   );
 }
-unsafe extern "C" fn wvdial_down(
+unsafe fn wvdial_down(
   mut ifd: *mut interface_defn_t,
-  mut exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   return execute(
     b"start-stop-daemon --stop -x wvdial -p /var/run/wvdial.%iface% -s 2\x00" as *const u8
@@ -825,16 +825,16 @@ static mut methods: [method_t; 7] = [
       name: b"manual\x00" as *const u8 as *const libc::c_char,
       up: Some(
         manual_up_down
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
       down: Some(
         manual_up_down
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
     };
@@ -845,16 +845,16 @@ static mut methods: [method_t; 7] = [
       name: b"wvdial\x00" as *const u8 as *const libc::c_char,
       up: Some(
         wvdial_up
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
       down: Some(
         wvdial_down
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
     };
@@ -865,16 +865,16 @@ static mut methods: [method_t; 7] = [
       name: b"ppp\x00" as *const u8 as *const libc::c_char,
       up: Some(
         ppp_up
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
       down: Some(
         ppp_down
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
     };
@@ -885,16 +885,16 @@ static mut methods: [method_t; 7] = [
       name: b"static\x00" as *const u8 as *const libc::c_char,
       up: Some(
         static_up
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
       down: Some(
         static_down
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
     };
@@ -905,16 +905,16 @@ static mut methods: [method_t; 7] = [
       name: b"bootp\x00" as *const u8 as *const libc::c_char,
       up: Some(
         bootp_up
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
       down: Some(
         static_down
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
     };
@@ -925,16 +925,16 @@ static mut methods: [method_t; 7] = [
       name: b"dhcp\x00" as *const u8 as *const libc::c_char,
       up: Some(
         dhcp_up
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
       down: Some(
         dhcp_down
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
     };
@@ -945,16 +945,16 @@ static mut methods: [method_t; 7] = [
       name: b"loopback\x00" as *const u8 as *const libc::c_char,
       up: Some(
         loopback_up
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
       down: Some(
         loopback_down
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *mut interface_defn_t,
-            _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+            _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
           ) -> libc::c_int,
       ),
     };
@@ -970,9 +970,9 @@ static mut addr_inet: address_family_t = address_family_t {
 };
 
 /* FEATURE_IFUPDOWN_IPV4 */
-unsafe extern "C" fn link_up_down(
+unsafe fn link_up_down(
   mut _ifd: *mut interface_defn_t,
-  mut _exec: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+  mut _exec: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
 ) -> libc::c_int {
   return 1i32;
 }
@@ -982,16 +982,16 @@ static mut link_methods: [method_t; 1] = [{
     name: b"none\x00" as *const u8 as *const libc::c_char,
     up: Some(
       link_up_down
-        as unsafe extern "C" fn(
+        as unsafe fn(
           _: *mut interface_defn_t,
-          _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
         ) -> libc::c_int,
     ),
     down: Some(
       link_up_down
-        as unsafe extern "C" fn(
+        as unsafe fn(
           _: *mut interface_defn_t,
-          _: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int>,
+          _: Option<unsafe fn(_: *mut libc::c_char) -> libc::c_int>,
         ) -> libc::c_int,
     ),
   };
@@ -1007,7 +1007,7 @@ static mut addr_link: address_family_t = address_family_t {
 /* Returns pointer to the next word, or NULL.
  * In 1st case, advances *buf to the word after this one.
  */
-unsafe extern "C" fn next_word(mut buf: *mut *mut libc::c_char) -> *mut libc::c_char {
+unsafe fn next_word(mut buf: *mut *mut libc::c_char) -> *mut libc::c_char {
   let mut length: libc::c_uint = 0;
   let mut word: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Skip over leading whitespace */
@@ -1027,7 +1027,7 @@ unsafe extern "C" fn next_word(mut buf: *mut *mut libc::c_char) -> *mut libc::c_
   *buf = skip_whitespace(word.offset(length as isize));
   return word;
 }
-unsafe extern "C" fn get_address_family(
+unsafe fn get_address_family(
   mut af: *const *const address_family_t,
   mut name: *mut libc::c_char,
 ) -> *const address_family_t {
@@ -1044,7 +1044,7 @@ unsafe extern "C" fn get_address_family(
   }
   return std::ptr::null();
 }
-unsafe extern "C" fn get_method(
+unsafe fn get_method(
   mut af: *const address_family_t,
   mut name: *mut libc::c_char,
 ) -> *const method_t {
@@ -1062,7 +1062,7 @@ unsafe extern "C" fn get_method(
   }
   return std::ptr::null();
 }
-unsafe extern "C" fn read_interfaces(
+unsafe fn read_interfaces(
   mut filename: *const libc::c_char,
   mut defn: *mut interfaces_file_t,
 ) -> *mut interfaces_file_t {
@@ -1371,7 +1371,7 @@ unsafe extern "C" fn read_interfaces(
   fclose(f);
   return defn;
 }
-unsafe extern "C" fn setlocalenv(
+unsafe fn setlocalenv(
   mut format: *const libc::c_char,
   mut name: *const libc::c_char,
   mut value: *const libc::c_char,
@@ -1404,7 +1404,7 @@ unsafe extern "C" fn setlocalenv(
   crate::libbb::safe_strncpy::overlapping_strcpy(dst, src);
   return result;
 }
-unsafe extern "C" fn set_environ(
+unsafe fn set_environ(
   mut iface: *mut interface_defn_t,
   mut mode: *const libc::c_char,
   mut opt: *const libc::c_char,
@@ -1494,7 +1494,7 @@ unsafe extern "C" fn set_environ(
     )
   };
 }
-unsafe extern "C" fn doit(mut str: *mut libc::c_char) -> libc::c_int {
+unsafe fn doit(mut str: *mut libc::c_char) -> libc::c_int {
   if option_mask32 & (OPT_no_act as libc::c_int | OPT_verbose as libc::c_int) as libc::c_uint != 0 {
     puts(str);
   }
@@ -1526,10 +1526,7 @@ unsafe extern "C" fn doit(mut str: *mut libc::c_char) -> libc::c_int {
   }
   return 1i32;
 }
-unsafe extern "C" fn execute_all(
-  mut ifd: *mut interface_defn_t,
-  mut opt: *const libc::c_char,
-) -> libc::c_int {
+unsafe fn execute_all(mut ifd: *mut interface_defn_t, mut opt: *const libc::c_char) -> libc::c_int {
   /* 'opt' is always short, the longest value is "post-down".
    * Can use on-stack buffer instead of xasprintf'ed one.
    */
@@ -1557,13 +1554,13 @@ unsafe extern "C" fn execute_all(
   );
   return doit(buf.as_mut_ptr());
 }
-unsafe extern "C" fn check(mut str: *mut libc::c_char) -> libc::c_int {
+unsafe fn check(mut str: *mut libc::c_char) -> libc::c_int {
   return (str != std::ptr::null_mut()) as libc::c_int;
 }
-unsafe extern "C" fn iface_up(mut iface: *mut interface_defn_t) -> libc::c_int {
+unsafe fn iface_up(mut iface: *mut interface_defn_t) -> libc::c_int {
   if (*(*iface).method).up.expect("non-null function pointer")(
     iface,
-    Some(check as unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int),
+    Some(check as unsafe fn(_: *mut libc::c_char) -> libc::c_int),
   ) == 0
   {
     return -1i32;
@@ -1578,7 +1575,7 @@ unsafe extern "C" fn iface_up(mut iface: *mut interface_defn_t) -> libc::c_int {
   }
   if (*(*iface).method).up.expect("non-null function pointer")(
     iface,
-    Some(doit as unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int),
+    Some(doit as unsafe fn(_: *mut libc::c_char) -> libc::c_int),
   ) == 0
   {
     return 0;
@@ -1593,10 +1590,10 @@ unsafe extern "C" fn iface_up(mut iface: *mut interface_defn_t) -> libc::c_int {
   }
   return 1i32;
 }
-unsafe extern "C" fn iface_down(mut iface: *mut interface_defn_t) -> libc::c_int {
+unsafe fn iface_down(mut iface: *mut interface_defn_t) -> libc::c_int {
   if (*(*iface).method).down.expect("non-null function pointer")(
     iface,
-    Some(check as unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int),
+    Some(check as unsafe fn(_: *mut libc::c_char) -> libc::c_int),
   ) == 0
   {
     return -1i32;
@@ -1611,7 +1608,7 @@ unsafe extern "C" fn iface_down(mut iface: *mut interface_defn_t) -> libc::c_int
   }
   if (*(*iface).method).down.expect("non-null function pointer")(
     iface,
-    Some(doit as unsafe extern "C" fn(_: *mut libc::c_char) -> libc::c_int),
+    Some(doit as unsafe fn(_: *mut libc::c_char) -> libc::c_int),
   ) == 0
   {
     return 0;
@@ -1626,7 +1623,7 @@ unsafe extern "C" fn iface_down(mut iface: *mut interface_defn_t) -> libc::c_int
   }
   return 1i32;
 }
-unsafe extern "C" fn popen2(
+unsafe fn popen2(
   mut in_0: *mut *mut FILE,
   mut out: *mut *mut FILE,
   mut command: *mut libc::c_char,
@@ -1664,7 +1661,7 @@ unsafe extern "C" fn popen2(
   *out = crate::libbb::wfopen::xfdopen_for_read(outfd.rd);
   return pid;
 }
-unsafe extern "C" fn run_mapping(
+unsafe fn run_mapping(
   mut physical: *mut libc::c_char,
   mut map: *mut mapping_defn_t,
 ) -> *mut libc::c_char {
@@ -1718,7 +1715,7 @@ unsafe extern "C" fn run_mapping(
   return logical;
 }
 /* FEATURE_IFUPDOWN_MAPPING */
-unsafe extern "C" fn find_iface_state(
+unsafe fn find_iface_state(
   mut state_list: *mut llist_t,
   mut iface: *const libc::c_char,
 ) -> *mut llist_t {
@@ -1734,7 +1731,7 @@ unsafe extern "C" fn find_iface_state(
   return std::ptr::null_mut();
 }
 /* read the previous state from the state file */
-unsafe extern "C" fn read_iface_state() -> *mut llist_t {
+unsafe fn read_iface_state() -> *mut llist_t {
   let mut state_list: *mut llist_t = std::ptr::null_mut();
   let mut state_fp: *mut FILE = crate::libbb::wfopen::fopen_for_read(
     b"/var/run/ifstate\x00" as *const u8 as *const libc::c_char,
@@ -1758,7 +1755,7 @@ unsafe extern "C" fn read_iface_state() -> *mut llist_t {
   return state_list;
 }
 /* read the previous state from the state file */
-unsafe extern "C" fn open_new_state_file() -> *mut FILE {
+unsafe fn open_new_state_file() -> *mut FILE {
   let mut fd: libc::c_int = 0;
   let mut flags: libc::c_int = 0;
   let mut cnt: libc::c_int = 0;
@@ -1792,13 +1789,12 @@ unsafe extern "C" fn open_new_state_file() -> *mut FILE {
   }
   return crate::libbb::wfopen::xfdopen_for_write(fd);
 }
-#[no_mangle]
-pub unsafe extern "C" fn ifupdown_main(
+pub unsafe fn ifupdown_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
   let mut current_block: u64;
-  let mut cmds: Option<unsafe extern "C" fn(_: *mut interface_defn_t) -> libc::c_int> = None;
+  let mut cmds: Option<unsafe fn(_: *mut interface_defn_t) -> libc::c_int> = None;
   let mut defn: *mut interfaces_file_t = std::ptr::null_mut();
   let mut target_list: *mut llist_t = std::ptr::null_mut();
   let mut interfaces: *const libc::c_char =
@@ -1810,9 +1806,9 @@ pub unsafe extern "C" fn ifupdown_main(
   *fresh20 = crate::libbb::xfuncs_printf::xstrdup(crate::libbb::get_shell_name::get_shell_name());
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(2) as libc::c_int == 'u' as i32) {
     /* ifup command */
-    cmds = Some(iface_up as unsafe extern "C" fn(_: *mut interface_defn_t) -> libc::c_int)
+    cmds = Some(iface_up as unsafe fn(_: *mut interface_defn_t) -> libc::c_int)
   } else {
-    cmds = Some(iface_down as unsafe extern "C" fn(_: *mut interface_defn_t) -> libc::c_int)
+    cmds = Some(iface_down as unsafe fn(_: *mut interface_defn_t) -> libc::c_int)
   }
   crate::libbb::getopt32::getopt32(
     argv,
@@ -1856,7 +1852,7 @@ pub unsafe extern "C" fn ifupdown_main(
     if option_mask32 & OPT_force as libc::c_int as libc::c_uint == 0 {
       let mut state_list: *mut llist_t = read_iface_state();
       let mut iface_state: *const llist_t = find_iface_state(state_list, iface);
-      if cmds == Some(iface_up as unsafe extern "C" fn(_: *mut interface_defn_t) -> libc::c_int) {
+      if cmds == Some(iface_up as unsafe fn(_: *mut interface_defn_t) -> libc::c_int) {
         /* ifup */
         if !iface_state.is_null() {
           crate::libbb::verror_msg::bb_error_msg(
@@ -1879,10 +1875,7 @@ pub unsafe extern "C" fn ifupdown_main(
       match current_block {
         12709013627096618709 => {}
         _ => {
-          crate::libbb::llist::llist_free(
-            state_list,
-            Some(free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
-          );
+          crate::libbb::llist::llist_free(state_list);
           current_block = 13678349939556791712;
         }
       }
@@ -1891,7 +1884,7 @@ pub unsafe extern "C" fn ifupdown_main(
     }
     match current_block {
       13678349939556791712 => {
-        if cmds == Some(iface_up as unsafe extern "C" fn(_: *mut interface_defn_t) -> libc::c_int)
+        if cmds == Some(iface_up as unsafe fn(_: *mut interface_defn_t) -> libc::c_int)
           && option_mask32 & OPT_no_mappings as libc::c_int as libc::c_uint == 0
         {
           let mut currmap: *mut mapping_defn_t = std::ptr::null_mut();
@@ -1958,7 +1951,7 @@ pub unsafe extern "C" fn ifupdown_main(
           let mut state: *mut llist_t = std::ptr::null_mut();
           let mut state_list_0: *mut llist_t = read_iface_state();
           let mut iface_state_0: *mut llist_t = find_iface_state(state_list_0, iface);
-          if cmds == Some(iface_up as unsafe extern "C" fn(_: *mut interface_defn_t) -> libc::c_int)
+          if cmds == Some(iface_up as unsafe fn(_: *mut interface_defn_t) -> libc::c_int)
             && !curr_failure
           {
             let mut newiface: *mut libc::c_char = crate::libbb::xfuncs_printf::xasprintf(
@@ -1997,10 +1990,7 @@ pub unsafe extern "C" fn ifupdown_main(
             b"/var/run/ifstate.new\x00" as *const u8 as *const libc::c_char,
             b"/var/run/ifstate\x00" as *const u8 as *const libc::c_char,
           );
-          crate::libbb::llist::llist_free(
-            state_list_0,
-            Some(free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
-          );
+          crate::libbb::llist::llist_free(state_list_0);
         }
       }
       _ => {}
@@ -2010,7 +2000,7 @@ pub unsafe extern "C" fn ifupdown_main(
   }
   return any_failures as libc::c_int;
 }
-unsafe extern "C" fn run_static_initializers() {
+unsafe fn run_static_initializers() {
   addr_inet6 = {
     let mut init = address_family_t {
       name: b"inet6\x00" as *const u8 as *const libc::c_char,
@@ -2046,4 +2036,4 @@ unsafe extern "C" fn run_static_initializers() {
 #[cfg_attr(target_os = "linux", link_section = ".init_array")]
 #[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
 #[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
-static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];
+static INIT_ARRAY: [unsafe fn(); 1] = [run_static_initializers];

@@ -427,11 +427,7 @@ pub const PSSCAN_PPID: C2RustUnnamed = 2;
 /* Embedded script support */
 /* Applets which are useful from another applets */
 /* If shell needs them, they exist even if not enabled as applets */
-#[no_mangle]
-pub unsafe extern "C" fn kill_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn kill_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut arg: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pid: pid_t = 0;

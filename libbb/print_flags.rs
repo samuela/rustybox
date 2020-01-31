@@ -16,8 +16,7 @@ extern "C" {
 // }
 
 /* returns a set with the flags not printed */
-#[no_mangle]
-pub unsafe extern "C" fn print_flags_separated(
+pub unsafe fn print_flags_separated(
   mut masks: *const libc::c_int,
   mut labels: *const libc::c_char,
   mut flags: libc::c_int,
@@ -45,7 +44,7 @@ pub unsafe extern "C" fn print_flags_separated(
 }
 
 // #[no_mangle]
-// pub unsafe extern "C" fn print_flags(
+// pub unsafe fn print_flags(
 // 	mut ml: *const masks_labels_t,
 // 	mut flags: libc::c_int,
 // ) -> libc::c_int {

@@ -280,8 +280,7 @@ extern "C" {
  * of '-' for stdin, according to SUSv3.  So we encapsulate the check
  * here to save a little space.
  */
-#[no_mangle]
-pub unsafe extern "C" fn fclose_if_not_stdin(mut f: *mut FILE) -> libc::c_int {
+pub unsafe fn fclose_if_not_stdin(mut f: *mut FILE) -> libc::c_int {
   /* Some more paranoid applets want ferror() check too */
   let mut r: libc::c_int = ferror_unlocked(f); /* NB: does NOT set errno! */
   if r != 0 {

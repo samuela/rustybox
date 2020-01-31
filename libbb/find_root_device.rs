@@ -35,7 +35,7 @@ pub const DEVNAME_MAX: C2RustUnnamed = 256;
  * We handle /dev/dir/dir/dir too, at a cost of ~80 more bytes code */
 /* Do not reallocate all this stuff on each recursion */
 pub type C2RustUnnamed = libc::c_uint;
-unsafe extern "C" fn find_block_device_in_dir(mut ap: *mut arena) -> *mut libc::c_char {
+unsafe fn find_block_device_in_dir(mut ap: *mut arena) -> *mut libc::c_char {
   let mut dir: *mut DIR = std::ptr::null_mut();
   let mut entry: *mut dirent = std::ptr::null_mut();
   let mut retpath: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -200,8 +200,7 @@ unsafe extern "C" fn find_block_device_in_dir(mut ap: *mut arena) -> *mut libc::
  * work coreutils-compatibly. */
 /*ACTION_REVERSE      = (1 << 4), - unused */
 /* more than enough for "/dev/ttyXXX" */
-#[no_mangle]
-pub unsafe extern "C" fn find_block_device(mut path: *const libc::c_char) -> *mut libc::c_char {
+pub unsafe fn find_block_device(mut path: *const libc::c_char) -> *mut libc::c_char {
   let mut a: arena = arena {
     st: std::mem::zeroed(),
     dev: 0,

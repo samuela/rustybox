@@ -24,8 +24,7 @@ use libc::printf;
 //usage:#define rdev_example_usage
 //usage:       "$ rdev\n"
 //usage:       "/dev/mtdblock9 /\n"
-#[no_mangle]
-pub unsafe extern "C" fn rdev_main(
+pub unsafe fn rdev_main(
   mut _argc: libc::c_int,
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

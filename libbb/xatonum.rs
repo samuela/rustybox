@@ -146,8 +146,7 @@ You need to define the following (example):
 #define XSTR_TYPE_MIN LONG_MIN
 #define XSTR_STRTOU strtoul
 */
-#[no_mangle]
-pub unsafe extern "C" fn xstrtoull_range_sfx(
+pub unsafe fn xstrtoull_range_sfx(
   mut numstr: *const libc::c_char,
   mut base: libc::c_int,
   mut lower: libc::c_ulonglong,
@@ -266,8 +265,7 @@ pub unsafe extern "C" fn xstrtoull_range_sfx(
     numstr,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn xstrtou_range_sfx(
+pub unsafe fn xstrtou_range_sfx(
   mut numstr: *const libc::c_char,
   mut base: libc::c_int,
   mut lower: libc::c_uint,
@@ -353,8 +351,7 @@ pub unsafe extern "C" fn xstrtou_range_sfx(
     numstr,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn xstrtou_range(
+pub unsafe fn xstrtou_range(
   mut numstr: *const libc::c_char,
   mut base: libc::c_int,
   mut lower: libc::c_uint,
@@ -362,8 +359,7 @@ pub unsafe extern "C" fn xstrtou_range(
 ) -> libc::c_uint {
   return xstrtou_range_sfx(numstr, base, lower, upper, 0 as *const suffix_mult);
 }
-#[no_mangle]
-pub unsafe extern "C" fn xstrtoull_range(
+pub unsafe fn xstrtoull_range(
   mut numstr: *const libc::c_char,
   mut base: libc::c_int,
   mut lower: libc::c_ulonglong,
@@ -371,8 +367,7 @@ pub unsafe extern "C" fn xstrtoull_range(
 ) -> libc::c_ulonglong {
   return xstrtoull_range_sfx(numstr, base, lower, upper, 0 as *const suffix_mult);
 }
-#[no_mangle]
-pub unsafe extern "C" fn xstrtoull_sfx(
+pub unsafe fn xstrtoull_sfx(
   mut numstr: *const libc::c_char,
   mut base: libc::c_int,
   mut suffixes: *const suffix_mult,
@@ -387,8 +382,7 @@ pub unsafe extern "C" fn xstrtoull_sfx(
     suffixes,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn xstrtou_sfx(
+pub unsafe fn xstrtou_sfx(
   mut numstr: *const libc::c_char,
   mut base: libc::c_int,
   mut suffixes: *const suffix_mult,
@@ -403,8 +397,7 @@ pub unsafe extern "C" fn xstrtou_sfx(
     suffixes,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn xstrtou(
+pub unsafe fn xstrtou(
   mut numstr: *const libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_uint {
@@ -418,8 +411,7 @@ pub unsafe extern "C" fn xstrtou(
     0 as *const suffix_mult,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn xstrtoull(
+pub unsafe fn xstrtoull(
   mut numstr: *const libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_ulonglong {
@@ -433,8 +425,7 @@ pub unsafe extern "C" fn xstrtoull(
     0 as *const suffix_mult,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn xatou_range_sfx(
+pub unsafe fn xatou_range_sfx(
   mut numstr: *const libc::c_char,
   mut lower: libc::c_uint,
   mut upper: libc::c_uint,
@@ -442,8 +433,7 @@ pub unsafe extern "C" fn xatou_range_sfx(
 ) -> libc::c_uint {
   return xstrtou_range_sfx(numstr, 10i32, lower, upper, suffixes);
 }
-#[no_mangle]
-pub unsafe extern "C" fn xatoull_range_sfx(
+pub unsafe fn xatoull_range_sfx(
   mut numstr: *const libc::c_char,
   mut lower: libc::c_ulonglong,
   mut upper: libc::c_ulonglong,
@@ -451,24 +441,21 @@ pub unsafe extern "C" fn xatoull_range_sfx(
 ) -> libc::c_ulonglong {
   return xstrtoull_range_sfx(numstr, 10i32, lower, upper, suffixes);
 }
-#[no_mangle]
-pub unsafe extern "C" fn xatou_range(
+pub unsafe fn xatou_range(
   mut numstr: *const libc::c_char,
   mut lower: libc::c_uint,
   mut upper: libc::c_uint,
 ) -> libc::c_uint {
   return xstrtou_range_sfx(numstr, 10i32, lower, upper, 0 as *const suffix_mult);
 }
-#[no_mangle]
-pub unsafe extern "C" fn xatoull_range(
+pub unsafe fn xatoull_range(
   mut numstr: *const libc::c_char,
   mut lower: libc::c_ulonglong,
   mut upper: libc::c_ulonglong,
 ) -> libc::c_ulonglong {
   return xstrtoull_range_sfx(numstr, 10i32, lower, upper, 0 as *const suffix_mult);
 }
-#[no_mangle]
-pub unsafe extern "C" fn xatou_sfx(
+pub unsafe fn xatou_sfx(
   mut numstr: *const libc::c_char,
   mut suffixes: *const suffix_mult,
 ) -> libc::c_uint {
@@ -482,8 +469,7 @@ pub unsafe extern "C" fn xatou_sfx(
     suffixes,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn xatoull_sfx(
+pub unsafe fn xatoull_sfx(
   mut numstr: *const libc::c_char,
   mut suffixes: *const suffix_mult,
 ) -> libc::c_ulonglong {
@@ -497,18 +483,15 @@ pub unsafe extern "C" fn xatoull_sfx(
     suffixes,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn xatoull(mut numstr: *const libc::c_char) -> libc::c_ulonglong {
+pub unsafe fn xatoull(mut numstr: *const libc::c_char) -> libc::c_ulonglong {
   return xatoull_sfx(numstr, 0 as *const suffix_mult);
 }
-#[no_mangle]
-pub unsafe extern "C" fn xatou(mut numstr: *const libc::c_char) -> libc::c_uint {
+pub unsafe fn xatou(mut numstr: *const libc::c_char) -> libc::c_uint {
   return xatou_sfx(numstr, 0 as *const suffix_mult);
 }
 /* Signed ones */
 /* Signed ones */
-#[no_mangle]
-pub unsafe extern "C" fn xstrtoi_range_sfx(
+pub unsafe fn xstrtoi_range_sfx(
   mut numstr: *const libc::c_char,
   mut base: libc::c_int,
   mut lower: libc::c_int,
@@ -544,8 +527,7 @@ pub unsafe extern "C" fn xstrtoi_range_sfx(
   }
   return r;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xstrtoll_range_sfx(
+pub unsafe fn xstrtoll_range_sfx(
   mut numstr: *const libc::c_char,
   mut base: libc::c_int,
   mut lower: libc::c_longlong,
@@ -575,8 +557,7 @@ pub unsafe extern "C" fn xstrtoll_range_sfx(
   }
   return r;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xstrtoi_range(
+pub unsafe fn xstrtoi_range(
   mut numstr: *const libc::c_char,
   mut base: libc::c_int,
   mut lower: libc::c_int,
@@ -584,8 +565,7 @@ pub unsafe extern "C" fn xstrtoi_range(
 ) -> libc::c_int {
   return xstrtoi_range_sfx(numstr, base, lower, upper, 0 as *const suffix_mult);
 }
-#[no_mangle]
-pub unsafe extern "C" fn xstrtoll_range(
+pub unsafe fn xstrtoll_range(
   mut numstr: *const libc::c_char,
   mut base: libc::c_int,
   mut lower: libc::c_longlong,
@@ -593,8 +573,7 @@ pub unsafe extern "C" fn xstrtoll_range(
 ) -> libc::c_longlong {
   return xstrtoll_range_sfx(numstr, base, lower, upper, 0 as *const suffix_mult);
 }
-#[no_mangle]
-pub unsafe extern "C" fn xstrtoi(
+pub unsafe fn xstrtoi(
   mut numstr: *const libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_int {
@@ -606,8 +585,7 @@ pub unsafe extern "C" fn xstrtoi(
     0 as *const suffix_mult,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn xstrtoll(
+pub unsafe fn xstrtoll(
   mut numstr: *const libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_longlong {
@@ -619,8 +597,7 @@ pub unsafe extern "C" fn xstrtoll(
     0 as *const suffix_mult,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn xatoll_range_sfx(
+pub unsafe fn xatoll_range_sfx(
   mut numstr: *const libc::c_char,
   mut lower: libc::c_longlong,
   mut upper: libc::c_longlong,
@@ -628,8 +605,7 @@ pub unsafe extern "C" fn xatoll_range_sfx(
 ) -> libc::c_longlong {
   return xstrtoll_range_sfx(numstr, 10i32, lower, upper, suffixes);
 }
-#[no_mangle]
-pub unsafe extern "C" fn xatoi_range_sfx(
+pub unsafe fn xatoi_range_sfx(
   mut numstr: *const libc::c_char,
   mut lower: libc::c_int,
   mut upper: libc::c_int,
@@ -637,24 +613,21 @@ pub unsafe extern "C" fn xatoi_range_sfx(
 ) -> libc::c_int {
   return xstrtoi_range_sfx(numstr, 10i32, lower, upper, suffixes);
 }
-#[no_mangle]
-pub unsafe extern "C" fn xatoll_range(
+pub unsafe fn xatoll_range(
   mut numstr: *const libc::c_char,
   mut lower: libc::c_longlong,
   mut upper: libc::c_longlong,
 ) -> libc::c_longlong {
   return xstrtoll_range_sfx(numstr, 10i32, lower, upper, 0 as *const suffix_mult);
 }
-#[no_mangle]
-pub unsafe extern "C" fn xatoi_range(
+pub unsafe fn xatoi_range(
   mut numstr: *const libc::c_char,
   mut lower: libc::c_int,
   mut upper: libc::c_int,
 ) -> libc::c_int {
   return xstrtoi_range_sfx(numstr, 10i32, lower, upper, 0 as *const suffix_mult);
 }
-#[no_mangle]
-pub unsafe extern "C" fn xatoll_sfx(
+pub unsafe fn xatoll_sfx(
   mut numstr: *const libc::c_char,
   mut suffixes: *const suffix_mult,
 ) -> libc::c_longlong {
@@ -666,8 +639,7 @@ pub unsafe extern "C" fn xatoll_sfx(
     suffixes,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn xatoi_sfx(
+pub unsafe fn xatoi_sfx(
   mut numstr: *const libc::c_char,
   mut suffixes: *const suffix_mult,
 ) -> libc::c_int {
@@ -679,8 +651,7 @@ pub unsafe extern "C" fn xatoi_sfx(
     suffixes,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn xatoll(mut numstr: *const libc::c_char) -> libc::c_longlong {
+pub unsafe fn xatoll(mut numstr: *const libc::c_char) -> libc::c_longlong {
   return xstrtoll_range_sfx(
     numstr,
     10i32,
@@ -703,8 +674,7 @@ pub unsafe extern "C" fn xatoll(mut numstr: *const libc::c_char) -> libc::c_long
 /* (useful for mapping them to the type of the same width) */
 /* If long == long long, then just map them one-to-one */
 /* Same for int -> [long] long */
-#[no_mangle]
-pub unsafe extern "C" fn xatoi(mut numstr: *const libc::c_char) -> libc::c_int {
+pub unsafe fn xatoi(mut numstr: *const libc::c_char) -> libc::c_int {
   return xstrtoi_range_sfx(
     numstr,
     10i32,
@@ -714,7 +684,7 @@ pub unsafe extern "C" fn xatoi(mut numstr: *const libc::c_char) -> libc::c_int {
   );
 }
 #[inline(always)]
-unsafe extern "C" fn bb_strtoui(
+unsafe fn bb_strtoui(
   mut str: *const libc::c_char,
   mut end: *mut *mut libc::c_char,
   mut b: libc::c_int,
@@ -733,8 +703,7 @@ unsafe extern "C" fn bb_strtoui(
   return v as libc::c_uint;
 }
 /* A few special cases */
-#[no_mangle]
-pub unsafe extern "C" fn xatoi_positive(mut numstr: *const libc::c_char) -> libc::c_int {
+pub unsafe fn xatoi_positive(mut numstr: *const libc::c_char) -> libc::c_int {
   return xatou_range(numstr, 0 as libc::c_uint, 2147483647i32 as libc::c_uint) as libc::c_int;
 }
 
@@ -1024,8 +993,7 @@ pub unsafe extern "C" fn xatoi_positive(mut numstr: *const libc::c_char) -> libc
  * but that would be too long.
  */
 /* Useful for reading port numbers */
-#[no_mangle]
-pub unsafe extern "C" fn xatou16(mut numstr: *const libc::c_char) -> u16 {
+pub unsafe fn xatou16(mut numstr: *const libc::c_char) -> u16 {
   return xatou_range(numstr, 0 as libc::c_uint, 0xffffi32 as libc::c_uint) as u16;
 }
 #[no_mangle]

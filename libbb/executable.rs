@@ -26,8 +26,7 @@ extern "C" {
  * return 1 if found;
  * return 0 otherwise;
  */
-#[no_mangle]
-pub unsafe extern "C" fn file_is_executable(mut name: *const libc::c_char) -> libc::c_int {
+pub unsafe fn file_is_executable(mut name: *const libc::c_char) -> libc::c_int {
   let mut s: stat = std::mem::zeroed();
   return (access(name, 1i32) == 0
     && stat(name, &mut s) == 0
@@ -44,8 +43,7 @@ pub unsafe extern "C" fn file_is_executable(mut name: *const libc::c_char) -> li
  * in all cases (*PATHp) contents are temporarily modified
  * but are restored on return (s/:/NUL/ and back).
  */
-#[no_mangle]
-pub unsafe extern "C" fn find_executable(
+pub unsafe fn find_executable(
   mut filename: *const libc::c_char,
   mut PATHp: *mut *mut libc::c_char,
 ) -> *mut libc::c_char {
@@ -93,15 +91,13 @@ pub unsafe extern "C" fn find_executable(
  * return 1 if found;
  * return 0 otherwise;
  */
-#[no_mangle]
-pub unsafe extern "C" fn executable_exists(mut filename: *const libc::c_char) -> libc::c_int {
+pub unsafe fn executable_exists(mut filename: *const libc::c_char) -> libc::c_int {
   let mut path: *mut libc::c_char = getenv(b"PATH\x00" as *const u8 as *const libc::c_char);
   let mut ret: *mut libc::c_char = find_executable(filename, &mut path);
   free(ret as *mut libc::c_void);
   return (ret != std::ptr::null_mut()) as libc::c_int;
 }
-#[no_mangle]
-pub unsafe extern "C" fn BB_EXECVP_or_die(mut argv: *mut *mut libc::c_char) -> ! {
+pub unsafe fn BB_EXECVP_or_die(mut argv: *mut *mut libc::c_char) -> ! {
   execvp(*argv.offset(0), argv as *const *mut libc::c_char);
   /* SUSv3-mandated exit codes */
   xfunc_error_retval = if *bb_errno == 2i32 { 127i32 } else { 126i32 } as u8;
@@ -418,8 +414,7 @@ pub unsafe extern "C" fn BB_EXECVP_or_die(mut argv: *mut *mut libc::c_char) -> !
  * but it may exec busybox and call applet instead of searching PATH.
  */
 /* Typical idiom for applets which exec *optional* PROG [ARGS] */
-#[no_mangle]
-pub unsafe extern "C" fn exec_prog_or_SHELL(mut argv: *mut *mut libc::c_char) -> ! {
+pub unsafe fn exec_prog_or_SHELL(mut argv: *mut *mut libc::c_char) -> ! {
   if !(*argv.offset(0)).is_null() {
     BB_EXECVP_or_die(argv);
   }

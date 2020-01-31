@@ -27,11 +27,7 @@ extern "C" {
 
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn reset_main(
-  mut _argc: libc::c_int,
-  mut _argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn reset_main(mut _argc: libc::c_int, mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   static mut args: [*const libc::c_char; 3] = [
     b"stty\x00" as *const u8 as *const libc::c_char,
     b"sane\x00" as *const u8 as *const libc::c_char,

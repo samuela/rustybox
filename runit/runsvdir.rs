@@ -1,6 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::smallint;
-
 use libc;
 use libc::chdir;
 use libc::closedir;
@@ -331,7 +330,7 @@ pub unsafe extern "C" fn runsvdir_main(
       } else {
         0
       }),
-    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo),
   );
   let fresh3 = argv;
   argv = argv.offset(1);

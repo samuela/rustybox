@@ -97,7 +97,7 @@ pub const IACBUFSIZE: C2RustUnnamed = 128;
 pub const DATABUFSIZE: C2RustUnnamed = 128;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const netfd: C2RustUnnamed_0 = 3;
-unsafe extern "C" fn iac_flush() {
+unsafe fn iac_flush() {
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).iaclen != 0 {
     crate::libbb::full_write::full_write(
       netfd as libc::c_int,
@@ -109,11 +109,11 @@ unsafe extern "C" fn iac_flush() {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).iaclen = 0
   };
 }
-unsafe extern "C" fn doexit(mut ev: libc::c_int) -> ! {
+unsafe fn doexit(mut ev: libc::c_int) -> ! {
   cookmode();
   exit(ev);
 }
-unsafe extern "C" fn con_escape() {
+unsafe fn con_escape() {
   let mut current_block: u64;
   let mut b: libc::c_char = 0;
   if bb_got_signal != 0 {
@@ -173,7 +173,7 @@ unsafe extern "C" fn con_escape() {
   }
   bb_got_signal = 0 as smallint;
 }
-unsafe extern "C" fn handle_net_output(mut len: libc::c_int) {
+unsafe fn handle_net_output(mut len: libc::c_int) {
   let mut outbuf: [byte; 256] = [0; 256];
   let mut dst: *mut byte = outbuf.as_mut_ptr();
   let mut src: *mut byte = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -213,7 +213,7 @@ unsafe extern "C" fn handle_net_output(mut len: libc::c_int) {
     );
   };
 }
-unsafe extern "C" fn handle_net_input(mut len: libc::c_int) {
+unsafe fn handle_net_input(mut len: libc::c_int) {
   let mut c: byte = 0;
   let mut i: libc::c_int = 0;
   let mut cstart: libc::c_int = 0;
@@ -371,7 +371,7 @@ unsafe extern "C" fn handle_net_input(mut len: libc::c_int) {
     ); /* "... & 0xff" is implicit */
   };
 }
-unsafe extern "C" fn put_iac(mut c: libc::c_int) {
+unsafe fn put_iac(mut c: libc::c_int) {
   let mut iaclen: libc::c_int = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).iaclen;
   if iaclen >= IACBUFSIZE as libc::c_int {
     iac_flush();
@@ -380,21 +380,21 @@ unsafe extern "C" fn put_iac(mut c: libc::c_int) {
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).iacbuf[iaclen as usize] = c as libc::c_char;
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).iaclen = iaclen + 1i32;
 }
-unsafe extern "C" fn put_iac2_msb_lsb(mut x_y: libc::c_uint) {
+unsafe fn put_iac2_msb_lsb(mut x_y: libc::c_uint) {
   put_iac((x_y >> 8i32) as libc::c_int);
   put_iac(x_y as libc::c_int);
   /* "... & 0xff" is implicit */
 }
-unsafe extern "C" fn put_iac4_msb_lsb(mut x_y_z_t: libc::c_uint) {
+unsafe fn put_iac4_msb_lsb(mut x_y_z_t: libc::c_uint) {
   put_iac2_msb_lsb(x_y_z_t >> 16i32);
   put_iac2_msb_lsb(x_y_z_t);
   /* "... & 0xffff" is implicit */
 }
-unsafe extern "C" fn put_iac3_IAC_x_y_merged(mut wwdd_and_c: libc::c_uint) {
+unsafe fn put_iac3_IAC_x_y_merged(mut wwdd_and_c: libc::c_uint) {
   put_iac(255i32); /* "USER" */
   put_iac2_msb_lsb(wwdd_and_c);
 }
-unsafe extern "C" fn put_iac_subopt(mut c: byte, mut str: *mut libc::c_char) {
+unsafe fn put_iac_subopt(mut c: byte, mut str: *mut libc::c_char) {
   put_iac4_msb_lsb(
     ((255i32 << 24i32) + (250i32 << 16i32) + ((c as libc::c_int) << 8i32) + 0) as libc::c_uint,
   );
@@ -405,7 +405,7 @@ unsafe extern "C" fn put_iac_subopt(mut c: byte, mut str: *mut libc::c_char) {
   }
   put_iac2_msb_lsb(((255i32 << 8i32) + 240i32) as libc::c_uint);
 }
-unsafe extern "C" fn put_iac_subopt_autologin() {
+unsafe fn put_iac_subopt_autologin() {
   let mut p: *const libc::c_char = std::ptr::null();
   put_iac4_msb_lsb(((255i32 << 24i32) + (250i32 << 16i32) + (39i32 << 8i32) + 0) as libc::c_uint);
   put_iac4_msb_lsb(
@@ -421,12 +421,12 @@ unsafe extern "C" fn put_iac_subopt_autologin() {
   }
   put_iac2_msb_lsb(((255i32 << 8i32) + 240i32) as libc::c_uint);
 }
-unsafe extern "C" fn put_iac_naws(mut c: byte, mut x: libc::c_int, mut y: libc::c_int) {
+unsafe fn put_iac_naws(mut c: byte, mut x: libc::c_int, mut y: libc::c_int) {
   put_iac3_IAC_x_y_merged(((250i32 << 8i32) + c as libc::c_int) as libc::c_uint);
   put_iac4_msb_lsb(((x << 16i32) + y) as libc::c_uint);
   put_iac2_msb_lsb(((255i32 << 8i32) + 240i32) as libc::c_uint);
 }
-unsafe extern "C" fn setConMode() {
+unsafe fn setConMode() {
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).telflags as libc::c_int
     & UF_ECHO as libc::c_int
     != 0
@@ -456,7 +456,7 @@ unsafe extern "C" fn setConMode() {
     cookmode();
   };
 }
-unsafe extern "C" fn will_charmode() {
+unsafe fn will_charmode() {
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).charmode = CHM_TRY as libc::c_int as byte;
   let ref mut fresh5 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).telflags;
   *fresh5 = (*fresh5 as libc::c_int | (UF_ECHO as libc::c_int | UF_SGA as libc::c_int)) as byte;
@@ -465,7 +465,7 @@ unsafe extern "C" fn will_charmode() {
   put_iac3_IAC_x_y_merged(((253i32 << 8i32) + 3i32) as libc::c_uint);
   iac_flush();
 }
-unsafe extern "C" fn do_linemode() {
+unsafe fn do_linemode() {
   (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).charmode = CHM_TRY as libc::c_int as byte;
   let ref mut fresh6 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).telflags;
   *fresh6 = (*fresh6 as libc::c_int & !(UF_ECHO as libc::c_int | UF_SGA as libc::c_int)) as byte;
@@ -474,14 +474,14 @@ unsafe extern "C" fn do_linemode() {
   put_iac3_IAC_x_y_merged(((254i32 << 8i32) + 3i32) as libc::c_uint);
   iac_flush();
 }
-unsafe extern "C" fn to_notsup(mut c: libc::c_char) {
+unsafe fn to_notsup(mut c: libc::c_char) {
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).telwish as libc::c_int == 251i32 {
     put_iac3_IAC_x_y_merged(((254i32 << 8i32) + c as libc::c_int) as libc::c_uint);
   } else if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).telwish as libc::c_int == 253i32 {
     put_iac3_IAC_x_y_merged(((252i32 << 8i32) + c as libc::c_int) as libc::c_uint);
   };
 }
-unsafe extern "C" fn to_echo() {
+unsafe fn to_echo() {
   /* if server requests ECHO, don't agree */
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).telwish as libc::c_int == 253i32 {
     put_iac3_IAC_x_y_merged(((252i32 << 8i32) + 1i32) as libc::c_uint);
@@ -518,7 +518,7 @@ unsafe extern "C" fn to_echo() {
   crate::libbb::xfuncs::full_write1_str(b"\r\n\x00" as *const u8 as *const libc::c_char);
   /* sudden modec */
 }
-unsafe extern "C" fn to_sga() {
+unsafe fn to_sga() {
   /* daemon always sends will/wont, client do/dont */
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).telflags as libc::c_int
     & UF_SGA as libc::c_int
@@ -541,7 +541,7 @@ unsafe extern "C" fn to_sga() {
     put_iac3_IAC_x_y_merged(((254i32 << 8i32) + 3i32) as libc::c_uint);
   };
 }
-unsafe extern "C" fn to_ttype() {
+unsafe fn to_ttype() {
   /* Tell server we will (or won't) do TTYPE */
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .ttype
@@ -552,7 +552,7 @@ unsafe extern "C" fn to_ttype() {
     put_iac3_IAC_x_y_merged(((252i32 << 8i32) + 24i32) as libc::c_uint);
   };
 }
-unsafe extern "C" fn to_new_environ() {
+unsafe fn to_new_environ() {
   /* Tell server we will (or will not) do AUTOLOGIN */
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .autologin
@@ -563,11 +563,11 @@ unsafe extern "C" fn to_new_environ() {
     put_iac3_IAC_x_y_merged(((252i32 << 8i32) + 39i32) as libc::c_uint);
   };
 }
-unsafe extern "C" fn to_naws() {
+unsafe fn to_naws() {
   /* Tell server we will do NAWS */
   put_iac3_IAC_x_y_merged(((251i32 << 8i32) + 31i32) as libc::c_uint);
 }
-unsafe extern "C" fn telopt(mut c: byte) {
+unsafe fn telopt(mut c: byte) {
   match c as libc::c_int {
     1 => {
       to_echo();
@@ -595,7 +595,7 @@ unsafe extern "C" fn telopt(mut c: byte) {
   };
 }
 /* subnegotiation -- ignore all (except TTYPE,NAWS) */
-unsafe extern "C" fn subneg(mut c: byte) {
+unsafe fn subneg(mut c: byte) {
   match (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).telstate as libc::c_int {
     4 => {
       if c as libc::c_int == 255i32 {
@@ -629,7 +629,7 @@ unsafe extern "C" fn subneg(mut c: byte) {
     _ => {}
   };
 }
-unsafe extern "C" fn rawmode() {
+unsafe fn rawmode() {
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_termios != 0 {
     tcsetattr(
       0,
@@ -638,7 +638,7 @@ unsafe extern "C" fn rawmode() {
     );
   };
 }
-unsafe extern "C" fn cookmode() {
+unsafe fn cookmode() {
   if (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).do_termios != 0 {
     tcsetattr(
       0,
@@ -647,11 +647,7 @@ unsafe extern "C" fn cookmode() {
     );
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn telnet_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn telnet_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut host: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut port: libc::c_int = 0;
   let mut len: libc::c_int = 0;
@@ -721,10 +717,7 @@ pub unsafe extern "C" fn telnet_main(
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).win_height,
   );
   //TODO: support dynamic resize?
-  signal(
-    2i32,
-    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  signal(2i32, Some(crate::libbb::signals::record_signo));
   ufds[0].fd = 0;
   ufds[0].events = 0x1i32 as libc::c_short;
   ufds[1].fd = netfd as libc::c_int;

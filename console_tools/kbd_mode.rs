@@ -34,8 +34,7 @@ pub const SCANCODE: C2RustUnnamed = 1;
 //usage:     "\n	-s	Raw (scancode)"
 //usage:     "\n	-u	Unicode (utf-8)"
 //usage:     "\n	-C TTY	Affect TTY"
-#[no_mangle]
-pub unsafe extern "C" fn kbd_mode_main(
+pub unsafe fn kbd_mode_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

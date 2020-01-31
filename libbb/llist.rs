@@ -1,6 +1,5 @@
 use crate::libbb::xfuncs_printf::xmalloc;
 use libc;
-use libc::free;
 use libc::strcmp;
 
 #[repr(C)]
@@ -32,13 +31,13 @@ pub unsafe fn llist_add_to_end(mut list_head: *mut *mut llist_t, mut data: *mut 
 }
 
 /* Remove first element from the list and return it */
-pub unsafe fn llist_pop(mut head: *mut *mut llist_t) -> *mut libc::c_void {
+pub unsafe fn llist_pop(head: *mut *mut llist_t) -> *mut libc::c_void {
   let mut data: *mut libc::c_void = std::ptr::null_mut();
   let mut temp: *mut llist_t = *head;
   if !temp.is_null() {
     data = (*temp).data as *mut libc::c_void;
     *head = (*temp).link;
-    free(temp as *mut libc::c_void);
+    libc::free(temp as *mut libc::c_void);
   }
   return data;
 }
@@ -58,17 +57,10 @@ pub unsafe fn llist_unlink(mut head: *mut *mut llist_t, mut elm: *mut llist_t) {
   }
 }
 
-/* Recursively free all elements in the linked list.  If freeit != NULL
- * call it on each datum in the list */
-pub unsafe fn llist_free(
-  mut elm: *mut llist_t,
-  mut freeit: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
-) {
+/* Recursively free all elements in the linked list. */
+pub unsafe fn llist_free(mut elm: *mut llist_t) {
   while !elm.is_null() {
-    let mut data: *mut libc::c_void = llist_pop(&mut elm);
-    if freeit.is_some() {
-      freeit.expect("non-null function pointer")(data);
-    }
+    llist_pop(&mut elm);
   }
 }
 

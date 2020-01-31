@@ -426,8 +426,7 @@ pub struct utsname {
  *
  *     if (get_linux_version_code() > KERNEL_VERSION(2,2,11)) { <stuff> }
  */
-#[no_mangle]
-pub unsafe extern "C" fn get_linux_version_code() -> libc::c_int {
+pub unsafe fn get_linux_version_code() -> libc::c_int {
   let mut name: utsname = utsname {
     sysname: [0; 65],
     nodename: [0; 65],

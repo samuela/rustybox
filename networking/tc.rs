@@ -226,7 +226,7 @@ pub const CMD_add: C2RustUnnamed_4 = 0;
 pub type C2RustUnnamed_5 = libc::c_uint;
 /* Allocates a buffer containing the name of a class id.
  * The caller must free the returned memory.  */
-unsafe extern "C" fn print_tc_classid(mut cid: u32) -> *mut libc::c_char {
+unsafe fn print_tc_classid(mut cid: u32) -> *mut libc::c_char {
   /* IMPOSSIBLE */
   if cid == 0u32 {
     return crate::libbb::xfuncs_printf::xasprintf(b"none\x00" as *const u8 as *const libc::c_char);
@@ -249,10 +249,7 @@ unsafe extern "C" fn print_tc_classid(mut cid: u32) -> *mut libc::c_char {
   };
 }
 /* Get a qdisc handle.  Return 0 on success, !0 otherwise.  */
-unsafe extern "C" fn get_qdisc_handle(
-  mut h: *mut u32,
-  mut str: *const libc::c_char,
-) -> libc::c_int {
+unsafe fn get_qdisc_handle(mut h: *mut u32, mut str: *const libc::c_char) -> libc::c_int {
   let mut maj: u32 = 0;
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   maj = 0u32;
@@ -270,7 +267,7 @@ unsafe extern "C" fn get_qdisc_handle(
   return 0;
 }
 /* Get class ID.  Return 0 on success, !0 otherwise.  */
-unsafe extern "C" fn get_tc_classid(mut h: *mut u32, mut str: *const libc::c_char) -> libc::c_int {
+unsafe fn get_tc_classid(mut h: *mut u32, mut str: *const libc::c_char) -> libc::c_int {
   let mut maj: u32 = 0;
   let mut min: u32 = 0;
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -305,7 +302,7 @@ unsafe extern "C" fn get_tc_classid(mut h: *mut u32, mut str: *const libc::c_cha
   *h = maj;
   return 0;
 }
-unsafe extern "C" fn print_rate(mut buf: *mut libc::c_char, mut len: libc::c_int, mut rate: u32) {
+unsafe fn print_rate(mut buf: *mut libc::c_char, mut len: libc::c_int, mut rate: u32) {
   let mut tmp: libc::c_double = rate as libc::c_double * 8i32 as libc::c_double;
   if tmp >= (1000i32 * 1000000i32) as libc::c_double {
     snprintf(
@@ -330,7 +327,7 @@ unsafe extern "C" fn print_rate(mut buf: *mut libc::c_char, mut len: libc::c_int
     );
   };
 }
-unsafe extern "C" fn prio_print_opt(mut opt: *mut rtattr) -> libc::c_int {
+unsafe fn prio_print_opt(mut opt: *mut rtattr) -> libc::c_int {
   let mut i: libc::c_int = 0;
   let mut qopt: *mut tc_prio_qopt = std::ptr::null_mut();
   let mut tb: [*mut rtattr; 2] = [0 as *mut rtattr; 2];
@@ -369,7 +366,7 @@ unsafe extern "C" fn prio_print_opt(mut opt: *mut rtattr) -> libc::c_int {
   }
   return 0;
 }
-unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
+unsafe fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
   let mut tb: [*mut rtattr; 8] = [0 as *mut rtattr; 8];
   let mut r: *mut tc_ratespec = std::ptr::null_mut();
   let mut lss: *mut tc_cbq_lssopt = std::ptr::null_mut();
@@ -571,7 +568,7 @@ unsafe extern "C" fn cbq_print_opt(mut opt: *mut rtattr) -> libc::c_int {
   }
   return 0;
 }
-unsafe extern "C" fn print_qdisc(
+unsafe fn print_qdisc(
   mut _who: *const sockaddr_nl,
   mut hdr: *mut nlmsghdr,
   mut _arg: *mut libc::c_void,
@@ -690,7 +687,7 @@ unsafe extern "C" fn print_qdisc(
   crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   return 0;
 }
-unsafe extern "C" fn print_class(
+unsafe fn print_class(
   mut _who: *const sockaddr_nl,
   mut hdr: *mut nlmsghdr,
   mut _arg: *mut libc::c_void,
@@ -831,18 +828,14 @@ unsafe extern "C" fn print_class(
   crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
   return 0;
 }
-unsafe extern "C" fn print_filter(
+unsafe fn print_filter(
   mut _who: *const sockaddr_nl,
   mut _hdr: *mut nlmsghdr,
   mut _arg: *mut libc::c_void,
 ) -> libc::c_int {
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn tc_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn tc_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   static mut objects: [libc::c_char; 20] = [
     113, 100, 105, 115, 99, 0, 99, 108, 97, 115, 115, 0, 102, 105, 108, 116, 101, 114, 0, 0,
   ];
@@ -1055,32 +1048,11 @@ pub unsafe extern "C" fn tc_main(
     crate::networking::libiproute::libnetlink::xrtnl_dump_filter(
       &mut rth,
       if obj == OBJ_qdisc as libc::c_int {
-        Some(
-          print_qdisc
-            as unsafe extern "C" fn(
-              _: *const sockaddr_nl,
-              _: *mut nlmsghdr,
-              _: *mut libc::c_void,
-            ) -> libc::c_int,
-        )
+        Some(print_qdisc)
       } else if obj == OBJ_class as libc::c_int {
-        Some(
-          print_class
-            as unsafe extern "C" fn(
-              _: *const sockaddr_nl,
-              _: *mut nlmsghdr,
-              _: *mut libc::c_void,
-            ) -> libc::c_int,
-        )
+        Some(print_class)
       } else {
-        Some(
-          print_filter
-            as unsafe extern "C" fn(
-              _: *const sockaddr_nl,
-              _: *mut nlmsghdr,
-              _: *mut libc::c_void,
-            ) -> libc::c_int,
-        )
+        Some(print_filter)
       },
       0 as *mut libc::c_void,
     );

@@ -166,13 +166,13 @@ pub struct dlist {
   pub dl: *mut *mut libc::c_char,
 }
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 /* Restores full EOF from one 8th bit: */
 //#define TOK2CHAR(t) (((t) << SHIFT_EOF) >> SHIFT_EOF)
 /* We don't really need the above, we only need to have EOF != any_real_char: */
-unsafe extern "C" fn seek_ft(mut ft: *mut FILE_and_pos_t, mut pos: off_t) {
+unsafe fn seek_ft(mut ft: *mut FILE_and_pos_t, mut pos: off_t) {
   if (*ft).ft_pos != pos {
     (*ft).ft_pos = pos;
     fseeko((*ft).ft_fp, pos, 0);
@@ -181,7 +181,7 @@ unsafe extern "C" fn seek_ft(mut ft: *mut FILE_and_pos_t, mut pos: off_t) {
 /* Reads tokens from given fp, handling -b and -w flags
  * The user must reset tok every line start
  */
-unsafe extern "C" fn read_token(mut ft: *mut FILE_and_pos_t, mut tok: token_t) -> libc::c_int {
+unsafe fn read_token(mut ft: *mut FILE_and_pos_t, mut tok: token_t) -> libc::c_int {
   tok |= TOK_EMPTY as libc::c_int;
   /* this one too, ignore it */
   while tok & TOK_EOL as libc::c_int == 0 {
@@ -240,7 +240,7 @@ unsafe extern "C" fn read_token(mut ft: *mut FILE_and_pos_t, mut tok: token_t) -
   }
   return tok;
 }
-unsafe extern "C" fn search(
+unsafe fn search(
   mut c: *const libc::c_int,
   mut k: libc::c_int,
   mut y: libc::c_int,
@@ -270,7 +270,7 @@ unsafe extern "C" fn search(
     }
   }
 }
-unsafe extern "C" fn stone(
+unsafe fn stone(
   mut a: *const libc::c_int,
   mut n: libc::c_int,
   mut b: *const libc::c_int,
@@ -364,7 +364,7 @@ unsafe extern "C" fn stone(
   free(klist as *mut libc::c_void);
   free(clist as *mut libc::c_void);
 }
-unsafe extern "C" fn equiv(
+unsafe fn equiv(
   mut a: *mut line,
   mut n: libc::c_int,
   mut b: *mut line,
@@ -407,7 +407,7 @@ unsafe extern "C" fn equiv(
   }
   *c.offset(j as isize) = -1i32;
 }
-unsafe extern "C" fn unsort(mut f: *const line, mut l: libc::c_int, mut b: *mut libc::c_int) {
+unsafe fn unsort(mut f: *const line, mut l: libc::c_int, mut b: *mut libc::c_int) {
   let mut i: libc::c_int = 0;
   let mut a: *mut libc::c_int = xmalloc(
     ((l + 1i32) as libc::c_ulong)
@@ -441,7 +441,7 @@ unsafe extern "C" fn line_compar(
     .serial
     .wrapping_sub((*(b as *const line)).c2rust_unnamed.serial) as libc::c_int;
 }
-unsafe extern "C" fn fetch(
+unsafe fn fetch(
   mut ft: *mut FILE_and_pos_t,
   mut ix: *const off_t,
   mut a: libc::c_int,
@@ -499,7 +499,7 @@ unsafe extern "C" fn fetch(
  *   of the old and new file respectively. These must be freed by the caller.
  */
 #[inline(never)]
-unsafe extern "C" fn create_J(
+unsafe fn create_J(
   mut ft: *mut FILE_and_pos_t,
   mut nlen: *mut libc::c_int,
   mut ix: *mut *mut off_t,
@@ -641,10 +641,7 @@ unsafe extern "C" fn create_J(
       sfile[j as usize].offset(1) as *mut libc::c_void,
       slen[j as usize] as size_t,
       ::std::mem::size_of::<line>() as libc::c_ulong,
-      Some(
-        line_compar
-          as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int,
-      ),
+      Some(line_compar),
     );
     j += 1
   }
@@ -735,7 +732,7 @@ unsafe extern "C" fn create_J(
   }
   return J;
 }
-unsafe extern "C" fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_char) -> bool {
+unsafe fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_char) -> bool {
   let mut nlen: [libc::c_int; 2] = [0; 2];
   let mut ix: [*mut off_t; 2] = [0 as *mut off_t; 2];
   let mut ft: [FILE_and_pos_t; 2] = [std::mem::zeroed(); 2];
@@ -923,7 +920,7 @@ unsafe extern "C" fn diff(mut fp: *mut *mut FILE, mut file: *mut *mut libc::c_ch
   free(J as *mut libc::c_void);
   return anychange;
 }
-unsafe extern "C" fn diffreg(mut file: *mut *mut libc::c_char) -> libc::c_int {
+unsafe fn diffreg(mut file: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut fp: [*mut FILE; 2] = [0 as *mut FILE; 2];
   let mut binary: bool = 0 != 0;
@@ -1027,7 +1024,7 @@ unsafe extern "C" fn diffreg(mut file: *mut *mut libc::c_char) -> libc::c_int {
   crate::libbb::fclose_nonstdin::fclose_if_not_stdin(fp[1]);
   return status;
 }
-unsafe extern "C" fn print_status(mut status: libc::c_int, mut path: *mut *mut libc::c_char) {
+unsafe fn print_status(mut status: libc::c_int, mut path: *mut *mut libc::c_char) {
   match status {
     2 | 1 => {
       if option_mask32 & (1i32 << FLAG_q as libc::c_int) as libc::c_uint != 0
@@ -1053,7 +1050,7 @@ unsafe extern "C" fn print_status(mut status: libc::c_int, mut path: *mut *mut l
   };
 }
 /* This function adds a filename to dl, the directory listing. */
-unsafe extern "C" fn add_to_dirlist(
+unsafe fn add_to_dirlist(
   mut filename: *const libc::c_char,
   mut _sb: *mut stat,
   mut userdata: *mut libc::c_void,
@@ -1078,7 +1075,7 @@ unsafe extern "C" fn add_to_dirlist(
 /* If recursion is not set, this function adds the directory
  * to the list and prevents recursive_action from recursing into it.
  */
-unsafe extern "C" fn skip_dir(
+unsafe fn skip_dir(
   mut filename: *const libc::c_char,
   mut sb: *mut stat,
   mut userdata: *mut libc::c_void,
@@ -1113,7 +1110,7 @@ unsafe extern "C" fn skip_dir(
   }
   return 1i32;
 }
-unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const libc::c_char) {
+unsafe fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const libc::c_char) {
   let mut list: [dlist; 2] = [std::mem::zeroed(); 2];
   let mut i: libc::c_int = 0;
   memset(
@@ -1135,7 +1132,7 @@ unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const 
       (ACTION_RECURSE as libc::c_int | ACTION_FOLLOWLINKS as libc::c_int) as libc::c_uint,
       Some(
         add_to_dirlist
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *const libc::c_char,
             _: *mut stat,
             _: *mut libc::c_void,
@@ -1144,7 +1141,7 @@ unsafe extern "C" fn diffdir(mut p: *mut *mut libc::c_char, mut s_start: *const 
       ),
       Some(
         skip_dir
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *const libc::c_char,
             _: *mut stat,
             _: *mut libc::c_void,
@@ -1328,11 +1325,7 @@ static mut diff_longopts: [libc::c_char; 253] = [
   99, 97, 108, 45, 102, 105, 108, 101, 115, 0, 0, 115, 115, 116, 97, 114, 116, 105, 110, 103, 45,
   102, 105, 108, 101, 0, 1, 83, 109, 105, 110, 105, 109, 97, 108, 0, 0, 100, 0,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn diff_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn diff_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut gotstdin: libc::c_int = 0;
   let mut i: libc::c_int = 0;
   let mut file: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];

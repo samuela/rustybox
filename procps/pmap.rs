@@ -40,7 +40,7 @@ use crate::librb::smaprec;
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_q: C2RustUnnamed = 2;
 pub const OPT_x: C2RustUnnamed = 1;
-unsafe extern "C" fn print_smaprec(mut currec: *mut smaprec, mut data: *mut libc::c_void) {
+unsafe fn print_smaprec(mut currec: *mut smaprec, mut data: *mut libc::c_void) {
   let mut opt: libc::c_uint = data as uintptr_t as libc::c_uint; /* min one arg */
   printf(
     b"%016llx \x00" as *const u8 as *const libc::c_char,
@@ -66,7 +66,7 @@ unsafe extern "C" fn print_smaprec(mut currec: *mut smaprec, mut data: *mut libc
     (*currec).smap_name,
   );
 }
-unsafe extern "C" fn procps_get_maps(mut pid: pid_t, mut opt: libc::c_uint) -> libc::c_int {
+unsafe fn procps_get_maps(mut pid: pid_t, mut opt: libc::c_uint) -> libc::c_int {
   let mut total: smaprec = smaprec {
     mapped_rw: 0,
     mapped_ro: 0,
@@ -111,7 +111,7 @@ unsafe extern "C" fn procps_get_maps(mut pid: pid_t, mut opt: libc::c_uint) -> l
   ret = crate::libbb::procps::procps_read_smaps(
     pid,
     &mut total,
-    Some(print_smaprec as unsafe extern "C" fn(_: *mut smaprec, _: *mut libc::c_void) -> ()),
+    Some(print_smaprec as unsafe fn(_: *mut smaprec, _: *mut libc::c_void) -> ()),
     opt as uintptr_t as *mut libc::c_void,
   );
   if ret != 0 {
@@ -136,8 +136,7 @@ unsafe extern "C" fn procps_get_maps(mut pid: pid_t, mut opt: libc::c_uint) -> l
   }
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn pmap_main(
+pub unsafe fn pmap_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

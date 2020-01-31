@@ -144,7 +144,7 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 //usage:     "\n	-d SEC	Delay interval"
 //usage:     "\n	-n	Do not sync"
 //usage:     "\n	-f	Force (don't go through init)"
-unsafe extern "C" fn write_wtmp() {
+unsafe fn write_wtmp() {
   // TODO: use std::mem:zeroed here
   let mut utmp: utmpx = std::mem::zeroed();
   let mut uts: utsname = utsname {
@@ -196,7 +196,7 @@ unsafe extern "C" fn write_wtmp() {
  *
  * We want to make sure init exists and listens to signals.
  */
-unsafe extern "C" fn init_was_not_there() -> libc::c_int {
+unsafe fn init_was_not_there() -> libc::c_int {
   let mut cnt: libc::c_int = initial as libc::c_int - 1i32; /* 5 seconds should be plenty for timeout */
   /* Just existence of PID 1 does not mean it installed
    * the handlers already.
@@ -214,11 +214,7 @@ unsafe extern "C" fn init_was_not_there() -> libc::c_int {
   /* Does it look like init wasn't there? */
   return (cnt != initial as libc::c_int - 1i32) as libc::c_int;
 }
-#[no_mangle]
-pub unsafe extern "C" fn halt_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn halt_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   static mut magic: [libc::c_int; 3] = [0xcdef0123u32 as libc::c_int, 0x4321fedci32, 0x1234567i32];
   static mut signals: [smallint; 3] = [10i32 as smallint, 12i32 as smallint, 15i32 as smallint];
   let mut delay: libc::c_int = 0;

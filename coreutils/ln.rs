@@ -5,23 +5,13 @@ use libc::lstat;
 use libc::printf;
 use libc::rename;
 use libc::stat;
-use libc::symlink;
 use libc::unlink;
 extern "C" {
-
-  #[no_mangle]
-  fn link(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
-
   #[no_mangle]
   static mut optind: libc::c_int;
-
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn ln_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn ln_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut status: libc::c_int = 0;
   let mut opts: libc::c_int = 0;
   let mut last: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -144,21 +134,9 @@ pub unsafe extern "C" fn ln_main(
         match current_block_45 {
           12349973810996921269 => {}
           _ => {
-            link_func = Some(
-              link
-                as unsafe extern "C" fn(
-                  _: *const libc::c_char,
-                  _: *const libc::c_char,
-                ) -> libc::c_int,
-            );
+            link_func = Some(libc::link);
             if opts & 1i32 << 0 != 0 {
-              link_func = Some(
-                symlink
-                  as unsafe extern "C" fn(
-                    _: *const libc::c_char,
-                    _: *const libc::c_char,
-                  ) -> libc::c_int,
-              )
+              link_func = Some(libc::symlink)
             }
             if opts & 1i32 << 5i32 != 0 {
               printf(

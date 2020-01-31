@@ -55,11 +55,7 @@ extern "C" {
 //usage:       "the specified environment\n"
 //usage:     "\n	-, -i	Start with an empty environment"
 //usage:     "\n	-u	Remove variable from the environment"
-#[no_mangle]
-pub unsafe extern "C" fn env_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn env_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opts: libc::c_uint = 0;
   let mut unset_env: *mut llist_t = std::ptr::null_mut();
   opts = crate::libbb::getopt32::getopt32long(

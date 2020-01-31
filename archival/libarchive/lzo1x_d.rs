@@ -28,8 +28,7 @@ use libc;
 // decompress a block of data.
 ************************************************************************/
 /* safe decompression with overrun testing */
-#[no_mangle]
-pub unsafe extern "C" fn lzo1x_decompress_safe(
+pub unsafe fn lzo1x_decompress_safe(
   mut in_0: *const u8,
   mut in_len: libc::c_uint,
   mut out: *mut u8,

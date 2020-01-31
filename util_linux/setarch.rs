@@ -34,8 +34,7 @@ pub const PER_LINUX32: C2RustUnnamed = 8;
 // pub const PER_LINUX_32BIT: C2RustUnnamed = 8388608;
 pub const PER_LINUX: C2RustUnnamed = 0;
 
-#[no_mangle]
-pub unsafe extern "C" fn setarch_main(
+pub unsafe fn setarch_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

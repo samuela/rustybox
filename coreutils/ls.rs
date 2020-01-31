@@ -194,7 +194,7 @@ pub const OPTBIT_F: C2RustUnnamed_1 = 12;
  */
 /*un fi chr - dir - blk - file- link- sock- -  exe */
 /* mode of zero is interpreted as "unknown" (stat failed) */
-unsafe extern "C" fn fgcolor(mut mode: mode_t) -> libc::c_char {
+unsafe fn fgcolor(mut mode: mode_t) -> libc::c_char {
   if mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
     && mode & (0o100i32 | 0o100i32 >> 3i32 | 0o100i32 >> 3i32 >> 3i32) as libc::c_uint != 0
   {
@@ -206,7 +206,7 @@ unsafe extern "C" fn fgcolor(mut mode: mode_t) -> libc::c_char {
     b"\x1f##%\"%##\x00%$%#%% \x00",
   ))[(mode >> 12i32 & 0xfi32 as libc::c_uint) as usize]; /* File is executable ... */
 }
-unsafe extern "C" fn bold(mut mode: mode_t) -> libc::c_char {
+unsafe fn bold(mut mode: mode_t) -> libc::c_char {
   if mode & 0o170000i32 as libc::c_uint == 0o100000i32 as libc::c_uint
     && mode & (0o100i32 | 0o100i32 >> 3i32 | 0o100i32 >> 3i32 >> 3i32) as libc::c_uint != 0
   {
@@ -218,7 +218,7 @@ unsafe extern "C" fn bold(mut mode: mode_t) -> libc::c_char {
     b"\x01\x00\x01\x07\x01\x07\x01\x07\x00\x07\x01\x07\x01\x07\x07\x01\x00",
   ))[(mode >> 12i32 & 0xfi32 as libc::c_uint) as usize];
 }
-unsafe extern "C" fn append_char(mut mode: mode_t) -> libc::c_char {
+unsafe fn append_char(mut mode: mode_t) -> libc::c_char {
   if option_mask32 & (OPT_F as libc::c_int | OPT_p as libc::c_int) as libc::c_uint == 0 {
     return '\u{0}' as i32 as libc::c_char;
   }
@@ -237,7 +237,7 @@ unsafe extern "C" fn append_char(mut mode: mode_t) -> libc::c_char {
     b"\x00|\x00\x00/\x00\x00\x00\x00\x00@\x00=\x00\x00\x00\x00",
   ))[(mode >> 12i32 & 0xfi32 as libc::c_uint) as usize];
 }
-unsafe extern "C" fn calc_name_len(mut name: *const libc::c_char) -> libc::c_uint {
+unsafe fn calc_name_len(mut name: *const libc::c_char) -> libc::c_uint {
   let mut len: libc::c_uint = 0;
   let mut uni_stat: uni_stat_t = uni_stat_t {
     byte_count: 0,
@@ -265,7 +265,7 @@ unsafe extern "C" fn calc_name_len(mut name: *const libc::c_char) -> libc::c_uin
  * ls -b (--escape) = octal escapes (although it doesn't look like working)
  * ls -N (--literal) = not escape at all
  */
-unsafe extern "C" fn print_name(mut name: *const libc::c_char) -> libc::c_uint {
+unsafe fn print_name(mut name: *const libc::c_char) -> libc::c_uint {
   let mut len: libc::c_uint = 0;
   let mut uni_stat: uni_stat_t = uni_stat_t {
     byte_count: 0,
@@ -296,7 +296,7 @@ unsafe extern "C" fn print_name(mut name: *const libc::c_char) -> libc::c_uint {
  * -l and -1 modes don't care.
  */
 #[inline(never)]
-unsafe extern "C" fn display_single(mut dn: *const dnode) -> libc::c_uint {
+unsafe fn display_single(mut dn: *const dnode) -> libc::c_uint {
   let mut column: libc::c_uint = 0 as libc::c_uint;
   let mut lpath: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt: libc::c_int = 0;
@@ -484,7 +484,7 @@ unsafe extern "C" fn display_single(mut dn: *const dnode) -> libc::c_uint {
   }
   return column;
 }
-unsafe extern "C" fn display_files(mut dn: *mut *mut dnode, mut nfiles: libc::c_uint) {
+unsafe fn display_files(mut dn: *mut *mut dnode, mut nfiles: libc::c_uint) {
   let mut i: libc::c_uint = 0;
   let mut ncols: libc::c_uint = 0;
   let mut nrows: libc::c_uint = 0;
@@ -571,7 +571,7 @@ unsafe extern "C" fn display_files(mut dn: *mut *mut dnode, mut nfiles: libc::c_
   }
 }
 /* ** Dir scanning code ***/
-unsafe extern "C" fn my_stat(
+unsafe fn my_stat(
   mut fullname: *const libc::c_char,
   mut name: *const libc::c_char,
   mut force_follow: libc::c_int,
@@ -618,7 +618,7 @@ unsafe extern "C" fn my_stat(
   (*cur).dn_rdev_min = gnu_dev_minor(statbuf.st_rdev) as libc::c_int;
   return cur;
 }
-unsafe extern "C" fn count_dirs(mut dn: *mut *mut dnode, mut which: libc::c_int) -> libc::c_uint {
+unsafe fn count_dirs(mut dn: *mut *mut dnode, mut which: libc::c_int) -> libc::c_uint {
   let mut dirs: libc::c_uint = 0;
   let mut all: libc::c_uint = 0;
   if dn.is_null() {
@@ -648,7 +648,7 @@ unsafe extern "C" fn count_dirs(mut dn: *mut *mut dnode, mut which: libc::c_int)
   };
 }
 /* get memory to hold an array of pointers */
-unsafe extern "C" fn dnalloc(mut num: libc::c_uint) -> *mut *mut dnode {
+unsafe fn dnalloc(mut num: libc::c_uint) -> *mut *mut dnode {
   if num < 1i32 as libc::c_uint {
     return std::ptr::null_mut();
   } /* so that we have terminating NULL */
@@ -657,7 +657,7 @@ unsafe extern "C" fn dnalloc(mut num: libc::c_uint) -> *mut *mut dnode {
     (num as libc::c_ulong).wrapping_mul(::std::mem::size_of::<*mut dnode>() as libc::c_ulong),
   ) as *mut *mut dnode;
 }
-unsafe extern "C" fn dfree(mut dnp: *mut *mut dnode) {
+unsafe fn dfree(mut dnp: *mut *mut dnode) {
   let mut i: libc::c_uint = 0;
   if dnp.is_null() {
     return;
@@ -674,10 +674,7 @@ unsafe extern "C" fn dfree(mut dnp: *mut *mut dnode) {
   free(dnp as *mut libc::c_void);
 }
 /* Returns NULL-terminated malloced vector of pointers (or NULL) */
-unsafe extern "C" fn splitdnarray(
-  mut dn: *mut *mut dnode,
-  mut which: libc::c_int,
-) -> *mut *mut dnode {
+unsafe fn splitdnarray(mut dn: *mut *mut dnode, mut which: libc::c_int) -> *mut *mut dnode {
   let mut dncnt: libc::c_uint = 0;
   let mut d: libc::c_uint = 0;
   let mut dnp: *mut *mut dnode = std::ptr::null_mut();
@@ -779,23 +776,20 @@ unsafe extern "C" fn sortcmp(
     dif as libc::c_int
   };
 }
-unsafe extern "C" fn dnsort(mut dn: *mut *mut dnode, mut size: libc::c_int) {
+unsafe fn dnsort(mut dn: *mut *mut dnode, mut size: libc::c_int) {
   qsort(
     dn as *mut libc::c_void,
     size as size_t,
     ::std::mem::size_of::<*mut dnode>() as libc::c_ulong,
-    Some(
-      sortcmp
-        as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int,
-    ),
+    Some(sortcmp),
   );
 }
-unsafe extern "C" fn sort_and_display_files(mut dn: *mut *mut dnode, mut nfiles: libc::c_uint) {
+unsafe fn sort_and_display_files(mut dn: *mut *mut dnode, mut nfiles: libc::c_uint) {
   dnsort(dn, nfiles as libc::c_int);
   display_files(dn, nfiles);
 }
 /* Returns NULL-terminated malloced vector of pointers (or NULL) */
-unsafe extern "C" fn scan_one_dir(
+unsafe fn scan_one_dir(
   mut path: *const libc::c_char,
   mut nfiles_p: *mut libc::c_uint,
 ) -> *mut *mut dnode {
@@ -880,7 +874,7 @@ unsafe extern "C" fn scan_one_dir(
  * number of units.
  */
 /* by Jorgen Overgaard (jorgen AT antistaten.se) */
-unsafe extern "C" fn calculate_blocks(mut dn: *mut *mut dnode) -> off_t {
+unsafe fn calculate_blocks(mut dn: *mut *mut dnode) -> off_t {
   let mut blocks: uoff_t = 1i32 as uoff_t;
   if !dn.is_null() {
     while !(*dn).is_null() {
@@ -895,7 +889,7 @@ unsafe extern "C" fn calculate_blocks(mut dn: *mut *mut dnode) -> off_t {
    * "+ 1" was done when we initialized blocks to 1 */
   return (blocks >> 1i32) as off_t;
 }
-unsafe extern "C" fn scan_and_display_dirs_recur(mut dn: *mut *mut dnode, mut first: libc::c_int) {
+unsafe fn scan_and_display_dirs_recur(mut dn: *mut *mut dnode, mut first: libc::c_int) {
   let mut nfiles: libc::c_uint = 0;
   let mut subdnp: *mut *mut dnode = std::ptr::null_mut();
   while !(*dn).is_null() {
@@ -1339,11 +1333,7 @@ unsafe extern "C" fn scan_and_display_dirs_recur(mut dn: *mut *mut dnode, mut fi
 /* If shell needs them, they exist even if not enabled as applets */
 /* Similar, but used by chgrp, not shell */
 /* Used by ftpd */
-#[no_mangle]
-pub unsafe extern "C" fn ls_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn ls_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   /*      ^^^^^^^^^^^^^^^^^ note: if FTPD, argc can be wrong, see ftpd.c */
   let mut dnd: *mut *mut dnode = std::ptr::null_mut();
   let mut dnf: *mut *mut dnode = std::ptr::null_mut();

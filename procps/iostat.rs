@@ -137,14 +137,14 @@ pub const OPT_t: C2RustUnnamed_1 = 4;
 pub const OPT_d: C2RustUnnamed_1 = 2;
 pub const OPT_c: C2RustUnnamed_1 = 1;
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void; /* never fails */
 }
 #[inline(always)]
-unsafe extern "C" fn this_is_smp() -> libc::c_int {
+unsafe fn this_is_smp() -> libc::c_int {
   return ((*ptr_to_globals).total_cpus > 1i32 as libc::c_uint) as libc::c_int;
 }
-unsafe extern "C" fn print_header() {
+unsafe fn print_header() {
   let mut buf: [libc::c_char; 32] = [0; 32];
   let mut uts: utsname = utsname {
     sysname: [0; 65],
@@ -172,12 +172,12 @@ unsafe extern "C" fn print_header() {
     (*ptr_to_globals).total_cpus,
   );
 }
-unsafe extern "C" fn get_localtime(mut ptm: *mut tm) {
+unsafe fn get_localtime(mut ptm: *mut tm) {
   let mut timer: time_t = 0;
   time(&mut timer);
   localtime_r(&mut timer, ptm);
 }
-unsafe extern "C" fn print_timestamp() {
+unsafe fn print_timestamp() {
   let mut buf: [libc::c_char; 64] = [0; 64];
   /* %x: date representation for the current locale */
   /* %X: time representation for the current locale */
@@ -189,7 +189,7 @@ unsafe extern "C" fn print_timestamp() {
   );
   puts(buf.as_mut_ptr());
 }
-unsafe extern "C" fn get_smp_uptime() -> cputime_t {
+unsafe fn get_smp_uptime() -> cputime_t {
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut sec: libc::c_ulong = 0;
   let mut dec: libc::c_ulong = 0;
@@ -217,7 +217,7 @@ unsafe extern "C" fn get_smp_uptime() -> cputime_t {
     );
 }
 /* Fetch CPU statistics from /proc/stat */
-unsafe extern "C" fn get_cpu_statistics(mut sc: *mut stats_cpu_t) {
+unsafe fn get_cpu_statistics(mut sc: *mut stats_cpu_t) {
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 1024] = [0; 1024];
   fp = crate::libbb::wfopen::xfopen_for_read(b"/proc/stat\x00" as *const u8 as *const libc::c_char);
@@ -266,7 +266,7 @@ unsafe extern "C" fn get_cpu_statistics(mut sc: *mut stats_cpu_t) {
   fclose(fp);
 }
 #[inline(always)]
-unsafe extern "C" fn get_interval(mut old: cputime_t, mut new: cputime_t) -> cputime_t {
+unsafe fn get_interval(mut old: cputime_t, mut new: cputime_t) -> cputime_t {
   let mut itv: cputime_t = new.wrapping_sub(old);
   return if itv == 0 as libc::c_ulonglong {
     1i32 as libc::c_ulonglong
@@ -280,7 +280,7 @@ unsafe extern "C" fn get_interval(mut old: cputime_t, mut new: cputime_t) -> cpu
  */
 /* Surprisingly, on 32bit inlining is a size win */
 #[inline(always)]
-unsafe extern "C" fn overflow_safe_sub(mut prev: cputime_t, mut curr: cputime_t) -> cputime_t {
+unsafe fn overflow_safe_sub(mut prev: cputime_t, mut curr: cputime_t) -> cputime_t {
   let mut v: cputime_t = curr.wrapping_sub(prev);
   if (v as icputime_t) < 0 as libc::c_longlong && prev <= 0xffffffffu32 as libc::c_ulonglong {
     /* kernel uses 32bit value for the counter? */
@@ -291,7 +291,7 @@ unsafe extern "C" fn overflow_safe_sub(mut prev: cputime_t, mut curr: cputime_t)
   }
   return v;
 }
-unsafe extern "C" fn percent_value(
+unsafe fn percent_value(
   mut prev: cputime_t,
   mut curr: cputime_t,
   mut itv: cputime_t,
@@ -299,7 +299,7 @@ unsafe extern "C" fn percent_value(
   return overflow_safe_sub(prev, curr) as libc::c_double / itv as libc::c_double
     * 100i32 as libc::c_double;
 }
-unsafe extern "C" fn print_stats_cpu_struct(mut stats: *mut stats_cpu_pair_t) {
+unsafe fn print_stats_cpu_struct(mut stats: *mut stats_cpu_pair_t) {
   let mut p: *mut cputime_t = (*(*stats).prev).vector.as_mut_ptr();
   let mut c: *mut cputime_t = (*(*stats).curr).vector.as_mut_ptr();
   printf(
@@ -340,7 +340,7 @@ unsafe extern "C" fn print_stats_cpu_struct(mut stats: *mut stats_cpu_pair_t) {
     ),
   );
 }
-unsafe extern "C" fn cpu_report(mut stats: *mut stats_cpu_pair_t) {
+unsafe fn cpu_report(mut stats: *mut stats_cpu_pair_t) {
   /* Always print a header */
   puts(
     b"avg-cpu:  %user   %nice %system %iowait  %steal   %idle\x00" as *const u8
@@ -349,7 +349,7 @@ unsafe extern "C" fn cpu_report(mut stats: *mut stats_cpu_pair_t) {
   /* Print current statistics */
   print_stats_cpu_struct(stats);
 }
-unsafe extern "C" fn print_stats_dev_struct(mut stats_dev: *mut stats_dev_t, mut itv: cputime_t) {
+unsafe fn print_stats_dev_struct(mut stats_dev: *mut stats_dev_t, mut itv: cputime_t) {
   let mut p: *mut stats_dev_data_t = &mut (*stats_dev).prev_data;
   let mut c: *mut stats_dev_data_t = &mut (*stats_dev).curr_data;
   if option_mask32 & OPT_z as libc::c_int as libc::c_uint != 0 {
@@ -379,7 +379,7 @@ unsafe extern "C" fn print_stats_dev_struct(mut stats_dev: *mut stats_dev_t, mut
       .wrapping_div((*ptr_to_globals).unit.div as libc::c_ulonglong),
   );
 }
-unsafe extern "C" fn print_devstat_header() {
+unsafe fn print_devstat_header() {
   printf(
     b"Device:%15s%6s%s/s%6s%s/s%6s%s%6s%s\n\x00" as *const u8 as *const libc::c_char,
     b"tps\x00" as *const u8 as *const libc::c_char,
@@ -396,7 +396,7 @@ unsafe extern "C" fn print_devstat_header() {
 /*
  * Is input partition of format [sdaN]?
  */
-unsafe extern "C" fn is_partition(mut dev: *const libc::c_char) -> libc::c_int {
+unsafe fn is_partition(mut dev: *const libc::c_char) -> libc::c_int {
   /* Ok, this is naive... */
   return (*dev.offset(0) as libc::c_int - 's' as i32
     | *dev.offset(1) as libc::c_int - 'd' as i32
@@ -405,7 +405,7 @@ unsafe extern "C" fn is_partition(mut dev: *const libc::c_char) -> libc::c_int {
     && (*dev.offset(3) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32)
     as libc::c_int;
 }
-unsafe extern "C" fn stats_dev_find_or_new(mut dev_name: *const libc::c_char) -> *mut stats_dev_t {
+unsafe fn stats_dev_find_or_new(mut dev_name: *const libc::c_char) -> *mut stats_dev_t {
   let mut curr: *mut *mut stats_dev_t = &mut (*ptr_to_globals).stats_dev_list;
   while !(*curr).is_null() {
     if strcmp((**curr).dname.as_mut_ptr(), dev_name) == 0 {
@@ -423,7 +423,7 @@ unsafe extern "C" fn stats_dev_find_or_new(mut dev_name: *const libc::c_char) ->
   return *curr;
 }
 
-unsafe extern "C" fn do_disk_statistics(mut itv: cputime_t) {
+unsafe fn do_disk_statistics(mut itv: cputime_t) {
   let mut buf: [libc::c_char; 128] = [0; 128];
   let mut dev_name: [libc::c_char; 13] = [0; 13];
   let mut rd_sec_or_dummy: libc::c_ulonglong = 0;
@@ -488,7 +488,7 @@ unsafe extern "C" fn do_disk_statistics(mut itv: cputime_t) {
   }
   fclose(fp);
 }
-unsafe extern "C" fn dev_report(mut itv: cputime_t) {
+unsafe fn dev_report(mut itv: cputime_t) {
   /* Always print a header */
   print_devstat_header();
   /* Fetch current disk statistics */
@@ -504,8 +504,7 @@ unsafe extern "C" fn dev_report(mut itv: cputime_t) {
 //usage:     "\n	-z	Omit devices with no activity"
 //usage:     "\n	-k	Use kb/s"
 //usage:     "\n	-m	Use Mb/s"
-#[no_mangle]
-pub unsafe extern "C" fn iostat_main(
+pub unsafe fn iostat_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

@@ -1,8 +1,7 @@
 use libc;
 use libc::strcmp;
 
-#[no_mangle]
-pub unsafe extern "C" fn single_argv(mut argv: *mut *mut libc::c_char) -> *mut libc::c_char {
+pub unsafe fn single_argv(mut argv: *mut *mut libc::c_char) -> *mut libc::c_char {
   if !(*argv.offset(1)).is_null()
     && strcmp(
       *argv.offset(1),

@@ -1,5 +1,7 @@
+use crate::librb::suffix_mult;
 use libc;
 use libc::close;
+use libc::useconds_t;
 extern "C" {
   #[no_mangle]
   fn _exit(_: libc::c_int) -> !;
@@ -10,11 +12,9 @@ extern "C" {
 
 }
 
-use libc::useconds_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 
-use crate::librb::suffix_mult;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const DAEMON_ONLY_SANITIZE: C2RustUnnamed_0 = 8;
 pub const DAEMON_CLOSE_EXTRA_FDS: C2RustUnnamed_0 = 4;
@@ -45,8 +45,7 @@ unsafe extern "C" fn watchdog_open(mut device: *const libc::c_char) {
   crate::libbb::xfuncs_printf::xmove_fd(crate::libbb::xfuncs_printf::xopen(device, 0o1i32), 3i32);
   /* reboots after N ms if not restarted */
 }
-#[no_mangle]
-pub unsafe extern "C" fn watchdog_main(
+pub unsafe fn watchdog_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -102,10 +101,7 @@ pub unsafe extern "C" fn watchdog_main(
   if opts & (1i32 << 1i32) as libc::c_uint != 0 {
     stimer_duration = crate::libbb::xatonum::xatou_sfx(st_arg, suffixes.as_ptr())
   }
-  crate::libbb::signals::bb_signals(
-    BB_FATAL_SIGS as libc::c_int,
-    Some(shutdown_on_signal as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  crate::libbb::signals::bb_signals(BB_FATAL_SIGS as libc::c_int, Some(shutdown_on_signal));
   watchdog_open(*argv.offset(optind as isize));
   /* WDIOC_SETTIMEOUT takes seconds, not milliseconds */
   htimer_duration = htimer_duration.wrapping_div(1000i32 as libc::c_uint);

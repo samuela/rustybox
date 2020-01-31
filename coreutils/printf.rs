@@ -102,9 +102,9 @@ extern "C" {
  * We try to be compatible.
  */
 pub type converter =
-  Option<unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> ()>;
+  Option<unsafe fn(_: *const libc::c_char, _: *mut libc::c_void) -> ()>;
 
-unsafe extern "C" fn multiconvert(
+unsafe fn multiconvert(
   mut arg: *const libc::c_char,
   mut result: *mut libc::c_void,
   mut convert: converter,
@@ -124,7 +124,7 @@ unsafe extern "C" fn multiconvert(
   return 0;
 }
 
-unsafe extern "C" fn conv_strtoull(mut arg: *const libc::c_char, mut result: *mut libc::c_void) {
+unsafe fn conv_strtoull(mut arg: *const libc::c_char, mut result: *mut libc::c_void) {
   /* Allow leading '+' - bb_strtoull() by itself does not allow it,
    * and probably shouldn't (other callers might require purely numeric
    * inputs to be allowed.
@@ -146,7 +146,7 @@ unsafe extern "C" fn conv_strtoull(mut arg: *const libc::c_char, mut result: *mu
   };
 }
 
-unsafe extern "C" fn conv_strtoll(mut arg: *const libc::c_char, mut result: *mut libc::c_void) {
+unsafe fn conv_strtoll(mut arg: *const libc::c_char, mut result: *mut libc::c_void) {
   if *arg.offset(0) as libc::c_int == '+' as i32 {
     arg = arg.offset(1)
   }
@@ -154,7 +154,7 @@ unsafe extern "C" fn conv_strtoll(mut arg: *const libc::c_char, mut result: *mut
     crate::libbb::bb_strtonum::bb_strtoll(arg, 0 as *mut *mut libc::c_char, 0);
 }
 
-unsafe extern "C" fn conv_strtod(mut arg: *const libc::c_char, mut result: *mut libc::c_void) {
+unsafe fn conv_strtod(mut arg: *const libc::c_char, mut result: *mut libc::c_void) {
   let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* Well, this one allows leading whitespace... so what? */
   /* What I like much less is that "-" accepted too! :( */
@@ -166,12 +166,12 @@ unsafe extern "C" fn conv_strtod(mut arg: *const libc::c_char, mut result: *mut 
 }
 
 /* Callers should check errno to detect errors */
-unsafe extern "C" fn my_xstrtoull(mut arg: *const libc::c_char) -> libc::c_ulonglong {
+unsafe fn my_xstrtoull(mut arg: *const libc::c_char) -> libc::c_ulonglong {
   let mut result: libc::c_ulonglong = 0;
   if multiconvert(
     arg,
     &mut result as *mut libc::c_ulonglong as *mut libc::c_void,
-    Some(conv_strtoull as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> ()),
+    Some(conv_strtoull as unsafe fn(_: *const libc::c_char, _: *mut libc::c_void) -> ()),
   ) != 0
   {
     result = 0 as libc::c_ulonglong
@@ -179,12 +179,12 @@ unsafe extern "C" fn my_xstrtoull(mut arg: *const libc::c_char) -> libc::c_ulong
   return result;
 }
 
-unsafe extern "C" fn my_xstrtoll(mut arg: *const libc::c_char) -> libc::c_longlong {
+unsafe fn my_xstrtoll(mut arg: *const libc::c_char) -> libc::c_longlong {
   let mut result: libc::c_longlong = 0;
   if multiconvert(
     arg,
     &mut result as *mut libc::c_longlong as *mut libc::c_void,
-    Some(conv_strtoll as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> ()),
+    Some(conv_strtoll as unsafe fn(_: *const libc::c_char, _: *mut libc::c_void) -> ()),
   ) != 0
   {
     result = 0 as libc::c_longlong
@@ -192,18 +192,18 @@ unsafe extern "C" fn my_xstrtoll(mut arg: *const libc::c_char) -> libc::c_longlo
   return result;
 }
 
-unsafe extern "C" fn my_xstrtod(mut arg: *const libc::c_char) -> libc::c_double {
+unsafe fn my_xstrtod(mut arg: *const libc::c_char) -> libc::c_double {
   let mut result: libc::c_double = 0.;
   multiconvert(
     arg,
     &mut result as *mut libc::c_double as *mut libc::c_void,
-    Some(conv_strtod as unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::c_void) -> ()),
+    Some(conv_strtod as unsafe fn(_: *const libc::c_char, _: *mut libc::c_void) -> ()),
   );
   return result;
 }
 
 /* Handles %b; return 1 if output is to be short-circuited by \c */
-unsafe extern "C" fn print_esc_string(mut str: *const libc::c_char) -> libc::c_int {
+unsafe fn print_esc_string(mut str: *const libc::c_char) -> libc::c_int {
   let mut c: libc::c_char = 0;
   loop {
     c = *str;
@@ -232,7 +232,7 @@ unsafe extern "C" fn print_esc_string(mut str: *const libc::c_char) -> libc::c_i
   return 0;
 }
 
-unsafe extern "C" fn print_direc(
+unsafe fn print_direc(
   mut format: *mut libc::c_char,
   mut fmt_length: libc::c_uint,
   mut field_width: libc::c_int,
@@ -332,7 +332,7 @@ unsafe extern "C" fn print_direc(
 }
 
 /* Handle params for "%*.*f". Negative numbers are ok (compat). */
-unsafe extern "C" fn get_width_prec(mut str: *const libc::c_char) -> libc::c_int {
+unsafe fn get_width_prec(mut str: *const libc::c_char) -> libc::c_int {
   let mut v: libc::c_int =
     crate::libbb::bb_strtonum::bb_strtoi(str, 0 as *mut *mut libc::c_char, 10i32);
   if *bb_errno != 0 {
@@ -347,7 +347,7 @@ unsafe extern "C" fn get_width_prec(mut str: *const libc::c_char) -> libc::c_int
 
 /* Print the text in FORMAT, using ARGV for arguments to any '%' directives.
 Return advanced ARGV.  */
-unsafe extern "C" fn print_formatted(
+unsafe fn print_formatted(
   mut f: *mut libc::c_char,
   mut argv: *mut *mut libc::c_char,
   mut conv_err: *mut libc::c_int,
@@ -500,11 +500,7 @@ unsafe extern "C" fn print_formatted(
   return argv;
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn printf_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn printf_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut conv_err: libc::c_int = 0;
   let mut format: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut argv2: *mut *mut libc::c_char = std::ptr::null_mut();

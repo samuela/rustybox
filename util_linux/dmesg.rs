@@ -66,8 +66,7 @@ pub type C2RustUnnamed = libc::c_uint;
 //usage:     "\n	-n LEVEL	Set console logging level"
 //usage:     "\n	-s SIZE		Buffer size"
 //usage:     "\n	-r		Print raw message buffer"
-#[no_mangle]
-pub unsafe extern "C" fn dmesg_main(
+pub unsafe fn dmesg_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

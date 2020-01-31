@@ -24,7 +24,7 @@ use crate::librb::suffix_mult;
 pub type C2RustUnnamed = libc::c_uint;
 pub const READ_BUFFER_SIZE: C2RustUnnamed = 1023;
 #[inline(always)]
-unsafe extern "C" fn xatoul_range(
+unsafe fn xatoul_range(
   mut str: *const libc::c_char,
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
@@ -109,7 +109,7 @@ static mut split_suffixes: [suffix_mult; 5] = [
 /* Increment the suffix part of the filename.
  * Returns NULL if we are out of filenames.
  */
-unsafe extern "C" fn next_file(
+unsafe fn next_file(
   mut old: *mut libc::c_char,
   mut suffix_len: libc::c_uint,
 ) -> *mut libc::c_char {
@@ -131,11 +131,7 @@ unsafe extern "C" fn next_file(
   }
   return old;
 }
-#[no_mangle]
-pub unsafe extern "C" fn split_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn split_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut suffix_len: libc::c_uint = 2i32 as libc::c_uint;
   let mut pfx: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut count_p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

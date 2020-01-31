@@ -423,10 +423,10 @@ pub const POSIX_KWORD_MASK: C2RustUnnamed_1 = 1002411;
 pub type C2RustUnnamed_2 = libc::c_ulong;
 pub const BC_PARSE_EXPRS_BITS: C2RustUnnamed_2 = 472174290611994592;
 pub type BcNumBinaryOp =
-  Option<unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus>;
-pub type BcNumDigitOp = Option<unsafe extern "C" fn(_: size_t, _: size_t, _: bool) -> ()>;
+  Option<unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus>;
+pub type BcNumDigitOp = Option<unsafe fn(_: size_t, _: size_t, _: bool) -> ()>;
 #[inline(always)]
-unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
+unsafe fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   let mut b: libc::c_uchar = (a as libc::c_int - '0' as i32) as libc::c_uchar;
   if b as libc::c_int <= 9i32 {
     return (b as libc::c_int <= 9i32) as libc::c_int;
@@ -435,7 +435,7 @@ unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   return (b as libc::c_int <= 'z' as i32 - 'a' as i32) as libc::c_int;
 }
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 static mut bc_lex_kws: [BcLexKeyword; 20] = [
@@ -561,7 +561,7 @@ static mut bc_lex_kws: [BcLexKeyword; 20] = [
   },
 ];
 #[inline(always)]
-unsafe extern "C" fn lex_allowed_in_bc_expr(mut i: libc::c_uint) -> libc::c_long {
+unsafe fn lex_allowed_in_bc_expr(mut i: libc::c_uint) -> libc::c_long {
   return (BC_PARSE_EXPRS_BITS as libc::c_ulong & 1u64 << i) as libc::c_long;
 }
 static mut bc_ops_prec_and_assoc: [u8; 25] = [
@@ -746,7 +746,7 @@ static mut dc_LEX_to_INST: [i8; 42] = [
 //
 // Utility routines
 //
-unsafe extern "C" fn fflush_and_check() {
+unsafe fn fflush_and_check() {
   crate::libbb::xfuncs_printf::fflush_all(); // for compiler
   if ferror_unlocked(stdout) != 0 || ferror_unlocked(stderr) != 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
@@ -754,7 +754,7 @@ unsafe extern "C" fn fflush_and_check() {
     );
   };
 }
-unsafe extern "C" fn quit() -> ! {
+unsafe fn quit() -> ! {
   if ferror_unlocked(stdin) != 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
       b"input error\x00" as *const u8 as *const libc::c_char,
@@ -763,7 +763,7 @@ unsafe extern "C" fn quit() -> ! {
   fflush_and_check();
   exit(0i32);
 }
-unsafe extern "C" fn bc_verror_msg(mut fmt: *const libc::c_char, mut p: ::std::ffi::VaList) {
+unsafe fn bc_verror_msg(mut fmt: *const libc::c_char, mut p: ::std::ffi::VaList) {
   let mut sv: *const libc::c_char = std::ptr::null();
   sv = sv;
   if !(*ptr_to_globals).prs.lex_filename.is_null() {
@@ -814,10 +814,10 @@ unsafe extern "C" fn zbc_posix_error_fmt(mut fmt: *const libc::c_char, mut args:
 // function must not have caller-cleaned parameters on stack.
 // Unfortunately, vararg function API does exactly that on most arches.
 // Thus, use these shims for the cases when we have no vararg PARAMS:
-unsafe extern "C" fn bc_error(mut msg: *const libc::c_char) -> libc::c_int {
+unsafe fn bc_error(mut msg: *const libc::c_char) -> libc::c_int {
   return bc_error_fmt(b"%s\x00" as *const u8 as *const libc::c_char, msg);
 }
-unsafe extern "C" fn bc_error_at(mut msg: *const libc::c_char) -> libc::c_int {
+unsafe fn bc_error_at(mut msg: *const libc::c_char) -> libc::c_int {
   let mut err_at: *const libc::c_char = (*ptr_to_globals).prs.lex_next_at;
   if !err_at.is_null() {
     return bc_error_fmt(
@@ -829,7 +829,7 @@ unsafe extern "C" fn bc_error_at(mut msg: *const libc::c_char) -> libc::c_int {
   }
   return bc_error_fmt(b"%s\x00" as *const u8 as *const libc::c_char, msg);
 }
-unsafe extern "C" fn bc_error_bad_character(mut c: libc::c_char) -> libc::c_int {
+unsafe fn bc_error_bad_character(mut c: libc::c_char) -> libc::c_int {
   if c == 0 {
     return bc_error(b"NUL character\x00" as *const u8 as *const libc::c_char);
   }
@@ -838,41 +838,41 @@ unsafe extern "C" fn bc_error_bad_character(mut c: libc::c_char) -> libc::c_int 
     c as libc::c_int,
   );
 }
-unsafe extern "C" fn bc_error_bad_function_definition() -> libc::c_int {
+unsafe fn bc_error_bad_function_definition() -> libc::c_int {
   return bc_error_at(b"bad function definition\x00" as *const u8 as *const libc::c_char);
 }
-unsafe extern "C" fn bc_error_bad_expression() -> libc::c_int {
+unsafe fn bc_error_bad_expression() -> libc::c_int {
   return bc_error_at(b"bad expression\x00" as *const u8 as *const libc::c_char);
 }
-unsafe extern "C" fn bc_error_bad_assignment() -> libc::c_int {
+unsafe fn bc_error_bad_assignment() -> libc::c_int {
   return bc_error_at(
     b"bad assignment: left side must be variable or array element\x00" as *const u8
       as *const libc::c_char,
   );
 }
-unsafe extern "C" fn bc_error_bad_token() -> libc::c_int {
+unsafe fn bc_error_bad_token() -> libc::c_int {
   return bc_error_at(b"bad token\x00" as *const u8 as *const libc::c_char);
 }
-unsafe extern "C" fn bc_error_stack_has_too_few_elements() -> libc::c_int {
+unsafe fn bc_error_stack_has_too_few_elements() -> libc::c_int {
   return bc_error(b"stack has too few elements\x00" as *const u8 as *const libc::c_char);
 }
-unsafe extern "C" fn bc_error_variable_is_wrong_type() -> libc::c_int {
+unsafe fn bc_error_variable_is_wrong_type() -> libc::c_int {
   return bc_error(b"variable is wrong type\x00" as *const u8 as *const libc::c_char);
 }
-unsafe extern "C" fn zbc_POSIX_requires(mut msg: *const libc::c_char) -> BcStatus {
+unsafe fn zbc_POSIX_requires(mut msg: *const libc::c_char) -> BcStatus {
   return zbc_posix_error_fmt(
     b"POSIX requires %s\x00" as *const u8 as *const libc::c_char,
     msg,
   );
 }
-unsafe extern "C" fn zbc_POSIX_does_not_allow(mut msg: *const libc::c_char) -> BcStatus {
+unsafe fn zbc_POSIX_does_not_allow(mut msg: *const libc::c_char) -> BcStatus {
   return zbc_posix_error_fmt(
     b"%s%s\x00" as *const u8 as *const libc::c_char,
     b"POSIX does not allow \x00" as *const u8 as *const libc::c_char,
     msg,
   );
 }
-unsafe extern "C" fn zbc_POSIX_does_not_allow_bool_ops_this_is_bad(
+unsafe fn zbc_POSIX_does_not_allow_bool_ops_this_is_bad(
   mut msg: *const libc::c_char,
 ) -> BcStatus {
   return zbc_posix_error_fmt(
@@ -882,7 +882,7 @@ unsafe extern "C" fn zbc_POSIX_does_not_allow_bool_ops_this_is_bad(
     msg,
   );
 }
-unsafe extern "C" fn zbc_POSIX_does_not_allow_empty_X_expression_in_for(
+unsafe fn zbc_POSIX_does_not_allow_empty_X_expression_in_for(
   mut msg: *const libc::c_char,
 ) -> BcStatus {
   return zbc_posix_error_fmt(
@@ -891,7 +891,7 @@ unsafe extern "C" fn zbc_POSIX_does_not_allow_empty_X_expression_in_for(
     msg,
   );
 }
-unsafe extern "C" fn bc_vec_grow(mut v: *mut BcVec, mut n: size_t) {
+unsafe fn bc_vec_grow(mut v: *mut BcVec, mut n: size_t) {
   let mut cap: size_t = (*v).cap.wrapping_mul(2i32 as libc::c_ulong);
   while cap < (*v).len.wrapping_add(n) {
     cap = (cap as libc::c_ulong).wrapping_mul(2i32 as libc::c_ulong) as size_t as size_t
@@ -901,21 +901,21 @@ unsafe extern "C" fn bc_vec_grow(mut v: *mut BcVec, mut n: size_t) {
       as *mut libc::c_char;
   (*v).cap = cap;
 }
-unsafe extern "C" fn bc_vec_init(mut v: *mut BcVec, mut esize: size_t, mut dtor: BcVecFree) {
+unsafe fn bc_vec_init(mut v: *mut BcVec, mut esize: size_t, mut dtor: BcVecFree) {
   (*v).size = esize;
   (*v).cap = (1i32 << 5i32) as size_t;
   (*v).len = 0 as size_t;
   (*v).dtor = dtor;
   (*v).v = xmalloc(esize.wrapping_mul((1i32 << 5i32) as libc::c_ulong)) as *mut libc::c_char;
 }
-unsafe extern "C" fn bc_char_vec_init(mut v: *mut BcVec) {
+unsafe fn bc_char_vec_init(mut v: *mut BcVec) {
   bc_vec_init(
     v,
     ::std::mem::size_of::<libc::c_char>() as libc::c_ulong,
     None,
   );
 }
-unsafe extern "C" fn bc_vec_expand(mut v: *mut BcVec, mut req: size_t) {
+unsafe fn bc_vec_expand(mut v: *mut BcVec, mut req: size_t) {
   if (*v).cap < req {
     (*v).v = crate::libbb::xfuncs_printf::xrealloc(
       (*v).v as *mut libc::c_void,
@@ -924,7 +924,7 @@ unsafe extern "C" fn bc_vec_expand(mut v: *mut BcVec, mut req: size_t) {
     (*v).cap = req
   };
 }
-unsafe extern "C" fn bc_vec_pop(mut v: *mut BcVec) {
+unsafe fn bc_vec_pop(mut v: *mut BcVec) {
   (*v).len = (*v).len.wrapping_sub(1);
   if (*v).dtor.is_some() {
     (*v).dtor.expect("non-null function pointer")(
@@ -932,7 +932,7 @@ unsafe extern "C" fn bc_vec_pop(mut v: *mut BcVec) {
     );
   };
 }
-unsafe extern "C" fn bc_vec_npop(mut v: *mut BcVec, mut n: size_t) {
+unsafe fn bc_vec_npop(mut v: *mut BcVec, mut n: size_t) {
   if (*v).dtor.is_none() {
     (*v).len = ((*v).len as libc::c_ulong).wrapping_sub(n) as size_t as size_t
   } else {
@@ -945,10 +945,10 @@ unsafe extern "C" fn bc_vec_npop(mut v: *mut BcVec, mut n: size_t) {
     }
   };
 }
-unsafe extern "C" fn bc_vec_pop_all(mut v: *mut BcVec) {
+unsafe fn bc_vec_pop_all(mut v: *mut BcVec) {
   bc_vec_npop(v, (*v).len);
 }
-unsafe extern "C" fn bc_vec_npush(
+unsafe fn bc_vec_npush(
   mut v: *mut BcVec,
   mut n: size_t,
   mut data: *const libc::c_void,
@@ -965,7 +965,7 @@ unsafe extern "C" fn bc_vec_npush(
   (*v).len = len.wrapping_add(n);
   return len;
 }
-unsafe extern "C" fn bc_vec_push(mut v: *mut BcVec, mut data: *const libc::c_void) -> size_t {
+unsafe fn bc_vec_push(mut v: *mut BcVec, mut data: *const libc::c_void) -> size_t {
   return bc_vec_npush(v, 1i32 as size_t, data);
   //size_t len = v->len;
   //if (len >= v->cap) bc_vec_grow(v, 1);
@@ -975,7 +975,7 @@ unsafe extern "C" fn bc_vec_push(mut v: *mut BcVec, mut data: *const libc::c_voi
 }
 // G.prog.results often needs "pop old operand, push result" idiom.
 // Can do this without a few extra ops
-unsafe extern "C" fn bc_result_pop_and_push(mut data: *const libc::c_void) -> size_t {
+unsafe fn bc_result_pop_and_push(mut data: *const libc::c_void) -> size_t {
   let mut v: *mut BcVec = &mut (*ptr_to_globals).prog.results;
   let mut last: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len: size_t = (*v).len.wrapping_sub(1i32 as libc::c_ulong);
@@ -986,15 +986,15 @@ unsafe extern "C" fn bc_result_pop_and_push(mut data: *const libc::c_void) -> si
   memmove(last as *mut libc::c_void, data, (*v).size);
   return len;
 }
-unsafe extern "C" fn bc_vec_pushByte(mut v: *mut BcVec, mut data: libc::c_char) -> size_t {
+unsafe fn bc_vec_pushByte(mut v: *mut BcVec, mut data: libc::c_char) -> size_t {
   return bc_vec_push(v, &mut data as *mut libc::c_char as *const libc::c_void);
 }
-unsafe extern "C" fn bc_vec_pushZeroByte(mut v: *mut BcVec) -> size_t {
+unsafe fn bc_vec_pushZeroByte(mut v: *mut BcVec) -> size_t {
   //return bc_vec_pushByte(v, '\0');
   // better:
   return bc_vec_push(v, &const_int_0 as *const libc::c_int as *const libc::c_void);
 }
-unsafe extern "C" fn bc_vec_pushAt(
+unsafe fn bc_vec_pushAt(
   mut v: *mut BcVec,
   mut data: *const libc::c_void,
   mut idx: size_t,
@@ -1017,7 +1017,7 @@ unsafe extern "C" fn bc_vec_pushAt(
     memmove(ptr as *mut libc::c_void, data, (*v).size);
   };
 }
-unsafe extern "C" fn bc_vec_string(
+unsafe fn bc_vec_string(
   mut v: *mut BcVec,
   mut len: size_t,
   mut str: *const libc::c_char,
@@ -1028,10 +1028,10 @@ unsafe extern "C" fn bc_vec_string(
   (*v).len = len;
   bc_vec_pushZeroByte(v);
 }
-unsafe extern "C" fn bc_vec_item(mut v: *const BcVec, mut idx: size_t) -> *mut libc::c_void {
+unsafe fn bc_vec_item(mut v: *const BcVec, mut idx: size_t) -> *mut libc::c_void {
   return (*v).v.offset((*v).size.wrapping_mul(idx) as isize) as *mut libc::c_void;
 }
-unsafe extern "C" fn bc_vec_item_rev(mut v: *const BcVec, mut idx: size_t) -> *mut libc::c_void {
+unsafe fn bc_vec_item_rev(mut v: *const BcVec, mut idx: size_t) -> *mut libc::c_void {
   return (*v).v.offset(
     (*v).size.wrapping_mul(
       (*v)
@@ -1041,7 +1041,7 @@ unsafe extern "C" fn bc_vec_item_rev(mut v: *const BcVec, mut idx: size_t) -> *m
     ) as isize,
   ) as *mut libc::c_void;
 }
-unsafe extern "C" fn bc_vec_top(mut v: *const BcVec) -> *mut libc::c_void {
+unsafe fn bc_vec_top(mut v: *const BcVec) -> *mut libc::c_void {
   return (*v).v.offset(
     (*v)
       .size
@@ -1053,30 +1053,30 @@ unsafe extern "C" fn bc_vec_free(mut vec: *mut libc::c_void) {
   bc_vec_pop_all(v);
   free((*v).v as *mut libc::c_void);
 }
-unsafe extern "C" fn xc_program_func(mut idx: size_t) -> *mut BcFunc {
+unsafe fn xc_program_func(mut idx: size_t) -> *mut BcFunc {
   return bc_vec_item(&mut (*ptr_to_globals).prog.fns, idx) as *mut BcFunc;
 }
 // BC_PROG_MAIN is zeroth element, so:
-unsafe extern "C" fn bc_program_current_func() -> *mut BcFunc {
+unsafe fn bc_program_current_func() -> *mut BcFunc {
   let mut ip: *mut BcInstPtr = bc_vec_top(&mut (*ptr_to_globals).prog.exestack) as *mut BcInstPtr; // "was not inserted"
   let mut func: *mut BcFunc = xc_program_func((*ip).func);
   return func;
 }
-unsafe extern "C" fn xc_program_str(mut idx: size_t) -> *mut *mut libc::c_char {
+unsafe fn xc_program_str(mut idx: size_t) -> *mut *mut libc::c_char {
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(0) as libc::c_int == 'b' as i32) {
     let mut func: *mut BcFunc = bc_program_current_func();
     return bc_vec_item(&mut (*func).strs, idx) as *mut *mut libc::c_char;
   }
   return bc_vec_item(&mut (*ptr_to_globals).prog.strs, idx) as *mut *mut libc::c_char;
 }
-unsafe extern "C" fn xc_program_const(mut idx: size_t) -> *mut *mut libc::c_char {
+unsafe fn xc_program_const(mut idx: size_t) -> *mut *mut libc::c_char {
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(0) as libc::c_int == 'b' as i32) {
     let mut func: *mut BcFunc = bc_program_current_func();
     return bc_vec_item(&mut (*func).consts, idx) as *mut *mut libc::c_char;
   }
   return bc_vec_item(&mut (*ptr_to_globals).prog.consts, idx) as *mut *mut libc::c_char;
 }
-unsafe extern "C" fn bc_id_cmp(
+unsafe fn bc_id_cmp(
   mut e1: *const libc::c_void,
   mut e2: *const libc::c_void,
 ) -> libc::c_int {
@@ -1085,7 +1085,7 @@ unsafe extern "C" fn bc_id_cmp(
 unsafe extern "C" fn bc_id_free(mut id: *mut libc::c_void) {
   free((*(id as *mut BcId)).name as *mut libc::c_void);
 }
-unsafe extern "C" fn bc_map_find_ge(mut v: *const BcVec, mut ptr: *const libc::c_void) -> size_t {
+unsafe fn bc_map_find_ge(mut v: *const BcVec, mut ptr: *const libc::c_void) -> size_t {
   let mut low: size_t = 0 as size_t;
   let mut high: size_t = (*v).len;
   while low < high {
@@ -1103,7 +1103,7 @@ unsafe extern "C" fn bc_map_find_ge(mut v: *const BcVec, mut ptr: *const libc::c
   }
   return low;
 }
-unsafe extern "C" fn bc_map_insert(
+unsafe fn bc_map_insert(
   mut v: *mut BcVec,
   mut ptr: *const libc::c_void,
   mut i: *mut size_t,
@@ -1120,7 +1120,7 @@ unsafe extern "C" fn bc_map_insert(
   return 1i32;
   // "was inserted"
 }
-unsafe extern "C" fn bc_map_find_exact(
+unsafe fn bc_map_find_exact(
   mut v: *const BcVec,
   mut ptr: *const libc::c_void,
 ) -> size_t {
@@ -1134,21 +1134,21 @@ unsafe extern "C" fn bc_map_find_exact(
     i
   };
 }
-unsafe extern "C" fn bc_num_setToZero(mut n: *mut BcNum, mut scale: size_t) {
+unsafe fn bc_num_setToZero(mut n: *mut BcNum, mut scale: size_t) {
   (*n).len = 0 as size_t;
   (*n).neg = 0 != 0;
   (*n).rdx = scale;
 }
-unsafe extern "C" fn bc_num_zero(mut n: *mut BcNum) {
+unsafe fn bc_num_zero(mut n: *mut BcNum) {
   bc_num_setToZero(n, 0 as size_t);
 }
-unsafe extern "C" fn bc_num_one(mut n: *mut BcNum) {
+unsafe fn bc_num_one(mut n: *mut BcNum) {
   bc_num_setToZero(n, 0 as size_t);
   (*n).len = 1i32 as size_t;
   *(*n).num.offset(0) = 1i32 as BcDig;
 }
 // Note: this also sets BcNum to zero
-unsafe extern "C" fn bc_num_init(mut n: *mut BcNum, mut req: size_t) {
+unsafe fn bc_num_init(mut n: *mut BcNum, mut req: size_t) {
   req = if req >= 16i32 as libc::c_ulong {
     req
   } else {
@@ -1161,10 +1161,10 @@ unsafe extern "C" fn bc_num_init(mut n: *mut BcNum, mut req: size_t) {
   (*n).len = 0 as size_t;
   (*n).neg = 0 != 0;
 }
-unsafe extern "C" fn bc_num_init_DEF_SIZE(mut n: *mut BcNum) {
+unsafe fn bc_num_init_DEF_SIZE(mut n: *mut BcNum) {
   bc_num_init(n, 16i32 as size_t);
 }
-unsafe extern "C" fn bc_num_expand(mut n: *mut BcNum, mut req: size_t) {
+unsafe fn bc_num_expand(mut n: *mut BcNum, mut req: size_t) {
   req = if req >= 16i32 as libc::c_ulong {
     req
   } else {
@@ -1179,7 +1179,7 @@ unsafe extern "C" fn bc_num_expand(mut n: *mut BcNum, mut req: size_t) {
 unsafe extern "C" fn bc_num_free(mut num: *mut libc::c_void) {
   free((*(num as *mut BcNum)).num as *mut libc::c_void);
 }
-unsafe extern "C" fn bc_num_copy(mut d: *mut BcNum, mut s: *mut BcNum) {
+unsafe fn bc_num_copy(mut d: *mut BcNum, mut s: *mut BcNum) {
   if d != s {
     bc_num_expand(d, (*s).cap);
     (*d).len = (*s).len;
@@ -1192,7 +1192,7 @@ unsafe extern "C" fn bc_num_copy(mut d: *mut BcNum, mut s: *mut BcNum) {
     );
   };
 }
-unsafe extern "C" fn zbc_num_ulong_abs(
+unsafe fn zbc_num_ulong_abs(
   mut n: *mut BcNum,
   mut result_p: *mut libc::c_ulong,
 ) -> BcStatus {
@@ -1217,7 +1217,7 @@ unsafe extern "C" fn zbc_num_ulong_abs(
   *result_p = result;
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zbc_num_ulong(
+unsafe fn zbc_num_ulong(
   mut n: *mut BcNum,
   mut result_p: *mut libc::c_ulong,
 ) -> BcStatus {
@@ -1228,7 +1228,7 @@ unsafe extern "C" fn zbc_num_ulong(
 }
 // minimum BC_NUM_DEF_SIZE, so that bc_num_expand() in bc_num_ulong2num()
 // would not hit realloc() code path - not good if num[] is not malloced
-unsafe extern "C" fn bc_num_ulong2num(mut n: *mut BcNum, mut val: libc::c_ulong) {
+unsafe fn bc_num_ulong2num(mut n: *mut BcNum, mut val: libc::c_ulong) {
   let mut ptr: *mut BcDig = std::ptr::null_mut();
   bc_num_zero(n);
   if val == 0 as libc::c_ulong {
@@ -1247,7 +1247,7 @@ unsafe extern "C" fn bc_num_ulong2num(mut n: *mut BcNum, mut val: libc::c_ulong)
     }
   }
 }
-unsafe extern "C" fn bc_num_subArrays(mut a: *mut BcDig, mut b: *mut BcDig, mut len: size_t) {
+unsafe fn bc_num_subArrays(mut a: *mut BcDig, mut b: *mut BcDig, mut len: size_t) {
   let mut i: size_t = 0;
   let mut j: size_t = 0;
   i = 0 as size_t;
@@ -1266,7 +1266,7 @@ unsafe extern "C" fn bc_num_subArrays(mut a: *mut BcDig, mut b: *mut BcDig, mut 
     i = i.wrapping_add(1)
   }
 }
-unsafe extern "C" fn bc_num_compare(
+unsafe fn bc_num_compare(
   mut a: *mut BcDig,
   mut b: *mut BcDig,
   mut len: size_t,
@@ -1289,7 +1289,7 @@ unsafe extern "C" fn bc_num_compare(
   }
 }
 //#define BC_NUM_AREQ(a, b)       (BC_MAX((a)->rdx, (b)->rdx) + BC_MAX(BC_NUM_INT(a), BC_NUM_INT(b)) + 1)
-unsafe extern "C" fn BC_NUM_AREQ(mut a: *mut BcNum, mut b: *mut BcNum) -> size_t {
+unsafe fn BC_NUM_AREQ(mut a: *mut BcNum, mut b: *mut BcNum) -> size_t {
   return (if (*a).rdx > (*b).rdx {
     (*a).rdx
   } else {
@@ -1305,7 +1305,7 @@ unsafe extern "C" fn BC_NUM_AREQ(mut a: *mut BcNum, mut b: *mut BcNum) -> size_t
   .wrapping_add(1i32 as libc::c_ulong);
 }
 //#define BC_NUM_MREQ(a, b, scale) (BC_NUM_INT(a) + BC_NUM_INT(b) + BC_MAX((scale), (a)->rdx + (b)->rdx) + 1)
-unsafe extern "C" fn BC_NUM_MREQ(
+unsafe fn BC_NUM_MREQ(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut scale: size_t,
@@ -1321,7 +1321,7 @@ unsafe extern "C" fn BC_NUM_MREQ(
     })
     .wrapping_add(1i32 as libc::c_ulong);
 }
-unsafe extern "C" fn bc_num_cmp(mut a: *mut BcNum, mut b: *mut BcNum) -> ssize_t {
+unsafe fn bc_num_cmp(mut a: *mut BcNum, mut b: *mut BcNum) -> ssize_t {
   let mut i: size_t = 0;
   let mut min: size_t = 0;
   let mut a_int: size_t = 0;
@@ -1383,7 +1383,7 @@ unsafe extern "C" fn bc_num_cmp(mut a: *mut BcNum, mut b: *mut BcNum) -> ssize_t
   }
   return 0;
 }
-unsafe extern "C" fn bc_num_truncate(mut n: *mut BcNum, mut places: size_t) {
+unsafe fn bc_num_truncate(mut n: *mut BcNum, mut places: size_t) {
   if places == 0 {
     return;
   }
@@ -1399,7 +1399,7 @@ unsafe extern "C" fn bc_num_truncate(mut n: *mut BcNum, mut places: size_t) {
     );
   };
 }
-unsafe extern "C" fn bc_num_extend(mut n: *mut BcNum, mut places: size_t) {
+unsafe fn bc_num_extend(mut n: *mut BcNum, mut places: size_t) {
   let mut len: size_t = (*n).len.wrapping_add(places);
   if places != 0 {
     if (*n).cap < len {
@@ -1419,7 +1419,7 @@ unsafe extern "C" fn bc_num_extend(mut n: *mut BcNum, mut places: size_t) {
     (*n).rdx = ((*n).rdx as libc::c_ulong).wrapping_add(places) as size_t as size_t
   };
 }
-unsafe extern "C" fn bc_num_clean(mut n: *mut BcNum) {
+unsafe fn bc_num_clean(mut n: *mut BcNum) {
   while (*n).len > 0 as libc::c_ulong
     && *(*n)
       .num
@@ -1434,7 +1434,7 @@ unsafe extern "C" fn bc_num_clean(mut n: *mut BcNum) {
     (*n).len = (*n).rdx
   };
 }
-unsafe extern "C" fn bc_num_retireMul(
+unsafe fn bc_num_retireMul(
   mut n: *mut BcNum,
   mut scale: size_t,
   mut neg1: bool,
@@ -1450,7 +1450,7 @@ unsafe extern "C" fn bc_num_retireMul(
     (*n).neg = !neg1 as libc::c_int != !neg2 as libc::c_int
   };
 }
-unsafe extern "C" fn bc_num_split(
+unsafe fn bc_num_split(
   mut n: *mut BcNum,
   mut idx: size_t,
   mut a: *mut BcNum,
@@ -1480,7 +1480,7 @@ unsafe extern "C" fn bc_num_split(
   bc_num_clean(a);
   bc_num_clean(b);
 }
-unsafe extern "C" fn zbc_num_shift(mut n: *mut BcNum, mut places: size_t) -> BcStatus {
+unsafe fn zbc_num_shift(mut n: *mut BcNum, mut places: size_t) -> BcStatus {
   if places == 0 as libc::c_ulong || (*n).len == 0 as libc::c_ulong {
     return BC_STATUS_SUCCESS;
   }
@@ -1512,7 +1512,7 @@ unsafe extern "C" fn zbc_num_shift(mut n: *mut BcNum, mut places: size_t) -> BcS
   bc_num_clean(n);
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zbc_num_binary(
+unsafe fn zbc_num_binary(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -1561,7 +1561,7 @@ unsafe extern "C" fn zbc_num_binary(
   }
   return s;
 }
-unsafe extern "C" fn zbc_num_add(
+unsafe fn zbc_num_add(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -1570,17 +1570,17 @@ unsafe extern "C" fn zbc_num_add(
   let mut op: BcNumBinaryOp = if !(*a).neg as libc::c_int == !(*b).neg as libc::c_int {
     Some(
       zbc_num_a
-        as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+        as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
     )
   } else {
     Some(
       zbc_num_s
-        as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+        as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
     )
   };
   return zbc_num_binary(a, b, c, 0 as size_t, op, BC_NUM_AREQ(a, b));
 }
-unsafe extern "C" fn zbc_num_sub(
+unsafe fn zbc_num_sub(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -1589,17 +1589,17 @@ unsafe extern "C" fn zbc_num_sub(
   let mut op: BcNumBinaryOp = if !(*a).neg as libc::c_int == !(*b).neg as libc::c_int {
     Some(
       zbc_num_s
-        as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+        as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
     )
   } else {
     Some(
       zbc_num_a
-        as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+        as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
     )
   };
   return zbc_num_binary(a, b, c, 1i32 as size_t, op, BC_NUM_AREQ(a, b));
 }
-unsafe extern "C" fn zbc_num_mul(
+unsafe fn zbc_num_mul(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -1613,12 +1613,12 @@ unsafe extern "C" fn zbc_num_mul(
     scale,
     Some(
       zbc_num_m
-        as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+        as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
     ),
     req,
   );
 }
-unsafe extern "C" fn zbc_num_div(
+unsafe fn zbc_num_div(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -1632,12 +1632,12 @@ unsafe extern "C" fn zbc_num_div(
     scale,
     Some(
       zbc_num_d
-        as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+        as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
     ),
     req,
   );
 }
-unsafe extern "C" fn zbc_num_mod(
+unsafe fn zbc_num_mod(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -1651,12 +1651,12 @@ unsafe extern "C" fn zbc_num_mod(
     scale,
     Some(
       zbc_num_rem
-        as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+        as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
     ),
     req,
   );
 }
-unsafe extern "C" fn zbc_num_pow(
+unsafe fn zbc_num_pow(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -1669,7 +1669,7 @@ unsafe extern "C" fn zbc_num_pow(
     scale,
     Some(
       zbc_num_p
-        as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+        as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
     ),
     (*a)
       .len
@@ -1681,31 +1681,31 @@ unsafe extern "C" fn zbc_num_pow(
 static mut zxc_program_ops: [BcNumBinaryOp; 6] = [
   Some(
     zbc_num_pow
-      as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+      as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
   ),
   Some(
     zbc_num_mul
-      as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+      as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
   ),
   Some(
     zbc_num_div
-      as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+      as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
   ),
   Some(
     zbc_num_mod
-      as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+      as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
   ),
   Some(
     zbc_num_add
-      as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+      as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
   ),
   Some(
     zbc_num_sub
-      as unsafe extern "C" fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+      as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
   ),
 ];
 
-unsafe extern "C" fn zbc_num_inv(
+unsafe fn zbc_num_inv(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut scale: size_t,
@@ -1717,7 +1717,7 @@ unsafe extern "C" fn zbc_num_inv(
   bc_num_one(&mut one);
   return zbc_num_div(&mut one, a, b, scale);
 }
-unsafe extern "C" fn zbc_num_a(
+unsafe fn zbc_num_a(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -1815,7 +1815,7 @@ unsafe extern "C" fn zbc_num_a(
   return BC_STATUS_SUCCESS;
   // can't make void, see zbc_num_binary()
 }
-unsafe extern "C" fn zbc_num_s(
+unsafe fn zbc_num_s(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -1888,7 +1888,7 @@ unsafe extern "C" fn zbc_num_s(
   return BC_STATUS_SUCCESS;
   // can't make void, see zbc_num_binary()
 }
-unsafe extern "C" fn zbc_num_k(
+unsafe fn zbc_num_k(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -2043,7 +2043,7 @@ unsafe extern "C" fn zbc_num_k(
   bc_num_free(&mut l1 as *mut BcNum as *mut libc::c_void);
   return s;
 }
-unsafe extern "C" fn zbc_num_m(
+unsafe fn zbc_num_m(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -2099,7 +2099,7 @@ unsafe extern "C" fn zbc_num_m(
   bc_num_free(&mut cpa as *mut BcNum as *mut libc::c_void);
   return s;
 }
-unsafe extern "C" fn zbc_num_d(
+unsafe fn zbc_num_d(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -2194,7 +2194,7 @@ unsafe extern "C" fn zbc_num_d(
   bc_num_free(&mut cp as *mut BcNum as *mut libc::c_void);
   return s;
 }
-unsafe extern "C" fn zbc_num_r(
+unsafe fn zbc_num_r(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -2234,7 +2234,7 @@ unsafe extern "C" fn zbc_num_r(
   bc_num_free(&mut temp as *mut BcNum as *mut libc::c_void);
   return s;
 }
-unsafe extern "C" fn zbc_num_rem(
+unsafe fn zbc_num_rem(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -2253,7 +2253,7 @@ unsafe extern "C" fn zbc_num_rem(
   bc_num_free(&mut c1 as *mut BcNum as *mut libc::c_void);
   return s;
 }
-unsafe extern "C" fn zbc_num_p(
+unsafe fn zbc_num_p(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -2408,7 +2408,7 @@ unsafe extern "C" fn zbc_num_p(
   bc_num_free(&mut copy as *mut BcNum as *mut libc::c_void);
   return s;
 }
-unsafe extern "C" fn zbc_num_sqrt(
+unsafe fn zbc_num_sqrt(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut scale: size_t,
@@ -2552,7 +2552,7 @@ unsafe extern "C" fn zbc_num_sqrt(
   bc_num_free(&mut num1 as *mut BcNum as *mut libc::c_void);
   return s;
 }
-unsafe extern "C" fn zbc_num_divmod(
+unsafe fn zbc_num_divmod(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -2588,7 +2588,7 @@ unsafe extern "C" fn zbc_num_divmod(
   }
   return s;
 }
-unsafe extern "C" fn zdc_num_modexp(
+unsafe fn zdc_num_modexp(
   mut a: *mut BcNum,
   mut b: *mut BcNum,
   mut c: *mut BcNum,
@@ -2660,7 +2660,7 @@ unsafe extern "C" fn zdc_num_modexp(
 unsafe extern "C" fn bc_string_free(mut string: *mut libc::c_void) {
   free(*(string as *mut *mut libc::c_char) as *mut libc::c_void);
 }
-unsafe extern "C" fn bc_func_init(mut f: *mut BcFunc) {
+unsafe fn bc_func_init(mut f: *mut BcFunc) {
   bc_char_vec_init(&mut (*f).code);
   bc_vec_init(
     &mut (*f).labels,
@@ -2670,17 +2670,17 @@ unsafe extern "C" fn bc_func_init(mut f: *mut BcFunc) {
   bc_vec_init(
     &mut (*f).autos,
     ::std::mem::size_of::<BcId>() as libc::c_ulong,
-    Some(bc_id_free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+    Some(bc_id_free ),
   );
   bc_vec_init(
     &mut (*f).strs,
     ::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong,
-    Some(bc_string_free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+    Some(bc_string_free ),
   );
   bc_vec_init(
     &mut (*f).consts,
     ::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong,
-    Some(bc_string_free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+    Some(bc_string_free ),
   );
   (*f).nparams = 0 as size_t;
 }
@@ -2692,24 +2692,24 @@ unsafe extern "C" fn bc_func_free(mut func: *mut libc::c_void) {
   bc_vec_free(&mut (*f).strs as *mut BcVec as *mut libc::c_void);
   bc_vec_free(&mut (*f).consts as *mut BcVec as *mut libc::c_void);
 }
-unsafe extern "C" fn bc_array_init(mut a: *mut BcVec, mut nums: bool) {
+unsafe fn bc_array_init(mut a: *mut BcVec, mut nums: bool) {
   if nums {
     bc_vec_init(
       a,
       ::std::mem::size_of::<BcNum>() as libc::c_ulong,
-      Some(bc_num_free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+      Some(bc_num_free),
     );
   } else {
     bc_vec_init(
       a,
       ::std::mem::size_of::<BcVec>() as libc::c_ulong,
-      Some(bc_vec_free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+      Some(bc_vec_free),
     );
   }
   bc_array_expand(a, 1i32 as size_t);
 }
-unsafe extern "C" fn bc_array_expand(mut a: *mut BcVec, mut len: size_t) {
-  if (*a).dtor == Some(bc_num_free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()) {
+unsafe fn bc_array_expand(mut a: *mut BcVec, mut len: size_t) {
+  if (*a).dtor == Some(bc_num_free) {
     // && a->size == sizeof(BcNum) - always true
     let mut n: BcNum = std::mem::zeroed();
     while len > (*a).len {
@@ -2724,7 +2724,7 @@ unsafe extern "C" fn bc_array_expand(mut a: *mut BcVec, mut len: size_t) {
     }
   };
 }
-unsafe extern "C" fn bc_array_copy(mut d: *mut BcVec, mut s: *const BcVec) {
+unsafe fn bc_array_copy(mut d: *mut BcVec, mut s: *const BcVec) {
   let mut dnum: *mut BcNum = std::ptr::null_mut();
   let mut snum: *mut BcNum = std::ptr::null_mut();
   let mut i: size_t = 0;
@@ -2742,7 +2742,7 @@ unsafe extern "C" fn bc_array_copy(mut d: *mut BcVec, mut s: *const BcVec) {
     snum = snum.offset(1)
   }
 }
-unsafe extern "C" fn dc_result_copy(mut d: *mut BcResult, mut src: *mut BcResult) {
+unsafe fn dc_result_copy(mut d: *mut BcResult, mut src: *mut BcResult) {
   (*d).t = (*src).t;
   match (*d).t as libc::c_uint {
     0 | 6 | 8 | 7 => {
@@ -2773,7 +2773,7 @@ unsafe extern "C" fn bc_result_free(mut result: *mut libc::c_void) {
     _ => {}
   };
 }
-unsafe extern "C" fn bad_input_byte(mut c: libc::c_char) -> libc::c_int {
+unsafe fn bad_input_byte(mut c: libc::c_char) -> libc::c_int {
   if (c as libc::c_int) < ' ' as i32
     && c as libc::c_int != '\t' as i32
     && c as libc::c_int != '\r' as i32
@@ -2788,7 +2788,7 @@ unsafe extern "C" fn bad_input_byte(mut c: libc::c_char) -> libc::c_int {
   }
   return 0;
 }
-unsafe extern "C" fn xc_read_line(mut vec: *mut BcVec, mut fp: *mut FILE) {
+unsafe fn xc_read_line(mut vec: *mut BcVec, mut fp: *mut FILE) {
   let mut c_0: libc::c_int = 0;
   let mut bad_chars: bool = false;
   let mut n: libc::c_int = 0;
@@ -2934,7 +2934,7 @@ unsafe extern "C" fn xc_read_line(mut vec: *mut BcVec, mut fp: *mut FILE) {
 // all input digits greater or equal to ibase to the value of ibase-1.
 // This makes the number ZZZ always be the largest 3 digit number of the
 // input base."
-unsafe extern "C" fn xc_num_strValid(mut val: *const libc::c_char) -> bool {
+unsafe fn xc_num_strValid(mut val: *const libc::c_char) -> bool {
   let mut radix: bool = 0 != 0;
   loop {
     let fresh10 = val;
@@ -2958,7 +2958,7 @@ unsafe extern "C" fn xc_num_strValid(mut val: *const libc::c_char) -> bool {
 }
 // Note: n is already "bc_num_zero()"ed,
 // leading zeroes in "val" are removed
-unsafe extern "C" fn bc_num_parseDecimal(mut n: *mut BcNum, mut val: *const libc::c_char) {
+unsafe fn bc_num_parseDecimal(mut n: *mut BcNum, mut val: *const libc::c_char) {
   let mut len: size_t = 0; // +1 for e.g. "A" converting into 10
   let mut i: size_t = 0;
   let mut ptr: *const libc::c_char = std::ptr::null();
@@ -3022,7 +3022,7 @@ unsafe extern "C" fn bc_num_parseDecimal(mut n: *mut BcNum, mut val: *const libc
 }
 // Note: n is already "bc_num_zero()"ed,
 // leading zeroes in "val" are removed
-unsafe extern "C" fn bc_num_parseBase(
+unsafe fn bc_num_parseBase(
   mut n: *mut BcNum,
   mut val: *const libc::c_char,
   mut base_t: libc::c_uint,
@@ -3147,7 +3147,7 @@ unsafe extern "C" fn bc_num_parseBase(
   }
   bc_num_free(&mut mult as *mut BcNum as *mut libc::c_void);
 }
-unsafe extern "C" fn zxc_num_parse(
+unsafe fn zxc_num_parse(
   mut n: *mut BcNum,
   mut val: *const libc::c_char,
   mut base_t: libc::c_uint,
@@ -3211,7 +3211,7 @@ unsafe extern "C" fn zxc_num_parse(
 // "str/*"      - prints "str/*" at once
 // "str#\       - waits for second line
 // end"         - ...prints "str#\<newline>end"
-unsafe extern "C" fn peek_inbuf() -> libc::c_char {
+unsafe fn peek_inbuf() -> libc::c_char {
   if *(*ptr_to_globals).prs.lex_inbuf as libc::c_int == '\u{0}' as i32
     && !(*ptr_to_globals).prs.lex_input_fp.is_null()
   {
@@ -3227,14 +3227,14 @@ unsafe extern "C" fn peek_inbuf() -> libc::c_char {
   }
   return *(*ptr_to_globals).prs.lex_inbuf;
 }
-unsafe extern "C" fn eat_inbuf() -> libc::c_char {
+unsafe fn eat_inbuf() -> libc::c_char {
   let mut c: libc::c_char = peek_inbuf();
   if c != 0 {
     (*ptr_to_globals).prs.lex_inbuf = (*ptr_to_globals).prs.lex_inbuf.offset(1)
   }
   return c;
 }
-unsafe extern "C" fn xc_lex_lineComment() {
+unsafe fn xc_lex_lineComment() {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut c: libc::c_char = 0;
   // Try: echo -n '#foo' | bc
@@ -3250,7 +3250,7 @@ unsafe extern "C" fn xc_lex_lineComment() {
     (*p).lex_inbuf = (*p).lex_inbuf.offset(1)
   }
 }
-unsafe extern "C" fn xc_lex_whitespace() {
+unsafe fn xc_lex_whitespace() {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   (*p).lex = XC_LEX_WHITESPACE as libc::c_int as smallint;
   loop
@@ -3272,7 +3272,7 @@ unsafe extern "C" fn xc_lex_whitespace() {
     (*p).lex_inbuf = (*p).lex_inbuf.offset(1)
   }
 }
-unsafe extern "C" fn zxc_lex_number(mut last: libc::c_char) -> BcStatus {
+unsafe fn zxc_lex_number(mut last: libc::c_char) -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut pt: bool = false;
   let mut last_valid_ch: libc::c_char = 0;
@@ -3340,7 +3340,7 @@ unsafe extern "C" fn zxc_lex_number(mut last: libc::c_char) -> BcStatus {
   (*ptr_to_globals).err_line = (*ptr_to_globals).prs.lex_line;
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn xc_lex_name() {
+unsafe fn xc_lex_name() {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut i: size_t = 0;
   let mut buf: *const libc::c_char = std::ptr::null();
@@ -3367,7 +3367,7 @@ unsafe extern "C" fn xc_lex_name() {
     .offset(i.wrapping_sub(1i32 as libc::c_ulong) as isize);
   //return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zxc_lex_next() -> BcStatus {
+unsafe fn zxc_lex_next() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   (*ptr_to_globals).err_line = (*p).lex_line;
@@ -3398,13 +3398,13 @@ unsafe extern "C" fn zxc_lex_next() -> BcStatus {
   }
   return s;
 }
-unsafe extern "C" fn zbc_lex_skip_if_at_NLINE() -> BcStatus {
+unsafe fn zbc_lex_skip_if_at_NLINE() -> BcStatus {
   if (*ptr_to_globals).prs.lex as libc::c_int == XC_LEX_NLINE as libc::c_int {
     return zxc_lex_next();
   }
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zbc_lex_next_and_skip_NLINE() -> BcStatus {
+unsafe fn zbc_lex_next_and_skip_NLINE() -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   s = zxc_lex_next();
   if s as u64 != 0 {
@@ -3414,7 +3414,7 @@ unsafe extern "C" fn zbc_lex_next_and_skip_NLINE() -> BcStatus {
   s = zbc_lex_skip_if_at_NLINE(); // "ifz" does not match "if" keyword, "if." does
   return s;
 }
-unsafe extern "C" fn zbc_lex_identifier() -> BcStatus {
+unsafe fn zbc_lex_identifier() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut i: libc::c_uint = 0;
@@ -3498,7 +3498,7 @@ unsafe extern "C" fn zbc_lex_identifier() -> BcStatus {
   } // else store "without" value
   return s;
 }
-unsafe extern "C" fn zbc_lex_string() -> BcStatus {
+unsafe fn zbc_lex_string() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   (*p).lex = XC_LEX_STR as libc::c_int as smallint;
   bc_vec_pop_all(&mut (*p).lex_strnumbuf);
@@ -3524,7 +3524,7 @@ unsafe extern "C" fn zbc_lex_string() -> BcStatus {
   (*ptr_to_globals).err_line = (*p).lex_line;
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn parse_lex_by_checking_eq_sign(mut with_and_without: libc::c_uint) {
+unsafe fn parse_lex_by_checking_eq_sign(mut with_and_without: libc::c_uint) {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   if *(*p).lex_inbuf as libc::c_int == '=' as i32 {
     // ^^^ not using peek_inbuf() since '==' etc can't be split across lines
@@ -3534,7 +3534,7 @@ unsafe extern "C" fn parse_lex_by_checking_eq_sign(mut with_and_without: libc::c
   }
   (*p).lex = (with_and_without & 0xffi32 as libc::c_uint) as smallint;
 }
-unsafe extern "C" fn zbc_lex_comment() -> BcStatus {
+unsafe fn zbc_lex_comment() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   (*p).lex = XC_LEX_WHITESPACE as libc::c_int as smallint;
   's_14: loop
@@ -3561,7 +3561,7 @@ unsafe extern "C" fn zbc_lex_comment() -> BcStatus {
   (*ptr_to_globals).err_line = (*p).lex_line;
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zbc_lex_token() -> BcStatus {
+unsafe fn zbc_lex_token() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut c: libc::c_char = eat_inbuf();
@@ -3749,7 +3749,7 @@ unsafe extern "C" fn zbc_lex_token() -> BcStatus {
   return s;
 }
 // ENABLE_BC
-unsafe extern "C" fn zdc_lex_register() -> BcStatus {
+unsafe fn zdc_lex_register() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs; // eats whitespace (but not newline)
   if 1i32 != 0
     && option_mask32 & ((1i32 << 6i32) * 1i32) as libc::c_uint != 0
@@ -3772,7 +3772,7 @@ unsafe extern "C" fn zdc_lex_register() -> BcStatus {
   }
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zdc_lex_string() -> BcStatus {
+unsafe fn zdc_lex_string() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut depth: size_t = 0;
   (*p).lex = XC_LEX_STR as libc::c_int as smallint;
@@ -3806,7 +3806,7 @@ unsafe extern "C" fn zdc_lex_string() -> BcStatus {
   (*ptr_to_globals).err_line = (*p).lex_line;
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zdc_lex_token() -> BcStatus {
+unsafe fn zdc_lex_token() -> BcStatus {
   //BcLexType - should be this type, but narrower type saves size:
   static mut dc_lex_regs: [u8; 13] = [
     XC_LEX_OP_REL_EQ as libc::c_int as u8,
@@ -3902,11 +3902,11 @@ unsafe extern "C" fn zdc_lex_token() -> BcStatus {
   return s;
 }
 // ENABLE_DC
-unsafe extern "C" fn xc_parse_push(mut i: libc::c_uint) {
+unsafe fn xc_parse_push(mut i: libc::c_uint) {
   let mut code: *mut BcVec = &mut (*(*ptr_to_globals).prs.func).code;
   bc_vec_pushByte(code, i as u8 as libc::c_char);
 }
-unsafe extern "C" fn xc_parse_pushName(mut name: *mut libc::c_char) {
+unsafe fn xc_parse_pushName(mut name: *mut libc::c_char) {
   let mut code: *mut BcVec = &mut (*(*ptr_to_globals).prs.func).code;
   let mut pos: size_t = (*code).len;
   let mut len: size_t = strlen(name).wrapping_add(1i32 as libc::c_ulong);
@@ -3914,7 +3914,7 @@ unsafe extern "C" fn xc_parse_pushName(mut name: *mut libc::c_char) {
   strcpy((*code).v.offset(pos as isize), name);
   (*code).len = pos.wrapping_add(len);
 }
-unsafe extern "C" fn bc_vec_pushIndex(mut v: *mut BcVec, mut idx: size_t) {
+unsafe fn bc_vec_pushIndex(mut v: *mut BcVec, mut idx: size_t) {
   let mut mask: size_t = 0;
   let mut amt: libc::c_uint = 0;
   if idx
@@ -3948,20 +3948,20 @@ unsafe extern "C" fn bc_vec_pushIndex(mut v: *mut BcVec, mut idx: size_t) {
     }
   }
 }
-unsafe extern "C" fn xc_parse_pushIndex(mut idx: size_t) {
+unsafe fn xc_parse_pushIndex(mut idx: size_t) {
   bc_vec_pushIndex(&mut (*(*ptr_to_globals).prs.func).code, idx);
 }
-unsafe extern "C" fn xc_parse_pushInst_and_Index(mut inst: libc::c_uint, mut idx: size_t) {
+unsafe fn xc_parse_pushInst_and_Index(mut inst: libc::c_uint, mut idx: size_t) {
   xc_parse_push(inst);
   xc_parse_pushIndex(idx);
 }
-unsafe extern "C" fn bc_parse_pushJUMP(mut idx: size_t) {
+unsafe fn bc_parse_pushJUMP(mut idx: size_t) {
   xc_parse_pushInst_and_Index(BC_INST_JUMP as libc::c_int as libc::c_uint, idx);
 }
-unsafe extern "C" fn bc_parse_pushJUMP_ZERO(mut idx: size_t) {
+unsafe fn bc_parse_pushJUMP_ZERO(mut idx: size_t) {
   xc_parse_pushInst_and_Index(BC_INST_JUMP_ZERO as libc::c_int as libc::c_uint, idx);
 }
-unsafe extern "C" fn zbc_parse_pushSTR() -> BcStatus {
+unsafe fn zbc_parse_pushSTR() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut str: *mut libc::c_char = crate::libbb::xfuncs_printf::xstrdup((*p).lex_strnumbuf.v);
   xc_parse_pushInst_and_Index(
@@ -3974,7 +3974,7 @@ unsafe extern "C" fn zbc_parse_pushSTR() -> BcStatus {
   );
   return zxc_lex_next();
 }
-unsafe extern "C" fn xc_parse_pushNUM() {
+unsafe fn xc_parse_pushNUM() {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut num: *mut libc::c_char = crate::libbb::xfuncs_printf::xstrdup((*p).lex_strnumbuf.v);
   let mut idx: size_t = bc_vec_push(
@@ -3987,7 +3987,7 @@ unsafe extern "C" fn xc_parse_pushNUM() {
   );
   xc_parse_pushInst_and_Index(XC_INST_NUM as libc::c_int as libc::c_uint, idx);
 }
-unsafe extern "C" fn zxc_parse_text_init(mut text: *const libc::c_char) -> BcStatus {
+unsafe fn zxc_parse_text_init(mut text: *const libc::c_char) -> BcStatus {
   (*ptr_to_globals).prs.func = xc_program_func((*ptr_to_globals).prs.fidx);
   (*ptr_to_globals).prs.lex_inbuf = text;
   (*ptr_to_globals).prs.lex_last = XC_LEX_INVALID as libc::c_int as smallint;
@@ -3996,7 +3996,7 @@ unsafe extern "C" fn zxc_parse_text_init(mut text: *const libc::c_char) -> BcSta
 }
 // Called when parsing or execution detects a failure,
 // resets execution structures.
-unsafe extern "C" fn xc_program_reset() {
+unsafe fn xc_program_reset() {
   let mut f: *mut BcFunc = std::ptr::null_mut();
   let mut ip: *mut BcInstPtr = std::ptr::null_mut();
   bc_vec_npop(
@@ -4014,7 +4014,7 @@ unsafe extern "C" fn xc_program_reset() {
 }
 // Called when parsing code detects a failure,
 // resets parsing structures.
-unsafe extern "C" fn xc_parse_reset() {
+unsafe fn xc_parse_reset() {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   if (*p).fidx != 0 as libc::c_ulong {
     bc_func_free((*p).func as *mut libc::c_void);
@@ -4029,13 +4029,13 @@ unsafe extern "C" fn xc_parse_reset() {
   bc_vec_pop_all(&mut (*p).ops);
   xc_program_reset();
 }
-unsafe extern "C" fn xc_parse_free() {
+unsafe fn xc_parse_free() {
   bc_vec_free(&mut (*ptr_to_globals).prs.exits as *mut BcVec as *mut libc::c_void);
   bc_vec_free(&mut (*ptr_to_globals).prs.conds as *mut BcVec as *mut libc::c_void);
   bc_vec_free(&mut (*ptr_to_globals).prs.ops as *mut BcVec as *mut libc::c_void);
   bc_vec_free(&mut (*ptr_to_globals).prs.lex_strnumbuf as *mut BcVec as *mut libc::c_void);
 }
-unsafe extern "C" fn xc_parse_create(mut fidx: size_t) {
+unsafe fn xc_parse_create(mut fidx: size_t) {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   memset(
     p as *mut libc::c_void,
@@ -4061,7 +4061,7 @@ unsafe extern "C" fn xc_parse_create(mut fidx: size_t) {
   (*p).fidx = fidx;
   (*p).func = xc_program_func(fidx);
 }
-unsafe extern "C" fn xc_program_add_fn() {
+unsafe fn xc_program_add_fn() {
   //size_t idx;
   let mut f: BcFunc = BcFunc {
     code: std::mem::zeroed(),
@@ -4081,7 +4081,7 @@ unsafe extern "C" fn xc_program_add_fn() {
   //return idx;
 }
 // Note: takes ownership of 'name' (must be malloced)
-unsafe extern "C" fn bc_program_addFunc(mut name: *mut libc::c_char) -> size_t {
+unsafe fn bc_program_addFunc(mut name: *mut libc::c_char) -> size_t {
   let mut idx: size_t = 0;
   let mut entry: BcId = BcId {
     name: std::ptr::null_mut::<libc::c_char>(),
@@ -4112,10 +4112,10 @@ unsafe extern "C" fn bc_program_addFunc(mut name: *mut libc::c_char) -> size_t {
   }
   return idx;
 }
-unsafe extern "C" fn zbc_parse_stmt() -> BcStatus {
+unsafe fn zbc_parse_stmt() -> BcStatus {
   return zbc_parse_stmt_possibly_auto(0i32 != 0);
 }
-unsafe extern "C" fn zbc_parse_stmt_allow_NLINE_before(
+unsafe fn zbc_parse_stmt_allow_NLINE_before(
   mut after_X: *const libc::c_char,
 ) -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
@@ -4133,7 +4133,7 @@ unsafe extern "C" fn zbc_parse_stmt_allow_NLINE_before(
   }
   return zbc_parse_stmt();
 }
-unsafe extern "C" fn bc_parse_operator(
+unsafe fn bc_parse_operator(
   mut type_0: BcLexType,
   mut start: size_t,
   mut nexprs: *mut size_t,
@@ -4179,7 +4179,7 @@ unsafe extern "C" fn bc_parse_operator(
     &mut type_0 as *mut BcLexType as *const libc::c_void,
   );
 }
-unsafe extern "C" fn zbc_parse_rightParen(mut ops_bgn: size_t, mut nexs: *mut size_t) -> BcStatus {
+unsafe fn zbc_parse_rightParen(mut ops_bgn: size_t, mut nexs: *mut size_t) -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut top: BcLexType = XC_LEX_EOF;
   if (*p).ops.len <= ops_bgn {
@@ -4207,7 +4207,7 @@ unsafe extern "C" fn zbc_parse_rightParen(mut ops_bgn: size_t, mut nexs: *mut si
   bc_vec_pop(&mut (*p).ops);
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zbc_parse_params(mut flags: u8) -> BcStatus {
+unsafe fn zbc_parse_params(mut flags: u8) -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut nparams: size_t = 0;
@@ -4241,7 +4241,7 @@ unsafe extern "C" fn zbc_parse_params(mut flags: u8) -> BcStatus {
   return BC_STATUS_SUCCESS;
 }
 // Note: takes ownership of 'name' (must be malloced)
-unsafe extern "C" fn zbc_parse_call(mut name: *mut libc::c_char, mut flags: u8) -> BcStatus {
+unsafe fn zbc_parse_call(mut name: *mut libc::c_char, mut flags: u8) -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut entry: BcId = BcId {
@@ -4278,7 +4278,7 @@ unsafe extern "C" fn zbc_parse_call(mut name: *mut libc::c_char, mut flags: u8) 
   free(name as *mut libc::c_void);
   return s;
 }
-unsafe extern "C" fn zbc_parse_name(mut type_0: *mut BcInst, mut flags: u8) -> BcStatus {
+unsafe fn zbc_parse_name(mut type_0: *mut BcInst, mut flags: u8) -> BcStatus {
   let mut current_block: u64;
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
@@ -4348,7 +4348,7 @@ unsafe extern "C" fn zbc_parse_name(mut type_0: *mut BcInst, mut flags: u8) -> B
   free(name as *mut libc::c_void);
   return s;
 }
-unsafe extern "C" fn zbc_parse_read() -> BcStatus {
+unsafe fn zbc_parse_read() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   s = zxc_lex_next();
@@ -4368,7 +4368,7 @@ unsafe extern "C" fn zbc_parse_read() -> BcStatus {
   xc_parse_push(XC_INST_READ as libc::c_int as libc::c_uint);
   return s;
 }
-unsafe extern "C" fn zbc_parse_builtin(
+unsafe fn zbc_parse_builtin(
   mut type_0: BcLexType,
   mut flags: u8,
   mut prev: *mut BcInst,
@@ -4402,7 +4402,7 @@ unsafe extern "C" fn zbc_parse_builtin(
   xc_parse_push(*prev as libc::c_uint);
   return s;
 }
-unsafe extern "C" fn zbc_parse_scale(mut type_0: *mut BcInst, mut flags: u8) -> BcStatus {
+unsafe fn zbc_parse_scale(mut type_0: *mut BcInst, mut flags: u8) -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   s = zxc_lex_next();
@@ -4430,7 +4430,7 @@ unsafe extern "C" fn zbc_parse_scale(mut type_0: *mut BcInst, mut flags: u8) -> 
   xc_parse_push(XC_INST_SCALE_FUNC as libc::c_int as libc::c_uint);
   return zxc_lex_next();
 }
-unsafe extern "C" fn zbc_parse_incdec(
+unsafe fn zbc_parse_incdec(
   mut prev: *mut BcInst,
   mut nexs: *mut size_t,
   mut flags: u8,
@@ -4495,13 +4495,13 @@ unsafe extern "C" fn zbc_parse_incdec(
   }
   return s;
 }
-unsafe extern "C" fn bc_parse_inst_isLeaf(mut p: BcInst) -> libc::c_int {
+unsafe fn bc_parse_inst_isLeaf(mut p: BcInst) -> libc::c_int {
   return (p as libc::c_int >= XC_INST_NUM as libc::c_int
     && p as libc::c_int <= XC_INST_SQRT as libc::c_int
     || p as libc::c_int == BC_INST_INC_POST as libc::c_int
     || p as libc::c_int == BC_INST_DEC_POST as libc::c_int) as libc::c_int;
 }
-unsafe extern "C" fn zbc_parse_minus(
+unsafe fn zbc_parse_minus(
   mut prev: *mut BcInst,
   mut ops_bgn: size_t,
   mut rparen: bool,
@@ -4535,7 +4535,7 @@ unsafe extern "C" fn zbc_parse_minus(
   }
   return s;
 }
-unsafe extern "C" fn zbc_parse_print() -> BcStatus {
+unsafe fn zbc_parse_print() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut type_0: BcLexType = XC_LEX_EOF;
@@ -4560,7 +4560,7 @@ unsafe extern "C" fn zbc_parse_print() -> BcStatus {
   }
   return s;
 }
-unsafe extern "C" fn zbc_parse_return() -> BcStatus {
+unsafe fn zbc_parse_return() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut t: BcLexType = XC_LEX_EOF;
@@ -4595,12 +4595,12 @@ unsafe extern "C" fn zbc_parse_return() -> BcStatus {
   }
   return s;
 }
-unsafe extern "C" fn rewrite_label_to_current(mut idx: size_t) {
+unsafe fn rewrite_label_to_current(mut idx: size_t) {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut label: *mut size_t = bc_vec_item(&mut (*(*p).func).labels, idx) as *mut size_t;
   *label = (*(*p).func).code.len;
 }
-unsafe extern "C" fn zbc_parse_if() -> BcStatus {
+unsafe fn zbc_parse_if() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut ip_idx: size_t = 0;
@@ -4652,7 +4652,7 @@ unsafe extern "C" fn zbc_parse_if() -> BcStatus {
   rewrite_label_to_current(ip_idx);
   return s;
 }
-unsafe extern "C" fn zbc_parse_while() -> BcStatus {
+unsafe fn zbc_parse_while() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut cond_idx: size_t = 0;
@@ -4703,7 +4703,7 @@ unsafe extern "C" fn zbc_parse_while() -> BcStatus {
   bc_vec_pop(&mut (*p).conds);
   return s;
 }
-unsafe extern "C" fn zbc_parse_for() -> BcStatus {
+unsafe fn zbc_parse_for() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut cond_idx: size_t = 0;
@@ -4825,7 +4825,7 @@ unsafe extern "C" fn zbc_parse_for() -> BcStatus {
   bc_vec_pop(&mut (*p).conds);
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zbc_parse_break_or_continue(mut type_0: BcLexType) -> BcStatus {
+unsafe fn zbc_parse_break_or_continue(mut type_0: BcLexType) -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut i: size_t = 0;
   if type_0 as libc::c_uint == BC_LEX_KEY_BREAK as libc::c_int as libc::c_uint {
@@ -4840,7 +4840,7 @@ unsafe extern "C" fn zbc_parse_break_or_continue(mut type_0: BcLexType) -> BcSta
   bc_parse_pushJUMP(i);
   return zxc_lex_next();
 }
-unsafe extern "C" fn zbc_func_insert(
+unsafe fn zbc_func_insert(
   mut f: *mut BcFunc,
   mut name: *mut libc::c_char,
   mut type_0: BcType,
@@ -4869,7 +4869,7 @@ unsafe extern "C" fn zbc_func_insert(
   bc_vec_push(&mut (*f).autos, &mut a as *mut BcId as *const libc::c_void);
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zbc_parse_funcdef() -> BcStatus {
+unsafe fn zbc_parse_funcdef() -> BcStatus {
   let mut current_block: u64;
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
@@ -5028,7 +5028,7 @@ unsafe extern "C" fn zbc_parse_funcdef() -> BcStatus {
     }
   };
 }
-unsafe extern "C" fn zbc_parse_auto() -> BcStatus {
+unsafe fn zbc_parse_auto() -> BcStatus {
   let mut current_block: u64;
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
@@ -5101,7 +5101,7 @@ unsafe extern "C" fn zbc_parse_auto() -> BcStatus {
     }
   };
 }
-unsafe extern "C" fn zbc_parse_stmt_possibly_auto(mut auto_allowed: bool) -> BcStatus {
+unsafe fn zbc_parse_stmt_possibly_auto(mut auto_allowed: bool) -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   if (*p).lex as libc::c_int == XC_LEX_NLINE as libc::c_int {
@@ -5192,7 +5192,7 @@ unsafe extern "C" fn zbc_parse_stmt_possibly_auto(mut auto_allowed: bool) -> BcS
   }
   return s;
 }
-unsafe extern "C" fn zbc_parse_stmt_or_funcdef() -> BcStatus {
+unsafe fn zbc_parse_stmt_or_funcdef() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   //why?
@@ -5209,7 +5209,7 @@ unsafe extern "C" fn zbc_parse_stmt_or_funcdef() -> BcStatus {
 // We can calculate the conversion between tokens and exprs by subtracting the
 // position of the first operator in the lex enum and adding the position of the
 // first in the expr enum. Note: This only works for binary operators.
-unsafe extern "C" fn zbc_parse_expr(mut flags: u8) -> BcStatus {
+unsafe fn zbc_parse_expr(mut flags: u8) -> BcStatus {
   let mut current_block: u64;
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut prev: BcInst = XC_INST_PRINT;
@@ -5474,7 +5474,7 @@ unsafe extern "C" fn zbc_parse_expr(mut flags: u8) -> BcStatus {
   return BC_STATUS_SUCCESS;
 }
 // ENABLE_BC
-unsafe extern "C" fn zdc_parse_register() -> BcStatus {
+unsafe fn zdc_parse_register() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   s = zxc_lex_next();
@@ -5487,7 +5487,7 @@ unsafe extern "C" fn zdc_parse_register() -> BcStatus {
   xc_parse_pushName((*p).lex_strnumbuf.v);
   return s;
 }
-unsafe extern "C" fn dc_parse_string() {
+unsafe fn dc_parse_string() {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len: size_t = (*ptr_to_globals).prog.strs.len;
@@ -5503,7 +5503,7 @@ unsafe extern "C" fn dc_parse_string() {
   xc_program_add_fn();
   (*p).func = xc_program_func((*p).fidx);
 }
-unsafe extern "C" fn zdc_parse_mem(mut inst: u8, mut name: bool, mut store: bool) -> BcStatus {
+unsafe fn zdc_parse_mem(mut inst: u8, mut name: bool, mut store: bool) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   xc_parse_push(inst as libc::c_uint);
   if name {
@@ -5519,7 +5519,7 @@ unsafe extern "C" fn zdc_parse_mem(mut inst: u8, mut name: bool, mut store: bool
   }
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zdc_parse_cond(mut inst: u8) -> BcStatus {
+unsafe fn zdc_parse_cond(mut inst: u8) -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   xc_parse_push(inst as libc::c_uint);
@@ -5546,7 +5546,7 @@ unsafe extern "C" fn zdc_parse_cond(mut inst: u8) -> BcStatus {
   }
   return s;
 }
-unsafe extern "C" fn zdc_parse_token(mut t: BcLexType) -> BcStatus {
+unsafe fn zdc_parse_token(mut t: BcLexType) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut inst: u8 = 0;
   let mut assign: bool = false;
@@ -5619,7 +5619,7 @@ unsafe extern "C" fn zdc_parse_token(mut t: BcLexType) -> BcStatus {
   }
   return s;
 }
-unsafe extern "C" fn zdc_parse_expr() -> BcStatus {
+unsafe fn zdc_parse_expr() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut i: libc::c_int = 0;
   if (*p).lex as libc::c_int == XC_LEX_NLINE as libc::c_int {
@@ -5635,7 +5635,7 @@ unsafe extern "C" fn zdc_parse_expr() -> BcStatus {
   }
   return zdc_parse_token((*p).lex as BcLexType);
 }
-unsafe extern "C" fn zdc_parse_exprs_until_eof() -> BcStatus {
+unsafe fn zdc_parse_exprs_until_eof() -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   while (*p).lex as libc::c_int != XC_LEX_EOF as libc::c_int {
     let mut s: BcStatus = zdc_parse_expr();
@@ -5649,7 +5649,7 @@ unsafe extern "C" fn zdc_parse_exprs_until_eof() -> BcStatus {
 //
 // Execution engine
 //
-unsafe extern "C" fn xc_program_index(mut code: *mut libc::c_char, mut bgn: *mut size_t) -> size_t {
+unsafe fn xc_program_index(mut code: *mut libc::c_char, mut bgn: *mut size_t) -> size_t {
   let mut bytes: *mut libc::c_uchar =
     code.offset(*bgn as isize) as *mut libc::c_void as *mut libc::c_uchar; // amt is 1 or more here
   let mut amt: libc::c_uint = 0;
@@ -5686,7 +5686,7 @@ unsafe extern "C" fn xc_program_index(mut code: *mut libc::c_char, mut bgn: *mut
   }
   return res;
 }
-unsafe extern "C" fn xc_program_name(
+unsafe fn xc_program_name(
   mut code: *mut libc::c_char,
   mut bgn: *mut size_t,
 ) -> *mut libc::c_char {
@@ -5695,7 +5695,7 @@ unsafe extern "C" fn xc_program_name(
     as size_t as size_t;
   return crate::libbb::xfuncs_printf::xstrdup(code);
 }
-unsafe extern "C" fn xc_program_dereference(mut vec: *mut BcVec) -> *mut BcVec {
+unsafe fn xc_program_dereference(mut vec: *mut BcVec) -> *mut BcVec {
   let mut v: *mut BcVec = std::ptr::null_mut();
   let mut vidx: size_t = 0;
   let mut nidx: size_t = 0;
@@ -5708,7 +5708,7 @@ unsafe extern "C" fn xc_program_dereference(mut vec: *mut BcVec) -> *mut BcVec {
   //assert(v->size != sizeof(u8));
   return v; // 1 if insertion was successful
 }
-unsafe extern "C" fn xc_program_search(
+unsafe fn xc_program_search(
   mut id: *mut libc::c_char,
   mut type_0: BcType,
 ) -> *mut BcVec {
@@ -5747,7 +5747,7 @@ unsafe extern "C" fn xc_program_search(
   return bc_vec_item(v, (*ptr).idx) as *mut BcVec;
 }
 // 'num' need not be initialized on entry
-unsafe extern "C" fn zxc_program_num(mut r: *mut BcResult, mut num: *mut *mut BcNum) -> BcStatus {
+unsafe fn zxc_program_num(mut r: *mut BcResult, mut num: *mut *mut BcNum) -> BcStatus {
   match (*r).t as libc::c_uint {
     5 | 0 | 1 | 6 | 8 | 7 => *num = &mut (*r).d.n,
     10 => {
@@ -5805,7 +5805,7 @@ unsafe extern "C" fn zxc_program_num(mut r: *mut BcResult, mut num: *mut *mut Bc
   }
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zxc_program_binOpPrep(
+unsafe fn zxc_program_binOpPrep(
   mut l: *mut *mut BcResult,
   mut ln: *mut *mut BcNum,
   mut r: *mut *mut BcResult,
@@ -5857,13 +5857,13 @@ unsafe extern "C" fn zxc_program_binOpPrep(
   }
   return s;
 }
-unsafe extern "C" fn xc_program_binOpRetire(mut r: *mut BcResult) {
+unsafe fn xc_program_binOpRetire(mut r: *mut BcResult) {
   (*r).t = XC_RESULT_TEMP;
   bc_vec_pop(&mut (*ptr_to_globals).prog.results);
   bc_result_pop_and_push(r as *const libc::c_void);
 }
 // Note: *r and *n need not be initialized by caller
-unsafe extern "C" fn zxc_program_prep(
+unsafe fn zxc_program_prep(
   mut r: *mut *mut BcResult,
   mut n: *mut *mut BcNum,
 ) -> BcStatus {
@@ -5884,11 +5884,11 @@ unsafe extern "C" fn zxc_program_prep(
   }
   return s;
 }
-unsafe extern "C" fn xc_program_retire(mut r: *mut BcResult, mut t: BcResultType) {
+unsafe fn xc_program_retire(mut r: *mut BcResult, mut t: BcResultType) {
   (*r).t = t;
   bc_result_pop_and_push(r as *const libc::c_void);
 }
-unsafe extern "C" fn zxc_program_op(mut inst: libc::c_char) -> BcStatus {
+unsafe fn zxc_program_op(mut inst: libc::c_char) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut opd1: *mut BcResult = std::ptr::null_mut();
   let mut opd2: *mut BcResult = std::ptr::null_mut();
@@ -5916,7 +5916,7 @@ unsafe extern "C" fn zxc_program_op(mut inst: libc::c_char) -> BcStatus {
     return s;
   };
 }
-unsafe extern "C" fn zxc_program_read() -> BcStatus {
+unsafe fn zxc_program_read() -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut sv_parse: BcParse = std::mem::zeroed();
   let mut buf: BcVec = std::mem::zeroed();
@@ -5961,7 +5961,7 @@ unsafe extern "C" fn zxc_program_read() -> BcStatus {
   bc_vec_free(&mut buf as *mut BcVec as *mut libc::c_void);
   return s;
 }
-unsafe extern "C" fn xc_program_printString(mut str: *const libc::c_char) {
+unsafe fn xc_program_printString(mut str: *const libc::c_char) {
   if *str.offset(0) == 0
     && (1i32 != 0 && (1i32 == 0 || *applet_name.offset(0) as libc::c_int != 'b' as i32))
   {
@@ -6004,7 +6004,7 @@ unsafe extern "C" fn xc_program_printString(mut str: *const libc::c_char) {
     (*ptr_to_globals).prog.nchars = (*ptr_to_globals).prog.nchars.wrapping_add(1)
   }
 }
-unsafe extern "C" fn bc_num_printNewline() {
+unsafe fn bc_num_printNewline() {
   if (*ptr_to_globals).prog.nchars
     == (*ptr_to_globals)
       .prog
@@ -6016,12 +6016,12 @@ unsafe extern "C" fn bc_num_printNewline() {
     (*ptr_to_globals).prog.nchars = 0 as size_t
   };
 }
-unsafe extern "C" fn dc_num_printChar(mut num: size_t, mut width: size_t, mut _radix: bool) {
+unsafe fn dc_num_printChar(mut num: size_t, mut width: size_t, mut _radix: bool) {
   crate::libbb::xfuncs_printf::bb_putchar(num as libc::c_char as libc::c_int);
   (*ptr_to_globals).prog.nchars =
     ((*ptr_to_globals).prog.nchars as libc::c_ulong).wrapping_add(width) as size_t as size_t;
 }
-unsafe extern "C" fn bc_num_printDigits(mut num: size_t, mut width: size_t, mut radix: bool) {
+unsafe fn bc_num_printDigits(mut num: size_t, mut width: size_t, mut radix: bool) {
   let mut exp: size_t = 0;
   let mut pow: size_t = 0;
   bc_num_printNewline();
@@ -6050,7 +6050,7 @@ unsafe extern "C" fn bc_num_printDigits(mut num: size_t, mut width: size_t, mut 
     exp = exp.wrapping_add(1)
   }
 }
-unsafe extern "C" fn bc_num_printHex(mut num: size_t, mut width: size_t, mut radix: bool) {
+unsafe fn bc_num_printHex(mut num: size_t, mut width: size_t, mut radix: bool) {
   if radix {
     bc_num_printNewline();
     crate::libbb::xfuncs_printf::bb_putchar('.' as i32);
@@ -6063,7 +6063,7 @@ unsafe extern "C" fn bc_num_printHex(mut num: size_t, mut width: size_t, mut rad
   (*ptr_to_globals).prog.nchars =
     ((*ptr_to_globals).prog.nchars as libc::c_ulong).wrapping_add(width) as size_t as size_t;
 }
-unsafe extern "C" fn bc_num_printDecimal(mut n: *mut BcNum) {
+unsafe fn bc_num_printDecimal(mut n: *mut BcNum) {
   let mut i: size_t = 0;
   let mut rdx: size_t = (*n).rdx.wrapping_sub(1i32 as libc::c_ulong);
   if (*n).neg {
@@ -6080,7 +6080,7 @@ unsafe extern "C" fn bc_num_printDecimal(mut n: *mut BcNum) {
     i = i.wrapping_sub(1)
   }
 }
-unsafe extern "C" fn zxc_num_printNum(
+unsafe fn zxc_num_printNum(
   mut n: *mut BcNum,
   mut base_t: libc::c_uint,
   mut width: size_t,
@@ -6206,7 +6206,7 @@ unsafe extern "C" fn zxc_num_printNum(
   bc_vec_free(&mut stack as *mut BcVec as *mut libc::c_void);
   return s;
 }
-unsafe extern "C" fn zxc_num_printBase(mut n: *mut BcNum) -> BcStatus {
+unsafe fn zxc_num_printBase(mut n: *mut BcNum) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut width: size_t = 0;
   let mut print: BcNumDigitOp = None;
@@ -6218,7 +6218,7 @@ unsafe extern "C" fn zxc_num_printBase(mut n: *mut BcNum) -> BcStatus {
   (*n).neg = 0 != 0;
   if (*ptr_to_globals).prog.ob_t <= 16i32 as libc::c_ulong {
     width = 1i32 as size_t;
-    print = Some(bc_num_printHex as unsafe extern "C" fn(_: size_t, _: size_t, _: bool) -> ())
+    print = Some(bc_num_printHex as unsafe fn(_: size_t, _: size_t, _: bool) -> ())
   } else {
     let mut i: libc::c_uint = (*ptr_to_globals)
       .prog
@@ -6232,13 +6232,13 @@ unsafe extern "C" fn zxc_num_printBase(mut n: *mut BcNum) -> BcStatus {
         break;
       }
     }
-    print = Some(bc_num_printDigits as unsafe extern "C" fn(_: size_t, _: size_t, _: bool) -> ())
+    print = Some(bc_num_printDigits as unsafe fn(_: size_t, _: size_t, _: bool) -> ())
   }
   s = zxc_num_printNum(n, (*ptr_to_globals).prog.ob_t as libc::c_uint, width, print);
   (*n).neg = neg;
   return s;
 }
-unsafe extern "C" fn zxc_num_print(mut n: *mut BcNum, mut newline: bool) -> BcStatus {
+unsafe fn zxc_num_print(mut n: *mut BcNum, mut newline: bool) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   bc_num_printNewline();
   if (*n).len == 0 as libc::c_ulong {
@@ -6255,7 +6255,7 @@ unsafe extern "C" fn zxc_num_print(mut n: *mut BcNum, mut newline: bool) -> BcSt
   }
   return s;
 }
-unsafe extern "C" fn xc_program_print(mut inst: libc::c_char, mut idx: size_t) -> BcStatus {
+unsafe fn xc_program_print(mut inst: libc::c_char, mut idx: size_t) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut r: *mut BcResult = std::ptr::null_mut();
   let mut num: *mut BcNum = std::ptr::null_mut();
@@ -6312,7 +6312,7 @@ unsafe extern "C" fn xc_program_print(mut inst: libc::c_char, mut idx: size_t) -
   }
   return s;
 }
-unsafe extern "C" fn zxc_program_negate() -> BcStatus {
+unsafe fn zxc_program_negate() -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut res: BcResult = BcResult {
     t: XC_RESULT_TEMP,
@@ -6334,7 +6334,7 @@ unsafe extern "C" fn zxc_program_negate() -> BcStatus {
   xc_program_retire(&mut res, XC_RESULT_TEMP);
   return s;
 }
-unsafe extern "C" fn zxc_program_logical(mut inst: libc::c_char) -> BcStatus {
+unsafe fn zxc_program_logical(mut inst: libc::c_char) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut opd1: *mut BcResult = std::ptr::null_mut();
   let mut opd2: *mut BcResult = std::ptr::null_mut();
@@ -6376,7 +6376,7 @@ unsafe extern "C" fn zxc_program_logical(mut inst: libc::c_char) -> BcStatus {
   xc_program_binOpRetire(&mut res);
   return s;
 }
-unsafe extern "C" fn zdc_program_assignStr(
+unsafe fn zdc_program_assignStr(
   mut r: *mut BcResult,
   mut v: *mut BcVec,
   mut push: bool,
@@ -6408,7 +6408,7 @@ unsafe extern "C" fn zdc_program_assignStr(
   return BC_STATUS_SUCCESS;
 }
 // ENABLE_DC
-unsafe extern "C" fn zxc_program_popResultAndCopyToVar(
+unsafe fn zxc_program_popResultAndCopyToVar(
   mut name: *mut libc::c_char,
   mut t: BcType,
 ) -> BcStatus {
@@ -6503,7 +6503,7 @@ unsafe extern "C" fn zxc_program_popResultAndCopyToVar(
   bc_vec_pop(&mut (*ptr_to_globals).prog.results);
   return s;
 }
-unsafe extern "C" fn zxc_program_assign(mut inst: libc::c_char) -> BcStatus {
+unsafe fn zxc_program_assign(mut inst: libc::c_char) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut left: *mut BcResult = std::ptr::null_mut();
   let mut right: *mut BcResult = std::ptr::null_mut();
@@ -6597,7 +6597,7 @@ unsafe extern "C" fn zxc_program_assign(mut inst: libc::c_char) -> BcStatus {
   xc_program_binOpRetire(&mut res);
   return s;
 }
-unsafe extern "C" fn xc_program_pushVar(
+unsafe fn xc_program_pushVar(
   mut code: *mut libc::c_char,
   mut bgn: *mut size_t,
   mut pop: bool,
@@ -6638,7 +6638,7 @@ unsafe extern "C" fn xc_program_pushVar(
   );
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zbc_program_pushArray(
+unsafe fn zbc_program_pushArray(
   mut code: *mut libc::c_char,
   mut bgn: *mut size_t,
   mut inst: libc::c_char,
@@ -6681,7 +6681,7 @@ unsafe extern "C" fn zbc_program_pushArray(
   }
   return s;
 }
-unsafe extern "C" fn zbc_program_incdec(mut inst: libc::c_char) -> BcStatus {
+unsafe fn zbc_program_incdec(mut inst: libc::c_char) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut ptr: *mut BcResult = std::ptr::null_mut();
   let mut res: BcResult = BcResult {
@@ -6732,7 +6732,7 @@ unsafe extern "C" fn zbc_program_incdec(mut inst: libc::c_char) -> BcStatus {
   }
   return s;
 }
-unsafe extern "C" fn zbc_program_call(
+unsafe fn zbc_program_call(
   mut code: *mut libc::c_char,
   mut idx: *mut size_t,
 ) -> BcStatus {
@@ -6812,7 +6812,7 @@ unsafe extern "C" fn zbc_program_call(
   );
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zbc_program_return(mut inst: libc::c_char) -> BcStatus {
+unsafe fn zbc_program_return(mut inst: libc::c_char) -> BcStatus {
   let mut res: BcResult = BcResult {
     t: XC_RESULT_TEMP,
     d: BcResultData {
@@ -6865,10 +6865,10 @@ unsafe extern "C" fn zbc_program_return(mut inst: libc::c_char) -> BcStatus {
   return BC_STATUS_SUCCESS;
 }
 // ENABLE_BC
-unsafe extern "C" fn xc_program_scale(mut n: *mut BcNum) -> libc::c_ulong {
+unsafe fn xc_program_scale(mut n: *mut BcNum) -> libc::c_ulong {
   return (*n).rdx;
 }
-unsafe extern "C" fn xc_program_len(mut n: *mut BcNum) -> libc::c_ulong {
+unsafe fn xc_program_len(mut n: *mut BcNum) -> libc::c_ulong {
   let mut len: size_t = (*n).len;
   if (*n).rdx != len {
     return len;
@@ -6881,7 +6881,7 @@ unsafe extern "C" fn xc_program_len(mut n: *mut BcNum) -> libc::c_ulong {
   }
   return len;
 }
-unsafe extern "C" fn zxc_program_builtin(mut inst: libc::c_char) -> BcStatus {
+unsafe fn zxc_program_builtin(mut inst: libc::c_char) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut opnd: *mut BcResult = std::ptr::null_mut();
   let mut num: *mut BcNum = std::ptr::null_mut();
@@ -6941,7 +6941,7 @@ unsafe extern "C" fn zxc_program_builtin(mut inst: libc::c_char) -> BcStatus {
   xc_program_retire(&mut res, XC_RESULT_TEMP);
   return s;
 }
-unsafe extern "C" fn zdc_program_divmod() -> BcStatus {
+unsafe fn zdc_program_divmod() -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut opd1: *mut BcResult = std::ptr::null_mut();
   let mut opd2: *mut BcResult = std::ptr::null_mut();
@@ -6986,7 +6986,7 @@ unsafe extern "C" fn zdc_program_divmod() -> BcStatus {
     return s;
   };
 }
-unsafe extern "C" fn zdc_program_modexp() -> BcStatus {
+unsafe fn zdc_program_modexp() -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut r1: *mut BcResult = std::ptr::null_mut();
   let mut r2: *mut BcResult = std::ptr::null_mut();
@@ -7046,7 +7046,7 @@ unsafe extern "C" fn zdc_program_modexp() -> BcStatus {
     return s;
   };
 }
-unsafe extern "C" fn dc_program_stackLen() {
+unsafe fn dc_program_stackLen() {
   let mut res: BcResult = BcResult {
     t: XC_RESULT_TEMP,
     d: BcResultData {
@@ -7062,7 +7062,7 @@ unsafe extern "C" fn dc_program_stackLen() {
     &mut res as *mut BcResult as *const libc::c_void,
   );
 }
-unsafe extern "C" fn zdc_program_asciify() -> BcStatus {
+unsafe fn zdc_program_asciify() -> BcStatus {
   let mut current_block: u64;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut r: *mut BcResult = std::ptr::null_mut();
@@ -7167,7 +7167,7 @@ unsafe extern "C" fn zdc_program_asciify() -> BcStatus {
   bc_result_pop_and_push(&mut res as *mut BcResult as *const libc::c_void);
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn zdc_program_printStream() -> BcStatus {
+unsafe fn zdc_program_printStream() -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut r: *mut BcResult = std::ptr::null_mut();
   let mut n: *mut BcNum = std::ptr::null_mut();
@@ -7188,7 +7188,7 @@ unsafe extern "C" fn zdc_program_printStream() -> BcStatus {
       n,
       0x100i32 as libc::c_uint,
       1i32 as size_t,
-      Some(dc_num_printChar as unsafe extern "C" fn(_: size_t, _: size_t, _: bool) -> ()),
+      Some(dc_num_printChar as unsafe fn(_: size_t, _: size_t, _: bool) -> ()),
     )
   } else {
     let mut str: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -7202,7 +7202,7 @@ unsafe extern "C" fn zdc_program_printStream() -> BcStatus {
   }
   return s;
 }
-unsafe extern "C" fn zdc_program_nquit() -> BcStatus {
+unsafe fn zdc_program_nquit() -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut opnd: *mut BcResult = std::ptr::null_mut();
   let mut num: *mut BcNum = std::ptr::null_mut();
@@ -7225,7 +7225,7 @@ unsafe extern "C" fn zdc_program_nquit() -> BcStatus {
   bc_vec_npop(&mut (*ptr_to_globals).prog.exestack, val);
   return s;
 }
-unsafe extern "C" fn zdc_program_execStr(
+unsafe fn zdc_program_execStr(
   mut code: *mut libc::c_char,
   mut bgn: *mut size_t,
   mut cond: bool,
@@ -7359,7 +7359,7 @@ unsafe extern "C" fn zdc_program_execStr(
   return s;
 }
 // ENABLE_DC
-unsafe extern "C" fn xc_program_pushGlobal(mut inst: libc::c_char) {
+unsafe fn xc_program_pushGlobal(mut inst: libc::c_char) {
   let mut res: BcResult = BcResult {
     t: XC_RESULT_TEMP,
     d: BcResultData {
@@ -7383,7 +7383,7 @@ unsafe extern "C" fn xc_program_pushGlobal(mut inst: libc::c_char) {
     &mut res as *mut BcResult as *const libc::c_void,
   );
 }
-unsafe extern "C" fn zxc_program_exec() -> BcStatus {
+unsafe fn zxc_program_exec() -> BcStatus {
   let mut current_block: u64;
   let mut r: BcResult = BcResult {
     t: XC_RESULT_TEMP,
@@ -7679,7 +7679,7 @@ unsafe extern "C" fn zxc_program_exec() -> BcStatus {
   }
   return BC_STATUS_SUCCESS;
 }
-unsafe extern "C" fn xc_vm_envLen(mut var: *const libc::c_char) -> libc::c_uint {
+unsafe fn xc_vm_envLen(mut var: *const libc::c_char) -> libc::c_uint {
   let mut lenv: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut len: libc::c_uint = 0;
   lenv = getenv(var);
@@ -7694,7 +7694,7 @@ unsafe extern "C" fn xc_vm_envLen(mut var: *const libc::c_char) -> libc::c_uint 
   }
   return len;
 }
-unsafe extern "C" fn zxc_vm_process(mut text: *const libc::c_char) -> BcStatus {
+unsafe fn zxc_vm_process(mut text: *const libc::c_char) -> BcStatus {
   let mut current_block: u64;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   s = zxc_parse_text_init(text);
@@ -7809,7 +7809,7 @@ unsafe extern "C" fn zxc_vm_process(mut text: *const libc::c_char) -> BcStatus {
   }
   return s;
 }
-unsafe extern "C" fn zxc_vm_execute_FILE(
+unsafe fn zxc_vm_execute_FILE(
   mut fp: *mut FILE,
   mut filename: *const libc::c_char,
 ) -> BcStatus {
@@ -7834,7 +7834,7 @@ unsafe extern "C" fn zxc_vm_execute_FILE(
   (*ptr_to_globals).prs.lex_filename = std::ptr::null();
   return s;
 }
-unsafe extern "C" fn zxc_vm_file(mut file: *const libc::c_char) -> BcStatus {
+unsafe fn zxc_vm_file(mut file: *const libc::c_char) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut fp: *mut FILE = std::ptr::null_mut();
   fp = crate::libbb::wfopen::xfopen_for_read(file);
@@ -7842,11 +7842,11 @@ unsafe extern "C" fn zxc_vm_file(mut file: *const libc::c_char) -> BcStatus {
   fclose(fp);
   return s;
 }
-unsafe extern "C" fn bc_vm_info() {
+unsafe fn bc_vm_info() {
   printf(b"%s 1.32.0.git\nAdapted from https://github.com/gavinhoward/bc\nOriginal code (c) 2018 Gavin D. Howard and contributors\n\x00"
                as *const u8 as *const libc::c_char, applet_name);
 }
-unsafe extern "C" fn bc_args(mut argv: *mut *mut libc::c_char) {
+unsafe fn bc_args(mut argv: *mut *mut libc::c_char) {
   let mut opts: libc::c_uint = 0;
   let mut i: libc::c_int = 0;
   optind = 0;
@@ -7871,7 +7871,7 @@ unsafe extern "C" fn bc_args(mut argv: *mut *mut libc::c_char) {
     i += 1
   }
 }
-unsafe extern "C" fn bc_vm_envArgs() {
+unsafe fn bc_vm_envArgs() {
   let mut v: BcVec = BcVec {
     v: std::ptr::null_mut::<libc::c_char>(),
     len: 0,
@@ -8002,7 +8002,7 @@ static mut bc_lib: [libc::c_char; 1584] = [
   97, 10, 114, 101, 116, 117, 114, 110, 40, 97, 42, 114, 47, 49, 41, 10, 125, 0,
 ];
 // ENABLE_BC
-unsafe extern "C" fn zxc_vm_exec() -> BcStatus {
+unsafe fn zxc_vm_exec() -> BcStatus {
   let mut fname: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut i: size_t = 0;
@@ -8037,7 +8037,7 @@ unsafe extern "C" fn zxc_vm_exec() -> BcStatus {
   }
   return s;
 }
-unsafe extern "C" fn xc_program_init() {
+unsafe fn xc_program_init() {
   let mut ip: BcInstPtr = BcInstPtr {
     func: 0,
     inst_idx: 0,
@@ -8060,12 +8060,12 @@ unsafe extern "C" fn xc_program_init() {
   bc_vec_init(
     &mut (*ptr_to_globals).prog.fns,
     ::std::mem::size_of::<BcFunc>() as libc::c_ulong,
-    Some(bc_func_free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+    Some(bc_func_free),
   );
   bc_vec_init(
     &mut (*ptr_to_globals).prog.fn_map,
     ::std::mem::size_of::<BcId>() as libc::c_ulong,
-    Some(bc_id_free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+    Some(bc_id_free),
   );
   if 1i32 != 0 && (1i32 == 0 || *applet_name.offset(0) as libc::c_int == 'b' as i32) {
     // Names are chosen simply to be distinct and never match
@@ -8085,37 +8085,37 @@ unsafe extern "C" fn xc_program_init() {
   bc_vec_init(
     &mut (*ptr_to_globals).prog.vars,
     ::std::mem::size_of::<BcVec>() as libc::c_ulong,
-    Some(bc_vec_free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+    Some(bc_vec_free),
   );
   bc_vec_init(
     &mut (*ptr_to_globals).prog.var_map,
     ::std::mem::size_of::<BcId>() as libc::c_ulong,
-    Some(bc_id_free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+    Some(bc_id_free),
   );
   bc_vec_init(
     &mut (*ptr_to_globals).prog.arrs,
     ::std::mem::size_of::<BcVec>() as libc::c_ulong,
-    Some(bc_vec_free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+    Some(bc_vec_free),
   );
   bc_vec_init(
     &mut (*ptr_to_globals).prog.arr_map,
     ::std::mem::size_of::<BcId>() as libc::c_ulong,
-    Some(bc_id_free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+    Some(bc_id_free),
   );
   bc_vec_init(
     &mut (*ptr_to_globals).prog.strs,
     ::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong,
-    Some(bc_string_free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+    Some(bc_string_free),
   );
   bc_vec_init(
     &mut (*ptr_to_globals).prog.consts,
     ::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong,
-    Some(bc_string_free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+    Some(bc_string_free),
   );
   bc_vec_init(
     &mut (*ptr_to_globals).prog.results,
     ::std::mem::size_of::<BcResult>() as libc::c_ulong,
-    Some(bc_result_free as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+    Some(bc_result_free),
   );
   bc_vec_init(
     &mut (*ptr_to_globals).prog.exestack,
@@ -8128,7 +8128,7 @@ unsafe extern "C" fn xc_program_init() {
   );
   bc_char_vec_init(&mut (*ptr_to_globals).input_buffer);
 }
-unsafe extern "C" fn xc_vm_init(mut env_len: *const libc::c_char) -> libc::c_int {
+unsafe fn xc_vm_init(mut env_len: *const libc::c_char) -> libc::c_int {
   (*ptr_to_globals).prog.len = xc_vm_envLen(env_len) as size_t;
   (*ptr_to_globals).line_input_state =
     crate::libbb::lineedit::new_line_input_t(DO_HISTORY as libc::c_int);
@@ -8149,7 +8149,7 @@ unsafe extern "C" fn xc_vm_init(mut env_len: *const libc::c_char) -> libc::c_int
     // "tty"
     crate::libbb::signals::signal_SA_RESTART_empty_mask(
       2i32,
-      Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+      Some(crate::libbb::signals::record_signo),
     );
     return 1i32;
   }
@@ -8173,15 +8173,11 @@ unsafe extern "C" fn xc_vm_init(mut env_len: *const libc::c_char) -> libc::c_int
   //signal_no_SA_RESTART_empty_mask(SIGINT, record_signo);
   // "not a tty"
 }
-unsafe extern "C" fn xc_vm_run() -> BcStatus {
+unsafe fn xc_vm_run() -> BcStatus {
   let mut st: BcStatus = zxc_vm_exec();
   return st;
 }
-#[no_mangle]
-pub unsafe extern "C" fn bc_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn bc_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut is_tty: libc::c_int = 0;
   let ref mut fresh21 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)
@@ -8196,11 +8192,7 @@ pub unsafe extern "C" fn bc_main(
   }
   return xc_vm_run() as libc::c_int;
 }
-#[no_mangle]
-pub unsafe extern "C" fn dc_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn dc_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut noscript: libc::c_int = 0;
   let ref mut fresh22 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)

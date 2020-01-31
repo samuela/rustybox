@@ -228,8 +228,7 @@ unsafe extern "C" fn modinfo(
 //usage:     "\n	-0		Separate output with NULs"
 //usage:#define modinfo_example_usage
 //usage:       "$ modinfo -F vermagic loop\n"
-#[no_mangle]
-pub unsafe extern "C" fn modinfo_main(
+pub unsafe fn modinfo_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -269,7 +268,7 @@ pub unsafe extern "C" fn modinfo_main(
     ),
     Some(
       crate::libbb::wfopen::xfopen_for_read
-        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+        as unsafe fn(_: *const libc::c_char) -> *mut FILE,
     ),
   );
   while crate::libbb::parse_config::config_read(

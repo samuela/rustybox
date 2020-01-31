@@ -29,7 +29,7 @@ pub unsafe fn dpkg_deb_main(
   (*ar_archive).dpkg__sub_archive = tar_archive;
   (*ar_archive).filter = Some(
     crate::archival::libarchive::filter_accept_list_reassign::filter_accept_list_reassign
-      as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+      as unsafe fn(_: *mut archive_handle_t) -> libc::c_char,
   );
   crate::libbb::llist::llist_add_to(
     &mut (*ar_archive).accept,
@@ -93,7 +93,7 @@ pub unsafe fn dpkg_deb_main(
     // -c
     (*tar_archive).action_header = Some(
       crate::archival::libarchive::header_verbose_list::header_verbose_list
-        as unsafe extern "C" fn(_: *const file_header_t) -> (),
+        as unsafe fn(_: *const file_header_t) -> (),
     );
     if !extract_dir.is_null() {
       crate::libbb::appletlib::bb_show_usage();
@@ -111,11 +111,11 @@ pub unsafe fn dpkg_deb_main(
     );
     (*tar_archive).filter = Some(
       crate::archival::libarchive::filter_accept_list::filter_accept_list
-        as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+        as unsafe fn(_: *mut archive_handle_t) -> libc::c_char,
     );
     (*tar_archive).action_data = Some(
       crate::archival::libarchive::data_extract_to_stdout::data_extract_to_stdout
-        as unsafe extern "C" fn(_: *mut archive_handle_t) -> (),
+        as unsafe fn(_: *mut archive_handle_t) -> (),
     );
     if !extract_dir.is_null() {
       crate::libbb::appletlib::bb_show_usage();
@@ -126,7 +126,7 @@ pub unsafe fn dpkg_deb_main(
     (*ar_archive).accept = control_tar_llist;
     (*tar_archive).action_data = Some(
       crate::archival::libarchive::data_extract_all::data_extract_all
-        as unsafe extern "C" fn(_: *mut archive_handle_t) -> (),
+        as unsafe fn(_: *mut archive_handle_t) -> (),
     );
     if extract_dir.is_null() {
       extract_dir = b"./DEBIAN\x00" as *const u8 as *const libc::c_char
@@ -137,12 +137,12 @@ pub unsafe fn dpkg_deb_main(
     if opt & 8i32 as libc::c_uint != 0 {
       (*tar_archive).action_header = Some(
         crate::archival::libarchive::header_list::header_list
-          as unsafe extern "C" fn(_: *const file_header_t) -> (),
+          as unsafe fn(_: *const file_header_t) -> (),
       )
     }
     (*tar_archive).action_data = Some(
       crate::archival::libarchive::data_extract_all::data_extract_all
-        as unsafe extern "C" fn(_: *mut archive_handle_t) -> (),
+        as unsafe fn(_: *mut archive_handle_t) -> (),
     );
     if extract_dir.is_null() {
       crate::libbb::appletlib::bb_show_usage();

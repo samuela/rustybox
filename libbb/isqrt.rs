@@ -73,8 +73,7 @@ use libc;
  */
 //kbuild:lib-y += isqrt.o
 /* Returns such x that x+1 > sqrt(N) */
-#[no_mangle]
-pub unsafe extern "C" fn isqrt(mut N: libc::c_ulonglong) -> libc::c_ulong {
+pub unsafe fn isqrt(mut N: libc::c_ulonglong) -> libc::c_ulong {
   let mut x: libc::c_ulong = 0; /* whoops, that +1 was too much */
   let mut shift: libc::c_uint = 0;
   shift = ((::std::mem::size_of::<libc::c_ulonglong>() as libc::c_ulong)

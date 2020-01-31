@@ -56,7 +56,7 @@ pub const MULTIPLE_OF_3: C2RustUnnamed = 4;
 pub const MULTIPLE_DETECTED: C2RustUnnamed = 2116;
 pub const INCREMENT_EACH: C2RustUnnamed = 137;
 pub type C2RustUnnamed = libc::c_uint;
-unsafe extern "C" fn isqrt_odd(mut N: wide_t) -> half_t {
+unsafe fn isqrt_odd(mut N: wide_t) -> half_t {
   let mut s: half_t = crate::libbb::isqrt::isqrt(N) as half_t;
   /* Subtract 1 from even s, odd s won't change: */
   /* (doesnt work for zero, but we know that s != 0 here) */
@@ -64,7 +64,7 @@ unsafe extern "C" fn isqrt_odd(mut N: wide_t) -> half_t {
   return s;
 }
 #[inline(never)]
-unsafe extern "C" fn factorize(mut N: wide_t) {
+unsafe fn factorize(mut N: wide_t) {
   let mut factor: half_t = 0;
   let mut max_factor: half_t = 0;
   // unsigned count3;
@@ -168,7 +168,7 @@ unsafe extern "C" fn factorize(mut N: wide_t) {
   }
   crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
 }
-unsafe extern "C" fn factorize_numstr(mut numstr: *const libc::c_char) {
+unsafe fn factorize_numstr(mut numstr: *const libc::c_char) {
   let mut N: wide_t = 0;
   /* Leading + is ok (coreutils compat) */
   if *numstr as libc::c_int == '+' as i32 {
@@ -181,11 +181,7 @@ unsafe extern "C" fn factorize_numstr(mut numstr: *const libc::c_char) {
   printf(b"%llu:\x00" as *const u8 as *const libc::c_char, N);
   factorize(N);
 }
-#[no_mangle]
-pub unsafe extern "C" fn factor_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn factor_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   // // coreutils has undocumented option ---debug (three dashes)
   //getopt32(argv, "");
   //argv += optind;

@@ -76,7 +76,7 @@ pub struct child {
 }
 pub type CHILD = child;
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 /* used by dump_by_user */
@@ -86,7 +86,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
  *
  * bufindex  the index that will be used after the call to this function.
  */
-unsafe extern "C" fn ensure_buffer_capacity(mut bufindex: libc::c_int) {
+unsafe fn ensure_buffer_capacity(mut bufindex: libc::c_int) {
   if bufindex as libc::c_uint >= (*ptr_to_globals).capacity {
     (*ptr_to_globals).capacity = (*ptr_to_globals)
       .capacity
@@ -106,7 +106,7 @@ unsafe extern "C" fn ensure_buffer_capacity(mut bufindex: libc::c_int) {
 /* NB: this function is never called with "bad" chars
  * (control chars or chars >= 0x7f)
  */
-unsafe extern "C" fn out_char(mut c: libc::c_char) {
+unsafe fn out_char(mut c: libc::c_char) {
   (*ptr_to_globals).cur_x = (*ptr_to_globals).cur_x.wrapping_add(1);
   if (*ptr_to_globals).cur_x > (*ptr_to_globals).output_width {
     return;
@@ -119,18 +119,18 @@ unsafe extern "C" fn out_char(mut c: libc::c_char) {
 /* NB: this function is never called with "bad" chars
  * (control chars or chars >= 0x7f)
  */
-unsafe extern "C" fn out_string(mut str: *const libc::c_char) {
+unsafe fn out_string(mut str: *const libc::c_char) {
   while *str != 0 {
     let fresh0 = str;
     str = str.offset(1);
     out_char(*fresh0);
   }
 }
-unsafe extern "C" fn out_newline() {
+unsafe fn out_newline() {
   putchar_unlocked('\n' as i32);
   (*ptr_to_globals).cur_x = 0 as libc::c_uint;
 }
-unsafe extern "C" fn find_proc(mut pid: pid_t) -> *mut PROC {
+unsafe fn find_proc(mut pid: pid_t) -> *mut PROC {
   let mut walk: *mut PROC = std::ptr::null_mut();
   walk = (*ptr_to_globals).list;
   while !walk.is_null() {
@@ -141,7 +141,7 @@ unsafe extern "C" fn find_proc(mut pid: pid_t) -> *mut PROC {
   }
   return walk;
 }
-unsafe extern "C" fn new_proc(
+unsafe fn new_proc(
   mut comm: *const libc::c_char,
   mut pid: pid_t,
   mut uid: uid_t,
@@ -156,7 +156,7 @@ unsafe extern "C" fn new_proc(
   (*ptr_to_globals).list = new;
   return (*ptr_to_globals).list;
 }
-unsafe extern "C" fn add_child(mut parent: *mut PROC, mut child: *mut PROC) {
+unsafe fn add_child(mut parent: *mut PROC, mut child: *mut PROC) {
   let mut new: *mut CHILD = std::ptr::null_mut();
   let mut walk: *mut *mut CHILD = std::ptr::null_mut();
   let mut cmp: libc::c_int = 0;
@@ -179,7 +179,7 @@ unsafe extern "C" fn add_child(mut parent: *mut PROC, mut child: *mut PROC) {
   (*new).next = *walk;
   *walk = new;
 }
-unsafe extern "C" fn add_proc(
+unsafe fn add_proc(
   mut comm: *const libc::c_char,
   mut pid: pid_t,
   mut ppid: pid_t,
@@ -212,7 +212,7 @@ unsafe extern "C" fn add_proc(
   add_child(parent, this);
   (*this).parent = parent;
 }
-unsafe extern "C" fn tree_equal(mut a: *const PROC, mut b: *const PROC) -> libc::c_int {
+unsafe fn tree_equal(mut a: *const PROC, mut b: *const PROC) -> libc::c_int {
   let mut walk_a: *const CHILD = std::ptr::null();
   let mut walk_b: *const CHILD = std::ptr::null();
   if strcmp((*a).comm.as_ptr(), (*b).comm.as_ptr()) != 0 {
@@ -232,7 +232,7 @@ unsafe extern "C" fn tree_equal(mut a: *const PROC, mut b: *const PROC) -> libc:
   }
   return !(!walk_a.is_null() || !walk_b.is_null()) as libc::c_int;
 }
-unsafe extern "C" fn out_args(mut mystr: *const libc::c_char) -> libc::c_int {
+unsafe fn out_args(mut mystr: *const libc::c_char) -> libc::c_int {
   let mut here: *const libc::c_char = std::ptr::null();
   let mut strcount: libc::c_int = 0;
   let mut tmpstr: [libc::c_char; 5] = [0; 5];
@@ -257,7 +257,7 @@ unsafe extern "C" fn out_args(mut mystr: *const libc::c_char) -> libc::c_int {
   }
   return strcount;
 }
-unsafe extern "C" fn dump_tree(
+unsafe fn dump_tree(
   mut current: *mut PROC,
   mut level: libc::c_int,
   mut rep: libc::c_int,
@@ -384,7 +384,7 @@ unsafe extern "C" fn dump_tree(
     walk = next
   }
 }
-unsafe extern "C" fn dump_by_user(mut current: *mut PROC, mut uid: uid_t) {
+unsafe fn dump_by_user(mut current: *mut PROC, mut uid: uid_t) {
   let mut walk: *const CHILD = std::ptr::null();
   if current.is_null() {
     return;
@@ -403,7 +403,7 @@ unsafe extern "C" fn dump_by_user(mut current: *mut PROC, mut uid: uid_t) {
     walk = (*walk).next
   }
 }
-unsafe extern "C" fn handle_thread(
+unsafe fn handle_thread(
   mut comm: *const libc::c_char,
   mut pid: pid_t,
   mut ppid: pid_t,
@@ -418,7 +418,7 @@ unsafe extern "C" fn handle_thread(
   );
   add_proc(threadname.as_mut_ptr(), pid, ppid, uid);
 }
-unsafe extern "C" fn mread_proc() {
+unsafe fn mread_proc() {
   let mut p: *mut procps_status_t = std::ptr::null_mut();
   let mut parent: pid_t = 0;
   let mut flags: libc::c_int = PSSCAN_COMM as libc::c_int
@@ -444,11 +444,7 @@ unsafe extern "C" fn mread_proc() {
     }
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn pstree_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn pstree_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut pid: pid_t = 1i32;
   let mut uid: libc::c_long = 0;
   let ref mut fresh2 = *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)

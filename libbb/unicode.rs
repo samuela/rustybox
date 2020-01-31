@@ -32,7 +32,7 @@ pub struct bb_mbstate_t {
   pub bogus: libc::c_char,
 }
 #[inline(always)]
-unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
+unsafe fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   let mut b: libc::c_uchar = (a as libc::c_int - '0' as i32) as libc::c_uchar;
   if b as libc::c_int <= 9i32 {
     return (b as libc::c_int <= 9i32) as libc::c_int;
@@ -54,7 +54,7 @@ unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
  * via locale, or use our own logic:
  */
 /* Homegrown Unicode support. It knows only C and Unicode locales. */
-unsafe extern "C" fn wcrtomb_internal(mut s: *mut libc::c_char, mut wc: wchar_t) -> size_t {
+unsafe fn wcrtomb_internal(mut s: *mut libc::c_char, mut wc: wchar_t) -> size_t {
   let mut n: libc::c_int = 0;
   let mut i: libc::c_int = 0;
   let mut v: u32 = wc as u32;
@@ -90,8 +90,7 @@ unsafe extern "C" fn wcrtomb_internal(mut s: *mut libc::c_char, mut wc: wchar_t)
   *s.offset(0) = (wc | (0x3f00i32 >> n) as u8 as libc::c_int) as libc::c_char;
   return n as size_t;
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_wcrtomb(
+pub unsafe fn bb_wcrtomb(
   mut s: *mut libc::c_char,
   mut wc: wchar_t,
   mut _ps: *mut bb_mbstate_t,
@@ -102,8 +101,7 @@ pub unsafe extern "C" fn bb_wcrtomb(
   }
   return wcrtomb_internal(s, wc);
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_wcstombs(
+pub unsafe fn bb_wcstombs(
   mut dest: *mut libc::c_char,
   mut src: *const wchar_t,
   mut n: size_t,
@@ -157,7 +155,7 @@ pub unsafe extern "C" fn bb_wcstombs(
   }
   return org_n.wrapping_sub(n);
 }
-unsafe extern "C" fn mbstowc_internal(
+unsafe fn mbstowc_internal(
   mut res: *mut wchar_t,
   mut src: *const libc::c_char,
 ) -> *const libc::c_char {
@@ -215,8 +213,7 @@ unsafe extern "C" fn mbstowc_internal(
   *res = c as wchar_t;
   return src;
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_mbstowcs(
+pub unsafe fn bb_mbstowcs(
   mut dest: *mut wchar_t,
   mut src: *const libc::c_char,
   mut n: size_t,
@@ -258,8 +255,7 @@ pub unsafe extern "C" fn bb_mbstowcs(
   }
   return org_n.wrapping_sub(n);
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_iswspace(mut wc: bb_wint_t) -> libc::c_int {
+pub unsafe fn bb_iswspace(mut wc: bb_wint_t) -> libc::c_int {
   return (wc as libc::c_uint <= 0x7fi32 as libc::c_uint
     && ({
       let mut bb__isspace: libc::c_uchar = (wc - 9i32) as libc::c_uchar;
@@ -267,13 +263,11 @@ pub unsafe extern "C" fn bb_iswspace(mut wc: bb_wint_t) -> libc::c_int {
         || bb__isspace as libc::c_int <= 13i32 - 9i32) as libc::c_int
     }) != 0) as libc::c_int;
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_iswalnum(mut wc: bb_wint_t) -> libc::c_int {
+pub unsafe fn bb_iswalnum(mut wc: bb_wint_t) -> libc::c_int {
   return (wc as libc::c_uint <= 0x7fi32 as libc::c_uint
     && bb_ascii_isalnum(wc as libc::c_uchar) != 0) as libc::c_int;
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_iswpunct(mut wc: bb_wint_t) -> libc::c_int {
+pub unsafe fn bb_iswpunct(mut wc: bb_wint_t) -> libc::c_int {
   return (wc as libc::c_uint <= 0x7fi32 as libc::c_uint
     && *strchrnul(
       b"!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\x00" as *const u8 as *const libc::c_char,
@@ -403,8 +397,7 @@ pub unsafe extern "C" fn bb_iswpunct(mut wc: bb_wint_t) -> libc::c_int {
  * This implementation assumes that wchar_t characters are encoded
  * in ISO 10646.
  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_wcwidth(mut ucs: libc::c_uint) -> libc::c_int {
+pub unsafe fn bb_wcwidth(mut ucs: libc::c_uint) -> libc::c_int {
   if ucs == 0 as libc::c_uint {
     return 0;
   }
@@ -427,8 +420,7 @@ pub unsafe extern "C" fn bb_wcwidth(mut ucs: libc::c_uint) -> libc::c_int {
 /* UNICODE_BIDI_SUPPORT */
 /* Homegrown Unicode support */
 /* The rest is mostly same for libc and for "homegrown" support */
-#[no_mangle]
-pub unsafe extern "C" fn unicode_strlen(mut string: *const libc::c_char) -> size_t {
+pub unsafe fn unicode_strlen(mut string: *const libc::c_char) -> size_t {
   let mut width: size_t = bb_mbstowcs(0 as *mut wchar_t, string, 2147483647i32 as size_t);
   if width == -1i64 as size_t {
     return strlen(string);
@@ -436,8 +428,7 @@ pub unsafe extern "C" fn unicode_strlen(mut string: *const libc::c_char) -> size
   return width;
 }
 /* Width on terminal */
-#[no_mangle]
-pub unsafe extern "C" fn unicode_strwidth(mut string: *const libc::c_char) -> size_t {
+pub unsafe fn unicode_strwidth(mut string: *const libc::c_char) -> size_t {
   let mut uni_stat: uni_stat_t = uni_stat_t {
     byte_count: 0,
     unicode_count: 0,
@@ -446,7 +437,7 @@ pub unsafe extern "C" fn unicode_strwidth(mut string: *const libc::c_char) -> si
   crate::libbb::printable_string::printable_string2(&mut uni_stat, string);
   return uni_stat.unicode_width as size_t;
 }
-unsafe extern "C" fn unicode_conv_to_printable2(
+unsafe fn unicode_conv_to_printable2(
   mut stats: *mut uni_stat_t,
   mut src: *const libc::c_char,
   mut width: libc::c_uint,
@@ -601,16 +592,14 @@ unsafe extern "C" fn unicode_conv_to_printable2(
 }
 //UNUSED: unsigned FAST_FUNC unicode_padding_to_width(unsigned width, const char *src);
 //UNUSED: char* FAST_FUNC unicode_conv_to_printable2(uni_stat_t *stats, const char *src, unsigned width, int flags);
-#[no_mangle]
-pub unsafe extern "C" fn unicode_conv_to_printable(
+pub unsafe fn unicode_conv_to_printable(
   mut stats: *mut uni_stat_t,
   mut src: *const libc::c_char,
 ) -> *mut libc::c_char {
   return unicode_conv_to_printable2(stats, src, 2147483647i32 as libc::c_uint, 0);
 }
 //UNUSED: char* FAST_FUNC unicode_conv_to_printable_maxwidth(uni_stat_t *stats, const char *src, unsigned maxwidth);
-#[no_mangle]
-pub unsafe extern "C" fn unicode_conv_to_printable_fixedwidth(
+pub unsafe fn unicode_conv_to_printable_fixedwidth(
   mut src: *const libc::c_char,
   mut width: libc::c_uint,
 ) -> *mut libc::c_char {

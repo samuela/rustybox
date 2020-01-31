@@ -1,5 +1,4 @@
 use crate::libbb::ptr_to_globals::bb_errno;
-
 use crate::librb::fd_pair;
 use crate::librb::size_t;
 use libc;
@@ -36,7 +35,7 @@ pub unsafe extern "C" fn udhcp_sp_setup() {
   crate::libbb::xfuncs::ndelay_on(4i32);
   crate::libbb::signals::bb_signals(
     0 + (1i32 << 10i32) + (1i32 << 12i32) + (1i32 << 15i32),
-    Some(signal_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(signal_handler),
   );
 }
 /* Quick little function to setup the pfds.

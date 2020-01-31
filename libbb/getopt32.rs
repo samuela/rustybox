@@ -364,7 +364,7 @@ static mut bb_null_long_options: [option; 1] = [{
   init
 }];
 /* Please keep getopt32 free from xmalloc */
-unsafe extern "C" fn vgetopt32(
+unsafe fn vgetopt32(
   mut argv: *mut *mut libc::c_char,
   mut applet_opts: *const libc::c_char,
   mut applet_long_options: *const libc::c_char,
@@ -732,7 +732,6 @@ unsafe extern "C" fn vgetopt32(
   }
   return -1i32 as u32;
 }
-#[no_mangle]
 pub unsafe extern "C" fn getopt32(
   mut argv: *mut *mut libc::c_char,
   mut applet_opts: *const libc::c_char,
@@ -1097,7 +1096,6 @@ pub unsafe extern "C" fn getopt32(
 /* Clear dangerous stuff, set PATH. Return 1 if was run by different user. */
 /* For top, ps. Some argv[i] are replaced by malloced "-opt" strings */
 /* { "-", NULL } */
-#[no_mangle]
 pub unsafe extern "C" fn getopt32long(
   mut argv: *mut *mut libc::c_char,
   mut applet_opts: *const libc::c_char,

@@ -15,8 +15,7 @@ use crate::librb::uni_stat_t;
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn printable_string2(
+pub unsafe fn printable_string2(
   mut stats: *mut uni_stat_t,
   mut str: *const libc::c_char,
 ) -> *const libc::c_char {
@@ -270,7 +269,6 @@ pub unsafe extern "C" fn printable_string2(
 //int NOT_LONE_DASH(const char *s) { return s[0] != '-' || s[1]; }
 /* Returns a string with unprintable chars replaced by '?' or
  * SUBST_WCHAR. This function is unicode-aware. */
-#[no_mangle]
-pub unsafe extern "C" fn printable_string(mut str: *const libc::c_char) -> *const libc::c_char {
+pub unsafe fn printable_string(mut str: *const libc::c_char) -> *const libc::c_char {
   return printable_string2(0 as *mut uni_stat_t, str);
 }

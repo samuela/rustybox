@@ -24,7 +24,6 @@ pub type va_list = __builtin_va_list;
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
 pub unsafe extern "C" fn bb_perror_msg(mut s: *const libc::c_char, mut args: ...) {
   let mut p: ::std::ffi::VaListImpl;
   p = args.clone();
@@ -39,7 +38,6 @@ pub unsafe extern "C" fn bb_perror_msg(mut s: *const libc::c_char, mut args: ...
     },
   );
 }
-#[no_mangle]
 pub unsafe extern "C" fn bb_perror_msg_and_die(mut s: *const libc::c_char, mut args: ...) -> ! {
   let mut p: ::std::ffi::VaListImpl;
   p = args.clone();
@@ -55,8 +53,7 @@ pub unsafe extern "C" fn bb_perror_msg_and_die(mut s: *const libc::c_char, mut a
   );
   crate::libbb::xfunc_die::xfunc_die();
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_simple_perror_msg(mut s: *const libc::c_char) {
+pub unsafe fn bb_simple_perror_msg(mut s: *const libc::c_char) {
   bb_perror_msg(b"%s\x00" as *const u8 as *const libc::c_char, s);
 }
 
@@ -439,7 +436,6 @@ pub unsafe extern "C" fn bb_simple_perror_msg(mut s: *const libc::c_char) {
 /* start_stop_daemon and udhcpc are special - they want
  * to create pidfiles regardless of FEATURE_PIDFILE */
 /* True only if we created pidfile which is *file*, not /dev/null etc */
-#[no_mangle]
-pub unsafe extern "C" fn bb_simple_perror_msg_and_die(mut s: *const libc::c_char) -> ! {
+pub unsafe fn bb_simple_perror_msg_and_die(mut s: *const libc::c_char) -> ! {
   bb_perror_msg_and_die(b"%s\x00" as *const u8 as *const libc::c_char, s);
 }

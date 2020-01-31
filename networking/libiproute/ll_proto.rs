@@ -88,8 +88,7 @@ static mut llproto_names: [libc::c_char; 264] = [
   114, 100, 97, 0, 101, 99, 111, 110, 101, 116, 0, 56, 48, 50, 46, 49, 81, 0, 105, 112, 118, 52, 0,
   0,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn ll_proto_n2a(
+pub unsafe fn ll_proto_n2a(
   mut id: libc::c_ushort,
   mut buf: *mut libc::c_char,
   mut len: libc::c_int,
@@ -132,8 +131,7 @@ pub unsafe extern "C" fn ll_proto_n2a(
   );
   return buf;
 }
-#[no_mangle]
-pub unsafe extern "C" fn ll_proto_a2n(
+pub unsafe fn ll_proto_a2n(
   mut id: *mut libc::c_ushort,
   mut buf: *mut libc::c_char,
 ) -> libc::c_int {

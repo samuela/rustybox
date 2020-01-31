@@ -1,6 +1,10 @@
+use crate::libbb::llist::llist_t;
+use crate::librb::__compar_fn_t;
+use crate::librb::size_t;
 use libc;
 use libc::access;
 use libc::puts;
+use libc::stat;
 use libc::strcmp;
 use libc::umask;
 extern "C" {
@@ -17,9 +21,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::__compar_fn_t;
-use crate::librb::size_t;
-use libc::stat;
 pub type C2RustUnnamed = libc::c_uint;
 pub const ACTION_DANGLING_OK: C2RustUnnamed = 64;
 pub const ACTION_QUIET: C2RustUnnamed = 32;
@@ -27,7 +28,6 @@ pub const ACTION_DEPTHFIRST: C2RustUnnamed = 8;
 pub const ACTION_FOLLOWLINKS_L0: C2RustUnnamed = 4;
 pub const ACTION_FOLLOWLINKS: C2RustUnnamed = 2;
 pub const ACTION_RECURSE: C2RustUnnamed = 1;
-use crate::libbb::llist::llist_t;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -46,7 +46,7 @@ pub const OPT_r: C2RustUnnamed_1 = 4;
 pub const OPT_u: C2RustUnnamed_1 = 2;
 pub const OPT_a: C2RustUnnamed_1 = 1;
 #[inline(always)]
-unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
+unsafe fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   let mut b: libc::c_uchar = (a as libc::c_int - '0' as i32) as libc::c_uchar;
   if b as libc::c_int <= 9i32 {
     return (b as libc::c_int <= 9i32) as libc::c_int;
@@ -57,7 +57,7 @@ unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
 /* Is this a valid filename (upper/lower alpha, digits,
  * underscores, and hyphens only?)
  */
-unsafe extern "C" fn invalid_name(mut c: *const libc::c_char) -> bool {
+unsafe fn invalid_name(mut c: *const libc::c_char) -> bool {
   c = crate::libbb::get_last_path_component::bb_basename(c);
   while *c as libc::c_int != 0
     && (bb_ascii_isalnum(*c as libc::c_uchar) != 0
@@ -83,7 +83,7 @@ unsafe extern "C" fn bb_alphasort(
     r
   };
 }
-unsafe extern "C" fn act(
+unsafe fn act(
   mut file: *const libc::c_char,
   mut statbuf: *mut stat,
   mut _args: *mut libc::c_void,
@@ -121,8 +121,7 @@ static mut runparts_longopts: [libc::c_char; 55] = [
   0, -16, 116, 101, 115, 116, 0, 0, -15, 101, 120, 105, 116, 45, 111, 110, 45, 101, 114, 114, 111,
   114, 0, 0, -14, 108, 105, 115, 116, 0, 0, -13, 0,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn run_parts_main(
+pub unsafe fn run_parts_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -158,7 +157,7 @@ pub unsafe extern "C" fn run_parts_main(
     (ACTION_RECURSE as libc::c_int | ACTION_FOLLOWLINKS as libc::c_int) as libc::c_uint,
     Some(
       act
-        as unsafe extern "C" fn(
+        as unsafe fn(
           _: *const libc::c_char,
           _: *mut stat,
           _: *mut libc::c_void,
@@ -167,7 +166,7 @@ pub unsafe extern "C" fn run_parts_main(
     ),
     Some(
       act
-        as unsafe extern "C" fn(
+        as unsafe fn(
           _: *const libc::c_char,
           _: *mut stat,
           _: *mut libc::c_void,
@@ -187,10 +186,7 @@ pub unsafe extern "C" fn run_parts_main(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).names as *mut libc::c_void,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cur as size_t,
     ::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong,
-    Some(
-      bb_alphasort
-        as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int,
-    ),
+    Some(bb_alphasort),
   );
   n = 0 as libc::c_uint;
   loop {

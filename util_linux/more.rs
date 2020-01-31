@@ -53,14 +53,14 @@ pub struct globals {
   pub initial_settings: termios,
 }
 #[inline(always)]
-unsafe extern "C" fn bb_ascii_tolower(mut a: libc::c_uchar) -> libc::c_uchar {
+unsafe fn bb_ascii_tolower(mut a: libc::c_uchar) -> libc::c_uchar {
   let mut b: libc::c_uchar = (a as libc::c_int - 'A' as i32) as libc::c_uchar;
   if b as libc::c_int <= 'Z' as i32 - 'A' as i32 {
     a = (a as libc::c_int + ('a' as i32 - 'A' as i32)) as libc::c_uchar
   }
   return a;
 }
-unsafe extern "C" fn get_wh() {
+unsafe fn get_wh() {
   /* never returns w, h <= 1 */
   crate::libbb::xfuncs::get_terminal_width_height(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tty_fileno,
@@ -70,7 +70,7 @@ unsafe extern "C" fn get_wh() {
   let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).terminal_height;
   *fresh0 = (*fresh0).wrapping_sub(1i32 as libc::c_uint);
 }
-unsafe extern "C" fn tcsetattr_tty_TCSANOW(mut settings: *mut termios) {
+unsafe fn tcsetattr_tty_TCSANOW(mut settings: *mut termios) {
   tcsetattr(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tty_fileno,
     0,
@@ -85,11 +85,7 @@ unsafe extern "C" fn gotsig(mut _sig: libc::c_int) {
   _exit(1i32);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn more_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn more_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut c: libc::c_int = 0;
   c = c;
@@ -122,10 +118,7 @@ pub unsafe extern "C" fn more_main(
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).initial_settings,
     0,
   );
-  crate::libbb::signals::bb_signals(
-    BB_FATAL_SIGS as libc::c_int,
-    Some(gotsig as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  crate::libbb::signals::bb_signals(BB_FATAL_SIGS as libc::c_int, Some(gotsig));
   's_75: loop {
     let mut st: stat = std::mem::zeroed();
     let mut file: *mut FILE = std::ptr::null_mut();

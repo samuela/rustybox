@@ -52,7 +52,7 @@ pub struct fd_pair {
 #[derive(Copy, Clone)]
 pub struct md5_ctx_t {
   pub wbuffer: [u8; 64], /* always correctly aligned for uint64_t */
-  pub process_block: Option<unsafe extern "C" fn(_: *mut md5_ctx_t) -> ()>,
+  pub process_block: Option<unsafe fn(_: *mut md5_ctx_t) -> ()>,
   pub total64: u64,   /* must be directly before hash[] */
   pub hash: [u32; 8], /* 4 elements for md5, 5 for sha1, 8 for sha256 */
 }
@@ -195,22 +195,15 @@ pub struct aftype {
   pub title: *const libc::c_char,
   pub af: libc::c_int,
   pub alen: libc::c_int,
-  pub print: Option<unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char>,
-  pub sprint:
-    Option<unsafe extern "C" fn(_: *mut libc::sockaddr, _: libc::c_int) -> *const libc::c_char>,
-  pub input:
-    Option<unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::sockaddr) -> libc::c_int>,
-  pub herror: Option<unsafe extern "C" fn(_: *mut libc::c_char) -> ()>,
-  pub rprint: Option<unsafe extern "C" fn(_: libc::c_int) -> libc::c_int>,
-  pub rinput: Option<
-    unsafe extern "C" fn(_: libc::c_int, _: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int,
-  >,
+  pub print: Option<unsafe fn(_: *mut libc::c_uchar) -> *mut libc::c_char>,
+  pub sprint: Option<unsafe fn(_: *mut libc::sockaddr, _: libc::c_int) -> *const libc::c_char>,
+  pub input: Option<unsafe fn(_: *const libc::c_char, _: *mut libc::sockaddr) -> libc::c_int>,
+  pub herror: Option<unsafe fn(_: *mut libc::c_char) -> ()>,
+  pub rprint: Option<unsafe fn(_: libc::c_int) -> libc::c_int>,
+  pub rinput:
+    Option<unsafe fn(_: libc::c_int, _: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int>,
   pub getmask: Option<
-    unsafe extern "C" fn(
-      _: *mut libc::c_char,
-      _: *mut libc::sockaddr,
-      _: *mut libc::c_char,
-    ) -> libc::c_int,
+    unsafe fn(_: *mut libc::c_char, _: *mut libc::sockaddr, _: *mut libc::c_char) -> libc::c_int,
   >,
 }
 
@@ -221,10 +214,9 @@ pub struct hwtype {
   pub title: *const libc::c_char,
   pub type_0: libc::c_int,
   pub alen: libc::c_int,
-  pub print: Option<unsafe extern "C" fn(_: *mut libc::c_uchar) -> *mut libc::c_char>,
-  pub input:
-    Option<unsafe extern "C" fn(_: *const libc::c_char, _: *mut libc::sockaddr) -> libc::c_int>,
-  pub activate: Option<unsafe extern "C" fn(_: libc::c_int) -> libc::c_int>,
+  pub print: Option<unsafe fn(_: *mut libc::c_uchar) -> *mut libc::c_char>,
+  pub input: Option<unsafe fn(_: *const libc::c_char, _: *mut libc::sockaddr) -> libc::c_int>,
+  pub activate: Option<unsafe fn(_: libc::c_int) -> libc::c_int>,
   pub suppress_null_addr: libc::c_int,
 }
 

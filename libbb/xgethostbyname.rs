@@ -196,8 +196,7 @@ use libc::hostent;
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn xgethostbyname(mut name: *const libc::c_char) -> *mut hostent {
+pub unsafe fn xgethostbyname(mut name: *const libc::c_char) -> *mut hostent {
   let mut retval: *mut hostent = gethostbyname(name);
   if retval.is_null() {
     crate::libbb::herror_msg::bb_simple_herror_msg_and_die(name);

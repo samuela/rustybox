@@ -283,7 +283,7 @@ pub const OPT_x: C2RustUnnamed_7 = 2;
 pub type C2RustUnnamed_6 = libc::c_uint;
 pub type C2RustUnnamed_7 = libc::c_uint;
 /* NB: does not preserve file position! */
-unsafe extern "C" fn find_cdf_offset() -> u32 {
+unsafe fn find_cdf_offset() -> u32 {
   let mut cde: cde_t = cde_t { raw: [0; 16] };
   let mut buf: *mut libc::c_uchar = std::ptr::null_mut();
   let mut p: *mut libc::c_uchar = std::ptr::null_mut();
@@ -352,7 +352,7 @@ unsafe extern "C" fn find_cdf_offset() -> u32 {
   free(buf as *mut libc::c_void);
   return found;
 }
-unsafe extern "C" fn read_next_cdf(mut cdf_offset: u32, mut cdf: *mut cdf_header_t) -> u32 {
+unsafe fn read_next_cdf(mut cdf_offset: u32, mut cdf: *mut cdf_header_t) -> u32 {
   let mut magic: u32 = 0;
   if cdf_offset == 0xffffffffu32 {
     return cdf_offset;
@@ -384,7 +384,7 @@ unsafe extern "C" fn read_next_cdf(mut cdf_offset: u32, mut cdf: *mut cdf_header
   ) as u32 as u32;
   return cdf_offset;
 }
-unsafe extern "C" fn die_if_bad_fnamesize(mut sz: libc::c_uint) {
+unsafe fn die_if_bad_fnamesize(mut sz: libc::c_uint) {
   if sz > 0xfffi32 as libc::c_uint {
     /* more than 4k?! no funny business please */
     crate::libbb::verror_msg::bb_simple_error_msg_and_die(
@@ -392,14 +392,14 @@ unsafe extern "C" fn die_if_bad_fnamesize(mut sz: libc::c_uint) {
     );
   };
 }
-unsafe extern "C" fn unzip_skip(mut skip: off_t) {
+unsafe fn unzip_skip(mut skip: off_t) {
   if skip != 0 {
     if lseek(zip_fd as libc::c_int, skip, 1i32) == -1i32 as off_t {
       crate::libbb::copyfd::bb_copyfd_exact_size(zip_fd as libc::c_int, -1i32, skip);
     }
   };
 }
-unsafe extern "C" fn unzip_create_leading_dirs(mut fn_0: *const libc::c_char) {
+unsafe fn unzip_create_leading_dirs(mut fn_0: *const libc::c_char) {
   /* Create all leading directories */
   let mut name: *mut libc::c_char = crate::libbb::xfuncs_printf::xstrdup(fn_0);
   /* mode of -1: set mode according to umask */
@@ -414,7 +414,7 @@ unsafe extern "C" fn unzip_create_leading_dirs(mut fn_0: *const libc::c_char) {
   }
   free(name as *mut libc::c_void);
 }
-unsafe extern "C" fn unzip_extract_symlink(
+unsafe fn unzip_extract_symlink(
   mut symlink_placeholders: *mut *mut llist_t,
   mut zip: *mut zip_header_t,
   mut dst_fn: *const libc::c_char,
@@ -444,7 +444,7 @@ unsafe extern "C" fn unzip_extract_symlink(
   );
   free(target as *mut libc::c_void);
 }
-unsafe extern "C" fn unzip_extract(mut zip: *mut zip_header_t, mut dst_fd: libc::c_int) {
+unsafe fn unzip_extract(mut zip: *mut zip_header_t, mut dst_fd: libc::c_int) {
   let mut xstate: transformer_state_t = std::mem::zeroed();
   if (*zip).fmt.method as libc::c_int == 0 {
     /* Method 0 - stored (not compressed) */
@@ -517,7 +517,7 @@ unsafe extern "C" fn unzip_extract(mut zip: *mut zip_header_t, mut dst_fd: libc:
     );
   };
 }
-unsafe extern "C" fn my_fgets80(mut buf80: *mut libc::c_char) {
+unsafe fn my_fgets80(mut buf80: *mut libc::c_char) {
   crate::libbb::xfuncs_printf::fflush_all();
   if fgets_unlocked(buf80, 80i32, stdin).is_null() {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(
@@ -525,7 +525,7 @@ unsafe extern "C" fn my_fgets80(mut buf80: *mut libc::c_char) {
     );
   };
 }
-unsafe extern "C" fn get_lstat_mode(mut dst_fn: *const libc::c_char) -> libc::c_int {
+unsafe fn get_lstat_mode(mut dst_fn: *const libc::c_char) -> libc::c_int {
   let mut stat_buf: stat = std::mem::zeroed();
   if lstat(dst_fn, &mut stat_buf) == -1i32 {
     if *bb_errno != 2i32 {

@@ -1,13 +1,20 @@
 use crate::libbb::appletlib::applet_name;
+use crate::librb::__compar_fn_t;
+use crate::librb::size_t;
 use libc;
 use libc::closedir;
+use libc::dirent;
 use libc::open;
 use libc::opendir;
 use libc::printf;
 use libc::puts;
 use libc::readdir;
+use libc::sockaddr;
 use libc::sprintf;
+use libc::ssize_t;
 use libc::strcpy;
+use libc::DIR;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -34,10 +41,6 @@ extern "C" {
 }
 
 pub type __caddr_t = *mut libc::c_char;
-use crate::librb::size_t;
-use libc::dirent;
-use libc::ssize_t;
-use libc::DIR;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -49,9 +52,6 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 
-use crate::librb::__compar_fn_t;
-use libc::sockaddr;
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 
@@ -188,7 +188,7 @@ pub const ARG_delif: C2RustUnnamed_2 = 3;
 //usage:	)
 // Not yet implemented:
 //			hairpin BRIDGE IFACE on|off	Set hairpin on/off
-unsafe extern "C" fn str_to_jiffies(mut time_str: *const libc::c_char) -> libc::c_uint {
+unsafe fn str_to_jiffies(mut time_str: *const libc::c_char) -> libc::c_uint {
   let mut dd: libc::c_double = 0.;
   let mut endptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   dd = strtod(time_str, &mut endptr);
@@ -208,7 +208,7 @@ unsafe extern "C" fn str_to_jiffies(mut time_str: *const libc::c_char) -> libc::
   }
   return dd as libc::c_uint;
 }
-unsafe extern "C" fn read_file(mut name: *const libc::c_char) -> libc::c_int {
+unsafe fn read_file(mut name: *const libc::c_char) -> libc::c_int {
   let mut n: libc::c_int = crate::libbb::read::open_read_close(
     name,
     bb_common_bufsiz1.as_mut_ptr() as *mut libc::c_void,
@@ -229,10 +229,7 @@ unsafe extern "C" fn read_file(mut name: *const libc::c_char) -> libc::c_int {
 }
 /* NB: we are in /sys/class/net
  */
-unsafe extern "C" fn show_bridge(
-  mut name: *const libc::c_char,
-  mut need_hdr: libc::c_int,
-) -> libc::c_int {
+unsafe fn show_bridge(mut name: *const libc::c_char, mut need_hdr: libc::c_int) -> libc::c_int {
   /* Output:
    *bridge name	bridge id		STP enabled	interfaces
    *br0		8000.000000000000	no		eth0
@@ -314,7 +311,7 @@ unsafe extern "C" fn show_bridge(
   }
   return 0;
 }
-unsafe extern "C" fn write_uint(
+unsafe fn write_uint(
   mut name: *const libc::c_char,
   mut leaf: *const libc::c_char,
   mut val: libc::c_uint,
@@ -355,7 +352,7 @@ unsafe extern "C" fn compare_fdbs(
     6i32 as libc::c_ulong,
   );
 }
-unsafe extern "C" fn read_bridge_forward_db(
+unsafe fn read_bridge_forward_db(
   mut name: *const libc::c_char,
   mut _fdb: *mut *mut fdb_entry,
 ) -> size_t {
@@ -405,15 +402,12 @@ unsafe extern "C" fn read_bridge_forward_db(
     fdb as *mut libc::c_void,
     nentries,
     ::std::mem::size_of::<fdb_entry>() as libc::c_ulong,
-    Some(
-      compare_fdbs
-        as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int,
-    ),
+    Some(compare_fdbs),
   );
   *_fdb = fdb;
   return nentries;
 }
-unsafe extern "C" fn show_bridge_macs(mut name: *const libc::c_char) {
+unsafe fn show_bridge_macs(mut name: *const libc::c_char) {
   let mut fdb: *mut fdb_entry = std::ptr::null_mut();
   let mut nentries: size_t = 0;
   let mut i: size_t = 0;
@@ -445,7 +439,7 @@ unsafe extern "C" fn show_bridge_macs(mut name: *const libc::c_char) {
     i = i.wrapping_add(1)
   }
 }
-unsafe extern "C" fn show_bridge_timer(mut msg: *const libc::c_char) {
+unsafe fn show_bridge_timer(mut msg: *const libc::c_char) {
   let mut centisec: libc::c_ulonglong =
     crate::libbb::xatonum::xstrtoull(bb_common_bufsiz1.as_mut_ptr(), 0);
   let mut tv_sec: libc::c_uint = centisec.wrapping_div(100i32 as libc::c_ulonglong) as libc::c_uint;
@@ -458,7 +452,7 @@ unsafe extern "C" fn show_bridge_timer(mut msg: *const libc::c_char) {
     tv_csec,
   );
 }
-unsafe extern "C" fn show_bridge_state(mut state: libc::c_uint) -> *const libc::c_char {
+unsafe fn show_bridge_state(mut state: libc::c_uint) -> *const libc::c_char {
   /* See linux/if_bridge.h, BR_STATE_ constants */
   static mut state_names: [libc::c_char; 48] = [
     100, 105, 115, 97, 98, 108, 101, 100, 0, 108, 105, 115, 116, 101, 110, 105, 110, 103, 0, 108,
@@ -473,13 +467,13 @@ unsafe extern "C" fn show_bridge_state(mut state: libc::c_uint) -> *const libc::
   }
   return crate::libbb::xfuncs::utoa(state);
 }
-unsafe extern "C" fn printf_xstrtou(mut fmt: *const libc::c_char) {
+unsafe fn printf_xstrtou(mut fmt: *const libc::c_char) {
   printf(
     fmt,
     crate::libbb::xatonum::xstrtou(bb_common_bufsiz1.as_mut_ptr(), 0),
   );
 }
-unsafe extern "C" fn show_bridge_port(mut name: *const libc::c_char) {
+unsafe fn show_bridge_port(mut name: *const libc::c_char) {
   let mut pathbuf: [libc::c_char; 52] = [0; 52];
   let mut sfx: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   sfx = pathbuf.as_mut_ptr().offset(sprintf(
@@ -582,7 +576,7 @@ unsafe extern "C" fn show_bridge_port(mut name: *const libc::c_char) {
   }
   printf(b"\n\n\x00" as *const u8 as *const libc::c_char);
 }
-unsafe extern "C" fn show_bridge_stp(mut name: *const libc::c_char) {
+unsafe fn show_bridge_stp(mut name: *const libc::c_char) {
   let mut pathbuf: [libc::c_char; 54] = [0; 54];
   let mut sfx: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   sfx = pathbuf.as_mut_ptr().offset(sprintf(
@@ -698,11 +692,7 @@ unsafe extern "C" fn show_bridge_stp(mut name: *const libc::c_char) {
     }
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn brctl_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn brctl_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   static mut keywords: [libc::c_char; 124] = [
     97, 100, 100, 98, 114, 0, 100, 101, 108, 98, 114, 0, 97, 100, 100, 105, 102, 0, 100, 101, 108,
     105, 102, 0, 115, 116, 112, 0, 115, 104, 111, 119, 115, 116, 112, 0, 115, 101, 116, 97, 103,

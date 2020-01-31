@@ -6,7 +6,7 @@ extern "C" {
 
 pub type tls_state_t = tls_state;
 #[inline]
-unsafe extern "C" fn new_tls_state() -> *mut tls_state_t {
+unsafe fn new_tls_state() -> *mut tls_state_t {
   let mut tls: *mut tls_state_t = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<
     tls_state_t,
   >() as libc::c_ulong) as *mut tls_state_t;
@@ -28,8 +28,7 @@ unsafe extern "C" fn new_tls_state() -> *mut tls_state_t {
 //usage:#define ssl_client_trivial_usage
 //usage:       "[-e] -s FD [-r FD] [-n SNI]"
 //usage:#define ssl_client_full_usage ""
-#[no_mangle]
-pub unsafe extern "C" fn ssl_client_main(
+pub unsafe fn ssl_client_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

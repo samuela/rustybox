@@ -150,8 +150,7 @@ pub struct exfat_super_block {
 /*,u64 off*/
 /*,u64 off*/
 /*,u64 off*/
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_probe_exfat(mut id: *mut volume_id) -> libc::c_int
+pub unsafe fn volume_id_probe_exfat(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut sb: *mut exfat_super_block = std::ptr::null_mut();
   let mut de: *mut exfat_dir_entry = std::ptr::null_mut();

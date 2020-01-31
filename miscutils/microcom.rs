@@ -1,7 +1,6 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
 use crate::librb::smallint;
-
 use libc;
 use libc::close;
 use libc::getpid;
@@ -79,7 +78,7 @@ pub const OPT_s: C2RustUnnamed_0 = 2;
 //usage:     "\n	-s	Set serial line to SPEED"
 //usage:     "\n	-X	Disable special meaning of NUL and Ctrl-X from stdin"
 // set raw tty mode
-unsafe extern "C" fn xget1(mut fd: libc::c_int, mut t: *mut termios, mut oldt: *mut termios) {
+unsafe fn xget1(mut fd: libc::c_int, mut t: *mut termios, mut oldt: *mut termios) {
   crate::libbb::xfuncs::get_termios_and_make_raw(
     fd,
     t,
@@ -87,7 +86,7 @@ unsafe extern "C" fn xget1(mut fd: libc::c_int, mut t: *mut termios, mut oldt: *
     0 | 1i32 << 0 | 1i32 << 3i32 | (1i32 << 1i32 | 1i32 << 2i32),
   );
 }
-unsafe extern "C" fn xset1(
+unsafe fn xset1(
   mut fd: libc::c_int,
   mut tio: *mut termios,
   mut device: *const libc::c_char,
@@ -101,8 +100,7 @@ unsafe extern "C" fn xset1(
   }
   return ret;
 }
-#[no_mangle]
-pub unsafe extern "C" fn microcom_main(
+pub unsafe fn microcom_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -195,7 +193,7 @@ pub unsafe extern "C" fn microcom_main(
   // setup signals
   crate::libbb::signals::bb_signals(
     0 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 15i32) + (1i32 << 13i32),
-    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(crate::libbb::signals::record_signo),
   );
   // error exit code if we fail to open the device
   bb_got_signal = 1i32 as smallint;

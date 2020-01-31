@@ -216,8 +216,7 @@ use libc;
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn inet_cksum(mut addr: *mut u16, mut nleft: libc::c_int) -> u16 {
+pub unsafe fn inet_cksum(mut addr: *mut u16, mut nleft: libc::c_int) -> u16 {
   /*
    * Our algorithm is simple, using a 32 bit accumulator,
    * we add sequential 16 bit words to it, and at the end, fold

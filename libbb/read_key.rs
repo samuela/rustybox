@@ -50,8 +50,7 @@ pub const KEYCODE_UP: C2RustUnnamed = -2;
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn read_key(
+pub unsafe fn read_key(
   mut fd: libc::c_int,
   mut buffer: *mut libc::c_char,
   mut timeout: libc::c_int,
@@ -879,8 +878,7 @@ pub unsafe extern "C" fn read_key(
  * -1: poll(-1) (i.e. block even on NONBLOCKed fd)
  * >=0: poll() for TIMEOUT milliseconds, return -1/EAGAIN on timeout
  */
-#[no_mangle]
-pub unsafe extern "C" fn read_key_ungets(
+pub unsafe fn read_key_ungets(
   mut buffer: *mut libc::c_char,
   mut str: *const libc::c_char,
   mut len: libc::c_uint,

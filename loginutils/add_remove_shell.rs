@@ -19,8 +19,7 @@ pub type uintptr_t = libc::c_ulong;
 
 use libc::stat;
 use libc::FILE;
-#[no_mangle]
-pub unsafe extern "C" fn add_remove_shell_main(
+pub unsafe fn add_remove_shell_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

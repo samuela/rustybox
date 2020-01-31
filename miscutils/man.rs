@@ -333,11 +333,7 @@ unsafe extern "C" fn if_redefined(
   }
   return crate::libbb::xfuncs_printf::xstrdup(skip_whitespace(line));
 }
-#[no_mangle]
-pub unsafe extern "C" fn man_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn man_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut sec_list: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut man_path_list: *mut *mut libc::c_char = std::ptr::null_mut();
@@ -377,7 +373,7 @@ pub unsafe extern "C" fn man_main(
     b"/etc/man.config\x00" as *const u8 as *const libc::c_char,
     Some(
       crate::libbb::wfopen::fopen_for_read
-        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+        as unsafe fn(_: *const libc::c_char) -> *mut FILE,
     ),
   );
   if parser.is_null() {
@@ -385,7 +381,7 @@ pub unsafe extern "C" fn man_main(
       b"/etc/man.conf\x00" as *const u8 as *const libc::c_char,
       Some(
         crate::libbb::wfopen::fopen_for_read
-          as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+          as unsafe fn(_: *const libc::c_char) -> *mut FILE,
       ),
     )
   }
@@ -394,7 +390,7 @@ pub unsafe extern "C" fn man_main(
       b"/etc/man_db.conf\x00" as *const u8 as *const libc::c_char,
       Some(
         crate::libbb::wfopen::fopen_for_read
-          as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+          as unsafe fn(_: *const libc::c_char) -> *mut FILE,
       ),
     )
   }

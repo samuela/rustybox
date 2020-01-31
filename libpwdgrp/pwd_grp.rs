@@ -124,7 +124,7 @@ use crate::librb::spwd;
  *    return value is all-ones in this case.
  */
 #[inline(always)]
-unsafe extern "C" fn bb_strtol(
+unsafe fn bb_strtol(
   mut arg: *const libc::c_char,
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
@@ -156,7 +156,7 @@ static mut const_sp_db: const_passdb = const_passdb {
   size_of: 0,
 };
 static mut ptr_to_statics: *mut statics = std::ptr::null_mut();
-unsafe extern "C" fn get_S() -> *mut statics {
+unsafe fn get_S() -> *mut statics {
   if ptr_to_statics.is_null() {
     ptr_to_statics =
       crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<statics>() as libc::c_ulong)
@@ -186,7 +186,7 @@ unsafe extern "C" fn get_S() -> *mut statics {
  * Returns the number of fields found.
  * Strips leading and trailing whitespace in fields.
  */
-unsafe extern "C" fn tokenize(mut buffer: *mut libc::c_char, mut ch: libc::c_int) -> libc::c_int {
+unsafe fn tokenize(mut buffer: *mut libc::c_char, mut ch: libc::c_int) -> libc::c_int {
   let mut p: *mut libc::c_char = buffer;
   let mut s: *mut libc::c_char = p;
   let mut num_fields: libc::c_int = 0;
@@ -227,7 +227,7 @@ unsafe extern "C" fn tokenize(mut buffer: *mut libc::c_char, mut ch: libc::c_int
 /* Returns !NULL on success and matching line broken up in fields by '\0' in buf.
  * We require the expected number of fields to be found.
  */
-unsafe extern "C" fn parse_common(
+unsafe fn parse_common(
   mut fp: *mut FILE,
   mut db: *mut passdb,
   mut key: *const libc::c_char,
@@ -298,7 +298,7 @@ unsafe extern "C" fn parse_common(
   }
   return buf;
 }
-unsafe extern "C" fn parse_file(
+unsafe fn parse_file(
   mut db: *mut passdb,
   mut key: *const libc::c_char,
   mut field_pos: libc::c_int,
@@ -312,7 +312,7 @@ unsafe extern "C" fn parse_file(
   return buf;
 }
 /* Convert passwd/group/shadow file record in buffer to a struct */
-unsafe extern "C" fn convert_to_struct(
+unsafe fn convert_to_struct(
   mut db: *mut passdb,
   mut buffer: *mut libc::c_char,
   mut result: *mut libc::c_void,
@@ -387,7 +387,7 @@ unsafe extern "C" fn convert_to_struct(
   }
   return result;
 }
-unsafe extern "C" fn massage_data_for_r_func(
+unsafe fn massage_data_for_r_func(
   mut db: *mut passdb,
   mut buffer: *mut libc::c_char,
   mut buflen: size_t,
@@ -415,7 +415,7 @@ unsafe extern "C" fn massage_data_for_r_func(
    */
   return *bb_errno;
 }
-unsafe extern "C" fn massage_data_for_non_r_func(
+unsafe fn massage_data_for_non_r_func(
   mut db: *mut passdb,
   mut buf: *mut libc::c_char,
 ) -> *mut libc::c_void {
@@ -445,7 +445,7 @@ unsafe extern "C" fn massage_data_for_non_r_func(
   );
 }
 /* ***** getXXnam/id_r */
-unsafe extern "C" fn getXXnam_r(
+unsafe fn getXXnam_r(
   mut name: *const libc::c_char,
   mut db_and_field_pos: uintptr_t,
   mut buffer: *mut libc::c_char,
@@ -453,7 +453,7 @@ unsafe extern "C" fn getXXnam_r(
   mut result: *mut libc::c_void,
 ) -> libc::c_int {
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut db: *mut passdb = &mut *(*(get_S as unsafe extern "C" fn() -> *mut statics)())
+  let mut db: *mut passdb = &mut *(*(get_S as unsafe fn() -> *mut statics)())
     .db
     .as_mut_ptr()
     .offset((db_and_field_pos >> 2i32) as isize) as *mut passdb;
@@ -531,9 +531,9 @@ pub unsafe fn bb_internal_getspnam_r(
   );
 }
 /* ***** getXXent */
-unsafe extern "C" fn getXXent(mut db_idx: uintptr_t) -> *mut libc::c_void {
+unsafe fn getXXent(mut db_idx: uintptr_t) -> *mut libc::c_void {
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut db: *mut passdb = &mut *(*(get_S as unsafe extern "C" fn() -> *mut statics)())
+  let mut db: *mut passdb = &mut *(*(get_S as unsafe fn() -> *mut statics)())
     .db
     .as_mut_ptr()
     .offset(db_idx as isize) as *mut passdb;
@@ -551,12 +551,12 @@ pub unsafe fn bb_internal_getpwent() -> *mut passwd {
   return getXXent(0i32 as uintptr_t) as *mut passwd;
 }
 /* ***** getXXnam/id */
-unsafe extern "C" fn getXXnam(
+unsafe fn getXXnam(
   mut name: *const libc::c_char,
   mut db_and_field_pos: libc::c_uint,
 ) -> *mut libc::c_void {
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
-  let mut db: *mut passdb = &mut *(*(get_S as unsafe extern "C" fn() -> *mut statics)())
+  let mut db: *mut passdb = &mut *(*(get_S as unsafe fn() -> *mut statics)())
     .db
     .as_mut_ptr()
     .offset((db_and_field_pos >> 2i32) as isize) as *mut passdb;
@@ -636,7 +636,7 @@ pub unsafe fn bb_internal_endgrent() {
   };
 }
 /* ***** initgroups and getgrouplist */
-unsafe extern "C" fn getgrouplist_internal(
+unsafe fn getgrouplist_internal(
   mut ngroups_ptr: *mut libc::c_int,
   mut user: *const libc::c_char,
   mut gid: gid_t,
@@ -652,7 +652,7 @@ unsafe extern "C" fn getgrouplist_internal(
   ngroups = 1i32;
   fp = crate::libbb::wfopen::fopen_for_read(b"/etc/group\x00" as *const u8 as *const libc::c_char);
   if !fp.is_null() {
-    let mut db: *mut passdb = &mut *(*(get_S as unsafe extern "C" fn() -> *mut statics)())
+    let mut db: *mut passdb = &mut *(*(get_S as unsafe fn() -> *mut statics)())
       .db
       .as_mut_ptr()
       .offset(1) as *mut passdb;
@@ -758,7 +758,7 @@ pub unsafe fn bb_internal_getgrouplist(
   free(group_list as *mut libc::c_void);
   return ngroups_old;
 }
-unsafe extern "C" fn run_static_initializers() {
+unsafe fn run_static_initializers() {
   const_pw_db = {
     let mut init = const_passdb {
       filename: b"/etc/passwd\x00" as *const u8 as *const libc::c_char,
@@ -827,4 +827,4 @@ unsafe extern "C" fn run_static_initializers() {
 #[cfg_attr(target_os = "linux", link_section = ".init_array")]
 #[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
 #[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
-static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];
+static INIT_ARRAY: [unsafe fn(); 1] = [run_static_initializers];

@@ -35,8 +35,7 @@ pub type __socklen_t = libc::c_uint;
  *
  * Authors: Alexey Kuznetsov, <kuznet@ms2.inr.ac.ru>
  */
-#[no_mangle]
-pub unsafe extern "C" fn ll_addr_n2a(
+pub unsafe fn ll_addr_n2a(
   mut addr: *mut libc::c_uchar,
   mut alen: libc::c_int,
   mut type_0: libc::c_int,
@@ -74,8 +73,7 @@ pub unsafe extern "C" fn ll_addr_n2a(
   }
   return buf;
 }
-#[no_mangle]
-pub unsafe extern "C" fn ll_addr_a2n(
+pub unsafe fn ll_addr_a2n(
   mut lladdr: *mut libc::c_uchar,
   mut len: libc::c_int,
   mut arg: *mut libc::c_char,

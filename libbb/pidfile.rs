@@ -29,8 +29,7 @@ extern "C" {
 /* Override ENABLE_FEATURE_PIDFILE */
 #[no_mangle]
 pub static mut wrote_pidfile: smallint = 0;
-#[no_mangle]
-pub unsafe extern "C" fn write_pidfile(mut path: *const libc::c_char) {
+pub unsafe fn write_pidfile(mut path: *const libc::c_char) {
   let mut pid_fd: libc::c_int = 0;
   let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut buf: [libc::c_char; 14] = [0; 14];
@@ -63,8 +62,7 @@ pub unsafe extern "C" fn write_pidfile(mut path: *const libc::c_char) {
   }
   close(pid_fd);
 }
-#[no_mangle]
-pub unsafe extern "C" fn write_pidfile_std_path_and_ext(mut name: *const libc::c_char) {
+pub unsafe fn write_pidfile_std_path_and_ext(mut name: *const libc::c_char) {
   let mut buf: [libc::c_char; 73] = [0; 73];
   snprintf(
     buf.as_mut_ptr(),
@@ -454,8 +452,7 @@ pub unsafe extern "C" fn write_pidfile_std_path_and_ext(mut name: *const libc::c
 /* start_stop_daemon and udhcpc are special - they want
  * to create pidfiles regardless of FEATURE_PIDFILE */
 /* True only if we created pidfile which is *file*, not /dev/null etc */
-#[no_mangle]
-pub unsafe extern "C" fn remove_pidfile_std_path_and_ext(mut name: *const libc::c_char) {
+pub unsafe fn remove_pidfile_std_path_and_ext(mut name: *const libc::c_char) {
   let mut buf: [libc::c_char; 73] = [0; 73];
   if wrote_pidfile == 0 {
     return;

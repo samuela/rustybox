@@ -132,8 +132,7 @@ pub struct nbd_header_t {
 //
 //Default value for blocksize is 4096
 //Allowed values for blocksize are 512,1024,2048,4096
-#[no_mangle]
-pub unsafe extern "C" fn nbdclient_main(
+pub unsafe fn nbdclient_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

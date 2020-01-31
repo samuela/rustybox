@@ -114,8 +114,7 @@ pub union C2RustUnnamed_0 {
   pub sr: serial_struct,
   pub paranoia: [libc::c_char; 240],
 }
-#[no_mangle]
-pub unsafe extern "C" fn cttyhack_main(
+pub unsafe fn cttyhack_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

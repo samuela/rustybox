@@ -131,8 +131,7 @@ pub struct btrfs_dev_item {
 /* FS */
 /*,u64 off*/
 
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_probe_btrfs(mut id: *mut volume_id) -> libc::c_int
+pub unsafe fn volume_id_probe_btrfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   // btrfs has superblocks at 64K, 64M and 256G
   // minimum btrfs size is 256M

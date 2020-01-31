@@ -8,12 +8,10 @@ use libc::printf;
 use libc::time;
 use libc::time_t;
 extern "C" {
-
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
-
   #[no_mangle]
   fn ctime(__timer: *const time_t) -> *mut libc::c_char;
   #[no_mangle]
@@ -56,7 +54,7 @@ unsafe extern "C" fn socket_timeout(mut _sig: libc::c_int) {
     b"timeout connecting to time server\x00" as *const u8 as *const libc::c_char,
   );
 }
-unsafe extern "C" fn askremotedate(mut host: *const libc::c_char) -> time_t {
+unsafe fn askremotedate(mut host: *const libc::c_char) -> time_t {
   let mut nett: u32 = 0;
   let mut fd: libc::c_int = 0;
   /* Timeout for dead or inaccessible servers */
@@ -118,11 +116,7 @@ unsafe extern "C" fn askremotedate(mut host: *const libc::c_char) -> time_t {
   /* This is not going to work, but what can we do */
   return nett as time_t;
 }
-#[no_mangle]
-pub unsafe extern "C" fn rdate_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn rdate_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut remote_time: time_t = 0;
   let mut flags: libc::c_uint = 0;
   flags =

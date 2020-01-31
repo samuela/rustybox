@@ -17,21 +17,18 @@ use libc::termios;
 use libc::useconds_t;
 use libc::FILE;
 extern "C" {
-
   #[no_mangle]
   fn strtoul(
     __nptr: *const libc::c_char,
     __endptr: *mut *mut libc::c_char,
     __base: libc::c_int,
   ) -> libc::c_ulong;
-
   #[no_mangle]
   fn qsort(__base: *mut libc::c_void, __nmemb: size_t, __size: size_t, __compar: __compar_fn_t);
   #[no_mangle]
   fn div(__numer: libc::c_int, __denom: libc::c_int) -> div_t;
   #[no_mangle]
   static mut stdout: *mut FILE;
-
   #[no_mangle]
   fn snprintf(
     _: *mut libc::c_char,
@@ -39,32 +36,26 @@ extern "C" {
     _: *const libc::c_char,
     _: ...
   ) -> libc::c_int;
-
   #[no_mangle]
   fn fgets_unlocked(
     __s: *mut libc::c_char,
     __n: libc::c_int,
     __stream: *mut FILE,
   ) -> *mut libc::c_char;
-
   #[no_mangle]
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
   #[no_mangle]
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
-
   #[no_mangle]
   static mut option_mask32: u32;
-
   #[no_mangle]
   static mut die_func: Option<unsafe extern "C" fn() -> ()>;
-
   #[no_mangle]
   static ptr_to_globals: *mut globals;
 }
@@ -249,7 +240,7 @@ pub const EXIT_MASK: C2RustUnnamed_8 = 0;
 pub const TOPMEM_MASK: C2RustUnnamed_8 = 32801;
 pub const TOP_MASK: C2RustUnnamed_8 = 538163;
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 unsafe extern "C" fn pid_sort(mut P: *mut top_status_t, mut Q: *mut top_status_t) -> libc::c_int {
@@ -278,10 +269,7 @@ unsafe extern "C" fn time_sort(mut P: *mut top_status_t, mut Q: *mut top_status_
   return ((*Q).ticks != (*P).ticks) as libc::c_int;
   /* 0 if ==, 1 if > */
 }
-unsafe extern "C" fn mult_lvl_cmp(
-  mut a: *mut libc::c_void,
-  mut b: *mut libc::c_void,
-) -> libc::c_int {
+unsafe fn mult_lvl_cmp(mut a: *mut libc::c_void, mut b: *mut libc::c_void) -> libc::c_int {
   let mut i: libc::c_int = 0;
   let mut cmp_val: libc::c_int = 0;
   i = 0;
@@ -307,10 +295,7 @@ unsafe extern "C" fn mult_lvl_cmp(
   };
 }
 #[inline(never)]
-unsafe extern "C" fn read_cpu_jiffy(
-  mut fp: *mut FILE,
-  mut p_jif: *mut jiffy_counts_t,
-) -> libc::c_int {
+unsafe fn read_cpu_jiffy(mut fp: *mut FILE, mut p_jif: *mut jiffy_counts_t) -> libc::c_int {
   static mut fmt: [libc::c_char; 46] = [
     99, 112, 37, 42, 115, 32, 37, 108, 108, 117, 32, 37, 108, 108, 117, 32, 37, 108, 108, 117, 32,
     37, 108, 108, 117, 32, 37, 108, 108, 117, 32, 37, 108, 108, 117, 32, 37, 108, 108, 117, 32, 37,
@@ -358,7 +343,7 @@ unsafe extern "C" fn read_cpu_jiffy(
   }
   return ret;
 }
-unsafe extern "C" fn get_jiffy_counts() {
+unsafe fn get_jiffy_counts() {
   let mut fp: *mut FILE =
     crate::libbb::wfopen::xfopen_for_read(b"stat\x00" as *const u8 as *const libc::c_char);
   /* We need to parse cumulative counts even if SMP CPU display is on,
@@ -423,7 +408,7 @@ unsafe extern "C" fn get_jiffy_counts() {
   }
   fclose(fp);
 }
-unsafe extern "C" fn do_stats() {
+unsafe fn do_stats() {
   let mut cur: *mut top_status_t = std::ptr::null_mut();
   let mut pid: pid_t = 0;
   let mut n: libc::c_int = 0;
@@ -489,7 +474,7 @@ unsafe extern "C" fn do_stats() {
 }
 /* FEATURE_TOP_CPU_USAGE_PERCENTAGE */
 /* formats 7 char string (8 with terminating NUL) */
-unsafe extern "C" fn fmt_100percent_8(
+unsafe fn fmt_100percent_8(
   mut pbuf: *mut libc::c_char,
   mut value: libc::c_uint,
   mut total: libc::c_uint,
@@ -522,7 +507,7 @@ unsafe extern "C" fn fmt_100percent_8(
   *pbuf.offset(7) = '\u{0}' as i32 as libc::c_char;
   return pbuf;
 }
-unsafe extern "C" fn display_cpus(
+unsafe fn display_cpus(
   mut scr_width: libc::c_int,
   mut scrbuf: *mut libc::c_char,
   mut lines_rem_p: *mut libc::c_int,
@@ -612,7 +597,7 @@ unsafe extern "C" fn display_cpus(
   }
   *lines_rem_p -= i;
 }
-unsafe extern "C" fn parse_meminfo(mut meminfo: *mut libc::c_ulong) {
+unsafe fn parse_meminfo(mut meminfo: *mut libc::c_ulong) {
   static mut fields: [libc::c_char; 106] = [
     77, 101, 109, 84, 111, 116, 97, 108, 0, 77, 101, 109, 70, 114, 101, 101, 0, 77, 101, 109, 83,
     104, 97, 114, 101, 100, 0, 83, 104, 109, 101, 109, 0, 66, 117, 102, 102, 101, 114, 115, 0, 67,
@@ -649,7 +634,7 @@ unsafe extern "C" fn parse_meminfo(mut meminfo: *mut libc::c_ulong) {
   }
   fclose(f);
 }
-unsafe extern "C" fn display_header(
+unsafe fn display_header(
   mut scr_width: libc::c_int,
   mut lines_rem_p: *mut libc::c_int,
 ) -> libc::c_ulong {
@@ -706,7 +691,7 @@ unsafe extern "C" fn display_header(
   return meminfo[MI_MEMTOTAL as libc::c_int as usize];
 }
 #[inline(never)]
-unsafe extern "C" fn display_process_list(mut lines_rem: libc::c_int, mut scr_width: libc::c_int) {
+unsafe fn display_process_list(mut lines_rem: libc::c_int, mut scr_width: libc::c_int) {
   let mut s: *mut top_status_t = std::ptr::null_mut();
   let mut total_memory: libc::c_ulong = display_header(scr_width, &mut lines_rem);
   /* xxx_shift and xxx_scale variables allow us to replace
@@ -858,7 +843,7 @@ unsafe extern "C" fn display_process_list(mut lines_rem: libc::c_int, mut scr_wi
   );
   crate::libbb::xfuncs_printf::fflush_all();
 }
-unsafe extern "C" fn clearmems() {
+unsafe fn clearmems() {
   crate::libbb::procps::clear_username_cache();
   free((*ptr_to_globals).top as *mut libc::c_void);
   (*ptr_to_globals).top = std::ptr::null_mut();
@@ -872,10 +857,7 @@ unsafe extern "C" fn sig_catcher(mut sig: libc::c_int) {
   reset_term();
   crate::libbb::signals::kill_myself_with_sig(sig);
 }
-unsafe extern "C" fn topmem_sort(
-  mut a: *mut libc::c_char,
-  mut b: *mut libc::c_char,
-) -> libc::c_int {
+unsafe fn topmem_sort(mut a: *mut libc::c_char, mut b: *mut libc::c_char) -> libc::c_int {
   let mut n: libc::c_int = 0;
   let mut l: mem_t = 0;
   let mut r: mem_t = 0;
@@ -903,10 +885,7 @@ unsafe extern "C" fn topmem_sort(
   };
 }
 /* display header info (meminfo / loadavg) */
-unsafe extern "C" fn display_topmem_header(
-  mut scr_width: libc::c_int,
-  mut lines_rem_p: *mut libc::c_int,
-) {
+unsafe fn display_topmem_header(mut scr_width: libc::c_int, mut lines_rem_p: *mut libc::c_int) {
   let mut meminfo: [libc::c_ulong; 13] = [0; 13];
   parse_meminfo(meminfo.as_mut_ptr());
   snprintf(
@@ -956,7 +935,7 @@ unsafe extern "C" fn display_topmem_header(
   );
   *lines_rem_p -= 3i32;
 }
-unsafe extern "C" fn ulltoa6_and_space(mut ul: libc::c_ulonglong, mut buf: *mut libc::c_char) {
+unsafe fn ulltoa6_and_space(mut ul: libc::c_ulonglong, mut buf: *mut libc::c_char) {
   /* see http://en.wikipedia.org/wiki/Tera */
   *crate::libbb::human_readable::smart_ulltoa5(
     ul,
@@ -966,10 +945,7 @@ unsafe extern "C" fn ulltoa6_and_space(mut ul: libc::c_ulonglong, mut buf: *mut 
   .offset(0) = ' ' as i32 as libc::c_char;
 }
 #[inline(never)]
-unsafe extern "C" fn display_topmem_process_list(
-  mut lines_rem: libc::c_int,
-  mut scr_width: libc::c_int,
-) {
+unsafe fn display_topmem_process_list(mut lines_rem: libc::c_int, mut scr_width: libc::c_int) {
   let mut s: *const topmem_status_t =
     ((*ptr_to_globals).top as *mut topmem_status_t).offset((*ptr_to_globals).scroll_ofs as isize);
   let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -1102,10 +1078,7 @@ unsafe extern "C" fn display_topmem_process_list(
   );
   crate::libbb::xfuncs_printf::fflush_all();
 }
-unsafe extern "C" fn handle_input(
-  mut scan_mask: libc::c_uint,
-  mut interval: duration_t,
-) -> libc::c_uint {
+unsafe fn handle_input(mut scan_mask: libc::c_uint, mut interval: duration_t) -> libc::c_uint {
   if option_mask32 & OPT_EOF as libc::c_int as libc::c_uint != 0 {
     /* EOF on stdin ("top </dev/null") */
     crate::libbb::duration::sleep_for_duration(interval);
@@ -1156,25 +1129,13 @@ unsafe extern "C" fn handle_input(
         }
         if c == 'n' as i32 {
           scan_mask = TOP_MASK as libc::c_int as libc::c_uint;
-          (*ptr_to_globals).sort_function[0] = Some(
-            pid_sort
-              as unsafe extern "C" fn(_: *mut top_status_t, _: *mut top_status_t) -> libc::c_int,
-          );
+          (*ptr_to_globals).sort_function[0] = Some(pid_sort);
           continue;
         } else if c == 'm' as i32 {
           scan_mask = TOP_MASK as libc::c_int as libc::c_uint;
-          (*ptr_to_globals).sort_function[0] = Some(
-            mem_sort
-              as unsafe extern "C" fn(_: *mut top_status_t, _: *mut top_status_t) -> libc::c_int,
-          );
-          (*ptr_to_globals).sort_function[1] = Some(
-            pcpu_sort
-              as unsafe extern "C" fn(_: *mut top_status_t, _: *mut top_status_t) -> libc::c_int,
-          );
-          (*ptr_to_globals).sort_function[2] = Some(
-            time_sort
-              as unsafe extern "C" fn(_: *mut top_status_t, _: *mut top_status_t) -> libc::c_int,
-          );
+          (*ptr_to_globals).sort_function[0] = Some(mem_sort);
+          (*ptr_to_globals).sort_function[1] = Some(pcpu_sort);
+          (*ptr_to_globals).sort_function[2] = Some(time_sort);
           continue;
         } else if c == 'h' as i32 && scan_mask != TOPMEM_MASK as libc::c_int as libc::c_uint {
           scan_mask ^= PSSCAN_TASKS as libc::c_int as libc::c_uint;
@@ -1184,33 +1145,15 @@ unsafe extern "C" fn handle_input(
           continue;
         } else if c == 'p' as i32 {
           scan_mask = TOP_MASK as libc::c_int as libc::c_uint;
-          (*ptr_to_globals).sort_function[0] = Some(
-            pcpu_sort
-              as unsafe extern "C" fn(_: *mut top_status_t, _: *mut top_status_t) -> libc::c_int,
-          );
-          (*ptr_to_globals).sort_function[1] = Some(
-            mem_sort
-              as unsafe extern "C" fn(_: *mut top_status_t, _: *mut top_status_t) -> libc::c_int,
-          );
-          (*ptr_to_globals).sort_function[2] = Some(
-            time_sort
-              as unsafe extern "C" fn(_: *mut top_status_t, _: *mut top_status_t) -> libc::c_int,
-          );
+          (*ptr_to_globals).sort_function[0] = Some(pcpu_sort);
+          (*ptr_to_globals).sort_function[1] = Some(mem_sort);
+          (*ptr_to_globals).sort_function[2] = Some(time_sort);
           continue;
         } else if c == 't' as i32 {
           scan_mask = TOP_MASK as libc::c_int as libc::c_uint;
-          (*ptr_to_globals).sort_function[0] = Some(
-            time_sort
-              as unsafe extern "C" fn(_: *mut top_status_t, _: *mut top_status_t) -> libc::c_int,
-          );
-          (*ptr_to_globals).sort_function[1] = Some(
-            mem_sort
-              as unsafe extern "C" fn(_: *mut top_status_t, _: *mut top_status_t) -> libc::c_int,
-          );
-          (*ptr_to_globals).sort_function[2] = Some(
-            pcpu_sort
-              as unsafe extern "C" fn(_: *mut top_status_t, _: *mut top_status_t) -> libc::c_int,
-          );
+          (*ptr_to_globals).sort_function[0] = Some(time_sort);
+          (*ptr_to_globals).sort_function[1] = Some(mem_sort);
+          (*ptr_to_globals).sort_function[2] = Some(pcpu_sort);
           continue;
         } else if c == 's' as i32 {
           scan_mask = TOPMEM_MASK as libc::c_int as libc::c_uint;
@@ -1311,11 +1254,7 @@ unsafe extern "C" fn handle_input(
  *
  * TODO: -i STRING param as a better alternative?
  */
-#[no_mangle]
-pub unsafe extern "C" fn top_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn top_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut interval: duration_t = 0.; /* default update interval is 5 seconds */
   let mut iterations: libc::c_int = 0; /* infinite */
   let mut col: libc::c_uint = 0;
@@ -1369,26 +1308,17 @@ pub unsafe extern "C" fn top_main(
   }
   /* change to /proc */
   crate::libbb::xfuncs_printf::xchdir(b"/proc\x00" as *const u8 as *const libc::c_char);
-  (*ptr_to_globals).sort_function[0] = Some(
-    pcpu_sort as unsafe extern "C" fn(_: *mut top_status_t, _: *mut top_status_t) -> libc::c_int,
-  );
-  (*ptr_to_globals).sort_function[1] = Some(
-    mem_sort as unsafe extern "C" fn(_: *mut top_status_t, _: *mut top_status_t) -> libc::c_int,
-  );
-  (*ptr_to_globals).sort_function[2] = Some(
-    time_sort as unsafe extern "C" fn(_: *mut top_status_t, _: *mut top_status_t) -> libc::c_int,
-  );
+  (*ptr_to_globals).sort_function[0] = Some(pcpu_sort);
+  (*ptr_to_globals).sort_function[1] = Some(mem_sort);
+  (*ptr_to_globals).sort_function[2] = Some(time_sort);
   if option_mask32 & OPT_b as libc::c_int as libc::c_uint != 0 {
     option_mask32 |= OPT_EOF as libc::c_int as libc::c_uint
   } else {
     /* Turn on unbuffered input; turn off echoing, ^C ^Z etc */
     crate::libbb::xfuncs::set_termios_to_raw(0, &mut (*ptr_to_globals).initial_settings, 1i32 << 0);
-    die_func = Some(reset_term as unsafe extern "C" fn() -> ())
+    die_func = Some(reset_term)
   }
-  crate::libbb::signals::bb_signals(
-    BB_FATAL_SIGS as libc::c_int,
-    Some(sig_catcher as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  crate::libbb::signals::bb_signals(BB_FATAL_SIGS as libc::c_int, Some(sig_catcher));
   /* Eat initial input, if any */
   scan_mask = handle_input(scan_mask, 0 as duration_t); /* end of "while (not Q)" */
   's_204: while scan_mask != EXIT_MASK as libc::c_int as libc::c_uint {
@@ -1513,13 +1443,10 @@ pub unsafe extern "C" fn top_main(
             (*ptr_to_globals).ntop as size_t,
             ::std::mem::size_of::<top_status_t>() as libc::c_ulong,
             ::std::mem::transmute::<*mut libc::c_void, __compar_fn_t>(::std::mem::transmute::<
-              Option<
-                unsafe extern "C" fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_int,
-              >,
+              Option<unsafe fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_int>,
               *mut libc::c_void,
             >(Some(
-              mult_lvl_cmp
-                as unsafe extern "C" fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_int,
+              mult_lvl_cmp as unsafe fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_int,
             ))),
           );
         }
@@ -1530,11 +1457,10 @@ pub unsafe extern "C" fn top_main(
           (*ptr_to_globals).ntop as size_t,
           ::std::mem::size_of::<topmem_status_t>() as libc::c_ulong,
           ::std::mem::transmute::<*mut libc::c_void, __compar_fn_t>(::std::mem::transmute::<
-            Option<unsafe extern "C" fn(_: *mut libc::c_char, _: *mut libc::c_char) -> libc::c_int>,
+            Option<unsafe fn(_: *mut libc::c_char, _: *mut libc::c_char) -> libc::c_int>,
             *mut libc::c_void,
           >(Some(
-            topmem_sort
-              as unsafe extern "C" fn(_: *mut libc::c_char, _: *mut libc::c_char) -> libc::c_int,
+            topmem_sort as unsafe fn(_: *mut libc::c_char, _: *mut libc::c_char) -> libc::c_int,
           ))),
         );
       }

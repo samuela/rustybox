@@ -31,8 +31,7 @@ pub const SCAN_MOVE_FROM_LEFT: C2RustUnnamed = 1;
  * Copyright (c) 1997-2005 Herbert Xu <herbert@gondor.apana.org.au>
  * was re-ported from NetBSD and debianized.
  */
-#[no_mangle]
-pub unsafe extern "C" fn scan_and_match(
+pub unsafe fn scan_and_match(
   mut string: *mut libc::c_char,
   mut pattern: *const libc::c_char,
   mut flags: libc::c_uint,

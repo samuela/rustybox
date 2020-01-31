@@ -59,8 +59,7 @@ unsafe extern "C" fn get_line(
   *bufsize_p = bufsize;
   return buf;
 }
-#[no_mangle]
-pub unsafe extern "C" fn lsscsi_main(
+pub unsafe fn lsscsi_main(
   mut _argc: libc::c_int,
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

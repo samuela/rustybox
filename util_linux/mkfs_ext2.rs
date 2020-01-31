@@ -360,7 +360,7 @@ pub fn BUG_wrong_field_size() -> libc::c_uint {
   panic!("BUG_wrong_field_size")
 }
 
-unsafe extern "C" fn int_log2(mut arg: libc::c_uint) -> libc::c_uint {
+unsafe fn int_log2(mut arg: libc::c_uint) -> libc::c_uint {
   let mut r: libc::c_uint = 0 as libc::c_uint;
   loop {
     arg >>= 1i32;
@@ -373,7 +373,7 @@ unsafe extern "C" fn int_log2(mut arg: libc::c_uint) -> libc::c_uint {
 }
 // taken from mkfs_minix.c. libbb candidate?
 // "u32 size", since we never use it for anything >32 bits
-unsafe extern "C" fn div_roundup(mut size: u32, mut n: u32) -> u32 {
+unsafe fn div_roundup(mut size: u32, mut n: u32) -> u32 {
   // Overflow-resistant
   let mut res: u32 = size.wrapping_div(n);
   if res.wrapping_mul(n) != size {
@@ -381,7 +381,7 @@ unsafe extern "C" fn div_roundup(mut size: u32, mut n: u32) -> u32 {
   }
   return res;
 }
-unsafe extern "C" fn allocate(
+unsafe fn allocate(
   mut bitmap: *mut u8,
   mut blocksize: u32,
   mut start: u32,
@@ -404,7 +404,7 @@ unsafe extern "C" fn allocate(
   );
   // N.B. no overflow here!
 }
-unsafe extern "C" fn has_super(mut x: u32) -> u32 {
+unsafe fn has_super(mut x: u32) -> u32 {
   // 0, 1 and powers of 3, 5, 7 up to 2^32 limit
   static mut supers: [u32; 46] = [
     0 as u32,
@@ -469,13 +469,12 @@ unsafe extern "C" fn has_super(mut x: u32) -> u32 {
   }
 }
 /* predefined output descriptor */
-unsafe extern "C" fn PUT(mut off: u64, mut buf: *mut libc::c_void, mut size: u32) {
+unsafe fn PUT(mut off: u64, mut buf: *mut libc::c_void, mut size: u32) {
   //bb_error_msg("PUT[%llu]:[%u]", off, size);
   crate::libbb::xfuncs_printf::xlseek(3i32, off as off_t, 0); // superblock
   crate::libbb::xfuncs_printf::xwrite(3i32, buf, size as size_t); // group descriptors
 }
-#[no_mangle]
-pub unsafe extern "C" fn mkfs_ext2_main(
+pub unsafe fn mkfs_ext2_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

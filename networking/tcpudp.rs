@@ -371,14 +371,8 @@ pub unsafe extern "C" fn tcpudpsvd_main(
   } /* fd# 0,1,2 must be opened */
   crate::libbb::vfork_daemon_rexec::bb_sanitize_stdio(); /* I presume sockaddr len stays the same */
   crate::libbb::signals::sig_block(17i32); /* udp: needed for recv_from_to to work: */
-  signal(
-    17i32,
-    Some(sig_child_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
-  crate::libbb::signals::bb_signals(
-    BB_FATAL_SIGS as libc::c_int,
-    Some(sig_term_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  signal(17i32, Some(sig_child_handler));
+  crate::libbb::signals::bb_signals(BB_FATAL_SIGS as libc::c_int, Some(sig_term_handler));
   signal(
     13i32,
     ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t),

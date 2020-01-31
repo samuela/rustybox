@@ -33,11 +33,7 @@ extern "C" {
 //usage:       "PID..."
 //usage:#define pwdx_full_usage "\n\n"
 //usage:       "Show current directory for PIDs"
-#[no_mangle]
-pub unsafe extern "C" fn pwdx_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn pwdx_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   crate::libbb::getopt32::getopt32(argv, b"^\x00-1\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   loop {

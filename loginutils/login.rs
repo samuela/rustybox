@@ -91,7 +91,7 @@ pub const LOGIN_OPT_p: C2RustUnnamed_1 = 4;
 pub const LOGIN_OPT_f: C2RustUnnamed_1 = 1;
 pub type C2RustUnnamed_1 = libc::c_uint;
 pub const LOGIN_OPT_h: C2RustUnnamed_1 = 2;
-unsafe extern "C" fn die_if_nologin() {
+unsafe fn die_if_nologin() {
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut c: libc::c_int = 0;
   let mut empty: libc::c_int = 1i32;
@@ -121,7 +121,7 @@ unsafe extern "C" fn die_if_nologin() {
   tcdrain(1i32); /* NOMMU-friendly */
   exit(1i32);
 }
-unsafe extern "C" fn run_login_script(mut pw: *mut passwd, mut full_tty: *mut libc::c_char) {
+unsafe fn run_login_script(mut pw: *mut passwd, mut full_tty: *mut libc::c_char) {
   let mut t_argv: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   t_argv[0] = getenv(b"LOGIN_PRE_SUID_SCRIPT\x00" as *const u8 as *const libc::c_char);
   if !t_argv[0].is_null() {
@@ -154,7 +154,7 @@ unsafe extern "C" fn run_login_script(mut pw: *mut passwd, mut full_tty: *mut li
     unsetenv(b"LOGIN_SHELL\x00" as *const u8 as *const libc::c_char);
   };
 }
-unsafe extern "C" fn get_username_or_die(mut buf: *mut libc::c_char, mut size_buf: libc::c_int) {
+unsafe fn get_username_or_die(mut buf: *mut libc::c_char, mut size_buf: libc::c_int) {
   let mut c: libc::c_int = 0;
   let mut cntdown: libc::c_int = 0;
   cntdown = EMPTY_USERNAME_COUNT as libc::c_int;
@@ -197,7 +197,7 @@ unsafe extern "C" fn get_username_or_die(mut buf: *mut libc::c_char, mut size_bu
   }
   *buf = '\u{0}' as i32 as libc::c_char;
 }
-unsafe extern "C" fn motd() {
+unsafe fn motd() {
   let mut fd: libc::c_int = 0;
   fd = open(b"/etc/motd\x00" as *const u8 as *const libc::c_char, 0);
   if fd >= 0 {
@@ -229,11 +229,7 @@ unsafe extern "C" fn alarm_handler(mut _sig: libc::c_int) {
   crate::libbb::xfuncs::ndelay_off(1i32); /* for compiler */
   _exit(0i32);
 }
-#[no_mangle]
-pub unsafe extern "C" fn login_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn login_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut fromhost: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut username: [libc::c_char; 64] = [0; 64];
@@ -296,10 +292,7 @@ pub unsafe extern "C" fn login_main(
     /* Must be a terminal */
   }
   /* We install timeout handler only _after_ we saved G.tty_attrs */
-  signal(
-    14i32,
-    Some(alarm_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  signal(14i32, Some(alarm_handler));
   alarm(TIMEOUT as libc::c_int as libc::c_uint);
   /* Find out and memorize our tty name */
   full_tty = crate::libbb::xfuncs_printf::xmalloc_ttyname(0i32);

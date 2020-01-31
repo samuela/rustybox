@@ -56,8 +56,7 @@ pub struct format_descr {
   pub track: libc::c_uint,
 }
 /* format fill byte. */
-#[no_mangle]
-pub unsafe extern "C" fn fdformat_main(
+pub unsafe fn fdformat_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

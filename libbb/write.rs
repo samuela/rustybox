@@ -254,8 +254,7 @@ use libc::close;
  */
 /* Open file and write string str to it, close file.
  * Die on any open or write error.  */
-#[no_mangle]
-pub unsafe extern "C" fn xopen_xwrite_close(
+pub unsafe fn xopen_xwrite_close(
   mut file: *const libc::c_char,
   mut str: *const libc::c_char,
 ) {

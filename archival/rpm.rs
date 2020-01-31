@@ -171,7 +171,7 @@ pub const rpm_query_package: rpm_functions_e = 8;
 pub const rpm_query_info: rpm_functions_e = 4;
 pub const rpm_install: rpm_functions_e = 2;
 pub const rpm_query: rpm_functions_e = 1;
-unsafe extern "C" fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_int {
+unsafe fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_int {
   let mut tags: *mut rpm_index = std::ptr::null_mut();
   let mut fd: libc::c_int = 0;
   let mut pass: libc::c_uint = 0;
@@ -409,10 +409,7 @@ unsafe extern "C" fn bsearch_rpmtag(
   let mut tmp: *mut rpm_index = item as *mut rpm_index;
   return (*tag as libc::c_uint).wrapping_sub((*tmp).tag) as libc::c_int;
 }
-unsafe extern "C" fn rpm_getstr(
-  mut tag: libc::c_int,
-  mut itemindex: libc::c_int,
-) -> *mut libc::c_char {
+unsafe fn rpm_getstr(mut tag: libc::c_int, mut itemindex: libc::c_int) -> *mut libc::c_char {
   let mut found: *mut rpm_index = std::ptr::null_mut();
   found = bsearch(
     &mut tag as *mut libc::c_int as *const libc::c_void,
@@ -444,10 +441,10 @@ unsafe extern "C" fn rpm_getstr(
   }
   return std::ptr::null_mut::<libc::c_char>();
 }
-unsafe extern "C" fn rpm_getstr0(mut tag: libc::c_int) -> *mut libc::c_char {
+unsafe fn rpm_getstr0(mut tag: libc::c_int) -> *mut libc::c_char {
   return rpm_getstr(tag, 0);
 }
-unsafe extern "C" fn rpm_getint(mut tag: libc::c_int, mut itemindex: libc::c_int) -> libc::c_int {
+unsafe fn rpm_getint(mut tag: libc::c_int, mut itemindex: libc::c_int) -> libc::c_int {
   let mut found: *mut rpm_index = std::ptr::null_mut();
   let mut tmpint: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* gcc throws warnings here when sizeof(void*)!=sizeof(int) ...
@@ -457,10 +454,7 @@ unsafe extern "C" fn rpm_getint(mut tag: libc::c_int, mut itemindex: libc::c_int
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).mytags as *const libc::c_void,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tagcount as size_t,
     ::std::mem::size_of::<rpm_index>() as libc::c_ulong,
-    Some(
-      bsearch_rpmtag
-        as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int,
-    ),
+    Some(bsearch_rpmtag),
   ) as *mut rpm_index;
   if found.is_null() || itemindex as libc::c_uint >= (*found).count {
     return -1i32;
@@ -513,27 +507,21 @@ unsafe extern "C" fn rpm_getint(mut tag: libc::c_int, mut itemindex: libc::c_int
   }
   return -1i32;
 }
-unsafe extern "C" fn rpm_getcount(mut tag: libc::c_int) -> libc::c_int {
+unsafe fn rpm_getcount(mut tag: libc::c_int) -> libc::c_int {
   let mut found: *mut rpm_index = std::ptr::null_mut();
   found = bsearch(
     &mut tag as *mut libc::c_int as *const libc::c_void,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).mytags as *const libc::c_void,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).tagcount as size_t,
     ::std::mem::size_of::<rpm_index>() as libc::c_ulong,
-    Some(
-      bsearch_rpmtag
-        as unsafe extern "C" fn(_: *const libc::c_void, _: *const libc::c_void) -> libc::c_int,
-    ),
+    Some(bsearch_rpmtag),
   ) as *mut rpm_index;
   if found.is_null() {
     return 0;
   }
   return (*found).count as libc::c_int;
 }
-unsafe extern "C" fn fileaction_dobackup(
-  mut filename: *mut libc::c_char,
-  mut fileref: libc::c_int,
-) {
+unsafe fn fileaction_dobackup(mut filename: *mut libc::c_char, mut fileref: libc::c_int) {
   let mut oldfile: stat = std::mem::zeroed();
   let mut stat_res: libc::c_int = 0;
   let mut newname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -560,10 +548,7 @@ unsafe extern "C" fn fileaction_dobackup(
     }
   };
 }
-unsafe extern "C" fn fileaction_setowngrp(
-  mut filename: *mut libc::c_char,
-  mut fileref: libc::c_int,
-) {
+unsafe fn fileaction_setowngrp(mut filename: *mut libc::c_char, mut fileref: libc::c_int) {
   /* real rpm warns: "user foo does not exist - using <you>" */
   let mut pw: *mut passwd = bb_internal_getpwnam(rpm_getstr(1039i32, fileref)); /* or euid? */
   let mut uid: libc::c_int = if !pw.is_null() {
@@ -580,9 +565,9 @@ unsafe extern "C" fn fileaction_setowngrp(
   } as libc::c_int;
   chown(filename, uid as uid_t, gid as gid_t);
 }
-unsafe extern "C" fn loop_through_files(
+unsafe fn loop_through_files(
   mut filetag: libc::c_int,
-  mut fileaction: Option<unsafe extern "C" fn(_: *mut libc::c_char, _: libc::c_int) -> ()>,
+  mut fileaction: Option<unsafe fn(_: *mut libc::c_char, _: libc::c_int) -> ()>,
 ) {
   let mut count: libc::c_int = 0;
   while !rpm_getstr(filetag, count).is_null() {
@@ -598,7 +583,7 @@ unsafe extern "C" fn loop_through_files(
   }
 }
 //DEBUG
-unsafe extern "C" fn extract_cpio(mut fd: libc::c_int, mut source_rpm: *const libc::c_char) {
+unsafe fn extract_cpio(mut fd: libc::c_int, mut source_rpm: *const libc::c_char) {
   let mut archive_handle: *mut archive_handle_t = std::ptr::null_mut(); /* else: SRPM, install to current dir */
   if !source_rpm.is_null() {
     /* Binary rpm (it was built from some SRPM), install to root */
@@ -608,11 +593,11 @@ unsafe extern "C" fn extract_cpio(mut fd: libc::c_int, mut source_rpm: *const li
   archive_handle = crate::archival::libarchive::init_handle::init_handle();
   (*archive_handle).seek = Some(
     crate::archival::libarchive::seek_by_read::seek_by_read
-      as unsafe extern "C" fn(_: libc::c_int, _: off_t) -> (),
+      as unsafe fn(_: libc::c_int, _: off_t) -> (),
   );
   (*archive_handle).action_data = Some(
     crate::archival::libarchive::data_extract_all::data_extract_all
-      as unsafe extern "C" fn(_: *mut archive_handle_t) -> (),
+      as unsafe fn(_: *mut archive_handle_t) -> (),
   );
   /* For testing (rpm -i only lists the files in internal cpio): */
   (*archive_handle).ah_flags = (1i32 << 0 | 1i32 << 1i32 | 1i32 << 9i32) as libc::c_uint;
@@ -720,18 +705,14 @@ pub unsafe fn rpm_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) 
       /* Backup any config files */
       loop_through_files(
         1117i32,
-        Some(
-          fileaction_dobackup as unsafe extern "C" fn(_: *mut libc::c_char, _: libc::c_int) -> (),
-        ),
+        Some(fileaction_dobackup as unsafe fn(_: *mut libc::c_char, _: libc::c_int) -> ()),
       );
       /* Extact the archive */
       extract_cpio(rpm_fd, source_rpm);
       /* Set the correct file uid/gid's */
       loop_through_files(
         1117i32,
-        Some(
-          fileaction_setowngrp as unsafe extern "C" fn(_: *mut libc::c_char, _: libc::c_int) -> (),
-        ),
+        Some(fileaction_setowngrp as unsafe fn(_: *mut libc::c_char, _: libc::c_int) -> ()),
       );
     } else if func & (rpm_query as libc::c_int | rpm_query_package as libc::c_int)
       == rpm_query as libc::c_int | rpm_query_package as libc::c_int

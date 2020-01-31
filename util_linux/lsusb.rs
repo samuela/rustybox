@@ -45,7 +45,7 @@ pub const PARSE_NORMAL: C2RustUnnamed_0 = 4653056;
 //kbuild:lib-$(CONFIG_LSUSB) += lsusb.o
 //usage:#define lsusb_trivial_usage NOUSAGE_STR
 //usage:#define lsusb_full_usage ""
-unsafe extern "C" fn fileAction(
+unsafe fn fileAction(
   mut fileName: *const libc::c_char,
   mut _statbuf: *mut stat,
   mut _userData: *mut libc::c_void,
@@ -63,10 +63,7 @@ unsafe extern "C" fn fileAction(
   );
   parser = crate::libbb::parse_config::config_open2(
     uevent_filename,
-    Some(
-      crate::libbb::wfopen::fopen_for_read
-        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
-    ),
+    Some(crate::libbb::wfopen::fopen_for_read as unsafe fn(_: *const libc::c_char) -> *mut FILE),
   );
   free(uevent_filename as *mut libc::c_void);
   while crate::libbb::parse_config::config_read(
@@ -115,18 +112,14 @@ unsafe extern "C" fn fileAction(
   return 1i32;
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn lsusb_main(
-  mut _argc: libc::c_int,
-  mut _argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn lsusb_main(mut _argc: libc::c_int, mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   /* no options, no getopt */
   crate::libbb::recursive_action::recursive_action(
     b"/sys/bus/usb/devices\x00" as *const u8 as *const libc::c_char,
     ACTION_RECURSE as libc::c_int as libc::c_uint,
     Some(
       fileAction
-        as unsafe extern "C" fn(
+        as unsafe fn(
           _: *const libc::c_char,
           _: *mut stat,
           _: *mut libc::c_void,

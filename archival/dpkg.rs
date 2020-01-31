@@ -177,10 +177,10 @@ pub const OPT_install: C2RustUnnamed = 2;
 /* Commands */
 pub const OPT_configure: C2RustUnnamed = 1;
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
-unsafe extern "C" fn make_hash(
+unsafe fn make_hash(
   mut key: *const libc::c_char,
   mut start: *mut libc::c_uint,
   mut decrement: *mut libc::c_uint,
@@ -209,7 +209,7 @@ unsafe extern "C" fn make_hash(
     as libc::c_uint;
 }
 /* this adds the key to the hash table */
-unsafe extern "C" fn search_name_hashtable(mut key: *const libc::c_char) -> libc::c_int {
+unsafe fn search_name_hashtable(mut key: *const libc::c_char) -> libc::c_int {
   let mut probe_address: libc::c_uint = 0;
   let mut probe_decrement: libc::c_uint = 0;
   make_hash(key, &mut probe_address, &mut probe_decrement, 16381i32);
@@ -233,7 +233,7 @@ unsafe extern "C" fn search_name_hashtable(mut key: *const libc::c_char) -> libc
 /* this DOESN'T add the key to the hashtable
  * TODO make it consistent with search_name_hashtable
  */
-unsafe extern "C" fn search_status_hashtable(mut key: *const libc::c_char) -> libc::c_uint {
+unsafe fn search_status_hashtable(mut key: *const libc::c_char) -> libc::c_uint {
   let mut probe_address: libc::c_uint = 0;
   let mut probe_decrement: libc::c_uint = 0;
   make_hash(key, &mut probe_address, &mut probe_decrement, 8191i32);
@@ -254,7 +254,7 @@ unsafe extern "C" fn search_status_hashtable(mut key: *const libc::c_char) -> li
   }
   return probe_address;
 }
-unsafe extern "C" fn order(mut x: libc::c_char) -> libc::c_int {
+unsafe fn order(mut x: libc::c_char) -> libc::c_int {
   return if x as libc::c_int == '~' as i32 {
     -1i32
   } else if x as libc::c_int == '\u{0}' as i32 {
@@ -270,7 +270,7 @@ unsafe extern "C" fn order(mut x: libc::c_char) -> libc::c_int {
   };
 }
 /* This code is taken from dpkg and modified slightly to work with busybox */
-unsafe extern "C" fn version_compare_part(
+unsafe fn version_compare_part(
   mut val: *const libc::c_char,
   mut ref_0: *const libc::c_char,
 ) -> libc::c_int {
@@ -327,7 +327,7 @@ unsafe extern "C" fn version_compare_part(
  * if ver1 = ver2 return 0,
  * if ver1 > ver2 return 1,
  */
-unsafe extern "C" fn version_compare(ver1: libc::c_uint, ver2: libc::c_uint) -> libc::c_int {
+unsafe fn version_compare(ver1: libc::c_uint, ver2: libc::c_uint) -> libc::c_int {
   let mut ch_ver1: *mut libc::c_char = (*ptr_to_globals).name_hashtable[ver1 as usize];
   let mut ch_ver2: *mut libc::c_char = (*ptr_to_globals).name_hashtable[ver2 as usize];
   let mut epoch1: libc::c_uint = 0 as libc::c_uint;
@@ -380,7 +380,7 @@ unsafe extern "C" fn version_compare(ver1: libc::c_uint, ver2: libc::c_uint) -> 
   free(upstream_ver2 as *mut libc::c_void);
   return result;
 }
-unsafe extern "C" fn test_version(
+unsafe fn test_version(
   version1: libc::c_uint,
   version2: libc::c_uint,
   operator: libc::c_uint,
@@ -397,7 +397,7 @@ unsafe extern "C" fn test_version(
   }
   return 0;
 }
-unsafe extern "C" fn search_package_hashtable(
+unsafe fn search_package_hashtable(
   name: libc::c_uint,
   version: libc::c_uint,
   operator: libc::c_uint,
@@ -447,7 +447,7 @@ unsafe extern "C" fn search_package_hashtable(
  * FIXME: I don't think this is very efficient, but I thought I'd keep
  * it simple for now until it proves to be a problem.
  */
-unsafe extern "C" fn search_for_provides(
+unsafe fn search_for_provides(
   mut needle: libc::c_int,
   mut start_at: libc::c_int,
 ) -> libc::c_int {
@@ -475,7 +475,7 @@ unsafe extern "C" fn search_for_provides(
 /*
  * Add an edge to a node
  */
-unsafe extern "C" fn add_edge_to_node(mut node: *mut common_node_t, mut edge: *mut edge_t) {
+unsafe fn add_edge_to_node(mut node: *mut common_node_t, mut edge: *mut edge_t) {
   (*node).edge = crate::libbb::xrealloc_vector::xrealloc_vector_helper(
     (*node).edge as *mut libc::c_void,
     ((::std::mem::size_of::<*mut edge_t>() as libc::c_ulong) << 8i32)
@@ -498,7 +498,7 @@ unsafe extern "C" fn add_edge_to_node(mut node: *mut common_node_t, mut edge: *m
  * field contains the number of EDGE nodes which follow as part of
  * this alternative.
  */
-unsafe extern "C" fn add_split_dependencies(
+unsafe fn add_split_dependencies(
   mut parent_node: *mut common_node_t,
   mut whole_line: *const libc::c_char,
   mut edge_type: libc::c_uint,
@@ -641,7 +641,7 @@ unsafe extern "C" fn add_split_dependencies(
   }
   free(line as *mut libc::c_void);
 }
-unsafe extern "C" fn free_package(mut node: *mut common_node_t) {
+unsafe fn free_package(mut node: *mut common_node_t) {
   let mut i: libc::c_uint = 0;
   if !node.is_null() {
     i = 0 as libc::c_uint;
@@ -657,7 +657,7 @@ unsafe extern "C" fn free_package(mut node: *mut common_node_t) {
  * Gets the next package field from package_buffer, separated into the field name
  * and field value, it returns the int offset to the first character of the next field
  */
-unsafe extern "C" fn read_package_field(
+unsafe fn read_package_field(
   mut package_buffer: *const libc::c_char,
   mut field_name: *mut *mut libc::c_char,
   mut field_value: *mut *mut libc::c_char,
@@ -756,7 +756,7 @@ unsafe extern "C" fn read_package_field(
   }
   return next_offset;
 }
-unsafe extern "C" fn fill_package_struct(mut control_buffer: *mut libc::c_char) -> libc::c_uint {
+unsafe fn fill_package_struct(mut control_buffer: *mut libc::c_char) -> libc::c_uint {
   static mut field_names: [libc::c_char; 94] = [
     80, 97, 99, 107, 97, 103, 101, 0, 86, 101, 114, 115, 105, 111, 110, 0, 80, 114, 101, 45, 68,
     101, 112, 101, 110, 100, 115, 0, 68, 101, 112, 101, 110, 100, 115, 0, 82, 101, 112, 108, 97,
@@ -881,7 +881,7 @@ unsafe extern "C" fn fill_package_struct(mut control_buffer: *mut libc::c_char) 
   return num as libc::c_uint;
 }
 /* if num = 1, it returns the want status, 2 returns flag, 3 returns status */
-unsafe extern "C" fn get_status(status_node: libc::c_uint, num: libc::c_int) -> libc::c_uint {
+unsafe fn get_status(status_node: libc::c_uint, num: libc::c_int) -> libc::c_uint {
   let mut status_string: *mut libc::c_char = (*ptr_to_globals).name_hashtable
     [(*(*ptr_to_globals).status_hashtable[status_node as usize]).status() as usize];
   let mut state_sub_string: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -908,7 +908,7 @@ unsafe extern "C" fn get_status(status_node: libc::c_uint, num: libc::c_int) -> 
   free(state_sub_string as *mut libc::c_void);
   return state_sub_num;
 }
-unsafe extern "C" fn set_status(
+unsafe fn set_status(
   status_node_num: libc::c_uint,
   mut new_value: *const libc::c_char,
   position: libc::c_int,
@@ -938,7 +938,7 @@ unsafe extern "C" fn set_status(
     .set_status(search_name_hashtable(new_status) as libc::c_uint);
   free(new_status as *mut libc::c_void);
 }
-unsafe extern "C" fn describe_status(mut status_num: libc::c_int) -> *const libc::c_char {
+unsafe fn describe_status(mut status_num: libc::c_int) -> *const libc::c_char {
   let mut status_want: libc::c_int = 0;
   let mut status_state: libc::c_int = 0;
   if (*ptr_to_globals).status_hashtable[status_num as usize].is_null()
@@ -967,7 +967,7 @@ unsafe extern "C" fn describe_status(mut status_num: libc::c_int) -> *const libc
   }
   return b"is not installed or flagged to be installed\x00" as *const u8 as *const libc::c_char;
 }
-unsafe extern "C" fn index_status_file(mut filename: *const libc::c_char) {
+unsafe fn index_status_file(mut filename: *const libc::c_char) {
   let mut status_file: *mut FILE = std::ptr::null_mut();
   let mut control_buffer: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut status_line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -1016,7 +1016,7 @@ unsafe extern "C" fn index_status_file(mut filename: *const libc::c_char) {
   }
   fclose(status_file);
 }
-unsafe extern "C" fn write_buffer_no_status(
+unsafe fn write_buffer_no_status(
   mut new_status_file: *mut FILE,
   mut control_buffer: *const libc::c_char,
 ) {
@@ -1043,7 +1043,7 @@ unsafe extern "C" fn write_buffer_no_status(
   }
 }
 /* This could do with a cleanup */
-unsafe extern "C" fn write_status_file(mut deb_file: *mut *mut deb_file_t) {
+unsafe fn write_status_file(mut deb_file: *mut *mut deb_file_t) {
   let mut old_status_file: *mut FILE = crate::libbb::wfopen::xfopen_for_read(
     b"/var/lib/dpkg/status\x00" as *const u8 as *const libc::c_char,
   );
@@ -1325,7 +1325,7 @@ unsafe extern "C" fn write_status_file(mut deb_file: *mut *mut deb_file_t) {
  * which a regular depends can be satisfied by a package which we want
  * to install.
  */
-unsafe extern "C" fn package_satisfies_dependency(
+unsafe fn package_satisfies_dependency(
   mut package: libc::c_int,
   mut depend_type: libc::c_int,
 ) -> libc::c_int {
@@ -1354,7 +1354,7 @@ unsafe extern "C" fn package_satisfies_dependency(
   }
   return 0;
 }
-unsafe extern "C" fn check_deps(
+unsafe fn check_deps(
   mut deb_file: *mut *mut deb_file_t,
   mut deb_start: libc::c_int,
 ) -> libc::c_int
@@ -1651,7 +1651,7 @@ unsafe extern "C" fn check_deps(
   free(conflicts as *mut libc::c_void);
   return 1i32;
 }
-unsafe extern "C" fn create_list(mut filename: *const libc::c_char) -> *mut *mut libc::c_char {
+unsafe fn create_list(mut filename: *const libc::c_char) -> *mut *mut libc::c_char {
   let mut list_stream: *mut FILE = std::ptr::null_mut();
   let mut file_list: *mut *mut libc::c_char = std::ptr::null_mut();
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -1684,7 +1684,7 @@ unsafe extern "C" fn create_list(mut filename: *const libc::c_char) -> *mut *mut
   return file_list;
 }
 /* maybe i should try and hook this into remove_file.c somehow */
-unsafe extern "C" fn remove_file_array(
+unsafe fn remove_file_array(
   mut remove_names: *mut *mut libc::c_char,
   mut exclude_names: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -1738,7 +1738,7 @@ unsafe extern "C" fn remove_file_array(
   }
   return (remove_flag == 0) as libc::c_int;
 }
-unsafe extern "C" fn run_package_script_or_die(
+unsafe fn run_package_script_or_die(
   mut package_name: *const libc::c_char,
   mut script_type: *const libc::c_char,
 ) {
@@ -1806,7 +1806,7 @@ static mut all_control_files: [*const libc::c_char; 10] = [
   b"config\x00" as *const u8 as *const libc::c_char,
   b"templates\x00" as *const u8 as *const libc::c_char,
 ];
-unsafe extern "C" fn all_control_list(
+unsafe fn all_control_list(
   mut package_name: *const libc::c_char,
 ) -> *mut *mut libc::c_char {
   let mut i: libc::c_uint = 0 as libc::c_uint;
@@ -1831,7 +1831,7 @@ unsafe extern "C" fn all_control_list(
   }
   return remove_files;
 }
-unsafe extern "C" fn free_array(mut array: *mut *mut libc::c_char) {
+unsafe fn free_array(mut array: *mut *mut libc::c_char) {
   if !array.is_null() {
     let mut i: libc::c_uint = 0 as libc::c_uint;
     while !(*array.offset(i as isize)).is_null() {
@@ -1845,7 +1845,7 @@ unsafe extern "C" fn free_array(mut array: *mut *mut libc::c_char) {
  * the status_hashtable to retrieve the info. This results in smaller code than
  * scanning the status file. The resulting list, however, is unsorted.
  */
-unsafe extern "C" fn list_packages(mut pattern: *const libc::c_char) {
+unsafe fn list_packages(mut pattern: *const libc::c_char) {
   let mut i: libc::c_int = 0;
   puts(b"    Name           Version\x00" as *const u8 as *const libc::c_char);
   puts(b"+++-==============-==============\x00" as *const u8 as *const libc::c_char);
@@ -1898,7 +1898,7 @@ unsafe extern "C" fn list_packages(mut pattern: *const libc::c_char) {
     i += 1
   }
 }
-unsafe extern "C" fn remove_package(package_num: libc::c_uint, mut noisy: libc::c_int) {
+unsafe fn remove_package(package_num: libc::c_uint, mut noisy: libc::c_int) {
   let mut package_name: *const libc::c_char = (*ptr_to_globals).name_hashtable
     [(*(*ptr_to_globals).package_hashtable[package_num as usize]).name() as usize];
   let mut package_version: *const libc::c_char = (*ptr_to_globals).name_hashtable
@@ -1971,7 +1971,7 @@ unsafe extern "C" fn remove_package(package_num: libc::c_uint, mut noisy: libc::
     3i32,
   );
 }
-unsafe extern "C" fn purge_package(package_num: libc::c_uint) {
+unsafe fn purge_package(package_num: libc::c_uint) {
   let mut package_name: *const libc::c_char = (*ptr_to_globals).name_hashtable
     [(*(*ptr_to_globals).package_hashtable[package_num as usize]).name() as usize];
   let mut package_version: *const libc::c_char = (*ptr_to_globals).name_hashtable
@@ -2031,7 +2031,7 @@ unsafe extern "C" fn purge_package(package_num: libc::c_uint) {
     3i32,
   );
 }
-unsafe extern "C" fn init_archive_deb_ar(
+unsafe fn init_archive_deb_ar(
   mut filename: *const libc::c_char,
 ) -> *mut archive_handle_t {
   let mut ar_handle: *mut archive_handle_t = std::ptr::null_mut();
@@ -2039,12 +2039,12 @@ unsafe extern "C" fn init_archive_deb_ar(
   ar_handle = crate::archival::libarchive::init_handle::init_handle();
   (*ar_handle).filter = Some(
     crate::archival::libarchive::filter_accept_list_reassign::filter_accept_list_reassign
-      as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+      as unsafe fn(_: *mut archive_handle_t) -> libc::c_char,
   );
   (*ar_handle).src_fd = crate::libbb::xfuncs_printf::xopen(filename, 0);
   return ar_handle;
 }
-unsafe extern "C" fn init_archive_deb_control(mut ar_handle: *mut archive_handle_t) {
+unsafe fn init_archive_deb_control(mut ar_handle: *mut archive_handle_t) {
   let mut tar_handle: *mut archive_handle_t = std::ptr::null_mut();
   /* Setup the tar archive handle */
   tar_handle = crate::archival::libarchive::init_handle::init_handle();
@@ -2073,7 +2073,7 @@ unsafe extern "C" fn init_archive_deb_control(mut ar_handle: *mut archive_handle
   /* Assign the tar handle as a subarchive of the ar handle */
   (*ar_handle).dpkg__sub_archive = tar_handle;
 }
-unsafe extern "C" fn init_archive_deb_data(mut ar_handle: *mut archive_handle_t) {
+unsafe fn init_archive_deb_data(mut ar_handle: *mut archive_handle_t) {
   let mut tar_handle: *mut archive_handle_t = std::ptr::null_mut();
   /* Setup the tar archive handle */
   tar_handle = crate::archival::libarchive::init_handle::init_handle();
@@ -2106,7 +2106,7 @@ unsafe extern "C" fn init_archive_deb_data(mut ar_handle: *mut archive_handle_t)
   /* Assign the tar handle as a subarchive of the ar handle */
   (*ar_handle).dpkg__sub_archive = tar_handle;
 }
-unsafe extern "C" fn data_extract_to_buffer(mut archive_handle: *mut archive_handle_t) {
+unsafe fn data_extract_to_buffer(mut archive_handle: *mut archive_handle_t) {
   let mut size: libc::c_uint = (*(*archive_handle).file_header).size as libc::c_uint;
   (*archive_handle).dpkg__buffer =
     crate::libbb::xfuncs_printf::xzalloc(size.wrapping_add(1i32 as libc::c_uint) as size_t)
@@ -2117,22 +2117,22 @@ unsafe extern "C" fn data_extract_to_buffer(mut archive_handle: *mut archive_han
     size as size_t,
   );
 }
-unsafe extern "C" fn deb_extract_control_file_to_buffer(
+unsafe fn deb_extract_control_file_to_buffer(
   mut ar_handle: *mut archive_handle_t,
   mut myaccept: *mut llist_t,
 ) -> *mut libc::c_char {
   (*(*ar_handle).dpkg__sub_archive).action_data =
-    Some(data_extract_to_buffer as unsafe extern "C" fn(_: *mut archive_handle_t) -> ());
+    Some(data_extract_to_buffer as unsafe fn(_: *mut archive_handle_t) -> ());
   (*(*ar_handle).dpkg__sub_archive).accept = myaccept;
   (*(*ar_handle).dpkg__sub_archive).filter = Some(
     crate::archival::libarchive::filter_accept_list::filter_accept_list
-      as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+      as unsafe fn(_: *mut archive_handle_t) -> libc::c_char,
   );
   crate::archival::libarchive::unpack_ar_archive::unpack_ar_archive(ar_handle);
   close((*ar_handle).src_fd);
   return (*(*ar_handle).dpkg__sub_archive).dpkg__buffer;
 }
-unsafe extern "C" fn append_control_file_to_llist(
+unsafe fn append_control_file_to_llist(
   mut package_name: *const libc::c_char,
   mut control_name: *const libc::c_char,
   mut ll: *mut *mut llist_t,
@@ -2158,7 +2158,7 @@ unsafe extern "C" fn append_control_file_to_llist(
     fclose(fp);
   };
 }
-unsafe extern "C" fn filter_rename_config(
+unsafe fn filter_rename_config(
   mut archive_handle: *mut archive_handle_t,
 ) -> libc::c_char {
   let mut fd: libc::c_int = 0;
@@ -2228,7 +2228,7 @@ unsafe extern "C" fn filter_rename_config(
   }
   return 0 as libc::c_char;
 }
-unsafe extern "C" fn data_extract_all_prefix(mut archive_handle: *mut archive_handle_t) {
+unsafe fn data_extract_all_prefix(mut archive_handle: *mut archive_handle_t) {
   let mut name_ptr: *mut libc::c_char = (*(*archive_handle).file_header).name;
   /* Skip all leading "/" */
   while *name_ptr as libc::c_int == '/' as i32 {
@@ -2264,7 +2264,7 @@ unsafe extern "C" fn data_extract_all_prefix(mut archive_handle: *mut archive_ha
     }
   };
 }
-unsafe extern "C" fn unpack_package(mut deb_file: *mut deb_file_t) {
+unsafe fn unpack_package(mut deb_file: *mut deb_file_t) {
   let mut package_name: *const libc::c_char = (*ptr_to_globals).name_hashtable
     [(*(*ptr_to_globals).package_hashtable[(*deb_file).package() as usize]).name() as usize];
   let status_num: libc::c_uint = search_status_hashtable(package_name);
@@ -2333,10 +2333,10 @@ unsafe extern "C" fn unpack_package(mut deb_file: *mut deb_file_t) {
   (*(*archive_handle).dpkg__sub_archive).accept = accept_list;
   (*(*archive_handle).dpkg__sub_archive).filter = Some(
     crate::archival::libarchive::filter_accept_list::filter_accept_list
-      as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+      as unsafe fn(_: *mut archive_handle_t) -> libc::c_char,
   );
   (*(*archive_handle).dpkg__sub_archive).action_data =
-    Some(data_extract_all_prefix as unsafe extern "C" fn(_: *mut archive_handle_t) -> ());
+    Some(data_extract_all_prefix as unsafe fn(_: *mut archive_handle_t) -> ());
   (*(*archive_handle).dpkg__sub_archive).dpkg__buffer = info_prefix;
   (*(*archive_handle).dpkg__sub_archive).ah_flags |= (1i32 << 2i32) as libc::c_uint;
   crate::archival::libarchive::unpack_ar_archive::unpack_ar_archive(archive_handle);
@@ -2363,9 +2363,9 @@ unsafe extern "C" fn unpack_package(mut deb_file: *mut deb_file_t) {
    */
   (*(*archive_handle).dpkg__sub_archive).ah_flags |= (1i32 << 8i32 | 1i32 << 2i32) as libc::c_uint; /* huh? */
   (*(*archive_handle).dpkg__sub_archive).filter =
-    Some(filter_rename_config as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char);
+    Some(filter_rename_config as unsafe fn(_: *mut archive_handle_t) -> libc::c_char);
   (*(*archive_handle).dpkg__sub_archive).action_data =
-    Some(data_extract_all_prefix as unsafe extern "C" fn(_: *mut archive_handle_t) -> ());
+    Some(data_extract_all_prefix as unsafe fn(_: *mut archive_handle_t) -> ());
   (*(*archive_handle).dpkg__sub_archive).dpkg__buffer =
     b"/\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
   crate::archival::libarchive::unpack_ar_archive::unpack_ar_archive(archive_handle);
@@ -2405,7 +2405,7 @@ unsafe extern "C" fn unpack_package(mut deb_file: *mut deb_file_t) {
   free(info_prefix as *mut libc::c_void);
   free(list_filename as *mut libc::c_void);
 }
-unsafe extern "C" fn configure_package(mut deb_file: *mut deb_file_t) {
+unsafe fn configure_package(mut deb_file: *mut deb_file_t) {
   let mut package_name: *const libc::c_char = (*ptr_to_globals).name_hashtable
     [(*(*ptr_to_globals).package_hashtable[(*deb_file).package() as usize]).name() as usize];
   let mut package_version: *const libc::c_char = (*ptr_to_globals).name_hashtable

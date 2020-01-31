@@ -356,7 +356,7 @@ unsafe extern "C" fn message(
     );
   };
 }
-unsafe extern "C" fn console_init() {
+unsafe fn console_init() {
   let mut vtno: libc::c_int = 0;
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   s = getenv(b"CONSOLE\x00" as *const u8 as *const libc::c_char);
@@ -392,7 +392,7 @@ unsafe extern "C" fn console_init() {
 }
 /* Set terminal settings to reasonable defaults.
  * NB: careful, we can be called after vfork! */
-unsafe extern "C" fn set_sane_term() {
+unsafe fn set_sane_term() {
   let mut tty: termios = termios {
     c_iflag: 0,
     c_oflag: 0,
@@ -433,7 +433,7 @@ unsafe extern "C" fn set_sane_term() {
 }
 /* Open the new terminal device.
  * NB: careful, we can be called after vfork! */
-unsafe extern "C" fn open_stdio_to_tty(mut tty_name: *const libc::c_char) -> libc::c_int {
+unsafe fn open_stdio_to_tty(mut tty_name: *const libc::c_char) -> libc::c_int {
   /* empty tty_name means "use init's tty", else... */
   if *tty_name.offset(0) != 0 {
     let mut fd: libc::c_int = 0;
@@ -456,7 +456,7 @@ unsafe extern "C" fn open_stdio_to_tty(mut tty_name: *const libc::c_char) -> lib
   return 1i32;
   /* success */
 }
-unsafe extern "C" fn reset_sighandlers_and_unblock_sigs() {
+unsafe fn reset_sighandlers_and_unblock_sigs() {
   crate::libbb::signals::bb_signals(
     0 + (1i32 << 10i32)
       + (1i32 << 12i32)
@@ -477,7 +477,7 @@ unsafe extern "C" fn reset_sighandlers_and_unblock_sigs() {
  * and uses plain exec().
  * NB: careful, we can be called after vfork!
  */
-unsafe extern "C" fn init_exec(mut command: *const libc::c_char) {
+unsafe fn init_exec(mut command: *const libc::c_char) {
   /* +8 allows to write VLA sizes below more efficiently: */
   let mut command_size: libc::c_uint =
     strlen(command).wrapping_add(8i32 as libc::c_ulong) as libc::c_uint;
@@ -552,7 +552,7 @@ unsafe extern "C" fn init_exec(mut command: *const libc::c_char) {
   /* returns if execvp fails */
 }
 /* Used only by run_actions */
-unsafe extern "C" fn run(mut a: *const init_action) -> pid_t {
+unsafe fn run(mut a: *const init_action) -> pid_t {
   let mut pid: pid_t = 0;
   /* Careful: don't be affected by a signal in vforked child */
   crate::libbb::signals::sigprocmask_allsigs(0i32);
@@ -632,7 +632,7 @@ unsafe extern "C" fn run(mut a: *const init_action) -> pid_t {
   /* We're still here?  Some error happened. */
   _exit(-1i32);
 }
-unsafe extern "C" fn mark_terminated(mut pid: pid_t) -> *mut init_action {
+unsafe fn mark_terminated(mut pid: pid_t) -> *mut init_action {
   let mut a: *mut init_action = std::ptr::null_mut();
   if pid > 0 {
     crate::libbb::utmp::update_utmp_DEAD_PROCESS(pid);
@@ -647,7 +647,7 @@ unsafe extern "C" fn mark_terminated(mut pid: pid_t) -> *mut init_action {
   }
   return std::ptr::null_mut();
 }
-unsafe extern "C" fn waitfor(mut pid: pid_t) {
+unsafe fn waitfor(mut pid: pid_t) {
   /* waitfor(run(x)): protect against failed fork inside run() */
   if pid <= 0 {
     return;
@@ -667,7 +667,7 @@ unsafe extern "C" fn waitfor(mut pid: pid_t) {
   }
 }
 /* Run all commands of a particular type */
-unsafe extern "C" fn run_actions(mut action_type: libc::c_int) {
+unsafe fn run_actions(mut action_type: libc::c_int) {
   let mut a: *mut init_action = std::ptr::null_mut();
   a = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).init_action_list;
   while !a.is_null() {
@@ -690,7 +690,7 @@ unsafe extern "C" fn run_actions(mut action_type: libc::c_int) {
     a = (*a).next
   }
 }
-unsafe extern "C" fn new_init_action(
+unsafe fn new_init_action(
   mut action_type: u8,
   mut command: *const libc::c_char,
   mut cons: *const libc::c_char,
@@ -760,14 +760,11 @@ unsafe extern "C" fn new_init_action(
  * _is_ defined, but /etc/inittab is missing, this
  * results in the same set of default behaviors.
  */
-unsafe extern "C" fn parse_inittab() {
+unsafe fn parse_inittab() {
   let mut token: [*mut libc::c_char; 4] = [0 as *mut libc::c_char; 4];
   let mut parser: *mut parser_t = crate::libbb::parse_config::config_open2(
     b"/etc/inittab\x00" as *const u8 as *const libc::c_char,
-    Some(
-      crate::libbb::wfopen::fopen_for_read
-        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
-    ),
+    Some(crate::libbb::wfopen::fopen_for_read as unsafe fn(_: *const libc::c_char) -> *mut FILE),
   );
   if parser.is_null() {
     /* No inittab file - set up some default behavior */
@@ -872,7 +869,7 @@ unsafe extern "C" fn parse_inittab() {
   }
   crate::libbb::parse_config::config_close(parser);
 }
-unsafe extern "C" fn pause_and_low_level_reboot(mut magic: libc::c_uint) -> ! {
+unsafe fn pause_and_low_level_reboot(mut magic: libc::c_uint) -> ! {
   let mut pid: pid_t = 0;
   /* Allow time for last message to reach serial console, etc */
   sleep(1i32 as libc::c_uint);
@@ -893,7 +890,7 @@ unsafe extern "C" fn pause_and_low_level_reboot(mut magic: libc::c_uint) -> ! {
   sleep(1i32 as libc::c_uint);
   _exit(0i32);
 }
-unsafe extern "C" fn run_shutdown_and_kill_processes() {
+unsafe fn run_shutdown_and_kill_processes() {
   /* Run everything to be run at "shutdown".  This is done _prior_
    * to killing everything, in case people wish to use scripts to
    * shut things down gracefully... */
@@ -956,7 +953,7 @@ unsafe extern "C" fn run_shutdown_and_kill_processes() {
  * and only one will be remembered and acted upon.
  */
 /* The SIGPWR/SIGUSR[12]/SIGTERM handler */
-unsafe extern "C" fn halt_reboot_pwoff(mut sig: libc::c_int) -> ! {
+unsafe fn halt_reboot_pwoff(mut sig: libc::c_int) -> ! {
   let mut m: *const libc::c_char = std::ptr::null();
   let mut rb: libc::c_uint = 0;
   /* We may call run() and it unmasks signals,
@@ -986,7 +983,7 @@ unsafe extern "C" fn halt_reboot_pwoff(mut sig: libc::c_int) -> ! {
 }
 /* Handler for QUIT - exec "restart" action,
  * else (no such action defined) do nothing */
-unsafe extern "C" fn exec_restart_action() {
+unsafe fn exec_restart_action() {
   let mut a: *mut init_action = std::ptr::null_mut();
   a = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).init_action_list;
   while !a.is_null() {
@@ -1029,10 +1026,7 @@ unsafe extern "C" fn stop_handler(mut _sig: libc::c_int) {
   let mut saved_errno: libc::c_int = 0;
   saved_bb_got_signal = bb_got_signal;
   saved_errno = *bb_errno;
-  signal(
-    18i32,
-    Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  signal(18i32, Some(crate::libbb::signals::record_signo));
   loop {
     let mut wpid: pid_t = 0;
     if bb_got_signal as libc::c_int == 18i32 {
@@ -1050,7 +1044,7 @@ unsafe extern "C" fn stop_handler(mut _sig: libc::c_int) {
   *bb_errno = saved_errno;
   bb_got_signal = saved_bb_got_signal;
 }
-unsafe extern "C" fn reload_inittab() {
+unsafe fn reload_inittab() {
   let mut a: *mut init_action = std::ptr::null_mut();
   let mut nextp: *mut *mut init_action = std::ptr::null_mut();
   message(
@@ -1096,7 +1090,7 @@ unsafe extern "C" fn reload_inittab() {
   /* run_actions(RESPAWN | ASKFIRST); */
   /* - we return to main loop, which does this automagically */
 }
-unsafe extern "C" fn check_delayed_sigs() -> libc::c_int {
+unsafe fn check_delayed_sigs() -> libc::c_int {
   let mut sigs_seen: libc::c_int = 0;
   loop {
     let mut sig: smallint = bb_got_signal;
@@ -1126,11 +1120,7 @@ unsafe extern "C" fn check_delayed_sigs() -> libc::c_int {
 unsafe extern "C" fn sleep_much() {
   sleep((30i32 * 24i32 * 60i32 * 60i32) as libc::c_uint);
 }
-#[no_mangle]
-pub unsafe extern "C" fn init_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn init_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   if !(*argv.offset(1)).is_null()
     && strcmp(
       *argv.offset(1),
@@ -1164,7 +1154,7 @@ pub unsafe extern "C" fn init_main(
    * command for sysvinit) will show help text (which isn't too bad),
    * *and sleep forever* (which is bad!)
    */
-  die_func = Some(sleep_much as unsafe extern "C" fn() -> ());
+  die_func = Some(sleep_much);
   /* Figure out where the default console should be */
   console_init();
   set_sane_term();
@@ -1235,8 +1225,7 @@ pub unsafe extern "C" fn init_main(
     );
     sigfillset(&mut sa.sa_mask);
     sigdelset(&mut sa.sa_mask, 18i32);
-    sa.__sigaction_handler.sa_handler =
-      Some(stop_handler as unsafe extern "C" fn(_: libc::c_int) -> ());
+    sa.__sigaction_handler.sa_handler = Some(stop_handler);
     /* NB: sa_flags doesn't have SA_RESTART.
      * It must be able to interrupt wait().
      */
@@ -1256,7 +1245,7 @@ pub unsafe extern "C" fn init_main(
         + (1i32 << 15i32)
         + (1i32 << 12i32)
         + (1i32 << 1i32),
-      Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+      Some(crate::libbb::signals::record_signo),
     );
     crate::libbb::signals::sigprocmask_allsigs(1i32);
   }

@@ -166,8 +166,7 @@ pub struct sysv_super {
 /*,u64 off*/
 /*,u64 off*/
 /*,u64 off*/
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_probe_sysv(mut id: *mut volume_id) -> libc::c_int
+pub unsafe fn volume_id_probe_sysv(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut current_block: u64;
   let mut vs: *mut sysv_super = std::ptr::null_mut();

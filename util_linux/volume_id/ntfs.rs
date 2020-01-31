@@ -176,8 +176,7 @@ pub struct ntfs_super_block {
 //int FAST_FUNC volume_id_probe_msdos_part_table(struct volume_id *id /*,u64 off*/);
 /*,u64 off*/
 /*,u64 off*/
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c_int
+pub unsafe fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut sector_size: libc::c_uint = 0;
   let mut cluster_size: libc::c_uint = 0;

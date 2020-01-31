@@ -43,7 +43,7 @@ extern "C" {
 //usage:       "$ ls | paste - - - -\n"
 //usage:       "# combine pairs of lines from a file into single lines\n"
 //usage:       "$ paste -s -d '\\t\\n' file\n"
-unsafe extern "C" fn paste_files(
+unsafe fn paste_files(
   mut files: *mut *mut FILE,
   mut file_cnt: libc::c_int,
   mut delims: *mut libc::c_char,
@@ -85,7 +85,7 @@ unsafe extern "C" fn paste_files(
     }
   }
 }
-unsafe extern "C" fn paste_files_separate(
+unsafe fn paste_files_separate(
   mut files: *mut *mut FILE,
   mut delims: *mut libc::c_char,
   mut del_cnt: libc::c_int,
@@ -129,11 +129,7 @@ unsafe extern "C" fn paste_files_separate(
     i += 1
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn paste_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn paste_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut delims: *mut libc::c_char =
     b"\t\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
   let mut del_cnt: libc::c_int = 1i32;

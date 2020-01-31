@@ -119,8 +119,7 @@ unsafe extern "C" fn next_good_eraseblock(
     block_offset = block_offset.wrapping_add((*meminfo).erasesize)
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn nandwrite_main(
+pub unsafe fn nandwrite_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

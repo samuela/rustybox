@@ -139,7 +139,7 @@ pub struct caps {
 }
 
 // Recursively delete contents of rootfs
-unsafe extern "C" fn delete_contents(mut directory: *const libc::c_char, mut rootdev: libc::dev_t) {
+unsafe fn delete_contents(mut directory: *const libc::c_char, mut rootdev: libc::dev_t) {
   let mut dir: *mut DIR = std::ptr::null_mut();
   let mut d: *mut dirent = std::ptr::null_mut();
   let mut st: stat = std::mem::zeroed();
@@ -178,7 +178,7 @@ unsafe extern "C" fn delete_contents(mut directory: *const libc::c_char, mut roo
     unlink(directory); /* assuming files do not exist */
   };
 }
-unsafe extern "C" fn drop_capset(mut cap_idx: libc::c_int) {
+unsafe fn drop_capset(mut cap_idx: libc::c_int) {
   let mut caps: caps = caps {
     header: __user_cap_header_struct { version: 0, pid: 0 },
     u32s: 0,
@@ -196,7 +196,7 @@ unsafe extern "C" fn drop_capset(mut cap_idx: libc::c_int) {
     );
   };
 }
-unsafe extern "C" fn drop_bounding_set(mut cap_idx: libc::c_int) {
+unsafe fn drop_bounding_set(mut cap_idx: libc::c_int) {
   let mut ret: libc::c_int = 0;
   ret = prctl(23i32, cap_idx, 0, 0, 0);
   if ret < 0 {
@@ -215,7 +215,7 @@ unsafe extern "C" fn drop_bounding_set(mut cap_idx: libc::c_int) {
     }
   };
 }
-unsafe extern "C" fn drop_usermodehelper(
+unsafe fn drop_usermodehelper(
   mut filename: *const libc::c_char,
   mut cap_idx: libc::c_int,
 ) {
@@ -255,7 +255,7 @@ unsafe extern "C" fn drop_usermodehelper(
   dprintf(fd, b"%u %u\x00" as *const u8 as *const libc::c_char, lo, hi);
   close(fd);
 }
-unsafe extern "C" fn drop_capabilities(mut string: *mut libc::c_char) {
+unsafe fn drop_capabilities(mut string: *mut libc::c_char) {
   let mut cap: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   cap = strtok(string, b",\x00" as *const u8 as *const libc::c_char);
   while !cap.is_null() {
@@ -281,8 +281,7 @@ unsafe extern "C" fn drop_capabilities(mut string: *mut libc::c_char) {
     )
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn switch_root_main(
+pub unsafe fn switch_root_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

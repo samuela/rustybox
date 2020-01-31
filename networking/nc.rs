@@ -1091,7 +1091,7 @@ pub unsafe extern "C" fn nc_main(
   /* catch a signal or two for cleanup */
   crate::libbb::signals::bb_signals(
     0 + (1i32 << 2i32) + (1i32 << 3i32) + (1i32 << 15i32),
-    Some(catch as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(catch),
   );
   /* and suppress others... */
   crate::libbb::signals::bb_signals(

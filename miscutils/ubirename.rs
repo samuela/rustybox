@@ -53,8 +53,7 @@ pub struct C2RustUnnamed {
   pub name: [libc::c_char; 128],
 }
 // end ubi-user.h
-#[no_mangle]
-pub unsafe extern "C" fn ubirename_main(
+pub unsafe fn ubirename_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

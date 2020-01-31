@@ -93,7 +93,7 @@ pub const FLAG_SHOW_ALL: C2RustUnnamed_0 = 8;
 pub const FLAG_TABLE_FORMAT: C2RustUnnamed_0 = 4;
 pub const FLAG_SHOW_KEY_ERRORS: C2RustUnnamed_0 = 2;
 pub const FLAG_SHOW_KEYS: C2RustUnnamed_0 = 1;
-unsafe extern "C" fn sysctl_dots_to_slashes(mut name: *mut libc::c_char) {
+unsafe fn sysctl_dots_to_slashes(mut name: *mut libc::c_char) {
   let mut cptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut last_good: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -165,7 +165,7 @@ unsafe extern "C" fn sysctl_dots_to_slashes(mut name: *mut libc::c_char) {
   }
   *end = end_ch;
 }
-unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> libc::c_int {
+unsafe fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut fd: libc::c_int = 0;
   let mut retval: libc::c_int = 0;
@@ -333,7 +333,7 @@ unsafe extern "C" fn sysctl_act_on_setting(mut setting: *mut libc::c_char) -> li
   free(outname as *mut libc::c_void); /* d_name is "." or ".." */
   return retval;
 }
-unsafe extern "C" fn sysctl_act_recursive(mut path: *const libc::c_char) -> libc::c_int {
+unsafe fn sysctl_act_recursive(mut path: *const libc::c_char) -> libc::c_int {
   let mut buf: stat = std::mem::zeroed();
   let mut retval: libc::c_int = 0;
   if option_mask32 & FLAG_WRITE as libc::c_int as libc::c_uint == 0
@@ -380,7 +380,7 @@ unsafe extern "C" fn sysctl_act_recursive(mut path: *const libc::c_char) -> libc
  * # Controls IP packet forwarding
  * net.ipv4.ip_forward = 0
  */
-unsafe extern "C" fn sysctl_handle_preload_file(mut filename: *const libc::c_char) -> libc::c_int {
+unsafe fn sysctl_handle_preload_file(mut filename: *const libc::c_char) -> libc::c_int {
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut parse_flags: libc::c_int = 0;
@@ -417,11 +417,7 @@ unsafe extern "C" fn sysctl_handle_preload_file(mut filename: *const libc::c_cha
   }
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn sysctl_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn sysctl_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut retval: libc::c_int = 0;
   let mut opt: libc::c_int = 0;
   opt = crate::libbb::getopt32::getopt32(argv, b"+neAapwq\x00" as *const u8 as *const libc::c_char)

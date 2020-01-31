@@ -24,7 +24,7 @@ pub type C2RustUnnamed = libc::c_uint;
 pub type C2RustUnnamed_0 = libc::c_uint;
 /* wait for vt active */
 /* get keyboard type */
-unsafe extern "C" fn open_a_console(mut fnam: *const libc::c_char) -> libc::c_int {
+unsafe fn open_a_console(mut fnam: *const libc::c_char) -> libc::c_int {
   /* try read-write */
   let mut fd: libc::c_int = open(fnam, 0o2);
 
@@ -45,8 +45,7 @@ unsafe extern "C" fn open_a_console(mut fnam: *const libc::c_char) -> libc::c_in
  * We try several things because opening /dev/console will fail
  * if someone else used X (which does a chown on /dev/console).
  */
-#[no_mangle]
-pub unsafe extern "C" fn get_console_fd_or_die() -> libc::c_int {
+pub unsafe fn get_console_fd_or_die() -> libc::c_int {
   static mut console_names: [*const libc::c_char; 3] = [
     b"/dev/console\x00" as *const u8 as *const libc::c_char,
     b"/dev/tty0\x00" as *const u8 as *const libc::c_char,
@@ -83,8 +82,7 @@ pub unsafe extern "C" fn get_console_fd_or_die() -> libc::c_int {
   );
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn console_make_active(mut fd: libc::c_int, vt_num: libc::c_int) {
+pub unsafe fn console_make_active(mut fd: libc::c_int, vt_num: libc::c_int) {
   crate::libbb::xfuncs_printf::bb_xioctl(
     fd,
     VT_ACTIVATE as libc::c_int as libc::c_uint,

@@ -1333,18 +1333,12 @@ unsafe extern "C" fn common_ping_main(
   /*return EXIT_SUCCESS;*/
 }
 /* FEATURE_FANCY_PING */
-#[no_mangle]
-pub unsafe extern "C" fn ping_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+
+pub unsafe fn ping_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   return common_ping_main(0i32, argv);
 }
-#[no_mangle]
-pub unsafe extern "C" fn ping6_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+
+pub unsafe fn ping6_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   return common_ping_main(OPT_IPV6 as libc::c_int, argv);
 }
 /* from ping6.c:

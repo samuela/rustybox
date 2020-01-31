@@ -40,10 +40,7 @@ unsafe extern "C" fn rtnl_tab_initialize(
   );
   parser = crate::libbb::parse_config::config_open2(
     fullname.as_mut_ptr(),
-    Some(
-      crate::libbb::wfopen::fopen_for_read
-        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
-    ),
+    Some(crate::libbb::wfopen::fopen_for_read as unsafe fn(_: *const libc::c_char) -> *mut FILE),
   );
   while crate::libbb::parse_config::config_read(
     parser,

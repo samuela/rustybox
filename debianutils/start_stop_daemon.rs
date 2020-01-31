@@ -110,7 +110,7 @@ pub const OPT_QUIET: C2RustUnnamed_1 = 8;
 pub const OPT_BACKGROUND: C2RustUnnamed_1 = 4;
 pub const CTX_START: C2RustUnnamed_1 = 2;
 pub const CTX_STOP: C2RustUnnamed_1 = 1;
-unsafe extern "C" fn pid_is_exec(mut pid: pid_t) -> libc::c_int {
+unsafe fn pid_is_exec(mut pid: pid_t) -> libc::c_int {
   let mut bytes: ssize_t = 0;
   let mut buf: [libc::c_char; 29] = [0; 29];
   let mut procname: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -151,7 +151,7 @@ unsafe extern "C" fn pid_is_exec(mut pid: pid_t) -> libc::c_int {
   }
   return 0;
 }
-unsafe extern "C" fn pid_is_name(mut pid: pid_t) -> libc::c_int {
+unsafe fn pid_is_name(mut pid: pid_t) -> libc::c_int {
   /* /proc/PID/stat is "PID (comm_15_bytes_max) ..." */
   let mut buf: [libc::c_char; 32] = [0; 32]; /* should be enough */
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); /* paranoia */
@@ -194,7 +194,7 @@ unsafe extern "C" fn pid_is_name(mut pid: pid_t) -> libc::c_int {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cmdname,
   ) == 0) as libc::c_int;
 }
-unsafe extern "C" fn pid_is_user(mut pid: libc::c_int) -> libc::c_int {
+unsafe fn pid_is_user(mut pid: libc::c_int) -> libc::c_int {
   let mut sb: stat = std::mem::zeroed();
   let mut buf: [libc::c_char; 19] = [0; 19];
   sprintf(
@@ -208,7 +208,7 @@ unsafe extern "C" fn pid_is_user(mut pid: libc::c_int) -> libc::c_int {
   return (sb.st_uid == (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).user_id as uid_t)
     as libc::c_int;
 }
-unsafe extern "C" fn check(mut pid: libc::c_int) {
+unsafe fn check(mut pid: libc::c_int) {
   let mut p: *mut pid_list = std::ptr::null_mut();
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .execname
@@ -237,7 +237,7 @@ unsafe extern "C" fn check(mut pid: libc::c_int) {
   let ref mut fresh0 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).found_procs;
   *fresh0 = p;
 }
-unsafe extern "C" fn do_pidfile() {
+unsafe fn do_pidfile() {
   let mut f: *mut FILE = std::ptr::null_mut();
   let mut pid: libc::c_uint = 0;
   f = crate::libbb::wfopen::fopen_for_read(
@@ -260,7 +260,7 @@ unsafe extern "C" fn do_pidfile() {
     );
   };
 }
-unsafe extern "C" fn do_procinit() {
+unsafe fn do_procinit() {
   let mut procdir: *mut DIR = std::ptr::null_mut();
   let mut entry: *mut dirent = std::ptr::null_mut();
   let mut pid: libc::c_int = 0;
@@ -302,7 +302,7 @@ unsafe extern "C" fn do_procinit() {
     );
   };
 }
-unsafe extern "C" fn do_stop() -> libc::c_int {
+unsafe fn do_stop() -> libc::c_int {
   let mut current_block: u64;
   let mut what: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut p: *mut pid_list = std::ptr::null_mut();
@@ -421,8 +421,7 @@ static mut start_stop_daemon_longopts: [libc::c_char; 156] = [
   120, 101, 99, 0, 1, 120, 112, 105, 100, 102, 105, 108, 101, 0, 1, 112, 114, 101, 116, 114, 121,
   0, 1, 82, 0,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn start_stop_daemon_main(
+pub unsafe fn start_stop_daemon_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

@@ -15,8 +15,7 @@ use crate::librb::size_t;
  * Authors: Alexey Kuznetsov, <kuznet@ms2.inr.ac.ru>
  */
 /* linux/if_arp.h needs it on some systems */
-#[no_mangle]
-pub unsafe extern "C" fn ll_type_n2a(
+pub unsafe fn ll_type_n2a(
   mut type_0: libc::c_int,
   mut buf: *mut libc::c_char,
 ) -> *const libc::c_char {

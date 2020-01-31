@@ -30,7 +30,7 @@ pub type uintptr_t = libc::c_ulong;
 // compress a block of data.
 ************************************************************************/
 #[inline(never)]
-unsafe extern "C" fn do_compress(
+unsafe fn do_compress(
   mut in_0: *const u8,
   mut in_len: libc::c_uint,
   mut out: *mut u8,
@@ -304,8 +304,7 @@ unsafe extern "C" fn do_compress(
 /* **********************************************************************
 // public entry point
 ************************************************************************/
-#[no_mangle]
-pub unsafe extern "C" fn lzo1x_1_15_compress(
+pub unsafe fn lzo1x_1_15_compress(
   mut in_0: *const u8,
   mut in_len: libc::c_uint,
   mut out: *mut u8,

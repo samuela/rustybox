@@ -442,8 +442,7 @@ use libc;
    concat_path_file(path, filename)
    and skipping "." and ".." directory entries
 */
-#[no_mangle]
-pub unsafe extern "C" fn concat_subpath_file(
+pub unsafe fn concat_subpath_file(
   mut path: *const libc::c_char,
   mut f: *const libc::c_char,
 ) -> *mut libc::c_char {

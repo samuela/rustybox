@@ -450,8 +450,7 @@ extern "C" {
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 //kbuild:lib-y += get_shell_name.o
-#[no_mangle]
-pub unsafe extern "C" fn get_shell_name() -> *const libc::c_char {
+pub unsafe fn get_shell_name() -> *const libc::c_char {
   let mut pw: *mut passwd = std::ptr::null_mut();
   let mut shell: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   shell = getenv(b"SHELL\x00" as *const u8 as *const libc::c_char);

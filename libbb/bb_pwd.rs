@@ -50,8 +50,7 @@ unsafe extern "C" fn bb_strtoul(
  * This will allow to stop using libc functions returning
  * pointers to static data (getpwuid)
  */
-#[no_mangle]
-pub unsafe extern "C" fn xgetpwnam(mut name: *const libc::c_char) -> *mut passwd {
+pub unsafe fn xgetpwnam(mut name: *const libc::c_char) -> *mut passwd {
   let mut pw: *mut passwd = bb_internal_getpwnam(name);
   if pw.is_null() {
     crate::libbb::verror_msg::bb_error_msg_and_die(
@@ -61,8 +60,7 @@ pub unsafe extern "C" fn xgetpwnam(mut name: *const libc::c_char) -> *mut passwd
   }
   return pw;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xgetgrnam(mut name: *const libc::c_char) -> *mut group {
+pub unsafe fn xgetgrnam(mut name: *const libc::c_char) -> *mut group {
   let mut gr: *mut group = crate::libpwdgrp::pwd_grp::bb_internal_getgrnam(name);
   if gr.is_null() {
     crate::libbb::verror_msg::bb_error_msg_and_die(
@@ -72,8 +70,7 @@ pub unsafe extern "C" fn xgetgrnam(mut name: *const libc::c_char) -> *mut group 
   }
   return gr;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xgetpwuid(mut uid: uid_t) -> *mut passwd {
+pub unsafe fn xgetpwuid(mut uid: uid_t) -> *mut passwd {
   /* Note: used in nofork applets (whoami), be careful not to leak anything */
   let mut pw: *mut passwd = crate::libpwdgrp::pwd_grp::bb_internal_getpwuid(uid);
   if pw.is_null() {
@@ -84,8 +81,7 @@ pub unsafe extern "C" fn xgetpwuid(mut uid: uid_t) -> *mut passwd {
   }
   return pw;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xgetgrgid(mut gid: gid_t) -> *mut group {
+pub unsafe fn xgetgrgid(mut gid: gid_t) -> *mut group {
   let mut gr: *mut group = bb_internal_getgrgid(gid);
   if gr.is_null() {
     crate::libbb::verror_msg::bb_error_msg_and_die(
@@ -95,19 +91,16 @@ pub unsafe extern "C" fn xgetgrgid(mut gid: gid_t) -> *mut group {
   }
   return gr;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xuid2uname(mut uid: uid_t) -> *mut libc::c_char {
+pub unsafe fn xuid2uname(mut uid: uid_t) -> *mut libc::c_char {
   /* Note: used in nofork applets (whoami), be careful not to leak anything */
   let mut pw: *mut passwd = xgetpwuid(uid);
   return (*pw).pw_name;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xgid2group(mut gid: gid_t) -> *mut libc::c_char {
+pub unsafe fn xgid2group(mut gid: gid_t) -> *mut libc::c_char {
   let mut gr: *mut group = xgetgrgid(gid);
   return (*gr).gr_name;
 }
-#[no_mangle]
-pub unsafe extern "C" fn uid2uname(mut uid: uid_t) -> *mut libc::c_char {
+pub unsafe fn uid2uname(mut uid: uid_t) -> *mut libc::c_char {
   let mut pw: *mut passwd = crate::libpwdgrp::pwd_grp::bb_internal_getpwuid(uid);
   return if !pw.is_null() {
     (*pw).pw_name
@@ -115,8 +108,7 @@ pub unsafe extern "C" fn uid2uname(mut uid: uid_t) -> *mut libc::c_char {
     std::ptr::null_mut::<libc::c_char>()
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn gid2group(mut gid: gid_t) -> *mut libc::c_char {
+pub unsafe fn gid2group(mut gid: gid_t) -> *mut libc::c_char {
   let mut gr: *mut group = bb_internal_getgrgid(gid);
   return if !gr.is_null() {
     (*gr).gr_name
@@ -124,8 +116,7 @@ pub unsafe extern "C" fn gid2group(mut gid: gid_t) -> *mut libc::c_char {
     std::ptr::null_mut::<libc::c_char>()
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn uid2uname_utoa(mut uid: uid_t) -> *mut libc::c_char {
+pub unsafe fn uid2uname_utoa(mut uid: uid_t) -> *mut libc::c_char {
   let mut name: *mut libc::c_char = uid2uname(uid);
   return if !name.is_null() {
     name
@@ -136,8 +127,7 @@ pub unsafe extern "C" fn uid2uname_utoa(mut uid: uid_t) -> *mut libc::c_char {
 /* always sets uid and gid; returns 0 on failure */
 /* always sets uid and gid; exits on failure */
 /* chown-like handling of "user[:[group]" */
-#[no_mangle]
-pub unsafe extern "C" fn gid2group_utoa(mut gid: gid_t) -> *mut libc::c_char {
+pub unsafe fn gid2group_utoa(mut gid: gid_t) -> *mut libc::c_char {
   let mut name: *mut libc::c_char = gid2group(gid);
   return if !name.is_null() {
     name
@@ -145,14 +135,12 @@ pub unsafe extern "C" fn gid2group_utoa(mut gid: gid_t) -> *mut libc::c_char {
     crate::libbb::xfuncs::utoa(gid)
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn xuname2uid(mut name: *const libc::c_char) -> libc::c_long {
+pub unsafe fn xuname2uid(mut name: *const libc::c_char) -> libc::c_long {
   let mut myuser: *mut passwd = std::ptr::null_mut();
   myuser = xgetpwnam(name);
   return (*myuser).pw_uid as libc::c_long;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xgroup2gid(mut name: *const libc::c_char) -> libc::c_long {
+pub unsafe fn xgroup2gid(mut name: *const libc::c_char) -> libc::c_long {
   let mut mygroup: *mut group = std::ptr::null_mut();
   mygroup = xgetgrnam(name);
   return (*mygroup).gr_gid as libc::c_long;
@@ -448,15 +436,14 @@ pub unsafe extern "C" fn xgroup2gid(mut name: *const libc::c_char) -> libc::c_lo
  * for BusyBox since we want to avoid using the glibc NSS stuff, which
  * increases target size and is often not needed on embedded systems.  */
 /* wrapper: allows string to contain numeric uid or gid */
-#[no_mangle]
-pub unsafe extern "C" fn get_ug_id(
+pub unsafe fn get_ug_id(
   mut s: *const libc::c_char,
-  mut xname2id: Option<unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_long>,
+  mut xname2id: unsafe fn(_: *const libc::c_char) -> libc::c_long,
 ) -> libc::c_ulong {
   let mut r: libc::c_ulong = 0;
   r = bb_strtoul(s, 0 as *mut *mut libc::c_char, 10i32);
   if *bb_errno != 0 {
-    return xname2id.expect("non-null function pointer")(s) as libc::c_ulong;
+    return xname2id(s) as libc::c_ulong;
   }
   return r;
 }

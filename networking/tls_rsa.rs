@@ -37,7 +37,7 @@ pub struct psRsaKey_t {
  *  matrixssl-3-7-2b-open/crypto/pubkey/rsa.c
  * and (so far) almost not modified. Changes are flagged with //bbox
  */
-unsafe extern "C" fn pkcs1Pad(
+unsafe fn pkcs1Pad(
   mut in_0: *mut libc::c_uchar,
   mut inlen: uint32,
   mut out: *mut libc::c_uchar,
@@ -101,7 +101,7 @@ unsafe extern "C" fn pkcs1Pad(
   );
   return outlen as int32;
 }
-unsafe extern "C" fn psRsaCrypt(
+unsafe fn psRsaCrypt(
   mut in_0: *const libc::c_uchar,
   mut inlen: uint32,
   mut out: *mut libc::c_uchar,
@@ -299,8 +299,7 @@ unsafe extern "C" fn psRsaCrypt(
 /* Size of the key in bytes */
 /* 1 for optimized */
 //bbox	psPool_t *pool;
-#[no_mangle]
-pub unsafe extern "C" fn psRsaEncryptPub(
+pub unsafe fn psRsaEncryptPub(
   mut key: *mut psRsaKey_t,
   mut in_0: *mut libc::c_uchar,
   mut inlen: uint32,

@@ -164,7 +164,7 @@ pub union C2RustUnnamed_1 {
 
 use libc::FILE;
 #[inline(always)]
-unsafe extern "C" fn xatoul_range(
+unsafe fn xatoul_range(
   mut str: *const libc::c_char,
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
@@ -173,7 +173,7 @@ unsafe extern "C" fn xatoul_range(
     as libc::c_ulong;
 }
 #[inline(always)]
-unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
+unsafe fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
   return crate::libbb::xatonum::xatoull(str) as libc::c_ulong;
 }
 /* We remap '-' to '#' to avoid problems with getopt. */
@@ -193,7 +193,7 @@ static mut flags_ipvx: [u16; 4] = [
   0x10i32 as u16,
   0x8i32 as u16,
 ];
-unsafe extern "C" fn kw_lookup(
+unsafe fn kw_lookup(
   mut kwtbl: *const libc::c_char,
   mut pargs: *mut *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -222,7 +222,7 @@ unsafe extern "C" fn kw_lookup(
 }
 /* Add or delete a route, depending on action. */
 #[inline(never)]
-unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut libc::c_char) {
+unsafe fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut libc::c_char) {
   /* char buffer instead of bona-fide struct avoids aliasing warning */
   let mut rt_buf: [libc::c_char; 120] = [0; 120];
   let rt: *mut rtentry = rt_buf.as_mut_ptr() as *mut libc::c_void as *mut rtentry;
@@ -475,7 +475,7 @@ unsafe extern "C" fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut 
   };
 }
 #[inline(never)]
-unsafe extern "C" fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut libc::c_char) {
+unsafe fn INET6_setroute(mut action: libc::c_int, mut args: *mut *mut libc::c_char) {
   let mut sa6: sockaddr_in6 = std::mem::zeroed();
   let mut rt: in6_rtmsg = std::mem::zeroed();
   let mut prefix_len: libc::c_int = 0;
@@ -623,7 +623,7 @@ static mut flagvals: [libc::c_uint; 11] = [
 ];
 /* Must agree with flagvals[]. */
 static mut flagchars: [libc::c_char; 12] = [85, 71, 72, 82, 68, 77, 68, 65, 67, 33, 110, 0];
-unsafe extern "C" fn set_flags(mut flagstr: *mut libc::c_char, mut flags: libc::c_int) {
+unsafe fn set_flags(mut flagstr: *mut libc::c_char, mut flags: libc::c_int) {
   let mut i: libc::c_int = 0;
   i = 0;
   loop {
@@ -638,8 +638,7 @@ unsafe extern "C" fn set_flags(mut flagstr: *mut libc::c_char, mut flags: libc::
   }
 }
 /* also used in netstat */
-#[no_mangle]
-pub unsafe extern "C" fn bb_displayroutes(mut noresolve: libc::c_int, mut netstatfmt: libc::c_int) {
+pub unsafe fn bb_displayroutes(mut noresolve: libc::c_int, mut netstatfmt: libc::c_int) {
   let mut current_block: u64;
   let mut devname: [libc::c_char; 64] = [0; 64];
   let mut flags: [libc::c_char; 16] = [0; 16];
@@ -776,7 +775,7 @@ pub unsafe extern "C" fn bb_displayroutes(mut noresolve: libc::c_int, mut netsta
   /* EOF with no (nonspace) chars read. */
   fclose(fp);
 }
-unsafe extern "C" fn INET6_displayroutes() {
+unsafe fn INET6_displayroutes() {
   let mut addr6: [libc::c_char; 128] = [0; 128];
   let mut naddr6: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* In addr6x, we store both 40-byte ':'-delimited ipv6 addresses.
@@ -932,11 +931,7 @@ static mut tbl_verb: [libc::c_char; 21] = [
   6, 1, 97, 100, 100, 0, 6, 2, 100, 101, 108, 0, 8, 2, 100, 101, 108, 101, 116, 101, 0,
 ];
 /* Since it's last, we can save a byte. */
-#[no_mangle]
-pub unsafe extern "C" fn route_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn route_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
   let mut what: libc::c_int = 0;
   let mut family: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

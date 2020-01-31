@@ -39,8 +39,7 @@ pub type regex_t = re_pattern_buffer;
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn regcomp_or_errmsg(
+pub unsafe fn regcomp_or_errmsg(
   mut preg: *mut regex_t,
   mut regex: *const libc::c_char,
   mut cflags: libc::c_int,
@@ -55,8 +54,7 @@ pub unsafe extern "C" fn regcomp_or_errmsg(
   }
   return std::ptr::null_mut::<libc::c_char>();
 }
-#[no_mangle]
-pub unsafe extern "C" fn xregcomp(
+pub unsafe fn xregcomp(
   mut preg: *mut regex_t,
   mut regex: *const libc::c_char,
   mut cflags: libc::c_int,

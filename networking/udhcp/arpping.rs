@@ -267,8 +267,7 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 /*u32 ip,*/
 /* Returns 1 if no reply received */
 /* Returns 1 if no reply received */
-#[no_mangle]
-pub unsafe extern "C" fn arpping(
+pub unsafe fn arpping(
   mut test_nip: u32,
   mut safe_mac: *const u8,
   mut from_ip: u32,

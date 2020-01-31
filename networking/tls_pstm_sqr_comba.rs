@@ -70,7 +70,7 @@ pub type pstm_word = uint64;
  Non-unrolled comba squarer
 */
 //bbox: pool unused
-unsafe extern "C" fn pstm_sqr_comba_gen(
+unsafe fn pstm_sqr_comba_gen(
   mut A: *mut pstm_int,
   mut B: *mut pstm_int,
   mut paD: *mut pstm_digit,
@@ -345,8 +345,7 @@ unsafe extern "C" fn pstm_sqr_comba_gen(
 /* *****************************************************************************/
 /*
  */
-#[no_mangle]
-pub unsafe extern "C" fn pstm_sqr_comba(
+pub unsafe fn pstm_sqr_comba(
   mut A: *mut pstm_int,
   mut B: *mut pstm_int,
   mut paD: *mut pstm_digit,

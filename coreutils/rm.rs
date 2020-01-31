@@ -55,11 +55,7 @@ pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
 //usage:#define rm_example_usage
 //usage:       "$ rm -rf /tmp/foo\n"
 /* This is a NOEXEC applet. Be very careful! */
-#[no_mangle]
-pub unsafe extern "C" fn rm_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn rm_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut status: libc::c_int = 0;
   let mut flags: libc::c_int = 0;
   let mut opt: libc::c_uint = 0;

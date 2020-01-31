@@ -32,8 +32,7 @@ extern "C" {
   #[no_mangle]
   fn pivot_root(new_root: *const libc::c_char, put_old: *const libc::c_char) -> libc::c_int;
 }
-#[no_mangle]
-pub unsafe extern "C" fn pivot_root_main(
+pub unsafe fn pivot_root_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

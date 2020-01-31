@@ -157,22 +157,22 @@ pub const MSG: type_id = 2;
 pub const SEM: type_id = 1;
 pub const SHM: type_id = 0;
 #[inline(always)]
-unsafe extern "C" fn xstrtoul(mut str: *const libc::c_char, mut b: libc::c_int) -> libc::c_ulong {
+unsafe fn xstrtoul(mut str: *const libc::c_char, mut b: libc::c_int) -> libc::c_ulong {
   return crate::libbb::xatonum::xstrtoull(str, b) as libc::c_ulong;
 }
 #[inline(always)]
-unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
+unsafe fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
   return crate::libbb::xatonum::xatoull(str) as libc::c_ulong;
 }
 #[inline(always)]
-unsafe extern "C" fn bb_strtoul(
+unsafe fn bb_strtoul(
   mut arg: *const libc::c_char,
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
 ) -> libc::c_ulong {
   return crate::libbb::bb_strtonum::bb_strtoull(arg, endp, base) as libc::c_ulong;
 }
-unsafe extern "C" fn remove_ids(
+unsafe fn remove_ids(
   mut type_0: type_id,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -218,8 +218,7 @@ unsafe extern "C" fn remove_ids(
 //usage:     "\n	-mM	Remove memory segment after last detach"
 //usage:     "\n	-qQ	Remove message queue"
 //usage:     "\n	-sS	Remove semaphore"
-#[no_mangle]
-pub unsafe extern "C" fn ipcrm_main(
+pub unsafe fn ipcrm_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

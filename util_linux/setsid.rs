@@ -36,8 +36,7 @@ extern "C" {
 //usage:       "Run PROG in a new session. PROG will have no controlling terminal\n"
 //usage:       "and will not be affected by keyboard signals (^C etc).\n"
 //usage:     "\n	-c	Set controlling terminal to stdin"
-#[no_mangle]
-pub unsafe extern "C" fn setsid_main(
+pub unsafe fn setsid_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

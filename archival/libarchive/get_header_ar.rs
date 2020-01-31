@@ -52,7 +52,7 @@ pub union C2RustUnnamed {
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
 /* WARNING: Clobbers str[len], so fields must be read in reverse order! */
-unsafe extern "C" fn read_num(
+unsafe fn read_num(
   mut str: *mut libc::c_char,
   mut base: libc::c_int,
   mut len: libc::c_int,
@@ -72,8 +72,7 @@ unsafe extern "C" fn read_num(
   }
   return err as libc::c_uint;
 }
-#[no_mangle]
-pub unsafe extern "C" fn get_header_ar(mut archive_handle: *mut archive_handle_t) -> libc::c_char {
+pub unsafe fn get_header_ar(mut archive_handle: *mut archive_handle_t) -> libc::c_char {
   let mut typed: *mut file_header_t = (*archive_handle).file_header;
   let mut size: libc::c_uint = 0;
   let mut ar: C2RustUnnamed = C2RustUnnamed { raw: [0; 60] };

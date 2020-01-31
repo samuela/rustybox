@@ -30,34 +30,30 @@ pub type C2RustUnnamed = libc::c_uint;
  */
 //#define rotl32(x,n) (((x) << (n)) | ((x) >> (32 - (n))))
 #[inline(always)]
-unsafe extern "C" fn rotl32(mut x: u32, mut n: libc::c_uint) -> u32 {
+unsafe fn rotl32(mut x: u32, mut n: libc::c_uint) -> u32 {
   return x << n | x >> (32i32 as libc::c_uint).wrapping_sub(n);
 }
 //#define rotr32(x,n) (((x) >> (n)) | ((x) << (32 - (n))))
 #[inline(always)]
-unsafe extern "C" fn rotr32(mut x: u32, mut n: libc::c_uint) -> u32 {
+unsafe fn rotr32(mut x: u32, mut n: libc::c_uint) -> u32 {
   return x >> n | x << (32i32 as libc::c_uint).wrapping_sub(n);
 }
 /* rotr64 in needed for sha512 only: */
 //#define rotr64(x,n) (((x) >> (n)) | ((x) << (64 - (n))))
 #[inline(always)]
-unsafe extern "C" fn rotr64(mut x: u64, mut n: libc::c_uint) -> u64 {
+unsafe fn rotr64(mut x: u64, mut n: libc::c_uint) -> u64 {
   return x >> n | x << (64i32 as libc::c_uint).wrapping_sub(n);
 }
 /* rotl64 only used for sha3 currently */
 #[inline(always)]
-unsafe extern "C" fn rotl64(mut x: u64, mut n: libc::c_uint) -> u64 {
+unsafe fn rotl64(mut x: u64, mut n: libc::c_uint) -> u64 {
   return x << n | x >> (64i32 as libc::c_uint).wrapping_sub(n);
 }
 /* Feed data through a temporary buffer.
  * The internal buffer remembers previous data until it has 64
  * bytes worth to pass on.
  */
-unsafe extern "C" fn common64_hash(
-  mut ctx: *mut md5_ctx_t,
-  mut buffer: *const libc::c_void,
-  mut len: size_t,
-) {
+unsafe fn common64_hash(mut ctx: *mut md5_ctx_t, mut buffer: *const libc::c_void, mut len: size_t) {
   let mut bufpos: libc::c_uint = ((*ctx).total64 & 63i32 as libc::c_ulong) as libc::c_uint;
   (*ctx).total64 = ((*ctx).total64 as libc::c_ulong).wrapping_add(len) as u64 as u64;
   loop {
@@ -85,7 +81,7 @@ unsafe extern "C" fn common64_hash(
 }
 /* Buffer is filled up, process it */
 /* Process the remaining bytes in the buffer */
-unsafe extern "C" fn common64_end(mut ctx: *mut md5_ctx_t, mut swap_needed: libc::c_int) {
+unsafe fn common64_end(mut ctx: *mut md5_ctx_t, mut swap_needed: libc::c_int) {
   let mut bufpos: libc::c_uint = ((*ctx).total64 & 63i32 as libc::c_ulong) as libc::c_uint;
   /* Pad the buffer to the next 64-byte boundary with 0x80,0,0,0... */
   let fresh0 = bufpos;
@@ -159,7 +155,7 @@ unsafe extern "C" fn common64_end(mut ctx: *mut md5_ctx_t, mut swap_needed: libc
  * #define FF(b, c, d) ((b & c) | (~b & d))
  */
 /* Hash a single block, 64 bytes long and 4-byte aligned */
-unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
+unsafe fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
   /* Before we start, one word to the strange constants.
     They are defined in RFC 1321 as
     T[i] = (int)(2^32 * fabs(sin(i))), i=1..64
@@ -495,22 +491,16 @@ unsafe extern "C" fn md5_process_block64(mut ctx: *mut md5_ctx_t) {
 /* Initialize structure containing state of computation.
  * (RFC 1321, 3.3: Step 3)
  */
-#[no_mangle]
-pub unsafe extern "C" fn md5_begin(mut ctx: *mut md5_ctx_t) {
+pub unsafe fn md5_begin(mut ctx: *mut md5_ctx_t) {
   (*ctx).hash[0] = 0x67452301i32 as u32;
   (*ctx).hash[1] = 0xefcdab89u32;
   (*ctx).hash[2] = 0x98badcfeu32;
   (*ctx).hash[3] = 0x10325476i32 as u32;
   (*ctx).total64 = 0 as u64;
-  (*ctx).process_block = Some(md5_process_block64 as unsafe extern "C" fn(_: *mut md5_ctx_t) -> ());
+  (*ctx).process_block = Some(md5_process_block64);
 }
 /* Used also for sha1 and sha256 */
-#[no_mangle]
-pub unsafe extern "C" fn md5_hash(
-  mut ctx: *mut md5_ctx_t,
-  mut buffer: *const libc::c_void,
-  mut len: size_t,
-) {
+pub unsafe fn md5_hash(mut ctx: *mut md5_ctx_t, mut buffer: *const libc::c_void, mut len: size_t) {
   common64_hash(ctx, buffer, len);
 }
 /* Process the remaining bytes in the buffer and put result from CTX
@@ -518,11 +508,7 @@ pub unsafe extern "C" fn md5_hash(
  * endian byte order, so that a byte-wise output yields to the wanted
  * ASCII representation of the message digest.
  */
-#[no_mangle]
-pub unsafe extern "C" fn md5_end(
-  mut ctx: *mut md5_ctx_t,
-  mut resbuf: *mut libc::c_void,
-) -> libc::c_uint {
+pub unsafe fn md5_end(mut ctx: *mut md5_ctx_t, mut resbuf: *mut libc::c_void) -> libc::c_uint {
   /* MD5 stores total in LE, need to swap on BE arches: */
   common64_end(ctx, 0);
   /* The MD5 result is in little endian byte order */
@@ -555,7 +541,7 @@ pub unsafe extern "C" fn md5_end(
  * and replace "4096" with something like "2000 + time(NULL) % 2097",
  * then rebuild and compare "shaNNNsum bigfile" results.
  */
-unsafe extern "C" fn sha1_process_block64(mut ctx: *mut sha1_ctx_t) {
+unsafe fn sha1_process_block64(mut ctx: *mut sha1_ctx_t) {
   static mut rconsts: [u32; 4] = [
     0x5a827999i32 as u32,
     0x6ed9eba1i32 as u32,
@@ -749,7 +735,7 @@ static mut sha_K: [sha_K_int; 80] = [
   0x5fcb6fab3ad6faecu64 as sha_K_int,
   0x6c44198c4a475817u64 as sha_K_int,
 ];
-unsafe extern "C" fn sha256_process_block64(mut ctx: *mut sha256_ctx_t) {
+unsafe fn sha256_process_block64(mut ctx: *mut sha256_ctx_t) {
   let mut t: libc::c_uint = 0;
   let mut W: [u32; 64] = [0; 64];
   let mut a: u32 = 0;
@@ -860,7 +846,7 @@ unsafe extern "C" fn sha256_process_block64(mut ctx: *mut sha256_ctx_t) {
   (*ctx).hash[6] = ((*ctx).hash[6] as libc::c_uint).wrapping_add(g) as u32 as u32;
   (*ctx).hash[7] = ((*ctx).hash[7] as libc::c_uint).wrapping_add(h) as u32 as u32;
 }
-unsafe extern "C" fn sha512_process_block128(mut ctx: *mut sha512_ctx_t) {
+unsafe fn sha512_process_block128(mut ctx: *mut sha512_ctx_t) {
   let mut t: libc::c_uint = 0;
   let mut W: [u64; 80] = [0; 80];
   /* On i386, having assignments here (not later as sha256 does)
@@ -962,16 +948,14 @@ unsafe extern "C" fn sha512_process_block128(mut ctx: *mut sha512_ctx_t) {
   (*ctx).hash[7] = ((*ctx).hash[7] as libc::c_ulong).wrapping_add(h) as u64 as u64;
 }
 /* NEED_SHA512 */
-#[no_mangle]
-pub unsafe extern "C" fn sha1_begin(mut ctx: *mut sha1_ctx_t) {
+pub unsafe fn sha1_begin(mut ctx: *mut sha1_ctx_t) {
   (*ctx).hash[0] = 0x67452301i32 as u32;
   (*ctx).hash[1] = 0xefcdab89u32;
   (*ctx).hash[2] = 0x98badcfeu32;
   (*ctx).hash[3] = 0x10325476i32 as u32;
   (*ctx).hash[4] = 0xc3d2e1f0u32;
   (*ctx).total64 = 0 as u64;
-  (*ctx).process_block =
-    Some(sha1_process_block64 as unsafe extern "C" fn(_: *mut sha1_ctx_t) -> ());
+  (*ctx).process_block = Some(sha1_process_block64);
 }
 static mut init256: [u32; 10] = [
   0 as u32,
@@ -1004,21 +988,18 @@ static mut init512_lo: [u32; 10] = [
 // and the output is constructed by omitting last two 64-bit words of it.
 /* Initialize structure containing state of computation.
 (FIPS 180-2:5.3.2)  */
-#[no_mangle]
-pub unsafe extern "C" fn sha256_begin(mut ctx: *mut sha256_ctx_t) {
+pub unsafe fn sha256_begin(mut ctx: *mut sha256_ctx_t) {
   memcpy(
     &mut (*ctx).total64 as *mut u64 as *mut libc::c_void,
     init256.as_ptr() as *const libc::c_void,
     ::std::mem::size_of::<[u32; 10]>() as libc::c_ulong,
   );
   /*ctx->total64 = 0; - done by prepending two 32-bit zeros to init256 */
-  (*ctx).process_block =
-    Some(sha256_process_block64 as unsafe extern "C" fn(_: *mut sha256_ctx_t) -> ());
+  (*ctx).process_block = Some(sha256_process_block64);
 }
 /* Initialize structure containing state of computation.
 (FIPS 180-2:5.3.3)  */
-#[no_mangle]
-pub unsafe extern "C" fn sha512_begin(mut ctx: *mut sha512_ctx_t) {
+pub unsafe fn sha512_begin(mut ctx: *mut sha512_ctx_t) {
   let mut i: libc::c_int = 0;
   /* Two extra iterations zero out ctx->total64[2] */
   let mut tp: *mut u64 = (*ctx).total64.as_mut_ptr();
@@ -1030,8 +1011,7 @@ pub unsafe extern "C" fn sha512_begin(mut ctx: *mut sha512_ctx_t) {
   }
   /*ctx->total64[0] = ctx->total64[1] = 0; - already done */
 }
-#[no_mangle]
-pub unsafe extern "C" fn sha512_hash(
+pub unsafe fn sha512_hash(
   mut ctx: *mut sha512_ctx_t,
   mut buffer: *const libc::c_void,
   mut len: size_t,
@@ -1071,17 +1051,11 @@ pub unsafe extern "C" fn sha512_hash(
 /* Buffer is filled up, process it */
 /* NEED_SHA512 */
 /* Used also for sha256 */
-#[no_mangle]
-pub unsafe extern "C" fn sha1_end(
-  mut ctx: *mut sha1_ctx_t,
-  mut resbuf: *mut libc::c_void,
-) -> libc::c_uint {
+pub unsafe fn sha1_end(mut ctx: *mut sha1_ctx_t, mut resbuf: *mut libc::c_void) -> libc::c_uint {
   let mut hash_size: libc::c_uint = 0;
   /* SHA stores total in BE, need to swap on LE arches: */
   common64_end(ctx, 1i32);
-  hash_size = if (*ctx).process_block
-    == Some(sha1_process_block64 as unsafe extern "C" fn(_: *mut sha1_ctx_t) -> ())
-  {
+  hash_size = if (*ctx).process_block == Some(sha1_process_block64) {
     5i32
   } else {
     8i32
@@ -1120,8 +1094,7 @@ pub unsafe extern "C" fn sha1_end(
   );
   return hash_size;
 }
-#[no_mangle]
-pub unsafe extern "C" fn sha512_end(
+pub unsafe fn sha512_end(
   mut ctx: *mut sha512_ctx_t,
   mut resbuf: *mut libc::c_void,
 ) -> libc::c_uint {
@@ -1253,7 +1226,7 @@ pub unsafe extern "C" fn sha512_end(
 /*
  * In the crypto literature this function is usually called Keccak-f().
  */
-unsafe extern "C" fn sha3_process_block72(mut state: *mut u64) {
+unsafe fn sha3_process_block72(mut state: *mut u64) {
   /* Native 64-bit algorithm */
   static mut IOTA_CONST: [u16; 24] = [
     0x1i32 as u16,
@@ -1416,8 +1389,7 @@ unsafe extern "C" fn sha3_process_block72(mut state: *mut u64) {
     round = round.wrapping_add(1)
   }
 }
-#[no_mangle]
-pub unsafe extern "C" fn sha3_begin(mut ctx: *mut sha3_ctx_t) {
+pub unsafe fn sha3_begin(mut ctx: *mut sha3_ctx_t) {
   memset(
     ctx as *mut libc::c_void,
     0,
@@ -1427,8 +1399,7 @@ pub unsafe extern "C" fn sha3_begin(mut ctx: *mut sha3_ctx_t) {
   (*ctx).input_block_bytes = ((1600i32 - 512i32 * 2i32) / 8i32) as libc::c_uint;
   /* 72 bytes */
 }
-#[no_mangle]
-pub unsafe extern "C" fn sha3_hash(
+pub unsafe fn sha3_hash(
   mut ctx: *mut sha3_ctx_t,
   mut buffer: *const libc::c_void,
   mut len: size_t,
@@ -2011,11 +1982,7 @@ pub unsafe extern "C" fn sha3_hash(
 /* 4 elements for md5, 5 for sha1, 8 for sha256 */
 /* must be directly before hash[] */
 /* always correctly aligned for uint64_t */
-#[no_mangle]
-pub unsafe extern "C" fn sha3_end(
-  mut ctx: *mut sha3_ctx_t,
-  mut resbuf: *mut libc::c_void,
-) -> libc::c_uint {
+pub unsafe fn sha3_end(mut ctx: *mut sha3_ctx_t, mut resbuf: *mut libc::c_void) -> libc::c_uint {
   /* Padding */
   let mut buf: *mut u8 = (*ctx).state.as_mut_ptr() as *mut u8;
   /*

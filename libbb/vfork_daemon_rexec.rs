@@ -42,8 +42,7 @@ pub const DAEMON_CHDIR_ROOT: C2RustUnnamed = 1;
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn set_task_comm(mut comm: *const libc::c_char) {
+pub unsafe fn set_task_comm(mut comm: *const libc::c_char) {
   /* okay if too long (truncates) */
   prctl(15i32, comm as libc::c_long, 0, 0, 0);
 }
@@ -55,8 +54,7 @@ pub unsafe extern "C" fn set_task_comm(mut comm: *const libc::c_char) {
  */
 /* This does a fork/exec in one call, using vfork().  Returns PID of new child,
  * -1 for failure.  Runs argv[0], searching path if that has no / in it. */
-#[no_mangle]
-pub unsafe extern "C" fn spawn(mut argv: *mut *mut libc::c_char) -> pid_t {
+pub unsafe fn spawn(mut argv: *mut *mut libc::c_char) -> pid_t {
   /* Compiler should not optimize stores here */
   let mut failed: libc::c_int = 0;
   let mut pid: pid_t = 0;
@@ -95,24 +93,21 @@ pub unsafe extern "C" fn spawn(mut argv: *mut *mut libc::c_char) -> pid_t {
   return pid;
 }
 /* Die with an error message if we can't spawn a child process. */
-#[no_mangle]
-pub unsafe extern "C" fn xspawn(mut argv: *mut *mut libc::c_char) -> pid_t {
+pub unsafe fn xspawn(mut argv: *mut *mut libc::c_char) -> pid_t {
   let mut pid: pid_t = spawn(argv);
   if pid < 0 {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(*argv);
   }
   return pid;
 }
-#[no_mangle]
-pub unsafe extern "C" fn spawn_and_wait(mut argv: *mut *mut libc::c_char) -> libc::c_int {
+pub unsafe fn spawn_and_wait(mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut rc: libc::c_int = 0;
   rc = spawn(argv);
   return crate::libbb::xfuncs::wait4pid(rc);
 }
 /* Due to a #define in libbb.h on MMU systems we actually have 1 argument -
  * char **argv "vanishes" */
-#[no_mangle]
-pub unsafe extern "C" fn bb_daemonize_or_rexec(mut flags: libc::c_int) {
+pub unsafe fn bb_daemonize_or_rexec(mut flags: libc::c_int) {
   let mut fd: libc::c_int = 0;
   if flags & DAEMON_CHDIR_ROOT as libc::c_int != 0 {
     crate::libbb::xfuncs_printf::xchdir(b"/\x00" as *const u8 as *const libc::c_char);
@@ -515,7 +510,6 @@ pub unsafe extern "C" fn bb_daemonize_or_rexec(mut flags: libc::c_int) {
  */
 /* internal use */
 //DAEMON_DOUBLE_FORK     = 1 << 4, /* double fork to avoid controlling tty */
-#[no_mangle]
-pub unsafe extern "C" fn bb_sanitize_stdio() {
+pub unsafe fn bb_sanitize_stdio() {
   bb_daemonize_or_rexec(DAEMON_ONLY_SANITIZE as libc::c_int);
 }

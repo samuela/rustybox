@@ -39,11 +39,7 @@ use libc;
 //usage:       "$ ls -l /tmp/foo\n"
 //usage:       "-r--r--r--    1 andersen root            0 Apr 12 18:25 /tmp/foo\n"
 /* This is a NOEXEC applet. Be very careful! */
-#[no_mangle]
-pub unsafe extern "C" fn chgrp_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn chgrp_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   /* "chgrp [opts] abc file(s)" == "chown [opts] :abc file(s)" */
   let mut p: *mut *mut libc::c_char = argv;
   loop {

@@ -227,8 +227,7 @@ pub const _SC_ARG_MAX: C2RustUnnamed = 0;
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_arg_max() -> libc::c_uint {
+pub unsafe fn bb_arg_max() -> libc::c_uint {
   let mut r: libc::c_long = sysconf(_SC_ARG_MAX as libc::c_int);
   /* I've seen a version of uclibc which returned -1.
    * Guard about it, and also avoid insanely large values
@@ -478,7 +477,6 @@ pub unsafe extern "C" fn bb_arg_max() -> libc::c_uint {
 /* Never returns NULL */
 /* Else use variable one (a bit more expensive) */
 /* Return the number of clock ticks per second. */
-#[no_mangle]
-pub unsafe extern "C" fn bb_clk_tck() -> libc::c_uint {
+pub unsafe fn bb_clk_tck() -> libc::c_uint {
   return sysconf(_SC_CLK_TCK as libc::c_int) as libc::c_uint;
 }

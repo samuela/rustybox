@@ -106,10 +106,10 @@ pub struct globals {
   pub orig_termios: termios,
 }
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
-unsafe extern "C" fn restore_term() {
+unsafe fn restore_term() {
   crate::libbb::xfuncs::tcsetattr_stdin_TCSANOW(&mut (*ptr_to_globals).orig_termios);
   printf(b"\x1b[?1049l\x00" as *const u8 as *const libc::c_char);
   crate::libbb::xfuncs_printf::fflush_all();
@@ -123,7 +123,7 @@ unsafe extern "C" fn sig_catcher(mut sig: libc::c_int) {
   restore_term();
   crate::libbb::signals::kill_myself_with_sig(sig);
 }
-unsafe extern "C" fn format_line(
+unsafe fn format_line(
   mut hex: *mut libc::c_char,
   mut data: *mut u8,
   mut offset: off_t,
@@ -191,7 +191,7 @@ unsafe extern "C" fn format_line(
   *text = '\u{0}' as i32 as libc::c_char;
   return ofs_pos;
 }
-unsafe extern "C" fn redraw(mut cursor: libc::c_uint) {
+unsafe fn redraw(mut cursor: libc::c_uint) {
   let mut data: *mut u8 = std::ptr::null_mut();
   let mut offset: off_t = 0;
   let mut i: libc::c_uint = 0;
@@ -233,7 +233,7 @@ unsafe extern "C" fn redraw(mut cursor: libc::c_uint) {
       .wrapping_add((cursor & 0xfi32 as libc::c_uint).wrapping_mul(3i32 as libc::c_uint)),
   );
 }
-unsafe extern "C" fn redraw_cur_line() {
+unsafe fn redraw_cur_line() {
   let mut buf: [libc::c_char; 88] = [0; 88];
   let mut data: *mut u8 = std::ptr::null_mut();
   let mut offset: off_t = 0;
@@ -252,7 +252,7 @@ unsafe extern "C" fn redraw_cur_line() {
   );
 }
 /* if remappers return 0, no change was done */
-unsafe extern "C" fn remap(mut cur_pos: libc::c_uint) -> libc::c_int {
+unsafe fn remap(mut cur_pos: libc::c_uint) -> libc::c_int {
   if !(*ptr_to_globals).baseaddr.is_null() {
     munmap(
       (*ptr_to_globals).baseaddr as *mut libc::c_void,
@@ -286,7 +286,7 @@ unsafe extern "C" fn remap(mut cur_pos: libc::c_uint) -> libc::c_int {
   } /* can't move mapping even further, it's at the end already */
   return 1i32; /* constant on most arches */
 }
-unsafe extern "C" fn move_mapping_further() -> libc::c_int {
+unsafe fn move_mapping_further() -> libc::c_int {
   let mut pos: libc::c_uint = 0;
   let mut pagesize: libc::c_uint = 0;
   if (*ptr_to_globals).size - (*ptr_to_globals).offset < (64i32 * 1024i32) as libc::c_long {
@@ -316,7 +316,7 @@ unsafe extern "C" fn move_mapping_further() -> libc::c_int {
   }
   return 0;
 }
-unsafe extern "C" fn move_mapping_lower() -> libc::c_int {
+unsafe fn move_mapping_lower() -> libc::c_int {
   let mut pos: libc::c_uint = 0;
   let mut pagesize: libc::c_uint = 0;
   if (*ptr_to_globals).offset == 0 {
@@ -342,8 +342,7 @@ unsafe extern "C" fn move_mapping_lower() -> libc::c_int {
 //usage:	"FILE"
 //usage:#define hexedit_full_usage "\n\n"
 //usage:	"Edit FILE in hexadecimal"
-#[no_mangle]
-pub unsafe extern "C" fn hexedit_main(
+pub unsafe fn hexedit_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -378,10 +377,7 @@ pub unsafe extern "C" fn hexedit_main(
     &mut (*ptr_to_globals).orig_termios,
     1i32 << 1i32 | 1i32 << 2i32,
   );
-  crate::libbb::signals::bb_signals(
-    BB_FATAL_SIGS as libc::c_int,
-    Some(sig_catcher as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  crate::libbb::signals::bb_signals(BB_FATAL_SIGS as libc::c_int, Some(sig_catcher));
   remap(0i32 as libc::c_uint);
   redraw(0i32 as libc::c_uint);
   loop

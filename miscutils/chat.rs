@@ -78,7 +78,7 @@ unsafe extern "C" fn signal_handler(mut _signo: libc::c_int) {
   // report I/O error condition
   bb_got_signal = ERR_IO as libc::c_int as smallint;
 }
-unsafe extern "C" fn unescape(mut s: *mut libc::c_char, mut nocr: *mut libc::c_int) -> size_t {
+unsafe fn unescape(mut s: *mut libc::c_char, mut nocr: *mut libc::c_int) -> size_t {
   let mut start: *mut libc::c_char = s;
   let mut p: *mut libc::c_char = s;
   while *s != 0 {
@@ -135,11 +135,7 @@ unsafe extern "C" fn unescape(mut s: *mut libc::c_char, mut nocr: *mut libc::c_i
   *p = '\u{0}' as i32 as libc::c_char;
   return p.wrapping_offset_from(start) as libc::c_long as size_t;
 }
-#[no_mangle]
-pub unsafe extern "C" fn chat_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn chat_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut record_fd: libc::c_int = -1i32;
   let mut echo: bool = 0 != 0;
@@ -155,7 +151,7 @@ pub unsafe extern "C" fn chat_main(
   // trap vanilla signals to prevent process from being killed suddenly
   crate::libbb::signals::bb_signals(
     0 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 15i32) + (1i32 << 13i32),
-    Some(signal_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(signal_handler),
   );
   crate::libbb::getopt32::getopt32(argv, b"vVsSE\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
@@ -185,7 +181,7 @@ pub unsafe extern "C" fn chat_main(
         signal(
           1i32,
           if onoff as libc::c_int != 0 {
-            Some(signal_handler as unsafe extern "C" fn(_: libc::c_int) -> ())
+            Some(signal_handler)
           } else {
             ::std::mem::transmute::<libc::intptr_t, __sighandler_t>(1i32 as libc::intptr_t)
           },

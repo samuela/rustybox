@@ -76,7 +76,7 @@ pub const OPT_o: C2RustUnnamed_0 = 4;
 // read message for recipients, append them to those on cmdline
 pub const OPT_f: C2RustUnnamed_0 = 2;
 #[inline(always)]
-unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
+unsafe fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   let mut b: libc::c_uchar = (a as libc::c_int - '0' as i32) as libc::c_uchar;
   if b as libc::c_int <= 9i32 {
     return (b as libc::c_int <= 9i32) as libc::c_int;
@@ -85,10 +85,10 @@ unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   return (b as libc::c_int <= 'z' as i32 - 'a' as i32) as libc::c_int;
 }
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
-unsafe extern "C" fn send_r_n(mut s: *const libc::c_char) {
+unsafe fn send_r_n(mut s: *const libc::c_char) {
   if (*ptr_to_globals).verbose != 0 {
     crate::libbb::verror_msg::bb_error_msg(
       b"send:\'%s\'\x00" as *const u8 as *const libc::c_char,
@@ -97,7 +97,7 @@ unsafe extern "C" fn send_r_n(mut s: *const libc::c_char) {
   }
   printf(b"%s\r\n\x00" as *const u8 as *const libc::c_char, s);
 }
-unsafe extern "C" fn smtp_checkp(
+unsafe fn smtp_checkp(
   mut fmt: *const libc::c_char,
   mut param: *const libc::c_char,
   mut code: libc::c_int,
@@ -144,14 +144,14 @@ unsafe extern "C" fn smtp_checkp(
     msg,
   );
 }
-unsafe extern "C" fn smtp_check(
+unsafe fn smtp_check(
   mut fmt: *const libc::c_char,
   mut code: libc::c_int,
 ) -> libc::c_int {
   return smtp_checkp(fmt, 0 as *const libc::c_char, code);
 }
 // strip argument of bad chars
-unsafe extern "C" fn sane_address(mut str: *mut libc::c_char) -> *mut libc::c_char {
+unsafe fn sane_address(mut str: *mut libc::c_char) -> *mut libc::c_char {
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   crate::libbb::trim::trim(str);
   s = str;
@@ -182,7 +182,7 @@ unsafe extern "C" fn sane_address(mut str: *mut libc::c_char) -> *mut libc::c_ch
   return str;
 }
 // check for an address inside angle brackets, if not found fall back to normal
-unsafe extern "C" fn angle_address(mut str: *mut libc::c_char) -> *mut libc::c_char {
+unsafe fn angle_address(mut str: *mut libc::c_char) -> *mut libc::c_char {
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut e: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   e = crate::libbb::trim::trim(str);
@@ -198,7 +198,7 @@ unsafe extern "C" fn angle_address(mut str: *mut libc::c_char) -> *mut libc::c_c
   }
   return sane_address(str);
 }
-unsafe extern "C" fn rcptto(mut s: *const libc::c_char) {
+unsafe fn rcptto(mut s: *const libc::c_char) {
   if *s == 0 {
     return;
   }
@@ -217,7 +217,7 @@ unsafe extern "C" fn rcptto(mut s: *const libc::c_char) {
   };
 }
 // send to a list of comma separated addresses
-unsafe extern "C" fn rcptto_list(mut list: *const libc::c_char) {
+unsafe fn rcptto_list(mut list: *const libc::c_char) {
   let mut free_me: *mut libc::c_char = crate::libbb::xfuncs_printf::xstrdup(list);
   let mut str: *mut libc::c_char = free_me;
   let mut s: *mut libc::c_char = free_me;
@@ -241,8 +241,7 @@ unsafe extern "C" fn rcptto_list(mut list: *const libc::c_char) {
   }
   free(free_me as *mut libc::c_void);
 }
-#[no_mangle]
-pub unsafe extern "C" fn sendmail_main(
+pub unsafe fn sendmail_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

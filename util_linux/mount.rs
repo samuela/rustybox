@@ -223,7 +223,7 @@ static mut mount_option_str: [libc::c_char; 345] = [
   109, 97, 107, 101, 45, 114, 117, 110, 98, 105, 110, 100, 97, 98, 108, 101, 0, 114, 111, 0, 114,
   119, 0, 114, 101, 109, 111, 117, 110, 116, 0, 0,
 ];
-unsafe extern "C" fn verbose_mount(
+unsafe fn verbose_mount(
   mut source: *const libc::c_char,
   mut target: *const libc::c_char,
   mut filesystemtype: *const libc::c_char,
@@ -247,7 +247,7 @@ unsafe extern "C" fn verbose_mount(
   return rc;
 }
 // Append mount options to string
-unsafe extern "C" fn append_mount_options(
+unsafe fn append_mount_options(
   mut oldopts: *mut *mut libc::c_char,
   mut newopts: *const libc::c_char,
 ) {
@@ -301,7 +301,7 @@ unsafe extern "C" fn append_mount_options(
 }
 // Use the mount_options list to parse options into flags.
 // Also update list of unrecognized options if unrecognized != NULL
-unsafe extern "C" fn parse_mount_options(
+unsafe fn parse_mount_options(
   mut options: *mut libc::c_char,
   mut unrecognized: *mut *mut libc::c_char,
 ) -> libc::c_ulong {
@@ -393,7 +393,7 @@ unsafe extern "C" fn parse_mount_options(
   return flags;
 }
 // Return a list of all block device backed filesystems
-unsafe extern "C" fn get_block_backed_filesystems() -> *mut llist_t {
+unsafe fn get_block_backed_filesystems() -> *mut llist_t {
   static mut filesystems: [[libc::c_char; 18]; 2] = [
     [
       47, 101, 116, 99, 47, 102, 105, 108, 101, 115, 121, 115, 116, 101, 109, 115, 0, 0,
@@ -445,7 +445,7 @@ unsafe extern "C" fn get_block_backed_filesystems() -> *mut llist_t {
 }
 // Perform actual mount of specific filesystem at specific location.
 // NB: mp->xxx fields may be trashed on exit
-unsafe extern "C" fn mount_it_now(
+unsafe fn mount_it_now(
   mut mp: *mut mntent,
   mut vfsflags: libc::c_ulong,
   mut filteropts: *mut libc::c_char,
@@ -597,7 +597,7 @@ unsafe extern "C" fn mount_it_now(
  * For older kernels, you must build busybox with ENABLE_FEATURE_MOUNT_NFS.
  * (However, note that then you lose any chances that NFS over IPv6 would work).
  */
-unsafe extern "C" fn nfsmount(
+unsafe fn nfsmount(
   mut mp: *mut mntent,
   mut vfsflags: libc::c_ulong,
   mut filteropts: *mut libc::c_char,
@@ -639,7 +639,7 @@ unsafe extern "C" fn nfsmount(
 // Mount one directory.  Handles CIFS, NFS, loopback, autobind, and filesystem
 // type detection.  Returns 0 for success, nonzero for failure.
 // NB: mp->xxx fields may be trashed on exit
-unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_int) -> libc::c_int {
+unsafe fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_int) -> libc::c_int {
   let mut loopfd: libc::c_int = -1i32;
   let mut rc: libc::c_int = -1i32;
   let mut vfsflags: libc::c_ulong = 0;
@@ -874,7 +874,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
         //     .is_null()
         // {
         //   atexit(Some(
-        //     delete_block_backed_filesystems as unsafe extern "C" fn() -> (),
+        //     delete_block_backed_filesystems as unsafe fn() -> (),
         //   ));
         // }
       }
@@ -926,7 +926,7 @@ unsafe extern "C" fn singlemount(mut mp: *mut mntent, mut ignore_busy: libc::c_i
 //
 // It is different from -t in that each option is matched exactly; a leading
 // "no" at the beginning of one option does not negate the rest.
-unsafe extern "C" fn match_opt(
+unsafe fn match_opt(
   mut fs_opt_in: *const libc::c_char,
   mut O_opt: *const libc::c_char,
 ) -> libc::c_int {
@@ -982,11 +982,7 @@ unsafe extern "C" fn match_opt(
 }
 // Parse options, if necessary parse fstab/mtab, and call singlemount for
 // each directory to be mounted.
-#[no_mangle]
-pub unsafe extern "C" fn mount_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn mount_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut cmdopts: *mut libc::c_char =
     crate::libbb::xfuncs_printf::xzalloc(1i32 as size_t) as *mut libc::c_char;
   let mut fstype: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

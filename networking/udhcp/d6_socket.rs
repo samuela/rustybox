@@ -199,8 +199,7 @@ pub struct sockaddr_ll {
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn d6_read_interface(
+pub unsafe fn d6_read_interface(
   mut interface: *const libc::c_char,
   mut ifindex: *mut libc::c_int,
   mut nip6: *mut in6_addr,
@@ -383,11 +382,7 @@ pub unsafe extern "C" fn d6_read_interface(
   }
   return retval;
 }
-#[no_mangle]
-pub unsafe extern "C" fn d6_listen_socket(
-  mut port: libc::c_int,
-  mut inf: *const libc::c_char,
-) -> libc::c_int {
+pub unsafe fn d6_listen_socket(mut port: libc::c_int, mut inf: *const libc::c_char) -> libc::c_int {
   let mut fd: libc::c_int = 0;
   let mut addr: sockaddr_in6 = std::mem::zeroed();
   if dhcp_verbose >= 1i32 as libc::c_uint {

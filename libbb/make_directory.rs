@@ -30,8 +30,7 @@ pub const FILEUTILS_RECUR: C2RustUnnamed = 4;
 pub const FILEUTILS_DEREFERENCE: C2RustUnnamed = 2;
 pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
 
-#[no_mangle]
-pub unsafe extern "C" fn bb_make_directory(
+pub unsafe fn bb_make_directory(
   mut path: *mut libc::c_char,
   mut mode: libc::c_long,
   mut flags: libc::c_int,

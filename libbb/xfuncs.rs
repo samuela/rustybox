@@ -357,7 +357,7 @@ pub unsafe fn full_write2_str(mut string: *const libc::c_char) -> ssize_t {
   return crate::libbb::full_write::full_write(2i32, string as *const libc::c_void, strlen(string));
 }
 
-unsafe extern "C" fn wh_helper(
+unsafe fn wh_helper(
   mut value: libc::c_int,
   mut def_val: libc::c_int,
   mut env_name: *const libc::c_char,

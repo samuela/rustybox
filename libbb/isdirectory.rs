@@ -91,8 +91,7 @@ use libc::stat;
  * Return TRUE if fileName is a directory.
  * Nonexistent files return FALSE.
  */
-#[no_mangle]
-pub unsafe extern "C" fn is_directory(
+pub unsafe fn is_directory(
   mut fileName: *const libc::c_char,
   mut followLinks: libc::c_int,
 ) -> libc::c_int {

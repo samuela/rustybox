@@ -20,8 +20,7 @@ pub const VISIBLE_ENDLINE: C2RustUnnamed_0 = 1;
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn fputc_printable(mut ch: libc::c_int, mut file: *mut FILE) {
+pub unsafe fn fputc_printable(mut ch: libc::c_int, mut file: *mut FILE) {
   let mut current_block: u64;
   if ch & 0x80i32 + PRINTABLE_META as libc::c_int == 0x80i32 + PRINTABLE_META as libc::c_int {
     fputs_unlocked(b"M-\x00" as *const u8 as *const libc::c_char, file);
@@ -279,8 +278,7 @@ pub unsafe extern "C" fn fputc_printable(mut ch: libc::c_int, mut file: *mut FIL
  * else it is printed as-is (except for ch = 0x9b) */
 /* Return a string that is the printable representation of character ch.
  * Buffer must hold at least four characters. */
-#[no_mangle]
-pub unsafe extern "C" fn visible(
+pub unsafe fn visible(
   mut ch: libc::c_uint,
   mut buf: *mut libc::c_char,
   mut flags: libc::c_int,

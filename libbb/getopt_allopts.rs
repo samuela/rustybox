@@ -89,8 +89,7 @@ extern "C" {
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
 //kbuild:lib-y += getopt_allopts.o
-#[no_mangle]
-pub unsafe extern "C" fn make_all_argv_opts(mut argv: *mut *mut libc::c_char) {
+pub unsafe fn make_all_argv_opts(mut argv: *mut *mut libc::c_char) {
   loop
   /* Note: we skip argv[0] */
   {

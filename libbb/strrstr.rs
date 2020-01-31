@@ -86,8 +86,7 @@ extern "C" {
  * The strrstr() function finds the last occurrence of the substring needle
  * in the string haystack. The terminating nul characters are not compared.
  */
-#[no_mangle]
-pub unsafe extern "C" fn strrstr(
+pub unsafe fn strrstr(
   mut haystack: *const libc::c_char,
   mut needle: *const libc::c_char,
 ) -> *mut libc::c_char {

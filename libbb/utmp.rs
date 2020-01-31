@@ -50,13 +50,12 @@ pub struct C2RustUnnamed {
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-unsafe extern "C" fn touch(mut filename: *const libc::c_char) {
+unsafe fn touch(mut filename: *const libc::c_char) {
   if access(filename, 4i32 | 2i32) == -1i32 {
     close(open(filename, 0o1i32 | 0o100i32, 0o664i32));
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn write_new_utmp(
+pub unsafe fn write_new_utmp(
   mut pid: pid_t,
   mut new_type: libc::c_int,
   mut tty_name: *const libc::c_char,
@@ -123,8 +122,7 @@ pub unsafe extern "C" fn write_new_utmp(
 /*
  * Read "man utmp" to make sense out of it.
  */
-#[no_mangle]
-pub unsafe extern "C" fn update_utmp(
+pub unsafe fn update_utmp(
   mut pid: pid_t,
   mut new_type: libc::c_int,
   mut tty_name: *const libc::c_char,
@@ -521,8 +519,7 @@ pub unsafe extern "C" fn update_utmp(
  * We do not bother actually clearing fields:
  * it might be interesting to know who was logged in and from where
  */
-#[no_mangle]
-pub unsafe extern "C" fn update_utmp_DEAD_PROCESS(mut pid: pid_t) {
+pub unsafe fn update_utmp_DEAD_PROCESS(mut pid: pid_t) {
   update_utmp(
     pid,
     8i32,

@@ -520,7 +520,7 @@ pub unsafe fn setsockopt_bindtodevice(
   }
   return r;
 }
-unsafe extern "C" fn get_lsa(
+unsafe fn get_lsa(
   mut fd: libc::c_int,
   mut get_name: Option<
     unsafe extern "C" fn(_: libc::c_int, _: *mut sockaddr, _: *mut socklen_t) -> libc::c_int,
@@ -558,14 +558,7 @@ pub unsafe fn get_sock_lsa(mut fd: libc::c_int) -> *mut len_and_sockaddr {
       Option<
         unsafe extern "C" fn(_: libc::c_int, _: *mut sockaddr, _: *mut socklen_t) -> libc::c_int,
       >,
-    >(Some(
-      getsockname
-        as unsafe extern "C" fn(
-          _: libc::c_int,
-          _: __SOCKADDR_ARG,
-          _: *mut socklen_t,
-        ) -> libc::c_int,
-    )),
+    >(Some(getsockname)),
   );
 }
 pub unsafe fn get_peer_lsa(mut fd: libc::c_int) -> *mut len_and_sockaddr {
@@ -578,14 +571,7 @@ pub unsafe fn get_peer_lsa(mut fd: libc::c_int) -> *mut len_and_sockaddr {
       Option<
         unsafe extern "C" fn(_: libc::c_int, _: *mut sockaddr, _: *mut socklen_t) -> libc::c_int,
       >,
-    >(Some(
-      getpeername
-        as unsafe extern "C" fn(
-          _: libc::c_int,
-          _: __SOCKADDR_ARG,
-          _: *mut socklen_t,
-        ) -> libc::c_int,
-    )),
+    >(Some(getpeername)),
   );
 }
 pub unsafe fn xconnect(mut s: libc::c_int, mut s_addr: *const sockaddr, mut addrlen: socklen_t) {
@@ -679,7 +665,7 @@ pub unsafe fn set_nport(mut sa: *mut sockaddr, mut port: libc::c_uint) {
 }
 /* host: "1.2.3.4[:port]", "www.google.com[:port]"
  * port: if neither of above specifies port # */
-unsafe extern "C" fn str2sockaddr(
+unsafe fn str2sockaddr(
   mut host: *const libc::c_char,
   mut port: libc::c_int,
   mut af: sa_family_t,
@@ -992,7 +978,7 @@ pub unsafe fn xsocket_type(
 pub unsafe fn xsocket_stream(mut lsap: *mut *mut len_and_sockaddr) -> libc::c_int {
   return xsocket_type(lsap, 0, SOCK_STREAM as libc::c_int);
 }
-unsafe extern "C" fn create_and_bind_or_die(
+unsafe fn create_and_bind_or_die(
   mut bindaddr: *const libc::c_char,
   mut port: libc::c_int,
   mut sock_type: libc::c_int,
@@ -1097,10 +1083,7 @@ pub unsafe fn xconnect_stream(mut lsa: *const len_and_sockaddr) -> libc::c_int {
   xconnect(fd, &(*lsa).u.sa, (*lsa).len);
   return fd;
 }
-unsafe extern "C" fn sockaddr2str(
-  mut sa: *const sockaddr,
-  mut flags: libc::c_int,
-) -> *mut libc::c_char {
+unsafe fn sockaddr2str(mut sa: *const sockaddr, mut flags: libc::c_int) -> *mut libc::c_char {
   let mut host: [libc::c_char; 128] = [0; 128];
   let mut serv: [libc::c_char; 16] = [0; 16];
   let mut rc: libc::c_int = 0;

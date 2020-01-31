@@ -29,8 +29,7 @@ extern "C" {
 //usage:       "Print environment VARIABLEs.\n"
 //usage:       "If no VARIABLE specified, print all."
 /* This is a NOFORK applet. Be very careful! */
-#[no_mangle]
-pub unsafe extern "C" fn printenv_main(
+pub unsafe fn printenv_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

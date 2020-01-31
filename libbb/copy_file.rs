@@ -286,8 +286,7 @@ unsafe extern "C" fn ask_and_unlink(
  *  0 copy is made or user answered "no" in interactive mode
  *    (failures to preserve mode/owner/times are not reported in exit code)
  */
-#[no_mangle]
-pub unsafe extern "C" fn copy_file(
+pub unsafe fn copy_file(
   mut source: *const libc::c_char,
   mut dest: *const libc::c_char,
   mut flags: libc::c_int,
@@ -306,11 +305,10 @@ pub unsafe extern "C" fn copy_file(
   /* Inverse of cp -d ("cp without -d") */
   if (if flags & FILEUTILS_DEREFERENCE as libc::c_int + FILEUTILS_DEREFERENCE_L0 as libc::c_int != 0
   {
-    Some(stat as unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int)
+    stat
   } else {
-    Some(lstat as unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int)
-  })
-  .expect("non-null function pointer")(source, &mut source_stat)
+    lstat
+  })(source, &mut source_stat)
     < 0
   {
     /* This may be a dangling symlink.
@@ -734,14 +732,9 @@ pub unsafe extern "C" fn copy_file(
    * if (DEREF && MAKE_SOFTLINK) source = realpath(source) ?
    * (but realpath returns NULL on dangling symlinks...) */
   lf = if flags & FILEUTILS_MAKE_SOFTLINK as libc::c_int != 0 {
-    Some(
-      symlink
-        as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int,
-    )
+    Some(symlink)
   } else {
-    Some(
-      link as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int,
-    )
+    Some(link)
   };
   if lf.expect("non-null function pointer")(source, dest) < 0 {
     ovr = ask_and_unlink(dest, flags) as smallint;

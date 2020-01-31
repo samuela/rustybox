@@ -18,8 +18,7 @@ extern "C" {
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn header_verbose_list(mut file_header: *const file_header_t) {
+pub unsafe fn header_verbose_list(mut file_header: *const file_header_t) {
   let mut tm_time: tm = std::mem::zeroed(); //localtime(&file_header->mtime);
   let mut ptm: *mut tm = &mut tm_time;
   let mut uid: [libc::c_char; 14] = [0; 14];

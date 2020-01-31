@@ -310,8 +310,7 @@ pub struct utsname {
  * This is an illegal first character for a hostname.
  * The returned malloced string must be freed by the caller.
  */
-#[no_mangle]
-pub unsafe extern "C" fn safe_gethostname() -> *mut libc::c_char {
+pub unsafe fn safe_gethostname() -> *mut libc::c_char {
   let mut uts: utsname = utsname {
     sysname: [0; 65],
     nodename: [0; 65],

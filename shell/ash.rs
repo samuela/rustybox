@@ -14979,11 +14979,7 @@ unsafe extern "C" fn reset() {
  * exception occurs.  When an exception occurs the variable "state"
  * is used to figure out how far we had gotten.
  */
-#[no_mangle]
-pub unsafe extern "C" fn ash_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int
+pub unsafe fn ash_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int
 /* note: 'argc' is used only if embedded scripts are enabled */ {
   let mut hp: *const libc::c_char = std::ptr::null();
   let mut current_block: u64;

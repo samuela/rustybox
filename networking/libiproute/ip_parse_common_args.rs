@@ -38,8 +38,7 @@ pub static mut oneline: smallint = 0;
 #[no_mangle]
 pub static mut _SL_: libc::c_char = 0;
 
-#[no_mangle]
-pub unsafe extern "C" fn ip_parse_common_args(
+pub unsafe fn ip_parse_common_args(
   mut argv: *mut *mut libc::c_char,
 ) -> *mut *mut libc::c_char {
   static mut ip_common_commands: [libc::c_char; 22] = [

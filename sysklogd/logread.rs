@@ -97,7 +97,7 @@ static mut init_sem: [sembuf; 3] = [
 /*
  * sem_up - up()'s a semaphore.
  */
-unsafe extern "C" fn sem_up(mut semid: libc::c_int) {
+unsafe fn sem_up(mut semid: libc::c_int) {
   if semop(
     semid,
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
@@ -115,8 +115,7 @@ unsafe extern "C" fn interrupted(mut sig: libc::c_int) {
   /* shmdt(shbuf); - on Linux, shmdt is not mandatory on exit */
   crate::libbb::signals::kill_myself_with_sig(sig); /* ipc semaphore id */
 }
-#[no_mangle]
-pub unsafe extern "C" fn logread_main(
+pub unsafe fn logread_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -158,10 +157,7 @@ pub unsafe extern "C" fn logread_main(
       b"can\'t get access to semaphores for syslogd buffer\x00" as *const u8 as *const libc::c_char,
     );
   }
-  crate::libbb::signals::bb_signals(
-    BB_FATAL_SIGS as libc::c_int,
-    Some(interrupted as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  crate::libbb::signals::bb_signals(BB_FATAL_SIGS as libc::c_int, Some(interrupted));
   /* Suppose atomic memory read */
   /* Max possible value for tail is shbuf->size - 1 */
   cur = (*(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).shbuf).tail as libc::c_uint;

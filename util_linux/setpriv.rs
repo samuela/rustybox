@@ -139,7 +139,7 @@ pub struct caps {
   pub u32s: libc::c_uint,
   pub data: [__user_cap_data_struct; 2],
 }
-unsafe extern "C" fn parse_cap(mut cap: *const libc::c_char) -> libc::c_uint {
+unsafe fn parse_cap(mut cap: *const libc::c_char) -> libc::c_uint {
   match *cap.offset(0) as libc::c_int {
     45 | 43 => {}
     _ => {
@@ -152,7 +152,7 @@ unsafe extern "C" fn parse_cap(mut cap: *const libc::c_char) -> libc::c_uint {
   cap = cap.offset(1);
   return crate::libbb::capability::cap_name_to_number(cap);
 }
-unsafe extern "C" fn set_inh_caps(mut capstring: *mut libc::c_char) {
+unsafe fn set_inh_caps(mut capstring: *mut libc::c_char) {
   let mut caps: caps = caps {
     header: __user_cap_header_struct { version: 0, pid: 0 },
     u32s: 0,
@@ -191,7 +191,7 @@ unsafe extern "C" fn set_inh_caps(mut capstring: *mut libc::c_char) {
     );
   };
 }
-unsafe extern "C" fn set_ambient_caps(mut string: *mut libc::c_char) {
+unsafe fn set_ambient_caps(mut string: *mut libc::c_char) {
   let mut cap: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   cap = strtok(string, b",\x00" as *const u8 as *const libc::c_char);
   while !cap.is_null() {
@@ -215,7 +215,7 @@ unsafe extern "C" fn set_ambient_caps(mut string: *mut libc::c_char) {
   }
 }
 /* FEATURE_SETPRIV_CAPABILITIES */
-unsafe extern "C" fn dump() -> libc::c_int {
+unsafe fn dump() -> libc::c_int {
   let mut caps: caps = caps {
     header: __user_cap_header_struct { version: 0, pid: 0 },
     u32s: 0,
@@ -339,8 +339,7 @@ unsafe extern "C" fn dump() -> libc::c_int {
   return 0;
 }
 /* FEATURE_SETPRIV_DUMP */
-#[no_mangle]
-pub unsafe extern "C" fn setpriv_main(
+pub unsafe fn setpriv_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

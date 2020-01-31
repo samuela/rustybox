@@ -619,11 +619,7 @@ unsafe extern "C" fn run_command(mut cmd: *const *mut libc::c_char, mut resp: *m
   signal(2i32, interrupt_signal);
   signal(3i32, quit_signal);
 }
-#[no_mangle]
-pub unsafe extern "C" fn time_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn time_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut res: resource_t = resource_t {
     waitstatus: 0,
     ru: rusage {

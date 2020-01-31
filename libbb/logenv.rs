@@ -123,8 +123,7 @@ pub const LOGMODE_NONE: C2RustUnnamed = 0;
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_logenv_override() {
+pub unsafe fn bb_logenv_override() {
   let mut mode: *const libc::c_char = getenv(b"LOGGING\x00" as *const u8 as *const libc::c_char);
   if mode.is_null() {
     return;

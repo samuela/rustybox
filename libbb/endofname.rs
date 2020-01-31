@@ -494,8 +494,7 @@ unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 //kbuild:lib-y += endofname.o
-#[no_mangle]
-pub unsafe extern "C" fn endofname(mut name: *const libc::c_char) -> *const libc::c_char {
+pub unsafe fn endofname(mut name: *const libc::c_char) -> *const libc::c_char {
   if !(*name as libc::c_int == '_' as i32
     || ((*name as libc::c_uchar as libc::c_int | 0x20i32) - 'a' as i32) as libc::c_uchar
       as libc::c_int

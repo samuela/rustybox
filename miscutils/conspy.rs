@@ -126,20 +126,20 @@ pub const FLAG_Q: C2RustUnnamed_1 = 2;
 pub const FLAG_c: C2RustUnnamed_1 = 1;
 pub const FLAG_v: C2RustUnnamed_1 = 0;
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
-unsafe extern "C" fn putcsi(mut s: *const libc::c_char) {
+unsafe fn putcsi(mut s: *const libc::c_char) {
   fputs_unlocked(b"\x1b[\x00" as *const u8 as *const libc::c_char, stdout);
   fputs_unlocked(s, stdout);
 }
-unsafe extern "C" fn clrscr() {
+unsafe fn clrscr() {
   // Home, clear till end of screen
   putcsi(b"1;1H\x1b[J\x00" as *const u8 as *const libc::c_char);
   (*ptr_to_globals).line = 0 as libc::c_uint;
   (*ptr_to_globals).col = (*ptr_to_globals).line;
 }
-unsafe extern "C" fn set_cursor(mut state: libc::c_int) {
+unsafe fn set_cursor(mut state: libc::c_int) {
   if (*ptr_to_globals).curoff as libc::c_int != state {
     (*ptr_to_globals).curoff = state as smallint;
     putcsi(b"?25\x00" as *const u8 as *const libc::c_char);
@@ -149,7 +149,7 @@ unsafe extern "C" fn set_cursor(mut state: libc::c_int) {
     );
   };
 }
-unsafe extern "C" fn gotoxy(mut col: libc::c_int, mut line: libc::c_int) {
+unsafe fn gotoxy(mut col: libc::c_int, mut line: libc::c_int) {
   if (*ptr_to_globals).col != col as libc::c_uint || (*ptr_to_globals).line != line as libc::c_uint
   {
     (*ptr_to_globals).col = col as libc::c_uint;
@@ -178,7 +178,7 @@ unsafe extern "C" fn cleanup(mut code: libc::c_int) -> ! {
   }
   exit(code);
 }
-unsafe extern "C" fn screen_read_close() {
+unsafe fn screen_read_close() {
   let mut i: libc::c_uint = 0;
   let mut j: libc::c_uint = 0;
   let mut vcsa_fd: libc::c_int = 0;
@@ -234,7 +234,7 @@ unsafe extern "C" fn screen_read_close() {
     i = i.wrapping_add(1)
   }
 }
-unsafe extern "C" fn screen_char(mut data: *mut libc::c_char) {
+unsafe fn screen_char(mut data: *mut libc::c_char) {
   if option_mask32 & (1i32 << FLAG_n as libc::c_int) as libc::c_uint == 0 {
     let mut attr_diff: u8 = 0;
     let mut attr: u8 = *(data as *mut u8).offset(1);
@@ -342,7 +342,7 @@ unsafe extern "C" fn screen_char(mut data: *mut libc::c_char) {
   putchar_unlocked(*(data as *mut u8) as libc::c_int);
   (*ptr_to_globals).col = (*ptr_to_globals).col.wrapping_add(1);
 }
-unsafe extern "C" fn screen_dump() {
+unsafe fn screen_dump() {
   let mut linefeed_cnt: libc::c_int = 0;
   let mut line: libc::c_int = 0;
   let mut col: libc::c_int = 0;
@@ -386,7 +386,7 @@ unsafe extern "C" fn screen_dump() {
     line += 1
   }
 }
-unsafe extern "C" fn curmove() {
+unsafe fn curmove() {
   let mut cx: libc::c_uint =
     ((*ptr_to_globals).remote.cursor_x as libc::c_int - (*ptr_to_globals).x) as libc::c_uint;
   let mut cy: libc::c_uint =
@@ -398,10 +398,7 @@ unsafe extern "C" fn curmove() {
   }
   set_cursor(cursor);
 }
-unsafe extern "C" fn create_cdev_if_doesnt_exist(
-  mut name: *const libc::c_char,
-  mut dev: libc::dev_t,
-) {
+unsafe fn create_cdev_if_doesnt_exist(mut name: *const libc::c_char, mut dev: libc::dev_t) {
   let mut fd: libc::c_int = open(name, 0);
   if fd != -1i32 {
     close(fd);
@@ -410,7 +407,7 @@ unsafe extern "C" fn create_cdev_if_doesnt_exist(
   };
 }
 #[inline(never)]
-unsafe extern "C" fn start_shell_in_child(mut tty_name: *const libc::c_char) {
+unsafe fn start_shell_in_child(mut tty_name: *const libc::c_char) {
   let mut pid: libc::c_int = {
     let mut bb__xvfork_pid: pid_t = vfork();
     if bb__xvfork_pid < 0 {
@@ -460,11 +457,7 @@ unsafe extern "C" fn start_shell_in_child(mut tty_name: *const libc::c_char) {
     crate::libbb::perror_msg::bb_simple_perror_msg_and_die(shell);
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn conspy_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn conspy_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut k: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tty_name: [libc::c_char; 11] = [0; 11];
   let mut opts: libc::c_uint = 0;

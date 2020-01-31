@@ -47,8 +47,7 @@ pub type C2RustUnnamed_0 = libc::c_uint;
  *
  * Authors: Alexey Kuznetsov, <kuznet@ms2.inr.ac.ru>
  */
-#[no_mangle]
-pub unsafe extern "C" fn rtnl_rtntype_n2a(mut id: libc::c_int) -> *const libc::c_char {
+pub unsafe fn rtnl_rtntype_n2a(mut id: libc::c_int) -> *const libc::c_char {
   match id {
     0 => return b"none\x00" as *const u8 as *const libc::c_char,
     1 => return b"unicast\x00" as *const u8 as *const libc::c_char,
@@ -65,8 +64,7 @@ pub unsafe extern "C" fn rtnl_rtntype_n2a(mut id: libc::c_int) -> *const libc::c
     _ => return crate::libbb::xfuncs::itoa(id),
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn rtnl_rtntype_a2n(
+pub unsafe fn rtnl_rtntype_a2n(
   mut id: *mut libc::c_int,
   mut arg: *mut libc::c_char,
 ) -> libc::c_int {
@@ -116,11 +114,7 @@ pub unsafe extern "C" fn rtnl_rtntype_a2n(
   return 0;
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn get_rt_realms(
-  mut realms: *mut u32,
-  mut arg: *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn get_rt_realms(mut realms: *mut u32, mut arg: *mut libc::c_char) -> libc::c_int {
   let mut realm: u32 = 0 as u32;
   let mut p: *mut libc::c_char = strchr(arg, '/' as i32);
   *realms = 0 as u32;

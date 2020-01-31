@@ -189,8 +189,7 @@ unsafe extern "C" fn find_by_index(mut idx: libc::c_int) -> *mut idxmap {
   return std::ptr::null_mut();
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn ll_remember_index(
+pub unsafe fn ll_remember_index(
   mut _who: *const sockaddr_nl,
   mut n: *mut nlmsghdr,
   mut _arg: *mut libc::c_void,
@@ -341,14 +340,12 @@ unsafe extern "C" fn ll_idx_n2a(mut idx: libc::c_int) -> *const libc::c_char
   ));
 }
 //static: const char *ll_idx_n2a(int idx, char *buf) FAST_FUNC;
-#[no_mangle]
-pub unsafe extern "C" fn ll_index_to_name(mut idx: libc::c_int) -> *const libc::c_char {
+pub unsafe fn ll_index_to_name(mut idx: libc::c_int) -> *const libc::c_char {
   //static char nbuf[16];
   return ll_idx_n2a(idx);
 }
 /* int ll_index_to_type(int idx); */
-#[no_mangle]
-pub unsafe extern "C" fn ll_index_to_flags(mut idx: libc::c_int) -> libc::c_uint {
+pub unsafe fn ll_index_to_flags(mut idx: libc::c_int) -> libc::c_uint {
   let mut im: *mut idxmap = std::ptr::null_mut();
   if idx == 0 {
     return 0 as libc::c_uint;
@@ -359,8 +356,7 @@ pub unsafe extern "C" fn ll_index_to_flags(mut idx: libc::c_int) -> libc::c_uint
   }
   return 0 as libc::c_uint;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xll_name_to_index(mut name: *const libc::c_char) -> libc::c_int {
+pub unsafe fn xll_name_to_index(mut name: *const libc::c_char) -> libc::c_int {
   let mut ret: libc::c_int = 0;
   /* caching is not warranted - no users which repeatedly call it */
   ret = if_nametoindex(name) as libc::c_int;
@@ -373,8 +369,7 @@ pub unsafe extern "C" fn xll_name_to_index(mut name: *const libc::c_char) -> lib
   }
   return ret;
 }
-#[no_mangle]
-pub unsafe extern "C" fn ll_init_map(mut rth: *mut rtnl_handle) -> libc::c_int {
+pub unsafe fn ll_init_map(mut rth: *mut rtnl_handle) -> libc::c_int {
   crate::networking::libiproute::libnetlink::xrtnl_wilddump_request(
     rth,
     0,
@@ -382,14 +377,7 @@ pub unsafe extern "C" fn ll_init_map(mut rth: *mut rtnl_handle) -> libc::c_int {
   );
   crate::networking::libiproute::libnetlink::xrtnl_dump_filter(
     rth,
-    Some(
-      ll_remember_index
-        as unsafe extern "C" fn(
-          _: *const sockaddr_nl,
-          _: *mut nlmsghdr,
-          _: *mut libc::c_void,
-        ) -> libc::c_int,
-    ),
+    Some(ll_remember_index),
     0 as *mut libc::c_void,
   );
   return 0;

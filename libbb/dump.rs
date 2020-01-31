@@ -119,8 +119,7 @@ static mut size_conv_str: [libc::c_char; 25] = [
   1, 4, 4, 4, 4, 4, 4, 8, 8, 8, 8, 8, 99, 100, 105, 111, 117, 120, 88, 101, 69, 102, 103, 71, 0,
 ];
 static mut int_convs: [libc::c_char; 7] = [100, 105, 111, 117, 120, 88, 0];
-#[no_mangle]
-pub unsafe extern "C" fn alloc_dumper() -> *mut dumper_t {
+pub unsafe fn alloc_dumper() -> *mut dumper_t {
   let mut dumper: *mut priv_dumper_t = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<
     priv_dumper_t,
   >() as libc::c_ulong) as *mut priv_dumper_t;
@@ -1176,8 +1175,7 @@ unsafe extern "C" fn display(mut dumper: *mut priv_dumper_t) {
     }
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_dump_dump(
+pub unsafe fn bb_dump_dump(
   mut pub_dumper: *mut dumper_t,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -1205,8 +1203,7 @@ pub unsafe extern "C" fn bb_dump_dump(
   display(pub_dumper as *mut priv_dumper_t);
   return (*(pub_dumper as *mut priv_dumper_t)).exitval as libc::c_int;
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_dump_add(mut pub_dumper: *mut dumper_t, mut fmt: *const libc::c_char) {
+pub unsafe fn bb_dump_add(mut pub_dumper: *mut dumper_t, mut fmt: *const libc::c_char) {
   let mut p: *const libc::c_char = std::ptr::null();
   let mut tfs: *mut FS = std::ptr::null_mut();
   let mut tfu: *mut FU = std::ptr::null_mut();

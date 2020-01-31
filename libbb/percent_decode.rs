@@ -3,7 +3,7 @@ use libc;
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
 //kbuild:lib-y += percent_decode.o
-unsafe extern "C" fn hex_to_bin(mut c: libc::c_uchar) -> libc::c_uint {
+unsafe fn hex_to_bin(mut c: libc::c_uchar) -> libc::c_uint {
   let mut v: libc::c_uint = 0;
   v = (c as libc::c_int - '0' as i32) as libc::c_uint;
   if v <= 9i32 as libc::c_uint {
@@ -565,8 +565,7 @@ unsafe extern "C" fn hex_to_bin(mut c: libc::c_uchar) -> libc::c_uint {
  * In non-strict mode, it always succeeds (returns str),
  * and also it additionally decoded '+' to space.
  */
-#[no_mangle]
-pub unsafe extern "C" fn percent_decode_in_place(
+pub unsafe fn percent_decode_in_place(
   mut str: *mut libc::c_char,
   mut strict: libc::c_int,
 ) -> *mut libc::c_char {

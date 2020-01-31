@@ -28,11 +28,7 @@ use libc;
 //usage:       "# chroot /mnt\n"
 //usage:       "# ls -l /bin/ls\n"
 //usage:       "-rwxr-xr-x    1 root     root        40816 Feb  5 07:45 /bin/ls*\n"
-#[no_mangle]
-pub unsafe extern "C" fn chroot_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn chroot_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   argv = argv.offset(1);
   if (*argv).is_null() {
     crate::libbb::appletlib::bb_show_usage();

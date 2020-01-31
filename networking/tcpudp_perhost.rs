@@ -25,8 +25,7 @@ pub struct hcc {
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn ipsvd_perhost_init(mut c: libc::c_uint) -> *mut hcc {
+pub unsafe fn ipsvd_perhost_init(mut c: libc::c_uint) -> *mut hcc {
   //	free(cc);
   let mut cc: *mut hcc = crate::libbb::xfuncs_printf::xzalloc(
     (c.wrapping_add(1i32 as libc::c_uint) as libc::c_ulong)
@@ -41,8 +40,7 @@ pub unsafe extern "C" fn ipsvd_perhost_init(mut c: libc::c_uint) -> *mut hcc {
  * and pointer to table entry if stored in *hccpp
  * (useful for storing pid later).
  * Else ip is NOT inserted (you must take care of it - free() etc) */
-#[no_mangle]
-pub unsafe extern "C" fn ipsvd_perhost_add(
+pub unsafe fn ipsvd_perhost_add(
   mut cc: *mut hcc,
   mut ip: *mut libc::c_char,
   mut maxconn: libc::c_uint,
@@ -71,8 +69,7 @@ pub unsafe extern "C" fn ipsvd_perhost_add(
   return conn;
 }
 /* Finds and frees element with pid */
-#[no_mangle]
-pub unsafe extern "C" fn ipsvd_perhost_remove(mut cc: *mut hcc, mut pid: libc::c_int) {
+pub unsafe fn ipsvd_perhost_remove(mut cc: *mut hcc, mut pid: libc::c_int) {
   let mut i: libc::c_uint = 0;
   i = 0 as libc::c_uint;
   while (*cc.offset(i as isize)).pid >= 0 {

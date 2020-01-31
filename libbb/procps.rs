@@ -108,7 +108,7 @@ static mut groupname: cache_t = cache_t {
   cache: 0 as *const id_to_name_map_t as *mut id_to_name_map_t,
   size: 0,
 };
-unsafe extern "C" fn clear_cache(mut cp: *mut cache_t) {
+unsafe fn clear_cache(mut cp: *mut cache_t) {
   free((*cp).cache as *mut libc::c_void);
   (*cp).cache = std::ptr::null_mut();
   (*cp).size = 0;
@@ -118,10 +118,10 @@ pub unsafe fn clear_username_cache() {
   clear_cache(&mut groupname);
 }
 /* more generic, but we don't need that yet */
-unsafe extern "C" fn get_cached(
+unsafe fn get_cached(
   mut cp: *mut cache_t,
   mut id: uid_t,
-  mut x2x_utoa: Option<unsafe extern "C" fn(_: uid_t) -> *mut libc::c_char>,
+  mut x2x_utoa: Option<unsafe fn(_: uid_t) -> *mut libc::c_char>,
 ) -> *mut libc::c_char {
   let mut i: libc::c_int = 0;
   i = 0;
@@ -153,21 +153,17 @@ pub unsafe fn get_cached_username(mut uid: uid_t) -> *const libc::c_char {
   return get_cached(
     &mut username,
     uid,
-    Some(
-      crate::libbb::bb_pwd::uid2uname_utoa as unsafe extern "C" fn(_: uid_t) -> *mut libc::c_char,
-    ),
+    Some(crate::libbb::bb_pwd::uid2uname_utoa),
   );
 }
 pub unsafe fn get_cached_groupname(mut gid: gid_t) -> *const libc::c_char {
   return get_cached(
     &mut groupname,
     gid,
-    Some(
-      crate::libbb::bb_pwd::gid2group_utoa as unsafe extern "C" fn(_: gid_t) -> *mut libc::c_char,
-    ),
+    Some(crate::libbb::bb_pwd::gid2group_utoa),
   );
 }
-unsafe extern "C" fn read_to_buf(
+unsafe fn read_to_buf(
   mut filename: *const libc::c_char,
   mut buf: *mut libc::c_void,
 ) -> libc::c_int {
@@ -184,7 +180,7 @@ unsafe extern "C" fn read_to_buf(
     '\u{0}' as i32 as libc::c_char;
   return ret as libc::c_int;
 }
-unsafe extern "C" fn alloc_procps_scan() -> *mut procps_status_t {
+unsafe fn alloc_procps_scan() -> *mut procps_status_t {
   let mut n: libc::c_uint = getpagesize() as libc::c_uint;
   let mut sp: *mut procps_status_t = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<
     procps_status_t,
@@ -210,7 +206,7 @@ pub unsafe fn free_procps_scan(mut sp: *mut procps_status_t) {
   free((*sp).exe as *mut libc::c_void);
   free(sp as *mut libc::c_void);
 }
-unsafe extern "C" fn fast_strtoull_16(mut endptr: *mut *mut libc::c_char) -> libc::c_ulonglong {
+unsafe fn fast_strtoull_16(mut endptr: *mut *mut libc::c_char) -> libc::c_ulonglong {
   let mut c: libc::c_uchar = 0;
   let mut str: *mut libc::c_char = *endptr;
   let mut n: libc::c_ulonglong = 0 as libc::c_ulonglong;
@@ -236,7 +232,7 @@ unsafe extern "C" fn fast_strtoull_16(mut endptr: *mut *mut libc::c_char) -> lib
   return n;
 }
 /* We cut a lot of corners here for speed */
-unsafe extern "C" fn fast_strtoul_10(mut endptr: *mut *mut libc::c_char) -> libc::c_ulong {
+unsafe fn fast_strtoul_10(mut endptr: *mut *mut libc::c_char) -> libc::c_ulong {
   let mut c: libc::c_uchar = 0;
   let mut str: *mut libc::c_char = *endptr;
   let mut n: libc::c_ulong = (*str as libc::c_int - '0' as i32) as libc::c_ulong;
@@ -255,10 +251,7 @@ unsafe extern "C" fn fast_strtoul_10(mut endptr: *mut *mut libc::c_char) -> libc
   *endptr = str.offset(1);
   return n;
 }
-unsafe extern "C" fn skip_fields(
-  mut str: *mut libc::c_char,
-  mut count: libc::c_int,
-) -> *mut libc::c_char {
+unsafe fn skip_fields(mut str: *mut libc::c_char, mut count: libc::c_int) -> *mut libc::c_char {
   loop {
     loop {
       let fresh2 = str;
@@ -278,7 +271,7 @@ unsafe extern "C" fn skip_fields(
 pub unsafe fn procps_read_smaps(
   mut pid: pid_t,
   mut total: *mut smaprec,
-  mut cb: Option<unsafe extern "C" fn(_: *mut smaprec, _: *mut libc::c_void) -> ()>,
+  mut cb: Option<unsafe fn(_: *mut smaprec, _: *mut libc::c_void) -> ()>,
   mut data: *mut libc::c_void,
 ) -> libc::c_int {
   let mut file: *mut FILE = std::ptr::null_mut();

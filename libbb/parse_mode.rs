@@ -11,8 +11,7 @@ extern "C" {
 
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn bb_parse_mode(
+pub unsafe fn bb_parse_mode(
   mut s: *const libc::c_char,
   mut current_mode: libc::c_uint,
 ) -> libc::c_int {

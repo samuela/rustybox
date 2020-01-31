@@ -33,8 +33,7 @@ pub type C2RustUnnamed = libc::c_uint;
 /* On Linux, Bxx constants are 0..15 (up to B38400) and 0x1001..0x100f */
 // Initialized in run_static_initializers
 static mut speeds: [speed_map; 31] = [speed_map { speed: 0, value: 0 }; 31];
-#[no_mangle]
-pub unsafe extern "C" fn tty_baud_to_value(mut speed: speed_t) -> libc::c_uint {
+pub unsafe fn tty_baud_to_value(mut speed: speed_t) -> libc::c_uint {
   let mut i: libc::c_int = 0;
   loop {
     if speed == speeds[i as usize].speed as libc::c_uint {
@@ -445,8 +444,7 @@ pub unsafe extern "C" fn tty_baud_to_value(mut speed: speed_t) -> libc::c_uint {
 /*int type,*/
 /* may modify src */
 /* This structure defines hardware protocols and their handlers. */
-#[no_mangle]
-pub unsafe extern "C" fn tty_value_to_baud(mut value: libc::c_uint) -> speed_t {
+pub unsafe fn tty_value_to_baud(mut value: libc::c_uint) -> speed_t {
   let mut i: libc::c_int = 0;
   loop {
     if value == tty_baud_to_value(speeds[i as usize].speed as speed_t) {
@@ -459,7 +457,7 @@ pub unsafe extern "C" fn tty_value_to_baud(mut value: libc::c_uint) -> speed_t {
   }
   return -1i32 as speed_t;
 }
-unsafe extern "C" fn run_static_initializers() {
+unsafe fn run_static_initializers() {
   speeds = [
     {
       let mut init = speed_map {
@@ -684,4 +682,4 @@ unsafe extern "C" fn run_static_initializers() {
 #[cfg_attr(target_os = "linux", link_section = ".init_array")]
 #[cfg_attr(target_os = "windows", link_section = ".CRT$XIB")]
 #[cfg_attr(target_os = "macos", link_section = "__DATA,__mod_init_func")]
-static INIT_ARRAY: [unsafe extern "C" fn(); 1] = [run_static_initializers];
+static INIT_ARRAY: [unsafe fn(); 1] = [run_static_initializers];

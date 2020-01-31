@@ -159,7 +159,7 @@ pub const CMD_PID1: C2RustUnnamed_2 = 3;
 pub const CMD_STOP: C2RustUnnamed_2 = 0;
 pub type C2RustUnnamed_2 = libc::c_uint;
 pub const CMD_INIT: C2RustUnnamed_2 = 2;
-unsafe extern "C" fn dump_file(mut fp: *mut FILE, mut filename: *const libc::c_char) {
+unsafe fn dump_file(mut fp: *mut FILE, mut filename: *const libc::c_char) {
   let mut fd: libc::c_int = open(filename, 0);
   if fd >= 0 {
     fputs_unlocked(
@@ -174,10 +174,7 @@ unsafe extern "C" fn dump_file(mut fp: *mut FILE, mut filename: *const libc::c_c
     putc_unlocked('\n' as i32, fp);
   };
 }
-unsafe extern "C" fn dump_procs(
-  mut fp: *mut FILE,
-  mut look_for_login_process: libc::c_int,
-) -> libc::c_int {
+unsafe fn dump_procs(mut fp: *mut FILE, mut look_for_login_process: libc::c_int) -> libc::c_int {
   let mut entry: *mut dirent = std::ptr::null_mut();
   let mut dir: *mut DIR = opendir(b"/proc\x00" as *const u8 as *const libc::c_char);
   let mut found_login_process: libc::c_int = 0;
@@ -258,7 +255,7 @@ unsafe extern "C" fn dump_procs(
   putc_unlocked('\n' as i32, fp);
   return found_login_process;
 }
-unsafe extern "C" fn make_tempdir() -> *mut libc::c_char {
+unsafe fn make_tempdir() -> *mut libc::c_char {
   let mut template: [libc::c_char; 22] =
     *::std::mem::transmute::<&[u8; 22], &mut [libc::c_char; 22]>(b"/tmp/bootchart.XXXXXX\x00");
   let mut tempdir: *mut libc::c_char =
@@ -303,10 +300,7 @@ unsafe extern "C" fn make_tempdir() -> *mut libc::c_char {
   }
   return tempdir;
 }
-unsafe extern "C" fn do_logging(
-  mut sample_period_us: libc::c_uint,
-  mut process_accounting: libc::c_int,
-) {
+unsafe fn do_logging(mut sample_period_us: libc::c_uint, mut process_accounting: libc::c_int) {
   let mut proc_stat: *mut FILE = crate::libbb::xfuncs_printf::xfopen(
     b"proc_stat.log\x00" as *const u8 as *const libc::c_char,
     b"w\x00" as *const u8 as *const libc::c_char,
@@ -388,7 +382,7 @@ unsafe extern "C" fn do_logging(
     usleep(sample_period_us);
   }
 }
-unsafe extern "C" fn finalize(
+unsafe fn finalize(
   mut tempdir: *mut libc::c_char,
   mut prog: *const libc::c_char,
   mut process_accounting: libc::c_int,
@@ -499,8 +493,7 @@ unsafe extern "C" fn finalize(
 //usage:     "\nstop: send USR1 to all bootchartd processes"
 //usage:     "\ninit: start background logging; stop when getty/xdm is seen (for init scripts)"
 //usage:     "\nUnder PID 1: as init, then exec $bootchart_init, /init, /sbin/init"
-#[no_mangle]
-pub unsafe extern "C" fn bootchartd_main(
+pub unsafe fn bootchartd_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -543,18 +536,12 @@ pub unsafe extern "C" fn bootchartd_main(
   let mut token: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   let mut parser: *mut parser_t = crate::libbb::parse_config::config_open2(
     (b"/etc/bootchartd.conf\x00" as *const u8 as *const libc::c_char).offset(5),
-    Some(
-      crate::libbb::wfopen::fopen_for_read
-        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
-    ),
+    Some(crate::libbb::wfopen::fopen_for_read as unsafe fn(_: *const libc::c_char) -> *mut FILE),
   );
   if parser.is_null() {
     parser = crate::libbb::parse_config::config_open2(
       b"/etc/bootchartd.conf\x00" as *const u8 as *const libc::c_char,
-      Some(
-        crate::libbb::wfopen::fopen_for_read
-          as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
-      ),
+      Some(crate::libbb::wfopen::fopen_for_read as unsafe fn(_: *const libc::c_char) -> *mut FILE),
     )
   }
   while crate::libbb::parse_config::config_read(
@@ -602,7 +589,7 @@ pub unsafe extern "C" fn bootchartd_main(
         + (1i32 << 3i32)
         + (1i32 << 2i32)
         + (1i32 << 1i32),
-      Some(crate::libbb::signals::record_signo as unsafe extern "C" fn(_: libc::c_int) -> ()),
+      Some(crate::libbb::signals::record_signo),
     );
     /* Inform parent that we are ready */
     raise(19i32);

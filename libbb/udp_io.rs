@@ -170,13 +170,11 @@ pub union C2RustUnnamed_2 {
  * This asks kernel to let us know dst addr/port of incoming packets
  * We don't check for errors here. Not supported == won't be used
  */
-#[no_mangle]
-pub unsafe extern "C" fn socket_want_pktinfo(mut fd: libc::c_int) {
+pub unsafe fn socket_want_pktinfo(mut fd: libc::c_int) {
   crate::libbb::xconnect::setsockopt_1(fd, IPPROTO_IP as libc::c_int, 8i32);
   crate::libbb::xconnect::setsockopt_1(fd, IPPROTO_IPV6 as libc::c_int, 49i32);
 }
-#[no_mangle]
-pub unsafe extern "C" fn send_to_from(
+pub unsafe fn send_to_from(
   mut fd: libc::c_int,
   mut buf: *mut libc::c_void,
   mut len: size_t,
@@ -482,8 +480,7 @@ pub unsafe extern "C" fn send_to_from(
  * _Only_ IP/IPv6 address part of 'to' is _maybe_ modified.
  * Typical usage is to preinit 'to' with "default" value
  * before calling recv_from_to(). */
-#[no_mangle]
-pub unsafe extern "C" fn recv_from_to(
+pub unsafe fn recv_from_to(
   mut fd: libc::c_int,
   mut buf: *mut libc::c_void,
   mut len: size_t,

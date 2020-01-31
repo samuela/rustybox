@@ -110,7 +110,7 @@ pub const OPT_algo: C2RustUnnamed_0 = 1;
 //usage:     "\n	-d	Set password to ''"
 //usage:     "\n	-l	Lock (disable) account"
 //usage:     "\n	-u	Unlock (enable) account"
-unsafe extern "C" fn new_password(
+unsafe fn new_password(
   mut pw: *const passwd,
   mut myuid: uid_t,
   mut algo: *const libc::c_char,
@@ -179,8 +179,7 @@ unsafe extern "C" fn new_password(
   crate::libbb::nuke_str::nuke_str(cp);
   return ret;
 }
-#[no_mangle]
-pub unsafe extern "C" fn passwd_main(
+pub unsafe fn passwd_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

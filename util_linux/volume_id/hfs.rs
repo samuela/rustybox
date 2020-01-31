@@ -164,7 +164,7 @@ pub struct hfs_mdb {
   pub embed_startblock: u16,
   pub embed_blockcount: u16,
 }
-unsafe extern "C" fn hfs_set_uuid(mut id: *mut volume_id, mut hfs_id: *const u8) {
+unsafe fn hfs_set_uuid(mut id: *mut volume_id, mut hfs_id: *const u8) {
   let mut current_block: u64;
   let mut md5c: md5_ctx_t = md5_ctx_t {
     wbuffer: [0; 64],
@@ -273,8 +273,7 @@ unsafe extern "C" fn hfs_set_uuid(mut id: *mut volume_id, mut hfs_id: *const u8)
 /*,u64 off*/
 /*,u64 off*/
 /*,u64 off*/
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> libc::c_int
+pub unsafe fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut current_block: u64;
   let mut off: u64 = 0 as u64;

@@ -442,8 +442,7 @@ use libc;
  * If path is NULL, it is assumed to be "/".
  * filename should not be NULL.
  */
-#[no_mangle]
-pub unsafe extern "C" fn concat_path_file(
+pub unsafe fn concat_path_file(
   mut path: *const libc::c_char,
   mut filename: *const libc::c_char,
 ) -> *mut libc::c_char {

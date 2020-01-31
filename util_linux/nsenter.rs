@@ -170,7 +170,7 @@ static mut nsenter_longopts: [libc::c_char; 112] = [
  * NULL) the routine builds a path to a procfs file using the following
  * template: '/proc/<target_pid>/<target_file>'.
  */
-unsafe extern "C" fn open_by_path_or_target(
+unsafe fn open_by_path_or_target(
   mut path: *const libc::c_char,
   mut target_pid: pid_t,
   mut target_file: *const libc::c_char,
@@ -195,8 +195,7 @@ unsafe extern "C" fn open_by_path_or_target(
   return crate::libbb::xfuncs_printf::xopen(path, 0);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn nsenter_main(
+pub unsafe fn nsenter_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

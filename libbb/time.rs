@@ -66,7 +66,7 @@ use libc::tm;
  *    return value is all-ones in this case.
  */
 #[inline(always)]
-unsafe extern "C" fn bb_strtol(
+unsafe fn bb_strtol(
   mut arg: *const libc::c_char,
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
@@ -81,8 +81,7 @@ unsafe extern "C" fn bb_strtol(
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn parse_datestr(mut date_str: *const libc::c_char, mut ptm: *mut tm) {
+pub unsafe fn parse_datestr(mut date_str: *const libc::c_char, mut ptm: *mut tm) {
   let mut end: libc::c_char = '\u{0}' as i32 as libc::c_char;
   let mut last_colon: *const libc::c_char = strrchr(date_str, ':' as i32);
   if !last_colon.is_null() {
@@ -364,8 +363,7 @@ pub unsafe extern "C" fn parse_datestr(mut date_str: *const libc::c_char, mut pt
     crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_invalid_date.as_ptr(), date_str);
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn validate_tm_time(
+pub unsafe fn validate_tm_time(
   mut date_str: *const libc::c_char,
   mut ptm: *mut tm,
 ) -> time_t {
@@ -375,7 +373,7 @@ pub unsafe extern "C" fn validate_tm_time(
   }
   return t;
 }
-unsafe extern "C" fn strftime_fmt(
+unsafe fn strftime_fmt(
   mut buf: *mut libc::c_char,
   mut len: libc::c_uint,
   mut tp: *mut time_t,
@@ -389,8 +387,7 @@ unsafe extern "C" fn strftime_fmt(
   /* Returns pointer to NUL */
   return buf.offset(strftime(buf, len as size_t, fmt, localtime(tp)) as isize);
 }
-#[no_mangle]
-pub unsafe extern "C" fn strftime_HHMMSS(
+pub unsafe fn strftime_HHMMSS(
   mut buf: *mut libc::c_char,
   mut len: libc::c_uint,
   mut tp: *mut time_t,
@@ -491,8 +488,7 @@ pub unsafe extern "C" fn strftime_HHMMSS(
 /* Useful for having small structure members/global variables */
 /* | AF_DECnet */
 /* | AF_IPX */
-#[no_mangle]
-pub unsafe extern "C" fn strftime_YYYYMMDDHHMMSS(
+pub unsafe fn strftime_YYYYMMDDHHMMSS(
   mut buf: *mut libc::c_char,
   mut len: libc::c_uint,
   mut tp: *mut time_t,
@@ -506,31 +502,28 @@ pub unsafe extern "C" fn strftime_YYYYMMDDHHMMSS(
 }
 /* Old glibc (< 2.3.4) does not provide this constant. We use syscall
  * directly so this definition is safe. */
-unsafe extern "C" fn get_mono(mut ts: *mut timespec) {
+unsafe fn get_mono(mut ts: *mut timespec) {
   if clock_gettime(1i32, ts) != 0 {
     crate::libbb::verror_msg::bb_simple_error_msg_and_die(
       b"clock_gettime(MONOTONIC) failed\x00" as *const u8 as *const libc::c_char,
     );
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn monotonic_ns() -> libc::c_ulonglong {
+pub unsafe fn monotonic_ns() -> libc::c_ulonglong {
   let mut ts: timespec = std::mem::zeroed();
   get_mono(&mut ts);
   return (ts.tv_sec as libc::c_ulonglong)
     .wrapping_mul(1000000000u64)
     .wrapping_add(ts.tv_nsec as libc::c_ulonglong);
 }
-#[no_mangle]
-pub unsafe extern "C" fn monotonic_us() -> libc::c_ulonglong {
+pub unsafe fn monotonic_us() -> libc::c_ulonglong {
   let mut ts: timespec = std::mem::zeroed();
   get_mono(&mut ts);
   return (ts.tv_sec as libc::c_ulonglong)
     .wrapping_mul(1000000u64)
     .wrapping_add((ts.tv_nsec / 1000i32 as libc::c_long) as libc::c_ulonglong);
 }
-#[no_mangle]
-pub unsafe extern "C" fn monotonic_ms() -> libc::c_ulonglong {
+pub unsafe fn monotonic_ms() -> libc::c_ulonglong {
   let mut ts: timespec = std::mem::zeroed();
   get_mono(&mut ts);
   return (ts.tv_sec as libc::c_ulonglong)
@@ -605,8 +598,7 @@ pub unsafe extern "C" fn monotonic_ms() -> libc::c_ulonglong {
 /* buffer allocation schemes */
 /* glibc uses __errno_location() to get a ptr to errno */
 /* We can just memorize it once - no multithreading in busybox :) */
-#[no_mangle]
-pub unsafe extern "C" fn monotonic_sec() -> libc::c_uint {
+pub unsafe fn monotonic_sec() -> libc::c_uint {
   let mut ts: timespec = std::mem::zeroed();
   get_mono(&mut ts);
   return ts.tv_sec as libc::c_uint;

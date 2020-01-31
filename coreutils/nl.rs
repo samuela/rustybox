@@ -42,11 +42,7 @@ pub const OPT_p: C2RustUnnamed = 1;
 //usage:     "\n	-v N		Start from N"
 //usage:     "\n	-w N		Width of line numbers"
 /* By default, selects -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn */
-#[no_mangle]
-pub unsafe extern "C" fn nl_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn nl_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut ns: number_state = number_state {
     width: 0,
     start: 0,

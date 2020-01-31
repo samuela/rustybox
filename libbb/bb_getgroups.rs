@@ -7,8 +7,7 @@ extern "C" {
 
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn bb_getgroups(
+pub unsafe fn bb_getgroups(
   mut ngroups: *mut libc::c_int,
   mut group_array: *mut gid_t,
 ) -> *mut gid_t {

@@ -92,8 +92,7 @@ static mut mode_chars: [libc::c_char; 7] = [114, 119, 120, 83, 84, 115, 116];
  * skipping an index is a bad bug - it may miss a realloc!
  */
 //TODO: supply a pointer to char[11] buffer (avoid statics)?
-#[no_mangle]
-pub unsafe extern "C" fn bb_mode_string(mut mode: mode_t) -> *const libc::c_char {
+pub unsafe fn bb_mode_string(mut mode: mode_t) -> *const libc::c_char {
   static mut buf: [libc::c_char; 12] = [0; 12];
   let mut p: *mut libc::c_char = buf.as_mut_ptr();
   let mut i: libc::c_int = 0;

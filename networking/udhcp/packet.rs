@@ -196,8 +196,7 @@ pub struct sockaddr_ll {
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn udhcp_init_header(mut packet: *mut dhcp_packet, mut type_0: libc::c_char) {
+pub unsafe fn udhcp_init_header(mut packet: *mut dhcp_packet, mut type_0: libc::c_char) {
   memset(
     packet as *mut libc::c_void,
     0,
@@ -236,8 +235,7 @@ pub unsafe extern "C" fn udhcp_init_header(mut packet: *mut dhcp_packet, mut typ
   }
   crate::networking::udhcp::common::udhcp_add_simple_option(packet, 0x35i32 as u8, type_0 as u32);
 }
-#[no_mangle]
-pub unsafe extern "C" fn udhcp_dump_packet(mut packet: *mut dhcp_packet) {
+pub unsafe fn udhcp_dump_packet(mut packet: *mut dhcp_packet) {
   let mut buf: [libc::c_char; 33] = [0; 33];
   if dhcp_verbose < 2i32 as libc::c_uint {
     return;
@@ -263,8 +261,7 @@ pub unsafe extern "C" fn udhcp_dump_packet(mut packet: *mut dhcp_packet) {
   );
 }
 /* Read a packet from socket fd, return -1 on read error, -2 on packet error */
-#[no_mangle]
-pub unsafe extern "C" fn udhcp_recv_kernel_packet(
+pub unsafe fn udhcp_recv_kernel_packet(
   mut packet: *mut dhcp_packet,
   mut fd: libc::c_int,
 ) -> libc::c_int {
@@ -324,8 +321,7 @@ pub unsafe extern "C" fn udhcp_recv_kernel_packet(
   return bytes;
 }
 /* Construct a ip/udp header for a packet, send packet */
-#[no_mangle]
-pub unsafe extern "C" fn udhcp_send_raw_packet(
+pub unsafe fn udhcp_send_raw_packet(
   mut dhcp_pkt: *mut dhcp_packet,
   mut source_nip: u32,
   mut source_port: libc::c_int,
@@ -746,8 +742,7 @@ pub unsafe extern "C" fn udhcp_send_raw_packet(
 /* 2nd param is "u32*" */
 /* 2nd param is "struct option_set**" */
 /* Let the kernel do all the work for packet generation */
-#[no_mangle]
-pub unsafe extern "C" fn udhcp_send_kernel_packet(
+pub unsafe fn udhcp_send_kernel_packet(
   mut dhcp_pkt: *mut dhcp_packet,
   mut source_nip: u32,
   mut source_port: libc::c_int,

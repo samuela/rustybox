@@ -34,8 +34,7 @@ pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-pub type stat_func =
-  Option<unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int>;
+pub type stat_func = Option<unsafe fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int>;
 /*OPT_rmdest  = FILEUTILS_RMDEST = 1 << FILEUTILS_CP_OPTNUM */
 pub const OPT_parents: C2RustUnnamed_0 = 65536;
 pub type C2RustUnnamed_0 = libc::c_uint;
@@ -95,11 +94,7 @@ pub const FILEUTILS_CP_OPTNUM: C2RustUnnamed_0 = 15;
 //usage:     "\n	-T	Treat DEST as a normal file"
 //usage:     "\n	-u	Copy only newer files"
 /* This is a NOEXEC applet. Be very careful! */
-#[no_mangle]
-pub unsafe extern "C" fn cp_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn cp_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut source_stat: stat = std::mem::zeroed();
   let mut dest_stat: stat = std::mem::zeroed();
@@ -192,9 +187,9 @@ pub unsafe extern "C" fn cp_main(
       *argv,
       &mut source_stat,
       if flags & FILEUTILS_DEREFERENCE as libc::c_int != 0 {
-        Some(stat as unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int)
+        stat
       } else {
-        Some(lstat as unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int)
+        lstat
       },
     );
     if s_flags < 0 {

@@ -38,11 +38,7 @@ extern "C" {
 //usage:#define which_example_usage
 //usage:       "$ which login\n"
 //usage:       "/bin/login\n"
-#[no_mangle]
-pub unsafe extern "C" fn which_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn which_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut env_path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut status: libc::c_int = 0;
   /* This sizeof(): bb_default_root_path is shorter than BB_PATH_ROOT_PATH */

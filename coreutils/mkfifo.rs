@@ -33,11 +33,7 @@ extern "C" {
 //usage:     "\n	-Z	Set security context"
 //usage:	)
 /* This is a NOEXEC applet. Be very careful! */
-#[no_mangle]
-pub unsafe extern "C" fn mkfifo_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn mkfifo_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut mode: mode_t = 0; /* Avoid multibyte problems. */
   let mut retval: libc::c_int = 0;
   mode = crate::coreutils::libcoreutils::getopt_mk_fifo_nod::getopt_mk_fifo_nod(argv);

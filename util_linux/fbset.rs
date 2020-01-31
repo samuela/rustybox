@@ -143,12 +143,12 @@ fn BUG_xatou32_unimplemented() -> u32 {
 }
 
 #[inline(always)]
-unsafe extern "C" fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
+unsafe fn xatoul(mut str: *const libc::c_char) -> libc::c_ulong {
   return crate::libbb::xatonum::xatoull(str) as libc::c_ulong;
 }
 
 #[inline(always)]
-unsafe extern "C" fn xatou32(mut numstr: *const libc::c_char) -> u32 {
+unsafe fn xatou32(mut numstr: *const libc::c_char) -> u32 {
   if (2147483647i32 as libc::c_uint)
     .wrapping_mul(2u32)
     .wrapping_add(1u32)
@@ -166,7 +166,7 @@ unsafe extern "C" fn xatou32(mut numstr: *const libc::c_char) -> u32 {
   return BUG_xatou32_unimplemented();
 }
 
-unsafe extern "C" fn copy_if_gt0(mut src: *mut u32, mut dst: *mut u32, mut cnt: libc::c_uint) {
+unsafe fn copy_if_gt0(mut src: *mut u32, mut dst: *mut u32, mut cnt: libc::c_uint) {
   loop {
     if *src as i32 > 0 {
       *dst = *src
@@ -181,7 +181,7 @@ unsafe extern "C" fn copy_if_gt0(mut src: *mut u32, mut dst: *mut u32, mut cnt: 
 }
 
 #[inline(never)]
-unsafe extern "C" fn copy_changed_values(
+unsafe fn copy_changed_values(
   mut base: *mut fb_var_screeninfo,
   mut set: *mut fb_var_screeninfo,
 ) {
@@ -500,7 +500,7 @@ static mut g_cmdoptions: [cmdoptions_t; 36] = [
   },
 ];
 
-unsafe extern "C" fn ss(
+unsafe fn ss(
   mut x: *mut u32,
   mut flag: u32,
   mut buf: *mut libc::c_char,
@@ -523,7 +523,7 @@ unsafe extern "C" fn ss(
  *     vsync high
  * endmode
  */
-unsafe extern "C" fn read_mode_db(
+unsafe fn read_mode_db(
   mut base: *mut fb_var_screeninfo,
   mut fn_0: *const libc::c_char,
   mut mode: *const libc::c_char,
@@ -739,7 +739,7 @@ unsafe extern "C" fn read_mode_db(
 }
 
 #[inline(never)]
-unsafe extern "C" fn showmode(mut v: *mut fb_var_screeninfo) {
+unsafe fn showmode(mut v: *mut fb_var_screeninfo) {
   let mut drate: libc::c_double = 0 as libc::c_double;
   let mut hrate: libc::c_double = 0 as libc::c_double;
   let mut vrate: libc::c_double = 0 as libc::c_double;
@@ -773,8 +773,7 @@ unsafe extern "C" fn showmode(mut v: *mut fb_var_screeninfo) {
            (*v).transp.length, (*v).transp.offset);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn fbset_main(
+pub unsafe fn fbset_main(
   mut argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

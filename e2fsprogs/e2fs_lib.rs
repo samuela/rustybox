@@ -29,7 +29,7 @@ use libc::FILE;
  *
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
-unsafe extern "C" fn close_silently(mut fd: libc::c_int) {
+unsafe fn close_silently(mut fd: libc::c_int) {
   let mut e: libc::c_int = *bb_errno;
   close(fd);
   *bb_errno = e;
@@ -38,7 +38,7 @@ unsafe extern "C" fn close_silently(mut fd: libc::c_int) {
 pub unsafe fn iterate_on_dir(
   mut dir_name: *const libc::c_char,
   mut func: Option<
-    unsafe extern "C" fn(
+    unsafe fn(
       _: *const libc::c_char,
       _: *mut dirent,
       _: *mut libc::c_void,

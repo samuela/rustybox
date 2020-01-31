@@ -12,11 +12,7 @@ extern "C" {
 
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn rmdir_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn rmdir_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut status: libc::c_int = 0; /* Match gnu rmdir msg. */
   let mut flags: libc::c_int = 0;
   let mut path: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

@@ -10,8 +10,7 @@ use libc::strrchr;
  */
 
 /* Simpler version: does not special case "/" string */
-#[no_mangle]
-pub unsafe extern "C" fn bb_basename(mut name: *const libc::c_char) -> *const libc::c_char {
+pub unsafe fn bb_basename(mut name: *const libc::c_char) -> *const libc::c_char {
   let mut cp: *const libc::c_char = strrchr(name, '/' as i32);
   if !cp.is_null() {
     return cp.offset(1);
@@ -26,8 +25,7 @@ pub unsafe extern "C" fn bb_basename(mut name: *const libc::c_char) -> *const li
  * "abc/def"  -> "def"
  * "abc/def/" -> ""
  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_get_last_path_component_nostrip(
+pub unsafe fn bb_get_last_path_component_nostrip(
   mut path: *const libc::c_char,
 ) -> *mut libc::c_char {
   let mut slash: *mut libc::c_char = strrchr(path, '/' as i32);
@@ -49,8 +47,7 @@ pub unsafe extern "C" fn bb_get_last_path_component_nostrip(
  * "abc/def"  -> "def"
  * "abc/def/" -> "def" !!
  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_get_last_path_component_strip(
+pub unsafe fn bb_get_last_path_component_strip(
   mut path: *mut libc::c_char,
 ) -> *mut libc::c_char {
   let mut slash: *mut libc::c_char = crate::libbb::last_char_is::last_char_is(path, '/' as i32);

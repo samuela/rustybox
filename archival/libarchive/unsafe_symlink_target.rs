@@ -15,8 +15,7 @@ extern "C" {
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn create_or_remember_link(
+pub unsafe fn create_or_remember_link(
   mut link_placeholders: *mut *mut llist_t,
   mut target: *const libc::c_char,
   mut linkname: *const libc::c_char,
@@ -48,8 +47,7 @@ pub unsafe extern "C" fn create_or_remember_link(
     );
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn create_links_from_list(mut list: *mut llist_t) {
+pub unsafe fn create_links_from_list(mut list: *mut llist_t) {
   while !list.is_null() {
     let mut target: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     target = (*list)
@@ -57,17 +55,11 @@ pub unsafe extern "C" fn create_links_from_list(mut list: *mut llist_t) {
       .offset(1)
       .offset(strlen((*list).data.offset(1)) as isize)
       .offset(1);
-    if if *(*list).data as libc::c_int != 0 {
-      Some(
-        link as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int,
-      )
+    if (if *(*list).data as libc::c_int != 0 {
+      link
     } else {
-      Some(
-        symlink
-          as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_int,
-      )
-    }
-    .expect("non-null function pointer")(target, (*list).data.offset(1))
+      symlink
+    })(target, (*list).data.offset(1))
       != 0
     {
       /* shared message */

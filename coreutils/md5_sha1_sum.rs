@@ -40,7 +40,7 @@ pub union _ctx_ {
 }
 
 /* This might be useful elsewhere */
-unsafe extern "C" fn hash_bin_to_hex(
+unsafe fn hash_bin_to_hex(
   mut hash_value: *mut libc::c_uchar,
   mut hash_length: libc::c_uint,
 ) -> *mut libc::c_uchar {
@@ -58,7 +58,7 @@ unsafe extern "C" fn hash_bin_to_hex(
   return hex_value as *mut libc::c_uchar;
 }
 
-unsafe extern "C" fn hash_file(
+unsafe fn hash_file(
   mut filename: *const libc::c_char,
   mut sha3_width: libc::c_uint,
 ) -> *mut u8 {
@@ -74,10 +74,10 @@ unsafe extern "C" fn hash_file(
   };
   let mut hash_value: *mut u8 = std::ptr::null_mut();
   let mut update: Option<
-    unsafe extern "C" fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> (),
+    unsafe fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> (),
   > = None;
   let mut final_0: Option<
-    unsafe extern "C" fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint,
+    unsafe fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint,
   > = None;
   let mut hash_algo: libc::c_char = 0;
   src_fd = crate::libbb::wfopen_input::open_or_warn_stdin(filename);
@@ -90,115 +90,115 @@ unsafe extern "C" fn hash_file(
     crate::libbb::hash_md5_sha::md5_begin(&mut context.md5);
     update = ::std::mem::transmute::<
       *mut libc::c_void,
-      Option<unsafe extern "C" fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()>,
+      Option<unsafe fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()>,
     >(::std::mem::transmute::<
-      Option<unsafe extern "C" fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> ()>,
+      Option<unsafe fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> ()>,
       *mut libc::c_void,
     >(Some(
       crate::libbb::hash_md5_sha::md5_hash
-        as unsafe extern "C" fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> (),
+        as unsafe fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> (),
     )));
     final_0 = ::std::mem::transmute::<
       *mut libc::c_void,
-      Option<unsafe extern "C" fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint>,
+      Option<unsafe fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint>,
     >(::std::mem::transmute::<
-      Option<unsafe extern "C" fn(_: *mut md5_ctx_t, _: *mut libc::c_void) -> libc::c_uint>,
+      Option<unsafe fn(_: *mut md5_ctx_t, _: *mut libc::c_void) -> libc::c_uint>,
       *mut libc::c_void,
     >(Some(
       crate::libbb::hash_md5_sha::md5_end
-        as unsafe extern "C" fn(_: *mut md5_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
+        as unsafe fn(_: *mut md5_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
     )));
     hash_len = 16i32
   } else if 1i32 != 0 && hash_algo as libc::c_int == HASH_SHA1 as libc::c_int {
     crate::libbb::hash_md5_sha::sha1_begin(&mut context.sha1);
     update = ::std::mem::transmute::<
       *mut libc::c_void,
-      Option<unsafe extern "C" fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()>,
+      Option<unsafe fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()>,
     >(::std::mem::transmute::<
-      Option<unsafe extern "C" fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> ()>,
+      Option<unsafe fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> ()>,
       *mut libc::c_void,
     >(Some(
       crate::libbb::hash_md5_sha::md5_hash
-        as unsafe extern "C" fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> (),
+        as unsafe fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> (),
     )));
     final_0 = ::std::mem::transmute::<
       *mut libc::c_void,
-      Option<unsafe extern "C" fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint>,
+      Option<unsafe fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint>,
     >(::std::mem::transmute::<
-      Option<unsafe extern "C" fn(_: *mut sha1_ctx_t, _: *mut libc::c_void) -> libc::c_uint>,
+      Option<unsafe fn(_: *mut sha1_ctx_t, _: *mut libc::c_void) -> libc::c_uint>,
       *mut libc::c_void,
     >(Some(
       crate::libbb::hash_md5_sha::sha1_end
-        as unsafe extern "C" fn(_: *mut sha1_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
+        as unsafe fn(_: *mut sha1_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
     )));
     hash_len = 20i32
   } else if 1i32 != 0 && hash_algo as libc::c_int == HASH_SHA256 as libc::c_int {
     crate::libbb::hash_md5_sha::sha256_begin(&mut context.sha256);
     update = ::std::mem::transmute::<
       *mut libc::c_void,
-      Option<unsafe extern "C" fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()>,
+      Option<unsafe fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()>,
     >(::std::mem::transmute::<
-      Option<unsafe extern "C" fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> ()>,
+      Option<unsafe fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> ()>,
       *mut libc::c_void,
     >(Some(
       crate::libbb::hash_md5_sha::md5_hash
-        as unsafe extern "C" fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> (),
+        as unsafe fn(_: *mut md5_ctx_t, _: *const libc::c_void, _: size_t) -> (),
     )));
     final_0 = ::std::mem::transmute::<
       *mut libc::c_void,
-      Option<unsafe extern "C" fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint>,
+      Option<unsafe fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint>,
     >(::std::mem::transmute::<
-      Option<unsafe extern "C" fn(_: *mut sha1_ctx_t, _: *mut libc::c_void) -> libc::c_uint>,
+      Option<unsafe fn(_: *mut sha1_ctx_t, _: *mut libc::c_void) -> libc::c_uint>,
       *mut libc::c_void,
     >(Some(
       crate::libbb::hash_md5_sha::sha1_end
-        as unsafe extern "C" fn(_: *mut sha1_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
+        as unsafe fn(_: *mut sha1_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
     )));
     hash_len = 32i32
   } else if 1i32 != 0 && hash_algo as libc::c_int == HASH_SHA512 as libc::c_int {
     crate::libbb::hash_md5_sha::sha512_begin(&mut context.sha512);
     update = ::std::mem::transmute::<
       *mut libc::c_void,
-      Option<unsafe extern "C" fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()>,
+      Option<unsafe fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()>,
     >(::std::mem::transmute::<
-      Option<unsafe extern "C" fn(_: *mut sha512_ctx_t, _: *const libc::c_void, _: size_t) -> ()>,
+      Option<unsafe fn(_: *mut sha512_ctx_t, _: *const libc::c_void, _: size_t) -> ()>,
       *mut libc::c_void,
     >(Some(
       crate::libbb::hash_md5_sha::sha512_hash
-        as unsafe extern "C" fn(_: *mut sha512_ctx_t, _: *const libc::c_void, _: size_t) -> (),
+        as unsafe fn(_: *mut sha512_ctx_t, _: *const libc::c_void, _: size_t) -> (),
     )));
     final_0 = ::std::mem::transmute::<
       *mut libc::c_void,
-      Option<unsafe extern "C" fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint>,
+      Option<unsafe fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint>,
     >(::std::mem::transmute::<
-      Option<unsafe extern "C" fn(_: *mut sha512_ctx_t, _: *mut libc::c_void) -> libc::c_uint>,
+      Option<unsafe fn(_: *mut sha512_ctx_t, _: *mut libc::c_void) -> libc::c_uint>,
       *mut libc::c_void,
     >(Some(
       crate::libbb::hash_md5_sha::sha512_end
-        as unsafe extern "C" fn(_: *mut sha512_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
+        as unsafe fn(_: *mut sha512_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
     )));
     hash_len = 64i32
   } else if 1i32 != 0 && hash_algo as libc::c_int == HASH_SHA3 as libc::c_int {
     crate::libbb::hash_md5_sha::sha3_begin(&mut context.sha3);
     update = ::std::mem::transmute::<
       *mut libc::c_void,
-      Option<unsafe extern "C" fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()>,
+      Option<unsafe fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()>,
     >(::std::mem::transmute::<
-      Option<unsafe extern "C" fn(_: *mut sha3_ctx_t, _: *const libc::c_void, _: size_t) -> ()>,
+      Option<unsafe fn(_: *mut sha3_ctx_t, _: *const libc::c_void, _: size_t) -> ()>,
       *mut libc::c_void,
     >(Some(
       crate::libbb::hash_md5_sha::sha3_hash
-        as unsafe extern "C" fn(_: *mut sha3_ctx_t, _: *const libc::c_void, _: size_t) -> (),
+        as unsafe fn(_: *mut sha3_ctx_t, _: *const libc::c_void, _: size_t) -> (),
     )));
     final_0 = ::std::mem::transmute::<
       *mut libc::c_void,
-      Option<unsafe extern "C" fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint>,
+      Option<unsafe fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint>,
     >(::std::mem::transmute::<
-      Option<unsafe extern "C" fn(_: *mut sha3_ctx_t, _: *mut libc::c_void) -> libc::c_uint>,
+      Option<unsafe fn(_: *mut sha3_ctx_t, _: *mut libc::c_void) -> libc::c_uint>,
       *mut libc::c_void,
     >(Some(
       crate::libbb::hash_md5_sha::sha3_end
-        as unsafe extern "C" fn(_: *mut sha3_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
+        as unsafe fn(_: *mut sha3_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
     )));
     /*
      * Should support 224, 256, 384, 512.
@@ -256,8 +256,7 @@ unsafe extern "C" fn hash_file(
   return hash_value;
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn md5_sha1_sum_main(
+pub unsafe fn md5_sha1_sum_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

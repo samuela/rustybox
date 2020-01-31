@@ -185,7 +185,7 @@ pub struct SpecialEntry {
  * 0 is the most verbose, default 8.
  * For some reason, in fact only 5, 7 and 8 are used.
  */
-unsafe extern "C" fn crondlog(
+unsafe fn crondlog(
   mut level: libc::c_uint,
   mut msg: *const libc::c_char,
   mut va: ::std::ffi::VaList,
@@ -223,7 +223,7 @@ static mut MonAry: [libc::c_char; 37] = [
   106, 97, 110, 102, 101, 98, 109, 97, 114, 97, 112, 114, 109, 97, 121, 106, 117, 110, 106, 117,
   108, 97, 117, 103, 115, 101, 112, 111, 99, 116, 110, 111, 118, 100, 101, 99, 0,
 ];
-unsafe extern "C" fn ParseField(
+unsafe fn ParseField(
   mut user: *mut libc::c_char,
   mut ary: *mut libc::c_char,
   mut modvalue: libc::c_int,
@@ -360,7 +360,7 @@ unsafe extern "C" fn ParseField(
     base,
   );
 }
-unsafe extern "C" fn FixDayDow(mut line: *mut CronLine) {
+unsafe fn FixDayDow(mut line: *mut CronLine) {
   let mut i: libc::c_uint = 0;
   let mut weekUsed: libc::c_int = 0;
   let mut daysUsed: libc::c_int = 0;
@@ -424,7 +424,7 @@ unsafe extern "C" fn FixDayDow(mut line: *mut CronLine) {
 //is still running.
 //OTOH most other versions of cron do not wait for job termination anyway,
 //they end up with multiple copies of jobs if they don't terminate soon enough.
-unsafe extern "C" fn delete_cronfile(mut userName: *const libc::c_char) {
+unsafe fn delete_cronfile(mut userName: *const libc::c_char) {
   let mut pfile: *mut *mut CronFile =
     &mut (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cron_files;
   let mut file: *mut CronFile = std::ptr::null_mut();
@@ -462,7 +462,7 @@ unsafe extern "C" fn delete_cronfile(mut userName: *const libc::c_char) {
     pfile = &mut (*file).cf_next
   }
 }
-unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
+unsafe fn load_crontab(mut fileName: *const libc::c_char) {
   let mut parser: *mut parser_t = std::ptr::null_mut();
   let mut sbuf: stat = std::mem::zeroed();
   let mut maxLines: libc::c_int = 0;
@@ -732,7 +732,7 @@ unsafe extern "C" fn load_crontab(mut fileName: *const libc::c_char) {
   free(mailTo as *mut libc::c_void);
   free(shell as *mut libc::c_void);
 }
-unsafe extern "C" fn process_cron_update_file() {
+unsafe fn process_cron_update_file() {
   let mut fi: *mut FILE = std::ptr::null_mut();
   let mut buf: [libc::c_char; 256] = [0; 256];
   fi = crate::libbb::wfopen::fopen_for_read(b"cron.update\x00" as *const u8 as *const libc::c_char);
@@ -753,7 +753,7 @@ unsafe extern "C" fn process_cron_update_file() {
     fclose(fi);
   };
 }
-unsafe extern "C" fn rescan_crontab_dir() {
+unsafe fn rescan_crontab_dir() {
   let mut file: *mut CronFile = std::ptr::null_mut();
   's_5: loop
   /* Delete all files until we only have ones with running jobs (or none) */
@@ -802,7 +802,7 @@ unsafe extern "C" fn rescan_crontab_dir() {
 /* We set environment *before* vfork (because we want to use vfork),
  * so we cannot use setenv() - repeated calls to setenv() may leak memory!
  * Using putenv(), and freeing memory after unsetenv() won't leak */
-unsafe extern "C" fn safe_setenv(
+unsafe fn safe_setenv(
   mut pvar_val: *mut *mut libc::c_char,
   mut var: *const libc::c_char,
   mut val: *const libc::c_char,
@@ -818,7 +818,7 @@ unsafe extern "C" fn safe_setenv(
   );
   putenv(*pvar_val);
 }
-unsafe extern "C" fn set_env_vars(mut pas: *mut passwd, mut shell: *const libc::c_char) {
+unsafe fn set_env_vars(mut pas: *mut passwd, mut shell: *const libc::c_char) {
   /* POSIX requires crond to set up at least HOME, LOGNAME, PATH, SHELL.
    * We assume crond inherited suitable PATH.
    */
@@ -843,7 +843,7 @@ unsafe extern "C" fn set_env_vars(mut pas: *mut passwd, mut shell: *const libc::
     shell,
   );
 }
-unsafe extern "C" fn change_user(mut pas: *mut passwd) {
+unsafe fn change_user(mut pas: *mut passwd) {
   /* careful: we're after vfork! */
   crate::libbb::change_identity::change_identity(pas); /* - initgroups, setgid, setuid */
   if chdir((*pas).pw_dir) < 0 {
@@ -855,7 +855,7 @@ unsafe extern "C" fn change_user(mut pas: *mut passwd) {
   };
 }
 // TODO: sendmail should be _run-time_ option, not compile-time!
-unsafe extern "C" fn fork_job(
+unsafe fn fork_job(
   mut user: *const libc::c_char,
   mut mailFd: libc::c_int,
   mut line: *mut CronLine,
@@ -960,10 +960,7 @@ unsafe extern "C" fn fork_job(
   }
   return pid;
 }
-unsafe extern "C" fn start_one_job(
-  mut user: *const libc::c_char,
-  mut line: *mut CronLine,
-) -> pid_t {
+unsafe fn start_one_job(mut user: *const libc::c_char, mut line: *mut CronLine) -> pid_t {
   let mut mailFile: [libc::c_char; 128] = [0; 128];
   let mut mailFd: libc::c_int = -1i32;
   (*line).cl_pid = 0;
@@ -1021,7 +1018,7 @@ unsafe extern "C" fn start_one_job(
 /*
  * process_finished_job - called when job terminates and when mail terminates
  */
-unsafe extern "C" fn process_finished_job(mut user: *const libc::c_char, mut line: *mut CronLine) {
+unsafe fn process_finished_job(mut user: *const libc::c_char, mut line: *mut CronLine) {
   let mut pid: pid_t = 0;
   let mut mailFd: libc::c_int = 0;
   let mut mailFile: [libc::c_char; 128] = [0; 128];
@@ -1073,7 +1070,7 @@ unsafe extern "C" fn process_finished_job(mut user: *const libc::c_char, mut lin
  * period is about a minute (one scan).  Worst case it will be one
  * hour (60 scans).
  */
-unsafe extern "C" fn flag_starting_jobs(mut t1: time_t, mut t2: time_t) {
+unsafe fn flag_starting_jobs(mut t1: time_t, mut t2: time_t) {
   let mut t: time_t = 0;
   /* Find jobs > t1 and <= t2 */
   t = t1 - t1 % 60i32 as libc::c_long;
@@ -1127,7 +1124,7 @@ unsafe extern "C" fn flag_starting_jobs(mut t1: time_t, mut t2: time_t) {
     t += 60i32 as libc::c_long
   }
 }
-unsafe extern "C" fn touch_reboot_file() -> libc::c_int {
+unsafe fn touch_reboot_file() -> libc::c_int {
   let mut fd: libc::c_int = open(
     b"/var/run/crond.reboot\x00" as *const u8 as *const libc::c_char,
     0o1i32 | 0o100i32 | 0o200i32 | 0o1000i32,
@@ -1140,7 +1137,7 @@ unsafe extern "C" fn touch_reboot_file() -> libc::c_int {
   /* File (presumably) exists - this is not the first run after reboot */
   return 0;
 }
-unsafe extern "C" fn start_jobs(mut wants_start: libc::c_int) {
+unsafe fn start_jobs(mut wants_start: libc::c_int) {
   let mut file: *mut CronFile = std::ptr::null_mut();
   let mut line: *mut CronLine = std::ptr::null_mut();
   file = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).cron_files;
@@ -1175,7 +1172,7 @@ unsafe extern "C" fn start_jobs(mut wants_start: libc::c_int) {
  * Check for job completion, return number of jobs still running after
  * all done.
  */
-unsafe extern "C" fn check_completions() -> libc::c_int {
+unsafe fn check_completions() -> libc::c_int {
   let mut file: *mut CronFile = std::ptr::null_mut();
   let mut line: *mut CronLine = std::ptr::null_mut();
   let mut num_still_running: libc::c_int = 0;
@@ -1219,7 +1216,7 @@ unsafe extern "C" fn check_completions() -> libc::c_int {
   }
   return num_still_running;
 }
-unsafe extern "C" fn reopen_logfile_to_stderr() {
+unsafe fn reopen_logfile_to_stderr() {
   if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
     .log_filename
     .is_null()
@@ -1233,11 +1230,7 @@ unsafe extern "C" fn reopen_logfile_to_stderr() {
     }
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn crond_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn crond_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut t2: time_t = 0;
   let mut rescan: libc::c_uint = 0;
   let mut sleep_time: libc::c_uint = 0;

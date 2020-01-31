@@ -59,7 +59,7 @@ pub const OPT_m: C2RustUnnamed_1 = 1;
 /*
  * PCI_SLOT_NAME PCI_CLASS: PCI_VID:PCI_DID [PCI_SUBSYS_VID:PCI_SUBSYS_DID] [DRIVER]
  */
-unsafe extern "C" fn fileAction(
+unsafe fn fileAction(
   mut fileName: *const libc::c_char,
   mut _statbuf: *mut stat,
   mut _userData: *mut libc::c_void,
@@ -80,10 +80,7 @@ unsafe extern "C" fn fileAction(
   );
   parser = crate::libbb::parse_config::config_open2(
     uevent_filename,
-    Some(
-      crate::libbb::wfopen::fopen_for_read
-        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
-    ),
+    Some(crate::libbb::wfopen::fopen_for_read as unsafe fn(_: *const libc::c_char) -> *mut FILE),
   );
   free(uevent_filename as *mut libc::c_void);
   while crate::libbb::parse_config::config_read(
@@ -155,18 +152,14 @@ unsafe extern "C" fn fileAction(
   free(pci_slot_name as *mut libc::c_void);
   return 1i32;
 }
-#[no_mangle]
-pub unsafe extern "C" fn lspci_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn lspci_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   crate::libbb::getopt32::getopt32(argv, b"mknv\x00" as *const u8 as *const libc::c_char);
   crate::libbb::recursive_action::recursive_action(
     b"/sys/bus/pci/devices\x00" as *const u8 as *const libc::c_char,
     ACTION_RECURSE as libc::c_int as libc::c_uint,
     Some(
       fileAction
-        as unsafe extern "C" fn(
+        as unsafe fn(
           _: *const libc::c_char,
           _: *mut stat,
           _: *mut libc::c_void,

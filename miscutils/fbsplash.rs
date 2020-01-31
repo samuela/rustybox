@@ -144,7 +144,7 @@ pub struct fb_cmap {
   pub transp: *mut __u16,
 }
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 // progress bar width
@@ -159,7 +159,7 @@ unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_vo
 /* *
  * Configure palette for RGB:332
  */
-unsafe extern "C" fn fb_setpal(mut fd: libc::c_int) {
+unsafe fn fb_setpal(mut fd: libc::c_int) {
   let mut cmap: fb_cmap = fb_cmap {
     start: 0,
     len: 0,
@@ -214,7 +214,7 @@ unsafe extern "C" fn fb_setpal(mut fd: libc::c_int) {
  * Open and initialize the framebuffer device
  * \param *strfb_device pointer to framebuffer device
  */
-unsafe extern "C" fn fb_open(mut strfb_device: *const libc::c_char) {
+unsafe fn fb_open(mut strfb_device: *const libc::c_char) {
   let mut fbfd: libc::c_int = crate::libbb::xfuncs_printf::xopen(strfb_device, 0o2i32);
   // framebuffer properties
   crate::libbb::xfuncs_printf::bb_xioctl(
@@ -290,7 +290,7 @@ unsafe extern "C" fn fb_open(mut strfb_device: *const libc::c_char) {
  * Return pixel value of the passed RGB color.
  * This is performance critical fn.
  */
-unsafe extern "C" fn fb_pixel_value(
+unsafe fn fb_pixel_value(
   mut r: libc::c_uint,
   mut g: libc::c_uint,
   mut b: libc::c_uint,
@@ -321,7 +321,7 @@ unsafe extern "C" fn fb_pixel_value(
 /* *
  * Draw pixel on framebuffer
  */
-unsafe extern "C" fn fb_write_pixel(mut addr: *mut libc::c_uchar, mut pixel: libc::c_uint) {
+unsafe fn fb_write_pixel(mut addr: *mut libc::c_uchar, mut pixel: libc::c_uint) {
   match (*ptr_to_globals).bytes_per_pixel {
     1 => *addr = pixel as libc::c_uchar,
     2 => *(addr as *mut u16) = pixel as u16,
@@ -337,7 +337,7 @@ unsafe extern "C" fn fb_write_pixel(mut addr: *mut libc::c_uchar, mut pixel: lib
 /* *
  * Draw hollow rectangle on framebuffer
  */
-unsafe extern "C" fn fb_drawrectangle() {
+unsafe fn fb_drawrectangle() {
   let mut cnt: libc::c_int = 0;
   let mut thispix: libc::c_uint = 0;
   let mut ptr1: *mut libc::c_uchar = std::ptr::null_mut();
@@ -410,7 +410,7 @@ unsafe extern "C" fn fb_drawrectangle() {
  * \param nx2pos,ny2pos down right position
  * \param nred,ngreen,nblue rgb color
  */
-unsafe extern "C" fn fb_drawfullrectangle(
+unsafe fn fb_drawfullrectangle(
   mut nx1pos: libc::c_int,
   mut ny1pos: libc::c_int,
   mut nx2pos: libc::c_int,
@@ -456,7 +456,7 @@ unsafe extern "C" fn fb_drawfullrectangle(
  * Draw a progress bar on framebuffer
  * \param percent percentage of loading
  */
-unsafe extern "C" fn fb_drawprogressbar(mut percent: libc::c_uint) {
+unsafe fn fb_drawprogressbar(mut percent: libc::c_uint) {
   let mut left_x: libc::c_int = 0;
   let mut top_y: libc::c_int = 0;
   let mut pos_x: libc::c_int = 0;
@@ -529,7 +529,7 @@ unsafe extern "C" fn fb_drawprogressbar(mut percent: libc::c_uint) {
 /* *
  * Draw image from PPM file
  */
-unsafe extern "C" fn fb_drawimage() {
+unsafe fn fb_drawimage() {
   let mut theme_file: *mut FILE = std::ptr::null_mut();
   let mut read_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pixline: *mut libc::c_uchar = std::ptr::null_mut();
@@ -657,7 +657,7 @@ unsafe extern "C" fn fb_drawimage() {
  * Parse configuration file
  * \param *cfg_filename name of the configuration file
  */
-unsafe extern "C" fn init(mut cfg_filename: *const libc::c_char) {
+unsafe fn init(mut cfg_filename: *const libc::c_char) {
   static mut param_names: [libc::c_char; 74] = [
     66, 65, 82, 95, 87, 73, 68, 84, 72, 0, 66, 65, 82, 95, 72, 69, 73, 71, 72, 84, 0, 66, 65, 82,
     95, 76, 69, 70, 84, 0, 66, 65, 82, 95, 84, 79, 80, 0, 66, 65, 82, 95, 82, 0, 66, 65, 82, 95,
@@ -669,7 +669,7 @@ unsafe extern "C" fn init(mut cfg_filename: *const libc::c_char) {
     cfg_filename,
     Some(
       crate::libbb::wfopen_input::xfopen_stdin
-        as unsafe extern "C" fn(_: *const libc::c_char) -> *mut FILE,
+        as unsafe fn(_: *const libc::c_char) -> *mut FILE,
     ),
   );
   while crate::libbb::parse_config::config_read(
@@ -697,8 +697,7 @@ unsafe extern "C" fn init(mut cfg_filename: *const libc::c_char) {
   }
   crate::libbb::parse_config::config_close(parser);
 }
-#[no_mangle]
-pub unsafe extern "C" fn fbsplash_main(
+pub unsafe fn fbsplash_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

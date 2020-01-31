@@ -1,8 +1,7 @@
 use libc;
 use libc::free;
 
-#[no_mangle]
-pub unsafe extern "C" fn auto_string(mut str: *mut libc::c_char) -> *mut libc::c_char {
+pub unsafe fn auto_string(mut str: *mut libc::c_char) -> *mut libc::c_char {
   static mut saved: [*mut libc::c_char; 4] = [0 as *const libc::c_char as *mut libc::c_char; 4]; /* = 0 */
   static mut cur_saved: u8 = 0;
   free(saved[cur_saved as usize] as *mut libc::c_void);

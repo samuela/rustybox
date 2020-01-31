@@ -731,11 +731,7 @@ unsafe extern "C" fn arp_show(mut name: *mut libc::c_char) -> libc::c_int {
   }
   return 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn arp_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn arp_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut hw_type: *const libc::c_char = std::ptr::null();
   let mut protocol: *const libc::c_char = std::ptr::null();
   let mut opts: libc::c_uint = 0;

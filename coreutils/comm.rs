@@ -14,7 +14,7 @@ extern "C" {
 }
 
 /* writeline outputs the input given, appropriately aligned according to class */
-unsafe extern "C" fn writeline(mut line: *mut libc::c_char, mut class: libc::c_int) {
+unsafe fn writeline(mut line: *mut libc::c_char, mut class: libc::c_int) {
   let mut flags: libc::c_int = option_mask32 as libc::c_int;
   if class == 0 {
     if flags & 1i32 << 0 != 0 {
@@ -41,11 +41,7 @@ unsafe extern "C" fn writeline(mut line: *mut libc::c_char, mut class: libc::c_i
   }
   puts(line);
 }
-#[no_mangle]
-pub unsafe extern "C" fn comm_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn comm_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut thisline: [*mut libc::c_char; 2] = [0 as *mut libc::c_char; 2];
   let mut stream: [*mut FILE; 2] = [0 as *mut FILE; 2];
   let mut i: libc::c_int = 0;

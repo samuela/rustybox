@@ -15,7 +15,7 @@ extern "C" {
 }
 
 #[inline(always)]
-unsafe extern "C" fn xatoul_range(
+unsafe fn xatoul_range(
   mut str: *const libc::c_char,
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
@@ -73,11 +73,7 @@ static mut modes_cubp: [mode_t; 3] = [
   0o20000i32 as mode_t,
   0o60000i32 as mode_t,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn mknod_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn mknod_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut mode: mode_t = 0;
   let mut dev: libc::dev_t = 0;
   let mut type_0: *const libc::c_char = std::ptr::null();

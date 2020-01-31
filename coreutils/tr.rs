@@ -142,7 +142,7 @@ pub const CLASS_digit: C2RustUnnamed_0 = 3;
 pub const CLASS_invalid: C2RustUnnamed_0 = 0;
 pub type C2RustUnnamed_0 = libc::c_uint;
 #[inline(always)]
-unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
+unsafe fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   let mut b: libc::c_uchar = (a as libc::c_int - '0' as i32) as libc::c_uchar;
   if b as libc::c_int <= 9i32 {
     return (b as libc::c_int <= 9i32) as libc::c_int;
@@ -150,7 +150,7 @@ unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   b = ((a as libc::c_int | 0x20i32) - 'a' as i32) as libc::c_uchar;
   return (b as libc::c_int <= 'z' as i32 - 'a' as i32) as libc::c_int;
 }
-unsafe extern "C" fn map(
+unsafe fn map(
   mut pvector: *mut libc::c_char,
   mut string1: *mut libc::c_char,
   mut string1_len: libc::c_uint,
@@ -189,7 +189,7 @@ unsafe extern "C" fn map(
  * # echo qwe123 | /usr/bin/tr 123456789 '[d*]'
  * qweddd
  */
-unsafe extern "C" fn expand(
+unsafe fn expand(
   mut arg: *mut libc::c_char,
   mut buffer_p: *mut *mut libc::c_char,
 ) -> libc::c_uint {
@@ -415,7 +415,7 @@ unsafe extern "C" fn expand(
 /* NB: buffer is guaranteed to be at least TR_BUFSIZE
  * (which is >= ASCII) big.
  */
-unsafe extern "C" fn complement(
+unsafe fn complement(
   mut buffer: *mut libc::c_char,
   mut buffer_len: libc::c_int,
 ) -> libc::c_int {
@@ -448,11 +448,7 @@ unsafe extern "C" fn complement(
   );
   return len;
 }
-#[no_mangle]
-pub unsafe extern "C" fn tr_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn tr_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut i: libc::c_int = 0;
   let mut opts: smalluint = 0;
   let mut read_chars: ssize_t = 0;

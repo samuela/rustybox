@@ -56,11 +56,7 @@ pub const OPT_n: C2RustUnnamed = 8;
 -s, --size=N		shred this many bytes (suffixes like K, M, G accepted)
 --remove[=HOW]		like -u but give control on HOW to delete;  See below
 */
-#[no_mangle]
-pub unsafe extern "C" fn shred_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn shred_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut rand_fd: libc::c_int = 0; /* for compiler */
   rand_fd = rand_fd;
   let mut zero_fd: libc::c_int = 0;

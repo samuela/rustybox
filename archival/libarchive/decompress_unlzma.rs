@@ -60,7 +60,7 @@ pub const LZMA_NUM_FULL_DISTANCES: C2RustUnnamed_0 = 128;
 pub const LZMA_NUM_STATES: C2RustUnnamed_0 = 12;
 pub const LZMA_NUM_LEN_PROBS: C2RustUnnamed_0 = 514;
 /* Called once in rc_do_normalize() */
-unsafe extern "C" fn rc_read(mut rc: *mut rc_t) {
+unsafe fn rc_read(mut rc: *mut rc_t) {
   let mut buffer_size: libc::c_int = crate::libbb::read::safe_read(
     (*rc).fd,
     rc.offset(1) as *mut u8 as *mut libc::c_void,
@@ -77,7 +77,7 @@ unsafe extern "C" fn rc_read(mut rc: *mut rc_t) {
   (*rc).ptr = rc.offset(1) as *mut u8;
 }
 /* Called twice, but one callsite is in speed_inline'd rc_is_bit_1() */
-unsafe extern "C" fn rc_do_normalize(mut rc: *mut rc_t) {
+unsafe fn rc_do_normalize(mut rc: *mut rc_t) {
   if (*rc).ptr >= (*rc).buffer_end {
     rc_read(rc);
   }
@@ -87,14 +87,14 @@ unsafe extern "C" fn rc_do_normalize(mut rc: *mut rc_t) {
   (*rc).code = (*rc).code << 8i32 | *fresh0 as libc::c_uint;
 }
 #[inline(always)]
-unsafe extern "C" fn rc_normalize(mut rc: *mut rc_t) {
+unsafe fn rc_normalize(mut rc: *mut rc_t) {
   if (*rc).range < (1i32 << 24i32) as libc::c_uint {
     rc_do_normalize(rc);
   };
 }
 /* Called once */
 #[inline(always)]
-unsafe extern "C" fn rc_init(mut fd: libc::c_int) -> *mut rc_t
+unsafe fn rc_init(mut fd: libc::c_int) -> *mut rc_t
 /*, int buffer_size) */ {
   let mut i: libc::c_int = 0;
   let mut rc: *mut rc_t = std::ptr::null_mut();
@@ -113,11 +113,11 @@ unsafe extern "C" fn rc_init(mut fd: libc::c_int) -> *mut rc_t
 }
 /* Called once  */
 #[inline(always)]
-unsafe extern "C" fn rc_free(mut rc: *mut rc_t) {
+unsafe fn rc_free(mut rc: *mut rc_t) {
   free(rc as *mut libc::c_void);
 }
 /* rc_is_bit_1 is called 9 times */
-unsafe extern "C" fn rc_is_bit_1(mut rc: *mut rc_t, mut p: *mut u16) -> libc::c_int {
+unsafe fn rc_is_bit_1(mut rc: *mut rc_t, mut p: *mut u16) -> libc::c_int {
   rc_normalize(rc);
   (*rc).bound = (*p as libc::c_uint).wrapping_mul((*rc).range >> 11i32);
   if (*rc).code < (*rc).bound {
@@ -132,7 +132,7 @@ unsafe extern "C" fn rc_is_bit_1(mut rc: *mut rc_t, mut p: *mut u16) -> libc::c_
 }
 /* Called 4 times in unlzma loop */
 #[inline(always)]
-unsafe extern "C" fn rc_get_bit(
+unsafe fn rc_get_bit(
   mut rc: *mut rc_t,
   mut p: *mut u16,
   mut symbol: *mut libc::c_int,
@@ -143,7 +143,7 @@ unsafe extern "C" fn rc_get_bit(
 }
 /* Called once */
 #[inline(always)]
-unsafe extern "C" fn rc_direct_bit(mut rc: *mut rc_t) -> libc::c_int {
+unsafe fn rc_direct_bit(mut rc: *mut rc_t) -> libc::c_int {
   rc_normalize(rc);
   (*rc).range >>= 1i32;
   if (*rc).code >= (*rc).range {
@@ -153,7 +153,7 @@ unsafe extern "C" fn rc_direct_bit(mut rc: *mut rc_t) -> libc::c_int {
   return 0;
 }
 /* Called twice */
-unsafe extern "C" fn rc_bit_tree_decode(
+unsafe fn rc_bit_tree_decode(
   mut rc: *mut rc_t,
   mut p: *mut u16,
   mut num_levels: libc::c_int,
@@ -171,10 +171,7 @@ unsafe extern "C" fn rc_bit_tree_decode(
   }
   *symbol -= 1i32 << num_levels;
 }
-#[no_mangle]
-pub unsafe extern "C" fn unpack_lzma_stream(
-  mut xstate: *mut transformer_state_t,
-) -> libc::c_longlong {
+pub unsafe fn unpack_lzma_stream(mut xstate: *mut transformer_state_t) -> libc::c_longlong {
   let mut num_bits: libc::c_int = 0;
   let mut offset: libc::c_int = 0;
   let mut prob2: *mut u16 = std::ptr::null_mut();

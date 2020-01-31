@@ -37,11 +37,7 @@ pub const COMMON_BUFSIZE: C2RustUnnamed = 1024;
 //usage:#define cksum_full_usage "\n\n"
 //usage:       "Calculate the CRC32 checksums of FILEs"
 /* This is a NOEXEC applet. Be very careful! */
-#[no_mangle]
-pub unsafe extern "C" fn cksum_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn cksum_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut crc32_table: *mut u32 = crate::libbb::crc32::crc32_filltable(0 as *mut u32, 1i32); /* coreutils 6.9 compat */
   let mut exit_code: libc::c_int = 0;
   crate::libbb::getopt32::getopt32(argv, b"\x00" as *const u8 as *const libc::c_char);

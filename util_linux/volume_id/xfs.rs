@@ -138,8 +138,7 @@ pub struct xfs_super_block {
 /*,u64 off*/
 /*,u64 off*/
 //int FAST_FUNC volume_id_probe_ufs(struct volume_id *id /*,u64 off*/);
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_probe_xfs(mut id: *mut volume_id) -> libc::c_int
+pub unsafe fn volume_id_probe_xfs(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut xs: *mut xfs_super_block = std::ptr::null_mut();
   xs = crate::util_linux::volume_id::util::volume_id_get_buffer(id, 0 as u64, 0x200i32 as size_t)

@@ -60,11 +60,11 @@ pub struct linux_rtc_wkalrm {
   /* time the alarm is set to */
 }
 #[inline(always)]
-unsafe extern "C" fn xatol(mut str: *const libc::c_char) -> libc::c_long {
+unsafe fn xatol(mut str: *const libc::c_char) -> libc::c_long {
   return crate::libbb::xatonum::xatoll(str) as libc::c_long;
 }
 #[inline(never)]
-unsafe extern "C" fn may_wakeup(mut rtcname: *const libc::c_char) -> bool {
+unsafe fn may_wakeup(mut rtcname: *const libc::c_char) -> bool {
   let mut ret: ssize_t = 0;
   let mut buf: [libc::c_char; 128] = [0; 128];
   /* strip "/dev/" from the rtcname here */
@@ -91,7 +91,7 @@ unsafe extern "C" fn may_wakeup(mut rtcname: *const libc::c_char) -> bool {
   .is_null();
 }
 #[inline(never)]
-unsafe extern "C" fn setup_alarm(
+unsafe fn setup_alarm(
   mut fd: libc::c_int,
   mut wakeup: *mut time_t,
   mut rtc_time: time_t,
@@ -171,8 +171,7 @@ unsafe extern "C" fn setup_alarm(
     );
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn rtcwake_main(
+pub unsafe fn rtcwake_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

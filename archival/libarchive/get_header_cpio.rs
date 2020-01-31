@@ -23,10 +23,7 @@ extern "C" {
   static cpio_TRAILER: [libc::c_char; 0];
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn get_header_cpio(
-  mut archive_handle: *mut archive_handle_t,
-) -> libc::c_char {
+pub unsafe fn get_header_cpio(mut archive_handle: *mut archive_handle_t) -> libc::c_char {
   let mut file_header: *mut file_header_t = (*archive_handle).file_header;
   let mut cpio_header: [libc::c_char; 110] = [0; 110];
   let mut namesize: libc::c_int = 0;

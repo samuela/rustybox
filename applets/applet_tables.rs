@@ -382,7 +382,7 @@ pub enum SUID {
 }
 
 pub enum Entrypoint {
-  CStyle(unsafe extern "C" fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int),
+  CStyle(unsafe fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int),
   SafeStyle(fn(&[&str]) -> !),
 }
 

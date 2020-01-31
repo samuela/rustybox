@@ -36,7 +36,7 @@ pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;
 pub const LOGMODE_STDIO: C2RustUnnamed = 1;
 pub const LOGMODE_NONE: C2RustUnnamed = 0;
 #[inline(always)]
-unsafe extern "C" fn xatoul_range(
+unsafe fn xatoul_range(
   mut str: *const libc::c_char,
   mut l: libc::c_ulong,
   mut u: libc::c_ulong,
@@ -92,7 +92,7 @@ unsafe extern "C" fn xatoul_range(
 //usage:     "\n	-s	No error messages"
 //usage:	)
 /* After libbb.h, because on some systems it needs other includes */
-unsafe extern "C" fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
+unsafe fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
   ipaddr = ({
     let mut __v: libc::c_uint = 0;
     let mut __x: libc::c_uint = ipaddr as libc::c_uint;
@@ -172,7 +172,7 @@ unsafe extern "C" fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
     return 0 as libc::c_ulong;
   };
 }
-unsafe extern "C" fn get_prefix(mut netmask: libc::c_ulong) -> libc::c_int {
+unsafe fn get_prefix(mut netmask: libc::c_ulong) -> libc::c_int {
   let mut msk: libc::c_ulong = 0x80000000u32 as libc::c_ulong;
   let mut ret: libc::c_int = 0;
   netmask = ({
@@ -206,11 +206,7 @@ static mut ipcalc_longopts: [libc::c_char; 62] = [
   110, 101, 116, 119, 111, 114, 107, 0, 0, 110, 112, 114, 101, 102, 105, 120, 0, 0, 112, 104, 111,
   115, 116, 110, 97, 109, 101, 0, 0, 104, 115, 105, 108, 101, 110, 116, 0, 0, 115, 0,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn ipcalc_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn ipcalc_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
   let mut have_netmask: bool = 0 != 0;
   let mut s_netmask: in_addr = in_addr { s_addr: 0 };

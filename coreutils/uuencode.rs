@@ -62,8 +62,7 @@ pub type C2RustUnnamed = libc::c_uint;
 /* This *MUST* be a multiple of 3 */
 pub const DST_BUF_SIZE: C2RustUnnamed = 60;
 pub const SRC_BUF_SIZE: C2RustUnnamed = 45;
-#[no_mangle]
-pub unsafe extern "C" fn uuencode_main(
+pub unsafe fn uuencode_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

@@ -48,7 +48,7 @@ pub const SUM_BSD: C2RustUnnamed_0 = 0;
 The checksum varies depending on sizeof (int). */
 /* SYSV: calculate and print the checksum and the size in 512-byte blocks */
 /* Return 1 if successful.  */
-unsafe extern "C" fn sum_file(
+unsafe fn sum_file(
   mut file: *const libc::c_char,
   mut type_0: libc::c_uint,
 ) -> libc::c_uint {
@@ -130,11 +130,7 @@ unsafe extern "C" fn sum_file(
   }
   return 1i32 as libc::c_uint;
 }
-#[no_mangle]
-pub unsafe extern "C" fn sum_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn sum_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut n: libc::c_uint = 0;
   let mut type_0: libc::c_uint = SUM_BSD as libc::c_int as libc::c_uint;
   n = crate::libbb::getopt32::getopt32(argv, b"sr\x00" as *const u8 as *const libc::c_char);

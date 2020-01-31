@@ -218,17 +218,13 @@ static mut date_longopts: [libc::c_char; 53] = [
  * - after xasprintf we use other xfuncs
  */
 
-unsafe extern "C" fn maybe_set_utc(mut opt: libc::c_int) {
+unsafe fn maybe_set_utc(mut opt: libc::c_int) {
   if opt & OPT_UTC as libc::c_int != 0 {
     putenv(b"TZ=UTC0\x00" as *const u8 as *const libc::c_char as *mut libc::c_char);
   };
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn date_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn date_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut ts: timespec = std::mem::zeroed(); /* skip over the '+' */
   let mut tm_time: tm = std::mem::zeroed(); /* can be NULL */
   let mut buf_fmt_dt2str: [libc::c_char; 64] = [0; 64];

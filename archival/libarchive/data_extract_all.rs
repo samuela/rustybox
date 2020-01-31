@@ -113,8 +113,7 @@ pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn data_extract_all(mut archive_handle: *mut archive_handle_t) {
+pub unsafe fn data_extract_all(mut archive_handle: *mut archive_handle_t) {
   let mut current_block: u64;
   let mut file_header: *mut file_header_t = (*archive_handle).file_header;
   let mut dst_fd: libc::c_int = 0;

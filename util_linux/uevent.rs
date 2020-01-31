@@ -33,8 +33,7 @@ pub const MAX_ENV: C2RustUnnamed = 127;
 pub type C2RustUnnamed_0 = libc::c_uint;
 pub const RCVBUF: C2RustUnnamed_0 = 2097152;
 
-#[no_mangle]
-pub unsafe extern "C" fn uevent_main(
+pub unsafe fn uevent_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

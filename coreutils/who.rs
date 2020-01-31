@@ -114,7 +114,7 @@ pub struct C2RustUnnamed {
 //usage:       "Show who is logged on\n"
 //usage:     "\n	-a	Show all"
 //usage:     "\n	-H	Print column headers"
-unsafe extern "C" fn idle_string(mut str6: *mut libc::c_char, mut t: time_t) {
+unsafe fn idle_string(mut str6: *mut libc::c_char, mut t: time_t) {
   t = time(0 as *mut time_t) - t;
   /*if (t < 60) {
     str6[0] = '.';
@@ -132,8 +132,7 @@ unsafe extern "C" fn idle_string(mut str6: *mut libc::c_char, mut t: time_t) {
   }
   strcpy(str6, b"old\x00" as *const u8 as *const libc::c_char);
 }
-#[no_mangle]
-pub unsafe extern "C" fn who_main(
+pub unsafe fn who_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

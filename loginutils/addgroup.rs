@@ -20,7 +20,7 @@ extern "C" {
   static bb_msg_perm_denied_are_you_root: [libc::c_char; 0];
 }
 
-unsafe extern "C" fn xgroup_study(mut g: *mut group) {
+unsafe fn xgroup_study(mut g: *mut group) {
   let mut max: libc::c_uint = 60000i32 as libc::c_uint;
   /* Make sure gr_name is unused */
   if !crate::libpwdgrp::pwd_grp::bb_internal_getgrnam((*g).gr_name).is_null() {
@@ -71,7 +71,7 @@ unsafe extern "C" fn xgroup_study(mut g: *mut group) {
   }
 }
 /* append a new user to the passwd file */
-unsafe extern "C" fn new_group(mut group: *mut libc::c_char, mut gid: gid_t) {
+unsafe fn new_group(mut group: *mut libc::c_char, mut gid: gid_t) {
   let mut gr: group = std::mem::zeroed();
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* make sure gid and group haven't already been allocated */
@@ -126,8 +126,7 @@ static mut addgroup_longopts: [libc::c_char; 16] = [
  * If called with two non-option arguments, addgroup
  * will add an existing user to an existing group.
  */
-#[no_mangle]
-pub unsafe extern "C" fn addgroup_main(
+pub unsafe fn addgroup_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

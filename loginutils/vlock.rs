@@ -70,11 +70,7 @@ unsafe extern "C" fn acquire_vt(mut _signo: libc::c_int) {
   /* ACK to kernel that switch to console is successful */
   ioctl(0i32, 0x5605i32 as libc::c_ulong, 0x2i32);
 }
-#[no_mangle]
-pub unsafe extern "C" fn vlock_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn vlock_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut vtm: vt_mode = vt_mode {
     mode: 0,
     waitv: 0,
@@ -125,14 +121,8 @@ pub unsafe extern "C" fn vlock_main(
   );
   /* We will use SIGUSRx for console switch control: */
   /* 1: set handlers */
-  crate::libbb::signals::signal_SA_RESTART_empty_mask(
-    10i32,
-    Some(release_vt as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
-  crate::libbb::signals::signal_SA_RESTART_empty_mask(
-    12i32,
-    Some(acquire_vt as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  );
+  crate::libbb::signals::signal_SA_RESTART_empty_mask(10i32, Some(release_vt));
+  crate::libbb::signals::signal_SA_RESTART_empty_mask(12i32, Some(acquire_vt));
   /* 2: unmask them */
   crate::libbb::signals::sig_unblock(10i32);
   crate::libbb::signals::sig_unblock(12i32);

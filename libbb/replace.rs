@@ -23,8 +23,7 @@ extern "C" {
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
 //kbuild:lib-y += replace.o
-#[no_mangle]
-pub unsafe extern "C" fn count_strstr(
+pub unsafe fn count_strstr(
   mut str: *const libc::c_char,
   mut sub: *const libc::c_char,
 ) -> libc::c_uint {
@@ -258,8 +257,7 @@ pub unsafe extern "C" fn count_strstr(
 /*u8 *server_write_MAC_key;*/
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
-#[no_mangle]
-pub unsafe extern "C" fn xmalloc_substitute_string(
+pub unsafe fn xmalloc_substitute_string(
   mut src: *const libc::c_char,
   mut count: libc::c_int,
   mut sub: *const libc::c_char,

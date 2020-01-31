@@ -623,11 +623,7 @@ unsafe extern "C" fn format_process(mut ps: *const procps_status_t) {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).buffer,
   );
 }
-#[no_mangle]
-pub unsafe extern "C" fn ps_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn ps_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut p: *mut procps_status_t = std::ptr::null_mut();
   let mut opt_o: *mut llist_t = std::ptr::null_mut();
   let mut default_o: [libc::c_char; 19] = [0; 19];

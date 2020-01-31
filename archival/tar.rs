@@ -319,7 +319,7 @@ pub const OPTBIT_DEREFERENCE: C2RustUnnamed_2 = 10;
 pub const OPTBIT_CREATE: C2RustUnnamed_2 = 9;
 pub const OPTBIT_KEEP_OLD: C2RustUnnamed_2 = 8;
 /* Might be faster (and bigger) if the dev/ino were stored in numeric order;) */
-unsafe extern "C" fn addHardLinkInfo(
+unsafe fn addHardLinkInfo(
   mut hlInfoHeadPtr: *mut *mut HardLinkInfo,
   mut statbuf: *mut stat,
   mut fileName: *const libc::c_char,
@@ -338,7 +338,7 @@ unsafe extern "C" fn addHardLinkInfo(
 }
 
 /* Might be faster (and bigger) if the dev/ino were stored in numeric order ;) */
-unsafe extern "C" fn findHardLinkInfo(
+unsafe fn findHardLinkInfo(
   mut hlInfo: *mut HardLinkInfo,
   mut statbuf: *mut stat,
 ) -> *mut HardLinkInfo {
@@ -353,7 +353,7 @@ unsafe extern "C" fn findHardLinkInfo(
 /* Put an octal string into the specified buffer.
  * The number is zero padded and possibly NUL terminated.
  * Stores low-order bits only if whole value does not fit. */
-unsafe extern "C" fn putOctal(mut cp: *mut libc::c_char, mut len: libc::c_int, mut value: off_t) {
+unsafe fn putOctal(mut cp: *mut libc::c_char, mut len: libc::c_int, mut value: off_t) {
   let mut tempBuffer: [libc::c_char; 25] = [0; 25];
   let mut tempString: *mut libc::c_char = tempBuffer.as_mut_ptr();
   let mut width: libc::c_int = 0;
@@ -377,7 +377,7 @@ unsafe extern "C" fn putOctal(mut cp: *mut libc::c_char, mut len: libc::c_int, m
     len as libc::c_ulong,
   );
 }
-unsafe extern "C" fn chksum_and_xwrite(mut fd: libc::c_int, mut hp: *mut tar_header_t) {
+unsafe fn chksum_and_xwrite(mut fd: libc::c_int, mut hp: *mut tar_header_t) {
   /* POSIX says that checksum is done on unsigned bytes
    * (Sun and HP-UX gets it wrong... more details in
    * GNU tar source) */
@@ -423,7 +423,7 @@ unsafe extern "C" fn chksum_and_xwrite(mut fd: libc::c_int, mut hp: *mut tar_hea
     ::std::mem::size_of::<tar_header_t>() as libc::c_ulong,
   );
 }
-unsafe extern "C" fn writeLongname(
+unsafe fn writeLongname(
   mut fd: libc::c_int,
   mut type_0: libc::c_int,
   mut name: *const libc::c_char,
@@ -507,7 +507,7 @@ unsafe extern "C" fn writeLongname(
   );
 }
 /* Write out a tar header for the specified file/directory/whatever */
-unsafe extern "C" fn writeTarHeader(
+unsafe fn writeTarHeader(
   mut tbInfo: *mut TarBallInfo,
   mut header_name: *const libc::c_char,
   mut fileName: *const libc::c_char,
@@ -744,7 +744,7 @@ unsafe extern "C" fn writeTarHeader(
   }
   return 1i32;
 }
-unsafe extern "C" fn exclude_file(
+unsafe fn exclude_file(
   mut excluded_files: *const llist_t,
   mut file: *const libc::c_char,
 ) -> libc::c_int {
@@ -770,7 +770,7 @@ unsafe extern "C" fn exclude_file(
   }
   return 0;
 }
-unsafe extern "C" fn writeFileToTarball(
+unsafe fn writeFileToTarball(
   mut fileName: *const libc::c_char,
   mut statbuf: *mut stat,
   mut userData: *mut libc::c_void,
@@ -873,7 +873,7 @@ unsafe extern "C" fn writeFileToTarball(
 }
 /* Don't inline: vfork scares gcc and pessimizes code */
 #[inline(never)]
-unsafe extern "C" fn vfork_compressor(mut tar_fd: libc::c_int, mut gzip: *const libc::c_char) {
+unsafe fn vfork_compressor(mut tar_fd: libc::c_int, mut gzip: *const libc::c_char) {
   // On Linux, vfork never unpauses parent early, although standard
   // allows for that. Do we want to waste bytes checking for it?
   let mut vfork_exec_errno: libc::c_int = 0; /* we only want EPIPE on errors */
@@ -941,7 +941,7 @@ unsafe extern "C" fn vfork_compressor(mut tar_fd: libc::c_int, mut gzip: *const 
 /* SEAMLESS_COMPRESSION */
 /* gcc 4.2.1 inlines it, making code bigger */
 #[inline(never)]
-unsafe extern "C" fn writeTarFile(
+unsafe fn writeTarFile(
   mut tbInfo: *mut TarBallInfo,
   mut recurseFlags: libc::c_int,
   mut filelist: *const llist_t,
@@ -966,7 +966,7 @@ unsafe extern "C" fn writeTarFile(
       recurseFlags as libc::c_uint,
       Some(
         writeFileToTarball
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *const libc::c_char,
             _: *mut stat,
             _: *mut libc::c_void,
@@ -975,7 +975,7 @@ unsafe extern "C" fn writeTarFile(
       ),
       Some(
         writeFileToTarball
-          as unsafe extern "C" fn(
+          as unsafe fn(
             _: *const libc::c_char,
             _: *mut stat,
             _: *mut libc::c_void,
@@ -1027,7 +1027,7 @@ unsafe extern "C" fn writeTarFile(
   return errorFlag;
 }
 /* FEATURE_TAR_CREATE */
-unsafe extern "C" fn append_file_list_to_list(mut list: *mut llist_t) -> *mut llist_t {
+unsafe fn append_file_list_to_list(mut list: *mut llist_t) -> *mut llist_t {
   let mut newlist: *mut llist_t = std::ptr::null_mut();
   while !list.is_null() {
     let mut src_stream: *mut FILE = std::ptr::null_mut();
@@ -1068,11 +1068,7 @@ static mut tar_longopts: [libc::c_char; 314] = [
   112, 101, 114, 109, 105, 115, 115, 105, 111, 110, 115, 0, 0, -3, 111, 118, 101, 114, 119, 114,
   105, 116, 101, 0, 0, -2, 101, 120, 99, 108, 117, 100, 101, 0, 1, -1, 0,
 ];
-#[no_mangle]
-pub unsafe extern "C" fn tar_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn tar_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut tar_handle: *mut archive_handle_t = std::ptr::null_mut();
   let mut base_dir: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut tar_filename: *const libc::c_char = b"-\x00" as *const u8 as *const libc::c_char;
@@ -1153,25 +1149,25 @@ pub unsafe extern "C" fn tar_main(
   if verboseFlag != 0 {
     (*tar_handle).action_header = Some(
       crate::archival::libarchive::header_verbose_list::header_verbose_list
-        as unsafe extern "C" fn(_: *const file_header_t) -> (),
+        as unsafe fn(_: *const file_header_t) -> (),
     )
   }
   if verboseFlag == 1i32 {
     (*tar_handle).action_header = Some(
       crate::archival::libarchive::header_list::header_list
-        as unsafe extern "C" fn(_: *const file_header_t) -> (),
+        as unsafe fn(_: *const file_header_t) -> (),
     )
   }
   if opt & OPT_EXTRACT as libc::c_int as libc::c_uint != 0 {
     (*tar_handle).action_data = Some(
       crate::archival::libarchive::data_extract_all::data_extract_all
-        as unsafe extern "C" fn(_: *mut archive_handle_t) -> (),
+        as unsafe fn(_: *mut archive_handle_t) -> (),
     )
   }
   if opt & OPT_2STDOUT as libc::c_int as libc::c_uint != 0 {
     (*tar_handle).action_data = Some(
       crate::archival::libarchive::data_extract_to_stdout::data_extract_to_stdout
-        as unsafe extern "C" fn(_: *mut archive_handle_t) -> (),
+        as unsafe fn(_: *mut archive_handle_t) -> (),
     )
   }
   if opt & OPT_2COMMAND as libc::c_int as libc::c_uint != 0 {
@@ -1182,7 +1178,7 @@ pub unsafe extern "C" fn tar_main(
     );
     (*tar_handle).action_data = Some(
       crate::archival::libarchive::data_extract_to_command::data_extract_to_command
-        as unsafe extern "C" fn(_: *mut archive_handle_t) -> (),
+        as unsafe fn(_: *mut archive_handle_t) -> (),
     );
     (*tar_handle).tar__to_command_shell =
       crate::libbb::xfuncs_printf::xstrdup(crate::libbb::get_shell_name::get_shell_name())
@@ -1229,7 +1225,7 @@ pub unsafe extern "C" fn tar_main(
   if !(*tar_handle).accept.is_null() || !(*tar_handle).reject.is_null() {
     (*tar_handle).filter = Some(
       crate::archival::libarchive::filter_accept_reject_list::filter_accept_reject_list
-        as unsafe extern "C" fn(_: *mut archive_handle_t) -> libc::c_char,
+        as unsafe fn(_: *mut archive_handle_t) -> libc::c_char,
     )
   }
   /* Open the tar file */
@@ -1250,7 +1246,7 @@ pub unsafe extern "C" fn tar_main(
     (*tar_handle).src_fd = tar_fd;
     (*tar_handle).seek = Some(
       crate::archival::libarchive::seek_by_read::seek_by_read
-        as unsafe extern "C" fn(_: libc::c_int, _: off_t) -> (),
+        as unsafe fn(_: libc::c_int, _: off_t) -> (),
     )
   } else if 1i32 != 0
     && 1i32 != 0
@@ -1369,8 +1365,7 @@ pub unsafe extern "C" fn tar_main(
     );
   }
   if opt & OPT_ANY_COMPRESS as libc::c_int as libc::c_uint != 0 {
-    let mut xformer: Option<unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong> =
-      None;
+    let mut xformer: Option<unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong> = None;
 
     // TODO: why was this translated this way?
     // (opt & OPT_COMPRESS as libc::c_int as libc::c_uint) != 0;
@@ -1378,7 +1373,7 @@ pub unsafe extern "C" fn tar_main(
     if opt & OPT_GZIP as libc::c_int as libc::c_uint != 0 {
       xformer = Some(
         crate::archival::libarchive::decompress_gunzip::unpack_gz_stream
-          as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
+          as unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong,
       )
     }
     if opt & OPT_BZIP2 as libc::c_int as libc::c_uint != 0 {
@@ -1387,13 +1382,13 @@ pub unsafe extern "C" fn tar_main(
     if opt & OPT_LZMA as libc::c_int as libc::c_uint != 0 {
       xformer = Some(
         crate::archival::libarchive::decompress_unlzma::unpack_lzma_stream
-          as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
+          as unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong,
       )
     }
     if opt & OPT_XZ as libc::c_int as libc::c_uint != 0 {
       xformer = Some(
         crate::archival::libarchive::decompress_unxz::unpack_xz_stream
-          as unsafe extern "C" fn(_: *mut transformer_state_t) -> libc::c_longlong,
+          as unsafe fn(_: *mut transformer_state_t) -> libc::c_longlong,
       )
     }
     crate::archival::libarchive::open_transformer::fork_transformer(
@@ -1404,7 +1399,7 @@ pub unsafe extern "C" fn tar_main(
     /*tar_handle->offset = 0; - already is */
     (*tar_handle).seek = Some(
       crate::archival::libarchive::seek_by_read::seek_by_read
-        as unsafe extern "C" fn(_: libc::c_int, _: off_t) -> (),
+        as unsafe fn(_: libc::c_int, _: off_t) -> (),
     )
   }
   /* Can't lseek over pipes */

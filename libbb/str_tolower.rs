@@ -332,7 +332,7 @@ use libc;
 // Unsafe wrt NUL: #define ispunct(a) (strchr("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~", (a)) != NULL)
 // Bigger code: #define isalnum(a) ({ unsigned char bb__isalnum = (a) - '0'; bb__isalnum <= 9 || ((bb__isalnum - ('A' - '0')) & 0xdf) <= 25; })
 #[inline(always)]
-unsafe extern "C" fn bb_ascii_tolower(mut a: libc::c_uchar) -> libc::c_uchar {
+unsafe fn bb_ascii_tolower(mut a: libc::c_uchar) -> libc::c_uchar {
   let mut b: libc::c_uchar = (a as libc::c_int - 'A' as i32) as libc::c_uchar;
   if b as libc::c_int <= 'Z' as i32 - 'A' as i32 {
     a = (a as libc::c_int + ('a' as i32 - 'A' as i32)) as libc::c_uchar
@@ -345,8 +345,7 @@ unsafe extern "C" fn bb_ascii_tolower(mut a: libc::c_uchar) -> libc::c_uchar {
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn str_tolower(mut str: *mut libc::c_char) -> *mut libc::c_char {
+pub unsafe fn str_tolower(mut str: *mut libc::c_char) -> *mut libc::c_char {
   let mut c: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   c = str;
   while *c != 0 {

@@ -38,8 +38,7 @@ unsafe extern "C" fn onintr(mut _sig: libc::c_int) {
   _exit(1i32);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn resize_main(
+pub unsafe fn resize_main(
   mut _argc: libc::c_int,
   mut _argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -79,7 +78,7 @@ pub unsafe extern "C" fn resize_main(
   new.c_lflag &= !(0o2i32 | 0o10i32 | 0o20i32 | 0o1i32) as libc::c_uint;
   crate::libbb::signals::bb_signals(
     0 + (1i32 << 2i32) + (1i32 << 3i32) + (1i32 << 15i32) + (1i32 << 14i32),
-    Some(onintr as unsafe extern "C" fn(_: libc::c_int) -> ()),
+    Some(onintr),
   );
   tcsetattr(2i32, 0, &mut new);
   /* save_cursor_pos 7

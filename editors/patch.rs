@@ -86,12 +86,12 @@ pub struct double_list {
   pub data: *mut libc::c_char,
 }
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
-unsafe extern "C" fn dlist_free(
+unsafe fn dlist_free(
   mut list: *mut double_list,
-  mut freeit: Option<unsafe extern "C" fn(_: *mut libc::c_void) -> ()>,
+  mut freeit: Option<unsafe fn(_: *mut libc::c_void) -> ()>,
 ) {
   while !list.is_null() {
     let mut pop: *mut libc::c_void = list as *mut libc::c_void;
@@ -102,7 +102,7 @@ unsafe extern "C" fn dlist_free(
     }
   }
 }
-unsafe extern "C" fn dlist_add(
+unsafe fn dlist_add(
   mut list: *mut *mut double_list,
   mut data: *mut libc::c_char,
 ) -> *mut double_list {
@@ -130,7 +130,7 @@ unsafe extern "C" fn dlist_add(
 // state = 2: write whole line to stderr
 // state = 3: write whole line to fileout
 // state > 3: write line+1 to fileout when *line != state
-unsafe extern "C" fn do_line(mut data: *mut libc::c_void) {
+unsafe fn do_line(mut data: *mut libc::c_void) {
   let mut dlist: *mut double_list = data as *mut double_list;
   if (*ptr_to_globals).state > 1i32 && *(*dlist).data as libc::c_int != (*ptr_to_globals).state {
     dprintf(
@@ -152,7 +152,7 @@ unsafe extern "C" fn do_line(mut data: *mut libc::c_void) {
   free((*dlist).data as *mut libc::c_void);
   free(dlist as *mut libc::c_void);
 }
-unsafe extern "C" fn finish_oldfile() {
+unsafe fn finish_oldfile() {
   if !(*ptr_to_globals).tempname.is_null() {
     // Copy the rest of the data and replace the original with the copy.
     let mut temp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -175,7 +175,7 @@ unsafe extern "C" fn finish_oldfile() {
   (*ptr_to_globals).filein = -1i32;
   (*ptr_to_globals).fileout = (*ptr_to_globals).filein;
 }
-unsafe extern "C" fn fail_hunk() {
+unsafe fn fail_hunk() {
   if (*ptr_to_globals).current_hunk.is_null() {
     return;
   }
@@ -193,7 +193,7 @@ unsafe extern "C" fn fail_hunk() {
   (*(*(*ptr_to_globals).current_hunk).prev).next = std::ptr::null_mut();
   dlist_free(
     (*ptr_to_globals).current_hunk,
-    Some(do_line as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+    Some(do_line as unsafe fn(_: *mut libc::c_void) -> ()),
   );
   (*ptr_to_globals).current_hunk = std::ptr::null_mut();
   // Abort the copy and delete the temporary file.
@@ -213,7 +213,7 @@ unsafe extern "C" fn fail_hunk() {
 // the change to be made, then outputs the changed data and returns.
 // (Finding EOF first is an error.)  This is a single pass operation, so
 // multiple hunks must occur in order in the file.
-unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
+unsafe fn apply_one_hunk() -> libc::c_int {
   let mut current_block: u64;
   let mut plist: *mut double_list = std::ptr::null_mut();
   let mut buf: *mut double_list = std::ptr::null_mut();
@@ -262,7 +262,7 @@ unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
             [(reverse ^ dummy_revert) as usize] as libc::c_int;
         dlist_free(
           (*ptr_to_globals).current_hunk,
-          Some(do_line as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
+          Some(do_line as unsafe fn(_: *mut libc::c_void) -> ()),
         );
         (*ptr_to_globals).current_hunk = std::ptr::null_mut();
         (*ptr_to_globals).state = 1i32;
@@ -377,10 +377,7 @@ unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
   }
   if !buf.is_null() {
     (*(*buf).prev).next = std::ptr::null_mut();
-    dlist_free(
-      buf,
-      Some(do_line as unsafe extern "C" fn(_: *mut libc::c_void) -> ()),
-    );
+    dlist_free(buf, Some(do_line as unsafe fn(_: *mut libc::c_void) -> ()));
   }
   return (*ptr_to_globals).state;
 }
@@ -392,11 +389,7 @@ unsafe extern "C" fn apply_one_hunk() -> libc::c_int {
 // state 3: In hunk: getting body
 // Like GNU patch, we don't require a --- line before the +++, and
 // also allow the --- after the +++ line.
-#[no_mangle]
-pub unsafe extern "C" fn patch_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn patch_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opts: libc::c_int = 0; /* for compiler */
   let mut reverse: libc::c_int = 0; /* for compiler */
   let mut state: libc::c_int = 0;

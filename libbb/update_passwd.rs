@@ -24,18 +24,14 @@ use libc::unlink;
 use libc::useconds_t;
 use libc::FILE;
 extern "C" {
-
   #[no_mangle]
   fn link(__from: *const libc::c_char, __to: *const libc::c_char) -> libc::c_int;
-
   #[no_mangle]
   fn fsync(__fd: libc::c_int) -> libc::c_int;
-
   #[no_mangle]
   fn fflush(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   fn fopen(__filename: *const libc::c_char, __modes: *const libc::c_char) -> *mut FILE;
-
   #[no_mangle]
   fn ferror_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
@@ -44,15 +40,12 @@ extern "C" {
   fn fchown(__fd: libc::c_int, __owner: uid_t, __group: gid_t) -> libc::c_int;
   #[no_mangle]
   fn usleep(__useconds: useconds_t) -> libc::c_int;
-
   #[no_mangle]
   fn strchrnul(__s: *const libc::c_char, __c: libc::c_int) -> *mut libc::c_char;
-
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
   #[no_mangle]
   fn strsep(__stringp: *mut *mut libc::c_char, __delim: *const libc::c_char) -> *mut libc::c_char;
-
 }
 
 #[repr(C)]
@@ -574,8 +567,7 @@ pub struct flock {
 
  Returns number of lines changed, or -1 on error.
 */
-#[no_mangle]
-pub unsafe extern "C" fn update_passwd(
+pub unsafe fn update_passwd(
   mut filename: *const libc::c_char,
   mut name: *const libc::c_char,
   mut new_passwd: *const libc::c_char,
@@ -616,10 +608,8 @@ pub unsafe extern "C" fn update_passwd(
     b"%s+\x00" as *const u8 as *const libc::c_char,
     filename,
   ); /* missing shadow is not an error */
-  sfx_char = &mut *fnamesfx.offset(
-    (strlen as unsafe extern "C" fn(_: *const libc::c_char) -> size_t)(fnamesfx)
-      .wrapping_sub(1i32 as libc::c_ulong) as isize,
-  ) as *mut libc::c_char;
+  sfx_char = &mut *fnamesfx.offset(strlen(fnamesfx).wrapping_sub(1i32 as libc::c_ulong) as isize)
+    as *mut libc::c_char;
   name_colon = crate::libbb::xfuncs_printf::xasprintf(
     b"%s:\x00" as *const u8 as *const libc::c_char,
     if !name.is_null() {

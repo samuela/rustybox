@@ -7,8 +7,7 @@ use libc;
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn skip_whitespace(mut s: *const libc::c_char) -> *mut libc::c_char {
+pub unsafe fn skip_whitespace(mut s: *const libc::c_char) -> *mut libc::c_char {
   /* In POSIX/C locale (the only locale we care about: do we REALLY want
    * to allow Unicode whitespace in, say, .conf files? nuts!)
    * isspace is only these chars: "\t\n\v\f\r" and space.
@@ -22,8 +21,7 @@ pub unsafe extern "C" fn skip_whitespace(mut s: *const libc::c_char) -> *mut lib
   }
   return s as *mut libc::c_char;
 }
-#[no_mangle]
-pub unsafe extern "C" fn skip_non_whitespace(mut s: *const libc::c_char) -> *mut libc::c_char {
+pub unsafe fn skip_non_whitespace(mut s: *const libc::c_char) -> *mut libc::c_char {
   while *s as libc::c_int != '\u{0}' as i32
     && *s as libc::c_int != ' ' as i32
     && (*s as libc::c_int - 9i32) as libc::c_uchar as libc::c_int > 13i32 - 9i32
@@ -100,8 +98,7 @@ pub unsafe extern "C" fn skip_non_whitespace(mut s: *const libc::c_char) -> *mut
 /* buffer allocation schemes */
 /* glibc uses __errno_location() to get a ptr to errno */
 /* We can just memorize it once - no multithreading in busybox :) */
-#[no_mangle]
-pub unsafe extern "C" fn skip_dev_pfx(mut tty_name: *const libc::c_char) -> *mut libc::c_char {
+pub unsafe fn skip_dev_pfx(mut tty_name: *const libc::c_char) -> *mut libc::c_char {
   let mut unprefixed: *mut libc::c_char = crate::libbb::compare_string_array::is_prefixed_with(
     tty_name,
     b"/dev/\x00" as *const u8 as *const libc::c_char,

@@ -50,13 +50,13 @@ pub struct sysinfo {
   pub _f: [libc::c_char; 0],
 }
 /* Because of NOFORK, "globals" are not in global data */
-unsafe extern "C" fn scale(mut g: *mut globals, mut d: libc::c_ulong) -> libc::c_ulonglong {
+unsafe fn scale(mut g: *mut globals, mut d: libc::c_ulong) -> libc::c_ulonglong {
   return (d as libc::c_ulonglong).wrapping_mul((*g).mem_unit as libc::c_ulonglong)
     >> (*g).unit_steps as libc::c_int;
 }
 /* NOINLINE reduces main() stack usage, which makes code smaller (on x86 at least) */
 #[inline(never)]
-unsafe extern "C" fn parse_meminfo(mut g: *mut globals) -> libc::c_uint {
+unsafe fn parse_meminfo(mut g: *mut globals) -> libc::c_uint {
   let mut buf: [libc::c_char; 60] = [0; 60]; /* actual lines we expect are ~30 chars or less */
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut seen_cached_and_available_and_reclaimable: libc::c_int = 0;
@@ -112,11 +112,7 @@ unsafe extern "C" fn parse_meminfo(mut g: *mut globals) -> libc::c_uint {
   fclose(fp);
   return (seen_cached_and_available_and_reclaimable == 0) as libc::c_int as libc::c_uint;
 }
-#[no_mangle]
-pub unsafe extern "C" fn free_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn free_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut G: globals = globals {
     mem_unit: 0,
     unit_steps: 0,

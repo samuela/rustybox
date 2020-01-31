@@ -474,7 +474,7 @@ pub struct C2RustUnnamed_10 {
   pub s: *const libc::c_char,
 }
 #[inline(always)]
-unsafe extern "C" fn bb_ascii_tolower(mut a: libc::c_uchar) -> libc::c_uchar {
+unsafe fn bb_ascii_tolower(mut a: libc::c_uchar) -> libc::c_uchar {
   let mut b: libc::c_uchar = (a as libc::c_int - 'A' as i32) as libc::c_uchar;
   if b as libc::c_int <= 'Z' as i32 - 'A' as i32 {
     a = (a as libc::c_int + ('a' as i32 - 'A' as i32)) as libc::c_uchar
@@ -482,7 +482,7 @@ unsafe extern "C" fn bb_ascii_tolower(mut a: libc::c_uchar) -> libc::c_uchar {
   return a;
 }
 #[inline(always)]
-unsafe extern "C" fn bb_ascii_toupper(mut a: libc::c_uchar) -> libc::c_uchar {
+unsafe fn bb_ascii_toupper(mut a: libc::c_uchar) -> libc::c_uchar {
   let mut b: libc::c_uchar = (a as libc::c_int - 'a' as i32) as libc::c_uchar;
   if b as libc::c_int <= 'z' as i32 - 'a' as i32 {
     a = (a as libc::c_int - ('a' as i32 - 'A' as i32)) as libc::c_uchar
@@ -490,7 +490,7 @@ unsafe extern "C" fn bb_ascii_toupper(mut a: libc::c_uchar) -> libc::c_uchar {
   return a;
 }
 #[inline(always)]
-unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
+unsafe fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   let mut b: libc::c_uchar = (a as libc::c_int - '0' as i32) as libc::c_uchar;
   if b as libc::c_int <= 9i32 {
     return (b as libc::c_int <= 9i32) as libc::c_int;
@@ -499,7 +499,7 @@ unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   return (b as libc::c_int <= 'z' as i32 - 'a' as i32) as libc::c_int;
 }
 #[inline(always)]
-unsafe extern "C" fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
+unsafe fn not_const_pp(mut p: *const libc::c_void) -> *mut libc::c_void {
   return p as *mut libc::c_void;
 }
 static mut tokenlist: [libc::c_char; 448] = [
@@ -708,14 +708,14 @@ static mut EMSG_NEGATIVE_FIELD: [libc::c_char; 25] = [
   65, 99, 99, 101, 115, 115, 32, 116, 111, 32, 110, 101, 103, 97, 116, 105, 118, 101, 32, 102, 105,
   101, 108, 100, 0,
 ];
-unsafe extern "C" fn zero_out_var(mut vp: *mut var) {
+unsafe fn zero_out_var(mut vp: *mut var) {
   memset(
     vp as *mut libc::c_void,
     0,
     ::std::mem::size_of::<var>() as libc::c_ulong,
   );
 }
-unsafe extern "C" fn syntax_error(mut message: *const libc::c_char) -> ! {
+unsafe fn syntax_error(mut message: *const libc::c_char) -> ! {
   crate::libbb::verror_msg::bb_error_msg_and_die(
     b"%s:%i: %s\x00" as *const u8 as *const libc::c_char,
     (*ptr_to_globals.offset(-1i32 as isize)).g_progname,
@@ -724,7 +724,7 @@ unsafe extern "C" fn syntax_error(mut message: *const libc::c_char) -> ! {
   );
 }
 /* ---- hash stuff ---- */
-unsafe extern "C" fn hashidx(mut name: *const libc::c_char) -> libc::c_uint {
+unsafe fn hashidx(mut name: *const libc::c_char) -> libc::c_uint {
   let mut idx: libc::c_uint = 0 as libc::c_uint;
   while *name != 0 {
     let fresh0 = name;
@@ -736,7 +736,7 @@ unsafe extern "C" fn hashidx(mut name: *const libc::c_char) -> libc::c_uint {
   return idx;
 }
 /* create new hash */
-unsafe extern "C" fn hash_init() -> *mut xhash {
+unsafe fn hash_init() -> *mut xhash {
   let mut newhash: *mut xhash = std::ptr::null_mut();
   newhash = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<xhash>() as libc::c_ulong)
     as *mut xhash;
@@ -748,7 +748,7 @@ unsafe extern "C" fn hash_init() -> *mut xhash {
   return newhash;
 }
 /* find item in hash, return ptr to data, NULL if not found */
-unsafe extern "C" fn hash_search(
+unsafe fn hash_search(
   mut hash: *mut xhash,
   mut name: *const libc::c_char,
 ) -> *mut libc::c_void {
@@ -765,7 +765,7 @@ unsafe extern "C" fn hash_search(
   return std::ptr::null_mut();
 }
 /* grow hash if it becomes too big */
-unsafe extern "C" fn hash_rebuild(mut hash: *mut xhash) {
+unsafe fn hash_rebuild(mut hash: *mut xhash) {
   let mut newsize: libc::c_uint = 0;
   let mut i: libc::c_uint = 0;
   let mut idx: libc::c_uint = 0;
@@ -803,7 +803,7 @@ unsafe extern "C" fn hash_rebuild(mut hash: *mut xhash) {
   (*hash).items = newitems;
 }
 /* find item in hash, add it if necessary. Return ptr to data */
-unsafe extern "C" fn hash_find(
+unsafe fn hash_find(
   mut hash: *mut xhash,
   mut name: *const libc::c_char,
 ) -> *mut libc::c_void {
@@ -829,11 +829,11 @@ unsafe extern "C" fn hash_find(
   }
   return &mut (*hi).data as *mut C2RustUnnamed_0 as *mut libc::c_void;
 }
-unsafe extern "C" fn hash_remove(mut hash: *mut xhash, mut name: *const libc::c_char) {
+unsafe fn hash_remove(mut hash: *mut xhash, mut name: *const libc::c_char) {
   let mut hi: *mut hash_item = std::ptr::null_mut();
   let mut phi: *mut *mut hash_item = std::ptr::null_mut();
   phi = &mut *(*hash).items.offset(
-    (hashidx as unsafe extern "C" fn(_: *const libc::c_char) -> libc::c_uint)(name)
+    (hashidx as unsafe fn(_: *const libc::c_char) -> libc::c_uint)(name)
       .wrapping_rem((*hash).csize) as isize,
   ) as *mut *mut hash_item_s;
   while !(*phi).is_null() {
@@ -852,7 +852,7 @@ unsafe extern "C" fn hash_remove(mut hash: *mut xhash, mut name: *const libc::c_
   }
 }
 /* ------ some useful functions ------ */
-unsafe extern "C" fn skip_spaces(mut p: *mut libc::c_char) -> *mut libc::c_char {
+unsafe fn skip_spaces(mut p: *mut libc::c_char) -> *mut libc::c_char {
   loop {
     if *p as libc::c_int == '\\' as i32 && *p.offset(1) as libc::c_int == '\n' as i32 {
       p = p.offset(1);
@@ -866,7 +866,7 @@ unsafe extern "C" fn skip_spaces(mut p: *mut libc::c_char) -> *mut libc::c_char 
   return p;
 }
 /* returns old *s, advances *s past word and terminating NUL */
-unsafe extern "C" fn nextword(mut s: *mut *mut libc::c_char) -> *mut libc::c_char {
+unsafe fn nextword(mut s: *mut *mut libc::c_char) -> *mut libc::c_char {
   let mut p: *mut libc::c_char = *s;
   loop {
     let fresh5 = *s;
@@ -877,7 +877,7 @@ unsafe extern "C" fn nextword(mut s: *mut *mut libc::c_char) -> *mut libc::c_cha
   }
   return p;
 }
-unsafe extern "C" fn nextchar(mut s: *mut *mut libc::c_char) -> libc::c_char {
+unsafe fn nextchar(mut s: *mut *mut libc::c_char) -> libc::c_char {
   let mut c: libc::c_char = 0;
   let mut pps: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let fresh6 = *s;
@@ -893,7 +893,7 @@ unsafe extern "C" fn nextchar(mut s: *mut *mut libc::c_char) -> libc::c_char {
    * s = "abc\"def"
    * we must treat \" as "
    */
-  
+
   if c as libc::c_int == '\\' as i32 && *s == pps {
     /* unrecognized \z? */
     c = **s;
@@ -906,7 +906,7 @@ unsafe extern "C" fn nextchar(mut s: *mut *mut libc::c_char) -> libc::c_char {
 }
 /* TODO: merge with strcpy_and_process_escape_sequences()?
  */
-unsafe extern "C" fn unescape_string_in_place(mut s1: *mut libc::c_char) {
+unsafe fn unescape_string_in_place(mut s1: *mut libc::c_char) {
   let mut s: *mut libc::c_char = s1;
   loop {
     *s1 = nextchar(&mut s);
@@ -917,10 +917,10 @@ unsafe extern "C" fn unescape_string_in_place(mut s1: *mut libc::c_char) {
   }
 }
 #[inline(always)]
-unsafe extern "C" fn isalnum_(mut c: libc::c_int) -> libc::c_int {
+unsafe fn isalnum_(mut c: libc::c_int) -> libc::c_int {
   return (bb_ascii_isalnum(c as libc::c_uchar) != 0 || c == '_' as i32) as libc::c_int;
 }
-unsafe extern "C" fn my_strtod(mut pp: *mut *mut libc::c_char) -> libc::c_double {
+unsafe fn my_strtod(mut pp: *mut *mut libc::c_char) -> libc::c_double {
   let mut cp: *mut libc::c_char = *pp;
   if 1i32 != 0 && *cp.offset(0) as libc::c_int == '0' as i32 {
     /* Might be hex or octal integer: 0x123abc or 07777 */
@@ -948,7 +948,7 @@ unsafe extern "C" fn my_strtod(mut pp: *mut *mut libc::c_char) -> libc::c_double
   return strtod(cp, pp);
 }
 /* -------- working with variables (set/get/copy/etc) -------- */
-unsafe extern "C" fn iamarray(mut v: *mut var) -> *mut xhash {
+unsafe fn iamarray(mut v: *mut var) -> *mut xhash {
   let mut a: *mut var = v;
   while (*a).type_0 & 0x2000i32 as libc::c_uint != 0 {
     a = (*a).x.parent
@@ -959,7 +959,7 @@ unsafe extern "C" fn iamarray(mut v: *mut var) -> *mut xhash {
   }
   return (*a).x.array;
 }
-unsafe extern "C" fn clear_array(mut array: *mut xhash) {
+unsafe fn clear_array(mut array: *mut xhash) {
   let mut i: libc::c_uint = 0;
   let mut hi: *mut hash_item = std::ptr::null_mut();
   let mut thi: *mut hash_item = std::ptr::null_mut();
@@ -980,7 +980,7 @@ unsafe extern "C" fn clear_array(mut array: *mut xhash) {
   (*array).glen = (*array).nel;
 }
 /* clear a variable */
-unsafe extern "C" fn clrvar(mut v: *mut var) -> *mut var {
+unsafe fn clrvar(mut v: *mut var) -> *mut var {
   if (*v).type_0 & 0x1000i32 as libc::c_uint == 0 {
     free((*v).string as *mut libc::c_void);
   }
@@ -990,14 +990,14 @@ unsafe extern "C" fn clrvar(mut v: *mut var) -> *mut var {
   return v;
 }
 /* assign string value to variable */
-unsafe extern "C" fn setvar_p(mut v: *mut var, mut value: *mut libc::c_char) -> *mut var {
+unsafe fn setvar_p(mut v: *mut var, mut value: *mut libc::c_char) -> *mut var {
   clrvar(v);
   (*v).string = value;
   handle_special(v);
   return v;
 }
 /* same as setvar_p but make a copy of string */
-unsafe extern "C" fn setvar_s(mut v: *mut var, mut value: *const libc::c_char) -> *mut var {
+unsafe fn setvar_s(mut v: *mut var, mut value: *const libc::c_char) -> *mut var {
   return setvar_p(
     v,
     if !value.is_null() && *value as libc::c_int != 0 {
@@ -1008,26 +1008,26 @@ unsafe extern "C" fn setvar_s(mut v: *mut var, mut value: *const libc::c_char) -
   );
 }
 /* same as setvar_s but sets USER flag */
-unsafe extern "C" fn setvar_u(mut v: *mut var, mut value: *const libc::c_char) -> *mut var {
+unsafe fn setvar_u(mut v: *mut var, mut value: *const libc::c_char) -> *mut var {
   v = setvar_s(v, value);
   (*v).type_0 |= 0x200i32 as libc::c_uint;
   return v;
 }
 /* set array element to user string */
-unsafe extern "C" fn setari_u(mut a: *mut var, mut idx: libc::c_int, mut s: *const libc::c_char) {
+unsafe fn setari_u(mut a: *mut var, mut idx: libc::c_int, mut s: *const libc::c_char) {
   let mut v: *mut var = std::ptr::null_mut();
   v = hash_find(iamarray(a), crate::libbb::xfuncs::itoa(idx)) as *mut var;
   setvar_u(v, s);
 }
 /* assign numeric value to variable */
-unsafe extern "C" fn setvar_i(mut v: *mut var, mut value: libc::c_double) -> *mut var {
+unsafe fn setvar_i(mut v: *mut var, mut value: libc::c_double) -> *mut var {
   clrvar(v);
   (*v).type_0 |= 0x1i32 as libc::c_uint;
   (*v).number = value;
   handle_special(v);
   return v;
 }
-unsafe extern "C" fn getvar_s(mut v: *mut var) -> *const libc::c_char {
+unsafe fn getvar_s(mut v: *mut var) -> *const libc::c_char {
   /* if v is numeric and has no cached string, convert it to string */
   if (*v).type_0 & (0x1i32 | 0x100i32) as libc::c_uint == 0x1i32 as libc::c_uint {
     fmt_num(
@@ -1047,7 +1047,7 @@ unsafe extern "C" fn getvar_s(mut v: *mut var) -> *const libc::c_char {
     (*v).string
   };
 }
-unsafe extern "C" fn getvar_i(mut v: *mut var) -> libc::c_double {
+unsafe fn getvar_i(mut v: *mut var) -> libc::c_double {
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if (*v).type_0 & (0x1i32 | 0x100i32) as libc::c_uint == 0 as libc::c_uint {
     (*v).number = 0 as libc::c_double;
@@ -1068,7 +1068,7 @@ unsafe extern "C" fn getvar_i(mut v: *mut var) -> libc::c_double {
   return (*v).number;
 }
 /* Used for operands of bitwise ops */
-unsafe extern "C" fn getvar_i_int(mut v: *mut var) -> libc::c_ulong {
+unsafe fn getvar_i_int(mut v: *mut var) -> libc::c_ulong {
   let mut d: libc::c_double = getvar_i(v);
   /* Casting doubles to longs is undefined for values outside
    * of target type range. Try to widen it as much as possible */
@@ -1078,7 +1078,7 @@ unsafe extern "C" fn getvar_i_int(mut v: *mut var) -> libc::c_ulong {
   /* Why? Think about d == -4294967295.0 (assuming 32bit longs) */
   return -(-d as libc::c_ulong as libc::c_long) as libc::c_ulong;
 }
-unsafe extern "C" fn copyvar(mut dest: *mut var, mut src: *const var) -> *mut var {
+unsafe fn copyvar(mut dest: *mut var, mut src: *const var) -> *mut var {
   if dest != src as *mut var {
     clrvar(dest);
     (*dest).type_0 |= (*src).type_0
@@ -1091,24 +1091,24 @@ unsafe extern "C" fn copyvar(mut dest: *mut var, mut src: *const var) -> *mut va
   handle_special(dest);
   return dest;
 }
-unsafe extern "C" fn incvar(mut v: *mut var) -> *mut var {
+unsafe fn incvar(mut v: *mut var) -> *mut var {
   return setvar_i(v, getvar_i(v) + 1.0f64);
 }
 /* return true if v is number or numeric string */
-unsafe extern "C" fn is_numeric(mut v: *mut var) -> libc::c_int {
+unsafe fn is_numeric(mut v: *mut var) -> libc::c_int {
   getvar_i(v);
   return (((*v).type_0 ^ 0x4000i32 as libc::c_uint)
     & (0x1i32 | 0x200i32 | 0x4000i32) as libc::c_uint) as libc::c_int;
 }
 /* return 1 when value of v corresponds to true, 0 otherwise */
-unsafe extern "C" fn istrue(mut v: *mut var) -> libc::c_int {
+unsafe fn istrue(mut v: *mut var) -> libc::c_int {
   if is_numeric(v) != 0 {
     return ((*v).number != 0 as libc::c_double) as libc::c_int;
   }
   return (!(*v).string.is_null() && *(*v).string.offset(0) as libc::c_int != 0) as libc::c_int;
 }
 /* temporary variables allocator. Last allocated should be first freed */
-unsafe extern "C" fn nvalloc(mut n: libc::c_int) -> *mut var {
+unsafe fn nvalloc(mut n: libc::c_int) -> *mut var {
   let mut pb: *mut nvblock = std::ptr::null_mut();
   let mut v: *mut var = std::ptr::null_mut();
   let mut r: *mut var = std::ptr::null_mut();
@@ -1161,7 +1161,7 @@ unsafe extern "C" fn nvalloc(mut n: libc::c_int) -> *mut var {
   }
   return r;
 }
-unsafe extern "C" fn nvfree(mut v: *mut var) {
+unsafe fn nvfree(mut v: *mut var) {
   let mut p: *mut var = std::ptr::null_mut();
   if v
     < (*(*ptr_to_globals.offset(-1i32 as isize)).g_cb)
@@ -1209,7 +1209,7 @@ unsafe extern "C" fn nvfree(mut v: *mut var) {
 /* Parse next token pointed by global pos, place results into global ttt.
  * If token isn't expected, give away. Return token class
  */
-unsafe extern "C" fn next_token(mut expected: u32) -> u32 {
+unsafe fn next_token(mut expected: u32) -> u32 {
   /* Initialized to TC_OPTERM: */
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -1471,10 +1471,10 @@ unsafe extern "C" fn next_token(mut expected: u32) -> u32 {
   }
   return (*(ptr_to_globals as *mut globals2)).next_token__ltclass;
 }
-unsafe extern "C" fn rollback_token() {
+unsafe fn rollback_token() {
   (*ptr_to_globals.offset(-1i32 as isize)).t_rollback = 1i32 as smallint;
 }
-unsafe extern "C" fn new_node(mut info: u32) -> *mut node {
+unsafe fn new_node(mut info: u32) -> *mut node {
   let mut n: *mut node = std::ptr::null_mut();
   n = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<node>() as libc::c_ulong)
     as *mut node;
@@ -1482,7 +1482,7 @@ unsafe extern "C" fn new_node(mut info: u32) -> *mut node {
   (*n).lineno = (*ptr_to_globals.offset(-1i32 as isize)).g_lineno as libc::c_uint;
   return n;
 }
-unsafe extern "C" fn mk_re_node(
+unsafe fn mk_re_node(
   mut s: *const libc::c_char,
   mut n: *mut node,
   mut re: *mut regex_t,
@@ -1493,13 +1493,13 @@ unsafe extern "C" fn mk_re_node(
   crate::libbb::xregcomp::xregcomp(re, s, 1i32);
   crate::libbb::xregcomp::xregcomp(re.offset(1), s, 1i32 | 1i32 << 1i32);
 }
-unsafe extern "C" fn condition() -> *mut node {
+unsafe fn condition() -> *mut node {
   next_token((1i32 << 0) as u32);
   return parse_expr((1i32 << 1i32) as u32);
 }
 /* parse expression terminated by given argument, return ptr
  * to built subtree. Terminator is eaten by parse_expr */
-unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
+unsafe fn parse_expr(mut iexp: u32) -> *mut node {
   let mut sn: node = std::mem::zeroed();
   let mut cn: *mut node = &mut sn;
   let mut vn: *mut node = std::ptr::null_mut();
@@ -1770,7 +1770,7 @@ unsafe extern "C" fn parse_expr(mut iexp: u32) -> *mut node {
   return sn.r.n;
 }
 /* add node to chain. Return ptr to alloc'd node */
-unsafe extern "C" fn chain_node(mut info: u32) -> *mut node {
+unsafe fn chain_node(mut info: u32) -> *mut node {
   let mut n: *mut node = std::ptr::null_mut();
   if (*(*ptr_to_globals.offset(-1i32 as isize)).seq)
     .first
@@ -1797,7 +1797,7 @@ unsafe extern "C" fn chain_node(mut info: u32) -> *mut node {
   *fresh31 = (*n).a.n;
   return n;
 }
-unsafe extern "C" fn chain_expr(mut info: u32) {
+unsafe fn chain_expr(mut info: u32) {
   let mut n: *mut node = std::ptr::null_mut();
   n = chain_node(info);
   (*n).l.n = parse_expr((1i32 << 14i32 | 1i32 << 15i32 | 1i32 << 13i32) as u32);
@@ -1808,7 +1808,7 @@ unsafe extern "C" fn chain_expr(mut info: u32) {
     rollback_token();
   };
 }
-unsafe extern "C" fn chain_loop(mut nn: *mut node) -> *mut node {
+unsafe fn chain_loop(mut nn: *mut node) -> *mut node {
   let mut n: *mut node = std::ptr::null_mut();
   let mut n2: *mut node = std::ptr::null_mut();
   let mut save_brk: *mut node = std::ptr::null_mut();
@@ -1836,7 +1836,7 @@ unsafe extern "C" fn chain_loop(mut nn: *mut node) -> *mut node {
   return n;
 }
 /* parse group and attach it to chain */
-unsafe extern "C" fn chain_group() {
+unsafe fn chain_group() {
   let mut c: u32 = 0;
   let mut n: *mut node = std::ptr::null_mut();
   let mut n2: *mut node = std::ptr::null_mut();
@@ -2007,7 +2007,7 @@ unsafe extern "C" fn chain_group() {
     }
   };
 }
-unsafe extern "C" fn parse_program(mut p: *mut libc::c_char) {
+unsafe fn parse_program(mut p: *mut libc::c_char) {
   let mut tclass: u32 = 0;
   let mut cn: *mut node = std::ptr::null_mut();
   let mut f: *mut func = std::ptr::null_mut();
@@ -2126,7 +2126,7 @@ unsafe extern "C" fn parse_program(mut p: *mut libc::c_char) {
   }
 }
 /* -------- program execution part -------- */
-unsafe extern "C" fn mk_splitter(mut s: *const libc::c_char, mut spl: *mut tsplitter) -> *mut node {
+unsafe fn mk_splitter(mut s: *const libc::c_char, mut spl: *mut tsplitter) -> *mut node {
   let mut re: *mut regex_t = std::ptr::null_mut();
   let mut ire: *mut regex_t = std::ptr::null_mut();
   let mut n: *mut node = std::ptr::null_mut();
@@ -2150,7 +2150,7 @@ unsafe extern "C" fn mk_splitter(mut s: *const libc::c_char, mut spl: *mut tspli
  * storage space. Return ptr to regex (if result points to preg, it should
  * be later regfree'd manually
  */
-unsafe extern "C" fn as_regex(mut op: *mut node, mut preg: *mut regex_t) -> *mut regex_t {
+unsafe fn as_regex(mut op: *mut node, mut preg: *mut regex_t) -> *mut regex_t {
   let mut cflags: libc::c_int = 0;
   let mut v: *mut var = std::ptr::null_mut();
   let mut s: *const libc::c_char = std::ptr::null();
@@ -2184,7 +2184,7 @@ unsafe extern "C" fn as_regex(mut op: *mut node, mut preg: *mut regex_t) -> *mut
  * note that we reallocate even if n == old_size,
  * and thus there is at least one extra allocated byte.
  */
-unsafe extern "C" fn qrealloc(
+unsafe fn qrealloc(
   mut b: *mut libc::c_char,
   mut n: libc::c_int,
   mut size: *mut libc::c_int,
@@ -2197,7 +2197,7 @@ unsafe extern "C" fn qrealloc(
   return b;
 }
 /* resize field storage space */
-unsafe extern "C" fn fsrealloc(mut size: libc::c_int) {
+unsafe fn fsrealloc(mut size: libc::c_int) {
   let mut i: libc::c_int = 0;
   if size >= (*ptr_to_globals.offset(-1i32 as isize)).maxfields {
     i = (*ptr_to_globals.offset(-1i32 as isize)).maxfields;
@@ -2233,7 +2233,7 @@ unsafe extern "C" fn fsrealloc(mut size: libc::c_int) {
   }
   (*ptr_to_globals.offset(-1i32 as isize)).nfields = size;
 }
-unsafe extern "C" fn awk_split(
+unsafe fn awk_split(
   mut s: *const libc::c_char,
   mut spl: *mut node,
   mut slist: *mut *mut libc::c_char,
@@ -2380,7 +2380,7 @@ unsafe extern "C" fn awk_split(
   }
   return n;
 }
-unsafe extern "C" fn split_f0() {
+unsafe fn split_f0() {
   /* static char *fstrings; */
   let mut i: libc::c_int = 0;
   let mut n: libc::c_int = 0;
@@ -2425,7 +2425,7 @@ unsafe extern "C" fn split_f0() {
 /*char Gofs_seed[offsetof(struct globals2, evaluate__seed)]; - 0x90 */
 /* function prototypes */
 /* perform additional actions when some internal variables changed */
-unsafe extern "C" fn handle_special(mut v: *mut var) {
+unsafe fn handle_special(mut v: *mut var) {
   let mut n: libc::c_int = 0;
   let mut b: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut sep: *const libc::c_char = std::ptr::null();
@@ -2525,7 +2525,7 @@ unsafe extern "C" fn handle_special(mut v: *mut var) {
   };
 }
 /* step through func/builtin/etc arguments */
-unsafe extern "C" fn nextarg(mut pn: *mut *mut node) -> *mut node {
+unsafe fn nextarg(mut pn: *mut *mut node) -> *mut node {
   let mut n: *mut node = std::ptr::null_mut(); /* why + 1? */
   n = *pn;
   if !n.is_null()
@@ -2538,7 +2538,7 @@ unsafe extern "C" fn nextarg(mut pn: *mut *mut node) -> *mut node {
   }
   return n;
 }
-unsafe extern "C" fn hashwalk_init(mut v: *mut var, mut array: *mut xhash) {
+unsafe fn hashwalk_init(mut v: *mut var, mut array: *mut xhash) {
   let mut hi: *mut hash_item = std::ptr::null_mut();
   let mut i: libc::c_uint = 0;
   let mut w: *mut walker_list = std::ptr::null_mut();
@@ -2569,7 +2569,7 @@ unsafe extern "C" fn hashwalk_init(mut v: *mut var, mut array: *mut xhash) {
     i = i.wrapping_add(1)
   }
 }
-unsafe extern "C" fn hashwalk_next(mut v: *mut var) -> libc::c_int {
+unsafe fn hashwalk_next(mut v: *mut var) -> libc::c_int {
   let mut w: *mut walker_list = (*v).x.walker;
   if (*w).cur >= (*w).end {
     let mut prev_walker: *mut walker_list = (*w).prev;
@@ -2581,7 +2581,7 @@ unsafe extern "C" fn hashwalk_next(mut v: *mut var) -> libc::c_int {
   return 1i32;
 }
 /* evaluate node, return 1 when result is true, 0 otherwise */
-unsafe extern "C" fn ptest(mut pattern: *mut node) -> libc::c_int {
+unsafe fn ptest(mut pattern: *mut node) -> libc::c_int {
   /* ptest__v is "static": to save stack space? */
   return istrue(evaluate(
     pattern,
@@ -2589,7 +2589,7 @@ unsafe extern "C" fn ptest(mut pattern: *mut node) -> libc::c_int {
   ));
 }
 /* read next record from stream rsm into a variable v */
-unsafe extern "C" fn awk_getline(mut rsm: *mut rstream, mut v: *mut var) -> libc::c_int {
+unsafe fn awk_getline(mut rsm: *mut rstream, mut v: *mut var) -> libc::c_int {
   let mut b: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut pmatch: [regmatch_t; 2] = [regmatch_t { rm_so: 0, rm_eo: 0 }; 2];
   let mut size: libc::c_int = 0;
@@ -2732,7 +2732,7 @@ unsafe extern "C" fn awk_getline(mut rsm: *mut rstream, mut v: *mut var) -> libc
   (*rsm).size = size;
   return r;
 }
-unsafe extern "C" fn fmt_num(
+unsafe fn fmt_num(
   mut b: *mut libc::c_char,
   mut size: libc::c_int,
   mut format: *const libc::c_char,
@@ -2780,7 +2780,7 @@ unsafe extern "C" fn fmt_num(
   return r;
 }
 /* formatted output into an allocated buffer, return ptr to buffer */
-unsafe extern "C" fn awk_printf(mut n: *mut node) -> *mut libc::c_char {
+unsafe fn awk_printf(mut n: *mut node) -> *mut libc::c_char {
   let mut b: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut fmt: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -2868,7 +2868,7 @@ unsafe extern "C" fn awk_printf(mut n: *mut node) -> *mut libc::c_char {
  * If src or dst is NULL, use $0.
  * If subexp != 0, enable subexpression matching (\1-\9).
  */
-unsafe extern "C" fn awk_sub(
+unsafe fn awk_sub(
   mut rn: *mut node,
   mut repl: *const libc::c_char,
   mut nm: libc::c_int,
@@ -3020,7 +3020,7 @@ unsafe extern "C" fn awk_sub(
   return match_no;
 }
 #[inline(never)]
-unsafe extern "C" fn do_mktime(mut ds: *const libc::c_char) -> libc::c_int {
+unsafe fn do_mktime(mut ds: *const libc::c_char) -> libc::c_int {
   let mut then: tm = std::mem::zeroed();
   let mut count: libc::c_int = 0;
   /*memset(&then, 0, sizeof(then)); - not needed */
@@ -3049,7 +3049,7 @@ unsafe extern "C" fn do_mktime(mut ds: *const libc::c_char) -> libc::c_int {
   return mktime(&mut then) as libc::c_int;
 }
 #[inline(never)]
-unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut var {
+unsafe fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut var {
   let mut tv: *mut var = std::ptr::null_mut();
   let mut an: [*mut node; 4] = [0 as *mut node; 4];
   let mut av: [*mut var; 4] = [0 as *mut var; 4];
@@ -3308,7 +3308,7 @@ unsafe extern "C" fn exec_builtin(mut op: *mut node, mut res: *mut var) -> *mut 
  * Evaluate node - the heart of the program. Supplied with subtree
  * and place where to store result. returns ptr to result.
  */
-unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var {
+unsafe fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var {
   let mut current_block: u64;
   /* This procedure is recursive so we should count every byte */
   /* seed is initialized to 1 */
@@ -21123,7 +21123,7 @@ unsafe extern "C" fn evaluate(mut op: *mut node, mut res: *mut var) -> *mut var 
   return res;
 }
 /* -------- main & co. -------- */
-unsafe extern "C" fn awk_exit(mut r: libc::c_int) -> ! {
+unsafe fn awk_exit(mut r: libc::c_int) -> ! {
   let mut tv: var = var {
     type_0: 0,
     number: 0.,
@@ -21159,7 +21159,7 @@ unsafe extern "C" fn awk_exit(mut r: libc::c_int) -> ! {
 }
 /* if expr looks like "var=value", perform assignment and return 1,
  * otherwise return 0 */
-unsafe extern "C" fn is_assignment(mut expr: *const libc::c_char) -> libc::c_int {
+unsafe fn is_assignment(mut expr: *const libc::c_char) -> libc::c_int {
   let mut exprc: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut val: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   if isalnum_(*expr as libc::c_int) == 0 || {
@@ -21182,7 +21182,7 @@ unsafe extern "C" fn is_assignment(mut expr: *const libc::c_char) -> libc::c_int
   return 1i32;
 }
 /* switch to next input file */
-unsafe extern "C" fn next_input_file() -> *mut rstream {
+unsafe fn next_input_file() -> *mut rstream {
   let mut F: *mut FILE = std::ptr::null_mut(); /* cheat */
   let mut fname: *const libc::c_char = std::ptr::null();
   let mut ind: *const libc::c_char = std::ptr::null();
@@ -21237,8 +21237,7 @@ unsafe extern "C" fn next_input_file() -> *mut rstream {
   *fresh66 = F;
   return &mut (*(ptr_to_globals as *mut globals2)).next_input_file__rsm;
 }
-#[no_mangle]
-pub unsafe extern "C" fn awk_main(
+pub unsafe fn awk_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

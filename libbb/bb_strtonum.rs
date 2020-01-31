@@ -90,8 +90,7 @@ unsafe extern "C" fn handle_errors(
   }
   return v;
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_strtoull(
+pub unsafe fn bb_strtoull(
   mut arg: *const libc::c_char,
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
@@ -112,8 +111,7 @@ pub unsafe extern "C" fn bb_strtoull(
   v = strtoull(arg, endp, base);
   return handle_errors(v, endp);
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_strtoll(
+pub unsafe fn bb_strtoll(
   mut arg: *const libc::c_char,
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
@@ -140,8 +138,7 @@ pub unsafe extern "C" fn bb_strtoll(
   v = strtoll(arg, endp, base) as libc::c_ulonglong;
   return handle_errors(v, endp) as libc::c_longlong;
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_strtou(
+pub unsafe fn bb_strtou(
   mut arg: *const libc::c_char,
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
@@ -192,8 +189,7 @@ pub unsafe extern "C" fn bb_strtou(
  * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
  *    return value is all-ones in this case.
  */
-#[no_mangle]
-pub unsafe extern "C" fn bb_strtoi(
+pub unsafe fn bb_strtoi(
   mut arg: *const libc::c_char,
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,

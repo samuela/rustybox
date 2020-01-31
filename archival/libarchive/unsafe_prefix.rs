@@ -5,8 +5,7 @@ use libc::strstr;
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#[no_mangle]
-pub unsafe extern "C" fn strip_unsafe_prefix(mut str: *const libc::c_char) -> *const libc::c_char {
+pub unsafe fn strip_unsafe_prefix(mut str: *const libc::c_char) -> *const libc::c_char {
   let mut cp: *const libc::c_char = str;
   loop {
     let mut cp2: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

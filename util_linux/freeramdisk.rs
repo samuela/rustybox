@@ -1,8 +1,7 @@
 use crate::libbb::appletlib::applet_name;
 use libc;
 
-#[no_mangle]
-pub unsafe extern "C" fn freeramdisk_main(
+pub unsafe fn freeramdisk_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

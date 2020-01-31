@@ -13,8 +13,7 @@ extern "C" {
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
 /* Like strncpy but make sure the resulting string is always 0 terminated. */
-#[no_mangle]
-pub unsafe extern "C" fn safe_strncpy(
+pub unsafe fn safe_strncpy(
   mut dst: *mut libc::c_char,
   mut src: *const libc::c_char,
   mut size: size_t,
@@ -241,8 +240,7 @@ pub unsafe extern "C" fn safe_strncpy(
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Like strcpy but can copy overlapping strings. */
-#[no_mangle]
-pub unsafe extern "C" fn overlapping_strcpy(
+pub unsafe fn overlapping_strcpy(
   mut dst: *mut libc::c_char,
   mut src: *const libc::c_char,
 ) {

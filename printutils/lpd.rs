@@ -25,7 +25,7 @@ pub const DAEMON_DEVNULL_STDIO: C2RustUnnamed = 2;
 pub const DAEMON_CHDIR_ROOT: C2RustUnnamed = 1;
 
 #[inline(always)]
-unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
+unsafe fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
   let mut b: libc::c_uchar = (a as libc::c_int - '0' as i32) as libc::c_uchar;
   if b as libc::c_int <= 9i32 {
     return (b as libc::c_int <= 9i32) as libc::c_int;
@@ -121,7 +121,7 @@ unsafe extern "C" fn bb_ascii_isalnum(mut a: libc::c_uchar) -> libc::c_int {
 //usage:     "\nExample:"
 //usage:     "\n	tcpsvd -E 0 515 softlimit -m 999999 lpd /var/spool ./print"
 // strip argument of bad chars
-unsafe extern "C" fn sane(mut string: *mut libc::c_char) -> *mut libc::c_char {
+unsafe fn sane(mut string: *mut libc::c_char) -> *mut libc::c_char {
   let mut s: *mut libc::c_char = string;
   let mut p: *mut libc::c_char = s;
   while *s != 0 {
@@ -139,17 +139,13 @@ unsafe extern "C" fn sane(mut string: *mut libc::c_char) -> *mut libc::c_char {
   return string;
 }
 
-unsafe extern "C" fn xmalloc_read_stdin() -> *mut libc::c_char {
+unsafe fn xmalloc_read_stdin() -> *mut libc::c_char {
   // SECURITY:
   let mut max: size_t = (4i32 * 1024i32) as size_t; // more than enough for commands!
   return crate::libbb::read_printf::xmalloc_reads(0i32, &mut max); // for compiler
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn lpd_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn lpd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut spooling: libc::c_int = 0;
   spooling = spooling;

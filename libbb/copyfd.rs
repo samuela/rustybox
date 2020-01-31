@@ -146,23 +146,13 @@ unsafe extern "C" fn bb_full_fd_action(
     total
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_copyfd_size(
-  mut fd1: libc::c_int,
-  mut fd2: libc::c_int,
-  mut size: off_t,
-) -> off_t {
+pub unsafe fn bb_copyfd_size(mut fd1: libc::c_int, mut fd2: libc::c_int, mut size: off_t) -> off_t {
   if size != 0 {
     return bb_full_fd_action(fd1, fd2, size);
   }
   return 0 as off_t;
 }
-#[no_mangle]
-pub unsafe extern "C" fn bb_copyfd_exact_size(
-  mut fd1: libc::c_int,
-  mut fd2: libc::c_int,
-  mut size: off_t,
-) {
+pub unsafe fn bb_copyfd_exact_size(mut fd1: libc::c_int, mut fd2: libc::c_int, mut size: off_t) {
   let mut sz: off_t = bb_copyfd_size(fd1, fd2, size);
   if sz == (if size >= 0 { size } else { -size }) {
     return;
@@ -284,7 +274,6 @@ pub unsafe extern "C" fn bb_copyfd_exact_size(
 /*ACTION_REVERSE      = (1 << 4), - unused */
 /* more than enough for "/dev/ttyXXX" */
 /* bb_copyfd_XX print read/write errors and return -1 if they occur */
-#[no_mangle]
-pub unsafe extern "C" fn bb_copyfd_eof(mut fd1: libc::c_int, mut fd2: libc::c_int) -> off_t {
+pub unsafe fn bb_copyfd_eof(mut fd1: libc::c_int, mut fd2: libc::c_int) -> off_t {
   return bb_full_fd_action(fd1, fd2, 0 as off_t);
 }

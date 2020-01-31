@@ -132,8 +132,7 @@ pub union C2RustUnnamed_1 {
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-#[no_mangle]
-pub unsafe extern "C" fn udhcp_read_interface(
+pub unsafe fn udhcp_read_interface(
   mut interface: *const libc::c_char,
   mut ifindex: *mut libc::c_int,
   mut nip: *mut u32,
@@ -372,8 +371,7 @@ pub unsafe extern "C" fn udhcp_read_interface(
 /* 2nd param is "struct option_set**" */
 /* 1. None of the callers expects it to ever fail */
 /* 2. ip was always INADDR_ANY */
-#[no_mangle]
-pub unsafe extern "C" fn udhcp_listen_socket(
+pub unsafe fn udhcp_listen_socket(
   mut port: libc::c_int,
   mut inf: *const libc::c_char,
 ) -> libc::c_int {

@@ -58,7 +58,7 @@ pub const OPT_L_local: C2RustUnnamed = 64;
 pub const OPT_m_nonraw: C2RustUnnamed = 32;
 pub type C2RustUnnamed = libc::c_uint;
 pub const OPT_p_proto: C2RustUnnamed = 1;
-unsafe extern "C" fn tcsetattr_serial_or_warn(mut state: *mut termios) -> libc::c_int {
+unsafe fn tcsetattr_serial_or_warn(mut state: *mut termios) -> libc::c_int {
   let mut ret: libc::c_int = 0;
   ret = tcsetattr(3i32, 0, state);
   if ret != 0 {
@@ -71,7 +71,7 @@ unsafe extern "C" fn tcsetattr_serial_or_warn(mut state: *mut termios) -> libc::
   return ret;
   /* 0 */
 }
-unsafe extern "C" fn restore_state_and_exit(mut exitcode: libc::c_int) -> ! {
+unsafe fn restore_state_and_exit(mut exitcode: libc::c_int) -> ! {
   let mut state: termios = termios {
     c_iflag: 0,
     c_oflag: 0,
@@ -115,8 +115,7 @@ unsafe extern "C" fn restore_state_and_exit(mut exitcode: libc::c_int) -> ! {
 unsafe extern "C" fn sig_handler(mut _signo: libc::c_int) {
   restore_state_and_exit(0i32);
 }
-#[no_mangle]
-pub unsafe extern "C" fn slattach_main(
+pub unsafe fn slattach_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
@@ -211,7 +210,7 @@ pub unsafe extern "C" fn slattach_main(
   if opt & OPT_e_quit as libc::c_int == 0 {
     crate::libbb::signals::bb_signals(
       0 + (1i32 << 1i32) + (1i32 << 2i32) + (1i32 << 3i32) + (1i32 << 15i32),
-      Some(sig_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
+      Some(sig_handler),
     );
   }
   /* Configure tty */

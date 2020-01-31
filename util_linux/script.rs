@@ -132,11 +132,7 @@ pub type C2RustUnnamed_0 = libc::c_uint;
 // > The output file on full-blown ubuntu system contains 6 bytes.
 // > Output on Busybox system (arm-linux) contains extra '\r' byte in each line.
 //however, in my test, "script" from util-linux-2.28 seems to also add '\r' bytes.
-#[no_mangle]
-pub unsafe extern "C" fn script_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn script_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opt: libc::c_int = 0; /* NB: 0: ok */
   let mut mode: libc::c_int = 0;
   let mut child_pid: libc::c_int = 0;

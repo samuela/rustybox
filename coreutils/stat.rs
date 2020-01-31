@@ -176,10 +176,9 @@ pub const OPT_FILESYS: C2RustUnnamed_0 = 4;
 pub const OPT_DEREFERENCE: C2RustUnnamed_0 = 2;
 pub const OPT_TERSE: C2RustUnnamed_0 = 1;
 
-pub type statfunc_ptr =
-  Option<unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> bool>;
+pub type statfunc_ptr = Option<unsafe fn(_: *const libc::c_char, _: *const libc::c_char) -> bool>;
 
-unsafe extern "C" fn file_type(mut st: *const stat) -> *const libc::c_char {
+unsafe fn file_type(mut st: *const stat) -> *const libc::c_char {
   /* See POSIX 1003.1-2001 XCU Table 4-8 lines 17093-17107
    * for some of these formats.
    * To keep diagnostics grammatical in English, the
@@ -246,7 +245,7 @@ unsafe fn human_time(ts: &libc::timespec) -> *const libc::c_char {
  * Others have statfs.f_fstypename[MFSNAMELEN]. (NetBSD 1.5.2)
  * Still others have neither and have to get by with f_type (Linux).
  */
-unsafe extern "C" fn human_fstype(mut f_type: u32) -> *const libc::c_char {
+unsafe fn human_fstype(mut f_type: u32) -> *const libc::c_char {
   static mut fstype: [u32; 35] = [
     0xadffi32 as u32,
     0x1cd1i32 as u32,
@@ -314,7 +313,7 @@ unsafe extern "C" fn human_fstype(mut f_type: u32) -> *const libc::c_char {
 
 /* "man statfs" says that statfsbuf->f_fsid is a mess */
 /* coreutils treats it as an array of ints, most significant first */
-unsafe extern "C" fn get_f_fsid(mut statfsbuf: *const statfs) -> libc::c_ulonglong {
+unsafe fn get_f_fsid(mut statfsbuf: *const statfs) -> libc::c_ulonglong {
   let mut p: *const libc::c_uint =
     &(*statfsbuf).f_fsid as *const libc::fsid_t as *const libc::c_void as *const libc::c_uint;
   let mut sz: libc::c_uint = (::std::mem::size_of::<libc::fsid_t>())
@@ -334,19 +333,19 @@ unsafe extern "C" fn get_f_fsid(mut statfsbuf: *const statfs) -> libc::c_ulonglo
 }
 
 /* FEATURE_STAT_FILESYSTEM */
-unsafe extern "C" fn strcatc(mut str: *mut libc::c_char, mut c: libc::c_char) {
+unsafe fn strcatc(mut str: *mut libc::c_char, mut c: libc::c_char) {
   let mut len: libc::c_int = strlen(str) as libc::c_int;
   let fresh1 = len;
   len = len + 1;
   *str.offset(fresh1 as isize) = c;
   *str.offset(len as isize) = '\u{0}' as i32 as libc::c_char;
 }
-unsafe extern "C" fn printfs(mut pformat: *mut libc::c_char, mut msg: *const libc::c_char) {
+unsafe fn printfs(mut pformat: *mut libc::c_char, mut msg: *const libc::c_char) {
   strcatc(pformat, 's' as i32 as libc::c_char);
   printf(pformat, msg);
 }
 /* print statfs info */
-unsafe extern "C" fn print_statfs(
+unsafe fn print_statfs(
   mut pformat: *mut libc::c_char,
   m: libc::c_char,
   filename: *const libc::c_char,
@@ -391,7 +390,7 @@ unsafe extern "C" fn print_statfs(
   };
 }
 /* print stat info */
-unsafe extern "C" fn print_stat(
+unsafe fn print_stat(
   mut pformat: *mut libc::c_char,
   m: libc::c_char,
   filename: *const libc::c_char,
@@ -560,11 +559,11 @@ unsafe extern "C" fn print_stat(
     printf(pformat, m as libc::c_int);
   };
 }
-unsafe extern "C" fn print_it(
+unsafe fn print_it(
   mut masterformat: *const libc::c_char,
   mut filename: *const libc::c_char,
   mut print_func: Option<
-    unsafe extern "C" fn(
+    unsafe fn(
       _: *mut libc::c_char,
       _: libc::c_char,
       _: *const libc::c_char,
@@ -638,10 +637,7 @@ unsafe extern "C" fn print_it(
 }
 /* FEATURE_STAT_FORMAT */
 /* Stat the file system and print what we find.  */
-unsafe extern "C" fn do_statfs(
-  mut filename: *const libc::c_char,
-  mut format: *const libc::c_char,
-) -> bool {
+unsafe fn do_statfs(mut filename: *const libc::c_char, mut format: *const libc::c_char) -> bool {
   let mut statfsbuf: statfs = std::mem::zeroed();
   if statfs(filename, &mut statfsbuf) != 0 {
     crate::libbb::perror_msg::bb_perror_msg(
@@ -664,7 +660,7 @@ unsafe extern "C" fn do_statfs(
     filename,
     Some(
       print_statfs
-        as unsafe extern "C" fn(
+        as unsafe fn(
           _: *mut libc::c_char,
           _: libc::c_char,
           _: *const libc::c_char,
@@ -679,17 +675,13 @@ unsafe extern "C" fn do_statfs(
 }
 /* FEATURE_STAT_FILESYSTEM */
 /* stat the file and print what we find */
-unsafe extern "C" fn do_stat(
-  mut filename: *const libc::c_char,
-  mut format: *const libc::c_char,
-) -> bool {
+unsafe fn do_stat(mut filename: *const libc::c_char, mut format: *const libc::c_char) -> bool {
   let mut statbuf: stat = std::mem::zeroed();
   if (if option_mask32 & OPT_DEREFERENCE as libc::c_int as libc::c_uint != 0 {
-    Some(stat as unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int)
+    stat
   } else {
-    Some(lstat as unsafe extern "C" fn(_: *const libc::c_char, _: *mut stat) -> libc::c_int)
-  })
-  .expect("non-null function pointer")(filename, &mut statbuf)
+    lstat
+  })(filename, &mut statbuf)
     != 0
   {
     crate::libbb::perror_msg::bb_perror_msg(
@@ -719,7 +711,7 @@ unsafe extern "C" fn do_stat(
     filename,
     Some(
       print_stat
-        as unsafe extern "C" fn(
+        as unsafe fn(
           _: *mut libc::c_char,
           _: libc::c_char,
           _: *const libc::c_char,
@@ -732,16 +724,12 @@ unsafe extern "C" fn do_stat(
   /* FEATURE_STAT_FORMAT */
   return 1i32 != 0;
 }
-#[no_mangle]
-pub unsafe extern "C" fn stat_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn stat_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut format: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut i: libc::c_int = 0;
   let mut ok: libc::c_int = 0;
   let mut statfunc: statfunc_ptr =
-    Some(do_stat as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> bool);
+    Some(do_stat as unsafe fn(_: *const libc::c_char, _: *const libc::c_char) -> bool);
   let mut opts: libc::c_uint = 0;
   opts = crate::libbb::getopt32::getopt32(
     argv,
@@ -750,9 +738,7 @@ pub unsafe extern "C" fn stat_main(
   );
   if opts & OPT_FILESYS as libc::c_int as libc::c_uint != 0 {
     /* -f */
-    statfunc = Some(
-      do_statfs as unsafe extern "C" fn(_: *const libc::c_char, _: *const libc::c_char) -> bool,
-    )
+    statfunc = Some(do_statfs as unsafe fn(_: *const libc::c_char, _: *const libc::c_char) -> bool)
   }
   ok = 1i32;
   argv = argv.offset(optind as isize);

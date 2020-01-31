@@ -3934,7 +3934,7 @@ pub unsafe fn read_line_input(
   (*lineedit_ptr_to_statics)
     .SIGWINCH_handler
     .__sigaction_handler
-    .sa_handler = Some(win_changed as unsafe extern "C" fn(_: libc::c_int) -> ()); /* while (1) */
+    .sa_handler = Some(win_changed); /* while (1) */
   (*lineedit_ptr_to_statics).SIGWINCH_handler.sa_flags = 0x10000000i32;
   sigaction2(28i32, &mut (*lineedit_ptr_to_statics).SIGWINCH_handler);
   read_key_buffer[0] = 0 as libc::c_char;

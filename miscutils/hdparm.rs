@@ -2990,11 +2990,7 @@ static mut hdparm_options: [libc::c_char; 68] = [
 ];
 /*-------------------------------------*/
 /* our main() routine: */
-#[no_mangle]
-pub unsafe extern "C" fn hdparm_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn hdparm_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut c: libc::c_int = 0;
   let mut flagcount: libc::c_int = 0;
   loop {

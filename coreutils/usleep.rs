@@ -29,8 +29,7 @@ extern "C" {
 //usage:       "$ usleep 1000000\n"
 //usage:       "[pauses for 1 second]\n"
 /* This is a NOFORK applet. Be very careful! */
-#[no_mangle]
-pub unsafe extern "C" fn usleep_main(
+pub unsafe fn usleep_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {

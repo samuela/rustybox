@@ -115,8 +115,7 @@ unsafe extern "C" fn comm_match(
  *
  * Modified by Vladimir Oleynik for use with libbb/procps.c
  */
-#[no_mangle]
-pub unsafe extern "C" fn find_pid_by_name(mut procName: *const libc::c_char) -> *mut pid_t {
+pub unsafe fn find_pid_by_name(mut procName: *const libc::c_char) -> *mut pid_t {
   let mut pidList: *mut pid_t = std::ptr::null_mut();
   let mut i: libc::c_int = 0;
   let mut p: *mut procps_status_t = std::ptr::null_mut();
@@ -700,8 +699,7 @@ pub unsafe extern "C" fn find_pid_by_name(mut procName: *const libc::c_char) -> 
 //procps_status_t* alloc_procps_scan(void) FAST_FUNC;
 /* Format cmdline (up to col chars) into char buf[size] */
 /* Puts [comm] if cmdline is empty (-> process is a kernel thread) */
-#[no_mangle]
-pub unsafe extern "C" fn pidlist_reverse(mut pidList: *mut pid_t) -> *mut pid_t {
+pub unsafe fn pidlist_reverse(mut pidList: *mut pid_t) -> *mut pid_t {
   let mut i: libc::c_int = 0;
   while *pidList.offset(i as isize) != 0 {
     i += 1

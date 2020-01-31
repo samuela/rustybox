@@ -119,8 +119,7 @@ pub struct swap_header_v1_2 {
 /*,u64 off*/
 /*,u64 off*/
 /*,u64 off*/
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_probe_linux_swap(mut id: *mut volume_id) -> libc::c_int
+pub unsafe fn volume_id_probe_linux_swap(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut current_block: u64;
   let mut sw: *mut swap_header_v1_2 = std::ptr::null_mut();

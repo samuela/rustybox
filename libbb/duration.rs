@@ -79,8 +79,7 @@ static mut duration_suffixes: [suffix_mult; 5] = [
     init
   },
 ];
-#[no_mangle]
-pub unsafe extern "C" fn parse_duration_str(mut str: *mut libc::c_char) -> duration_t {
+pub unsafe fn parse_duration_str(mut str: *mut libc::c_char) -> duration_t {
   let mut duration: duration_t = 0.;
   if !strchr(str, '.' as i32).is_null() {
     let mut d: libc::c_double = 0.;
@@ -394,8 +393,7 @@ pub unsafe extern "C" fn parse_duration_str(mut str: *mut libc::c_char) -> durat
  * but that would be too long.
  */
 /* Useful for reading port numbers */
-#[no_mangle]
-pub unsafe extern "C" fn sleep_for_duration(mut duration: duration_t) {
+pub unsafe fn sleep_for_duration(mut duration: duration_t) {
   let mut ts: timespec = std::mem::zeroed();
   ts.tv_sec = if -1i32 as time_t > 0 {
     -1i32 as time_t

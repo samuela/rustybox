@@ -65,11 +65,7 @@ pub struct mtab_list {
   pub next: *mut mtab_list,
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn umount_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn umount_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut doForce: libc::c_int = 0;
   let mut me: mntent = mntent {
     mnt_fsname: std::ptr::null_mut::<libc::c_char>(),

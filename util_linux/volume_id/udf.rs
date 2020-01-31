@@ -173,8 +173,7 @@ pub struct volume_structure_descriptor {
 /*,u64 off*/
 /*,u64 off*/
 /*,u64 off*/
-#[no_mangle]
-pub unsafe extern "C" fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_int
+pub unsafe fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_int
 /*,u64 off*/ {
   let mut current_block: u64;
   let mut vd: *mut volume_descriptor = std::ptr::null_mut();

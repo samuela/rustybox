@@ -563,11 +563,7 @@ unsafe extern "C" fn xargs_ask_confirmation() -> libc::c_int {
   fclose(tty_stream);
   return r;
 }
-#[no_mangle]
-pub unsafe extern "C" fn xargs_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn xargs_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut initial_idx: libc::c_int = 0;
   let mut i: libc::c_int = 0;
   let mut max_args: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -578,14 +574,7 @@ pub unsafe extern "C" fn xargs_main(
   let mut n_max_arg: libc::c_int = 0;
   let mut read_args: Option<
     unsafe extern "C" fn(_: libc::c_int, _: libc::c_int, _: *mut libc::c_char) -> *mut libc::c_char,
-  > = Some(
-    process_stdin
-      as unsafe extern "C" fn(
-        _: libc::c_int,
-        _: libc::c_int,
-        _: *mut libc::c_char,
-      ) -> *mut libc::c_char,
-  );
+  > = Some(process_stdin);
   let mut opt_a: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let ref mut fresh9 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).eof_str;
   *fresh9 = std::ptr::null();
@@ -629,14 +618,7 @@ pub unsafe extern "C" fn xargs_main(
     *fresh11 = std::ptr::null()
   }
   if opt & OPT_ZEROTERM as libc::c_int as libc::c_uint != 0 {
-    read_args = Some(
-      process0_stdin
-        as unsafe extern "C" fn(
-          _: libc::c_int,
-          _: libc::c_int,
-          _: *mut libc::c_char,
-        ) -> *mut libc::c_char,
-    );
+    read_args = Some(process0_stdin);
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).eol_ch = '\u{0}' as i32 as libc::c_char
   }
   argv = argv.offset(optind as isize);
@@ -710,14 +692,7 @@ pub unsafe extern "C" fn xargs_main(
     *fresh12 = std::ptr::null_mut();
     let ref mut fresh13 = (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).argv;
     *fresh13 = argv;
-    read_args = Some(
-      process_stdin_with_replace
-        as unsafe extern "C" fn(
-          _: libc::c_int,
-          _: libc::c_int,
-          _: *mut libc::c_char,
-        ) -> *mut libc::c_char,
-    );
+    read_args = Some(process_stdin_with_replace);
     /* Make -I imply -r. GNU findutils seems to do the same: */
     /* (otherwise "echo -n | xargs -I% echo %" would SEGV) */
     opt |= OPT_NO_EMPTY as libc::c_int as libc::c_uint

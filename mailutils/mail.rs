@@ -1,11 +1,15 @@
+use crate::librb::size_t;
 use libc;
 use libc::alarm;
 use libc::close;
 use libc::fclose;
 use libc::isatty;
+use libc::pid_t;
 use libc::prctl;
 use libc::printf;
 use libc::puts;
+use libc::ssize_t;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -30,11 +34,6 @@ extern "C" {
   static bb_uuenc_tbl_base64: [libc::c_char; 0];
 
 }
-
-use crate::librb::size_t;
-use libc::pid_t;
-use libc::ssize_t;
-use libc::FILE;
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -88,18 +87,14 @@ unsafe extern "C" fn signal_handler(mut signo: libc::c_int) {
   };
 }
 //char FAST_FUNC *parse_url(char *url, char **user, char **pass);
-#[no_mangle]
-pub unsafe extern "C" fn launch_helper(mut argv: *mut *const libc::c_char) {
+pub unsafe fn launch_helper(mut argv: *mut *const libc::c_char) {
   // setup vanilla unidirectional pipes interchange
   let mut i: libc::c_int = 0;
   let mut pipes: [libc::c_int; 4] = [0; 4];
   crate::libbb::xfuncs_printf::xpipe(pipes.as_mut_ptr());
   crate::libbb::xfuncs_printf::xpipe(pipes.as_mut_ptr().offset(2));
   // NB: handler must be installed before vfork
-  crate::libbb::signals::bb_signals(
-    0 + (1i32 << 17i32) + (1i32 << 14i32),
-    Some(signal_handler as unsafe extern "C" fn(_: libc::c_int) -> ()),
-  ); // for parent:0, for child:2
+  crate::libbb::signals::bb_signals(0 + (1i32 << 17i32) + (1i32 << 14i32), Some(signal_handler)); // for parent:0, for child:2
   (*ptr_to_globals).helper_pid = {
     let mut bb__xvfork_pid: pid_t = vfork(); // 1 or 3 - closing one write end
     if bb__xvfork_pid < 0 {
@@ -128,8 +123,7 @@ pub unsafe extern "C" fn launch_helper(mut argv: *mut *const libc::c_char) {
   };
   // parent goes on
 }
-#[no_mangle]
-pub unsafe extern "C" fn send_mail_command(
+pub unsafe fn send_mail_command(
   mut fmt: *const libc::c_char,
   mut param: *const libc::c_char,
 ) -> *mut libc::c_char {
@@ -172,7 +166,7 @@ static char* FAST_FUNC parse_url(char *url, char **user, char **pass)
   return url;
 }
 */
-unsafe extern "C" fn encode_n_base64(
+unsafe fn encode_n_base64(
   mut fname: *const libc::c_char,
   mut text: *const libc::c_char,
   mut len: size_t,
@@ -238,23 +232,19 @@ unsafe extern "C" fn encode_n_base64(
     fclose(fp);
   };
 }
-#[no_mangle]
-pub unsafe extern "C" fn printstr_base64(mut text: *const libc::c_char) {
+pub unsafe fn printstr_base64(mut text: *const libc::c_char) {
   encode_n_base64(0 as *const libc::c_char, text, strlen(text));
 }
-#[no_mangle]
-pub unsafe extern "C" fn printbuf_base64(mut text: *const libc::c_char, mut len: libc::c_uint) {
+pub unsafe fn printbuf_base64(mut text: *const libc::c_char, mut len: libc::c_uint) {
   encode_n_base64(0 as *const libc::c_char, text, len as size_t);
 }
-#[no_mangle]
-pub unsafe extern "C" fn printfile_base64(mut fname: *const libc::c_char) {
+pub unsafe fn printfile_base64(mut fname: *const libc::c_char) {
   encode_n_base64(fname, 0 as *const libc::c_char, 0 as size_t);
 }
 /*
  * get username and password from a file descriptor
  */
-#[no_mangle]
-pub unsafe extern "C" fn get_cred_or_die(mut fd: libc::c_int) {
+pub unsafe fn get_cred_or_die(mut fd: libc::c_int) {
   if isatty(fd) != 0 {
     (*ptr_to_globals).user = crate::libbb::bb_askpass::bb_ask_noecho(
       fd,
