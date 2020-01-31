@@ -247,9 +247,7 @@ pub unsafe fn add_to_uuid_cache(mut device: *const libc::c_char) -> libc::c_int 
   return 0;
 }
 /* Used by mount and findfs */
-pub unsafe fn get_devname_from_label(
-  mut spec: *const libc::c_char,
-) -> *mut libc::c_char {
+pub unsafe fn get_devname_from_label(mut spec: *const libc::c_char) -> *mut libc::c_char {
   let mut uc: *mut uuidCache_s = std::ptr::null_mut();
   uc = uuidcache_init(1i32);
   while !uc.is_null() {

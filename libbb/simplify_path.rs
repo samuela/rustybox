@@ -10,9 +10,7 @@ use libc::free;
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-pub unsafe fn bb_simplify_abs_path_inplace(
-  mut start: *mut libc::c_char,
-) -> *mut libc::c_char {
+pub unsafe fn bb_simplify_abs_path_inplace(mut start: *mut libc::c_char) -> *mut libc::c_char {
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   s = start;

@@ -85,10 +85,7 @@ unsafe fn restricted_shell(mut shell: *const libc::c_char) -> libc::c_int {
   }
   return result;
 }
-pub unsafe fn su_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn su_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut flags: libc::c_uint = 0;
   let mut opt_shell: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut opt_command: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

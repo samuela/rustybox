@@ -124,10 +124,7 @@ unsafe fn search_dev_inode(mut st: *const stat) -> smallint {
   }
   return 0 as smallint;
 }
-unsafe fn scan_proc_net_or_maps(
-  mut path: *const libc::c_char,
-  mut port: libc::c_uint,
-) -> smallint {
+unsafe fn scan_proc_net_or_maps(mut path: *const libc::c_char, mut port: libc::c_uint) -> smallint {
   let mut f: *mut FILE = std::ptr::null_mut();
   let mut line: [libc::c_char; 256] = [0; 256];
   let mut addr: [libc::c_char; 68] = [0; 68];

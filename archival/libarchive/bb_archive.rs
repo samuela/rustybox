@@ -93,8 +93,7 @@ pub struct archive_handle_t {
   /* Temporary storage */
   pub dpkg__buffer: *mut libc::c_char,
   /* How to process any sub archive, e.g. get_header_tar_gz */
-  pub dpkg__action_data_subarchive:
-    Option<unsafe fn(_: *mut archive_handle_t) -> libc::c_char>,
+  pub dpkg__action_data_subarchive: Option<unsafe fn(_: *mut archive_handle_t) -> libc::c_char>,
   /* Contains the handle to a sub archive */
   pub dpkg__sub_archive: *mut archive_handle_t,
 }

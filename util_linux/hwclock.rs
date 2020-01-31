@@ -106,10 +106,7 @@ pub struct linux_rtc_time {
  * and hw clock. It is useful, but not compatible with standard hwclock.
  * Thus disabled.
  */
-unsafe fn read_rtc(
-  mut pp_rtcname: *mut *const libc::c_char,
-  mut utc: libc::c_int,
-) -> time_t {
+unsafe fn read_rtc(mut pp_rtcname: *mut *const libc::c_char, mut utc: libc::c_int) -> time_t {
   let mut tm_time: tm = std::mem::zeroed();
   let mut fd: libc::c_int = 0;
   fd = crate::libbb::rtc::rtc_xopen(pp_rtcname, 0);
@@ -148,10 +145,7 @@ unsafe fn to_sys_clock(mut pp_rtcname: *mut *const libc::c_char, mut utc: libc::
     );
   };
 }
-unsafe fn from_sys_clock(
-  mut pp_rtcname: *mut *const libc::c_char,
-  mut utc: libc::c_int,
-) {
+unsafe fn from_sys_clock(mut pp_rtcname: *mut *const libc::c_char, mut utc: libc::c_int) {
   let mut tv: timeval = timeval {
     tv_sec: 0,
     tv_usec: 0,

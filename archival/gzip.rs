@@ -336,11 +336,7 @@ unsafe fn bi_windup() {
  * Copy a stored block to the zip file, storing first the length and its
  * one's complement if requested.
  */
-unsafe fn copy_block(
-  mut buf: *const libc::c_char,
-  mut len: libc::c_uint,
-  mut header: libc::c_int,
-) {
+unsafe fn copy_block(mut buf: *const libc::c_char, mut len: libc::c_uint, mut header: libc::c_int) {
   bi_windup(); /* align on byte boundary */
   if header != 0 {
     let mut v: libc::c_uint = len as u16 as libc::c_uint | !len << 16i32;
@@ -1468,11 +1464,7 @@ unsafe fn compress_block(mut ltree: *const ct_data, mut dtree: *const ct_data) {
  * trees or store, and output the encoded block to the zip file. This function
  * returns the total compressed length for the file so far.
  */
-unsafe fn flush_block(
-  mut buf: *const libc::c_char,
-  mut stored_len: ulg,
-  mut eof: libc::c_int,
-) {
+unsafe fn flush_block(mut buf: *const libc::c_char, mut stored_len: ulg, mut eof: libc::c_int) {
   let mut opt_lenb: ulg = 0; /* opt_len and static_len in bytes */
   let mut static_lenb: ulg = 0; /* index of last bit length code of non zero freq */
   let mut max_blindex: libc::c_int = 0; /* Save the flags for the last 8 items */

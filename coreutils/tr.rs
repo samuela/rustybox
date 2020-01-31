@@ -189,10 +189,7 @@ unsafe fn map(
  * # echo qwe123 | /usr/bin/tr 123456789 '[d*]'
  * qweddd
  */
-unsafe fn expand(
-  mut arg: *mut libc::c_char,
-  mut buffer_p: *mut *mut libc::c_char,
-) -> libc::c_uint {
+unsafe fn expand(mut arg: *mut libc::c_char, mut buffer_p: *mut *mut libc::c_char) -> libc::c_uint {
   let mut buffer: *mut libc::c_char = *buffer_p; /* can't be unsigned char: must be able to hold 256 */
   let mut pos: libc::c_uint = 0 as libc::c_uint;
   let mut size: libc::c_uint = TR_BUFSIZ as libc::c_int as libc::c_uint;
@@ -415,10 +412,7 @@ unsafe fn expand(
 /* NB: buffer is guaranteed to be at least TR_BUFSIZE
  * (which is >= ASCII) big.
  */
-unsafe fn complement(
-  mut buffer: *mut libc::c_char,
-  mut buffer_len: libc::c_int,
-) -> libc::c_int {
+unsafe fn complement(mut buffer: *mut libc::c_char, mut buffer_len: libc::c_int) -> libc::c_int {
   let mut len: libc::c_int = 0; /* not equal to any char */
   let mut conv: [libc::c_char; 256] = [0; 256];
   let mut ch: libc::c_uchar = 0;

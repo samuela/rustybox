@@ -89,10 +89,7 @@ pub unsafe fn rtc_adjtime_is_utc() -> libc::c_int {
  * Users wouldn't expect that to fail merely because /dev/rtc
  * was momentarily busy, let's try a bit harder on errno == EBUSY.
  */
-unsafe fn open_loop_on_busy(
-  mut name: *const libc::c_char,
-  mut flags: libc::c_int,
-) -> libc::c_int {
+unsafe fn open_loop_on_busy(mut name: *const libc::c_char, mut flags: libc::c_int) -> libc::c_int {
   let mut rtc: libc::c_int = 0;
   /*
    * Tested with two parallel "hwclock -w" loops.

@@ -23,10 +23,7 @@ extern "C" {
 //usage:	"FILE"
 //usage:#define unlink_full_usage "\n\n"
 //usage:	"Delete FILE by calling unlink()"
-pub unsafe fn unlink_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn unlink_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   crate::libbb::getopt32::getopt32(argv, b"^\x00=1\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);
   crate::libbb::xfuncs_printf::xunlink(*argv.offset(0));

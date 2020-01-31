@@ -712,11 +712,7 @@ unsafe fn deleteLines(mut num1: libc::c_int, mut num2: libc::c_int) {
  * Do the substitute command.
  * The current line is set to the last substitution done.
  */
-unsafe fn subCommand(
-  mut cmd: *const libc::c_char,
-  mut num1: libc::c_int,
-  mut num2: libc::c_int,
-) {
+unsafe fn subCommand(mut cmd: *const libc::c_char, mut num1: libc::c_int, mut num2: libc::c_int) {
   let mut cp: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut oldStr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut newStr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

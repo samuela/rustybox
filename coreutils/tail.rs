@@ -40,19 +40,12 @@ pub struct globals {
   pub from_top: bool,
   pub exitcode: bool,
 }
-unsafe fn tail_xprint_header(
-  mut fmt: *const libc::c_char,
-  mut filename: *const libc::c_char,
-) {
+unsafe fn tail_xprint_header(mut fmt: *const libc::c_char, mut filename: *const libc::c_char) {
   if dprintf(1i32, fmt, filename) < 0 {
     crate::libbb::perror_nomsg_and_die::bb_perror_nomsg_and_die();
   };
 }
-unsafe fn tail_read(
-  mut fd: libc::c_int,
-  mut buf: *mut libc::c_char,
-  mut count: size_t,
-) -> ssize_t {
+unsafe fn tail_read(mut fd: libc::c_int, mut buf: *mut libc::c_char, mut count: size_t) -> ssize_t {
   let mut r: ssize_t = 0;
   r = crate::libbb::read::full_read(fd, buf as *mut libc::c_void, count);
   if r < 0 {

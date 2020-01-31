@@ -179,10 +179,7 @@ unsafe fn new_password(
   crate::libbb::nuke_str::nuke_str(cp);
   return ret;
 }
-pub unsafe fn passwd_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn passwd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut opt: libc::c_uint = 0;
   let mut rc: libc::c_int = 0;

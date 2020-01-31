@@ -101,8 +101,7 @@ extern "C" {
  *
  * We try to be compatible.
  */
-pub type converter =
-  Option<unsafe fn(_: *const libc::c_char, _: *mut libc::c_void) -> ()>;
+pub type converter = Option<unsafe fn(_: *const libc::c_char, _: *mut libc::c_void) -> ()>;
 
 unsafe fn multiconvert(
   mut arg: *const libc::c_char,

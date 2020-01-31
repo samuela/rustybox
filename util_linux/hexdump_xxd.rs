@@ -115,10 +115,7 @@ use crate::libbb::dump::dumper_t;
 //usage:     "\n	-s OFFSET	Skip OFFSET bytes"
 // TODO: implement -r (see hexdump -R)
 /* This is a NOEXEC applet. Be very careful! */
-pub unsafe fn xxd_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn xxd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut buf: [libc::c_char; 80] = [0; 80];
   let mut dumper: *mut dumper_t = std::ptr::null_mut();
   let mut opt_l: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

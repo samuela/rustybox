@@ -54,10 +54,7 @@ pub type C2RustUnnamed = libc::c_uint;
 //usage:     "\n	-f	Sync filesystems underlying FILEs"
 //usage:    )
 /* This is a NOFORK applet. Be very careful! */
-unsafe fn sync_common(
-  mut opts: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+unsafe fn sync_common(mut opts: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut ret: libc::c_int = 0;
   ret = 0;
   loop {

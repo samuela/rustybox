@@ -66,10 +66,7 @@ unsafe fn string_checker_helper(
   }
   return 0;
 }
-unsafe fn string_checker(
-  mut p1: *const libc::c_char,
-  mut p2: *const libc::c_char,
-) -> libc::c_int {
+unsafe fn string_checker(mut p1: *const libc::c_char, mut p2: *const libc::c_char) -> libc::c_int {
   let mut size: libc::c_int = 0;
   let mut i: libc::c_int = 0;
   /* check string */

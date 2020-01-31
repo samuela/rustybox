@@ -111,10 +111,7 @@ pub type aliased_u32 = u32;
 //int FAST_FUNC volume_id_probe_highpoint_37x_raid(struct volume_id *id /*,u64 off*/);
 //int FAST_FUNC volume_id_probe_highpoint_45x_raid(struct volume_id *id /*,u64 off*/, u64 size);
 //int FAST_FUNC volume_id_probe_intel_software_raid(struct volume_id *id /*,u64 off*/, u64 size);
-pub unsafe fn volume_id_probe_linux_raid(
-  mut id: *mut volume_id,
-  mut size: u64,
-) -> libc::c_int {
+pub unsafe fn volume_id_probe_linux_raid(mut id: *mut volume_id, mut size: u64) -> libc::c_int {
   let mut sboff: u64 = 0;
   let mut uuid: [u8; 16] = [0; 16];
   let mut mdp: *mut mdp_super_block = std::ptr::null_mut();

@@ -63,10 +63,7 @@ pub const OPT_u: C2RustUnnamed = 4;
 //usage:       "a\n"
 //usage:       "b\n"
 //usage:       "c\n"
-pub unsafe fn uniq_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn uniq_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut input_filename: *const libc::c_char = std::ptr::null(); /* == 0 */
   let mut skip_fields: libc::c_uint = 0;
   let mut skip_chars: libc::c_uint = 0;

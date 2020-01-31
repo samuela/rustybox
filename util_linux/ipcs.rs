@@ -1163,10 +1163,7 @@ unsafe fn print_sem(mut semid: libc::c_int) {
 //usage:     "\n	-p	Pid"
 //usage:     "\n	-l	Limits"
 //usage:     "\n	-u	Summary"
-pub unsafe fn ipcs_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn ipcs_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut format: libc::c_int = 0; // -t
   let mut opt: libc::c_uint = 0; // -c
   let mut opt_i: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>(); // -p

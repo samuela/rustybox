@@ -134,10 +134,7 @@ extern "C" {
 /* Find out if the last character of a string matches the one given.
  * Don't underrun the buffer if the string length is 0.
  */
-pub unsafe fn last_char_is(
-  mut s: *const libc::c_char,
-  mut c: libc::c_int,
-) -> *mut libc::c_char {
+pub unsafe fn last_char_is(mut s: *const libc::c_char, mut c: libc::c_int) -> *mut libc::c_char {
   if !s.is_null() && *s as libc::c_int != 0 {
     let mut sz: size_t = strlen(s).wrapping_sub(1i32 as libc::c_ulong);
     s = s.offset(sz as isize);

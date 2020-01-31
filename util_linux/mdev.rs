@@ -1220,10 +1220,7 @@ unsafe fn dirAction(
  * - userspace writes "0" (worked) or "-1" (failed) to /sys/$DEVPATH/loading
  * - kernel loads firmware into device
  */
-unsafe fn load_firmware(
-  mut firmware: *const libc::c_char,
-  mut sysfs_path: *const libc::c_char,
-) {
+unsafe fn load_firmware(mut firmware: *const libc::c_char, mut sysfs_path: *const libc::c_char) {
   let mut current_block: u64;
   let mut cnt: libc::c_int = 0;
   let mut firmware_fd: libc::c_int = 0;

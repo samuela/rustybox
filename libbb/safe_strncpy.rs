@@ -240,10 +240,7 @@ pub unsafe fn safe_strncpy(
 //used by AES_GCM
 /* 0 if argv[0] is NULL: */
 /* Like strcpy but can copy overlapping strings. */
-pub unsafe fn overlapping_strcpy(
-  mut dst: *mut libc::c_char,
-  mut src: *const libc::c_char,
-) {
+pub unsafe fn overlapping_strcpy(mut dst: *mut libc::c_char, mut src: *const libc::c_char) {
   /* Cheap optimization for dst == src case -
    * better to have it here than in many callers.
    */

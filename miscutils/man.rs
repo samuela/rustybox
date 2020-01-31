@@ -371,27 +371,18 @@ pub unsafe fn man_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char)
   /* man-db implementation of man uses man_db.conf */
   parser = crate::libbb::parse_config::config_open2(
     b"/etc/man.config\x00" as *const u8 as *const libc::c_char,
-    Some(
-      crate::libbb::wfopen::fopen_for_read
-        as unsafe fn(_: *const libc::c_char) -> *mut FILE,
-    ),
+    Some(crate::libbb::wfopen::fopen_for_read as unsafe fn(_: *const libc::c_char) -> *mut FILE),
   );
   if parser.is_null() {
     parser = crate::libbb::parse_config::config_open2(
       b"/etc/man.conf\x00" as *const u8 as *const libc::c_char,
-      Some(
-        crate::libbb::wfopen::fopen_for_read
-          as unsafe fn(_: *const libc::c_char) -> *mut FILE,
-      ),
+      Some(crate::libbb::wfopen::fopen_for_read as unsafe fn(_: *const libc::c_char) -> *mut FILE),
     )
   }
   if parser.is_null() {
     parser = crate::libbb::parse_config::config_open2(
       b"/etc/man_db.conf\x00" as *const u8 as *const libc::c_char,
-      Some(
-        crate::libbb::wfopen::fopen_for_read
-          as unsafe fn(_: *const libc::c_char) -> *mut FILE,
-      ),
+      Some(crate::libbb::wfopen::fopen_for_read as unsafe fn(_: *const libc::c_char) -> *mut FILE),
     )
   }
   while crate::libbb::parse_config::config_read(

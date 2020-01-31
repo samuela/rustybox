@@ -24,10 +24,7 @@ use libc::printf;
 //usage:#define rdev_example_usage
 //usage:       "$ rdev\n"
 //usage:       "/dev/mtdblock9 /\n"
-pub unsafe fn rdev_main(
-  mut _argc: libc::c_int,
-  mut _argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn rdev_main(mut _argc: libc::c_int, mut _argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut root_device: *const libc::c_char =
     crate::libbb::find_root_device::find_block_device(b"/\x00" as *const u8 as *const libc::c_char);
   if !root_device.is_null() {

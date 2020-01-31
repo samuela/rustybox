@@ -169,10 +169,7 @@ pub struct ethtool_cmd {
   pub reserved: [u32; 3],
 }
 /* Get driver info. */
-unsafe fn nameif_parse_selector(
-  mut ch: *mut ethtable_t,
-  mut selector: *mut libc::c_char,
-) {
+unsafe fn nameif_parse_selector(mut ch: *mut ethtable_t, mut selector: *mut libc::c_char) {
   let mut lmac: *mut ether_addr = std::ptr::null_mut();
   let mut found_selector: libc::c_int = 0;
   while *selector != 0 {
@@ -318,10 +315,7 @@ pub unsafe fn nameif_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_ch
   ctl_sk = crate::libbb::xfuncs_printf::xsocket(2i32, SOCK_DGRAM as libc::c_int, 0);
   parser = crate::libbb::parse_config::config_open2(
     b"/proc/net/dev\x00" as *const u8 as *const libc::c_char,
-    Some(
-      crate::libbb::wfopen::xfopen_for_read
-        as unsafe fn(_: *const libc::c_char) -> *mut FILE,
-    ),
+    Some(crate::libbb::wfopen::xfopen_for_read as unsafe fn(_: *const libc::c_char) -> *mut FILE),
   );
   let mut current_block_42: u64;
   while !clist.is_null()

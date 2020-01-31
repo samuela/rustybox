@@ -397,10 +397,7 @@ pub unsafe fn xstrtou_sfx(
     suffixes,
   );
 }
-pub unsafe fn xstrtou(
-  mut numstr: *const libc::c_char,
-  mut base: libc::c_int,
-) -> libc::c_uint {
+pub unsafe fn xstrtou(mut numstr: *const libc::c_char, mut base: libc::c_int) -> libc::c_uint {
   return xstrtou_range_sfx(
     numstr,
     base,
@@ -573,10 +570,7 @@ pub unsafe fn xstrtoll_range(
 ) -> libc::c_longlong {
   return xstrtoll_range_sfx(numstr, base, lower, upper, 0 as *const suffix_mult);
 }
-pub unsafe fn xstrtoi(
-  mut numstr: *const libc::c_char,
-  mut base: libc::c_int,
-) -> libc::c_int {
+pub unsafe fn xstrtoi(mut numstr: *const libc::c_char, mut base: libc::c_int) -> libc::c_int {
   return xstrtoi_range_sfx(
     numstr,
     base,
@@ -585,10 +579,7 @@ pub unsafe fn xstrtoi(
     0 as *const suffix_mult,
   );
 }
-pub unsafe fn xstrtoll(
-  mut numstr: *const libc::c_char,
-  mut base: libc::c_int,
-) -> libc::c_longlong {
+pub unsafe fn xstrtoll(mut numstr: *const libc::c_char, mut base: libc::c_int) -> libc::c_longlong {
   return xstrtoll_range_sfx(
     numstr,
     base,

@@ -132,10 +132,7 @@ unsafe fn idle_string(mut str6: *mut libc::c_char, mut t: time_t) {
   }
   strcpy(str6, b"old\x00" as *const u8 as *const libc::c_char);
 }
-pub unsafe fn who_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn who_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut do_users: libc::c_int = (1i32 != 0
     && (1i32 + 1i32 + 1i32 == 1i32 || *applet_name.offset(0) as libc::c_int == 'u' as i32))
     as libc::c_int;

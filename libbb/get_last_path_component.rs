@@ -47,9 +47,7 @@ pub unsafe fn bb_get_last_path_component_nostrip(
  * "abc/def"  -> "def"
  * "abc/def/" -> "def" !!
  */
-pub unsafe fn bb_get_last_path_component_strip(
-  mut path: *mut libc::c_char,
-) -> *mut libc::c_char {
+pub unsafe fn bb_get_last_path_component_strip(mut path: *mut libc::c_char) -> *mut libc::c_char {
   let mut slash: *mut libc::c_char = crate::libbb::last_char_is::last_char_is(path, '/' as i32);
   if !slash.is_null() {
     while *slash as libc::c_int == '/' as i32 && slash != path {

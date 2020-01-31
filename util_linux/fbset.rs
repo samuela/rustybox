@@ -181,10 +181,7 @@ unsafe fn copy_if_gt0(mut src: *mut u32, mut dst: *mut u32, mut cnt: libc::c_uin
 }
 
 #[inline(never)]
-unsafe fn copy_changed_values(
-  mut base: *mut fb_var_screeninfo,
-  mut set: *mut fb_var_screeninfo,
-) {
+unsafe fn copy_changed_values(mut base: *mut fb_var_screeninfo, mut set: *mut fb_var_screeninfo) {
   //if ((i32) set->xres > 0) base->xres = set->xres;
   //if ((i32) set->yres > 0) base->yres = set->yres;
   //if ((i32) set->xres_virtual > 0)   base->xres_virtual = set->xres_virtual;
@@ -773,10 +770,7 @@ unsafe fn showmode(mut v: *mut fb_var_screeninfo) {
            (*v).transp.length, (*v).transp.offset);
 }
 
-pub unsafe fn fbset_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn fbset_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut var_old: fb_var_screeninfo = fb_var_screeninfo {
     xres: 0,

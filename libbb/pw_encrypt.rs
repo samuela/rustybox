@@ -108,10 +108,7 @@ unsafe fn i64c(mut i: libc::c_int) -> libc::c_int {
   }
   return 'a' as i32 - 38i32 + i;
 }
-pub unsafe fn crypt_make_salt(
-  mut p: *mut libc::c_char,
-  mut cnt: libc::c_int,
-) -> libc::c_int
+pub unsafe fn crypt_make_salt(mut p: *mut libc::c_char, mut cnt: libc::c_int) -> libc::c_int
 /*, int x */ {
   /* was: x += ... */
   let mut x: libc::c_uint = (getpid() as libc::c_ulonglong)
@@ -861,10 +858,7 @@ unsafe fn const_des_init() -> *mut const_des_ctx {
   }
   return cctx;
 }
-unsafe fn des_init(
-  mut ctx: *mut des_ctx,
-  mut cctx: *const const_des_ctx,
-) -> *mut des_ctx {
+unsafe fn des_init(mut ctx: *mut des_ctx, mut cctx: *const const_des_ctx) -> *mut des_ctx {
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   let mut b: libc::c_int = 0;
@@ -1437,9 +1431,8 @@ unsafe fn sha_crypt(
   let mut sha_hash: Option<
     unsafe fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> (),
   > = None;
-  let mut sha_end: Option<
-    unsafe fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint,
-  > = None;
+  let mut sha_end: Option<unsafe fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint> =
+    None;
   let mut _32or64: libc::c_int = 0;
   let mut result: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut resptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -1528,15 +1521,12 @@ unsafe fn sha_crypt(
   key_len = strlen(key_data) as libc::c_uint;
   key_data = crate::libbb::xfuncs_printf::xstrdup(key_data);
   /* Which flavor of SHAnnn ops to use? */
-  sha_begin = ::std::mem::transmute::<
-    *mut libc::c_void,
-    Option<unsafe fn(_: *mut libc::c_void) -> ()>,
-  >(::std::mem::transmute::<
-    Option<unsafe fn(_: *mut sha256_ctx_t) -> ()>,
-    *mut libc::c_void,
-  >(Some(
-    crate::libbb::hash_md5_sha::sha256_begin as unsafe fn(_: *mut sha256_ctx_t) -> (),
-  )));
+  sha_begin =
+    ::std::mem::transmute::<*mut libc::c_void, Option<unsafe fn(_: *mut libc::c_void) -> ()>>(
+      ::std::mem::transmute::<Option<unsafe fn(_: *mut sha256_ctx_t) -> ()>, *mut libc::c_void>(
+        Some(crate::libbb::hash_md5_sha::sha256_begin as unsafe fn(_: *mut sha256_ctx_t) -> ()),
+      ),
+    );
   sha_hash = ::std::mem::transmute::<
     *mut libc::c_void,
     Option<unsafe fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()>,
@@ -1558,15 +1548,12 @@ unsafe fn sha_crypt(
       as unsafe fn(_: *mut sha1_ctx_t, _: *mut libc::c_void) -> libc::c_uint,
   )));
   if _32or64 != 32i32 {
-    sha_begin = ::std::mem::transmute::<
-      *mut libc::c_void,
-      Option<unsafe fn(_: *mut libc::c_void) -> ()>,
-    >(::std::mem::transmute::<
-      Option<unsafe fn(_: *mut sha512_ctx_t) -> ()>,
-      *mut libc::c_void,
-    >(Some(
-      crate::libbb::hash_md5_sha::sha512_begin as unsafe fn(_: *mut sha512_ctx_t) -> (),
-    )));
+    sha_begin =
+      ::std::mem::transmute::<*mut libc::c_void, Option<unsafe fn(_: *mut libc::c_void) -> ()>>(
+        ::std::mem::transmute::<Option<unsafe fn(_: *mut sha512_ctx_t) -> ()>, *mut libc::c_void>(
+          Some(crate::libbb::hash_md5_sha::sha512_begin as unsafe fn(_: *mut sha512_ctx_t) -> ()),
+        ),
+      );
     sha_hash = ::std::mem::transmute::<
       *mut libc::c_void,
       Option<unsafe fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()>,

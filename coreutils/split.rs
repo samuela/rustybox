@@ -109,10 +109,7 @@ static mut split_suffixes: [suffix_mult; 5] = [
 /* Increment the suffix part of the filename.
  * Returns NULL if we are out of filenames.
  */
-unsafe fn next_file(
-  mut old: *mut libc::c_char,
-  mut suffix_len: libc::c_uint,
-) -> *mut libc::c_char {
+unsafe fn next_file(mut old: *mut libc::c_char, mut suffix_len: libc::c_uint) -> *mut libc::c_char {
   let mut end: size_t = strlen(old);
   let mut i: libc::c_uint = 1i32 as libc::c_uint;
   let mut curr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

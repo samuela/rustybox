@@ -864,11 +864,7 @@ unsafe fn list_types(mut sys: *const *const libc::c_char) {
   }
   crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);
 }
-unsafe fn set_hsc_start_end(
-  mut p: *mut partition,
-  mut start: sector_t,
-  mut stop: sector_t,
-) {
+unsafe fn set_hsc_start_end(mut p: *mut partition, mut start: sector_t, mut stop: sector_t) {
   if (*ptr_to_globals).dos_compatible_flag as libc::c_int != 0
     && start.wrapping_div(
       (*ptr_to_globals)
@@ -1592,10 +1588,7 @@ unsafe fn get_partition(mut warn: libc::c_int, mut max: libc::c_uint) -> libc::c
   }
   return i;
 }
-unsafe fn get_existing_partition(
-  mut warn: libc::c_int,
-  mut max: libc::c_uint,
-) -> libc::c_int {
+unsafe fn get_existing_partition(mut warn: libc::c_int, mut max: libc::c_uint) -> libc::c_int {
   let mut current_block: u64;
   let mut pno: libc::c_int = -1i32;
   let mut i: libc::c_uint = 0;
@@ -3205,10 +3198,7 @@ unsafe fn is_ide_cdrom_or_tape(mut device: *const libc::c_char) -> libc::c_int {
   }
   return is_ide;
 }
-unsafe fn open_list_and_close(
-  mut device: *const libc::c_char,
-  mut user_specified: libc::c_int,
-) {
+unsafe fn open_list_and_close(mut device: *const libc::c_char, mut user_specified: libc::c_int) {
   let mut gb: libc::c_int = 0;
   (*ptr_to_globals).disk_device = device;
   if _setjmp((*ptr_to_globals).listingbuf.as_mut_ptr()) != 0 {
@@ -3334,10 +3324,7 @@ unsafe fn unknown_command(mut c: libc::c_int) {
     c,
   );
 }
-pub unsafe fn fdisk_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn fdisk_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
   /*
    *  fdisk -v

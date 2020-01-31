@@ -201,9 +201,8 @@ pub unsafe fn uudecode_main(
     if line.is_null() {
       break;
     }
-    let mut decode_fn_ptr: Option<
-      unsafe fn(_: *mut FILE, _: *mut FILE, _: libc::c_int) -> (),
-    > = None;
+    let mut decode_fn_ptr: Option<unsafe fn(_: *mut FILE, _: *mut FILE, _: libc::c_int) -> ()> =
+      None;
     let mut line_ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut dst_stream: *mut FILE = std::ptr::null_mut();
     let mut mode: libc::c_int = 0;

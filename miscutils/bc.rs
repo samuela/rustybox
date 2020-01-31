@@ -872,9 +872,7 @@ unsafe fn zbc_POSIX_does_not_allow(mut msg: *const libc::c_char) -> BcStatus {
     msg,
   );
 }
-unsafe fn zbc_POSIX_does_not_allow_bool_ops_this_is_bad(
-  mut msg: *const libc::c_char,
-) -> BcStatus {
+unsafe fn zbc_POSIX_does_not_allow_bool_ops_this_is_bad(mut msg: *const libc::c_char) -> BcStatus {
   return zbc_posix_error_fmt(
     b"%s%s %s\x00" as *const u8 as *const libc::c_char,
     b"POSIX does not allow \x00" as *const u8 as *const libc::c_char,
@@ -948,11 +946,7 @@ unsafe fn bc_vec_npop(mut v: *mut BcVec, mut n: size_t) {
 unsafe fn bc_vec_pop_all(mut v: *mut BcVec) {
   bc_vec_npop(v, (*v).len);
 }
-unsafe fn bc_vec_npush(
-  mut v: *mut BcVec,
-  mut n: size_t,
-  mut data: *const libc::c_void,
-) -> size_t {
+unsafe fn bc_vec_npush(mut v: *mut BcVec, mut n: size_t, mut data: *const libc::c_void) -> size_t {
   let mut len: size_t = (*v).len;
   if len.wrapping_add(n) > (*v).cap {
     bc_vec_grow(v, n);
@@ -994,11 +988,7 @@ unsafe fn bc_vec_pushZeroByte(mut v: *mut BcVec) -> size_t {
   // better:
   return bc_vec_push(v, &const_int_0 as *const libc::c_int as *const libc::c_void);
 }
-unsafe fn bc_vec_pushAt(
-  mut v: *mut BcVec,
-  mut data: *const libc::c_void,
-  mut idx: size_t,
-) {
+unsafe fn bc_vec_pushAt(mut v: *mut BcVec, mut data: *const libc::c_void, mut idx: size_t) {
   if idx == (*v).len {
     bc_vec_push(v, data);
   } else {
@@ -1017,11 +1007,7 @@ unsafe fn bc_vec_pushAt(
     memmove(ptr as *mut libc::c_void, data, (*v).size);
   };
 }
-unsafe fn bc_vec_string(
-  mut v: *mut BcVec,
-  mut len: size_t,
-  mut str: *const libc::c_char,
-) {
+unsafe fn bc_vec_string(mut v: *mut BcVec, mut len: size_t, mut str: *const libc::c_char) {
   bc_vec_pop_all(v);
   bc_vec_expand(v, len.wrapping_add(1i32 as libc::c_ulong));
   memcpy((*v).v as *mut libc::c_void, str as *const libc::c_void, len);
@@ -1076,10 +1062,7 @@ unsafe fn xc_program_const(mut idx: size_t) -> *mut *mut libc::c_char {
   }
   return bc_vec_item(&mut (*ptr_to_globals).prog.consts, idx) as *mut *mut libc::c_char;
 }
-unsafe fn bc_id_cmp(
-  mut e1: *const libc::c_void,
-  mut e2: *const libc::c_void,
-) -> libc::c_int {
+unsafe fn bc_id_cmp(mut e1: *const libc::c_void, mut e2: *const libc::c_void) -> libc::c_int {
   return strcmp((*(e1 as *const BcId)).name, (*(e2 as *const BcId)).name);
 }
 unsafe extern "C" fn bc_id_free(mut id: *mut libc::c_void) {
@@ -1120,10 +1103,7 @@ unsafe fn bc_map_insert(
   return 1i32;
   // "was inserted"
 }
-unsafe fn bc_map_find_exact(
-  mut v: *const BcVec,
-  mut ptr: *const libc::c_void,
-) -> size_t {
+unsafe fn bc_map_find_exact(mut v: *const BcVec, mut ptr: *const libc::c_void) -> size_t {
   let mut i: size_t = bc_map_find_ge(v, ptr);
   if i >= (*v).len {
     return -1i32 as size_t;
@@ -1192,10 +1172,7 @@ unsafe fn bc_num_copy(mut d: *mut BcNum, mut s: *mut BcNum) {
     );
   };
 }
-unsafe fn zbc_num_ulong_abs(
-  mut n: *mut BcNum,
-  mut result_p: *mut libc::c_ulong,
-) -> BcStatus {
+unsafe fn zbc_num_ulong_abs(mut n: *mut BcNum, mut result_p: *mut libc::c_ulong) -> BcStatus {
   let mut i: size_t = 0;
   let mut result: libc::c_ulong = 0;
   result = 0 as libc::c_ulong;
@@ -1217,10 +1194,7 @@ unsafe fn zbc_num_ulong_abs(
   *result_p = result;
   return BC_STATUS_SUCCESS;
 }
-unsafe fn zbc_num_ulong(
-  mut n: *mut BcNum,
-  mut result_p: *mut libc::c_ulong,
-) -> BcStatus {
+unsafe fn zbc_num_ulong(mut n: *mut BcNum, mut result_p: *mut libc::c_ulong) -> BcStatus {
   if (*n).neg {
     return bc_error(b"negative number\x00" as *const u8 as *const libc::c_char) as BcStatus;
   }
@@ -1266,11 +1240,7 @@ unsafe fn bc_num_subArrays(mut a: *mut BcDig, mut b: *mut BcDig, mut len: size_t
     i = i.wrapping_add(1)
   }
 }
-unsafe fn bc_num_compare(
-  mut a: *mut BcDig,
-  mut b: *mut BcDig,
-  mut len: size_t,
-) -> ssize_t {
+unsafe fn bc_num_compare(mut a: *mut BcDig, mut b: *mut BcDig, mut len: size_t) -> ssize_t {
   let mut i: size_t = len;
   loop {
     let mut c: libc::c_int = 0;
@@ -1305,11 +1275,7 @@ unsafe fn BC_NUM_AREQ(mut a: *mut BcNum, mut b: *mut BcNum) -> size_t {
   .wrapping_add(1i32 as libc::c_ulong);
 }
 //#define BC_NUM_MREQ(a, b, scale) (BC_NUM_INT(a) + BC_NUM_INT(b) + BC_MAX((scale), (a)->rdx + (b)->rdx) + 1)
-unsafe fn BC_NUM_MREQ(
-  mut a: *mut BcNum,
-  mut b: *mut BcNum,
-  mut scale: size_t,
-) -> size_t {
+unsafe fn BC_NUM_MREQ(mut a: *mut BcNum, mut b: *mut BcNum, mut scale: size_t) -> size_t {
   return (*a)
     .len
     .wrapping_sub((*a).rdx)
@@ -1434,12 +1400,7 @@ unsafe fn bc_num_clean(mut n: *mut BcNum) {
     (*n).len = (*n).rdx
   };
 }
-unsafe fn bc_num_retireMul(
-  mut n: *mut BcNum,
-  mut scale: size_t,
-  mut neg1: bool,
-  mut neg2: bool,
-) {
+unsafe fn bc_num_retireMul(mut n: *mut BcNum, mut scale: size_t, mut neg1: bool, mut neg2: bool) {
   if (*n).rdx < scale {
     bc_num_extend(n, scale.wrapping_sub((*n).rdx));
   } else {
@@ -1450,12 +1411,7 @@ unsafe fn bc_num_retireMul(
     (*n).neg = !neg1 as libc::c_int != !neg2 as libc::c_int
   };
 }
-unsafe fn bc_num_split(
-  mut n: *mut BcNum,
-  mut idx: size_t,
-  mut a: *mut BcNum,
-  mut b: *mut BcNum,
-) {
+unsafe fn bc_num_split(mut n: *mut BcNum, mut idx: size_t, mut a: *mut BcNum, mut b: *mut BcNum) {
   if idx < (*n).len {
     (*b).len = (*n).len.wrapping_sub(idx);
     (*a).len = idx;
@@ -1568,15 +1524,9 @@ unsafe fn zbc_num_add(
   mut _scale: size_t,
 ) -> BcStatus {
   let mut op: BcNumBinaryOp = if !(*a).neg as libc::c_int == !(*b).neg as libc::c_int {
-    Some(
-      zbc_num_a
-        as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
-    )
+    Some(zbc_num_a as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus)
   } else {
-    Some(
-      zbc_num_s
-        as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
-    )
+    Some(zbc_num_s as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus)
   };
   return zbc_num_binary(a, b, c, 0 as size_t, op, BC_NUM_AREQ(a, b));
 }
@@ -1587,15 +1537,9 @@ unsafe fn zbc_num_sub(
   mut _scale: size_t,
 ) -> BcStatus {
   let mut op: BcNumBinaryOp = if !(*a).neg as libc::c_int == !(*b).neg as libc::c_int {
-    Some(
-      zbc_num_s
-        as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
-    )
+    Some(zbc_num_s as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus)
   } else {
-    Some(
-      zbc_num_a
-        as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
-    )
+    Some(zbc_num_a as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus)
   };
   return zbc_num_binary(a, b, c, 1i32 as size_t, op, BC_NUM_AREQ(a, b));
 }
@@ -1612,8 +1556,7 @@ unsafe fn zbc_num_mul(
     c,
     scale,
     Some(
-      zbc_num_m
-        as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+      zbc_num_m as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
     ),
     req,
   );
@@ -1631,8 +1574,7 @@ unsafe fn zbc_num_div(
     c,
     scale,
     Some(
-      zbc_num_d
-        as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+      zbc_num_d as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
     ),
     req,
   );
@@ -1650,8 +1592,7 @@ unsafe fn zbc_num_mod(
     c,
     scale,
     Some(
-      zbc_num_rem
-        as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+      zbc_num_rem as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
     ),
     req,
   );
@@ -1668,8 +1609,7 @@ unsafe fn zbc_num_pow(
     c,
     scale,
     Some(
-      zbc_num_p
-        as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+      zbc_num_p as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
     ),
     (*a)
       .len
@@ -1680,36 +1620,26 @@ unsafe fn zbc_num_pow(
 
 static mut zxc_program_ops: [BcNumBinaryOp; 6] = [
   Some(
-    zbc_num_pow
-      as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+    zbc_num_pow as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
   ),
   Some(
-    zbc_num_mul
-      as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+    zbc_num_mul as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
   ),
   Some(
-    zbc_num_div
-      as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+    zbc_num_div as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
   ),
   Some(
-    zbc_num_mod
-      as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+    zbc_num_mod as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
   ),
   Some(
-    zbc_num_add
-      as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+    zbc_num_add as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
   ),
   Some(
-    zbc_num_sub
-      as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
+    zbc_num_sub as unsafe fn(_: *mut BcNum, _: *mut BcNum, _: *mut BcNum, _: size_t) -> BcStatus,
   ),
 ];
 
-unsafe fn zbc_num_inv(
-  mut a: *mut BcNum,
-  mut b: *mut BcNum,
-  mut scale: size_t,
-) -> BcStatus {
+unsafe fn zbc_num_inv(mut a: *mut BcNum, mut b: *mut BcNum, mut scale: size_t) -> BcStatus {
   let mut one: BcNum = std::mem::zeroed();
   let mut num: [BcDig; 2] = [0; 2];
   one.cap = 2i32 as size_t;
@@ -1888,11 +1818,7 @@ unsafe fn zbc_num_s(
   return BC_STATUS_SUCCESS;
   // can't make void, see zbc_num_binary()
 }
-unsafe fn zbc_num_k(
-  mut a: *mut BcNum,
-  mut b: *mut BcNum,
-  mut c: *mut BcNum,
-) -> BcStatus {
+unsafe fn zbc_num_k(mut a: *mut BcNum, mut b: *mut BcNum, mut c: *mut BcNum) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut max: size_t = if (*a).len > (*b).len {
     (*a).len
@@ -2408,11 +2334,7 @@ unsafe fn zbc_num_p(
   bc_num_free(&mut copy as *mut BcNum as *mut libc::c_void);
   return s;
 }
-unsafe fn zbc_num_sqrt(
-  mut a: *mut BcNum,
-  mut b: *mut BcNum,
-  mut scale: size_t,
-) -> BcStatus {
+unsafe fn zbc_num_sqrt(mut a: *mut BcNum, mut b: *mut BcNum, mut scale: size_t) -> BcStatus {
   let mut current_block: u64;
   let mut s: BcStatus = BC_STATUS_SUCCESS;
   let mut num1: BcNum = std::mem::zeroed();
@@ -2670,17 +2592,17 @@ unsafe fn bc_func_init(mut f: *mut BcFunc) {
   bc_vec_init(
     &mut (*f).autos,
     ::std::mem::size_of::<BcId>() as libc::c_ulong,
-    Some(bc_id_free ),
+    Some(bc_id_free),
   );
   bc_vec_init(
     &mut (*f).strs,
     ::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong,
-    Some(bc_string_free ),
+    Some(bc_string_free),
   );
   bc_vec_init(
     &mut (*f).consts,
     ::std::mem::size_of::<*mut libc::c_char>() as libc::c_ulong,
-    Some(bc_string_free ),
+    Some(bc_string_free),
   );
   (*f).nparams = 0 as size_t;
 }
@@ -4115,9 +4037,7 @@ unsafe fn bc_program_addFunc(mut name: *mut libc::c_char) -> size_t {
 unsafe fn zbc_parse_stmt() -> BcStatus {
   return zbc_parse_stmt_possibly_auto(0i32 != 0);
 }
-unsafe fn zbc_parse_stmt_allow_NLINE_before(
-  mut after_X: *const libc::c_char,
-) -> BcStatus {
+unsafe fn zbc_parse_stmt_allow_NLINE_before(mut after_X: *const libc::c_char) -> BcStatus {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   // "if(cond)<newline>stmt" is accepted too, but not 2+ newlines.
   // Same for "else", "while()", "for()".
@@ -4133,11 +4053,7 @@ unsafe fn zbc_parse_stmt_allow_NLINE_before(
   }
   return zbc_parse_stmt();
 }
-unsafe fn bc_parse_operator(
-  mut type_0: BcLexType,
-  mut start: size_t,
-  mut nexprs: *mut size_t,
-) {
+unsafe fn bc_parse_operator(mut type_0: BcLexType, mut start: size_t, mut nexprs: *mut size_t) {
   let mut p: *mut BcParse = &mut (*ptr_to_globals).prs;
   let mut l: libc::c_char = 0;
   let mut r: libc::c_char = (bc_ops_prec_and_assoc
@@ -5686,10 +5602,7 @@ unsafe fn xc_program_index(mut code: *mut libc::c_char, mut bgn: *mut size_t) ->
   }
   return res;
 }
-unsafe fn xc_program_name(
-  mut code: *mut libc::c_char,
-  mut bgn: *mut size_t,
-) -> *mut libc::c_char {
+unsafe fn xc_program_name(mut code: *mut libc::c_char, mut bgn: *mut size_t) -> *mut libc::c_char {
   code = code.offset(*bgn as isize);
   *bgn = (*bgn as libc::c_ulong).wrapping_add(strlen(code).wrapping_add(1i32 as libc::c_ulong))
     as size_t as size_t;
@@ -5708,10 +5621,7 @@ unsafe fn xc_program_dereference(mut vec: *mut BcVec) -> *mut BcVec {
   //assert(v->size != sizeof(u8));
   return v; // 1 if insertion was successful
 }
-unsafe fn xc_program_search(
-  mut id: *mut libc::c_char,
-  mut type_0: BcType,
-) -> *mut BcVec {
+unsafe fn xc_program_search(mut id: *mut libc::c_char, mut type_0: BcType) -> *mut BcVec {
   let mut e: BcId = BcId {
     name: std::ptr::null_mut::<libc::c_char>(),
     idx: 0,
@@ -5863,10 +5773,7 @@ unsafe fn xc_program_binOpRetire(mut r: *mut BcResult) {
   bc_result_pop_and_push(r as *const libc::c_void);
 }
 // Note: *r and *n need not be initialized by caller
-unsafe fn zxc_program_prep(
-  mut r: *mut *mut BcResult,
-  mut n: *mut *mut BcNum,
-) -> BcStatus {
+unsafe fn zxc_program_prep(mut r: *mut *mut BcResult, mut n: *mut *mut BcNum) -> BcStatus {
   let mut s: BcStatus = BC_STATUS_SUCCESS; // struct copy
   if !((*ptr_to_globals).prog.results.len > 0 as size_t) {
     return bc_error_stack_has_too_few_elements() as BcStatus;
@@ -6732,10 +6639,7 @@ unsafe fn zbc_program_incdec(mut inst: libc::c_char) -> BcStatus {
   }
   return s;
 }
-unsafe fn zbc_program_call(
-  mut code: *mut libc::c_char,
-  mut idx: *mut size_t,
-) -> BcStatus {
+unsafe fn zbc_program_call(mut code: *mut libc::c_char, mut idx: *mut size_t) -> BcStatus {
   let mut ip: BcInstPtr = BcInstPtr {
     func: 0,
     inst_idx: 0,
@@ -7809,10 +7713,7 @@ unsafe fn zxc_vm_process(mut text: *const libc::c_char) -> BcStatus {
   }
   return s;
 }
-unsafe fn zxc_vm_execute_FILE(
-  mut fp: *mut FILE,
-  mut filename: *const libc::c_char,
-) -> BcStatus {
+unsafe fn zxc_vm_execute_FILE(mut fp: *mut FILE, mut filename: *const libc::c_char) -> BcStatus {
   // So far bc/dc have no way to include a file from another file,
   // therefore we know G.prs.lex_filename == NULL on entry
   //const char *sv_file;

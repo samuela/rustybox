@@ -97777,10 +97777,7 @@ unsafe extern "C" fn edit_file(mut fn_0: *mut libc::c_char) {
   go_bottom_and_clear_to_eol();
   cookmode();
 }
-pub unsafe fn vi_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn vi_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut c: libc::c_int = 0;
   let ref mut fresh17 =
     *(not_const_pp(&ptr_to_globals as *const *mut globals as *const libc::c_void)

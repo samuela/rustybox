@@ -5,10 +5,7 @@ use libc::mode_t;
 use libc::puts;
 use libc::stat;
 
-pub unsafe fn mesg_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn mesg_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut sb: stat = std::mem::zeroed();
   let mut m: mode_t = 0;
   let mut c: libc::c_char = 0 as libc::c_char;

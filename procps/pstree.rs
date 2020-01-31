@@ -141,11 +141,7 @@ unsafe fn find_proc(mut pid: pid_t) -> *mut PROC {
   }
   return walk;
 }
-unsafe fn new_proc(
-  mut comm: *const libc::c_char,
-  mut pid: pid_t,
-  mut uid: uid_t,
-) -> *mut PROC {
+unsafe fn new_proc(mut comm: *const libc::c_char, mut pid: pid_t, mut uid: uid_t) -> *mut PROC {
   let mut new: *mut PROC =
     crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<PROC>() as libc::c_ulong)
       as *mut PROC;
@@ -179,12 +175,7 @@ unsafe fn add_child(mut parent: *mut PROC, mut child: *mut PROC) {
   (*new).next = *walk;
   *walk = new;
 }
-unsafe fn add_proc(
-  mut comm: *const libc::c_char,
-  mut pid: pid_t,
-  mut ppid: pid_t,
-  mut uid: uid_t,
-)
+unsafe fn add_proc(mut comm: *const libc::c_char, mut pid: pid_t, mut ppid: pid_t, mut uid: uid_t)
 /*, char isthread*/
 {
   let mut this: *mut PROC = std::ptr::null_mut();

@@ -172,10 +172,7 @@ unsafe fn bb_strtoul(
 ) -> libc::c_ulong {
   return crate::libbb::bb_strtonum::bb_strtoull(arg, endp, base) as libc::c_ulong;
 }
-unsafe fn remove_ids(
-  mut type_0: type_id,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+unsafe fn remove_ids(mut type_0: type_id, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut id: libc::c_ulong = 0;
   let mut nb_errors: libc::c_int = 0;
   let mut arg: semun = semun { val: 0 };
@@ -218,10 +215,7 @@ unsafe fn remove_ids(
 //usage:     "\n	-mM	Remove memory segment after last detach"
 //usage:     "\n	-qQ	Remove message queue"
 //usage:     "\n	-sS	Remove semaphore"
-pub unsafe fn ipcrm_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn ipcrm_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut c: libc::c_int = 0;
   let mut error: libc::c_int = 0;
   /* if the command is executed without parameters, do nothing */

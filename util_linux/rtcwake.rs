@@ -91,11 +91,7 @@ unsafe fn may_wakeup(mut rtcname: *const libc::c_char) -> bool {
   .is_null();
 }
 #[inline(never)]
-unsafe fn setup_alarm(
-  mut fd: libc::c_int,
-  mut wakeup: *mut time_t,
-  mut rtc_time: time_t,
-) {
+unsafe fn setup_alarm(mut fd: libc::c_int, mut wakeup: *mut time_t, mut rtc_time: time_t) {
   let mut ptm: *mut tm = std::ptr::null_mut();
   let mut wake: linux_rtc_wkalrm = linux_rtc_wkalrm {
     enabled: 0,

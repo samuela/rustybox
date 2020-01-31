@@ -131,10 +131,7 @@ pub unsafe fn ll_proto_n2a(
   );
   return buf;
 }
-pub unsafe fn ll_proto_a2n(
-  mut id: *mut libc::c_ushort,
-  mut buf: *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn ll_proto_a2n(mut id: *mut libc::c_ushort, mut buf: *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64;
   let mut i: libc::c_uint = 0;
   let mut name: *const libc::c_char = llproto_names.as_ptr();

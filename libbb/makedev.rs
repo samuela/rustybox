@@ -16,9 +16,6 @@ extern "C" {
 /* At least glibc has horrendously large inline for this, so wrap it. */
 /* uclibc people please check - do we need "&& !__UCLIBC__" above? */
 /* Suppress gcc "no previous prototype" warning */
-pub unsafe fn bb_makedev(
-  mut major: libc::c_uint,
-  mut minor: libc::c_uint,
-) -> libc::c_ulonglong {
+pub unsafe fn bb_makedev(mut major: libc::c_uint, mut minor: libc::c_uint) -> libc::c_ulonglong {
   return gnu_dev_makedev(major, minor) as libc::c_ulonglong;
 }

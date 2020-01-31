@@ -471,10 +471,7 @@ static mut getopt_longopts: [libc::c_char; 95] = [
   110, 113, 117, 111, 116, 101, 100, 0, 0, 117, 97, 108, 116, 101, 114, 110, 97, 116, 105, 118,
   101, 0, 0, 97, 110, 97, 109, 101, 0, 1, 110, 0,
 ];
-pub unsafe fn getopt_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn getopt_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut n: libc::c_int = 0; /* used as yes/no flag */
   let mut optstr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut name: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

@@ -138,10 +138,7 @@ unsafe fn name_to_dev_t(mut devname: *const libc::c_char) -> libc::dev_t {
 //usage:       "BLOCKDEV [OFFSET]"
 //usage:#define resume_full_usage "\n"
 //usage:   "\n""Restore system state from 'suspend-to-disk' data in BLOCKDEV"
-pub unsafe fn resume_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn resume_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut ofs: libc::c_ulonglong = 0;
   let mut resume_device: libc::dev_t = 0;
   let mut s: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

@@ -36,10 +36,7 @@ extern "C" {
 //usage:       "Run PROG in a new session. PROG will have no controlling terminal\n"
 //usage:       "and will not be affected by keyboard signals (^C etc).\n"
 //usage:     "\n	-c	Set controlling terminal to stdin"
-pub unsafe fn setsid_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn setsid_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
   /* +: stop on first non-opt */
   opt =

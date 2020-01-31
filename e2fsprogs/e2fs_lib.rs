@@ -38,11 +38,7 @@ unsafe fn close_silently(mut fd: libc::c_int) {
 pub unsafe fn iterate_on_dir(
   mut dir_name: *const libc::c_char,
   mut func: Option<
-    unsafe fn(
-      _: *const libc::c_char,
-      _: *mut dirent,
-      _: *mut libc::c_void,
-    ) -> libc::c_int,
+    unsafe fn(_: *const libc::c_char, _: *mut dirent, _: *mut libc::c_void) -> libc::c_int,
   >,
   mut private: *mut libc::c_void,
 ) -> libc::c_int {

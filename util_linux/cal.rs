@@ -84,10 +84,7 @@ unsafe fn leap_year(mut yr: libc::c_uint) -> libc::c_int {
     || yr.wrapping_rem(400i32 as libc::c_uint) == 0) as libc::c_int;
 }
 /* spaces between day headings */
-pub unsafe fn cal_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn cal_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut zero_tm: tm = std::mem::zeroed();
   let mut now: time_t = 0;
   let mut month: libc::c_uint = 0;
@@ -309,11 +306,7 @@ pub unsafe fn cal_main(
  *	out end to end.  You would have 42 numbers or spaces.  This routine
  *	builds that array for any month from Jan. 1 through Dec. 9999.
  */
-unsafe fn day_array(
-  mut month: libc::c_uint,
-  mut year: libc::c_uint,
-  mut days: *mut libc::c_uint,
-) {
+unsafe fn day_array(mut month: libc::c_uint, mut year: libc::c_uint, mut days: *mut libc::c_uint) {
   let mut temp: libc::c_ulong = 0;
   let mut i: libc::c_uint = 0;
   let mut day: libc::c_uint = 0;
@@ -437,11 +430,7 @@ unsafe fn trim_trailing_spaces_and_print(mut s: *mut libc::c_char) {
 /* number of centuries since 1700, not inclusive */
 /* number of centuries since 1700 whose modulo of 400 is 0 */
 /* number of leap years between year 1 and this year, not inclusive */
-unsafe fn center(
-  mut str: *mut libc::c_char,
-  mut len: libc::c_uint,
-  mut separate: libc::c_uint,
-) {
+unsafe fn center(mut str: *mut libc::c_char, mut len: libc::c_uint, mut separate: libc::c_uint) {
   let mut n: libc::c_uint = strlen(str) as libc::c_uint;
   len = len.wrapping_sub(n);
   printf(
@@ -459,10 +448,7 @@ unsafe fn blank_string(mut buf: *mut libc::c_char, mut buflen: size_t) {
   memset(buf as *mut libc::c_void, ' ' as i32, buflen);
   *buf.offset(buflen.wrapping_sub(1i32 as libc::c_ulong) as isize) = '\u{0}' as i32 as libc::c_char;
 }
-unsafe fn build_row(
-  mut p: *mut libc::c_char,
-  mut dp: *mut libc::c_uint,
-) -> *mut libc::c_char {
+unsafe fn build_row(mut p: *mut libc::c_char, mut dp: *mut libc::c_uint) -> *mut libc::c_char {
   let mut col: libc::c_uint = 0;
   let mut val: libc::c_uint = 0;
   let mut day: libc::c_uint = 0;

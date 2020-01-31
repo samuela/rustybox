@@ -504,10 +504,7 @@ unsafe fn dev_report(mut itv: cputime_t) {
 //usage:     "\n	-z	Omit devices with no activity"
 //usage:     "\n	-k	Use kb/s"
 //usage:     "\n	-m	Use Mb/s"
-pub unsafe fn iostat_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn iostat_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opt: libc::c_int = 0;
   let mut interval: libc::c_uint = 0;
   let mut count: libc::c_int = 0;

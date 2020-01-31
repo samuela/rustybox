@@ -110,10 +110,7 @@ pub const WC_UNICHARS: C2RustUnnamed_0 = 2;
 /* -l */
 pub const WC_WORDS: C2RustUnnamed_0 = 1;
 pub const WC_LINES: C2RustUnnamed_0 = 0;
-pub unsafe fn wc_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn wc_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut fp: *mut FILE = std::ptr::null_mut();
   let mut s: *const libc::c_char = std::ptr::null();
   let mut u: libc::c_uint = 0;

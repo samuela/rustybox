@@ -121,11 +121,7 @@ pub unsafe fn moddb_free(mut db: *mut module_db) {
     i = i.wrapping_add(1)
   }
 }
-pub unsafe fn replace(
-  mut s: *mut libc::c_char,
-  mut what: libc::c_char,
-  mut with: libc::c_char,
-) {
+pub unsafe fn replace(mut s: *mut libc::c_char, mut what: libc::c_char, mut with: libc::c_char) {
   while *s != 0 {
     if what as libc::c_int == *s as libc::c_int {
       *s = with

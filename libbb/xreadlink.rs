@@ -65,9 +65,7 @@ pub unsafe fn xmalloc_readlink(mut path: *const libc::c_char) -> *mut libc::c_ch
  * those at the tail.
  * A malloced char* is returned, which must be freed by the caller.
  */
-pub unsafe fn xmalloc_follow_symlinks(
-  mut path: *const libc::c_char,
-) -> *mut libc::c_char {
+pub unsafe fn xmalloc_follow_symlinks(mut path: *const libc::c_char) -> *mut libc::c_char {
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut lpc: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut linkpath: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -108,9 +106,7 @@ pub unsafe fn xmalloc_follow_symlinks(
     return std::ptr::null_mut::<libc::c_char>();
   }
 }
-pub unsafe fn xmalloc_readlink_or_warn(
-  mut path: *const libc::c_char,
-) -> *mut libc::c_char {
+pub unsafe fn xmalloc_readlink_or_warn(mut path: *const libc::c_char) -> *mut libc::c_char {
   let mut buf: *mut libc::c_char = xmalloc_readlink(path);
   if buf.is_null() {
     /* EINVAL => "file: Invalid argument" => puzzled user */
@@ -255,9 +251,7 @@ pub unsafe fn xmalloc_realpath(mut path: *const libc::c_char) -> *mut libc::c_ch
 /* "abc/def/" -> "" and it never modifies 'path' */
 /* Simpler version: does not special case "/" string */
 /* NB: can violate const-ness (similarly to strchr) */
-pub unsafe fn xmalloc_realpath_coreutils(
-  mut path: *const libc::c_char,
-) -> *mut libc::c_char {
+pub unsafe fn xmalloc_realpath_coreutils(mut path: *const libc::c_char) -> *mut libc::c_char {
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   *bb_errno = 0;
   buf = xmalloc_realpath(path);

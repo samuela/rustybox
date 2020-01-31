@@ -185,11 +185,7 @@ unsafe fn nextarg(mut str: *const libc::c_char) -> libc::c_int {
     + *str.offset(1) as libc::c_uchar as libc::c_int;
 }
 /* The comparison operator handling functions.  */
-unsafe fn cmp_common(
-  mut l: *mut VALUE,
-  mut r: *mut VALUE,
-  mut op: libc::c_int,
-) -> libc::c_int {
+unsafe fn cmp_common(mut l: *mut VALUE, mut r: *mut VALUE, mut op: libc::c_int) -> libc::c_int {
   let mut ll: arith_t = 0;
   let mut rr: arith_t = 0;
   ll = (*l).u.i;
@@ -223,11 +219,7 @@ unsafe fn cmp_common(
   return (ll >= rr) as libc::c_int;
 }
 /* The arithmetic operator handling functions.  */
-unsafe fn arithmetic_common(
-  mut l: *mut VALUE,
-  mut r: *mut VALUE,
-  mut op: libc::c_int,
-) -> arith_t {
+unsafe fn arithmetic_common(mut l: *mut VALUE, mut r: *mut VALUE, mut op: libc::c_int) -> arith_t {
   let mut li: arith_t = 0;
   let mut ri: arith_t = 0;
   if !toarith(l) || !toarith(r) {

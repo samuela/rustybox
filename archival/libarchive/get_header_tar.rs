@@ -96,10 +96,7 @@ pub struct tar_header_t {
  */
 pub type aliased_u32 = u32;
 /* NB: _DESTROYS_ str[len] character! */
-unsafe fn getOctal(
-  mut str: *mut libc::c_char,
-  mut len: libc::c_int,
-) -> libc::c_ulonglong {
+unsafe fn getOctal(mut str: *mut libc::c_char, mut len: libc::c_int) -> libc::c_ulonglong {
   let mut v: libc::c_ulonglong = 0;
   let mut end: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   /* NB: leading spaces are allowed. Using strtoull to handle that.

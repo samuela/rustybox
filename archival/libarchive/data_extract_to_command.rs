@@ -72,11 +72,7 @@ unsafe fn dec2env(
   );
   xputenv(*env.offset(idx as isize));
 }
-unsafe fn oct2env(
-  mut env: *mut *mut libc::c_char,
-  mut idx: libc::c_int,
-  mut val: libc::c_ulong,
-) {
+unsafe fn oct2env(mut env: *mut *mut libc::c_char, mut idx: libc::c_int, mut val: libc::c_ulong) {
   let ref mut fresh2 = *env.offset(idx as isize);
   *fresh2 = crate::libbb::xfuncs_printf::xasprintf(
     b"TAR_%s=%lo\x00" as *const u8 as *const libc::c_char,

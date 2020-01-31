@@ -1408,10 +1408,7 @@ unsafe fn dump_strings(mut address: off_t, mut end_offset: off_t) {
 }
 /* If S is a valid traditional offset specification with an optional
 leading '+' return nonzero and set *OFFSET to the offset it denotes.  */
-unsafe fn parse_old_offset(
-  mut s: *const libc::c_char,
-  mut offset: *mut off_t,
-) -> libc::c_int {
+unsafe fn parse_old_offset(mut s: *const libc::c_char, mut offset: *mut off_t) -> libc::c_int {
   static mut Bb: [suffix_mult; 3] = [
     {
       let mut init = suffix_mult {

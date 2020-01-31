@@ -254,10 +254,7 @@ use libc::close;
  */
 /* Open file and write string str to it, close file.
  * Die on any open or write error.  */
-pub unsafe fn xopen_xwrite_close(
-  mut file: *const libc::c_char,
-  mut str: *const libc::c_char,
-) {
+pub unsafe fn xopen_xwrite_close(mut file: *const libc::c_char, mut str: *const libc::c_char) {
   let mut fd: libc::c_int = crate::libbb::xfuncs_printf::xopen(file, 0o1i32);
   crate::libbb::xfuncs_printf::xwrite_str(fd, str);
   close(fd);

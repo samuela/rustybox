@@ -668,8 +668,7 @@ unsafe fn init(mut cfg_filename: *const libc::c_char) {
   let mut parser: *mut parser_t = crate::libbb::parse_config::config_open2(
     cfg_filename,
     Some(
-      crate::libbb::wfopen_input::xfopen_stdin
-        as unsafe fn(_: *const libc::c_char) -> *mut FILE,
+      crate::libbb::wfopen_input::xfopen_stdin as unsafe fn(_: *const libc::c_char) -> *mut FILE,
     ),
   );
   while crate::libbb::parse_config::config_read(

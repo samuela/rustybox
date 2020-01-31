@@ -461,10 +461,7 @@ unsafe fn write_block(mut nr: libc::c_uint, mut addr: *mut libc::c_void) {
  * It sets 'changed' if the inode has needed changing, and re-writes
  * any indirect blocks with errors.
  */
-unsafe fn map_block(
-  mut inode: *mut minix1_inode,
-  mut blknr: libc::c_uint,
-) -> libc::c_int {
+unsafe fn map_block(mut inode: *mut minix1_inode, mut blknr: libc::c_uint) -> libc::c_int {
   let mut ind: [u16; 512] = [0; 512]; /* double indirect */
   let mut block: libc::c_int = 0; /* triple indirect */
   let mut result: libc::c_int = 0; /* double indirect */
@@ -514,10 +511,7 @@ unsafe fn map_block(
   return result;
 }
 
-unsafe fn map_block2(
-  mut inode: *mut minix2_inode,
-  mut blknr: libc::c_uint,
-) -> libc::c_int {
+unsafe fn map_block2(mut inode: *mut minix2_inode, mut blknr: libc::c_uint) -> libc::c_int {
   let mut ind: [u32; 256] = [0; 256];
   let mut block: libc::c_int = 0;
   let mut result: libc::c_int = 0;
@@ -979,10 +973,7 @@ unsafe fn check_root2() {
     die(b"root inode isn\'t a directory\x00" as *const u8 as *const libc::c_char);
   };
 }
-unsafe fn add_zone_common(
-  mut block: libc::c_int,
-  mut corrected: *mut smallint,
-) -> libc::c_int {
+unsafe fn add_zone_common(mut block: libc::c_int, mut corrected: *mut smallint) -> libc::c_int {
   if block == 0 {
     return 0;
   }

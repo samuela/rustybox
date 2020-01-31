@@ -118,10 +118,7 @@ unsafe fn passwd_study(mut p: *mut passwd) {
     }
   };
 }
-unsafe fn addgroup_wrapper(
-  mut p: *mut passwd,
-  mut group_name: *const libc::c_char,
-) -> libc::c_int {
+unsafe fn addgroup_wrapper(mut p: *mut passwd, mut group_name: *const libc::c_char) -> libc::c_int {
   let mut argv: [*mut libc::c_char; 6] = [0 as *mut libc::c_char; 6];
   argv[0] = b"addgroup\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
   if !group_name.is_null() {

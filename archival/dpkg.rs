@@ -447,10 +447,7 @@ unsafe fn search_package_hashtable(
  * FIXME: I don't think this is very efficient, but I thought I'd keep
  * it simple for now until it proves to be a problem.
  */
-unsafe fn search_for_provides(
-  mut needle: libc::c_int,
-  mut start_at: libc::c_int,
-) -> libc::c_int {
+unsafe fn search_for_provides(mut needle: libc::c_int, mut start_at: libc::c_int) -> libc::c_int {
   let mut i: libc::c_int = 0;
   let mut j: libc::c_int = 0;
   let mut p: *mut common_node_t = std::ptr::null_mut();
@@ -1806,9 +1803,7 @@ static mut all_control_files: [*const libc::c_char; 10] = [
   b"config\x00" as *const u8 as *const libc::c_char,
   b"templates\x00" as *const u8 as *const libc::c_char,
 ];
-unsafe fn all_control_list(
-  mut package_name: *const libc::c_char,
-) -> *mut *mut libc::c_char {
+unsafe fn all_control_list(mut package_name: *const libc::c_char) -> *mut *mut libc::c_char {
   let mut i: libc::c_uint = 0 as libc::c_uint;
   let mut remove_files: *mut *mut libc::c_char = std::ptr::null_mut();
   /* Create a list of all /var/lib/dpkg/info/<package> files */
@@ -2031,9 +2026,7 @@ unsafe fn purge_package(package_num: libc::c_uint) {
     3i32,
   );
 }
-unsafe fn init_archive_deb_ar(
-  mut filename: *const libc::c_char,
-) -> *mut archive_handle_t {
+unsafe fn init_archive_deb_ar(mut filename: *const libc::c_char) -> *mut archive_handle_t {
   let mut ar_handle: *mut archive_handle_t = std::ptr::null_mut();
   /* Setup an ar archive handle that refers to the gzip sub archive */
   ar_handle = crate::archival::libarchive::init_handle::init_handle();
@@ -2158,9 +2151,7 @@ unsafe fn append_control_file_to_llist(
     fclose(fp);
   };
 }
-unsafe fn filter_rename_config(
-  mut archive_handle: *mut archive_handle_t,
-) -> libc::c_char {
+unsafe fn filter_rename_config(mut archive_handle: *mut archive_handle_t) -> libc::c_char {
   let mut fd: libc::c_int = 0;
   let mut name_ptr: *mut libc::c_char = (*(*archive_handle).file_header).name.offset(1);
   /* Is this file marked as config file? */

@@ -215,10 +215,7 @@ unsafe fn drop_bounding_set(mut cap_idx: libc::c_int) {
     }
   };
 }
-unsafe fn drop_usermodehelper(
-  mut filename: *const libc::c_char,
-  mut cap_idx: libc::c_int,
-) {
+unsafe fn drop_usermodehelper(mut filename: *const libc::c_char, mut cap_idx: libc::c_int) {
   let mut lo: libc::c_uint = 0;
   let mut hi: libc::c_uint = 0;
   let mut buf: [libc::c_char; 32] = [0; 32];

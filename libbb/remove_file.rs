@@ -151,10 +151,7 @@ pub const FILEUTILS_PRESERVE_STATUS: C2RustUnnamed = 1;
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
 /* Used from NOFORK applets. Must not allocate anything */
-pub unsafe fn remove_file(
-  mut path: *const libc::c_char,
-  mut flags: libc::c_int,
-) -> libc::c_int {
+pub unsafe fn remove_file(mut path: *const libc::c_char, mut flags: libc::c_int) -> libc::c_int {
   let mut path_stat: stat = std::mem::zeroed();
   if lstat(path, &mut path_stat) < 0 {
     if *bb_errno != 2i32 {

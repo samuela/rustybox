@@ -38,9 +38,7 @@ pub static mut oneline: smallint = 0;
 #[no_mangle]
 pub static mut _SL_: libc::c_char = 0;
 
-pub unsafe fn ip_parse_common_args(
-  mut argv: *mut *mut libc::c_char,
-) -> *mut *mut libc::c_char {
+pub unsafe fn ip_parse_common_args(mut argv: *mut *mut libc::c_char) -> *mut *mut libc::c_char {
   static mut ip_common_commands: [libc::c_char; 22] = [
     111, 110, 101, 108, 105, 110, 101, 0, 102, 97, 109, 105, 108, 121, 0, 52, 0, 54, 0, 48, 0, 0,
   ];

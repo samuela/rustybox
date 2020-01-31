@@ -267,10 +267,7 @@ unsafe fn serial_ctl(
   }
   return ret;
 }
-unsafe fn print_flag(
-  mut prefix: *mut *const libc::c_char,
-  mut flag: *const libc::c_char,
-) {
+unsafe fn print_flag(mut prefix: *mut *const libc::c_char, mut flag: *const libc::c_char) {
   printf(
     b"%s%s\x00" as *const u8 as *const libc::c_char,
     *prefix,

@@ -253,12 +253,7 @@ unsafe fn mmin(mut a: i32, mut b: i32) -> i32 {
 /*---------------------------------------------*/
 /*---------------------------------------------*/
 #[inline]
-unsafe fn fallbackSimpleSort(
-  mut fmap: *mut u32,
-  mut eclass: *mut u32,
-  mut lo: i32,
-  mut hi: i32,
-) {
+unsafe fn fallbackSimpleSort(mut fmap: *mut u32, mut eclass: *mut u32, mut lo: i32, mut hi: i32) {
   let mut i: i32 = 0;
   let mut j: i32 = 0;
   let mut tmp: i32 = 0;
@@ -293,12 +288,7 @@ unsafe fn fallbackSimpleSort(
     i -= 1
   }
 }
-unsafe fn fallbackQSort3(
-  mut fmap: *mut u32,
-  mut eclass: *mut u32,
-  mut loSt: i32,
-  mut hiSt: i32,
-) {
+unsafe fn fallbackQSort3(mut fmap: *mut u32, mut eclass: *mut u32, mut loSt: i32, mut hiSt: i32) {
   let mut sp: i32 = 0;
   let mut r: u32 = 0;
   let mut stackLo: [i32; 100] = [0; 100];
@@ -1693,10 +1683,7 @@ unsafe fn handle_compress(mut strm: *mut bz_stream) {
   /*return progress_in || progress_out;*/
 }
 /*---------------------------------------------------*/
-unsafe fn BZ2_bzCompress(
-  mut strm: *mut bz_stream,
-  mut action: libc::c_int,
-) -> libc::c_int {
+unsafe fn BZ2_bzCompress(mut strm: *mut bz_stream, mut action: libc::c_int) -> libc::c_int {
   /*Bool progress;*/
   let mut s: *mut EState = std::ptr::null_mut();
   s = (*strm).state as *mut EState;

@@ -748,10 +748,7 @@ unsafe fn hash_init() -> *mut xhash {
   return newhash;
 }
 /* find item in hash, return ptr to data, NULL if not found */
-unsafe fn hash_search(
-  mut hash: *mut xhash,
-  mut name: *const libc::c_char,
-) -> *mut libc::c_void {
+unsafe fn hash_search(mut hash: *mut xhash, mut name: *const libc::c_char) -> *mut libc::c_void {
   let mut hi: *mut hash_item = std::ptr::null_mut();
   hi = *(*hash)
     .items
@@ -803,10 +800,7 @@ unsafe fn hash_rebuild(mut hash: *mut xhash) {
   (*hash).items = newitems;
 }
 /* find item in hash, add it if necessary. Return ptr to data */
-unsafe fn hash_find(
-  mut hash: *mut xhash,
-  mut name: *const libc::c_char,
-) -> *mut libc::c_void {
+unsafe fn hash_find(mut hash: *mut xhash, mut name: *const libc::c_char) -> *mut libc::c_void {
   let mut hi: *mut hash_item = std::ptr::null_mut();
   let mut idx: libc::c_uint = 0;
   let mut l: libc::c_int = 0;
@@ -833,8 +827,8 @@ unsafe fn hash_remove(mut hash: *mut xhash, mut name: *const libc::c_char) {
   let mut hi: *mut hash_item = std::ptr::null_mut();
   let mut phi: *mut *mut hash_item = std::ptr::null_mut();
   phi = &mut *(*hash).items.offset(
-    (hashidx as unsafe fn(_: *const libc::c_char) -> libc::c_uint)(name)
-      .wrapping_rem((*hash).csize) as isize,
+    (hashidx as unsafe fn(_: *const libc::c_char) -> libc::c_uint)(name).wrapping_rem((*hash).csize)
+      as isize,
   ) as *mut *mut hash_item_s;
   while !(*phi).is_null() {
     hi = *phi;
@@ -893,7 +887,7 @@ unsafe fn nextchar(mut s: *mut *mut libc::c_char) -> libc::c_char {
    * s = "abc\"def"
    * we must treat \" as "
    */
-
+  
   if c as libc::c_int == '\\' as i32 && *s == pps {
     /* unrecognized \z? */
     c = **s;
@@ -1482,11 +1476,7 @@ unsafe fn new_node(mut info: u32) -> *mut node {
   (*n).lineno = (*ptr_to_globals.offset(-1i32 as isize)).g_lineno as libc::c_uint;
   return n;
 }
-unsafe fn mk_re_node(
-  mut s: *const libc::c_char,
-  mut n: *mut node,
-  mut re: *mut regex_t,
-) {
+unsafe fn mk_re_node(mut s: *const libc::c_char, mut n: *mut node, mut re: *mut regex_t) {
   (*n).info = OC_REGEXP as libc::c_int as u32;
   (*n).l.re = re;
   (*n).r.ire = re.offset(1);
@@ -21237,10 +21227,7 @@ unsafe fn next_input_file() -> *mut rstream {
   *fresh66 = F;
   return &mut (*(ptr_to_globals as *mut globals2)).next_input_file__rsm;
 }
-pub unsafe fn awk_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn awk_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut opt: libc::c_uint = 0;
   let mut opt_F: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut list_v: *mut llist_t = std::ptr::null_mut();

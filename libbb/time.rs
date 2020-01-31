@@ -363,10 +363,7 @@ pub unsafe fn parse_datestr(mut date_str: *const libc::c_char, mut ptm: *mut tm)
     crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_invalid_date.as_ptr(), date_str);
   };
 }
-pub unsafe fn validate_tm_time(
-  mut date_str: *const libc::c_char,
-  mut ptm: *mut tm,
-) -> time_t {
+pub unsafe fn validate_tm_time(mut date_str: *const libc::c_char, mut ptm: *mut tm) -> time_t {
   let mut t: time_t = mktime(ptm);
   if t == -1i64 {
     crate::libbb::verror_msg::bb_error_msg_and_die(bb_msg_invalid_date.as_ptr(), date_str);

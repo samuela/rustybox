@@ -591,11 +591,7 @@ unsafe fn lzma_literal_probs(mut s: *mut xz_dec_lzma2) -> *mut u16 {
 unsafe fn rc_is_finished(mut rc: *const rc_dec) -> bool {
   return (*rc).code == 0 as libc::c_uint;
 }
-unsafe fn dict_repeat(
-  mut dict: *mut dictionary,
-  mut len: *mut u32,
-  mut dist: u32,
-) -> bool {
+unsafe fn dict_repeat(mut dict: *mut dictionary, mut len: *mut u32, mut dist: u32) -> bool {
   let mut back: size_t = 0;
   let mut left: u32 = 0;
   if dist as libc::c_ulong >= (*dict).full || dist >= (*dict).size {
@@ -638,11 +634,7 @@ unsafe fn rc_reset(mut rc: *mut rc_dec) {
   (*rc).code = 0 as u32;
   (*rc).init_bytes_left = 5i32 as u32;
 }
-unsafe fn dict_uncompressed(
-  mut dict: *mut dictionary,
-  mut b: *mut xz_buf,
-  mut left: *mut u32,
-) {
+unsafe fn dict_uncompressed(mut dict: *mut dictionary, mut b: *mut xz_buf, mut left: *mut u32) {
   let mut copy_size: size_t = 0;
   while *left > 0 as libc::c_uint && (*b).in_pos < (*b).in_size && (*b).out_pos < (*b).out_size {
     copy_size = if (*b).in_size.wrapping_sub((*b).in_pos) < (*b).out_size.wrapping_sub((*b).out_pos)
@@ -855,11 +847,7 @@ unsafe fn lzma_literal(mut s: *mut xz_dec_lzma2) {
   lzma_state_literal(&mut (*s).lzma.state);
 }
 /* Decode the length of the match into s->lzma.len. */
-unsafe fn lzma_len(
-  mut s: *mut xz_dec_lzma2,
-  mut l: *mut lzma_len_dec,
-  mut pos_state: u32,
-) {
+unsafe fn lzma_len(mut s: *mut xz_dec_lzma2, mut l: *mut lzma_len_dec, mut pos_state: u32) {
   let mut probs: *mut u16 = std::ptr::null_mut();
   let mut limit: u32 = 0;
   if rc_bit(&mut (*s).rc, &mut (*l).choice) == 0 {
@@ -1454,10 +1442,7 @@ unsafe fn xz_dec_lzma2_run(mut s: *mut xz_dec_lzma2, mut b: *mut xz_buf) -> xz_r
  * Allocate memory for LZMA2 decoder. xz_dec_lzma2_reset() must be used
  * before calling xz_dec_lzma2_run().
  */
-unsafe fn xz_dec_lzma2_create(
-  mut mode: xz_mode,
-  mut dict_max: u32,
-) -> *mut xz_dec_lzma2 {
+unsafe fn xz_dec_lzma2_create(mut mode: xz_mode, mut dict_max: u32) -> *mut xz_dec_lzma2 {
   let mut s: *mut xz_dec_lzma2 =
     malloc(::std::mem::size_of::<xz_dec_lzma2>() as libc::c_ulong) as *mut xz_dec_lzma2;
   if s.is_null() {

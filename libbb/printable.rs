@@ -278,11 +278,7 @@ pub unsafe fn fputc_printable(mut ch: libc::c_int, mut file: *mut FILE) {
  * else it is printed as-is (except for ch = 0x9b) */
 /* Return a string that is the printable representation of character ch.
  * Buffer must hold at least four characters. */
-pub unsafe fn visible(
-  mut ch: libc::c_uint,
-  mut buf: *mut libc::c_char,
-  mut flags: libc::c_int,
-) {
+pub unsafe fn visible(mut ch: libc::c_uint, mut buf: *mut libc::c_char, mut flags: libc::c_int) {
   if !(ch == '\t' as i32 as libc::c_uint && flags & VISIBLE_SHOW_TABS as libc::c_int == 0) {
     if ch == '\n' as i32 as libc::c_uint {
       if flags & VISIBLE_ENDLINE as libc::c_int != 0 {

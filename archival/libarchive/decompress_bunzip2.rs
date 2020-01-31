@@ -94,10 +94,7 @@ pub union C2RustUnnamed_1 {
 }
 /* Return the next nnn bits of input.  All reads from the compressed input
 are done through this function.  All reads are big endian */
-unsafe fn get_bits(
-  mut bd: *mut bunzip_data,
-  mut bits_wanted: libc::c_int,
-) -> libc::c_uint {
+unsafe fn get_bits(mut bd: *mut bunzip_data, mut bits_wanted: libc::c_int) -> libc::c_uint {
   let mut bits: libc::c_uint = 0 as libc::c_uint;
   /* Cache bd->inbufBitCount in a CPU register (hopefully): */
   let mut bit_count: libc::c_int = (*bd).inbufBitCount as libc::c_int;
@@ -852,9 +849,7 @@ unsafe fn dealloc_bunzip(mut bd: *mut bunzip_data) {
   free(bd as *mut libc::c_void);
 }
 /* Decompress src_fd to dst_fd.  Stops at end of bzip data, not end of file. */
-pub unsafe fn unpack_bz2_stream(
-  mut xstate: *mut transformer_state_t,
-) -> libc::c_longlong {
+pub unsafe fn unpack_bz2_stream(mut xstate: *mut transformer_state_t) -> libc::c_longlong {
   let mut total_written: libc::c_longlong = 0 as libc::c_longlong;
   let mut bd: *mut bunzip_data = std::ptr::null_mut();
   let mut outbuf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();

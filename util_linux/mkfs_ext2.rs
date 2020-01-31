@@ -381,12 +381,7 @@ unsafe fn div_roundup(mut size: u32, mut n: u32) -> u32 {
   }
   return res;
 }
-unsafe fn allocate(
-  mut bitmap: *mut u8,
-  mut blocksize: u32,
-  mut start: u32,
-  mut end: u32,
-) {
+unsafe fn allocate(mut bitmap: *mut u8, mut blocksize: u32, mut start: u32, mut end: u32) {
   let mut i: u32 = 0;
   //bb_error_msg("ALLOC: [%u][%u][%u]: [%u-%u]:=[%x],[%x]", blocksize, start, end, start/8, blocksize - end/8 - 1, (1 << (start & 7)) - 1, (u8)(0xFF00 >> (end & 7)));
   memset(bitmap as *mut libc::c_void, 0, blocksize as libc::c_ulong); //0..7 => 00000000..01111111

@@ -33,10 +33,7 @@ extern "C" {
 
 use crate::librb::suffix_mult;
 #[inline(always)]
-unsafe fn xatoul_sfx(
-  mut str: *const libc::c_char,
-  mut sfx: *const suffix_mult,
-) -> libc::c_ulong {
+unsafe fn xatoul_sfx(mut str: *const libc::c_char, mut sfx: *const suffix_mult) -> libc::c_ulong {
   return crate::libbb::xatonum::xatoull_sfx(str, sfx) as libc::c_ulong;
 }
 
@@ -83,11 +80,7 @@ unsafe fn xatoul_sfx(
 //usage:       "root:x:0:0:root:/root:/bin/bash\n"
 //usage:       "daemon:x:1:1:daemon:/usr/sbin:/bin/sh\n"
 /* This is a NOEXEC applet. Be very careful! */
-unsafe fn print_first_N(
-  mut fp: *mut FILE,
-  mut count: libc::c_ulong,
-  mut count_bytes: bool,
-) {
+unsafe fn print_first_N(mut fp: *mut FILE, mut count: libc::c_ulong, mut count_bytes: bool) {
   while count != 0 {
     let mut c: libc::c_int = getc_unlocked(fp);
     if c == -1i32 {
@@ -203,10 +196,7 @@ unsafe fn print_except_N_last_lines(mut fp: *mut FILE, mut count: libc::c_uint) 
   }
   free(circle as *mut libc::c_void);
 }
-unsafe fn eat_num(
-  mut negative_N: *mut bool,
-  mut p: *const libc::c_char,
-) -> libc::c_ulong {
+unsafe fn eat_num(mut negative_N: *mut bool, mut p: *const libc::c_char) -> libc::c_ulong {
   if *p as libc::c_int == '-' as i32 {
     *negative_N = 1i32 != 0;
     p = p.offset(1)

@@ -266,10 +266,7 @@ pub unsafe fn modinfo_main(
       uts.release.as_mut_ptr(),
       b"modules.dep\x00" as *const u8 as *const libc::c_char,
     ),
-    Some(
-      crate::libbb::wfopen::xfopen_for_read
-        as unsafe fn(_: *const libc::c_char) -> *mut FILE,
-    ),
+    Some(crate::libbb::wfopen::xfopen_for_read as unsafe fn(_: *const libc::c_char) -> *mut FILE),
   );
   while crate::libbb::parse_config::config_read(
     parser,

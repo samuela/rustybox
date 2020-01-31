@@ -144,10 +144,7 @@ unsafe fn smtp_checkp(
     msg,
   );
 }
-unsafe fn smtp_check(
-  mut fmt: *const libc::c_char,
-  mut code: libc::c_int,
-) -> libc::c_int {
+unsafe fn smtp_check(mut fmt: *const libc::c_char, mut code: libc::c_int) -> libc::c_int {
   return smtp_checkp(fmt, 0 as *const libc::c_char, code);
 }
 // strip argument of bad chars

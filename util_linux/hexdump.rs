@@ -188,10 +188,7 @@ static mut add_first: [libc::c_char; 12] = [34, 37, 48, 55, 46, 55, 95, 65, 120,
 static mut hexdump_opts: [libc::c_char; 17] = [
   98, 99, 100, 111, 120, 67, 101, 58, 102, 58, 110, 58, 115, 58, 118, 82, 0,
 ];
-pub unsafe fn hexdump_main(
-  mut argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn hexdump_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut buf: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut current_block: u64;
   let mut dumper: *mut dumper_t = crate::libbb::dump::alloc_dumper();

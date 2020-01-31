@@ -98,10 +98,7 @@ pub const OPT_P: C2RustUnnamed = 1;
  * LPD returns binary 0 on success.
  * Otherwise it returns error message.
  */
-unsafe fn get_response_or_say_and_die(
-  mut fd: libc::c_int,
-  mut errmsg: *const libc::c_char,
-) {
+unsafe fn get_response_or_say_and_die(mut fd: libc::c_int, mut errmsg: *const libc::c_char) {
   let mut sz: ssize_t = 0;
   let mut buf: [libc::c_char; 128] = [0; 128];
   buf[0] = ' ' as i32 as libc::c_char;

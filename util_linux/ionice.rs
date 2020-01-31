@@ -60,10 +60,7 @@ static mut to_prio: [libc::c_char; 31] = [
   102, 111, 114, 116, 0, 105, 100, 108, 101, 0,
 ];
 
-pub unsafe fn ionice_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn ionice_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   /* Defaults */
   let mut ioclass: libc::c_int = 0; /* affect own porcess */
   let mut pri: libc::c_int = 0;

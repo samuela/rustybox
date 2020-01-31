@@ -27,10 +27,7 @@ use libc;
 //usage:       "[BLOCKDEV]..."
 //usage:#define blkid_full_usage "\n\n"
 //usage:       "Print UUIDs of all filesystems"
-pub unsafe fn blkid_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn blkid_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut scan_devices: libc::c_int = 1i32;
   loop {
     argv = argv.offset(1);

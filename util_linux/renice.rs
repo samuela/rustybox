@@ -56,10 +56,7 @@ pub type __priority_which_t = __priority_which;
 //usage:     "\n	-p	Process ids (default)"
 //usage:     "\n	-g	Process group ids"
 //usage:     "\n	-u	Process user names"
-pub unsafe fn renice_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn renice_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut current_block: u64; /* Default 'which' value. */
   static mut Xetpriority_msg: [libc::c_char; 13] =
     [37, 99, 101, 116, 112, 114, 105, 111, 114, 105, 116, 121, 0];

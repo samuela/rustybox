@@ -58,10 +58,7 @@ unsafe fn hash_bin_to_hex(
   return hex_value as *mut libc::c_uchar;
 }
 
-unsafe fn hash_file(
-  mut filename: *const libc::c_char,
-  mut sha3_width: libc::c_uint,
-) -> *mut u8 {
+unsafe fn hash_file(mut filename: *const libc::c_char, mut sha3_width: libc::c_uint) -> *mut u8 {
   let mut src_fd: libc::c_int = 0;
   let mut hash_len: libc::c_int = 0;
   let mut count: libc::c_int = 0;
@@ -73,12 +70,10 @@ unsafe fn hash_file(
     },
   };
   let mut hash_value: *mut u8 = std::ptr::null_mut();
-  let mut update: Option<
-    unsafe fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> (),
-  > = None;
-  let mut final_0: Option<
-    unsafe fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint,
-  > = None;
+  let mut update: Option<unsafe fn(_: *mut libc::c_void, _: *const libc::c_void, _: size_t) -> ()> =
+    None;
+  let mut final_0: Option<unsafe fn(_: *mut libc::c_void, _: *mut libc::c_void) -> libc::c_uint> =
+    None;
   let mut hash_algo: libc::c_char = 0;
   src_fd = crate::libbb::wfopen_input::open_or_warn_stdin(filename);
   if src_fd < 0 {

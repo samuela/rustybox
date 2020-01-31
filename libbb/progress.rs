@@ -63,10 +63,7 @@ pub const STALLTIME: C2RustUnnamed = 5;
  * SUCH DAMAGE.
  */
 pub type C2RustUnnamed = libc::c_uint;
-pub unsafe fn bb_progress_init(
-  mut p: *mut bb_progress_t,
-  mut curfile: *const libc::c_char,
-) {
+pub unsafe fn bb_progress_init(mut p: *mut bb_progress_t, mut curfile: *const libc::c_char) {
   (*p).curfile =
     crate::libbb::unicode::unicode_conv_to_printable_fixedwidth(curfile, 20i32 as libc::c_uint);
   (*p).start_sec = crate::libbb::time::monotonic_sec();

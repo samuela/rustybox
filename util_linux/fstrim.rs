@@ -59,10 +59,7 @@ pub type C2RustUnnamed = libc::c_uint;
 //usage:     "\n	-m MIN		Minimum extent length"
 //usage:     "\n	-v		Print number of discarded bytes"
 //usage:	)
-pub unsafe fn fstrim_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn fstrim_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut range: fstrim_range = fstrim_range {
     start: 0,
     len: 0,

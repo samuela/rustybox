@@ -85,11 +85,7 @@ pub const OPT_INITIAL: C2RustUnnamed = 1;
 //FIXME: does not work properly with input containing NULs
 //coreutils 8.30 preserves NULs but treats them as chars of width zero:
 //AB<nul><tab>C will expand <tab> to 6 spaces, not 5.
-unsafe fn expand(
-  mut file: *mut FILE,
-  mut tab_size: libc::c_uint,
-  mut opt: libc::c_uint,
-) {
+unsafe fn expand(mut file: *mut FILE, mut tab_size: libc::c_uint, mut opt: libc::c_uint) {
   loop {
     let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
     let mut ptr: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
@@ -144,11 +140,7 @@ unsafe fn expand(
     free(line as *mut libc::c_void);
   }
 }
-unsafe fn unexpand(
-  mut file: *mut FILE,
-  mut tab_size: libc::c_uint,
-  mut opt: libc::c_uint,
-) {
+unsafe fn unexpand(mut file: *mut FILE, mut tab_size: libc::c_uint, mut opt: libc::c_uint) {
   let mut line: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   loop {
     line = crate::libbb::get_line_from_file::xmalloc_fgets(file);

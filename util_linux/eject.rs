@@ -130,10 +130,7 @@ unsafe fn eject_cdrom(mut flags: libc::c_uint, mut dev: *const libc::c_char) {
     dev,
   );
 }
-pub unsafe fn eject_main(
-  mut _argc: libc::c_int,
-  mut argv: *mut *mut libc::c_char,
-) -> libc::c_int {
+pub unsafe fn eject_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
   let mut flags: libc::c_uint = 0;
   let mut device: *const libc::c_char = std::ptr::null();
   flags = crate::libbb::getopt32::getopt32(
