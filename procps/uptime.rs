@@ -1,13 +1,9 @@
+use crate::libbb::getopt32::getopt32;
 use libc;
 use libc::getutxent;
 use libc::localtime;
 use libc::sysinfo;
 use libc::time;
-
-extern "C" {
-  #[no_mangle]
-  fn getopt32(argv: *mut *mut libc::c_char, applet_opts: *const libc::c_char, _: ...) -> u32;
-}
 
 // When reading the utmp entries with getuxent, this identifies
 // a user entry.
