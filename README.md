@@ -31,16 +31,16 @@ Please open an issue if you have trouble building!
 
 ### Customizing your rustybox distribution
 
-Chances are you don't actually need or want _everything_ in rustybox. By design, the default distribution includes a relatively conservative set of utilities and it's expected that you customize your build of rustybox for your specific use-case. If you'd like to build rustybox with the default utilities and some extras,
+By default, rustybox does not include any utility. You can include all of them:
 
 ```
-cargo build --release --features "mkfs_vfat"
+cargo build --all-features
 ```
 
-If you'd like to build rustybox with only a specific set of utilities (no defaults included),
+Chances are you don't actually need or want _everything_ in rustybox, especially for a release. If you'd like to build rustybox with only a specific set of utilities:
 
 ```
-cargo build --release --no-default-features --features "cat ls which"
+cargo build --release --features "cat ls which"
 ```
 
 Check out the `[features]` section of `Cargo.toml` for the full list of utilities on tap.
