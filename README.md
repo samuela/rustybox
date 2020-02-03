@@ -37,7 +37,7 @@ By default, rustybox does not include any utility. You can include all of them:
 cargo build --all-features
 ```
 
-Chances are you don't actually need or want _everything_ in rustybox, especially for a release. If you'd like to build rustybox with only a specific set of utilities (no defaults included),
+Chances are you don't actually need or want _everything_ in rustybox, especially for a release. If you'd like to build rustybox with only a specific set of utilities:
 
 ```
 cargo build --release --features "cat ls which"
