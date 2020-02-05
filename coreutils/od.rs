@@ -142,7 +142,7 @@ pub const OPT_b: C2RustUnnamed = 8;
 pub const OPT_a: C2RustUnnamed = 4;
 pub const OPT_N: C2RustUnnamed = 2;
 pub const OPT_A: C2RustUnnamed = 1;
-pub type longdouble_t = f128::f128;
+pub type longdouble_t = f128_internal::f128;
 pub type ulonglong_t = libc::c_ulonglong;
 static mut bytes_to_oct_digits: [u8; 17] = [
   0, 3, 6, 8, 11, 14, 16, 19, 22, 25, 27, 30, 32, 35, 38, 41, 43,

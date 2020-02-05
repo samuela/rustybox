@@ -44,25 +44,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "f128"
-version = "0.2.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-dependencies = [
- "f128_input 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "f128_internal 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)",
- "num-traits 0.2.9 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "f128_input"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-dependencies = [
- "f128_internal 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
 name = "f128_internal"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -127,7 +108,7 @@ dependencies = [
  "c2rust-asm-casts 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "c2rust-bitfields 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "duct 0.13.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "f128 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "f128_internal 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -182,8 +163,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum c2rust-bitfields-derive 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e435559e4c01dc6a7b59afe1a9f3a30446954426347dc20dfb32950d303ed3b5"
 "checksum cc 1.0.47 (registry+https://github.com/rust-lang/crates.io-index)" = "aa87058dce70a3ff5621797f1506cb837edd02ac4c0ae642b4542dce802908b8"
 "checksum duct 0.13.3 (registry+https://github.com/rust-lang/crates.io-index)" = "1607fa68d55be208e83bcfbcfffbc1ec65c9fbcf9eb1a5d548dc3ac0100743b0"
-"checksum f128 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)" = "f8bde88a633e45e0b19507b25a74c524ef3343ce820026268b48a2f87b5a2c5a"
-"checksum f128_input 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "18a821a6f74745607a8c99c932a8f513e6e7d6ee63725ec95511edf4a94510bb"
 "checksum f128_internal 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "d56fd9f07adbb53e3693a4602ad2e45bbd0015d6902a51dc57f01cd7333abafb"
 "checksum lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 "checksum libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)" = "1a31a0627fdf1f6a39ec0dd577e101440b7db22672c0901fe00a9a6fbb5c24e8"

@@ -18,7 +18,7 @@ path = "rustybox.rs"
 [dependencies]
 c2rust-bitfields = "0.3"
 c2rust-asm-casts = "0.1"
-f128 = "0.2.6"
+f128_internal = "0.2.1"
 libc = "0.2"
 lazy_static = "1.4"
 
