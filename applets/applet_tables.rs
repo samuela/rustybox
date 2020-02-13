@@ -35,8 +35,6 @@ pub enum Entrypoint {
   SafeStyle(fn(&[&str]) -> !),
 }
 
-// TODO: it's not clear to me how if at all noexec and nofork are actually used
-// in the code. Should they be removed?
 pub struct applet {
   pub name: &'static str,
   pub main: &'static str,
@@ -709,7 +707,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "false",
       main: "false",
-      entrypoint: Entrypoint::CStyle(crate::coreutils::r#false::false_main),
+      entrypoint: Entrypoint::SafeStyle(crate::coreutils::r#false::false_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/false"),
     });
@@ -2781,7 +2779,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "true",
       main: "true",
-      entrypoint: Entrypoint::CStyle(crate::coreutils::r#true::true_main),
+      entrypoint: Entrypoint::SafeStyle(crate::coreutils::r#true::true_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/true"),
     });
