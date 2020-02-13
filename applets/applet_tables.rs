@@ -67,7 +67,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "acpid",
       main: "acpid",
-      entrypoint: Entrypoint::CStyle(acpcrate::coreutils::id::id_main),
+      entrypoint: Entrypoint::CStyle(crate::util_linux::acpid::acpid_main),
       install_loc: InstallLoc::DIR_SBIN,
       usage: std::include_str!("../usage/acpid"),
     });
@@ -123,7 +123,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "arping",
       main: "arping",
-      entrypoint: Entrypoint::CStyle(crate::networking::arping::arcrate::networking::ping::ping_main),
+      entrypoint: Entrypoint::CStyle(crate::networking::arping::arping_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
       usage: std::include_str!("../usage/arping"),
     });
@@ -187,7 +187,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "blkid",
       main: "blkid",
-      entrypoint: Entrypoint::CStyle(blkcrate::coreutils::id::id_main),
+      entrypoint: Entrypoint::CStyle(crate::util_linux::blkid::blkid_main),
       install_loc: InstallLoc::DIR_SBIN,
       usage: std::include_str!("../usage/blkid"),
     });
@@ -267,7 +267,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "chattr",
       main: "chattr",
-      entrypoint: Entrypoint::CStyle(chatcrate::coreutils::tr::tr_main),
+      entrypoint: Entrypoint::CStyle(crate::e2fsprogs::chattr::chattr_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/chattr"),
     });
@@ -283,7 +283,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "chmod",
       main: "chmod",
-      entrypoint: Entrypoint::CStyle(crate::coreutils::chmod::chmcrate::coreutils::od::od_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::chmod::chmod_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/chmod"),
     });
@@ -299,7 +299,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "chpasswd",
       main: "chpasswd",
-      entrypoint: Entrypoint::CStyle(crate::loginutils::chpasswd::chcrate::loginutils::passwd::passwd_main),
+      entrypoint: Entrypoint::CStyle(crate::loginutils::chpasswd::chpasswd_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
       usage: std::include_str!("../usage/chpasswd"),
     });
@@ -339,7 +339,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "cksum",
       main: "cksum",
-      entrypoint: Entrypoint::CStyle(crate::coreutils::cksum::ckcrate::coreutils::sum::sum_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::cksum::cksum_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/cksum"),
     });
@@ -531,7 +531,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "dmesg",
       main: "dmesg",
-      entrypoint: Entrypoint::CStyle(crate::util_linux::dmesg::dcrate::util_linux::mesg::mesg_main),
+      entrypoint: Entrypoint::CStyle(crate::util_linux::dmesg::dmesg_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/dmesg"),
     });
@@ -715,7 +715,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "fatattr",
       main: "fatattr",
-      entrypoint: Entrypoint::CStyle(fatatcrate::coreutils::tr::tr_main),
+      entrypoint: Entrypoint::CStyle(crate::util_linux::fatattr::fatattr_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/fatattr"),
     });
@@ -731,7 +731,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "fbsplash",
       main: "fbsplash",
-      entrypoint: Entrypoint::CStyle(crate::miscutils::fbsplash::fbsplcrate::shell::ash::ash_main),
+      entrypoint: Entrypoint::CStyle(crate::miscutils::fbsplash::fbsplash_main),
       install_loc: InstallLoc::DIR_SBIN,
       usage: std::include_str!("../usage/fbsplash"),
     });
@@ -859,7 +859,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "fsync",
       main: "fsync",
-      entrypoint: Entrypoint::CStyle(crate::coreutils::sync::fcrate::coreutils::sync::sycrate::networking::nc::nc_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::sync::fsync_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/fsync"),
     });
@@ -907,7 +907,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "getty",
       main: "getty",
-      entrypoint: Entrypoint::CStyle(gecrate::coreutils::tty::tty_main),
+      entrypoint: Entrypoint::CStyle(crate::loginutils::getty::getty_main),
       install_loc: InstallLoc::DIR_SBIN,
       usage: std::include_str!("../usage/getty"),
     });
@@ -931,7 +931,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "gunzip",
       main: "gunzip",
-      entrypoint: Entrypoint::CStyle(crate::archival::bbunzip::gcrate::archival::unzip::unzcrate::networking::ip::ip_main),
+      entrypoint: Entrypoint::CStyle(crate::archival::bbunzip::gunzip_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/gunzip"),
     });
@@ -939,7 +939,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "gzip",
       main: "gzip",
-      entrypoint: Entrypoint::CStyle(crate::archival::gzip::gzcrate::networking::ip::ip_main),
+      entrypoint: Entrypoint::CStyle(crate::archival::gzip::gzip_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/gzip"),
     });
@@ -963,7 +963,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "hdparm",
       main: "hdparm",
-      entrypoint: Entrypoint::CStyle(hdpacrate::coreutils::rm::rm_main),
+      entrypoint: Entrypoint::CStyle(crate::miscutils::hdparm::hdparm_main),
       install_loc: InstallLoc::DIR_SBIN,
       usage: std::include_str!("../usage/hdparm"),
     });
@@ -995,7 +995,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "hostid",
       main: "hostid",
-      entrypoint: Entrypoint::CStyle(crate::coreutils::hostid::hostcrate::coreutils::id::id_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::hostid::hostid_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/hostid"),
     });
@@ -1155,7 +1155,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "ionice",
       main: "ionice",
-      entrypoint: Entrypoint::CStyle(iocrate::coreutils::nice::nice_main),
+      entrypoint: Entrypoint::CStyle(crate::util_linux::ionice::ionice_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/ionice"),
     });
@@ -1163,7 +1163,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "iostat",
       main: "iostat",
-      entrypoint: Entrypoint::CStyle(iocrate::coreutils::stat::stat_main),
+      entrypoint: Entrypoint::CStyle(crate::procps::iostat::iostat_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/iostat"),
     });
@@ -1195,7 +1195,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "ipcrm",
       main: "ipcrm",
-      entrypoint: Entrypoint::CStyle(ipccrate::coreutils::rm::rm_main),
+      entrypoint: Entrypoint::CStyle(crate::util_linux::ipcrm::ipcrm_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/ipcrm"),
     });
@@ -1211,7 +1211,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "iplink",
       main: "iplink",
-      entrypoint: Entrypoint::CStyle(ipcrate::coreutils::link::link_main),
+      entrypoint: Entrypoint::CStyle(crate::networking::ip::iplink_main),
       install_loc: InstallLoc::DIR_SBIN,
       usage: std::include_str!("../usage/iplink"),
     });
@@ -1227,7 +1227,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "iproute",
       main: "iproute",
-      entrypoint: Entrypoint::CStyle(crate::networking::ip::ipcrate::networking::route::route_main),
+      entrypoint: Entrypoint::CStyle(crate::networking::ip::iproute_main),
       install_loc: InstallLoc::DIR_SBIN,
       usage: std::include_str!("../usage/iproute"),
     });
@@ -1435,7 +1435,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "lsattr",
       main: "lsattr",
-      entrypoint: Entrypoint::CStyle(lsatcrate::coreutils::tr::tr_main),
+      entrypoint: Entrypoint::CStyle(crate::e2fsprogs::lsattr::lsattr_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/lsattr"),
     });
@@ -1443,7 +1443,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "lsmod",
       main: "lsmod",
-      entrypoint: Entrypoint::CStyle(lsmcrate::coreutils::od::od_main),
+      entrypoint: Entrypoint::CStyle(crate::modutils::modprobe_small::lsmod_main),
       install_loc: InstallLoc::DIR_SBIN,
       usage: std::include_str!("../usage/lsmod"),
     });
@@ -1531,7 +1531,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "md5sum",
       main: "md5_sha1_sum",
-      entrypoint: Entrypoint::CStyle(crate::coreutils::md5_sha1_sum::md5_sha1_crate::coreutils::sum::sum_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::md5_sha1_sum::md5_sha1_sum_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/md5sum"),
     });
@@ -1619,7 +1619,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "mknod",
       main: "mknod",
-      entrypoint: Entrypoint::CStyle(crate::coreutils::mknod::mkncrate::coreutils::od::od_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::mknod::mknod_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/mknod"),
     });
@@ -1691,7 +1691,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "mpstat",
       main: "mpstat",
-      entrypoint: Entrypoint::CStyle(mpcrate::coreutils::stat::stat_main),
+      entrypoint: Entrypoint::CStyle(crate::procps::mpstat::mpstat_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/mpstat"),
     });
@@ -1755,7 +1755,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "netstat",
       main: "netstat",
-      entrypoint: Entrypoint::CStyle(netcrate::coreutils::stat::stat_main),
+      entrypoint: Entrypoint::CStyle(crate::networking::netstat::netstat_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/netstat"),
     });
@@ -1883,7 +1883,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "pgrep",
       main: "pgrep",
-      entrypoint: Entrypoint::CStyle(pcrate::findutils::grep::grep_main),
+      entrypoint: Entrypoint::CStyle(crate::procps::pgrep::pgrep_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/pgrep"),
     });
@@ -1931,7 +1931,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "pkill",
       main: "pgrep",
-      entrypoint: Entrypoint::CStyle(pcrate::findutils::grep::grep_main),
+      entrypoint: Entrypoint::CStyle(crate::procps::pgrep::pgrep_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/pkill"),
     });
@@ -1963,7 +1963,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "powertop",
       main: "powertop",
-      entrypoint: Entrypoint::CStyle(crate::procps::powertop::powercrate::procps::top::top_main),
+      entrypoint: Entrypoint::CStyle(crate::procps::powertop::powertop_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
       usage: std::include_str!("../usage/powertop"),
     });
@@ -1971,7 +1971,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "printenv",
       main: "printenv",
-      entrypoint: Entrypoint::CStyle(printcrate::coreutils::env::env_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::printenv::printenv_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/printenv"),
     });
@@ -2035,7 +2035,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "rdate",
       main: "rdate",
-      entrypoint: Entrypoint::CStyle(rcrate::coreutils::date::date_main),
+      entrypoint: Entrypoint::CStyle(crate::util_linux::rdate::rdate_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
       usage: std::include_str!("../usage/rdate"),
     });
@@ -2051,7 +2051,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "readahead",
       main: "readahead",
-      entrypoint: Entrypoint::CStyle(readacrate::coreutils::head::head_main),
+      entrypoint: Entrypoint::CStyle(crate::miscutils::readahead::readahead_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
       usage: std::include_str!("../usage/readahead"),
     });
@@ -2059,7 +2059,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "readlink",
       main: "readlink",
-      entrypoint: Entrypoint::CStyle(readcrate::coreutils::link::link_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::readlink::readlink_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/readlink"),
     });
@@ -2107,7 +2107,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "renice",
       main: "renice",
-      entrypoint: Entrypoint::CStyle(recrate::coreutils::nice::nice_main),
+      entrypoint: Entrypoint::CStyle(crate::util_linux::renice::renice_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/renice"),
     });
@@ -2187,7 +2187,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "rpm2cpio",
       main: "rpm2cpio",
-      entrypoint: Entrypoint::CStyle(rpm2crate::archival::cpio::cpio_main),
+      entrypoint: Entrypoint::CStyle(crate::archival::rpm::rpm2cpio_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/rpm2cpio"),
     });
@@ -2211,7 +2211,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "run-parts",
       main: "run_parts",
-      entrypoint: Entrypoint::CStyle(crate::debianutils::run_parts::run_parcrate::miscutils::ts::ts_main),
+      entrypoint: Entrypoint::CStyle(crate::debianutils::run_parts::run_parts_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/run-parts"),
     });
@@ -2227,7 +2227,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "runsv",
       main: "runsv",
-      entrypoint: Entrypoint::CStyle(crate::runit::runsv::runcrate::runit::sv::sv_main),
+      entrypoint: Entrypoint::CStyle(crate::runit::runsv::runsv_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/runsv"),
     });
@@ -2267,7 +2267,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "sed",
       main: "sed",
-      entrypoint: Entrypoint::CStyle(scrate::editors::ed::ed_main),
+      entrypoint: Entrypoint::CStyle(crate::editors::sed::sed_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/sed"),
     });
@@ -2307,7 +2307,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "setfattr",
       main: "setfattr",
-      entrypoint: Entrypoint::CStyle(setfatcrate::coreutils::tr::tr_main),
+      entrypoint: Entrypoint::CStyle(crate::miscutils::setfattr::setfattr_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/setfattr"),
     });
@@ -2355,7 +2355,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "setsid",
       main: "setsid",
-      entrypoint: Entrypoint::CStyle(setscrate::coreutils::id::id_main),
+      entrypoint: Entrypoint::CStyle(crate::util_linux::setsid::setsid_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/setsid"),
     });
@@ -2379,7 +2379,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "sha1sum",
       main: "md5_sha1_sum",
-      entrypoint: Entrypoint::CStyle(crate::coreutils::md5_sha1_sum::md5_sha1_crate::coreutils::sum::sum_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::md5_sha1_sum::md5_sha1_sum_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/sha1sum"),
     });
@@ -2387,7 +2387,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "sha256sum",
       main: "md5_sha1_sum",
-      entrypoint: Entrypoint::CStyle(crate::coreutils::md5_sha1_sum::md5_sha1_crate::coreutils::sum::sum_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::md5_sha1_sum::md5_sha1_sum_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/sha256sum"),
     });
@@ -2395,7 +2395,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "sha3sum",
       main: "md5_sha1_sum",
-      entrypoint: Entrypoint::CStyle(crate::coreutils::md5_sha1_sum::md5_sha1_crate::coreutils::sum::sum_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::md5_sha1_sum::md5_sha1_sum_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/sha3sum"),
     });
@@ -2403,7 +2403,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "sha512sum",
       main: "md5_sha1_sum",
-      entrypoint: Entrypoint::CStyle(crate::coreutils::md5_sha1_sum::md5_sha1_crate::coreutils::sum::sum_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::md5_sha1_sum::md5_sha1_sum_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/sha512sum"),
     });
@@ -2419,7 +2419,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "shred",
       main: "shred",
-      entrypoint: Entrypoint::CStyle(crate::coreutils::shred::shrcrate::editors::ed::ed_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::shred::shred_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/shred"),
     });
@@ -2515,7 +2515,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "stty",
       main: "stty",
-      entrypoint: Entrypoint::CStyle(crate::coreutils::stty::scrate::coreutils::tty::tty_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::stty::stty_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/stty"),
     });
@@ -2531,7 +2531,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "sulogin",
       main: "sulogin",
-      entrypoint: Entrypoint::CStyle(sucrate::loginutils::login::login_main),
+      entrypoint: Entrypoint::CStyle(crate::loginutils::sulogin::sulogin_main),
       install_loc: InstallLoc::DIR_SBIN,
       usage: std::include_str!("../usage/sulogin"),
     });
@@ -2603,7 +2603,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "sync",
       main: "sync",
-      entrypoint: Entrypoint::CStyle(crate::coreutils::sync::sycrate::networking::nc::nc_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::sync::sync_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/sync"),
     });
@@ -2715,7 +2715,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "tftpd",
       main: "tftpd",
-      entrypoint: Entrypoint::CStyle(tcrate::networking::ftpd::ftpd_main),
+      entrypoint: Entrypoint::CStyle(crate::networking::tftp::tftpd_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
       usage: std::include_str!("../usage/tftpd"),
     });
@@ -2763,7 +2763,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "traceroute",
       main: "traceroute",
-      entrypoint: Entrypoint::CStyle(tracecrate::networking::route::route_main),
+      entrypoint: Entrypoint::CStyle(crate::networking::traceroute::traceroute_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/traceroute"),
     });
@@ -2827,7 +2827,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "ubiattach",
       main: "ubi_tools",
-      entrypoint: Entrypoint::CStyle(ubi_toocrate::coreutils::ls::ls_main),
+      entrypoint: Entrypoint::CStyle(crate::miscutils::ubi_tools::ubi_tools_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
       usage: std::include_str!("../usage/ubiattach"),
     });
@@ -2835,7 +2835,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "ubidetach",
       main: "ubi_tools",
-      entrypoint: Entrypoint::CStyle(ubi_toocrate::coreutils::ls::ls_main),
+      entrypoint: Entrypoint::CStyle(crate::miscutils::ubi_tools::ubi_tools_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
       usage: std::include_str!("../usage/ubidetach"),
     });
@@ -2843,7 +2843,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "ubimkvol",
       main: "ubi_tools",
-      entrypoint: Entrypoint::CStyle(ubi_toocrate::coreutils::ls::ls_main),
+      entrypoint: Entrypoint::CStyle(crate::miscutils::ubi_tools::ubi_tools_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
       usage: std::include_str!("../usage/ubimkvol"),
     });
@@ -2859,7 +2859,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "ubirmvol",
       main: "ubi_tools",
-      entrypoint: Entrypoint::CStyle(ubi_toocrate::coreutils::ls::ls_main),
+      entrypoint: Entrypoint::CStyle(crate::miscutils::ubi_tools::ubi_tools_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
       usage: std::include_str!("../usage/ubirmvol"),
     });
@@ -2867,7 +2867,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "ubirsvol",
       main: "ubi_tools",
-      entrypoint: Entrypoint::CStyle(ubi_toocrate::coreutils::ls::ls_main),
+      entrypoint: Entrypoint::CStyle(crate::miscutils::ubi_tools::ubi_tools_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
       usage: std::include_str!("../usage/ubirsvol"),
     });
@@ -2875,7 +2875,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "ubiupdatevol",
       main: "ubi_tools",
-      entrypoint: Entrypoint::CStyle(ubi_toocrate::coreutils::ls::ls_main),
+      entrypoint: Entrypoint::CStyle(crate::miscutils::ubi_tools::ubi_tools_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
       usage: std::include_str!("../usage/ubiupdatevol"),
     });
@@ -2923,7 +2923,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "umount",
       main: "umount",
-      entrypoint: Entrypoint::CStyle(ucrate::util_linux::mount::mount_main),
+      entrypoint: Entrypoint::CStyle(crate::util_linux::umount::umount_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/umount"),
     });
@@ -2963,7 +2963,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "unlink",
       main: "unlink",
-      entrypoint: Entrypoint::CStyle(uncrate::coreutils::link::link_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::unlink::unlink_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/unlink"),
     });
@@ -2995,7 +2995,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "unzip",
       main: "unzip",
-      entrypoint: Entrypoint::CStyle(crate::archival::unzip::unzcrate::networking::ip::ip_main),
+      entrypoint: Entrypoint::CStyle(crate::archival::unzip::unzip_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/unzip"),
     });
@@ -3003,7 +3003,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "uptime",
       main: "uptime",
-      entrypoint: Entrypoint::CStyle(upcrate::miscutils::time::time_main),
+      entrypoint: Entrypoint::CStyle(crate::procps::uptime::uptime_main),
       install_loc: InstallLoc::DIR_USR_BIN,
       usage: std::include_str!("../usage/uptime"),
     });
@@ -3019,7 +3019,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "usleep",
       main: "usleep",
-      entrypoint: Entrypoint::CStyle(ucrate::coreutils::sleep::sleep_main),
+      entrypoint: Entrypoint::CStyle(crate::coreutils::usleep::usleep_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/usleep"),
     });
@@ -3195,7 +3195,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "zcat",
       main: "gunzip",
-      entrypoint: Entrypoint::CStyle(crate::archival::bbunzip::gcrate::archival::unzip::unzcrate::networking::ip::ip_main),
+      entrypoint: Entrypoint::CStyle(crate::archival::bbunzip::gunzip_main),
       install_loc: InstallLoc::DIR_BIN,
       usage: std::include_str!("../usage/zcat"),
     });
@@ -3203,7 +3203,7 @@ lazy_static! {
     appy_mcappface.push(applet {
       name: "zcip",
       main: "zcip",
-      entrypoint: Entrypoint::CStyle(zccrate::networking::ip::ip_main),
+      entrypoint: Entrypoint::CStyle(crate::networking::zcip::zcip_main),
       install_loc: InstallLoc::DIR_SBIN,
       usage: std::include_str!("../usage/zcip"),
     });
