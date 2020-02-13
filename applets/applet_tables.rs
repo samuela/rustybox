@@ -45,22 +45,6 @@ pub struct applet {
   pub usage: &'static str,
 }
 
-/*
-name  - applet name as it is typed on command line
-help  - applet name, converted to C (ether-wake: help = ether_wake)
-main  - corresponding <applet>_main to call (bzcat: main = bunzip2)
-l     - location to install link to: [/usr]/[s]bin
-s     - suid type:
-        SUID_REQUIRE: will complain if busybox isn't suid
-        and is run by non-root (applet_main() will not be called at all)
-        SUID_DROP: will drop suid prior to applet_main()
-        SUID_MAYBE: neither of the above
-        (every instance of SUID_REQUIRE and SUID_MAYBE
-        needs to be justified in comment)
-        NB: please update FEATURE_SUID help text whenever you add/remove
-        SUID_REQUIRE or SUID_MAYBE applet.
-*/
-
 lazy_static! {
   pub static ref applets: Vec<applet> = {
     let mut appy_mcappface: Vec<applet> = Vec::new();
