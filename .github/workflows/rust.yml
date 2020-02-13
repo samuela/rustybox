@@ -417,7 +417,7 @@ jobs:
       # Sometimes rustfmt isn't installed, eg. https://github.com/samuela/rustybox/runs/442459640.
       - name: rustfmt
         run: |
-          rustup component add rustfmt --toolchain nightly
+          rustup component add rustfmt
           cargo fmt --version
           cargo fmt --all -- --check
       # See https://github.com/rust-lang/rust-clippy#travis-ci.
