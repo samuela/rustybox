@@ -1,3 +1,4 @@
+use crate::libbb::default_error_retval::xfunc_error_retval;
 use crate::librb::signal::__sighandler_t;
 use libc;
 use libc::close;
@@ -9,9 +10,6 @@ extern "C" {
 
   #[no_mangle]
   fn signal(__sig: libc::c_int, __handler: __sighandler_t) -> __sighandler_t;
-
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
 
 }
 

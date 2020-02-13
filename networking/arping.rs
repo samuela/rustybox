@@ -1,3 +1,4 @@
+use crate::libbb::default_error_retval::xfunc_error_retval;
 use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
@@ -66,9 +67,6 @@ extern "C" {
 
   #[no_mangle]
   static mut option_mask32: u32;
-
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
 
   #[no_mangle]
   static ptr_to_globals: *mut globals;

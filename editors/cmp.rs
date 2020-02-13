@@ -1,3 +1,4 @@
+use crate::libbb::default_error_retval::xfunc_error_retval;
 use crate::librb::smallint;
 use libc;
 use libc::fprintf;
@@ -14,8 +15,6 @@ extern "C" {
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
 }
 
 pub type C2RustUnnamed = libc::c_uint;

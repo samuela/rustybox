@@ -1,8 +1,8 @@
+use crate::libbb::default_error_retval::xfunc_error_retval;
 use crate::libbb::llist::llist_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
-
 use libc;
 use libc::alarm;
 use libc::atoi;
@@ -36,9 +36,6 @@ extern "C" {
 
   #[no_mangle]
   static mut bb_got_signal: smallint;
-
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];

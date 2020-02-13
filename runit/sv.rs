@@ -1,3 +1,4 @@
+use crate::libbb::default_error_retval::xfunc_error_retval;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -48,9 +49,6 @@ extern "C" {
    * But potentially slow, don't use in one-billion-times loops */
 
   /* NOMMU friendy fork+exec: */
-
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];

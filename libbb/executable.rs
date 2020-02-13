@@ -1,3 +1,4 @@
+use crate::libbb::default_error_retval::xfunc_error_retval;
 use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use libc::access;
@@ -9,9 +10,6 @@ extern "C" {
 
   #[no_mangle]
   fn execvp(__file: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
-
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
 
 }
 

@@ -1,3 +1,4 @@
+use crate::libbb::default_error_retval::xfunc_error_retval;
 use crate::libbb::llist::llist_t;
 use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
@@ -38,8 +39,7 @@ extern "C" {
   ) -> *mut libc::c_char;
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
+
 }
 
 /*

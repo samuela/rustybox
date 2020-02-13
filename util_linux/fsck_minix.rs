@@ -1,4 +1,5 @@
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::default_error_retval::xfunc_error_retval;
 use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -30,9 +31,6 @@ extern "C" {
 
   #[no_mangle]
   static mut option_mask32: u32;
-
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
 
   #[no_mangle]
   static bb_banner: [libc::c_char; 0];

@@ -1,4 +1,5 @@
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::default_error_retval::xfunc_error_retval;
 use crate::librb::re_pattern_buffer;
 use libc;
 use libc::fclose;
@@ -26,9 +27,6 @@ extern "C" {
 
   #[no_mangle]
   static mut option_mask32: u32;
-
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];

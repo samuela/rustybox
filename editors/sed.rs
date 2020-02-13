@@ -1,3 +1,4 @@
+use crate::libbb::default_error_retval::xfunc_error_retval;
 use crate::libbb::llist::llist_t;
 use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::libbb::xfuncs_printf::xmalloc;
@@ -78,8 +79,6 @@ extern "C" {
 
   /* "Opens" stdin if filename is special, else just opens file: */
 
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
   #[no_mangle]
   static mut die_func: Option<unsafe extern "C" fn() -> ()>;
 

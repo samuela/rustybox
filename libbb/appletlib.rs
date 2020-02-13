@@ -1,16 +1,12 @@
 use crate::applets::applet_tables::applets;
 use crate::applets::applet_tables::Entrypoint;
 use crate::applets::applet_tables::InstallLoc;
+use crate::libbb::default_error_retval::xfunc_error_retval;
 use crate::libbb::ptr_to_globals::bb_errno;
 use libc;
 use std::ffi::CStr;
 use std::ffi::CString;
 use std::path::Path;
-
-extern "C" {
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
-}
 
 pub unsafe fn string_array_len(argv: *mut *mut libc::c_char) -> libc::c_uint {
   let mut start: *mut *mut libc::c_char = argv;

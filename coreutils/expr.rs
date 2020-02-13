@@ -1,3 +1,4 @@
+use crate::libbb::default_error_retval::xfunc_error_retval;
 use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::re_pattern_buffer;
 use crate::librb::size_t;
@@ -22,9 +23,6 @@ extern "C" {
   fn strcspn(_: *const libc::c_char, _: *const libc::c_char) -> libc::c_ulong;
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
-
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
 
   #[no_mangle]
   static mut bb_common_bufsiz1: [libc::c_char; 0];

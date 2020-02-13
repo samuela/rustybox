@@ -10,5 +10,4 @@
  * by the applet.  I suppose we could use a wrapper function to set it, but
  * that too seems silly.
  */
-#[no_mangle]
-pub static mut xfunc_error_retval: u8 = 1i32 as u8;
+pub static mut xfunc_error_retval: u8 = 1;

@@ -1,8 +1,5 @@
+use crate::libbb::default_error_retval::xfunc_error_retval;
 use libc;
-extern "C" {
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
-}
 
 /* Keeping it separate allows to NOT pull in stdio for VERY small applets.
  * Try building busybox with only "true" enabled... */
@@ -11,8 +8,9 @@ extern "C" {
 pub static mut die_func: Option<unsafe fn() -> ()> = None;
 
 pub unsafe fn xfunc_die() -> ! {
-  if die_func.is_some() {
-    die_func.expect("non-null function pointer")();
+  match die_func {
+    Some(df) => df(),
+    None => (),
   }
   ::std::process::exit(xfunc_error_retval as libc::c_int);
 }
