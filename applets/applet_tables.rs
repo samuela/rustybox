@@ -374,13 +374,6 @@ pub enum InstallLoc {
   DIR_ROOT,
 }
 
-#[derive(PartialEq)]
-pub enum SUID {
-  SUID_REQUIRE,
-  SUID_MAYBE,
-  SUID_DROP,
-}
-
 pub enum Entrypoint {
   CStyle(unsafe fn(_: libc::c_int, _: *mut *mut libc::c_char) -> libc::c_int),
   SafeStyle(fn(&[&str]) -> !),
@@ -393,7 +386,6 @@ pub struct applet {
   pub main: &'static str,
   pub entrypoint: Entrypoint,
   pub install_loc: InstallLoc,
-  pub need_suid: SUID,
   pub usage: &'static str,
 }
 
@@ -423,7 +415,6 @@ lazy_static! {
       main: "test",
       entrypoint: Entrypoint::CStyle(test_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/["),
     });
     #[cfg(feature = "test-bracket2")]
@@ -432,7 +423,6 @@ lazy_static! {
       main: "test",
       entrypoint: Entrypoint::CStyle(test_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/[["),
     });
     #[cfg(feature = "acpid")]
@@ -441,7 +431,6 @@ lazy_static! {
       main: "acpid",
       entrypoint: Entrypoint::CStyle(acpid_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/acpid"),
     });
     #[cfg(feature = "add-shell")]
@@ -450,7 +439,6 @@ lazy_static! {
       main: "add_remove_shell",
       entrypoint: Entrypoint::CStyle(add_remove_shell_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/add-shell"),
     });
     #[cfg(feature = "addgroup")]
@@ -459,7 +447,6 @@ lazy_static! {
       main: "addgroup",
       entrypoint: Entrypoint::CStyle(addgroup_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/addgroup"),
     });
     #[cfg(feature = "adduser")]
@@ -468,7 +455,6 @@ lazy_static! {
       main: "adduser",
       entrypoint: Entrypoint::CStyle(adduser_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/adduser"),
     });
     #[cfg(feature = "adjtimex")]
@@ -477,7 +463,6 @@ lazy_static! {
       main: "adjtimex",
       entrypoint: Entrypoint::CStyle(adjtimex_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/adjtimex"),
     });
     #[cfg(feature = "arch")]
@@ -486,7 +471,6 @@ lazy_static! {
       main: "uname",
       entrypoint: Entrypoint::CStyle(uname_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/arch"),
     });
     #[cfg(feature = "arp")]
@@ -495,7 +479,6 @@ lazy_static! {
       main: "arp",
       entrypoint: Entrypoint::CStyle(arp_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/arp"),
     });
     #[cfg(feature = "arping")]
@@ -504,7 +487,6 @@ lazy_static! {
       main: "arping",
       entrypoint: Entrypoint::CStyle(arping_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/arping"),
     });
     #[cfg(feature = "ash")]
@@ -513,7 +495,6 @@ lazy_static! {
       main: "ash",
       entrypoint: Entrypoint::CStyle(ash_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ash"),
     });
     #[cfg(feature = "awk")]
@@ -522,7 +503,6 @@ lazy_static! {
       main: "awk",
       entrypoint: Entrypoint::CStyle(awk_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/awk"),
     });
     #[cfg(feature = "base64")]
@@ -531,7 +511,6 @@ lazy_static! {
       main: "base64",
       entrypoint: Entrypoint::CStyle(base64_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/base64"),
     });
     #[cfg(feature = "basename")]
@@ -540,7 +519,6 @@ lazy_static! {
       main: "basename",
       entrypoint: Entrypoint::CStyle(basename_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/basename"),
     });
     #[cfg(feature = "bc")]
@@ -549,7 +527,6 @@ lazy_static! {
       main: "bc",
       entrypoint: Entrypoint::CStyle(bc_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/bc"),
     });
     #[cfg(feature = "beep")]
@@ -558,7 +535,6 @@ lazy_static! {
       main: "beep",
       entrypoint: Entrypoint::CStyle(beep_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/beep"),
     });
     #[cfg(feature = "blkdiscard")]
@@ -567,7 +543,6 @@ lazy_static! {
       main: "blkdiscard",
       entrypoint: Entrypoint::CStyle(blkdiscard_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/blkdiscard"),
     });
     #[cfg(feature = "blkid")]
@@ -576,7 +551,6 @@ lazy_static! {
       main: "blkid",
       entrypoint: Entrypoint::CStyle(blkid_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/blkid"),
     });
     #[cfg(feature = "blockdev")]
@@ -585,7 +559,6 @@ lazy_static! {
       main: "blockdev",
       entrypoint: Entrypoint::CStyle(blockdev_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/blockdev"),
     });
     #[cfg(feature = "bootchartd")]
@@ -594,7 +567,6 @@ lazy_static! {
       main: "bootchartd",
       entrypoint: Entrypoint::CStyle(bootchartd_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/bootchartd"),
     });
     #[cfg(feature = "brctl")]
@@ -603,7 +575,6 @@ lazy_static! {
       main: "brctl",
       entrypoint: Entrypoint::CStyle(brctl_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/brctl"),
     });
     #[cfg(feature = "bunzip2")]
@@ -612,7 +583,6 @@ lazy_static! {
       main: "bunzip2",
       entrypoint: Entrypoint::CStyle(bunzip2_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/bunzip2"),
     });
     #[cfg(feature = "bzcat")]
@@ -621,7 +591,6 @@ lazy_static! {
       main: "bunzip2",
       entrypoint: Entrypoint::CStyle(bunzip2_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/bzcat"),
     });
     #[cfg(feature = "bzip2")]
@@ -630,7 +599,6 @@ lazy_static! {
       main: "bzip2",
       entrypoint: Entrypoint::CStyle(bzip2_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/bzip2"),
     });
     #[cfg(feature = "cal")]
@@ -639,7 +607,6 @@ lazy_static! {
       main: "cal",
       entrypoint: Entrypoint::CStyle(cal_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/cal"),
     });
     #[cfg(feature = "cat")]
@@ -648,7 +615,6 @@ lazy_static! {
       main: "cat",
       entrypoint: Entrypoint::CStyle(cat_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/cat"),
     });
     #[cfg(feature = "chat")]
@@ -657,7 +623,6 @@ lazy_static! {
       main: "chat",
       entrypoint: Entrypoint::CStyle(chat_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/chat"),
     });
     #[cfg(feature = "chattr")]
@@ -666,7 +631,6 @@ lazy_static! {
       main: "chattr",
       entrypoint: Entrypoint::CStyle(chattr_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/chattr"),
     });
     #[cfg(feature = "chgrp")]
@@ -675,7 +639,6 @@ lazy_static! {
       main: "chgrp",
       entrypoint: Entrypoint::CStyle(chgrp_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/chgrp"),
     });
     #[cfg(feature = "chmod")]
@@ -684,7 +647,6 @@ lazy_static! {
       main: "chmod",
       entrypoint: Entrypoint::CStyle(chmod_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/chmod"),
     });
     #[cfg(feature = "chown")]
@@ -693,7 +655,6 @@ lazy_static! {
       main: "chown",
       entrypoint: Entrypoint::CStyle(chown_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/chown"),
     });
     #[cfg(feature = "chpasswd")]
@@ -702,7 +663,6 @@ lazy_static! {
       main: "chpasswd",
       entrypoint: Entrypoint::CStyle(chpasswd_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/chpasswd"),
     });
     #[cfg(feature = "chpst")]
@@ -711,7 +671,6 @@ lazy_static! {
       main: "chpst",
       entrypoint: Entrypoint::CStyle(chpst_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/chpst"),
     });
     #[cfg(feature = "chroot")]
@@ -720,7 +679,6 @@ lazy_static! {
       main: "chroot",
       entrypoint: Entrypoint::CStyle(chroot_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/chroot"),
     });
     #[cfg(feature = "chrt")]
@@ -729,7 +687,6 @@ lazy_static! {
       main: "chrt",
       entrypoint: Entrypoint::CStyle(chrt_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/chrt"),
     });
     #[cfg(feature = "chvt")]
@@ -738,7 +695,6 @@ lazy_static! {
       main: "chvt",
       entrypoint: Entrypoint::CStyle(chvt_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/chvt"),
     });
     #[cfg(feature = "cksum")]
@@ -747,7 +703,6 @@ lazy_static! {
       main: "cksum",
       entrypoint: Entrypoint::CStyle(cksum_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/cksum"),
     });
     #[cfg(feature = "clear")]
@@ -756,7 +711,6 @@ lazy_static! {
       main: "clear",
       entrypoint: Entrypoint::CStyle(clear_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/clear"),
     });
     #[cfg(feature = "cmp")]
@@ -765,7 +719,6 @@ lazy_static! {
       main: "cmp",
       entrypoint: Entrypoint::CStyle(cmp_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/cmp"),
     });
     #[cfg(feature = "comm")]
@@ -774,7 +727,6 @@ lazy_static! {
       main: "comm",
       entrypoint: Entrypoint::CStyle(comm_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/comm"),
     });
     #[cfg(feature = "conspy")]
@@ -783,7 +735,6 @@ lazy_static! {
       main: "conspy",
       entrypoint: Entrypoint::CStyle(conspy_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/conspy"),
     });
     #[cfg(feature = "cp")]
@@ -792,7 +743,6 @@ lazy_static! {
       main: "cp",
       entrypoint: Entrypoint::CStyle(cp_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/cp"),
     });
     #[cfg(feature = "cpio")]
@@ -801,7 +751,6 @@ lazy_static! {
       main: "cpio",
       entrypoint: Entrypoint::CStyle(cpio_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/cpio"),
     });
     #[cfg(feature = "crond")]
@@ -810,7 +759,6 @@ lazy_static! {
       main: "crond",
       entrypoint: Entrypoint::CStyle(crond_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/crond"),
     });
     #[cfg(feature = "crontab")]
@@ -819,7 +767,6 @@ lazy_static! {
       main: "crontab",
       entrypoint: Entrypoint::CStyle(crontab_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_REQUIRE,
       usage: std::include_str!("../usage/crontab"),
     });
     #[cfg(feature = "cryptpw")]
@@ -828,7 +775,6 @@ lazy_static! {
       main: "cryptpw",
       entrypoint: Entrypoint::CStyle(cryptpw_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/cryptpw"),
     });
     #[cfg(feature = "cttyhack")]
@@ -837,7 +783,6 @@ lazy_static! {
       main: "cttyhack",
       entrypoint: Entrypoint::CStyle(cttyhack_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/cttyhack"),
     });
     #[cfg(feature = "cut")]
@@ -846,7 +791,6 @@ lazy_static! {
       main: "cut",
       entrypoint: Entrypoint::CStyle(cut_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/cut"),
     });
     #[cfg(feature = "date")]
@@ -855,7 +799,6 @@ lazy_static! {
       main: "date",
       entrypoint: Entrypoint::CStyle(date_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/date"),
     });
     #[cfg(feature = "dc")]
@@ -864,7 +807,6 @@ lazy_static! {
       main: "dc",
       entrypoint: Entrypoint::CStyle(dc_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/dc"),
     });
     #[cfg(feature = "dd")]
@@ -873,7 +815,6 @@ lazy_static! {
       main: "dd",
       entrypoint: Entrypoint::CStyle(dd_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/dd"),
     });
     #[cfg(feature = "deallocvt")]
@@ -882,7 +823,6 @@ lazy_static! {
       main: "deallocvt",
       entrypoint: Entrypoint::CStyle(deallocvt_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/deallocvt"),
     });
     #[cfg(feature = "delgroup")]
@@ -891,7 +831,6 @@ lazy_static! {
       main: "deluser",
       entrypoint: Entrypoint::CStyle(deluser_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/delgroup"),
     });
     #[cfg(feature = "deluser")]
@@ -900,7 +839,6 @@ lazy_static! {
       main: "deluser",
       entrypoint: Entrypoint::CStyle(deluser_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/deluser"),
     });
     #[cfg(feature = "depmod")]
@@ -909,7 +847,6 @@ lazy_static! {
       main: "modprobe",
       entrypoint: Entrypoint::CStyle(modprobe_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/depmod"),
     });
     #[cfg(feature = "devmem")]
@@ -918,7 +855,6 @@ lazy_static! {
       main: "devmem",
       entrypoint: Entrypoint::CStyle(devmem_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/devmem"),
     });
     #[cfg(feature = "df")]
@@ -927,7 +863,6 @@ lazy_static! {
       main: "df",
       entrypoint: Entrypoint::CStyle(df_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/df"),
     });
     #[cfg(feature = "dhcprelay")]
@@ -936,7 +871,6 @@ lazy_static! {
       main: "dhcprelay",
       entrypoint: Entrypoint::CStyle(dhcprelay_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/dhcprelay"),
     });
     #[cfg(feature = "diff")]
@@ -945,7 +879,6 @@ lazy_static! {
       main: "diff",
       entrypoint: Entrypoint::CStyle(diff_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/diff"),
     });
     #[cfg(feature = "dirname")]
@@ -954,7 +887,6 @@ lazy_static! {
       main: "dirname",
       entrypoint: Entrypoint::CStyle(dirname_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/dirname"),
     });
     #[cfg(feature = "dmesg")]
@@ -963,7 +895,6 @@ lazy_static! {
       main: "dmesg",
       entrypoint: Entrypoint::CStyle(dmesg_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/dmesg"),
     });
     #[cfg(feature = "dnsd")]
@@ -972,7 +903,6 @@ lazy_static! {
       main: "dnsd",
       entrypoint: Entrypoint::CStyle(dnsd_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/dnsd"),
     });
     #[cfg(feature = "dnsdomainname")]
@@ -981,7 +911,6 @@ lazy_static! {
       main: "hostname",
       entrypoint: Entrypoint::CStyle(hostname_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/dnsdomainname"),
     });
     #[cfg(feature = "dos2unix")]
@@ -990,7 +919,6 @@ lazy_static! {
       main: "dos2unix",
       entrypoint: Entrypoint::CStyle(dos2unix_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/dos2unix"),
     });
     #[cfg(feature = "dpkg")]
@@ -999,7 +927,6 @@ lazy_static! {
       main: "dpkg",
       entrypoint: Entrypoint::CStyle(dpkg_deb_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/dpkg"),
     });
     #[cfg(feature = "dpkg-deb")]
@@ -1008,7 +935,6 @@ lazy_static! {
       main: "dpkg_deb",
       entrypoint: Entrypoint::CStyle(dpkg_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/dpkg-deb"),
     });
     #[cfg(feature = "du")]
@@ -1017,7 +943,6 @@ lazy_static! {
       main: "du",
       entrypoint: Entrypoint::CStyle(du_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/du"),
     });
     #[cfg(feature = "dumpkmap")]
@@ -1026,7 +951,6 @@ lazy_static! {
       main: "dumpkmap",
       entrypoint: Entrypoint::CStyle(dumpkmap_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/dumpkmap"),
     });
     #[cfg(feature = "dumpleases")]
@@ -1035,7 +959,6 @@ lazy_static! {
       main: "dumpleases",
       entrypoint: Entrypoint::CStyle(dumpleases_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/dumpleases"),
     });
     #[cfg(feature = "echo")]
@@ -1044,7 +967,6 @@ lazy_static! {
       main: "echo",
       entrypoint: Entrypoint::CStyle(echo_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/echo"),
     });
     #[cfg(feature = "ed")]
@@ -1053,7 +975,6 @@ lazy_static! {
       main: "ed",
       entrypoint: Entrypoint::CStyle(ed_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ed"),
     });
     #[cfg(feature = "egrep")]
@@ -1062,7 +983,6 @@ lazy_static! {
       main: "grep",
       entrypoint: Entrypoint::CStyle(grep_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/egrep"),
     });
     #[cfg(feature = "eject")]
@@ -1071,7 +991,6 @@ lazy_static! {
       main: "eject",
       entrypoint: Entrypoint::CStyle(eject_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/eject"),
     });
     #[cfg(feature = "env")]
@@ -1080,7 +999,6 @@ lazy_static! {
       main: "env",
       entrypoint: Entrypoint::CStyle(env_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/env"),
     });
     #[cfg(feature = "envdir")]
@@ -1089,7 +1007,6 @@ lazy_static! {
       main: "chpst",
       entrypoint: Entrypoint::CStyle(chpst_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/envdir"),
     });
     #[cfg(feature = "envuidgid")]
@@ -1098,7 +1015,6 @@ lazy_static! {
       main: "chpst",
       entrypoint: Entrypoint::CStyle(chpst_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/envuidgid"),
     });
     #[cfg(feature = "ether-wake")]
@@ -1107,7 +1023,6 @@ lazy_static! {
       main: "ether_wake",
       entrypoint: Entrypoint::CStyle(ether_wake_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ether-wake"),
     });
     #[cfg(feature = "expand")]
@@ -1116,7 +1031,6 @@ lazy_static! {
       main: "expand",
       entrypoint: Entrypoint::CStyle(expand_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/expand"),
     });
     #[cfg(feature = "expr")]
@@ -1125,7 +1039,6 @@ lazy_static! {
       main: "expr",
       entrypoint: Entrypoint::CStyle(expr_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/expr"),
     });
     #[cfg(feature = "factor")]
@@ -1134,7 +1047,6 @@ lazy_static! {
       main: "factor",
       entrypoint: Entrypoint::CStyle(factor_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/factor"),
     });
     #[cfg(feature = "fakeidentd")]
@@ -1143,7 +1055,6 @@ lazy_static! {
       main: "fakeidentd",
       entrypoint: Entrypoint::CStyle(fakeidentd_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fakeidentd"),
     });
     #[cfg(feature = "fallocate")]
@@ -1152,7 +1063,6 @@ lazy_static! {
       main: "fallocate",
       entrypoint: Entrypoint::CStyle(fallocate_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fallocate"),
     });
     #[cfg(feature = "false")]
@@ -1161,7 +1071,6 @@ lazy_static! {
       main: "false",
       entrypoint: Entrypoint::CStyle(false_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/false"),
     });
     #[cfg(feature = "fatattr")]
@@ -1170,7 +1079,6 @@ lazy_static! {
       main: "fatattr",
       entrypoint: Entrypoint::CStyle(fatattr_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fatattr"),
     });
     #[cfg(feature = "fbset")]
@@ -1179,7 +1087,6 @@ lazy_static! {
       main: "fbset",
       entrypoint: Entrypoint::CStyle(fbset_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fbset"),
     });
     #[cfg(feature = "fbsplash")]
@@ -1188,7 +1095,6 @@ lazy_static! {
       main: "fbsplash",
       entrypoint: Entrypoint::CStyle(fbsplash_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fbsplash"),
     });
     #[cfg(feature = "fdflush")]
@@ -1197,7 +1103,6 @@ lazy_static! {
       main: "freeramdisk",
       entrypoint: Entrypoint::CStyle(freeramdisk_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fdflush"),
     });
     #[cfg(feature = "fdformat")]
@@ -1206,7 +1111,6 @@ lazy_static! {
       main: "fdformat",
       entrypoint: Entrypoint::CStyle(fdformat_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fdformat"),
     });
     #[cfg(feature = "fdisk")]
@@ -1215,7 +1119,6 @@ lazy_static! {
       main: "fdisk",
       entrypoint: Entrypoint::CStyle(fdisk_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fdisk"),
     });
     #[cfg(feature = "fgconsole")]
@@ -1224,7 +1127,6 @@ lazy_static! {
       main: "fgconsole",
       entrypoint: Entrypoint::CStyle(fgconsole_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fgconsole"),
     });
     #[cfg(feature = "fgrep")]
@@ -1233,7 +1135,6 @@ lazy_static! {
       main: "grep",
       entrypoint: Entrypoint::CStyle(grep_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fgrep"),
     });
     #[cfg(feature = "find")]
@@ -1242,7 +1143,6 @@ lazy_static! {
       main: "find",
       entrypoint: Entrypoint::CStyle(find_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/find"),
     });
     #[cfg(feature = "findfs")]
@@ -1251,7 +1151,6 @@ lazy_static! {
       main: "findfs",
       entrypoint: Entrypoint::CStyle(findfs_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_MAYBE,
       usage: std::include_str!("../usage/findfs"),
     });
     #[cfg(feature = "flock")]
@@ -1260,7 +1159,6 @@ lazy_static! {
       main: "flock",
       entrypoint: Entrypoint::CStyle(flock_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/flock"),
     });
     #[cfg(feature = "fold")]
@@ -1269,7 +1167,6 @@ lazy_static! {
       main: "fold",
       entrypoint: Entrypoint::CStyle(fold_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fold"),
     });
     #[cfg(feature = "free")]
@@ -1278,7 +1175,6 @@ lazy_static! {
       main: "free",
       entrypoint: Entrypoint::CStyle(free_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/free"),
     });
     #[cfg(feature = "freeramdisk")]
@@ -1287,7 +1183,6 @@ lazy_static! {
       main: "freeramdisk",
       entrypoint: Entrypoint::CStyle(freeramdisk_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/freeramdisk"),
     });
     #[cfg(feature = "fsck")]
@@ -1296,7 +1191,6 @@ lazy_static! {
       main: "fsck",
       entrypoint: Entrypoint::CStyle(fsck_minix_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fsck"),
     });
     #[cfg(feature = "fsck_minix")]
@@ -1305,7 +1199,6 @@ lazy_static! {
       main: "fsck_minix",
       entrypoint: Entrypoint::CStyle(fsck_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fsck.minix"),
     });
     #[cfg(feature = "fsfreeze")]
@@ -1314,7 +1207,6 @@ lazy_static! {
       main: "fsfreeze",
       entrypoint: Entrypoint::CStyle(fsfreeze_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fsfreeze"),
     });
     #[cfg(feature = "fstrim")]
@@ -1323,7 +1215,6 @@ lazy_static! {
       main: "fstrim",
       entrypoint: Entrypoint::CStyle(fstrim_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fstrim"),
     });
     #[cfg(feature = "fsync")]
@@ -1332,7 +1223,6 @@ lazy_static! {
       main: "fsync",
       entrypoint: Entrypoint::CStyle(fsync_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fsync"),
     });
     #[cfg(feature = "ftpd")]
@@ -1341,7 +1231,6 @@ lazy_static! {
       main: "ftpd",
       entrypoint: Entrypoint::CStyle(ftpd_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ftpd"),
     });
     #[cfg(feature = "ftpget")]
@@ -1350,7 +1239,6 @@ lazy_static! {
       main: "ftpgetput",
       entrypoint: Entrypoint::CStyle(ftpgetput_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ftpget"),
     });
     #[cfg(feature = "ftpput")]
@@ -1359,7 +1247,6 @@ lazy_static! {
       main: "ftpgetput",
       entrypoint: Entrypoint::CStyle(ftpgetput_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ftpput"),
     });
     #[cfg(feature = "fuser")]
@@ -1368,7 +1255,6 @@ lazy_static! {
       main: "fuser",
       entrypoint: Entrypoint::CStyle(fuser_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/fuser"),
     });
     #[cfg(feature = "getopt")]
@@ -1377,7 +1263,6 @@ lazy_static! {
       main: "getopt",
       entrypoint: Entrypoint::CStyle(getopt_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/getopt"),
     });
     #[cfg(feature = "getty")]
@@ -1386,7 +1271,6 @@ lazy_static! {
       main: "getty",
       entrypoint: Entrypoint::CStyle(getty_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/getty"),
     });
     #[cfg(feature = "grep")]
@@ -1395,7 +1279,6 @@ lazy_static! {
       main: "grep",
       entrypoint: Entrypoint::CStyle(grep_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/grep"),
     });
     #[cfg(feature = "groups")]
@@ -1404,7 +1287,6 @@ lazy_static! {
       main: "id",
       entrypoint: Entrypoint::CStyle(id_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/groups"),
     });
     #[cfg(feature = "gunzip")]
@@ -1413,7 +1295,6 @@ lazy_static! {
       main: "gunzip",
       entrypoint: Entrypoint::CStyle(gunzip_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/gunzip"),
     });
     #[cfg(feature = "gzip")]
@@ -1422,7 +1303,6 @@ lazy_static! {
       main: "gzip",
       entrypoint: Entrypoint::CStyle(gzip_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/gzip"),
     });
     #[cfg(feature = "halt")]
@@ -1431,7 +1311,6 @@ lazy_static! {
       main: "halt",
       entrypoint: Entrypoint::CStyle(halt_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/halt"),
     });
     #[cfg(feature = "hd")]
@@ -1440,7 +1319,6 @@ lazy_static! {
       main: "hexdump",
       entrypoint: Entrypoint::CStyle(hexdump_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/hd"),
     });
     #[cfg(feature = "hdparm")]
@@ -1449,7 +1327,6 @@ lazy_static! {
       main: "hdparm",
       entrypoint: Entrypoint::CStyle(hdparm_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/hdparm"),
     });
     #[cfg(feature = "head")]
@@ -1458,7 +1335,6 @@ lazy_static! {
       main: "head",
       entrypoint: Entrypoint::CStyle(head_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/head"),
     });
     #[cfg(feature = "hexdump")]
@@ -1467,7 +1343,6 @@ lazy_static! {
       main: "hexdump",
       entrypoint: Entrypoint::CStyle(hexdump_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/hexdump"),
     });
     #[cfg(feature = "hexedit")]
@@ -1476,7 +1351,6 @@ lazy_static! {
       main: "hexedit",
       entrypoint: Entrypoint::CStyle(hexedit_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/hexedit"),
     });
     #[cfg(feature = "hostid")]
@@ -1485,7 +1359,6 @@ lazy_static! {
       main: "hostid",
       entrypoint: Entrypoint::CStyle(hostid_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/hostid"),
     });
     #[cfg(feature = "hostname")]
@@ -1494,7 +1367,6 @@ lazy_static! {
       main: "hostname",
       entrypoint: Entrypoint::CStyle(hostname_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/hostname"),
     });
     #[cfg(feature = "httpd")]
@@ -1503,7 +1375,6 @@ lazy_static! {
       main: "httpd",
       entrypoint: Entrypoint::CStyle(httpd_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/httpd"),
     });
     #[cfg(feature = "hush")]
@@ -1512,7 +1383,6 @@ lazy_static! {
       main: "hush",
       entrypoint: Entrypoint::CStyle(hush_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/hush"),
     });
     #[cfg(feature = "hwclock")]
@@ -1521,7 +1391,6 @@ lazy_static! {
       main: "hwclock",
       entrypoint: Entrypoint::CStyle(hwclock_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/hwclock"),
     });
     #[cfg(feature = "i2cdetect")]
@@ -1530,7 +1399,6 @@ lazy_static! {
       main: "i2cdetect",
       entrypoint: Entrypoint::CStyle(i2cdetect_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/i2cdetect"),
     });
     #[cfg(feature = "i2cdump")]
@@ -1539,7 +1407,6 @@ lazy_static! {
       main: "i2cdump",
       entrypoint: Entrypoint::CStyle(i2cdump_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/i2cdump"),
     });
     #[cfg(feature = "i2cget")]
@@ -1548,7 +1415,6 @@ lazy_static! {
       main: "i2cget",
       entrypoint: Entrypoint::CStyle(i2cget_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/i2cget"),
     });
     #[cfg(feature = "i2cset")]
@@ -1557,7 +1423,6 @@ lazy_static! {
       main: "i2cset",
       entrypoint: Entrypoint::CStyle(i2cset_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/i2cset"),
     });
     #[cfg(feature = "i2ctransfer")]
@@ -1566,7 +1431,6 @@ lazy_static! {
       main: "i2ctransfer",
       entrypoint: Entrypoint::CStyle(i2ctransfer_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/i2ctransfer"),
     });
     #[cfg(feature = "id")]
@@ -1575,7 +1439,6 @@ lazy_static! {
       main: "id",
       entrypoint: Entrypoint::CStyle(id_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/id"),
     });
     #[cfg(feature = "ifconfig")]
@@ -1584,7 +1447,6 @@ lazy_static! {
       main: "ifconfig",
       entrypoint: Entrypoint::CStyle(ifconfig_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ifconfig"),
     });
     #[cfg(feature = "ifdown")]
@@ -1593,7 +1455,6 @@ lazy_static! {
       main: "ifupdown",
       entrypoint: Entrypoint::CStyle(ifupdown_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ifdown"),
     });
     #[cfg(feature = "ifenslave")]
@@ -1602,7 +1463,6 @@ lazy_static! {
       main: "ifenslave",
       entrypoint: Entrypoint::CStyle(ifenslave_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ifenslave"),
     });
     #[cfg(feature = "ifplugd")]
@@ -1611,7 +1471,6 @@ lazy_static! {
       main: "ifplugd",
       entrypoint: Entrypoint::CStyle(ifplugd_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ifplugd"),
     });
     #[cfg(feature = "ifup")]
@@ -1620,7 +1479,6 @@ lazy_static! {
       main: "ifupdown",
       entrypoint: Entrypoint::CStyle(ifupdown_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ifup"),
     });
     #[cfg(feature = "inetd")]
@@ -1629,7 +1487,6 @@ lazy_static! {
       main: "inetd",
       entrypoint: Entrypoint::CStyle(inetd_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/inetd"),
     });
     #[cfg(feature = "init")]
@@ -1638,7 +1495,6 @@ lazy_static! {
       main: "init",
       entrypoint: Entrypoint::CStyle(init_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/init"),
     });
     #[cfg(feature = "insmod")]
@@ -1647,7 +1503,6 @@ lazy_static! {
       main: "modprobe",
       entrypoint: Entrypoint::CStyle(modprobe_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/insmod"),
     });
     #[cfg(feature = "install")]
@@ -1656,7 +1511,6 @@ lazy_static! {
       main: "install",
       entrypoint: Entrypoint::CStyle(install_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/install"),
     });
     #[cfg(feature = "ionice")]
@@ -1665,7 +1519,6 @@ lazy_static! {
       main: "ionice",
       entrypoint: Entrypoint::CStyle(ionice_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ionice"),
     });
     #[cfg(feature = "iostat")]
@@ -1674,7 +1527,6 @@ lazy_static! {
       main: "iostat",
       entrypoint: Entrypoint::CStyle(iostat_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/iostat"),
     });
     #[cfg(feature = "ip")]
@@ -1683,7 +1535,6 @@ lazy_static! {
       main: "ip",
       entrypoint: Entrypoint::CStyle(ip_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ip"),
     });
     #[cfg(feature = "ipaddr")]
@@ -1692,7 +1543,6 @@ lazy_static! {
       main: "ipaddr",
       entrypoint: Entrypoint::CStyle(ipaddr_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ipaddr"),
     });
     #[cfg(feature = "ipcalc")]
@@ -1701,7 +1551,6 @@ lazy_static! {
       main: "ipcalc",
       entrypoint: Entrypoint::CStyle(ipcalc_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ipcalc"),
     });
     #[cfg(feature = "ipcrm")]
@@ -1710,7 +1559,6 @@ lazy_static! {
       main: "ipcrm",
       entrypoint: Entrypoint::CStyle(ipcrm_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ipcrm"),
     });
     #[cfg(feature = "ipcs")]
@@ -1719,7 +1567,6 @@ lazy_static! {
       main: "ipcs",
       entrypoint: Entrypoint::CStyle(ipcs_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ipcs"),
     });
     #[cfg(feature = "iplink")]
@@ -1728,7 +1575,6 @@ lazy_static! {
       main: "iplink",
       entrypoint: Entrypoint::CStyle(iplink_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/iplink"),
     });
     #[cfg(feature = "ipneigh")]
@@ -1737,7 +1583,6 @@ lazy_static! {
       main: "ipneigh",
       entrypoint: Entrypoint::CStyle(ipneigh_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ipneigh"),
     });
     #[cfg(feature = "iproute")]
@@ -1746,7 +1591,6 @@ lazy_static! {
       main: "iproute",
       entrypoint: Entrypoint::CStyle(iproute_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/iproute"),
     });
     #[cfg(feature = "iprule")]
@@ -1755,7 +1599,6 @@ lazy_static! {
       main: "iprule",
       entrypoint: Entrypoint::CStyle(iprule_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/iprule"),
     });
     #[cfg(feature = "iptunnel")]
@@ -1764,7 +1607,6 @@ lazy_static! {
       main: "iptunnel",
       entrypoint: Entrypoint::CStyle(iptunnel_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/iptunnel"),
     });
     #[cfg(feature = "kbd_mode")]
@@ -1773,7 +1615,6 @@ lazy_static! {
       main: "kbd_mode",
       entrypoint: Entrypoint::CStyle(kbd_mode_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/kbd_mode"),
     });
     #[cfg(feature = "kill")]
@@ -1782,7 +1623,6 @@ lazy_static! {
       main: "kill",
       entrypoint: Entrypoint::CStyle(kill_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/kill"),
     });
     #[cfg(feature = "killall")]
@@ -1791,7 +1631,6 @@ lazy_static! {
       main: "kill",
       entrypoint: Entrypoint::CStyle(kill_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/killall"),
     });
     #[cfg(feature = "killall5")]
@@ -1800,7 +1639,6 @@ lazy_static! {
       main: "kill",
       entrypoint: Entrypoint::CStyle(kill_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/killall5"),
     });
     #[cfg(feature = "klogd")]
@@ -1809,7 +1647,6 @@ lazy_static! {
       main: "klogd",
       entrypoint: Entrypoint::CStyle(klogd_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/klogd"),
     });
     #[cfg(feature = "last")]
@@ -1818,7 +1655,6 @@ lazy_static! {
       main: "last",
       entrypoint: Entrypoint::CStyle(last_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/last"),
     });
     #[cfg(feature = "less")]
@@ -1827,7 +1663,6 @@ lazy_static! {
       main: "less",
       entrypoint: Entrypoint::CStyle(less_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/less"),
     });
     #[cfg(feature = "link")]
@@ -1836,7 +1671,6 @@ lazy_static! {
       main: "link",
       entrypoint: Entrypoint::CStyle(link_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/link"),
     });
     #[cfg(feature = "linux32")]
@@ -1845,7 +1679,6 @@ lazy_static! {
       main: "setarch",
       entrypoint: Entrypoint::CStyle(setarch_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/linux32"),
     });
     #[cfg(feature = "linux64")]
@@ -1854,7 +1687,6 @@ lazy_static! {
       main: "setarch",
       entrypoint: Entrypoint::CStyle(setarch_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/linux64"),
     });
     #[cfg(feature = "linuxrc")]
@@ -1863,7 +1695,6 @@ lazy_static! {
       main: "init",
       entrypoint: Entrypoint::CStyle(init_main),
       install_loc: InstallLoc::DIR_ROOT,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/linuxrc"),
     });
     #[cfg(feature = "ln")]
@@ -1872,7 +1703,6 @@ lazy_static! {
       main: "ln",
       entrypoint: Entrypoint::CStyle(ln_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ln"),
     });
     #[cfg(feature = "loadfont")]
@@ -1881,7 +1711,6 @@ lazy_static! {
       main: "loadfont",
       entrypoint: Entrypoint::CStyle(loadfont_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/loadfont"),
     });
     #[cfg(feature = "loadkmap")]
@@ -1890,7 +1719,6 @@ lazy_static! {
       main: "loadkmap",
       entrypoint: Entrypoint::CStyle(loadkmap_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/loadkmap"),
     });
     #[cfg(feature = "logger")]
@@ -1899,7 +1727,6 @@ lazy_static! {
       main: "logger",
       entrypoint: Entrypoint::CStyle(logger_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/logger"),
     });
     #[cfg(feature = "login")]
@@ -1908,7 +1735,6 @@ lazy_static! {
       main: "login",
       entrypoint: Entrypoint::CStyle(login_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_REQUIRE,
       usage: std::include_str!("../usage/login"),
     });
     #[cfg(feature = "logname")]
@@ -1917,7 +1743,6 @@ lazy_static! {
       main: "logname",
       entrypoint: Entrypoint::CStyle(logname_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/logname"),
     });
     #[cfg(feature = "logread")]
@@ -1926,7 +1751,6 @@ lazy_static! {
       main: "logread",
       entrypoint: Entrypoint::CStyle(logread_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/logread"),
     });
     #[cfg(feature = "losetup")]
@@ -1935,7 +1759,6 @@ lazy_static! {
       main: "losetup",
       entrypoint: Entrypoint::CStyle(losetup_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/losetup"),
     });
     #[cfg(feature = "lpd")]
@@ -1944,7 +1767,6 @@ lazy_static! {
       main: "lpd",
       entrypoint: Entrypoint::CStyle(lpd_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/lpd"),
     });
     #[cfg(feature = "lpq")]
@@ -1953,7 +1775,6 @@ lazy_static! {
       main: "lpqr",
       entrypoint: Entrypoint::CStyle(lpqr_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/lpq"),
     });
     #[cfg(feature = "lpr")]
@@ -1962,7 +1783,6 @@ lazy_static! {
       main: "lpqr",
       entrypoint: Entrypoint::CStyle(lpqr_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/lpr"),
     });
     #[cfg(feature = "ls")]
@@ -1971,7 +1791,6 @@ lazy_static! {
       main: "ls",
       entrypoint: Entrypoint::CStyle(ls_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ls"),
     });
     #[cfg(feature = "lsattr")]
@@ -1980,7 +1799,6 @@ lazy_static! {
       main: "lsattr",
       entrypoint: Entrypoint::CStyle(lsattr_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/lsattr"),
     });
     #[cfg(feature = "lsmod")]
@@ -1989,7 +1807,6 @@ lazy_static! {
       main: "lsmod",
       entrypoint: Entrypoint::CStyle(lsmod_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/lsmod"),
     });
     #[cfg(feature = "lsof")]
@@ -1998,7 +1815,6 @@ lazy_static! {
       main: "lsof",
       entrypoint: Entrypoint::CStyle(lsof_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/lsof"),
     });
     #[cfg(feature = "lspci")]
@@ -2007,7 +1823,6 @@ lazy_static! {
       main: "lspci",
       entrypoint: Entrypoint::CStyle(lspci_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/lspci"),
     });
     #[cfg(feature = "lsscsi")]
@@ -2016,7 +1831,6 @@ lazy_static! {
       main: "lsscsi",
       entrypoint: Entrypoint::CStyle(lsscsi_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/lsscsi"),
     });
     #[cfg(feature = "lsusb")]
@@ -2025,7 +1839,6 @@ lazy_static! {
       main: "lsusb",
       entrypoint: Entrypoint::CStyle(lsusb_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/lsusb"),
     });
     #[cfg(feature = "lzcat")]
@@ -2034,7 +1847,6 @@ lazy_static! {
       main: "unlzma",
       entrypoint: Entrypoint::CStyle(unlzma_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/lzcat"),
     });
     #[cfg(feature = "lzma")]
@@ -2043,7 +1855,6 @@ lazy_static! {
       main: "unlzma",
       entrypoint: Entrypoint::CStyle(unlzma_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/lzma"),
     });
     #[cfg(feature = "lzop")]
@@ -2052,7 +1863,6 @@ lazy_static! {
       main: "lzop",
       entrypoint: Entrypoint::CStyle(lzop_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/lzop"),
     });
     #[cfg(feature = "makedevs")]
@@ -2061,7 +1871,6 @@ lazy_static! {
       main: "makedevs",
       entrypoint: Entrypoint::CStyle(makedevs_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/makedevs"),
     });
     #[cfg(feature = "makemime")]
@@ -2070,7 +1879,6 @@ lazy_static! {
       main: "makemime",
       entrypoint: Entrypoint::CStyle(makemime_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/makemime"),
     });
     #[cfg(feature = "man")]
@@ -2079,7 +1887,6 @@ lazy_static! {
       main: "man",
       entrypoint: Entrypoint::CStyle(man_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/man"),
     });
     #[cfg(feature = "md5sum")]
@@ -2088,7 +1895,6 @@ lazy_static! {
       main: "md5_sha1_sum",
       entrypoint: Entrypoint::CStyle(md5_sha1_sum_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/md5sum"),
     });
     #[cfg(feature = "mdev")]
@@ -2097,7 +1903,6 @@ lazy_static! {
       main: "mdev",
       entrypoint: Entrypoint::CStyle(mdev_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mdev"),
     });
     #[cfg(feature = "mesg")]
@@ -2106,7 +1911,6 @@ lazy_static! {
       main: "mesg",
       entrypoint: Entrypoint::CStyle(mesg_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mesg"),
     });
     #[cfg(feature = "microcom")]
@@ -2115,7 +1919,6 @@ lazy_static! {
       main: "microcom",
       entrypoint: Entrypoint::CStyle(microcom_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/microcom"),
     });
     #[cfg(feature = "mkdir")]
@@ -2124,7 +1927,6 @@ lazy_static! {
       main: "mkdir",
       entrypoint: Entrypoint::CStyle(mkdir_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mkdir"),
     });
     #[cfg(feature = "mkdosfs")]
@@ -2133,7 +1935,6 @@ lazy_static! {
       main: "mkfs_vfat",
       entrypoint: Entrypoint::CStyle(mkfs_vfat_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mkdosfs"),
     });
     #[cfg(feature = "mke2fs")]
@@ -2142,7 +1943,6 @@ lazy_static! {
       main: "mkfs_ext2",
       entrypoint: Entrypoint::CStyle(mkfs_ext2_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mke2fs"),
     });
     #[cfg(feature = "mkfifo")]
@@ -2151,7 +1951,6 @@ lazy_static! {
       main: "mkfifo",
       entrypoint: Entrypoint::CStyle(mkfifo_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mkfifo"),
     });
     #[cfg(feature = "mkfs_ext2")]
@@ -2160,7 +1959,6 @@ lazy_static! {
       main: "mkfs_ext2",
       entrypoint: Entrypoint::CStyle(mkfs_ext2_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mkfs.ext2"),
     });
     #[cfg(feature = "mkfs_minix")]
@@ -2169,7 +1967,6 @@ lazy_static! {
       main: "mkfs_minix",
       entrypoint: Entrypoint::CStyle(mkfs_minix_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mkfs.minix"),
     });
     #[cfg(feature = "mkfs_vfat")]
@@ -2178,7 +1975,6 @@ lazy_static! {
       main: "mkfs_vfat",
       entrypoint: Entrypoint::CStyle(mkfs_vfat_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mkfs.vfat"),
     });
     #[cfg(feature = "mknod")]
@@ -2187,7 +1983,6 @@ lazy_static! {
       main: "mknod",
       entrypoint: Entrypoint::CStyle(mknod_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mknod"),
     });
     #[cfg(feature = "mkpasswd")]
@@ -2196,7 +1991,6 @@ lazy_static! {
       main: "cryptpw",
       entrypoint: Entrypoint::CStyle(cryptpw_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mkpasswd"),
     });
     #[cfg(feature = "mkswap")]
@@ -2205,7 +1999,6 @@ lazy_static! {
       main: "mkswap",
       entrypoint: Entrypoint::CStyle(mkswap_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mkswap"),
     });
     #[cfg(feature = "mktemp")]
@@ -2214,7 +2007,6 @@ lazy_static! {
       main: "mktemp",
       entrypoint: Entrypoint::CStyle(mktemp_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mktemp"),
     });
     #[cfg(feature = "modinfo")]
@@ -2223,7 +2015,6 @@ lazy_static! {
       main: "modinfo",
       entrypoint: Entrypoint::CStyle(modinfo_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/modinfo"),
     });
     #[cfg(feature = "modprobe")]
@@ -2232,7 +2023,6 @@ lazy_static! {
       main: "modprobe",
       entrypoint: Entrypoint::CStyle(modprobe_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/modprobe"),
     });
     #[cfg(feature = "more")]
@@ -2241,7 +2031,6 @@ lazy_static! {
       main: "more",
       entrypoint: Entrypoint::CStyle(more_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/more"),
     });
     #[cfg(feature = "mount")]
@@ -2250,7 +2039,6 @@ lazy_static! {
       main: "mount",
       entrypoint: Entrypoint::CStyle(mount_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_MAYBE,
       usage: std::include_str!("../usage/mount"),
     });
     #[cfg(feature = "mountpoint")]
@@ -2259,7 +2047,6 @@ lazy_static! {
       main: "mountpoint",
       entrypoint: Entrypoint::CStyle(mountpoint_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mountpoint"),
     });
     #[cfg(feature = "mpstat")]
@@ -2268,7 +2055,6 @@ lazy_static! {
       main: "mpstat",
       entrypoint: Entrypoint::CStyle(mpstat_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mpstat"),
     });
     #[cfg(feature = "mt")]
@@ -2277,7 +2063,6 @@ lazy_static! {
       main: "mt",
       entrypoint: Entrypoint::CStyle(mt_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mt"),
     });
     #[cfg(feature = "mv")]
@@ -2286,7 +2071,6 @@ lazy_static! {
       main: "mv",
       entrypoint: Entrypoint::CStyle(mv_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/mv"),
     });
     #[cfg(feature = "nameif")]
@@ -2295,7 +2079,6 @@ lazy_static! {
       main: "nameif",
       entrypoint: Entrypoint::CStyle(nameif_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/nameif"),
     });
     #[cfg(feature = "nanddump")]
@@ -2304,7 +2087,6 @@ lazy_static! {
       main: "nandwrite",
       entrypoint: Entrypoint::CStyle(nandwrite_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/nanddump"),
     });
     #[cfg(feature = "nandwrite")]
@@ -2313,7 +2095,6 @@ lazy_static! {
       main: "nandwrite",
       entrypoint: Entrypoint::CStyle(nandwrite_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/nandwrite"),
     });
     #[cfg(feature = "nbd-client")]
@@ -2322,7 +2103,6 @@ lazy_static! {
       main: "nbdclient",
       entrypoint: Entrypoint::CStyle(nbdclient_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/nbd-client"),
     });
     #[cfg(feature = "nc")]
@@ -2331,7 +2111,6 @@ lazy_static! {
       main: "nc",
       entrypoint: Entrypoint::CStyle(nc_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/nc"),
     });
     #[cfg(feature = "netstat")]
@@ -2340,7 +2119,6 @@ lazy_static! {
       main: "netstat",
       entrypoint: Entrypoint::CStyle(netstat_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/netstat"),
     });
     #[cfg(feature = "nice")]
@@ -2349,7 +2127,6 @@ lazy_static! {
       main: "nice",
       entrypoint: Entrypoint::CStyle(nice_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/nice"),
     });
     #[cfg(feature = "nl")]
@@ -2358,7 +2135,6 @@ lazy_static! {
       main: "nl",
       entrypoint: Entrypoint::CStyle(nl_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/nl"),
     });
     #[cfg(feature = "nmeter")]
@@ -2367,7 +2143,6 @@ lazy_static! {
       main: "nmeter",
       entrypoint: Entrypoint::CStyle(nmeter_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/nmeter"),
     });
     #[cfg(feature = "nohup")]
@@ -2376,7 +2151,6 @@ lazy_static! {
       main: "nohup",
       entrypoint: Entrypoint::CStyle(nohup_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/nohup"),
     });
     #[cfg(feature = "nproc")]
@@ -2385,7 +2159,6 @@ lazy_static! {
       main: "nproc",
       entrypoint: Entrypoint::CStyle(nproc_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/nproc"),
     });
     #[cfg(feature = "nsenter")]
@@ -2394,7 +2167,6 @@ lazy_static! {
       main: "nsenter",
       entrypoint: Entrypoint::CStyle(nsenter_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/nsenter"),
     });
     #[cfg(feature = "nslookup")]
@@ -2403,7 +2175,6 @@ lazy_static! {
       main: "nslookup",
       entrypoint: Entrypoint::CStyle(nslookup_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/nslookup"),
     });
     #[cfg(feature = "ntpd")]
@@ -2412,7 +2183,6 @@ lazy_static! {
       main: "ntpd",
       entrypoint: Entrypoint::CStyle(ntpd_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ntpd"),
     });
     #[cfg(feature = "nuke")]
@@ -2421,7 +2191,6 @@ lazy_static! {
       main: "nuke",
       entrypoint: Entrypoint::CStyle(nuke_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/nuke"),
     });
     #[cfg(feature = "od")]
@@ -2430,7 +2199,6 @@ lazy_static! {
       main: "od",
       entrypoint: Entrypoint::CStyle(od_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/od"),
     });
     #[cfg(feature = "openvt")]
@@ -2439,7 +2207,6 @@ lazy_static! {
       main: "openvt",
       entrypoint: Entrypoint::CStyle(openvt_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/openvt"),
     });
     #[cfg(feature = "partprobe")]
@@ -2448,7 +2215,6 @@ lazy_static! {
       main: "partprobe",
       entrypoint: Entrypoint::CStyle(partprobe_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/partprobe"),
     });
     #[cfg(feature = "passwd")]
@@ -2457,7 +2223,6 @@ lazy_static! {
       main: "passwd",
       entrypoint: Entrypoint::CStyle(passwd_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_REQUIRE,
       usage: std::include_str!("../usage/passwd"),
     });
     #[cfg(feature = "paste")]
@@ -2466,7 +2231,6 @@ lazy_static! {
       main: "paste",
       entrypoint: Entrypoint::CStyle(paste_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/paste"),
     });
     #[cfg(feature = "patch")]
@@ -2475,7 +2239,6 @@ lazy_static! {
       main: "patch",
       entrypoint: Entrypoint::CStyle(patch_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/patch"),
     });
     #[cfg(feature = "pgrep")]
@@ -2484,7 +2247,6 @@ lazy_static! {
       main: "pgrep",
       entrypoint: Entrypoint::CStyle(pgrep_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/pgrep"),
     });
     #[cfg(feature = "pidof")]
@@ -2493,7 +2255,6 @@ lazy_static! {
       main: "pidof",
       entrypoint: Entrypoint::CStyle(pidof_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/pidof"),
     });
     #[cfg(feature = "ping")]
@@ -2502,7 +2263,6 @@ lazy_static! {
       main: "ping",
       entrypoint: Entrypoint::CStyle(ping_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_MAYBE,
       usage: std::include_str!("../usage/ping"),
     });
     #[cfg(feature = "ping6")]
@@ -2511,7 +2271,6 @@ lazy_static! {
       main: "ping6",
       entrypoint: Entrypoint::CStyle(ping6_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_MAYBE,
       usage: std::include_str!("../usage/ping6"),
     });
     #[cfg(feature = "pipe_progress")]
@@ -2520,7 +2279,6 @@ lazy_static! {
       main: "pipe_progress",
       entrypoint: Entrypoint::CStyle(pipe_progress_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/pipe_progress"),
     });
     #[cfg(feature = "pivot_root")]
@@ -2529,7 +2287,6 @@ lazy_static! {
       main: "pivot_root",
       entrypoint: Entrypoint::CStyle(pivot_root_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/pivot_root"),
     });
     #[cfg(feature = "pkill")]
@@ -2538,7 +2295,6 @@ lazy_static! {
       main: "pgrep",
       entrypoint: Entrypoint::CStyle(pgrep_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/pkill"),
     });
     #[cfg(feature = "pmap")]
@@ -2547,7 +2303,6 @@ lazy_static! {
       main: "pmap",
       entrypoint: Entrypoint::CStyle(pmap_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/pmap"),
     });
     #[cfg(feature = "popmaildir")]
@@ -2556,7 +2311,6 @@ lazy_static! {
       main: "popmaildir",
       entrypoint: Entrypoint::CStyle(popmaildir_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/popmaildir"),
     });
     #[cfg(feature = "poweroff")]
@@ -2565,7 +2319,6 @@ lazy_static! {
       main: "halt",
       entrypoint: Entrypoint::CStyle(halt_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/poweroff"),
     });
     #[cfg(feature = "powertop")]
@@ -2574,7 +2327,6 @@ lazy_static! {
       main: "powertop",
       entrypoint: Entrypoint::CStyle(powertop_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/powertop"),
     });
     #[cfg(feature = "printenv")]
@@ -2583,7 +2335,6 @@ lazy_static! {
       main: "printenv",
       entrypoint: Entrypoint::CStyle(printenv_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/printenv"),
     });
     #[cfg(feature = "printf")]
@@ -2592,7 +2343,6 @@ lazy_static! {
       main: "printf",
       entrypoint: Entrypoint::CStyle(printf_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/printf"),
     });
     #[cfg(feature = "ps")]
@@ -2601,7 +2351,6 @@ lazy_static! {
       main: "ps",
       entrypoint: Entrypoint::CStyle(ps_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ps"),
     });
     #[cfg(feature = "pscan")]
@@ -2610,7 +2359,6 @@ lazy_static! {
       main: "pscan",
       entrypoint: Entrypoint::CStyle(pscan_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/pscan"),
     });
     #[cfg(feature = "pstree")]
@@ -2619,7 +2367,6 @@ lazy_static! {
       main: "pstree",
       entrypoint: Entrypoint::CStyle(pstree_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/pstree"),
     });
     #[cfg(feature = "pwd")]
@@ -2628,7 +2375,6 @@ lazy_static! {
       main: "pwd",
       entrypoint: Entrypoint::CStyle(pwd_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/pwd"),
     });
     #[cfg(feature = "pwdx")]
@@ -2637,7 +2383,6 @@ lazy_static! {
       main: "pwdx",
       entrypoint: Entrypoint::CStyle(pwdx_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/pwdx"),
     });
     #[cfg(feature = "raidautorun")]
@@ -2646,7 +2391,6 @@ lazy_static! {
       main: "raidautorun",
       entrypoint: Entrypoint::CStyle(raidautorun_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/raidautorun"),
     });
     #[cfg(feature = "rdate")]
@@ -2655,7 +2399,6 @@ lazy_static! {
       main: "rdate",
       entrypoint: Entrypoint::CStyle(rdate_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/rdate"),
     });
     #[cfg(feature = "rdev")]
@@ -2664,7 +2407,6 @@ lazy_static! {
       main: "rdev",
       entrypoint: Entrypoint::CStyle(rdev_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/rdev"),
     });
     #[cfg(feature = "readahead")]
@@ -2673,7 +2415,6 @@ lazy_static! {
       main: "readahead",
       entrypoint: Entrypoint::CStyle(readahead_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/readahead"),
     });
     #[cfg(feature = "readlink")]
@@ -2682,7 +2423,6 @@ lazy_static! {
       main: "readlink",
       entrypoint: Entrypoint::CStyle(readlink_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/readlink"),
     });
     #[cfg(feature = "readprofile")]
@@ -2691,7 +2431,6 @@ lazy_static! {
       main: "readprofile",
       entrypoint: Entrypoint::CStyle(readprofile_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/readprofile"),
     });
     #[cfg(feature = "realpath")]
@@ -2700,7 +2439,6 @@ lazy_static! {
       main: "realpath",
       entrypoint: Entrypoint::CStyle(realpath_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/realpath"),
     });
     #[cfg(feature = "reboot")]
@@ -2709,7 +2447,6 @@ lazy_static! {
       main: "halt",
       entrypoint: Entrypoint::CStyle(halt_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/reboot"),
     });
     #[cfg(feature = "reformime")]
@@ -2718,7 +2455,6 @@ lazy_static! {
       main: "reformime",
       entrypoint: Entrypoint::CStyle(reformime_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/reformime"),
     });
     #[cfg(feature = "remove-shell")]
@@ -2727,7 +2463,6 @@ lazy_static! {
       main: "add_remove_shell",
       entrypoint: Entrypoint::CStyle(add_remove_shell_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/remove-shell"),
     });
     #[cfg(feature = "renice")]
@@ -2736,7 +2471,6 @@ lazy_static! {
       main: "renice",
       entrypoint: Entrypoint::CStyle(renice_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/renice"),
     });
     #[cfg(feature = "reset")]
@@ -2745,7 +2479,6 @@ lazy_static! {
       main: "reset",
       entrypoint: Entrypoint::CStyle(reset_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/reset"),
     });
     #[cfg(feature = "resize")]
@@ -2754,7 +2487,6 @@ lazy_static! {
       main: "resize",
       entrypoint: Entrypoint::CStyle(resize_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/resize"),
     });
     #[cfg(feature = "resume")]
@@ -2763,7 +2495,6 @@ lazy_static! {
       main: "resume",
       entrypoint: Entrypoint::CStyle(resume_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/resume"),
     });
     #[cfg(feature = "rev")]
@@ -2772,7 +2503,6 @@ lazy_static! {
       main: "rev",
       entrypoint: Entrypoint::CStyle(rev_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/rev"),
     });
     #[cfg(feature = "rm")]
@@ -2781,7 +2511,6 @@ lazy_static! {
       main: "rm",
       entrypoint: Entrypoint::CStyle(rm_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/rm"),
     });
     #[cfg(feature = "rmdir")]
@@ -2790,7 +2519,6 @@ lazy_static! {
       main: "rmdir",
       entrypoint: Entrypoint::CStyle(rmdir_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/rmdir"),
     });
     #[cfg(feature = "rmmod")]
@@ -2799,7 +2527,6 @@ lazy_static! {
       main: "modprobe",
       entrypoint: Entrypoint::CStyle(modprobe_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/rmmod"),
     });
     #[cfg(feature = "route")]
@@ -2808,7 +2535,6 @@ lazy_static! {
       main: "route",
       entrypoint: Entrypoint::CStyle(route_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/route"),
     });
     #[cfg(feature = "rpm")]
@@ -2817,7 +2543,6 @@ lazy_static! {
       main: "rpm",
       entrypoint: Entrypoint::CStyle(rpm_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/rpm"),
     });
     #[cfg(feature = "rpm2cpio")]
@@ -2826,7 +2551,6 @@ lazy_static! {
       main: "rpm2cpio",
       entrypoint: Entrypoint::CStyle(rpm2cpio_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/rpm2cpio"),
     });
     #[cfg(feature = "rtcwake")]
@@ -2835,7 +2559,6 @@ lazy_static! {
       main: "rtcwake",
       entrypoint: Entrypoint::CStyle(rtcwake_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/rtcwake"),
     });
     #[cfg(feature = "run-init")]
@@ -2844,7 +2567,6 @@ lazy_static! {
       main: "switch_root",
       entrypoint: Entrypoint::CStyle(switch_root_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/run-init"),
     });
     #[cfg(feature = "run-parts")]
@@ -2853,7 +2575,6 @@ lazy_static! {
       main: "run_parts",
       entrypoint: Entrypoint::CStyle(run_parts_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/run-parts"),
     });
     #[cfg(feature = "runlevel")]
@@ -2862,7 +2583,6 @@ lazy_static! {
       main: "runlevel",
       entrypoint: Entrypoint::CStyle(runlevel_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/runlevel"),
     });
     #[cfg(feature = "runsv")]
@@ -2871,7 +2591,6 @@ lazy_static! {
       main: "runsv",
       entrypoint: Entrypoint::CStyle(runsv_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/runsv"),
     });
     #[cfg(feature = "runsvdir")]
@@ -2880,7 +2599,6 @@ lazy_static! {
       main: "runsvdir",
       entrypoint: Entrypoint::CStyle(runsvdir_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/runsvdir"),
     });
     #[cfg(feature = "rx")]
@@ -2889,7 +2607,6 @@ lazy_static! {
       main: "rx",
       entrypoint: Entrypoint::CStyle(rx_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/rx"),
     });
     #[cfg(feature = "script")]
@@ -2898,7 +2615,6 @@ lazy_static! {
       main: "script",
       entrypoint: Entrypoint::CStyle(script_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/script"),
     });
     #[cfg(feature = "scriptreplay")]
@@ -2907,7 +2623,6 @@ lazy_static! {
       main: "scriptreplay",
       entrypoint: Entrypoint::CStyle(scriptreplay_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/scriptreplay"),
     });
     #[cfg(feature = "sed")]
@@ -2916,7 +2631,6 @@ lazy_static! {
       main: "sed",
       entrypoint: Entrypoint::CStyle(sed_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/sed"),
     });
     #[cfg(feature = "sendmail")]
@@ -2925,7 +2639,6 @@ lazy_static! {
       main: "sendmail",
       entrypoint: Entrypoint::CStyle(sendmail_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/sendmail"),
     });
     #[cfg(feature = "seq")]
@@ -2934,7 +2647,6 @@ lazy_static! {
       main: "seq",
       entrypoint: Entrypoint::CStyle(seq_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/seq"),
     });
     #[cfg(feature = "setarch")]
@@ -2943,7 +2655,6 @@ lazy_static! {
       main: "setarch",
       entrypoint: Entrypoint::CStyle(setarch_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/setarch"),
     });
     #[cfg(feature = "setconsole")]
@@ -2952,7 +2663,6 @@ lazy_static! {
       main: "setconsole",
       entrypoint: Entrypoint::CStyle(setconsole_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/setconsole"),
     });
     #[cfg(feature = "setfattr")]
@@ -2961,7 +2671,6 @@ lazy_static! {
       main: "setfattr",
       entrypoint: Entrypoint::CStyle(setfattr_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/setfattr"),
     });
     #[cfg(feature = "setfont")]
@@ -2970,7 +2679,6 @@ lazy_static! {
       main: "setfont",
       entrypoint: Entrypoint::CStyle(setfont_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/setfont"),
     });
     #[cfg(feature = "setkeycodes")]
@@ -2979,7 +2687,6 @@ lazy_static! {
       main: "setkeycodes",
       entrypoint: Entrypoint::CStyle(setkeycodes_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/setkeycodes"),
     });
     #[cfg(feature = "setlogcons")]
@@ -2988,7 +2695,6 @@ lazy_static! {
       main: "setlogcons",
       entrypoint: Entrypoint::CStyle(setlogcons_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/setlogcons"),
     });
     #[cfg(feature = "setpriv")]
@@ -2997,7 +2703,6 @@ lazy_static! {
       main: "setpriv",
       entrypoint: Entrypoint::CStyle(setpriv_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/setpriv"),
     });
     #[cfg(feature = "setserial")]
@@ -3006,7 +2711,6 @@ lazy_static! {
       main: "setserial",
       entrypoint: Entrypoint::CStyle(setserial_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/setserial"),
     });
     #[cfg(feature = "setsid")]
@@ -3015,7 +2719,6 @@ lazy_static! {
       main: "setsid",
       entrypoint: Entrypoint::CStyle(setsid_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/setsid"),
     });
     #[cfg(feature = "setuidgid")]
@@ -3024,7 +2727,6 @@ lazy_static! {
       main: "chpst",
       entrypoint: Entrypoint::CStyle(chpst_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/setuidgid"),
     });
     #[cfg(feature = "sh")]
@@ -3033,7 +2735,6 @@ lazy_static! {
       main: "ash",
       entrypoint: Entrypoint::CStyle(ash_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/sh"),
     });
     #[cfg(feature = "sha1sum")]
@@ -3042,7 +2743,6 @@ lazy_static! {
       main: "md5_sha1_sum",
       entrypoint: Entrypoint::CStyle(md5_sha1_sum_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/sha1sum"),
     });
     #[cfg(feature = "sha256sum")]
@@ -3051,7 +2751,6 @@ lazy_static! {
       main: "md5_sha1_sum",
       entrypoint: Entrypoint::CStyle(md5_sha1_sum_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/sha256sum"),
     });
     #[cfg(feature = "sha3sum")]
@@ -3060,7 +2759,6 @@ lazy_static! {
       main: "md5_sha1_sum",
       entrypoint: Entrypoint::CStyle(md5_sha1_sum_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/sha3sum"),
     });
     #[cfg(feature = "sha512sum")]
@@ -3069,7 +2767,6 @@ lazy_static! {
       main: "md5_sha1_sum",
       entrypoint: Entrypoint::CStyle(md5_sha1_sum_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/sha512sum"),
     });
     #[cfg(feature = "showkey")]
@@ -3078,7 +2775,6 @@ lazy_static! {
       main: "showkey",
       entrypoint: Entrypoint::CStyle(showkey_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/showkey"),
     });
     #[cfg(feature = "shred")]
@@ -3087,7 +2783,6 @@ lazy_static! {
       main: "shred",
       entrypoint: Entrypoint::CStyle(shred_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/shred"),
     });
     #[cfg(feature = "shuf")]
@@ -3096,7 +2791,6 @@ lazy_static! {
       main: "shuf",
       entrypoint: Entrypoint::CStyle(shuf_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/shuf"),
     });
     #[cfg(feature = "slattach")]
@@ -3105,7 +2799,6 @@ lazy_static! {
       main: "slattach",
       entrypoint: Entrypoint::CStyle(slattach_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/slattach"),
     });
     #[cfg(feature = "sleep")]
@@ -3114,7 +2807,6 @@ lazy_static! {
       main: "sleep",
       entrypoint: Entrypoint::CStyle(sleep_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/sleep"),
     });
     #[cfg(feature = "smemcap")]
@@ -3123,7 +2815,6 @@ lazy_static! {
       main: "smemcap",
       entrypoint: Entrypoint::CStyle(smemcap_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/smemcap"),
     });
     #[cfg(feature = "softlimit")]
@@ -3132,7 +2823,6 @@ lazy_static! {
       main: "chpst",
       entrypoint: Entrypoint::CStyle(chpst_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/softlimit"),
     });
     #[cfg(feature = "sort")]
@@ -3141,7 +2831,6 @@ lazy_static! {
       main: "sort",
       entrypoint: Entrypoint::CStyle(sort_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/sort"),
     });
     #[cfg(feature = "split")]
@@ -3150,7 +2839,6 @@ lazy_static! {
       main: "split",
       entrypoint: Entrypoint::CStyle(split_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/split"),
     });
     #[cfg(feature = "ssl_client")]
@@ -3159,7 +2847,6 @@ lazy_static! {
       main: "ssl_client",
       entrypoint: Entrypoint::CStyle(ssl_client_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ssl_client"),
     });
     #[cfg(feature = "start-stop-daemon")]
@@ -3168,7 +2855,6 @@ lazy_static! {
       main: "start_stop_daemon",
       entrypoint: Entrypoint::CStyle(start_stop_daemon_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/start-stop-daemon"),
     });
     #[cfg(feature = "stat")]
@@ -3177,7 +2863,6 @@ lazy_static! {
       main: "stat",
       entrypoint: Entrypoint::CStyle(stat_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/stat"),
     });
     #[cfg(feature = "strings")]
@@ -3186,7 +2871,6 @@ lazy_static! {
       main: "strings",
       entrypoint: Entrypoint::CStyle(strings_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/strings"),
     });
     #[cfg(feature = "stty")]
@@ -3195,7 +2879,6 @@ lazy_static! {
       main: "stty",
       entrypoint: Entrypoint::CStyle(stty_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/stty"),
     });
     #[cfg(feature = "su")]
@@ -3204,7 +2887,6 @@ lazy_static! {
       main: "su",
       entrypoint: Entrypoint::CStyle(su_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_REQUIRE,
       usage: std::include_str!("../usage/su"),
     });
     #[cfg(feature = "sulogin")]
@@ -3213,7 +2895,6 @@ lazy_static! {
       main: "sulogin",
       entrypoint: Entrypoint::CStyle(sulogin_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/sulogin"),
     });
     #[cfg(feature = "sum")]
@@ -3222,7 +2903,6 @@ lazy_static! {
       main: "sum",
       entrypoint: Entrypoint::CStyle(sum_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/sum"),
     });
     #[cfg(feature = "sv")]
@@ -3231,7 +2911,6 @@ lazy_static! {
       main: "sv",
       entrypoint: Entrypoint::CStyle(sv_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/sv"),
     });
     #[cfg(feature = "svc")]
@@ -3240,7 +2919,6 @@ lazy_static! {
       main: "svc",
       entrypoint: Entrypoint::CStyle(svc_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/svc"),
     });
     #[cfg(feature = "svlogd")]
@@ -3249,7 +2927,6 @@ lazy_static! {
       main: "svlogd",
       entrypoint: Entrypoint::CStyle(svlogd_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/svlogd"),
     });
     #[cfg(feature = "svok")]
@@ -3258,7 +2935,6 @@ lazy_static! {
       main: "svok",
       entrypoint: Entrypoint::CStyle(svok_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/svok"),
     });
     #[cfg(feature = "swapoff")]
@@ -3267,7 +2943,6 @@ lazy_static! {
       main: "swap_on_off",
       entrypoint: Entrypoint::CStyle(swap_on_off_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/swapoff"),
     });
     #[cfg(feature = "swapon")]
@@ -3276,7 +2951,6 @@ lazy_static! {
       main: "swap_on_off",
       entrypoint: Entrypoint::CStyle(swap_on_off_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/swapon"),
     });
     #[cfg(feature = "switch_root")]
@@ -3285,7 +2959,6 @@ lazy_static! {
       main: "switch_root",
       entrypoint: Entrypoint::CStyle(switch_root_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/switch_root"),
     });
     #[cfg(feature = "sync")]
@@ -3294,7 +2967,6 @@ lazy_static! {
       main: "sync",
       entrypoint: Entrypoint::CStyle(sync_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/sync"),
     });
     #[cfg(feature = "sysctl")]
@@ -3303,7 +2975,6 @@ lazy_static! {
       main: "sysctl",
       entrypoint: Entrypoint::CStyle(sysctl_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/sysctl"),
     });
     #[cfg(feature = "syslogd")]
@@ -3312,7 +2983,6 @@ lazy_static! {
       main: "syslogd",
       entrypoint: Entrypoint::CStyle(syslogd_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/syslogd"),
     });
     #[cfg(feature = "tac")]
@@ -3321,7 +2991,6 @@ lazy_static! {
       main: "tac",
       entrypoint: Entrypoint::CStyle(tac_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/tac"),
     });
     #[cfg(feature = "tail")]
@@ -3330,7 +2999,6 @@ lazy_static! {
       main: "tail",
       entrypoint: Entrypoint::CStyle(tail_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/tail"),
     });
     #[cfg(feature = "tar")]
@@ -3339,7 +3007,6 @@ lazy_static! {
       main: "tar",
       entrypoint: Entrypoint::CStyle(tar_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/tar"),
     });
     #[cfg(feature = "taskset")]
@@ -3348,7 +3015,6 @@ lazy_static! {
       main: "taskset",
       entrypoint: Entrypoint::CStyle(taskset_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/taskset"),
     });
     #[cfg(feature = "tc")]
@@ -3357,7 +3023,6 @@ lazy_static! {
       main: "tc",
       entrypoint: Entrypoint::CStyle(tc_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/tc"),
     });
     #[cfg(feature = "tcpsvd")]
@@ -3366,7 +3031,6 @@ lazy_static! {
       main: "tcpudpsvd",
       entrypoint: Entrypoint::CStyle(tcpudpsvd_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/tcpsvd"),
     });
     #[cfg(feature = "tee")]
@@ -3375,7 +3039,6 @@ lazy_static! {
       main: "tee",
       entrypoint: Entrypoint::CStyle(tee_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/tee"),
     });
     #[cfg(feature = "telnet")]
@@ -3384,7 +3047,6 @@ lazy_static! {
       main: "telnet",
       entrypoint: Entrypoint::CStyle(telnet_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/telnet"),
     });
     #[cfg(feature = "telnetd")]
@@ -3393,7 +3055,6 @@ lazy_static! {
       main: "telnetd",
       entrypoint: Entrypoint::CStyle(telnetd_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/telnetd"),
     });
     #[cfg(feature = "test")]
@@ -3402,7 +3063,6 @@ lazy_static! {
       main: "test",
       entrypoint: Entrypoint::CStyle(test_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/test"),
     });
     #[cfg(feature = "tftp")]
@@ -3411,7 +3071,6 @@ lazy_static! {
       main: "tftp",
       entrypoint: Entrypoint::CStyle(tftp_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/tftp"),
     });
     #[cfg(feature = "tftpd")]
@@ -3420,7 +3079,6 @@ lazy_static! {
       main: "tftpd",
       entrypoint: Entrypoint::CStyle(tftpd_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/tftpd"),
     });
     #[cfg(feature = "time")]
@@ -3429,7 +3087,6 @@ lazy_static! {
       main: "time",
       entrypoint: Entrypoint::CStyle(time_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/time"),
     });
     #[cfg(feature = "timeout")]
@@ -3438,7 +3095,6 @@ lazy_static! {
       main: "timeout",
       entrypoint: Entrypoint::CStyle(timeout_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/timeout"),
     });
     #[cfg(feature = "top")]
@@ -3447,7 +3103,6 @@ lazy_static! {
       main: "top",
       entrypoint: Entrypoint::CStyle(top_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/top"),
     });
     #[cfg(feature = "touch")]
@@ -3456,7 +3111,6 @@ lazy_static! {
       main: "touch",
       entrypoint: Entrypoint::CStyle(touch_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/touch"),
     });
     #[cfg(feature = "tr")]
@@ -3465,7 +3119,6 @@ lazy_static! {
       main: "tr",
       entrypoint: Entrypoint::CStyle(tr_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/tr"),
     });
     #[cfg(feature = "traceroute")]
@@ -3474,7 +3127,6 @@ lazy_static! {
       main: "traceroute",
       entrypoint: Entrypoint::CStyle(traceroute_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_MAYBE,
       usage: std::include_str!("../usage/traceroute"),
     });
     #[cfg(feature = "traceroute6")]
@@ -3483,7 +3135,6 @@ lazy_static! {
       main: "traceroute6",
       entrypoint: Entrypoint::CStyle(traceroute6_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_MAYBE,
       usage: std::include_str!("../usage/traceroute6"),
     });
     #[cfg(feature = "true")]
@@ -3492,7 +3143,6 @@ lazy_static! {
       main: "true",
       entrypoint: Entrypoint::CStyle(true_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/true"),
     });
     #[cfg(feature = "truncate")]
@@ -3501,7 +3151,6 @@ lazy_static! {
       main: "truncate",
       entrypoint: Entrypoint::CStyle(truncate_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/truncate"),
     });
     #[cfg(feature = "ts")]
@@ -3510,7 +3159,6 @@ lazy_static! {
       main: "ts",
       entrypoint: Entrypoint::CStyle(ts_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ts"),
     });
     #[cfg(feature = "tty")]
@@ -3519,7 +3167,6 @@ lazy_static! {
       main: "tty",
       entrypoint: Entrypoint::CStyle(tty_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/tty"),
     });
     #[cfg(feature = "ttysize")]
@@ -3528,7 +3175,6 @@ lazy_static! {
       main: "ttysize",
       entrypoint: Entrypoint::CStyle(ttysize_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ttysize"),
     });
     #[cfg(feature = "tunctl")]
@@ -3537,7 +3183,6 @@ lazy_static! {
       main: "tunctl",
       entrypoint: Entrypoint::CStyle(tunctl_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/tunctl"),
     });
     #[cfg(feature = "ubiattach")]
@@ -3546,7 +3191,6 @@ lazy_static! {
       main: "ubi_tools",
       entrypoint: Entrypoint::CStyle(ubi_tools_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ubiattach"),
     });
     #[cfg(feature = "ubidetach")]
@@ -3555,7 +3199,6 @@ lazy_static! {
       main: "ubi_tools",
       entrypoint: Entrypoint::CStyle(ubi_tools_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ubidetach"),
     });
     #[cfg(feature = "ubimkvol")]
@@ -3564,7 +3207,6 @@ lazy_static! {
       main: "ubi_tools",
       entrypoint: Entrypoint::CStyle(ubi_tools_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ubimkvol"),
     });
     #[cfg(feature = "ubirename")]
@@ -3573,7 +3215,6 @@ lazy_static! {
       main: "ubirename",
       entrypoint: Entrypoint::CStyle(ubirename_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ubirename"),
     });
     #[cfg(feature = "ubirmvol")]
@@ -3582,7 +3223,6 @@ lazy_static! {
       main: "ubi_tools",
       entrypoint: Entrypoint::CStyle(ubi_tools_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ubirmvol"),
     });
     #[cfg(feature = "ubirsvol")]
@@ -3591,7 +3231,6 @@ lazy_static! {
       main: "ubi_tools",
       entrypoint: Entrypoint::CStyle(ubi_tools_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ubirsvol"),
     });
     #[cfg(feature = "ubiupdatevol")]
@@ -3600,7 +3239,6 @@ lazy_static! {
       main: "ubi_tools",
       entrypoint: Entrypoint::CStyle(ubi_tools_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/ubiupdatevol"),
     });
     #[cfg(feature = "udhcpc")]
@@ -3609,7 +3247,6 @@ lazy_static! {
       main: "udhcpc",
       entrypoint: Entrypoint::CStyle(udhcpc_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/udhcpc"),
     });
     #[cfg(feature = "udhcpc6")]
@@ -3618,7 +3255,6 @@ lazy_static! {
       main: "udhcpc6",
       entrypoint: Entrypoint::CStyle(udhcpc6_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/udhcpc6"),
     });
     #[cfg(feature = "udhcpd")]
@@ -3627,7 +3263,6 @@ lazy_static! {
       main: "udhcpd",
       entrypoint: Entrypoint::CStyle(udhcpd_main),
       install_loc: InstallLoc::DIR_USR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/udhcpd"),
     });
     #[cfg(feature = "udpsvd")]
@@ -3636,7 +3271,6 @@ lazy_static! {
       main: "tcpudpsvd",
       entrypoint: Entrypoint::CStyle(tcpudpsvd_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/udpsvd"),
     });
     #[cfg(feature = "uevent")]
@@ -3645,7 +3279,6 @@ lazy_static! {
       main: "uevent",
       entrypoint: Entrypoint::CStyle(uevent_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/uevent"),
     });
     #[cfg(feature = "umount")]
@@ -3654,7 +3287,6 @@ lazy_static! {
       main: "umount",
       entrypoint: Entrypoint::CStyle(umount_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/umount"),
     });
     #[cfg(feature = "uname")]
@@ -3663,7 +3295,6 @@ lazy_static! {
       main: "uname",
       entrypoint: Entrypoint::CStyle(uname_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/uname"),
     });
     #[cfg(feature = "unexpand")]
@@ -3672,7 +3303,6 @@ lazy_static! {
       main: "expand",
       entrypoint: Entrypoint::CStyle(expand_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/unexpand"),
     });
     #[cfg(feature = "uniq")]
@@ -3681,7 +3311,6 @@ lazy_static! {
       main: "uniq",
       entrypoint: Entrypoint::CStyle(uniq_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/uniq"),
     });
     #[cfg(feature = "unix2dos")]
@@ -3690,7 +3319,6 @@ lazy_static! {
       main: "dos2unix",
       entrypoint: Entrypoint::CStyle(dos2unix_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/unix2dos"),
     });
     #[cfg(feature = "unlink")]
@@ -3699,7 +3327,6 @@ lazy_static! {
       main: "unlink",
       entrypoint: Entrypoint::CStyle(unlink_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/unlink"),
     });
     #[cfg(feature = "unlzma")]
@@ -3708,7 +3335,6 @@ lazy_static! {
       main: "unlzma",
       entrypoint: Entrypoint::CStyle(unlzma_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/unlzma"),
     });
     #[cfg(feature = "unshare")]
@@ -3717,7 +3343,6 @@ lazy_static! {
       main: "unshare",
       entrypoint: Entrypoint::CStyle(unshare_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/unshare"),
     });
     #[cfg(feature = "unxz")]
@@ -3726,7 +3351,6 @@ lazy_static! {
       main: "unxz",
       entrypoint: Entrypoint::CStyle(unxz_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/unxz"),
     });
     #[cfg(feature = "unzip")]
@@ -3735,7 +3359,6 @@ lazy_static! {
       main: "unzip",
       entrypoint: Entrypoint::CStyle(unzip_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/unzip"),
     });
     #[cfg(feature = "uptime")]
@@ -3744,7 +3367,6 @@ lazy_static! {
       main: "uptime",
       entrypoint: Entrypoint::CStyle(uptime_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/uptime"),
     });
     #[cfg(feature = "users")]
@@ -3753,7 +3375,6 @@ lazy_static! {
       main: "who",
       entrypoint: Entrypoint::CStyle(who_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/users"),
     });
     #[cfg(feature = "usleep")]
@@ -3762,7 +3383,6 @@ lazy_static! {
       main: "usleep",
       entrypoint: Entrypoint::CStyle(usleep_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/usleep"),
     });
     #[cfg(feature = "uudecode")]
@@ -3771,7 +3391,6 @@ lazy_static! {
       main: "uudecode",
       entrypoint: Entrypoint::CStyle(uudecode_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/uudecode"),
     });
     #[cfg(feature = "uuencode")]
@@ -3780,7 +3399,6 @@ lazy_static! {
       main: "uuencode",
       entrypoint: Entrypoint::CStyle(uuencode_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/uuencode"),
     });
     #[cfg(feature = "vconfig")]
@@ -3789,7 +3407,6 @@ lazy_static! {
       main: "vconfig",
       entrypoint: Entrypoint::CStyle(vconfig_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/vconfig"),
     });
     #[cfg(feature = "vi")]
@@ -3798,7 +3415,6 @@ lazy_static! {
       main: "vi",
       entrypoint: Entrypoint::CStyle(vi_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/vi"),
     });
     #[cfg(feature = "vlock")]
@@ -3807,7 +3423,6 @@ lazy_static! {
       main: "vlock",
       entrypoint: Entrypoint::CStyle(vlock_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_REQUIRE,
       usage: std::include_str!("../usage/vlock"),
     });
     #[cfg(feature = "volname")]
@@ -3816,7 +3431,6 @@ lazy_static! {
       main: "volname",
       entrypoint: Entrypoint::CStyle(volname_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/volname"),
     });
     #[cfg(feature = "w")]
@@ -3825,7 +3439,6 @@ lazy_static! {
       main: "who",
       entrypoint: Entrypoint::CStyle(who_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/w"),
     });
     #[cfg(feature = "wall")]
@@ -3834,7 +3447,6 @@ lazy_static! {
       main: "wall",
       entrypoint: Entrypoint::CStyle(wall_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_REQUIRE,
       usage: std::include_str!("../usage/wall"),
     });
     #[cfg(feature = "watch")]
@@ -3843,7 +3455,6 @@ lazy_static! {
       main: "watch",
       entrypoint: Entrypoint::CStyle(watch_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/watch"),
     });
     #[cfg(feature = "watchdog")]
@@ -3852,7 +3463,6 @@ lazy_static! {
       main: "watchdog",
       entrypoint: Entrypoint::CStyle(watchdog_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/watchdog"),
     });
     #[cfg(feature = "wc")]
@@ -3861,7 +3471,6 @@ lazy_static! {
       main: "wc",
       entrypoint: Entrypoint::CStyle(wc_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/wc"),
     });
     #[cfg(feature = "wget")]
@@ -3870,7 +3479,6 @@ lazy_static! {
       main: "wget",
       entrypoint: Entrypoint::CStyle(wget_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/wget"),
     });
     #[cfg(feature = "which")]
@@ -3879,7 +3487,6 @@ lazy_static! {
       main: "which",
       entrypoint: Entrypoint::CStyle(which_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/which"),
     });
     #[cfg(feature = "who")]
@@ -3888,7 +3495,6 @@ lazy_static! {
       main: "who",
       entrypoint: Entrypoint::CStyle(who_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/who"),
     });
     #[cfg(feature = "whoami")]
@@ -3897,7 +3503,6 @@ lazy_static! {
       main: "whoami",
       entrypoint: Entrypoint::CStyle(whoami_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/whoami"),
     });
     #[cfg(feature = "whois")]
@@ -3906,7 +3511,6 @@ lazy_static! {
       main: "whois",
       entrypoint: Entrypoint::CStyle(whois_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/whois"),
     });
     #[cfg(feature = "xargs")]
@@ -3915,7 +3519,6 @@ lazy_static! {
       main: "xargs",
       entrypoint: Entrypoint::CStyle(xargs_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/xargs"),
     });
     #[cfg(feature = "xxd")]
@@ -3924,7 +3527,6 @@ lazy_static! {
       main: "xxd",
       entrypoint: Entrypoint::CStyle(xxd_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/xxd"),
     });
     #[cfg(feature = "xz")]
@@ -3933,7 +3535,6 @@ lazy_static! {
       main: "unxz",
       entrypoint: Entrypoint::CStyle(unxz_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/xz"),
     });
     #[cfg(feature = "xzcat")]
@@ -3942,7 +3543,6 @@ lazy_static! {
       main: "unxz",
       entrypoint: Entrypoint::CStyle(unxz_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/xzcat"),
     });
     #[cfg(feature = "yes")]
@@ -3951,7 +3551,6 @@ lazy_static! {
       main: "yes",
       entrypoint: Entrypoint::SafeStyle(yes_main),
       install_loc: InstallLoc::DIR_USR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/yes"),
     });
     #[cfg(feature = "zcat")]
@@ -3960,7 +3559,6 @@ lazy_static! {
       main: "gunzip",
       entrypoint: Entrypoint::CStyle(gunzip_main),
       install_loc: InstallLoc::DIR_BIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/zcat"),
     });
     #[cfg(feature = "zcip")]
@@ -3969,7 +3567,6 @@ lazy_static! {
       main: "zcip",
       entrypoint: Entrypoint::CStyle(zcip_main),
       install_loc: InstallLoc::DIR_SBIN,
-      need_suid: SUID::SUID_DROP,
       usage: std::include_str!("../usage/zcip"),
     });
 
