@@ -1,6 +1,7 @@
 use crate::libbb::default_error_retval::xfunc_error_retval;
 use crate::libbb::llist::llist_t;
 use crate::libbb::skip_whitespace::skip_whitespace;
+use crate::libbb::xfunc_die::die_func;
 use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::re_pattern_buffer;
 use crate::librb::size_t;
@@ -78,9 +79,6 @@ extern "C" {
   /* Prints warning to stderr and returns NULL on failure: */
 
   /* "Opens" stdin if filename is special, else just opens file: */
-
-  #[no_mangle]
-  static mut die_func: Option<unsafe extern "C" fn() -> ()>;
 
   #[no_mangle]
   static bb_msg_requires_arg: [libc::c_char; 0];

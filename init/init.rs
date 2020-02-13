@@ -1,6 +1,7 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::parse_config::parser_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::xfunc_die::die_func;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::signal::sigaction;
 use crate::librb::size_t;
@@ -83,9 +84,6 @@ extern "C" {
 
   #[no_mangle]
   static mut bb_got_signal: smallint;
-
-  #[no_mangle]
-  static mut die_func: Option<unsafe extern "C" fn() -> ()>;
 
   /* delims[0] is a comment char (use '\0' to disable), the rest are token delimiters */
 

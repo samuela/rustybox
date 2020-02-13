@@ -1,4 +1,5 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::xfunc_die::die_func;
 use crate::libbb::xfuncs_printf::xmalloc;
 use crate::librb::__compar_fn_t;
 use crate::librb::procps_status_t;
@@ -54,8 +55,7 @@ extern "C" {
   fn stpcpy(_: *mut libc::c_char, _: *const libc::c_char) -> *mut libc::c_char;
   #[no_mangle]
   static mut option_mask32: u32;
-  #[no_mangle]
-  static mut die_func: Option<unsafe extern "C" fn() -> ()>;
+
   #[no_mangle]
   static ptr_to_globals: *mut globals;
 }

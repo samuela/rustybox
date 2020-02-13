@@ -4,8 +4,7 @@ use libc;
 /* Keeping it separate allows to NOT pull in stdio for VERY small applets.
  * Try building busybox with only "true" enabled... */
 
-#[no_mangle]
-pub static mut die_func: Option<unsafe fn() -> ()> = None;
+pub static mut die_func: Option<unsafe extern "C" fn() -> ()> = None;
 
 pub unsafe fn xfunc_die() -> ! {
   match die_func {
