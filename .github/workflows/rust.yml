@@ -414,8 +414,10 @@ jobs:
       - name: cargo test
         run: cargo test --verbose --all-features
 
+      # Sometimes rustfmt isn't installed, eg. https://github.com/samuela/rustybox/runs/442459640.
       - name: rustfmt
         run: |
+          rustup component add rustfmt --toolchain nightly
           cargo fmt --version
           cargo fmt --all -- --check
       # See https://github.com/rust-lang/rust-clippy#travis-ci.
