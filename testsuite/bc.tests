@@ -4,8 +4,8 @@
 
 . ./testing.sh
 
-for f in bc*.bc; do
-	r="`basename "$f" .bc`_results.txt"
+for f in bc_files/*.bc; do
+	r="bc_files/`basename "$f" .bc`_results.txt"
 	test -f "$r" || continue
 	# testing "test name" "command" "expected result" "file input" "stdin"
 	testing "bc -lq $f" \
