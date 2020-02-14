@@ -414,7 +414,8 @@ jobs:
       - name: cargo test
         run: cargo test --verbose --all-features
 
-      # Sometimes rustfmt isn't installed, eg. https://github.com/samuela/rustybox/runs/442459640.
+      # Not all nightlies have rustfmt, eg. https://github.com/samuela/rustybox/runs/442459640.
+      # See https://www.reddit.com/r/rust/comments/a4mn9m/rustfmt_unable_to_download_for_nightly_toolchain/.
       - name: rustfmt
         run: |
           cargo +stable fmt --version
