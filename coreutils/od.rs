@@ -142,7 +142,6 @@ pub const OPT_b: C2RustUnnamed = 8;
 pub const OPT_a: C2RustUnnamed = 4;
 pub const OPT_N: C2RustUnnamed = 2;
 pub const OPT_A: C2RustUnnamed = 1;
-pub type longdouble_t = f128::f128;
 pub type ulonglong_t = libc::c_ulonglong;
 static mut bytes_to_oct_digits: [u8; 17] = [
   0, 3, 6, 8, 11, 14, 16, 19, 22, 25, 27, 30, 32, 35, 38, 41, 43,
@@ -156,7 +155,7 @@ static mut bytes_to_unsigned_dec_digits: [u8; 17] = [
 static mut bytes_to_hex_digits: [u8; 17] = [
   0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32,
 ];
-static mut width_bytes: [libc::c_schar; 9] = [
+static mut width_bytes: [libc::c_schar; 8] = [
   -1i32 as libc::c_schar,
   ::std::mem::size_of::<libc::c_char>() as libc::c_ulong as libc::c_schar,
   ::std::mem::size_of::<libc::c_short>() as libc::c_ulong as libc::c_schar,
@@ -165,7 +164,6 @@ static mut width_bytes: [libc::c_schar; 9] = [
   ::std::mem::size_of::<ulonglong_t>() as libc::c_ulong as libc::c_schar,
   ::std::mem::size_of::<libc::c_float>() as libc::c_ulong as libc::c_schar,
   ::std::mem::size_of::<libc::c_double>() as libc::c_ulong as libc::c_schar,
-  ::std::mem::size_of::<longdouble_t>() as libc::c_ulong as libc::c_schar,
 ];
 static mut integral_type_size: [libc::c_uchar; 9] = [
   0,
@@ -178,7 +176,7 @@ static mut integral_type_size: [libc::c_uchar; 9] = [
   0,
   LONG as libc::c_int as libc::c_uchar,
 ];
-static mut fp_type_size: [libc::c_uchar; 17] = [
+static mut fp_type_size: [libc::c_uchar; 9] = [
   0,
   0,
   0,
@@ -188,14 +186,6 @@ static mut fp_type_size: [libc::c_uchar; 17] = [
   0,
   0,
   FLOAT_DOUBLE as libc::c_int as libc::c_uchar,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  FLOAT_LONG_DOUBLE as libc::c_int as libc::c_uchar,
 ];
 unsafe fn gcd(mut u: libc::c_uint, mut v: libc::c_uint) -> libc::c_uint {
   let mut t: libc::c_uint = 0;
@@ -358,25 +348,6 @@ unsafe fn print_double(
     let mut tmp: libc::c_double = *(block as *mut libc::c_double);
     printf(fmt_string, tmp);
     block = block.offset(::std::mem::size_of::<libc::c_double>() as libc::c_ulong as isize)
-  }
-}
-unsafe fn print_long_double(
-  mut n_bytes: size_t,
-  mut block: *const libc::c_char,
-  mut fmt_string: *const libc::c_char,
-) {
-  n_bytes = (n_bytes as libc::c_ulong)
-    .wrapping_div(::std::mem::size_of::<longdouble_t>() as libc::c_ulong) as size_t
-    as size_t;
-  loop {
-    let fresh8 = n_bytes;
-    n_bytes = n_bytes.wrapping_sub(1);
-    if !(fresh8 != 0) {
-      break;
-    }
-    let mut tmp: longdouble_t = *(block as *mut longdouble_t);
-    printf(fmt_string, tmp);
-    block = block.offset(::std::mem::size_of::<longdouble_t>() as libc::c_ulong as isize)
   }
 }
 /* print_[named]_ascii are optimized for speed.
@@ -726,7 +697,7 @@ unsafe fn decode_one_format(
       }
     }
     102 => {
-      static mut FDL: [libc::c_char; 4] = [70, 68, 76, 0];
+      static mut FDL: [libc::c_char; 3] = [70, 68, 0];
       fmt = FLOATING_POINT;
       s = s.offset(1);
       p = strchr(FDL.as_ptr(), *s as libc::c_int);
@@ -735,7 +706,7 @@ unsafe fn decode_one_format(
         if (*s.offset(0) as libc::c_int - '0' as i32) as libc::c_uchar as libc::c_int <= 9i32 {
           size = crate::libbb::bb_strtonum::bb_strtou(s, &mut end, 0);
           if *bb_errno == 34i32
-            || size as libc::c_ulong > ::std::mem::size_of::<longdouble_t>() as libc::c_ulong
+            || size as libc::c_ulong > ::std::mem::size_of::<libc::c_double>() as libc::c_ulong
             || fp_type_size[size as usize] as libc::c_int == NO_SIZE as libc::c_int
           {
             crate::libbb::verror_msg::bb_error_msg_and_die(
@@ -749,10 +720,9 @@ unsafe fn decode_one_format(
           s = end
         }
       } else {
-        static mut FDL_sizeof: [u8; 3] = [
+        static mut FDL_sizeof: [u8; 2] = [
           ::std::mem::size_of::<libc::c_float>() as libc::c_ulong as u8,
           ::std::mem::size_of::<libc::c_double>() as libc::c_ulong as u8,
-          ::std::mem::size_of::<longdouble_t>() as libc::c_ulong as u8,
         ];
         size =
           FDL_sizeof[p.wrapping_offset_from(FDL.as_ptr()) as libc::c_long as usize] as libc::c_uint;
@@ -774,7 +744,7 @@ unsafe fn decode_one_format(
             7i32,
           )
         }
-        7 => {
+        _ => {
           print_function = Some(
             print_double
               as unsafe fn(_: size_t, _: *const libc::c_char, _: *const libc::c_char) -> (),
@@ -782,19 +752,6 @@ unsafe fn decode_one_format(
           field_width = (15i32 + 8i32) as libc::c_uint;
           fmt_string = crate::libbb::xfuncs_printf::xasprintf(
             b" %%%d.%de\x00" as *const u8 as *const libc::c_char,
-            field_width,
-            15i32,
-          )
-        }
-        _ => {
-          /* case FLOAT_LONG_DOUBLE: */
-          print_function = Some(
-            print_long_double
-              as unsafe fn(_: size_t, _: *const libc::c_char, _: *const libc::c_char) -> (),
-          );
-          field_width = (15i32 + 8i32) as libc::c_uint;
-          fmt_string = crate::libbb::xfuncs_printf::xasprintf(
-            b" %%%d.%dLe\x00" as *const u8 as *const libc::c_char,
             field_width,
             15i32,
           )
