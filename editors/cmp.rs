@@ -1,5 +1,9 @@
+use crate::libbb::default_error_retval::xfunc_error_retval;
+use crate::librb::smallint;
 use libc;
 use libc::fprintf;
+use libc::off_t;
+use libc::FILE;
 extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -7,24 +11,18 @@ extern "C" {
   static mut stdout: *mut FILE;
   #[no_mangle]
   static mut stderr: *mut FILE;
-
   #[no_mangle]
   fn getc_unlocked(__stream: *mut FILE) -> libc::c_int;
-
   #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
 }
 
-use crate::librb::smallint;
-use libc::off_t;
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;
 pub const LOGMODE_STDIO: C2RustUnnamed = 1;
 pub const LOGMODE_NONE: C2RustUnnamed = 0;
+
 #[inline(always)]
 unsafe fn xatoul_range(
   mut str: *const libc::c_char,

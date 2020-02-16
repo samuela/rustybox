@@ -1,3 +1,4 @@
+use crate::libbb::default_error_retval::xfunc_error_retval;
 use libc;
 use libc::FILE;
 extern "C" {
@@ -312,8 +313,6 @@ extern "C" {
   #[no_mangle]
   static bb_msg_standard_output: [libc::c_char; 0];
 
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
 }
 
 /*

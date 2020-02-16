@@ -1,4 +1,5 @@
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::default_error_retval::xfunc_error_retval;
 use crate::librb::rtattr;
 use crate::librb::size_t;
 use crate::librb::socklen_t;
@@ -23,9 +24,6 @@ extern "C" {
   fn strlen(__s: *const libc::c_char) -> size_t;
 
   /* Convert each alpha char in str to lower-case */
-
-  #[no_mangle]
-  static mut xfunc_error_retval: u8;
 
   #[no_mangle]
   static bb_msg_requires_arg: [libc::c_char; 0];

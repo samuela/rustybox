@@ -1,5 +1,6 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::libbb::xfunc_die::die_func;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -71,8 +72,6 @@ extern "C" {
   static mut msg_eol: *const libc::c_char;
   #[no_mangle]
   static mut logmode: smallint;
-  #[no_mangle]
-  static mut die_func: Option<unsafe extern "C" fn() -> ()>;
 
 }
 

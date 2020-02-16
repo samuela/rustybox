@@ -1,5 +1,6 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::skip_whitespace::skip_whitespace;
+use crate::libbb::xfunc_die::die_func;
 use crate::librb::__compar_fn_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
@@ -59,20 +60,17 @@ extern "C" {
   #[no_mangle]
   fn strlen(__s: *const libc::c_char) -> size_t;
 
-  /* Non-aborting kind of convertors: bb_strto[u][l]l */
-  /* On exit: errno = 0 only if there was non-empty, '\0' terminated value
-   * errno = EINVAL if value was not '\0' terminated, but otherwise ok
-   *    Return value is still valid, caller should just check whether end[0]
-   *    is a valid terminating char for particular case. OTOH, if caller
-   *    requires '\0' terminated input, [s]he can just check errno == 0.
-   * errno = ERANGE if value had alphanumeric terminating char ("1234abcg").
-   * errno = ERANGE if value is out of range, missing, etc.
-   * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
-   *    return value is all-ones in this case.
-   */
-
-  #[no_mangle]
-  static mut die_func: Option<unsafe extern "C" fn() -> ()>;
+/* Non-aborting kind of convertors: bb_strto[u][l]l */
+/* On exit: errno = 0 only if there was non-empty, '\0' terminated value
+ * errno = EINVAL if value was not '\0' terminated, but otherwise ok
+ *    Return value is still valid, caller should just check whether end[0]
+ *    is a valid terminating char for particular case. OTOH, if caller
+ *    requires '\0' terminated input, [s]he can just check errno == 0.
+ * errno = ERANGE if value had alphanumeric terminating char ("1234abcg").
+ * errno = ERANGE if value is out of range, missing, etc.
+ * errno = ERANGE if value had minus sign for strtouXX (even "-0" is not ok )
+ *    return value is all-ones in this case.
+ */
 
 }
 
