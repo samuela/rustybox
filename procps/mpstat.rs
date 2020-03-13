@@ -1,5 +1,8 @@
 use crate::libbb::skip_whitespace::skip_whitespace;
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::signal::__sighandler_t;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
 use libc::alarm;
 use libc::fclose;
@@ -11,6 +14,9 @@ use libc::strcmp;
 use libc::strstr;
 use libc::strtok;
 use libc::time;
+use libc::time_t;
+use libc::tm;
+use libc::FILE;
 extern "C" {
   #[no_mangle]
   fn strtoul(
@@ -61,13 +67,6 @@ extern "C" {
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
 }
-
-use crate::librb::signal::__sighandler_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::time_t;
-use libc::tm;
-use libc::FILE;
 
 #[repr(C)]
 #[derive(Copy, Clone)]

@@ -1,11 +1,11 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::size_t;
 use crate::librb::smallint;
-
 use libc;
 use libc::access;
 use libc::close;
 use libc::closedir;
+use libc::dirent;
 use libc::fclose;
 use libc::free;
 use libc::fstat;
@@ -17,7 +17,9 @@ use libc::pid_t;
 use libc::printf;
 use libc::readdir;
 use libc::sscanf;
+use libc::stat;
 use libc::strcpy;
+use libc::DIR;
 use libc::FILE;
 extern "C" {
 
@@ -44,9 +46,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use libc::dirent;
-use libc::stat;
-use libc::DIR;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;

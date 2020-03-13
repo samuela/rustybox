@@ -1,11 +1,12 @@
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::size_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
 use libc::close;
 use libc::ioctl;
 use libc::open;
+use libc::pid_t;
 use libc::sleep;
 use libc::sprintf;
 use libc::strrchr;
@@ -40,8 +41,6 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::size_t;
-use libc::pid_t;
 pub type C2RustUnnamed = libc::c_uint;
 pub const IPPROTO_MAX: C2RustUnnamed = 256;
 pub const IPPROTO_RAW: C2RustUnnamed = 255;

@@ -1,6 +1,7 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
+use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
@@ -12,6 +13,7 @@ use libc::free;
 use libc::pid_t;
 use libc::sigset_t;
 use libc::sleep;
+use libc::sockaddr;
 use libc::sockaddr_in;
 use libc::sprintf;
 use libc::ssize_t;
@@ -125,7 +127,6 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::socklen_t;
 
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
@@ -138,7 +139,6 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 
-use libc::sockaddr;
 pub type C2RustUnnamed = libc::c_uint;
 pub const MSG_CMSG_CLOEXEC: C2RustUnnamed = 1073741824;
 pub const MSG_FASTOPEN: C2RustUnnamed = 536870912;

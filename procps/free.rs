@@ -2,6 +2,7 @@ use libc;
 use libc::fclose;
 use libc::printf;
 use libc::sscanf;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -14,8 +15,6 @@ extern "C" {
   #[no_mangle]
   fn sysinfo(__info: *mut sysinfo) -> libc::c_int;
 }
-
-use libc::FILE;
 
 #[repr(C)]
 #[derive(Copy, Clone)]

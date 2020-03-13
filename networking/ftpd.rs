@@ -4,6 +4,7 @@ use crate::libbb::xfuncs_printf::xmalloc;
 use crate::libpwdgrp::pwd_grp::bb_internal_getpwnam;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
@@ -139,7 +140,6 @@ extern "C" {
 pub type __socklen_t = libc::c_uint;
 
 pub type bb__aliased_u32 = u32;
-use crate::librb::socklen_t;
 
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;

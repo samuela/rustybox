@@ -1,5 +1,6 @@
 use crate::libbb::appletlib::applet_name;
 use crate::libbb::parse_config::parser_t;
+use crate::librb::size_t;
 use libc;
 use libc::hostent;
 use libc::in_addr;
@@ -28,8 +29,6 @@ extern "C" {
 /* delims[0] is a comment char (use '\0' to disable), the rest are token delimiters */
 
 }
-
-use crate::librb::size_t;
 
 pub type in_addr_t = u32;
 

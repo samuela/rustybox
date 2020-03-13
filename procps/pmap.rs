@@ -1,4 +1,6 @@
+use crate::librb::smaprec;
 use libc;
+use libc::pid_t;
 use libc::printf;
 use libc::puts;
 extern "C" {
@@ -7,13 +9,10 @@ extern "C" {
 
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
-
 }
 
 pub type uintptr_t = libc::c_ulong;
-use libc::pid_t;
 
-use crate::librb::smaprec;
 /*
  * pmap implementation for busybox
  *

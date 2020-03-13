@@ -1,16 +1,21 @@
 use crate::libbb::parse_config::parser_t;
 use crate::libbb::ptr_to_globals::bb_errno;
+use crate::librb::size_t;
 use libc;
 use libc::access;
 use libc::close;
 use libc::closedir;
+use libc::dirent;
 use libc::free;
 use libc::open;
 use libc::opendir;
 use libc::printf;
 use libc::puts;
 use libc::readdir;
+use libc::stat;
 use libc::strchr;
+use libc::DIR;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -30,11 +35,6 @@ extern "C" {
 
 }
 
-use crate::librb::size_t;
-use libc::dirent;
-use libc::stat;
-use libc::DIR;
-use libc::FILE;
 pub type C2RustUnnamed = libc::c_uint;
 pub const PARSE_NORMAL: C2RustUnnamed = 4653056;
 pub const PARSE_WS_COMMENTS: C2RustUnnamed = 16777216;

@@ -8,6 +8,7 @@ use crate::librb::sha1_ctx_t;
 use crate::librb::signal::__sighandler_t;
 use crate::librb::size_t;
 use crate::librb::smallint;
+use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
@@ -19,6 +20,7 @@ use libc::free;
 use libc::getpid;
 use libc::getuid;
 use libc::putenv;
+use libc::sockaddr;
 use libc::sockaddr_in;
 use libc::sockaddr_in6;
 use libc::ssize_t;
@@ -195,7 +197,7 @@ pub type __socklen_t = libc::c_uint;
 /* ---- Size-saving "small" ints (arch-dependent) ----------- */
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
-use crate::librb::socklen_t;
+
 pub type id_t = __id_t;
 
 pub type __socket_type = libc::c_uint;
@@ -209,7 +211,6 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 
-use libc::sockaddr;
 pub type C2RustUnnamed = libc::c_uint;
 pub const MSG_CMSG_CLOEXEC: C2RustUnnamed = 1073741824;
 pub const MSG_FASTOPEN: C2RustUnnamed = 536870912;

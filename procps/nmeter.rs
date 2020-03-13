@@ -1,9 +1,16 @@
 use crate::libbb::xfuncs_printf::xmalloc;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
 use libc::close;
 use libc::sprintf;
+use libc::ssize_t;
 use libc::strchr;
 use libc::strstr;
+use libc::time_t;
+use libc::timeval;
+use libc::tm;
+use libc::useconds_t;
 extern "C" {
   #[no_mangle]
   fn strtoul(
@@ -48,13 +55,6 @@ extern "C" {
   static mut bb_common_bufsiz1: [libc::c_char; 0];
 }
 
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::ssize_t;
-use libc::time_t;
-use libc::timeval;
-use libc::useconds_t;
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct timezone {
@@ -62,7 +62,6 @@ pub struct timezone {
   pub tz_dsttime: libc::c_int,
 }
 pub type __timezone_ptr_t = *mut timezone;
-use libc::tm;
 
 #[repr(C)]
 #[derive(Copy, Clone)]

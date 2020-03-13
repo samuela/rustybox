@@ -1,4 +1,7 @@
+use crate::libbb::llist::llist_t;
 use crate::libbb::skip_whitespace::skip_whitespace;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use libc;
 use libc::fclose;
 use libc::fscanf;
@@ -8,6 +11,9 @@ use libc::sleep;
 use libc::sscanf;
 use libc::strcmp;
 use libc::time;
+use libc::time_t;
+use libc::tm;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -43,13 +49,6 @@ extern "C" {
   #[no_mangle]
   fn uname(__name: *mut utsname) -> libc::c_int;
 }
-
-use crate::libbb::llist::llist_t;
-use crate::librb::size_t;
-use crate::librb::smallint;
-use libc::time_t;
-use libc::tm;
-use libc::FILE;
 
 #[repr(C)]
 #[derive(Copy, Clone)]

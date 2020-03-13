@@ -16,6 +16,8 @@ use libc::printf;
 use libc::puts;
 use libc::sa_family_t;
 use libc::sockaddr;
+use libc::sockaddr_in;
+use libc::sockaddr_in6;
 use libc::sprintf;
 use libc::sscanf;
 use libc::strcmp;
@@ -91,8 +93,6 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 
-use libc::sockaddr_in6;
-
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union C2RustUnnamed {
@@ -101,8 +101,6 @@ pub union C2RustUnnamed {
   pub __u6_addr32: [u32; 4],
 }
 pub type in_port_t = u16;
-
-use libc::sockaddr_in;
 
 pub type in_addr_t = u32;
 

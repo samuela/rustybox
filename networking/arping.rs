@@ -1,5 +1,6 @@
 use crate::libbb::default_error_retval::xfunc_error_retval;
 use crate::librb::size_t;
+use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
@@ -8,9 +9,11 @@ use libc::close;
 use libc::in_addr;
 use libc::printf;
 use libc::puts;
+use libc::sa_family_t;
 use libc::sigaddset;
 use libc::sigprocmask;
 use libc::sigset_t;
+use libc::sockaddr;
 use libc::sockaddr_in;
 use libc::sockaddr_in6;
 use libc::ssize_t;
@@ -75,7 +78,6 @@ extern "C" {
 pub type __caddr_t = *mut libc::c_char;
 pub type __socklen_t = libc::c_uint;
 
-use crate::librb::socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -86,8 +88,6 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
 
 #[repr(C)]
 #[derive(Copy, Clone)]

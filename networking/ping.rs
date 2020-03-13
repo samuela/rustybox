@@ -1,6 +1,7 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::len_and_sockaddr;
 use crate::librb::size_t;
+use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use c2rust_bitfields;
@@ -11,6 +12,8 @@ use libc::getpid;
 use libc::in_addr;
 use libc::printf;
 use libc::puts;
+use libc::sa_family_t;
+use libc::sockaddr;
 use libc::sockaddr_in;
 use libc::sockaddr_in6;
 use libc::ssize_t;
@@ -98,7 +101,6 @@ pub struct iovec {
   pub iov_base: *mut libc::c_void,
   pub iov_len: size_t,
 }
-use crate::librb::socklen_t;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;
@@ -109,8 +111,6 @@ pub const SOCK_RDM: __socket_type = 4;
 pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
-use libc::sa_family_t;
-use libc::sockaddr;
 
 #[repr(C)]
 #[derive(Copy, Clone)]

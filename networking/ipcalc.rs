@@ -1,7 +1,9 @@
+use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
-
 use libc;
+use libc::hostent;
+use libc::in_addr;
 use libc::printf;
 extern "C" {
   #[no_mangle]
@@ -24,12 +26,9 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::smallint;
 
-use libc::in_addr;
 pub type in_addr_t = u32;
 
-use libc::hostent;
 pub type C2RustUnnamed = libc::c_uint;
 pub const LOGMODE_BOTH: C2RustUnnamed = 3;
 pub const LOGMODE_SYSLOG: C2RustUnnamed = 2;

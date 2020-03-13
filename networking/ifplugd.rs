@@ -11,6 +11,7 @@ use libc::openlog;
 use libc::pid_t;
 use libc::pollfd;
 use libc::putenv;
+use libc::sockaddr;
 use libc::ssize_t;
 use libc::strchr;
 use libc::unlink;
@@ -94,7 +95,6 @@ pub const SOCK_RAW: __socket_type = 3;
 pub const SOCK_DGRAM: __socket_type = 2;
 pub const SOCK_STREAM: __socket_type = 1;
 
-use libc::sockaddr;
 pub type C2RustUnnamed = libc::c_uint;
 pub const MSG_CMSG_CLOEXEC: C2RustUnnamed = 1073741824;
 pub const MSG_FASTOPEN: C2RustUnnamed = 536870912;

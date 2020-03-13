@@ -1,6 +1,8 @@
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::librb::in6_addr;
 use crate::librb::size_t;
+use crate::librb::smallint;
+use crate::librb::socklen_t;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
@@ -12,6 +14,7 @@ use libc::sockaddr;
 use libc::sockaddr_in;
 use libc::sockaddr_in6;
 use libc::sscanf;
+use libc::stat;
 use libc::strcpy;
 extern "C" {
 
@@ -92,7 +95,7 @@ extern "C" {
 }
 
 pub type __socklen_t = libc::c_uint;
-use crate::librb::smallint;
+
 /*
  * Copyright 2006, Bernhard Reutner-Fischer
  *
@@ -144,9 +147,6 @@ use crate::librb::smallint;
 /* add other arches which benefit from this... */
 pub type smalluint = libc::c_uchar;
 
-use crate::librb::socklen_t;
-
-use libc::stat;
 pub type __socket_type = libc::c_uint;
 pub const SOCK_NONBLOCK: __socket_type = 2048;
 pub const SOCK_CLOEXEC: __socket_type = 524288;

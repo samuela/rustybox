@@ -1,22 +1,5 @@
 use libc;
 use libc::strrchr;
-extern "C" {
-
-  /*
-   * ascii-to-numbers implementations for busybox
-   *
-   * Copyright (C) 2003  Manuel Novoa III  <mjn3@codepoet.org>
-   *
-   * Licensed under GPLv2, see file LICENSE in this source tree.
-   */
-  /* Provides extern declarations of functions */
-  /* Unsigned long long functions always exist */
-  /* Provides inline definitions of functions */
-  /* (useful for mapping them to the type of the same width) */
-  /* If long == long long, then just map them one-to-one */
-  /* Same for int -> [long] long */
-
-}
 
 /*
  * Busybox main internal header file

@@ -1,22 +1,32 @@
 use crate::libbb::appletlib::applet_name;
+use crate::libbb::llist::llist_t;
 use crate::libbb::ptr_to_globals::bb_errno;
 use crate::libbb::skip_whitespace::skip_whitespace;
+use crate::librb::fd_pair;
+use crate::librb::size_t;
+use crate::librb::smallint;
 use c2rust_asm_casts;
 use c2rust_asm_casts::AsmCastTrait;
 use libc;
 use libc::close;
 use libc::closedir;
+use libc::dirent;
 use libc::fclose;
 use libc::fprintf;
 use libc::free;
 use libc::getenv;
+use libc::in_addr;
 use libc::open;
+use libc::pid_t;
 use libc::printf;
 use libc::puts;
 use libc::readdir;
 use libc::sprintf;
 use libc::strchr;
 use libc::strcmp;
+use libc::useconds_t;
+use libc::DIR;
+use libc::FILE;
 extern "C" {
 
   #[no_mangle]
@@ -66,18 +76,7 @@ extern "C" {
   ) -> libc::c_int;
 }
 
-use crate::librb::size_t;
-use libc::pid_t;
-use libc::useconds_t;
-
-use libc::in_addr;
 pub type in_addr_t = u32;
-use crate::libbb::llist::llist_t;
-use crate::librb::fd_pair;
-use crate::librb::smallint;
-use libc::dirent;
-use libc::DIR;
-use libc::FILE;
 
 #[repr(C)]
 #[derive(Copy, Clone)]

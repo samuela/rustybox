@@ -2,14 +2,12 @@ use libc;
 use libc::free;
 use libc::printf;
 use libc::system;
+use libc::time_t;
 extern "C" {
-
   #[no_mangle]
   static mut optind: libc::c_int;
-
 }
 
-use libc::time_t;
 pub type duration_t = libc::c_double;
 
 /*

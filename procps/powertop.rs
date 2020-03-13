@@ -6,10 +6,12 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
 use libc::closedir;
+use libc::dirent;
 use libc::fclose;
 use libc::free;
 use libc::geteuid;
 use libc::opendir;
+use libc::pollfd;
 use libc::printf;
 use libc::puts;
 use libc::readdir;
@@ -19,6 +21,7 @@ use libc::strcmp;
 use libc::strcpy;
 use libc::strstr;
 use libc::termios;
+use libc::DIR;
 use libc::FILE;
 extern "C" {
 
@@ -74,10 +77,7 @@ extern "C" {
 
 }
 
-use libc::dirent;
-use libc::DIR;
 pub type nfds_t = libc::c_ulong;
-use libc::pollfd;
 pub type C2RustUnnamed = libc::c_uint;
 pub const BB_FATAL_SIGS: C2RustUnnamed = 117503054;
 
