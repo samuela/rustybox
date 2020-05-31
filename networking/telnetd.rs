@@ -795,7 +795,7 @@ pub unsafe fn telnetd_main(
     let fresh8 = (::std::mem::size_of::<fd_set>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<__fd_mask>() as libc::c_ulong);
     let fresh9 = &mut *rdfdset.fds_bits.as_mut_ptr().offset(0) as *mut __fd_mask;
-    asm!("cld; rep; stosq" : "={cx}" (fresh5), "={di}" (fresh7) : "{ax}" (0i32),
+    llvm_asm!("cld; rep; stosq" : "={cx}" (fresh5), "={di}" (fresh7) : "{ax}" (0i32),
      "0" (c2rust_asm_casts::AsmCast::cast_in(fresh4, fresh8)), "1"
      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh9)) : "memory" :
      "volatile");
@@ -810,7 +810,7 @@ pub unsafe fn telnetd_main(
     let fresh14 = (::std::mem::size_of::<fd_set>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<__fd_mask>() as libc::c_ulong);
     let fresh15 = &mut *wrfdset.fds_bits.as_mut_ptr().offset(0) as *mut __fd_mask;
-    asm!("cld; rep; stosq" : "={cx}" (fresh11), "={di}" (fresh13) : "{ax}" (0i32),
+    llvm_asm!("cld; rep; stosq" : "={cx}" (fresh11), "={di}" (fresh13) : "{ax}" (0i32),
      "0" (c2rust_asm_casts::AsmCast::cast_in(fresh10, fresh14)), "1"
      (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh15)) : "memory" :
      "volatile");

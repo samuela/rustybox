@@ -104,7 +104,7 @@ pub unsafe fn ll_proto_n2a(
       let fresh0 = &mut __v;
       let fresh1;
       let fresh2 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
@@ -173,7 +173,7 @@ pub unsafe fn ll_proto_a2n(mut id: *mut libc::c_ushort, mut buf: *mut libc::c_ch
       let fresh3 = &mut __v;
       let fresh4;
       let fresh5 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
     }

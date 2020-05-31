@@ -414,7 +414,7 @@ pub unsafe fn patch_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_cha
     as *mut *mut globals);
   *fresh0 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   opts = crate::libbb::getopt32::getopt32long(
     argv,
     b"Rup:i:NEfg\x00" as *const u8 as *const libc::c_char,

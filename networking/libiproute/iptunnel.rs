@@ -439,7 +439,7 @@ unsafe extern "C" fn parse_args(
       let fresh0 = &mut __v;
       let fresh1;
       let fresh2 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
@@ -500,7 +500,7 @@ unsafe extern "C" fn parse_args(
             let fresh3 = &mut __v;
             let fresh4;
             let fresh5 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
           }
@@ -517,7 +517,7 @@ unsafe extern "C" fn parse_args(
             let fresh6 = &mut __v;
             let fresh7;
             let fresh8 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
           }
@@ -543,7 +543,7 @@ unsafe extern "C" fn parse_args(
             let fresh9 = &mut __v;
             let fresh10;
             let fresh11 = __x;
-            asm!("bswap $0" : "=r" (fresh10) : "0"
+            llvm_asm!("bswap $0" : "=r" (fresh10) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
           }
@@ -565,7 +565,7 @@ unsafe extern "C" fn parse_args(
             let fresh12 = &mut __v;
             let fresh13;
             let fresh14 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
           }
@@ -590,7 +590,7 @@ unsafe extern "C" fn parse_args(
             let fresh15 = &mut __v;
             let fresh16;
             let fresh17 = __x;
-            asm!("bswap $0" : "=r" (fresh16) : "0"
+            llvm_asm!("bswap $0" : "=r" (fresh16) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
           }
@@ -611,7 +611,7 @@ unsafe extern "C" fn parse_args(
             let fresh18 = &mut __v;
             let fresh19;
             let fresh20 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh19) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh19) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh18, fresh20, fresh19);
           }
@@ -636,7 +636,7 @@ unsafe extern "C" fn parse_args(
             let fresh21 = &mut __v;
             let fresh22;
             let fresh23 = __x;
-            asm!("bswap $0" : "=r" (fresh22) : "0"
+            llvm_asm!("bswap $0" : "=r" (fresh22) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh21, fresh23, fresh22);
           }
@@ -655,7 +655,7 @@ unsafe extern "C" fn parse_args(
             let fresh24 = &mut __v;
             let fresh25;
             let fresh26 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh25) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh25) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh24, fresh26)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh24, fresh26, fresh25);
           }
@@ -672,7 +672,7 @@ unsafe extern "C" fn parse_args(
             let fresh27 = &mut __v;
             let fresh28;
             let fresh29 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh28) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh28) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh27, fresh29)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh27, fresh29, fresh28);
           }
@@ -690,7 +690,7 @@ unsafe extern "C" fn parse_args(
             let fresh30 = &mut __v;
             let fresh31;
             let fresh32 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh31) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh31) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh30, fresh32)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh30, fresh32, fresh31);
           }
@@ -708,7 +708,7 @@ unsafe extern "C" fn parse_args(
             let fresh33 = &mut __v;
             let fresh34;
             let fresh35 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh34) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh34) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh33, fresh35)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh33, fresh35, fresh34);
           }
@@ -726,7 +726,7 @@ unsafe extern "C" fn parse_args(
             let fresh36 = &mut __v;
             let fresh37;
             let fresh38 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh37) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh37) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh36, fresh38)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh36, fresh38, fresh37);
           }
@@ -743,7 +743,7 @@ unsafe extern "C" fn parse_args(
             let fresh39 = &mut __v;
             let fresh40;
             let fresh41 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh40) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh40) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh39, fresh41)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh39, fresh41, fresh40);
           }
@@ -761,7 +761,7 @@ unsafe extern "C" fn parse_args(
             let fresh42 = &mut __v;
             let fresh43;
             let fresh44 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh43) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh43) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh42, fresh44)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh42, fresh44, fresh43);
           }
@@ -779,7 +779,7 @@ unsafe extern "C" fn parse_args(
             let fresh45 = &mut __v;
             let fresh46;
             let fresh47 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh46) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh46) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh45, fresh47)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh45, fresh47, fresh46);
           }
@@ -798,7 +798,7 @@ unsafe extern "C" fn parse_args(
           let fresh48 = &mut __v;
           let fresh49;
           let fresh50 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh49) : "0"
+          llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh49) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh48, fresh50)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh48, fresh50, fresh49);
         }
@@ -935,7 +935,7 @@ unsafe extern "C" fn parse_args(
           let fresh51 = &mut __v;
           let fresh52;
           let fresh53 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh52) : "0"
+          llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh52) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh51, fresh53)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh51, fresh53, fresh52);
         }
@@ -953,7 +953,7 @@ unsafe extern "C" fn parse_args(
             let fresh54 = &mut __v;
             let fresh55;
             let fresh56 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh55) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh55) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh54, fresh56)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh54, fresh56, fresh55);
           }
@@ -982,7 +982,7 @@ unsafe extern "C" fn parse_args(
         let fresh57 = &mut __v;
         let fresh58;
         let fresh59 = __x;
-        asm!("bswap $0" : "=r" (fresh58) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh58) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh57, fresh59)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh57, fresh59, fresh58);
       }
@@ -1002,7 +1002,7 @@ unsafe extern "C" fn parse_args(
           let fresh60 = &mut __v;
           let fresh61;
           let fresh62 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh61) : "0"
+          llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh61) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh60, fresh62)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh60, fresh62, fresh61);
         }
@@ -1022,7 +1022,7 @@ unsafe extern "C" fn parse_args(
         let fresh63 = &mut __v;
         let fresh64;
         let fresh65 = __x;
-        asm!("bswap $0" : "=r" (fresh64) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh64) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh63, fresh65)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh63, fresh65, fresh64);
       }
@@ -1042,7 +1042,7 @@ unsafe extern "C" fn parse_args(
           let fresh66 = &mut __v;
           let fresh67;
           let fresh68 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh67) : "0"
+          llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh67) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh66, fresh68)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh66, fresh68, fresh67);
         }
@@ -1061,7 +1061,7 @@ unsafe extern "C" fn parse_args(
       let fresh69 = &mut __v;
       let fresh70;
       let fresh71 = __x;
-      asm!("bswap $0" : "=r" (fresh70) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh70) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh69, fresh71)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh69, fresh71, fresh70);
     }
@@ -1227,7 +1227,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
         let fresh72 = &mut __v;
         let fresh73;
         let fresh74 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh73) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh73) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh72, fresh74)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh72, fresh74, fresh73);
       }
@@ -1260,7 +1260,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
         let fresh75 = &mut __v;
         let fresh76;
         let fresh77 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh76) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh76) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh75, fresh77)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh75, fresh77, fresh76);
       }
@@ -1278,7 +1278,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
           let fresh78 = &mut __v;
           let fresh79;
           let fresh80 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh79) : "0"
+          llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh79) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh78, fresh80)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh78, fresh80, fresh79);
         }
@@ -1303,7 +1303,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
           let fresh81 = &mut __v;
           let fresh82;
           let fresh83 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh82) : "0"
+          llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh82) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh81, fresh83)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh81, fresh83, fresh82);
         }
@@ -1327,7 +1327,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
           let fresh84 = &mut __v;
           let fresh85;
           let fresh86 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh85) : "0"
+          llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh85) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh84, fresh86)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh84, fresh86, fresh85);
         }
@@ -1352,7 +1352,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
         let fresh87 = &mut __v;
         let fresh88;
         let fresh89 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh88) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh88) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh87, fresh89)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh87, fresh89, fresh88);
       }
@@ -1376,7 +1376,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
         let fresh90 = &mut __v;
         let fresh91;
         let fresh92 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh91) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh91) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh90, fresh92)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh90, fresh92, fresh91);
       }
@@ -1400,7 +1400,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
         let fresh93 = &mut __v;
         let fresh94;
         let fresh95 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh94) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh94) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh93, fresh95)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh93, fresh95, fresh94);
       }
@@ -1424,7 +1424,7 @@ unsafe extern "C" fn print_tunnel(mut p: *mut ip_tunnel_parm) {
         let fresh96 = &mut __v;
         let fresh97;
         let fresh98 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh97) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh97) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh96, fresh98)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh96, fresh98, fresh97);
       }

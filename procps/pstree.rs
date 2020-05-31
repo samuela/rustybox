@@ -442,7 +442,7 @@ pub unsafe fn pstree_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_ch
     as *mut *mut globals);
   *fresh2 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).output_width = crate::libbb::xfuncs::get_terminal_width(0i32) as libc::c_uint;
   crate::libbb::getopt32::getopt32(argv, b"^p\x00?1\x00" as *const u8 as *const libc::c_char);
   argv = argv.offset(optind as isize);

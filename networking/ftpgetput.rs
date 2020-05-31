@@ -252,7 +252,7 @@ unsafe extern "C" fn xconnect_ftpdata() -> libc::c_int {
         let fresh1 = &mut __v;
         let fresh2;
         let fresh3 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh2) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh2) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh1, fresh3)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh1, fresh3, fresh2);
       }

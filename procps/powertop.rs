@@ -669,7 +669,7 @@ pub unsafe fn powertop_main(
     as *mut *mut globals);
   *fresh6 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   /* Print warning when we don't have superuser privileges */
   if geteuid() != 0 as libc::c_uint {
     crate::libbb::verror_msg::bb_simple_error_msg(

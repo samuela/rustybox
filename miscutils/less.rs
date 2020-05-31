@@ -1971,7 +1971,7 @@ pub unsafe fn less_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
       as *mut *mut globals);
   *fresh13 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).less_gets_pos = -1i32;
   (*ptr_to_globals).empty_line_marker = b"~\x00" as *const u8 as *const libc::c_char;
   (*ptr_to_globals).current_file = 1i32 as libc::c_uint;

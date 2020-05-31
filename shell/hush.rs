@@ -10910,7 +10910,7 @@ pub unsafe fn hush_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
       as *mut *mut globals);
   *fresh42 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   sigfillset(&mut (*ptr_to_globals).sa.sa_mask);
   (*ptr_to_globals).sa.sa_flags = 0x10000000i32;
   if 0 != 0 {

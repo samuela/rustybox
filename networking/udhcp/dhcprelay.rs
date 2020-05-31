@@ -373,7 +373,7 @@ unsafe extern "C" fn pass_to_client(
         let fresh5 = &mut __v;
         let fresh6;
         let fresh7 = __x;
-        asm!("bswap $0" : "=r" (fresh6) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh6) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh5, fresh7)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh5, fresh7, fresh6);
       }
@@ -392,7 +392,7 @@ unsafe extern "C" fn pass_to_client(
         let fresh8 = &mut __v;
         let fresh9;
         let fresh10 = __x;
-        asm!("bswap $0" : "=r" (fresh9) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh9) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh8, fresh10)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh8, fresh10, fresh9);
       }
@@ -440,7 +440,7 @@ pub unsafe fn dhcprelay_main(
       let fresh11 = &mut __v;
       let fresh12;
       let fresh13 = __x;
-      asm!("bswap $0" : "=r" (fresh12) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh12) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh11, fresh13)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh11, fresh13, fresh12);
     }
@@ -456,7 +456,7 @@ pub unsafe fn dhcprelay_main(
       let fresh14 = &mut __v;
       let fresh15;
       let fresh16 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh15) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh15) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh14, fresh16)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh14, fresh16, fresh15);
     }
@@ -510,7 +510,7 @@ pub unsafe fn dhcprelay_main(
     let fresh21 = (::std::mem::size_of::<fd_set>() as libc::c_ulong)
       .wrapping_div(::std::mem::size_of::<__fd_mask>() as libc::c_ulong);
     let fresh22 = &mut *rfds.fds_bits.as_mut_ptr().offset(0) as *mut __fd_mask;
-    asm!("cld; rep; stosq" : "={cx}" (fresh18), "={di}" (fresh20) : "{ax}" (0i32),
+    llvm_asm!("cld; rep; stosq" : "={cx}" (fresh18), "={di}" (fresh20) : "{ax}" (0i32),
      "0" (c2rust_asm_casts::AsmCast::cast_in(fresh17, fresh21)), "1"
      (c2rust_asm_casts::AsmCast::cast_in(fresh19, fresh22)) : "memory" :
      "volatile");

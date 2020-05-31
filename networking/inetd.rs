@@ -1340,7 +1340,7 @@ unsafe extern "C" fn reread_config_file(mut _sig: libc::c_int) {
                 let fresh12 = &mut __v;
                 let fresh13;
                 let fresh14 = __x;
-                asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
+                llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) : "cc");
                 c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
               }
@@ -1394,7 +1394,7 @@ unsafe extern "C" fn reread_config_file(mut _sig: libc::c_int) {
                         let fresh15 = &mut __v;
                         let fresh16;
                         let fresh17 = __x;
-                        asm!("rorw $$8, ${0:w}" : "=r" (fresh16) : "0"
+                        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh16) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17)) : "cc");
                         c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
                       }
@@ -2342,7 +2342,7 @@ unsafe extern "C" fn machtime() -> u32 {
       let fresh29 = &mut __v;
       let fresh30;
       let fresh31 = __x;
-      asm!("bswap $0" : "=r" (fresh30) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh30) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh29, fresh31)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh29, fresh31, fresh30);
     }

@@ -117,7 +117,7 @@ unsafe fn common64_end(mut ctx: *mut md5_ctx_t, mut swap_needed: libc::c_int) {
             let fresh1 = &mut __v;
             let fresh2;
             let fresh3 = __x;
-            asm!("bswap ${0:q}" : "=r" (fresh2) : "0"
+            llvm_asm!("bswap ${0:q}" : "=r" (fresh2) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh1, fresh3)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh1, fresh3, fresh2);
           }
@@ -573,7 +573,7 @@ unsafe fn sha1_process_block64(mut ctx: *mut sha1_ctx_t) {
         let fresh32 = &mut __v;
         let fresh33;
         let fresh34 = __x;
-        asm!("bswap $0" : "=r" (fresh33) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh33) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh32, fresh34)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh32, fresh34, fresh33);
       }
@@ -763,7 +763,7 @@ unsafe fn sha256_process_block64(mut ctx: *mut sha256_ctx_t) {
         let fresh35 = &mut __v;
         let fresh36;
         let fresh37 = __x;
-        asm!("bswap $0" : "=r" (fresh36) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh36) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh35, fresh37)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh35, fresh37, fresh36);
       }
@@ -881,7 +881,7 @@ unsafe fn sha512_process_block128(mut ctx: *mut sha512_ctx_t) {
         let fresh38 = &mut __v;
         let fresh39;
         let fresh40 = __x;
-        asm!("bswap ${0:q}" : "=r" (fresh39) : "0"
+        llvm_asm!("bswap ${0:q}" : "=r" (fresh39) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh38, fresh40)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh38, fresh40, fresh39);
       }
@@ -1076,7 +1076,7 @@ pub unsafe fn sha1_end(mut ctx: *mut sha1_ctx_t, mut resbuf: *mut libc::c_void) 
         let fresh41 = &mut __v;
         let fresh42;
         let fresh43 = __x;
-        asm!("bswap $0" : "=r" (fresh42) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh42) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh41, fresh43)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh41, fresh43, fresh42);
       }
@@ -1130,7 +1130,7 @@ pub unsafe fn sha512_end(
           let fresh45 = &mut __v;
           let fresh46;
           let fresh47 = __x;
-          asm!("bswap ${0:q}" : "=r" (fresh46) : "0"
+          llvm_asm!("bswap ${0:q}" : "=r" (fresh46) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh45, fresh47)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh45, fresh47, fresh46);
         }
@@ -1155,7 +1155,7 @@ pub unsafe fn sha512_end(
           let fresh48 = &mut __v;
           let fresh49;
           let fresh50 = __x;
-          asm!("bswap ${0:q}" : "=r" (fresh49) : "0"
+          llvm_asm!("bswap ${0:q}" : "=r" (fresh49) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh48, fresh50)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh48, fresh50, fresh49);
         }
@@ -1194,7 +1194,7 @@ pub unsafe fn sha512_end(
         let fresh51 = &mut __v;
         let fresh52;
         let fresh53 = __x;
-        asm!("bswap ${0:q}" : "=r" (fresh52) : "0"
+        llvm_asm!("bswap ${0:q}" : "=r" (fresh52) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh51, fresh53)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh51, fresh53, fresh52);
       }

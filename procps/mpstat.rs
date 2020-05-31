@@ -1172,7 +1172,7 @@ pub unsafe fn mpstat_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_ch
     as *mut *mut globals);
   *fresh1 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).interval = -1i32;
   /* Get number of processors */
   (*ptr_to_globals).cpu_nr = crate::libbb::get_cpu_count::get_cpu_count();

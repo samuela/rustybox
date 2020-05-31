@@ -21254,7 +21254,7 @@ pub unsafe fn awk_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char)
   ) as *mut libc::c_char)
     .offset(::std::mem::size_of::<globals>() as libc::c_ulong as isize)
     as *mut libc::c_void as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*(ptr_to_globals as *mut globals2)).next_token__ltclass = (1i32 << 14i32 | 1i32 << 15i32) as u32;
   (*(ptr_to_globals as *mut globals2)).evaluate__seed = 1i32 as libc::c_uint;
   /* Undo busybox.c, or else strtod may eat ','! This breaks parsing:

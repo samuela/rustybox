@@ -3862,7 +3862,7 @@ pub unsafe fn read_line_input(
   *fresh23 = crate::libbb::xfuncs_printf::xzalloc(
     ::std::mem::size_of::<lineedit_statics>() as libc::c_ulong
   ) as *mut lineedit_statics;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*lineedit_ptr_to_statics).cmdedit_termw = 80i32 as libc::c_uint;
   (*lineedit_ptr_to_statics).home_pwd_buf = null_str.as_ptr() as *mut libc::c_char;
   n = crate::libbb::xfuncs::get_termios_and_make_raw(

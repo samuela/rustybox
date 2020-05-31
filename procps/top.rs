@@ -1265,7 +1265,7 @@ pub unsafe fn top_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char)
     as *mut *mut globals);
   *fresh1 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   interval = 5i32 as duration_t;
   iterations = 0;
   /*num_cpus = 0;*/

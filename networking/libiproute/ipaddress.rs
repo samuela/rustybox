@@ -1767,7 +1767,7 @@ unsafe extern "C" fn ipaddr_modify(
               let fresh4 = &mut __v;
               let fresh5;
               let fresh6 = __x;
-              asm!("bswap $0" : "=r" (fresh5) : "0"
+              llvm_asm!("bswap $0" : "=r" (fresh5) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh4, fresh6)) :);
               c2rust_asm_casts::AsmCast::cast_out(fresh4, fresh6, fresh5);
             }
@@ -1786,7 +1786,7 @@ unsafe extern "C" fn ipaddr_modify(
               let fresh7 = &mut __v;
               let fresh8;
               let fresh9 = __x;
-              asm!("bswap $0" : "=r" (fresh8) : "0"
+              llvm_asm!("bswap $0" : "=r" (fresh8) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh7, fresh9)) :);
               c2rust_asm_casts::AsmCast::cast_out(fresh7, fresh9, fresh8);
             }

@@ -2093,7 +2093,7 @@ pub unsafe fn gzip_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
   ) as *mut libc::c_char)
     .offset(::std::mem::size_of::<globals>() as libc::c_ulong as isize)
     as *mut libc::c_void as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   /* Must match bbunzip's constants OPT_STDOUT, OPT_FORCE! */
   opt = crate::libbb::getopt32::getopt32long(
     argv,

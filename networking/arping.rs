@@ -281,7 +281,7 @@ unsafe extern "C" fn send_pack(
       let fresh0 = &mut __v;
       let fresh1;
       let fresh2 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
@@ -297,7 +297,7 @@ unsafe extern "C" fn send_pack(
       let fresh3 = &mut __v;
       let fresh4;
       let fresh5 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
     }
@@ -316,7 +316,7 @@ unsafe extern "C" fn send_pack(
         let fresh6 = &mut __v;
         let fresh7;
         let fresh8 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
       }
@@ -333,7 +333,7 @@ unsafe extern "C" fn send_pack(
         let fresh9 = &mut __v;
         let fresh10;
         let fresh11 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh10) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh10) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
       }
@@ -466,7 +466,7 @@ unsafe extern "C" fn recv_pack(
         let fresh12 = &mut __v;
         let fresh13;
         let fresh14 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
       }
@@ -483,7 +483,7 @@ unsafe extern "C" fn recv_pack(
           let fresh15 = &mut __v;
           let fresh16;
           let fresh17 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh16) : "0"
+          llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh16) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
         }
@@ -504,7 +504,7 @@ unsafe extern "C" fn recv_pack(
         let fresh18 = &mut __v;
         let fresh19;
         let fresh20 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh19) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh19) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh18, fresh20, fresh19);
       }
@@ -522,7 +522,7 @@ unsafe extern "C" fn recv_pack(
             let fresh21 = &mut __v;
             let fresh22;
             let fresh23 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh22) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh22) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh21, fresh23, fresh22);
           }
@@ -543,7 +543,7 @@ unsafe extern "C" fn recv_pack(
         let fresh24 = &mut __v;
         let fresh25;
         let fresh26 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh25) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh25) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh24, fresh26)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh24, fresh26, fresh25);
       }
@@ -620,7 +620,7 @@ unsafe extern "C" fn recv_pack(
             let fresh27 = &mut __v;
             let fresh28;
             let fresh29 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh28) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh28) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh27, fresh29)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh27, fresh29, fresh28);
           }
@@ -694,7 +694,7 @@ unsafe extern "C" fn recv_pack(
         let fresh30 = &mut __v;
         let fresh31;
         let fresh32 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh31) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh31) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh30, fresh32)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh30, fresh32, fresh31);
       }
@@ -725,7 +725,7 @@ pub unsafe fn arping_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_ch
       as *mut *mut globals);
   *fresh33 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).count = -1i32;
   crate::libbb::xfuncs_printf::xmove_fd(
     crate::libbb::xfuncs_printf::xsocket(17i32, SOCK_DGRAM as libc::c_int, 0),
@@ -838,7 +838,7 @@ pub unsafe fn arping_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_ch
           let fresh34 = &mut __v;
           let fresh35;
           let fresh36 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh35) : "0"
+          llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh35) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh34, fresh36)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh34, fresh36, fresh35);
         }
@@ -883,7 +883,7 @@ pub unsafe fn arping_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_ch
       let fresh37 = &mut __v;
       let fresh38;
       let fresh39 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh38) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh38) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh37, fresh39)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh37, fresh39, fresh38);
     }

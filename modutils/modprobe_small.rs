@@ -1196,7 +1196,7 @@ pub unsafe fn modprobe_main(
       as *mut *mut globals);
   *fresh14 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   /* Prevent ugly corner cases with no modules at all */
   (*ptr_to_globals).modinfo =
     crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<module_info>() as libc::c_ulong)

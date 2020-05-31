@@ -748,7 +748,7 @@ unsafe extern "C" fn udptest() -> libc::c_int {
           let fresh1 = &mut __v;
           let fresh2;
           let fresh3 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh2) : "0"
+          llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh2) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh1, fresh3)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh1, fresh3, fresh2);
         }
@@ -1083,7 +1083,7 @@ pub unsafe fn nc_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) 
     as *mut *mut globals);
   *fresh8 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   /* catch a signal or two for cleanup */
   crate::libbb::signals::bb_signals(
     0 + (1i32 << 2i32) + (1i32 << 3i32) + (1i32 << 15i32),
@@ -1240,7 +1240,7 @@ pub unsafe fn nc_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) 
             let fresh9 = &mut __v;
             let fresh10;
             let fresh11 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh10) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh10) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
           }

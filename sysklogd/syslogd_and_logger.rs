@@ -1820,7 +1820,7 @@ pub unsafe fn syslogd_main(
     &init_data as *const init_globals as *const libc::c_void,
     ::std::mem::size_of::<init_globals>() as libc::c_ulong,
   ) as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   /* No non-option params */
   opts = crate::libbb::getopt32::getopt32(
     argv,

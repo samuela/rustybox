@@ -505,7 +505,7 @@ unsafe extern "C" fn mton(mut mask: u32) -> libc::c_int {
       let fresh0 = &mut __v;
       let fresh1;
       let fresh2 = __x;
-      asm!("bswap $0" : "=r" (fresh1) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh1) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
@@ -646,7 +646,7 @@ unsafe extern "C" fn xmalloc_optname_optval(
               let fresh3 = &mut __v;
               let fresh4;
               let fresh5 = __x;
-              asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
+              llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
               c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
             }
@@ -676,7 +676,7 @@ unsafe extern "C" fn xmalloc_optname_optval(
               let fresh6 = &mut __v;
               let fresh7;
               let fresh8 = __x;
-              asm!("bswap $0" : "=r" (fresh7) : "0"
+              llvm_asm!("bswap $0" : "=r" (fresh7) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :);
               c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
             }
@@ -1213,7 +1213,7 @@ unsafe extern "C" fn init_packet(mut packet: *mut dhcp_packet, mut type_0: libc:
         let fresh24 = &mut __v;
         let fresh25;
         let fresh26 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh25) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh25) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh24, fresh26)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh24, fresh26, fresh25);
       }
@@ -1266,7 +1266,7 @@ unsafe extern "C" fn add_client_options(mut packet: *mut dhcp_packet) {
         let fresh27 = &mut __v;
         let fresh28;
         let fresh29 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh28) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh28) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh27, fresh29)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh27, fresh29, fresh28);
       }
@@ -1361,7 +1361,7 @@ unsafe extern "C" fn add_client_options(mut packet: *mut dhcp_packet) {
           let fresh30 = &mut __v;
           let fresh31;
           let fresh32 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh31) : "0"
+          llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh31) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh30, fresh32)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh30, fresh32, fresh31);
         }
@@ -1776,7 +1776,7 @@ unsafe extern "C" fn udhcp_recv_raw_packet(
         let fresh33 = &mut __v;
         let fresh34;
         let fresh35 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh34) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh34) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh33, fresh35)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh33, fresh35, fresh34);
       }
@@ -1803,7 +1803,7 @@ unsafe extern "C" fn udhcp_recv_raw_packet(
       let fresh36 = &mut __v;
       let fresh37;
       let fresh38 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh37) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh37) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh36, fresh38)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh36, fresh38, fresh37);
     }
@@ -1824,7 +1824,7 @@ unsafe extern "C" fn udhcp_recv_raw_packet(
           let fresh39 = &mut __v;
           let fresh40;
           let fresh41 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh40) : "0"
+          llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh40) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh39, fresh41)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh39, fresh41, fresh40);
         }
@@ -1840,7 +1840,7 @@ unsafe extern "C" fn udhcp_recv_raw_packet(
         let fresh42 = &mut __v;
         let fresh43;
         let fresh44 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh43) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh43) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh42, fresh44)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh42, fresh44, fresh43);
       }
@@ -1935,7 +1935,7 @@ unsafe extern "C" fn udhcp_recv_raw_packet(
         let fresh45 = &mut __v;
         let fresh46;
         let fresh47 = __x;
-        asm!("bswap $0" : "=r" (fresh46) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh46) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh45, fresh47)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh45, fresh47, fresh46);
       }
@@ -1995,7 +1995,7 @@ unsafe extern "C" fn udhcp_raw_socket(mut ifindex: libc::c_int) -> libc::c_int {
         let fresh48 = &mut __v;
         let fresh49;
         let fresh50 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh49) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh49) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh48, fresh50)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh48, fresh50, fresh49);
       }
@@ -2022,7 +2022,7 @@ unsafe extern "C" fn udhcp_raw_socket(mut ifindex: libc::c_int) -> libc::c_int {
       let fresh51 = &mut __v;
       let fresh52;
       let fresh53 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh52) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh52) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh51, fresh53)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh51, fresh53, fresh52);
     }
@@ -3339,7 +3339,7 @@ pub unsafe fn udhcpc_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_ch
                           let fresh62 = &mut __v;
                           let fresh63;
                           let fresh64 = __x;
-                          asm!("bswap $0" : "=r" (fresh63) : "0"
+                          llvm_asm!("bswap $0" : "=r" (fresh63) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh62, fresh64)) :);
                           c2rust_asm_casts::AsmCast::cast_out(fresh62, fresh64, fresh63);
                         }

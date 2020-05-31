@@ -350,7 +350,7 @@ pub unsafe fn hexedit_main(
     as *mut *mut globals);
   *fresh9 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   crate::libbb::xfuncs::get_terminal_width_height(
     -1i32,
     0 as *mut libc::c_uint,

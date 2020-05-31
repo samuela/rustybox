@@ -212,7 +212,7 @@ unsafe extern "C" fn svstatus_print(mut m: *const libc::c_char) -> libc::c_uint 
       let fresh2 = &mut __v;
       let fresh3;
       let fresh4 = __x;
-      asm!("bswap ${0:q}" : "=r" (fresh3) : "0"
+      llvm_asm!("bswap ${0:q}" : "=r" (fresh3) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh2, fresh4)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh2, fresh4, fresh3);
     }
@@ -421,7 +421,7 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
               let fresh5 = &mut __v;
               let fresh6;
               let fresh7 = __x;
-              asm!("bswap ${0:q}" : "=r" (fresh6) : "0"
+              llvm_asm!("bswap ${0:q}" : "=r" (fresh6) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh5, fresh7)) :);
               c2rust_asm_casts::AsmCast::cast_out(fresh5, fresh7, fresh6);
             }
@@ -458,7 +458,7 @@ unsafe extern "C" fn check(mut a: *const libc::c_char) -> libc::c_int {
             let fresh8 = &mut __v;
             let fresh9;
             let fresh10 = __x;
-            asm!("bswap ${0:q}" : "=r" (fresh9) : "0"
+            llvm_asm!("bswap ${0:q}" : "=r" (fresh9) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh8, fresh10)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh8, fresh10, fresh9);
           }

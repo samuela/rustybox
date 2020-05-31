@@ -780,7 +780,7 @@ pub unsafe fn ifenslave_main(
     as *mut *mut globals);
   *fresh0 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"cdfa\x00" as *const u8 as *const libc::c_char,

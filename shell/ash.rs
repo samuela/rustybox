@@ -1071,7 +1071,7 @@ unsafe extern "C" fn raise_exception(mut e: libc::c_int) -> ! {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ash_ptr_to_globals_misc).exception_type = e as smallint;
   longjmp(
     (*(*ash_ptr_to_globals_misc).exception_handler)
@@ -1110,7 +1110,7 @@ unsafe extern "C" fn raise_interrupt() -> ! {
 }
 #[inline]
 unsafe extern "C" fn int_on() {
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   ::std::ptr::write_volatile(
     &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
     ::std::ptr::read_volatile::<libc::c_int>(
@@ -1127,7 +1127,7 @@ unsafe extern "C" fn int_on() {
 }
 #[inline]
 unsafe extern "C" fn force_int_on() {
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   ::std::ptr::write_volatile(
     &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
     0,
@@ -1144,7 +1144,7 @@ unsafe extern "C" fn outstr(mut p: *const libc::c_char, mut file: *mut FILE) {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   fputs_unlocked(p, file);
   int_on();
 }
@@ -1155,7 +1155,7 @@ unsafe extern "C" fn flush_stdout_stderr() {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   crate::libbb::xfuncs_printf::fflush_all();
   int_on();
 }
@@ -1167,7 +1167,7 @@ unsafe extern "C" fn newline_and_flush(mut dest: *mut FILE) {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   putc_unlocked('\n' as i32, dest);
   fflush(dest);
   int_on();
@@ -1181,7 +1181,7 @@ unsafe extern "C" fn out1fmt(mut fmt: *const libc::c_char, mut args: ...) -> lib
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   ap = args.clone();
   r = vprintf(fmt, ap.as_va_list());
   int_on();
@@ -1201,7 +1201,7 @@ unsafe extern "C" fn fmtstr(
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   ap = args.clone();
   ret = vsnprintf(outbuf, length, fmt, ap.as_va_list());
   int_on();
@@ -1353,7 +1353,7 @@ unsafe extern "C" fn stalloc(mut nbytes: size_t) -> *mut libc::c_void {
         &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
       ) + 1,
     );
-    asm!("" : : : "memory" : "volatile");
+    llvm_asm!("" : : : "memory" : "volatile");
     sp = xmalloc(len) as *mut stack_block;
     (*sp).prev = (*ash_ptr_to_globals_memstack).g_stackp;
     (*ash_ptr_to_globals_memstack).g_stacknxt = (*sp).space.as_mut_ptr();
@@ -1422,7 +1422,7 @@ unsafe extern "C" fn popstackmark(mut mark: *mut stackmark) {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   while (*ash_ptr_to_globals_memstack).g_stackp != (*mark).stackp {
     sp = (*ash_ptr_to_globals_memstack).g_stackp;
     (*ash_ptr_to_globals_memstack).g_stackp = (*sp).prev;
@@ -1460,7 +1460,7 @@ unsafe extern "C" fn growstackblock() {
         &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
       ) + 1,
     );
-    asm!("" : : : "memory" : "volatile");
+    llvm_asm!("" : : : "memory" : "volatile");
     sp = (*ash_ptr_to_globals_memstack).g_stackp;
     prevstackp = (*sp).prev;
     grosslen = newlen
@@ -2087,7 +2087,7 @@ unsafe extern "C" fn setvar(
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   nameeq = crate::libbb::xfuncs_printf::xzalloc(
     namelen
       .wrapping_add(vallen)
@@ -2125,7 +2125,7 @@ unsafe extern "C" fn listsetvar(mut list_set_var: *mut strlist, mut flags: libc:
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   loop {
     setvareq((*lp).text, flags);
     lp = (*lp).next;
@@ -2389,7 +2389,7 @@ unsafe extern "C" fn setpwd(mut val: *const libc::c_char, mut setold: libc::c_in
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   if (*ash_ptr_to_globals_misc).physdir != (*ash_ptr_to_globals_misc).nullstr.as_mut_ptr() {
     if (*ash_ptr_to_globals_misc).physdir != oldcur {
       free((*ash_ptr_to_globals_misc).physdir as *mut libc::c_void);
@@ -2421,7 +2421,7 @@ unsafe extern "C" fn docd(mut dest: *const libc::c_char, mut flags: libc::c_int)
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   if flags & 1i32 == 0 {
     dir = updatepwd(dest);
     if !dir.is_null() {
@@ -2671,7 +2671,7 @@ unsafe extern "C" fn setalias(mut name: *const libc::c_char, mut val: *const lib
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   if !ap.is_null() {
     if (*ap).flag & 1i32 == 0 {
       free((*ap).val as *mut libc::c_void);
@@ -2697,7 +2697,7 @@ unsafe extern "C" fn unalias(mut name: *const libc::c_char) -> libc::c_int {
         &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
       ) + 1,
     );
-    asm!("" : : : "memory" : "volatile");
+    llvm_asm!("" : : : "memory" : "volatile");
     *app = freealias(*app);
     int_on();
     return 0;
@@ -2714,7 +2714,7 @@ unsafe extern "C" fn rmaliases() {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   i = 0;
   while i < 39i32 {
     app = &mut *atab.offset(i as isize) as *mut *mut alias;
@@ -3137,7 +3137,7 @@ unsafe extern "C" fn freejob(mut jp: *mut job) {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   i = (*jp).nprocs as libc::c_int;
   ps = (*jp).ps;
   loop {
@@ -3345,7 +3345,7 @@ unsafe extern "C" fn restartjob(mut jp: *mut job, mut mode: libc::c_int) -> libc
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   if !((*jp).state() as libc::c_int == 2i32) {
     (*jp).set_state(0i32 as libc::c_uint);
     pgid = (*(*jp).ps.offset(0)).ps_pid;
@@ -3507,7 +3507,7 @@ unsafe extern "C" fn dowait(mut block: libc::c_int, mut job: *mut job) -> libc::
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   if block == 2i32 {
     pid = wait_block_or_sig(&mut status)
   } else {
@@ -4345,7 +4345,7 @@ unsafe extern "C" fn clear_traps() {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   tp = (*ash_ptr_to_globals_misc).trap.as_mut_ptr();
   while tp
     < &mut *(*ash_ptr_to_globals_misc)
@@ -4510,7 +4510,7 @@ unsafe extern "C" fn waitforjob(mut jp: *mut job) -> libc::c_int {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   while (*jp).state() as libc::c_int == 0 {
     dowait(1i32, jp);
   }
@@ -4912,7 +4912,7 @@ unsafe extern "C" fn redirect(mut redir: *mut node, mut flags: libc::c_int) {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   if flags & 0o1i32 != 0 {
     sv = (*ash_ptr_to_globals_var).redirlist
   }
@@ -5030,7 +5030,7 @@ unsafe extern "C" fn redirectsafe(mut redir: *mut node, mut flags: libc::c_int) 
       1i32,
     );
   }
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   ::std::ptr::write_volatile(
     &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
     saveint,
@@ -5093,7 +5093,7 @@ unsafe extern "C" fn popredir(mut drop_0: libc::c_int) {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   rp = (*ash_ptr_to_globals_var).redirlist;
   i = 0;
   while i < (*rp).pair_count {
@@ -5139,7 +5139,7 @@ unsafe extern "C" fn ash_arith(mut s: *const libc::c_char) -> arith_t {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   result = crate::shell::math::arith(&mut math_state, s);
   if !math_state.errmsg.is_null() {
     ash_msg_and_raise_error(math_state.errmsg);
@@ -5328,7 +5328,7 @@ unsafe extern "C" fn ifsfree() {
         &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
       ) + 1,
     );
-    asm!("" : : : "memory" : "volatile");
+    llvm_asm!("" : : : "memory" : "volatile");
     loop {
       let mut ifsp: *mut ifsregion = std::ptr::null_mut();
       ifsp = (*p).next;
@@ -5574,7 +5574,7 @@ unsafe extern "C" fn recordregion(
         &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
       ) + 1,
     );
-    asm!("" : : : "memory" : "volatile");
+    llvm_asm!("" : : : "memory" : "volatile");
     ifsp = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<ifsregion>() as libc::c_ulong)
       as *mut ifsregion;
     /*ifsp->next = NULL; - ckzalloc did it */
@@ -5599,7 +5599,7 @@ unsafe extern "C" fn removerecordregions(mut endoff: libc::c_int) {
           &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
         ) + 1,
       );
-      asm!("" : : : "memory" : "volatile");
+      llvm_asm!("" : : : "memory" : "volatile");
       ifsp = (*ifsfirst.next).next;
       free(ifsfirst.next as *mut libc::c_void);
       ifsfirst.next = ifsp;
@@ -5625,7 +5625,7 @@ unsafe extern "C" fn removerecordregions(mut endoff: libc::c_int) {
         &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
       ) + 1,
     );
-    asm!("" : : : "memory" : "volatile");
+    llvm_asm!("" : : : "memory" : "volatile");
     ifsp_0 = (*(*ifslastp).next).next;
     free((*ifslastp).next as *mut libc::c_void);
     (*ifslastp).next = ifsp_0;
@@ -5767,7 +5767,7 @@ unsafe extern "C" fn expbackq(mut cmd: *mut node, mut flag: libc::c_int) {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   startloc = expdest.wrapping_offset_from(
     (*ash_ptr_to_globals_memstack).g_stacknxt as *mut libc::c_void as *mut libc::c_char,
   ) as libc::c_long as libc::c_int;
@@ -7316,7 +7316,7 @@ unsafe extern "C" fn expandmeta(mut str: *mut strlist)
           &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
         ) + 1,
       );
-      asm!("" : : : "memory" : "volatile");
+      llvm_asm!("" : : : "memory" : "volatile");
       p = preglob((*str).text, 0x1i32 | 0x10i32);
       len = strlen(p) as libc::c_uint;
       exp.dir_max = len.wrapping_add(4096i32 as libc::c_uint);
@@ -7605,7 +7605,7 @@ unsafe extern "C" fn clearcmdentry(mut firstchange: libc::c_int) {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   tblp = cmdtable;
   while tblp < &mut *cmdtable.offset(31) as *mut *mut tblentry {
     pp = tblp;
@@ -7686,7 +7686,7 @@ unsafe extern "C" fn delete_cmd_entry() {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   cmdp = *lastcmdentry;
   *lastcmdentry = (*cmdp).next;
   if (*cmdp).cmdtype as libc::c_int == 1i32 {
@@ -8355,7 +8355,7 @@ unsafe extern "C" fn defun(mut func: *mut node) {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   entry.cmdtype = 1i32 as smallint;
   entry.u.func = copyfunc(func);
   addcmdentry((*func).ndefun.text, &mut entry);
@@ -8387,7 +8387,7 @@ unsafe extern "C" fn dotrap() {
     &mut (*ash_ptr_to_globals_misc).pending_sig as *mut smallint,
     0 as smallint,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   sig = 1i32;
   g = (*ash_ptr_to_globals_misc).gotsig.as_mut_ptr();
   while sig < 64i32 + 1i32 {
@@ -8700,7 +8700,7 @@ unsafe extern "C" fn evalsubshell(mut n: *mut node, mut flags: libc::c_int) -> l
         &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
       ) + 1,
     );
-    asm!("" : : : "memory" : "volatile");
+    llvm_asm!("" : : : "memory" : "volatile");
 
     // TODO: why was this translated this way?
     // (backgnd) == 0;
@@ -8804,7 +8804,7 @@ unsafe extern "C" fn evalpipe(mut n: *mut node, mut flags: libc::c_int) -> libc:
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
 
   // TODO: why was this translated this way?
   // ((*n).npipe.pipe_backgnd as libc::c_int) == 0;
@@ -8898,7 +8898,7 @@ unsafe extern "C" fn poplocalvars(mut keep: libc::c_int) {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   ll = localvar_stack;
   localvar_stack = (*ll).next;
   next = (*ll).lv;
@@ -8961,7 +8961,7 @@ unsafe extern "C" fn pushlocalvars() -> *mut localvar_list {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   ll = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<localvar_list>() as libc::c_ulong)
     as *mut localvar_list;
   /*ll->lv = NULL; - zalloc did it */
@@ -9015,7 +9015,7 @@ unsafe extern "C" fn evalfun(
         &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
       ) + 1,
     );
-    asm!("" : : : "memory" : "volatile");
+    llvm_asm!("" : : : "memory" : "volatile");
     (*ash_ptr_to_globals_misc).exception_handler = &mut jmploc;
     (*ash_ptr_to_globals_var).shellparam.malloced = 0 as libc::c_uchar;
     (*func).count += 1;
@@ -9033,7 +9033,7 @@ unsafe extern "C" fn evalfun(
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   funcline = savefuncline;
   freefunc(func);
   freeparam(&mut (*ash_ptr_to_globals_var).shellparam as *mut shparam as *mut shparam);
@@ -9062,7 +9062,7 @@ unsafe extern "C" fn mklocal(mut name: *mut libc::c_char) {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   /* Cater for duplicate "local". Examples:
    * x=0; f() { local x=1; echo $x; local x; echo $x; }; f; echo $x
    * x=0; f() { local x=1; echo $x; local x=2; echo $x; }; f; echo $x
@@ -9995,7 +9995,7 @@ unsafe extern "C" fn evalcommand(mut cmd: *mut node, mut flags: libc::c_int) -> 
                   &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
                 ) + 1,
               );
-              asm!("" : : : "memory" : "volatile");
+              llvm_asm!("" : : : "memory" : "volatile");
               jp = makejob(1i32);
               if forkshell(jp, cmd, 0) != 0 {
                 /* fall through to exec'ing external program */
@@ -10211,7 +10211,7 @@ unsafe extern "C" fn pushstring(mut s: *mut libc::c_char, mut ap: *mut alias) {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   if !(*g_parsefile).strpush.is_null() {
     sp = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<strpush>() as libc::c_ulong)
       as *mut strpush;
@@ -10246,7 +10246,7 @@ unsafe extern "C" fn popstring() {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   if !(*sp).ap.is_null() {
     if *(*g_parsefile).next_to_pgetc.offset(-1i32 as isize) as libc::c_int == ' ' as i32
       || *(*g_parsefile).next_to_pgetc.offset(-1i32 as isize) as libc::c_int == '\t' as i32
@@ -10562,7 +10562,7 @@ unsafe extern "C" fn popfile() {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   if (*pf).pf_fd >= 0 {
     close((*pf).pf_fd);
   }
@@ -10632,7 +10632,7 @@ unsafe extern "C" fn setinputfile(
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   fd = open(fname, 0 | 0o2000000i32);
   if fd < 0 {
     if !(flags & INPUT_NOFILE_OK as libc::c_int != 0) {
@@ -10664,7 +10664,7 @@ unsafe extern "C" fn setinputstring(mut string: *mut libc::c_char) {
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   pushfile();
   (*g_parsefile).next_to_pgetc = string;
   (*g_parsefile).left_in_line = strlen(string) as libc::c_int;
@@ -10973,7 +10973,7 @@ unsafe extern "C" fn shiftcmd(
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ash_ptr_to_globals_var).shellparam.nparam -= n;
   ap1 = (*ash_ptr_to_globals_var).shellparam.p;
   loop {
@@ -11077,7 +11077,7 @@ unsafe extern "C" fn setcmd(
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   retval = options(0 as *mut libc::c_int);
   if retval == 0 {
     /* if no parse error... */
@@ -13335,7 +13335,7 @@ unsafe extern "C" fn expandstr(
     );
   }
   (*ash_ptr_to_globals_misc).exception_handler = savehandler;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   ::std::ptr::write_volatile(
     &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
     saveint,
@@ -13366,7 +13366,7 @@ unsafe extern "C" fn expandstr(
     exitshell();
   }
   (*ash_ptr_to_globals_misc).exception_handler = savehandler;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   ::std::ptr::write_volatile(
     &mut (*ash_ptr_to_globals_misc).suppress_int as *mut libc::c_int,
     saveint,
@@ -13839,7 +13839,7 @@ unsafe extern "C" fn find_command(
                     &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
                   ) + 1,
                 );
-                asm!("" : : : "memory" : "volatile");
+                llvm_asm!("" : : : "memory" : "volatile");
                 cmdp = cmdlookup(name, 1i32);
                 (*cmdp).cmdtype = 0 as smallint;
                 (*cmdp).param.index = idx;
@@ -13899,7 +13899,7 @@ unsafe extern "C" fn find_command(
               &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
             ) + 1,
           );
-          asm!("" : : : "memory" : "volatile");
+          llvm_asm!("" : : : "memory" : "volatile");
           cmdp = cmdlookup(name, 1i32);
           (*cmdp).cmdtype = 2i32 as smallint;
           (*cmdp).param.cmd = bcmd;
@@ -13983,7 +13983,7 @@ unsafe extern "C" fn trapcmd(
           &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
         ) + 1,
       );
-      asm!("" : : : "memory" : "volatile");
+      llvm_asm!("" : : : "memory" : "volatile");
       if !action.is_null() {
         if *action.offset(0) as libc::c_int == '-' as i32 && *action.offset(1) == 0 {
           action = std::ptr::null_mut::<libc::c_char>()
@@ -14301,7 +14301,7 @@ unsafe extern "C" fn readcmd(
         &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
       ) + 1,
     );
-    asm!("" : : : "memory" : "volatile");
+    llvm_asm!("" : : : "memory" : "volatile");
     r = crate::shell::shell_common::shell_builtin_read(&mut params);
     int_on();
     if !(r as uintptr_t == 1i32 as libc::c_ulong && *bb_errno == 4i32) {
@@ -14335,7 +14335,7 @@ unsafe extern "C" fn umaskcmd(
       &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
     ) + 1,
   );
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   mask = umask(0i32 as mode_t);
   umask(mask);
   int_on();
@@ -14994,7 +14994,7 @@ pub unsafe fn ash_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char)
   *fresh118 =
     crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals_misc>() as libc::c_ulong)
       as *mut globals_misc;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ash_ptr_to_globals_misc).curdir = (*ash_ptr_to_globals_misc).nullstr.as_mut_ptr();
   (*ash_ptr_to_globals_misc).physdir = (*ash_ptr_to_globals_misc).nullstr.as_mut_ptr();
   (*ash_ptr_to_globals_misc).trap_ptr = (*ash_ptr_to_globals_misc).trap.as_mut_ptr();
@@ -15004,7 +15004,7 @@ pub unsafe fn ash_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char)
   *fresh119 = crate::libbb::xfuncs_printf::xzalloc(
     ::std::mem::size_of::<globals_memstack>() as libc::c_ulong
   ) as *mut globals_memstack;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ash_ptr_to_globals_memstack).g_stackp = &mut (*ash_ptr_to_globals_memstack).stackbase;
   (*ash_ptr_to_globals_memstack).g_stacknxt =
     (*ash_ptr_to_globals_memstack).stackbase.space.as_mut_ptr();
@@ -15021,7 +15021,7 @@ pub unsafe fn ash_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char)
   *fresh120 =
     crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals_var>() as libc::c_ulong)
       as *mut globals_var;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   i = 0 as libc::c_uint;
   while i
     < (::std::mem::size_of::<[C2RustUnnamed_11; 13]>() as libc::c_ulong)
@@ -15147,7 +15147,7 @@ pub unsafe fn ash_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char)
                   &(*ash_ptr_to_globals_misc).suppress_int as *const libc::c_int,
                 ) + 1,
               );
-              asm!("" : : : "memory" : "volatile");
+              llvm_asm!("" : : : "memory" : "volatile");
               hp_0 = crate::libbb::concat_path_file::concat_path_file(
                 hp_0,
                 b".ash_history\x00" as *const u8 as *const libc::c_char,

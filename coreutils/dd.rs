@@ -662,7 +662,7 @@ pub unsafe fn dd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) 
                         let fresh3 = &mut __v;
                         let fresh4;
                         let fresh5 = __x;
-                        asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
+                        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
                         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
                       }

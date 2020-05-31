@@ -43,7 +43,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
       let fresh0 = &mut __v;
       let fresh1;
       let fresh2 = __x;
-      asm!("bswap ${0:q}" : "=r" (fresh1) : "0"
+      llvm_asm!("bswap ${0:q}" : "=r" (fresh1) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
@@ -67,7 +67,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
       let fresh3 = &mut __v;
       let fresh4;
       let fresh5 = __x;
-      asm!("bswap ${0:q}" : "=r" (fresh4) : "0"
+      llvm_asm!("bswap ${0:q}" : "=r" (fresh4) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
     }
@@ -89,7 +89,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
       let fresh6 = &mut __v;
       let fresh7;
       let fresh8 = __x;
-      asm!("bswap ${0:q}" : "=r" (fresh7) : "0"
+      llvm_asm!("bswap ${0:q}" : "=r" (fresh7) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
     }
@@ -112,7 +112,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
       let fresh9 = &mut __v;
       let fresh10;
       let fresh11 = __x;
-      asm!("bswap ${0:q}" : "=r" (fresh10) : "0"
+      llvm_asm!("bswap ${0:q}" : "=r" (fresh10) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
     }
@@ -249,7 +249,7 @@ pub unsafe extern "C" fn aesgcm_GHASH(
       let fresh13 = &mut __v;
       let fresh14;
       let fresh15 = __x;
-      asm!("bswap $0" : "=r" (fresh14) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh14) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh13, fresh15)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh13, fresh15, fresh14);
     }
@@ -269,7 +269,7 @@ pub unsafe extern "C" fn aesgcm_GHASH(
       let fresh17 = &mut __v;
       let fresh18;
       let fresh19 = __x;
-      asm!("bswap $0" : "=r" (fresh18) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh18) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh17, fresh19)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh17, fresh19, fresh18);
     }

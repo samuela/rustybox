@@ -541,7 +541,7 @@ unsafe extern "C" fn get_sname(
         let fresh0 = &mut __v;
         let fresh1;
         let fresh2 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
       }
@@ -580,7 +580,7 @@ unsafe extern "C" fn ip_port_str(
           let fresh3 = &mut __v;
           let fresh4;
           let fresh5 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
+          llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
         }
@@ -951,7 +951,7 @@ pub unsafe fn netstat_main(
     as *mut *mut globals);
   *fresh7 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).flags = (0x1i32 | (0x10i32 | 0x20i32 | 0x40i32 | 0x80i32)) as smalluint;
   /* Option string must match NETSTAT_xxx constants */
   opt =

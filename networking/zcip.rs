@@ -219,7 +219,7 @@ unsafe extern "C" fn pick_nip() -> u32 {
       let fresh0 = &mut __v;
       let fresh1;
       let fresh2 = __x;
-      asm!("bswap $0" : "=r" (fresh1) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh1) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
@@ -275,7 +275,7 @@ unsafe extern "C" fn send_arp_request(
       let fresh3 = &mut __v;
       let fresh4;
       let fresh5 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
     }
@@ -303,7 +303,7 @@ unsafe extern "C" fn send_arp_request(
       let fresh6 = &mut __v;
       let fresh7;
       let fresh8 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
     }
@@ -319,7 +319,7 @@ unsafe extern "C" fn send_arp_request(
       let fresh9 = &mut __v;
       let fresh10;
       let fresh11 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh10) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh10) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
     }
@@ -337,7 +337,7 @@ unsafe extern "C" fn send_arp_request(
       let fresh12 = &mut __v;
       let fresh13;
       let fresh14 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
     }
@@ -497,7 +497,7 @@ pub unsafe fn zcip_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
           let fresh16 = &mut __v;
           let fresh17;
           let fresh18 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh17) : "0"
+          llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh17) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh16, fresh18)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh16, fresh18, fresh17);
         }
@@ -528,7 +528,7 @@ pub unsafe fn zcip_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
           let fresh19 = &mut __v;
           let fresh20;
           let fresh21 = __x;
-          asm!("bswap $0" : "=r" (fresh20) : "0"
+          llvm_asm!("bswap $0" : "=r" (fresh20) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh19, fresh21)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh19, fresh21, fresh20);
         }
@@ -552,7 +552,7 @@ pub unsafe fn zcip_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
       let fresh22 = &mut __v;
       let fresh23;
       let fresh24 = __x;
-      asm!("bswap $0" : "=r" (fresh23) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh23) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh22, fresh24)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh22, fresh24, fresh23);
     }
@@ -574,7 +574,7 @@ pub unsafe fn zcip_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
           let fresh25 = &mut __v;
           let fresh26;
           let fresh27 = __x;
-          asm!("bswap $0" : "=r" (fresh26) : "0"
+          llvm_asm!("bswap $0" : "=r" (fresh26) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh25, fresh27)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh25, fresh27, fresh26);
         }
@@ -872,7 +872,7 @@ pub unsafe fn zcip_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
                     let fresh30 = &mut __v;
                     let fresh31;
                     let fresh32 = __x;
-                    asm!("rorw $$8, ${0:w}" : "=r" (fresh31) : "0"
+                    llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh31) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh30, fresh32)) : "cc");
                     c2rust_asm_casts::AsmCast::cast_out(fresh30, fresh32, fresh31);
                   }
@@ -893,7 +893,7 @@ pub unsafe fn zcip_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
                     let fresh33 = &mut __v;
                     let fresh34;
                     let fresh35 = __x;
-                    asm!("rorw $$8, ${0:w}" : "=r" (fresh34) : "0"
+                    llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh34) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh33, fresh35)) : "cc");
                     c2rust_asm_casts::AsmCast::cast_out(fresh33, fresh35, fresh34);
                   }
@@ -911,7 +911,7 @@ pub unsafe fn zcip_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
                       let fresh36 = &mut __v;
                       let fresh37;
                       let fresh38 = __x;
-                      asm!("rorw $$8, ${0:w}" : "=r" (fresh37) : "0"
+                      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh37) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh36, fresh38)) : "cc");
                       c2rust_asm_casts::AsmCast::cast_out(fresh36, fresh38, fresh37);
                     }
@@ -949,7 +949,7 @@ pub unsafe fn zcip_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
                       let fresh39 = &mut __v;
                       let fresh40;
                       let fresh41 = __x;
-                      asm!("rorw $$8, ${0:w}" : "=r" (fresh40) : "0"
+                      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh40) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh39, fresh41)) : "cc");
                       c2rust_asm_casts::AsmCast::cast_out(fresh39, fresh41, fresh40);
                     }

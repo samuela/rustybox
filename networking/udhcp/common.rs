@@ -1008,7 +1008,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
             let fresh1 = &mut __v;
             let fresh2;
             let fresh3 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh2) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh2) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh1, fresh3)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh1, fresh3, fresh2);
           }
@@ -1037,7 +1037,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
             let fresh4 = &mut __v;
             let fresh5;
             let fresh6 = __x;
-            asm!("bswap $0" : "=r" (fresh5) : "0"
+            llvm_asm!("bswap $0" : "=r" (fresh5) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh4, fresh6)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh4, fresh6, fresh5);
           }
@@ -1060,7 +1060,7 @@ pub unsafe extern "C" fn udhcp_str2optset(
             let fresh7 = &mut __v;
             let fresh8;
             let fresh9 = __x;
-            asm!("bswap $0" : "=r" (fresh8) : "0"
+            llvm_asm!("bswap $0" : "=r" (fresh8) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh7, fresh9)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh7, fresh9, fresh8);
           }

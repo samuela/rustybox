@@ -475,7 +475,7 @@ pub unsafe fn conspy_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_ch
       as *mut *mut globals);
   *fresh11 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).height = (2147483647i32 as libc::c_uint)
     .wrapping_mul(2u32)
     .wrapping_add(1u32);

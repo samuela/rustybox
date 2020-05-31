@@ -318,7 +318,7 @@ pub unsafe fn arpping(
         let fresh0 = &mut __v;
         let fresh1;
         let fresh2 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
       }
@@ -360,7 +360,7 @@ pub unsafe fn arpping(
         let fresh3 = &mut __v; /* hardware address length */
         let fresh4; /* protocol address length */
         let fresh5 = __x; /* ARP op code */
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc"); /* source hardware address */
         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4); /* source IP address */
       }
@@ -376,7 +376,7 @@ pub unsafe fn arpping(
         let fresh6 = &mut __v;
         let fresh7;
         let fresh8 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh7) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
       }
@@ -392,7 +392,7 @@ pub unsafe fn arpping(
         let fresh9 = &mut __v;
         let fresh10;
         let fresh11 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh10) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh10) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
       }
@@ -410,7 +410,7 @@ pub unsafe fn arpping(
         let fresh12 = &mut __v;
         let fresh13;
         let fresh14 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh13) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
       }
@@ -489,7 +489,7 @@ pub unsafe fn arpping(
                   let fresh15 = &mut __v;
                   let fresh16;
                   let fresh17 = __x;
-                  asm!("rorw $$8, ${0:w}" : "=r" (fresh16) : "0"
+                  llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh16) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17)) : "cc");
                   c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
                 }

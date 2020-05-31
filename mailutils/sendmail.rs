@@ -259,7 +259,7 @@ pub unsafe fn sendmail_main(
     as *mut *mut globals);
   *fresh1 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).opt_charset =
     b"us-ascii\x00" as *const u8 as *const libc::c_char as *mut libc::c_char;
   // default HOST[:PORT] is $SMTPHOST, or localhost

@@ -104,7 +104,7 @@ unsafe fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
       let fresh0 = &mut __v;
       let fresh1;
       let fresh2 = __x;
-      asm!("bswap $0" : "=r" (fresh1) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh1) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }
@@ -123,7 +123,7 @@ unsafe fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
         let fresh3 = &mut __v;
         let fresh4;
         let fresh5 = __x;
-        asm!("bswap $0" : "=r" (fresh4) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh4) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
       }
@@ -142,7 +142,7 @@ unsafe fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
         let fresh6 = &mut __v;
         let fresh7;
         let fresh8 = __x;
-        asm!("bswap $0" : "=r" (fresh7) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh7) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
       }
@@ -161,7 +161,7 @@ unsafe fn get_netmask(mut ipaddr: libc::c_ulong) -> libc::c_ulong {
         let fresh9 = &mut __v;
         let fresh10;
         let fresh11 = __x;
-        asm!("bswap $0" : "=r" (fresh10) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh10) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
       }
@@ -186,7 +186,7 @@ unsafe fn get_prefix(mut netmask: libc::c_ulong) -> libc::c_int {
       let fresh12 = &mut __v;
       let fresh13;
       let fresh14 = __x;
-      asm!("bswap $0" : "=r" (fresh13) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh13) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
     }
@@ -264,7 +264,7 @@ pub unsafe fn ipcalc_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_ch
             let fresh16 = &mut __v;
             let fresh17;
             let fresh18 = __x;
-            asm!("bswap $0" : "=r" (fresh17) : "0"
+            llvm_asm!("bswap $0" : "=r" (fresh17) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh16, fresh18)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh16, fresh18, fresh17);
           }

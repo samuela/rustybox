@@ -1204,7 +1204,7 @@ pub unsafe fn ed_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) 
       as *mut *mut globals);
   *fresh14 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).bufSize = INITBUF_SIZE as libc::c_int;
   (*ptr_to_globals).bufBase = xmalloc((*ptr_to_globals).bufSize as size_t) as *mut libc::c_char;
   (*ptr_to_globals).bufPtr = (*ptr_to_globals).bufBase;

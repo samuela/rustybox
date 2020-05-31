@@ -265,7 +265,7 @@ unsafe fn count_netmask_bits(mut dotted_quad: *const libc::c_char) -> libc::c_in
       let fresh0 = &mut __v;
       let fresh1;
       let fresh2 = __x;
-      asm!("bswap $0" : "=r" (fresh1) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh1) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
     }

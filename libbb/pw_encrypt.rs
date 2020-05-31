@@ -1036,7 +1036,7 @@ unsafe fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_char) {
       let fresh6 = &mut __v;
       let fresh7;
       let fresh8 = __x;
-      asm!("bswap $0" : "=r" (fresh7) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh7) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
     }
@@ -1054,7 +1054,7 @@ unsafe fn des_setkey(mut ctx: *mut des_ctx, mut key: *const libc::c_char) {
       let fresh9 = &mut __v;
       let fresh10;
       let fresh11 = __x;
-      asm!("bswap $0" : "=r" (fresh10) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh10) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
     }

@@ -2301,7 +2301,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
         let fresh14 = &mut __v;
         let fresh15;
         let fresh16 = __x;
-        asm!("bswap $0" : "=r" (fresh15) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh15) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh14, fresh16)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh14, fresh16, fresh15);
       }
@@ -2326,7 +2326,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
   //       let fresh17 = &mut __v;
   //       let fresh18;
   //       let fresh19 = __x;
-  //       asm!("bswap $0" : "=r" (fresh18) : "0"
+  //       llvm_asm!("bswap $0" : "=r" (fresh18) : "0"
   //                        (c2rust_asm_casts::AsmCast::cast_in(fresh17, fresh19))
   //                        :);
   //       c2rust_asm_casts::AsmCast::cast_out(fresh17, fresh19, fresh18);
@@ -2346,7 +2346,7 @@ unsafe extern "C" fn handle_incoming_and_exit(mut fromAddr: *const len_and_socka
   //       let fresh20 = &mut __v;
   //       let fresh21;
   //       let fresh22 = __x;
-  //       asm!("bswap $0" : "=r" (fresh21) : "0"
+  //       llvm_asm!("bswap $0" : "=r" (fresh21) : "0"
   //    (c2rust_asm_casts::AsmCast::cast_in(fresh20, fresh22)) :);
   //       c2rust_asm_casts::AsmCast::cast_out(fresh20, fresh22, fresh21);
   //     }
@@ -2961,7 +2961,7 @@ pub unsafe fn httpd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_cha
       as *mut *mut globals);
   *fresh28 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).g_realm = b"Web Server Authentication\x00" as *const u8 as *const libc::c_char;
   (*ptr_to_globals).range_start = -1i32 as off_t;
   (*ptr_to_globals).bind_addr_or_port = b"80\x00" as *const u8 as *const libc::c_char;

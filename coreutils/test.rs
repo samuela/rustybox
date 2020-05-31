@@ -1372,7 +1372,7 @@ pub unsafe fn test_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
   *fresh1 =
     crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<test_statics>() as libc::c_ulong)
       as *mut test_statics;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   res = _setjmp((*test_ptr_to_statics).leaving.as_mut_ptr());
   if !(res != 0) {
     /* resetting ngroups is probably unnecessary.  it will

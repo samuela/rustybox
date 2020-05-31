@@ -3338,7 +3338,7 @@ pub unsafe fn fdisk_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_cha
     as *mut *mut globals); /* needed: fd 3 must not stay closed */
   *fresh2 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).sector_size = 512i32 as libc::c_uint;
   (*ptr_to_globals).sector_offset = 1i32 as libc::c_uint;
   (*ptr_to_globals).g_partitions = 4i32;

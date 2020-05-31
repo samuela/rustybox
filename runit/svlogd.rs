@@ -374,7 +374,7 @@ unsafe fn fmt_time_bernstein_25(mut s: *mut libc::c_char) {
       let fresh2 = &mut __v;
       let fresh3;
       let fresh4 = __x;
-      asm!("bswap $0" : "=r" (fresh3) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh3) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh2, fresh4)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh2, fresh4, fresh3);
     }
@@ -392,7 +392,7 @@ unsafe fn fmt_time_bernstein_25(mut s: *mut libc::c_char) {
       let fresh5 = &mut __v;
       let fresh6;
       let fresh7 = __x;
-      asm!("bswap $0" : "=r" (fresh6) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh6) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh5, fresh7)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh5, fresh7, fresh6);
     }
@@ -410,7 +410,7 @@ unsafe fn fmt_time_bernstein_25(mut s: *mut libc::c_char) {
       let fresh8 = &mut __v;
       let fresh9;
       let fresh10 = __x;
-      asm!("bswap $0" : "=r" (fresh9) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh9) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh8, fresh10)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh8, fresh10, fresh9);
     }
@@ -1486,7 +1486,7 @@ pub unsafe fn svlogd_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_cha
       as *mut *mut globals);
   *fresh14 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).linemax = 1000i32;
   (*ptr_to_globals).linecomplete = 1i32 as smallint;
   (*ptr_to_globals).replace = b"\x00" as *const u8 as *const libc::c_char;

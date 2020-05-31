@@ -266,7 +266,7 @@ unsafe fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut libc::c_cha
         let fresh1 = &mut __v;
         let fresh2;
         let fresh3 = __x;
-        asm!("bswap $0" : "=r" (fresh2) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh2) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh1, fresh3)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh1, fresh3, fresh2);
       }
@@ -418,7 +418,7 @@ unsafe fn INET_setroute(mut action: libc::c_int, mut args: *mut *mut libc::c_cha
         let fresh4 = &mut __v;
         let fresh5;
         let fresh6 = __x;
-        asm!("bswap $0" : "=r" (fresh5) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh5) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh4, fresh6)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh4, fresh6, fresh5);
       }

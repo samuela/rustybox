@@ -1068,7 +1068,7 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
         let fresh5 = &mut __v_0;
         let fresh6;
         let fresh7 = __x_0;
-        asm!("bswap ${0:q}" : "=r" (fresh6) : "0"
+        llvm_asm!("bswap ${0:q}" : "=r" (fresh6) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh5, fresh7)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh5, fresh7, fresh6);
       }
@@ -1087,7 +1087,7 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
       let fresh8 = &mut __v;
       let fresh9;
       let fresh10 = __x;
-      asm!("bswap ${0:q}" : "=r" (fresh9) : "0"
+      llvm_asm!("bswap ${0:q}" : "=r" (fresh9) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh8, fresh10)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh8, fresh10, fresh9);
     }
@@ -1280,7 +1280,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
         let fresh12 = &mut __v_0;
         let fresh13;
         let fresh14 = __x_0;
-        asm!("bswap ${0:q}" : "=r" (fresh13) : "0"
+        llvm_asm!("bswap ${0:q}" : "=r" (fresh13) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh12, fresh14)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh12, fresh14, fresh13);
       }
@@ -1299,7 +1299,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
       let fresh15 = &mut __v;
       let fresh16;
       let fresh17 = __x;
-      asm!("bswap ${0:q}" : "=r" (fresh16) : "0"
+      llvm_asm!("bswap ${0:q}" : "=r" (fresh16) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh15, fresh17)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh15, fresh17, fresh16);
     }
@@ -1322,7 +1322,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
         let fresh18 = &mut __v;
         let fresh19;
         let fresh20 = __x;
-        asm!("bswap $0" : "=r" (fresh19) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh19) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh18, fresh20)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh18, fresh20, fresh19);
       }
@@ -1365,7 +1365,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
       let fresh21 = &mut __v;
       let fresh22;
       let fresh23 = __x;
-      asm!("bswap $0" : "=r" (fresh22) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh22) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh21, fresh23, fresh22);
     }
@@ -1514,7 +1514,7 @@ unsafe extern "C" fn tls_aesgcm_decrypt(
         let fresh24 = &mut __v;
         let fresh25;
         let fresh26 = __x;
-        asm!("bswap $0" : "=r" (fresh25) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh25) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh24, fresh26)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh24, fresh26, fresh25);
       }
@@ -2420,7 +2420,7 @@ unsafe extern "C" fn process_server_key(mut tls: *mut tls_state_t, mut len: libc
         let fresh29 = &mut __v;
         let fresh30;
         let fresh31 = __x;
-        asm!("bswap $0" : "=r" (fresh30) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh30) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh29, fresh31)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh29, fresh31, fresh30);
       }

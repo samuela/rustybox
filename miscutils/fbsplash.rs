@@ -712,7 +712,7 @@ pub unsafe fn fbsplash_main(
     as *mut *mut globals);
   *fresh0 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   // parse command line options
   fb_device = b"/dev/fb0\x00" as *const u8 as *const libc::c_char;
   cfg_filename = std::ptr::null();

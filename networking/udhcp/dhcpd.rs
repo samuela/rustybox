@@ -800,7 +800,7 @@ unsafe extern "C" fn find_free_or_expired_nip(
             let fresh0 = &mut __v;
             let fresh1;
             let fresh2 = __x;
-            asm!("bswap $0" : "=r" (fresh1) : "0"
+            llvm_asm!("bswap $0" : "=r" (fresh1) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
           }
@@ -1210,7 +1210,7 @@ unsafe extern "C" fn read_config(mut file: *const libc::c_char) {
       let fresh3 = &mut __v;
       let fresh4;
       let fresh5 = __x;
-      asm!("bswap $0" : "=r" (fresh4) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh4) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
     }
@@ -1228,7 +1228,7 @@ unsafe extern "C" fn read_config(mut file: *const libc::c_char) {
       let fresh6 = &mut __v;
       let fresh7;
       let fresh8 = __x;
-      asm!("bswap $0" : "=r" (fresh7) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh7) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
     }
@@ -1265,7 +1265,7 @@ unsafe extern "C" fn write_leases() {
       let fresh9 = &mut __v;
       let fresh10;
       let fresh11 = __x;
-      asm!("bswap ${0:q}" : "=r" (fresh10) : "0"
+      llvm_asm!("bswap ${0:q}" : "=r" (fresh10) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh9, fresh11)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh9, fresh11, fresh10);
     }
@@ -1302,7 +1302,7 @@ unsafe extern "C" fn write_leases() {
           let fresh13 = &mut __v;
           let fresh14;
           let fresh15 = __x;
-          asm!("bswap $0" : "=r" (fresh14) : "0"
+          llvm_asm!("bswap $0" : "=r" (fresh14) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh13, fresh15)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh13, fresh15, fresh14);
         }
@@ -1373,7 +1373,7 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
         let fresh16 = &mut __v;
         let fresh17;
         let fresh18 = __x;
-        asm!("bswap ${0:q}" : "=r" (fresh17) : "0"
+        llvm_asm!("bswap ${0:q}" : "=r" (fresh17) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh16, fresh18)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh16, fresh18, fresh17);
       }
@@ -1404,7 +1404,7 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
             let fresh19 = &mut __v;
             let fresh20;
             let fresh21 = __x;
-            asm!("bswap $0" : "=r" (fresh20) : "0"
+            llvm_asm!("bswap $0" : "=r" (fresh20) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh19, fresh21)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh19, fresh21, fresh20);
           }
@@ -1427,7 +1427,7 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
             let fresh22 = &mut __v;
             let fresh23;
             let fresh24 = __x;
-            asm!("bswap $0" : "=r" (fresh23) : "0"
+            llvm_asm!("bswap $0" : "=r" (fresh23) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh22, fresh24)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh22, fresh24, fresh23);
           }
@@ -1511,7 +1511,7 @@ unsafe extern "C" fn send_packet_to_client(
           let fresh25 = &mut __v;
           let fresh26;
           let fresh27 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh26) : "0"
+          llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh26) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh25, fresh27)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh25, fresh27, fresh26);
         }
@@ -1688,7 +1688,7 @@ unsafe extern "C" fn select_lease_time(mut packet: *mut dhcp_packet) -> u32 {
         let fresh28 = &mut __v;
         let fresh29;
         let fresh30 = __x;
-        asm!("bswap $0" : "=r" (fresh29) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh29) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh28, fresh30)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh28, fresh30, fresh29);
       }
@@ -1758,7 +1758,7 @@ unsafe extern "C" fn send_offer(
           let fresh31 = &mut __v;
           let fresh32;
           let fresh33 = __x;
-          asm!("bswap $0" : "=r" (fresh32) : "0"
+          llvm_asm!("bswap $0" : "=r" (fresh32) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh31, fresh33)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh31, fresh33, fresh32);
         }
@@ -1776,7 +1776,7 @@ unsafe extern "C" fn send_offer(
           let fresh34 = &mut __v;
           let fresh35;
           let fresh36 = __x;
-          asm!("bswap $0" : "=r" (fresh35) : "0"
+          llvm_asm!("bswap $0" : "=r" (fresh35) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh34, fresh36)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh34, fresh36, fresh35);
         }
@@ -1833,7 +1833,7 @@ unsafe extern "C" fn send_offer(
       let fresh37 = &mut __v;
       let fresh38;
       let fresh39 = __x;
-      asm!("bswap $0" : "=r" (fresh38) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh38) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh37, fresh39)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh37, fresh39, fresh38);
     }
@@ -1914,7 +1914,7 @@ unsafe extern "C" fn send_ACK(mut oldpacket: *mut dhcp_packet, mut yiaddr: u32) 
       let fresh40 = &mut __v;
       let fresh41;
       let fresh42 = __x;
-      asm!("bswap $0" : "=r" (fresh41) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh41) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh40, fresh42)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh40, fresh42, fresh41);
     }
@@ -2072,7 +2072,7 @@ pub unsafe fn udhcpd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_ch
         let fresh43 = &mut __v;
         let fresh44;
         let fresh45 = __x;
-        asm!("bswap $0" : "=r" (fresh44) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh44) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh43, fresh45)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh43, fresh45, fresh44);
       }
@@ -2100,7 +2100,7 @@ pub unsafe fn udhcpd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_ch
     ((*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).max_leases as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<dyn_lease>() as libc::c_ulong),
   ) as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   read_leases((*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).lease_file);
   if crate::networking::udhcp::socket::udhcp_read_interface(
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut server_data_t)).interface,

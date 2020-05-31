@@ -216,7 +216,7 @@ unsafe fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_int {
           let fresh0 = &mut __v;
           let fresh1;
           let fresh2 = __x;
-          asm!("bswap $0" : "=r" (fresh1) : "0"
+          llvm_asm!("bswap $0" : "=r" (fresh1) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
         }
@@ -240,7 +240,7 @@ unsafe fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_int {
         let fresh3 = &mut __v;
         let fresh4;
         let fresh5 = __x;
-        asm!("bswap $0" : "=r" (fresh4) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh4) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
       }
@@ -258,7 +258,7 @@ unsafe fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_int {
         let fresh6 = &mut __v;
         let fresh7;
         let fresh8 = __x;
-        asm!("bswap $0" : "=r" (fresh7) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh7) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh6, fresh8)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh6, fresh8, fresh7);
       }
@@ -300,7 +300,7 @@ unsafe fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_int {
           let fresh11 = &mut __v;
           let fresh12;
           let fresh13 = __x;
-          asm!("bswap $0" : "=r" (fresh12) : "0"
+          llvm_asm!("bswap $0" : "=r" (fresh12) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh11, fresh13)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh11, fresh13, fresh12);
         }
@@ -318,7 +318,7 @@ unsafe fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_int {
           let fresh14 = &mut __v;
           let fresh15;
           let fresh16 = __x;
-          asm!("bswap $0" : "=r" (fresh15) : "0"
+          llvm_asm!("bswap $0" : "=r" (fresh15) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh14, fresh16)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh14, fresh16, fresh15);
         }
@@ -336,7 +336,7 @@ unsafe fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_int {
           let fresh17 = &mut __v;
           let fresh18;
           let fresh19 = __x;
-          asm!("bswap $0" : "=r" (fresh18) : "0"
+          llvm_asm!("bswap $0" : "=r" (fresh18) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh17, fresh19)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh17, fresh19, fresh18);
         }
@@ -354,7 +354,7 @@ unsafe fn rpm_gettags(mut filename: *const libc::c_char) -> libc::c_int {
           let fresh20 = &mut __v;
           let fresh21;
           let fresh22 = __x;
-          asm!("bswap $0" : "=r" (fresh21) : "0"
+          llvm_asm!("bswap $0" : "=r" (fresh21) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh20, fresh22)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh20, fresh22, fresh21);
         }
@@ -475,7 +475,7 @@ unsafe fn rpm_getint(mut tag: libc::c_int, mut itemindex: libc::c_int) -> libc::
         let fresh25 = &mut __v;
         let fresh26;
         let fresh27 = __x;
-        asm!("bswap $0" : "=r" (fresh26) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh26) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh25, fresh27)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh25, fresh27, fresh26);
       }
@@ -494,7 +494,7 @@ unsafe fn rpm_getint(mut tag: libc::c_int, mut itemindex: libc::c_int) -> libc::
         let fresh28 = &mut __v;
         let fresh29;
         let fresh30 = __x;
-        asm!("rorw $$8, ${0:w}" : "=r" (fresh29) : "0"
+        llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh29) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh28, fresh30)) : "cc");
         c2rust_asm_casts::AsmCast::cast_out(fresh28, fresh30, fresh29);
       }

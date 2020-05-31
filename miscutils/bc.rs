@@ -8085,7 +8085,7 @@ pub unsafe fn bc_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) 
       as *mut *mut globals);
   *fresh21 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   is_tty = xc_vm_init(b"BC_LINE_LENGTH\x00" as *const u8 as *const libc::c_char);
   bc_args(argv);
   if is_tty != 0 && option_mask32 & (1i32 << 3i32) as libc::c_uint == 0 {
@@ -8100,7 +8100,7 @@ pub unsafe fn dc_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -
       as *mut *mut globals);
   *fresh22 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   // TODO: dc (GNU bc 1.07.1) 1.4.1 seems to use width
   // 1 char wider than bc from the same package.
   // Both default width, and xC_LINE_LENGTH=N are wider:

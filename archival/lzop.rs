@@ -751,7 +751,7 @@ unsafe fn read32() -> u32 {
       let fresh61 = &mut __v;
       let fresh62;
       let fresh63 = __x;
-      asm!("bswap $0" : "=r" (fresh62) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh62) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh61, fresh63)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh61, fresh63, fresh62);
     }
@@ -789,7 +789,7 @@ unsafe fn f_read32() -> u32 {
       let fresh64 = &mut __v;
       let fresh65;
       let fresh66 = __x;
-      asm!("bswap $0" : "=r" (fresh65) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh65) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh64, fresh66)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh64, fresh66, fresh65);
     }
@@ -809,7 +809,7 @@ unsafe fn write32(mut v: u32) {
       let fresh67 = &mut __v;
       let fresh68;
       let fresh69 = __x;
-      asm!("bswap $0" : "=r" (fresh68) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh68) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh67, fresh69)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh67, fresh69, fresh68);
     }
@@ -890,7 +890,7 @@ unsafe fn lzo_compress(mut h: *const header_t) -> libc::c_int {
           let fresh70 = &mut __v;
           let fresh71;
           let fresh72 = __x;
-          asm!("bswap $0" : "=r" (fresh71) : "0"
+          llvm_asm!("bswap $0" : "=r" (fresh71) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh70, fresh72)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh70, fresh72, fresh71);
         }
@@ -959,7 +959,7 @@ unsafe fn lzo_compress(mut h: *const header_t) -> libc::c_int {
             let fresh74 = &mut __v;
             let fresh75;
             let fresh76 = __x;
-            asm!("bswap $0" : "=r" (fresh75) : "0"
+            llvm_asm!("bswap $0" : "=r" (fresh75) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh74, fresh76)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh74, fresh76, fresh75);
           }
@@ -981,7 +981,7 @@ unsafe fn lzo_compress(mut h: *const header_t) -> libc::c_int {
             let fresh78 = &mut __v;
             let fresh79;
             let fresh80 = __x;
-            asm!("bswap $0" : "=r" (fresh79) : "0"
+            llvm_asm!("bswap $0" : "=r" (fresh79) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh78, fresh80)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh78, fresh80, fresh79);
           }
@@ -1004,7 +1004,7 @@ unsafe fn lzo_compress(mut h: *const header_t) -> libc::c_int {
             let fresh82 = &mut __v;
             let fresh83;
             let fresh84 = __x;
-            asm!("bswap $0" : "=r" (fresh83) : "0"
+            llvm_asm!("bswap $0" : "=r" (fresh83) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh82, fresh84)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh82, fresh84, fresh83);
           }
@@ -1026,7 +1026,7 @@ unsafe fn lzo_compress(mut h: *const header_t) -> libc::c_int {
             let fresh86 = &mut __v;
             let fresh87;
             let fresh88 = __x;
-            asm!("bswap $0" : "=r" (fresh87) : "0"
+            llvm_asm!("bswap $0" : "=r" (fresh87) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh86, fresh88)) :);
             c2rust_asm_casts::AsmCast::cast_out(fresh86, fresh88, fresh87);
           }
@@ -1050,7 +1050,7 @@ unsafe fn lzo_compress(mut h: *const header_t) -> libc::c_int {
               let fresh90 = &mut __v;
               let fresh91;
               let fresh92 = __x;
-              asm!("bswap $0" : "=r" (fresh91) : "0"
+              llvm_asm!("bswap $0" : "=r" (fresh91) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh90, fresh92)) :);
               c2rust_asm_casts::AsmCast::cast_out(fresh90, fresh92, fresh91);
             }
@@ -1072,7 +1072,7 @@ unsafe fn lzo_compress(mut h: *const header_t) -> libc::c_int {
               let fresh94 = &mut __v;
               let fresh95;
               let fresh96 = __x;
-              asm!("bswap $0" : "=r" (fresh95) : "0"
+              llvm_asm!("bswap $0" : "=r" (fresh95) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh94, fresh96)) :);
               c2rust_asm_casts::AsmCast::cast_out(fresh94, fresh96, fresh95);
             }
@@ -1357,7 +1357,7 @@ unsafe fn write_header(mut h: *mut header_t) {
       let fresh98 = &mut __v;
       let fresh99;
       let fresh100 = __x;
-      asm!("bswap $0" : "=r" (fresh99) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh99) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh98, fresh100)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh98, fresh100, fresh99);
     }
@@ -1396,7 +1396,7 @@ unsafe fn read_header(mut h: *mut header_t) -> libc::c_int {
       let fresh101 = &mut __v;
       let fresh102;
       let fresh103 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh102) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh102) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh101, fresh103)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh101, fresh103, fresh102);
     }
@@ -1415,7 +1415,7 @@ unsafe fn read_header(mut h: *mut header_t) -> libc::c_int {
       let fresh104 = &mut __v;
       let fresh105;
       let fresh106 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh105) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh105) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh104, fresh106)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh104, fresh106, fresh105);
     }
@@ -1462,7 +1462,7 @@ unsafe fn read_header(mut h: *mut header_t) -> libc::c_int {
       let fresh107 = &mut __v;
       let fresh108;
       let fresh109 = __x;
-      asm!("bswap $0" : "=r" (fresh108) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh108) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh107, fresh109)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh107, fresh109, fresh108);
     }
@@ -1559,7 +1559,7 @@ unsafe fn do_lzo_compress() -> libc::c_int {
       let fresh110 = &mut __v;
       let fresh111;
       let fresh112 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh111) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh111) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh110, fresh112)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh110, fresh112, fresh111);
     }
@@ -1575,7 +1575,7 @@ unsafe fn do_lzo_compress() -> libc::c_int {
       let fresh113 = &mut __v;
       let fresh114;
       let fresh115 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh114) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh114) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh113, fresh115)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh113, fresh115, fresh114);
     }
@@ -1591,7 +1591,7 @@ unsafe fn do_lzo_compress() -> libc::c_int {
       let fresh116 = &mut __v;
       let fresh117;
       let fresh118 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh117) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh117) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh116, fresh118)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh116, fresh118, fresh117);
     }
@@ -1609,7 +1609,7 @@ unsafe fn do_lzo_compress() -> libc::c_int {
       let fresh119 = &mut __v;
       let fresh120;
       let fresh121 = __x;
-      asm!("bswap $0" : "=r" (fresh120) : "0"
+      llvm_asm!("bswap $0" : "=r" (fresh120) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh119, fresh121)) :);
       c2rust_asm_casts::AsmCast::cast_out(fresh119, fresh121, fresh120);
     }
@@ -1630,7 +1630,7 @@ unsafe fn do_lzo_compress() -> libc::c_int {
         let fresh122 = &mut __v;
         let fresh123;
         let fresh124 = __x;
-        asm!("bswap $0" : "=r" (fresh123) : "0"
+        llvm_asm!("bswap $0" : "=r" (fresh123) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh122, fresh124)) :);
         c2rust_asm_casts::AsmCast::cast_out(fresh122, fresh124, fresh123);
       }
@@ -1649,7 +1649,7 @@ unsafe fn do_lzo_compress() -> libc::c_int {
           let fresh125 = &mut __v;
           let fresh126;
           let fresh127 = __x;
-          asm!("bswap $0" : "=r" (fresh126) : "0"
+          llvm_asm!("bswap $0" : "=r" (fresh126) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh125, fresh127)) :);
           c2rust_asm_casts::AsmCast::cast_out(fresh125, fresh127, fresh126);
         }

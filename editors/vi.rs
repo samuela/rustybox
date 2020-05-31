@@ -97784,7 +97784,7 @@ pub unsafe fn vi_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char) -
       as *mut *mut globals);
   *fresh17 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).last_modified_count = -1i32;
   (*ptr_to_globals).last_search_pattern =
     crate::libbb::xfuncs_printf::xzalloc(2i32 as size_t) as *mut libc::c_char;

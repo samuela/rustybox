@@ -567,7 +567,7 @@ unsafe extern "C" fn tftp_protocol(
                     let fresh1 = &mut __v;
                     let fresh2;
                     let fresh3 = __x;
-                    asm!("rorw $$8, ${0:w}" : "=r" (fresh2) : "0"
+                    llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh2) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh1, fresh3)) : "cc");
                     c2rust_asm_casts::AsmCast::cast_out(fresh1, fresh3, fresh2);
                   }
@@ -619,7 +619,7 @@ unsafe extern "C" fn tftp_protocol(
                     let fresh5 = &mut __v;
                     let fresh6;
                     let fresh7 = __x;
-                    asm!("rorw $$8, ${0:w}" : "=r" (fresh6) : "0"
+                    llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh6) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh5, fresh7)) : "cc");
                     c2rust_asm_casts::AsmCast::cast_out(fresh5, fresh7, fresh6);
                   }
@@ -725,7 +725,7 @@ unsafe extern "C" fn tftp_protocol(
                               let fresh8 = &mut __v;
                               let fresh9;
                               let fresh10 = __x;
-                              asm!("rorw $$8, ${0:w}" : "=r" (fresh9) : "0"
+                              llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh9) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh8, fresh10)) : "cc");
                               c2rust_asm_casts::AsmCast::cast_out(fresh8, fresh10, fresh9);
                             }
@@ -742,7 +742,7 @@ unsafe extern "C" fn tftp_protocol(
                               let fresh11 = &mut __v;
                               let fresh12;
                               let fresh13 = __x;
-                              asm!("rorw $$8, ${0:w}" : "=r" (fresh12) : "0"
+                              llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh12) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh11, fresh13)) : "cc");
                               c2rust_asm_casts::AsmCast::cast_out(fresh11, fresh13, fresh12);
                             }
@@ -1184,7 +1184,7 @@ pub unsafe fn tftpd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_cha
       let fresh21 = &mut __v;
       let fresh22;
       let fresh23 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh22) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh22) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh21, fresh23)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh21, fresh23, fresh22);
     }

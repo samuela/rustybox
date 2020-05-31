@@ -942,7 +942,7 @@ unsafe extern "C" fn prepare_ftp_session(
               let fresh3 = &mut __v;
               let fresh4;
               let fresh5 = __x;
-              asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
+              llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh4) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh3, fresh5)) : "cc");
               c2rust_asm_casts::AsmCast::cast_out(fresh3, fresh5, fresh4);
             }
@@ -1748,7 +1748,7 @@ pub unsafe fn wget_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
     as *mut *mut globals);
   *fresh6 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).timeout_seconds = 900i32 as libc::c_uint;
   signal(
     14i32,

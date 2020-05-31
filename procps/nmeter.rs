@@ -1092,7 +1092,7 @@ pub unsafe fn nmeter_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_ch
     as *mut *mut globals);
   *fresh8 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).cur_outbuf = bb_common_bufsiz1.as_mut_ptr();
   (*ptr_to_globals).final_char = '\n' as i32 as libc::c_char;
   (*ptr_to_globals).delta = 1000000i32;

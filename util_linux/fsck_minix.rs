@@ -1801,7 +1801,7 @@ pub unsafe fn fsck_minix_main(
     as *mut *mut globals);
   *fresh7 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   (*ptr_to_globals).dirsize = 16i32 as smallint;
   (*ptr_to_globals).namelen = 14i32 as smallint;
   (*ptr_to_globals).current_name[0] = '/' as i32 as libc::c_char;

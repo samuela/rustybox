@@ -626,7 +626,7 @@ pub unsafe fn bb_lookup_port(
             let fresh0 = &mut __v;
             let fresh1;
             let fresh2 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh1) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh0, fresh2)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh0, fresh2, fresh1);
           }
@@ -879,7 +879,7 @@ unsafe fn str2sockaddr(
             let fresh4 = &mut __v;
             let fresh5;
             let fresh6 = __x;
-            asm!("rorw $$8, ${0:w}" : "=r" (fresh5) : "0"
+            llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh5) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh4, fresh6)) : "cc");
             c2rust_asm_casts::AsmCast::cast_out(fresh4, fresh6, fresh5);
           }
@@ -1003,7 +1003,7 @@ unsafe fn create_and_bind_or_die(
           let fresh7 = &mut __v;
           let fresh8;
           let fresh9 = __x;
-          asm!("rorw $$8, ${0:w}" : "=r" (fresh8) : "0"
+          llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh8) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh7, fresh9)) : "cc");
           c2rust_asm_casts::AsmCast::cast_out(fresh7, fresh9, fresh8);
         }

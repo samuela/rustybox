@@ -663,7 +663,7 @@ unsafe extern "C" fn bind_for_passive_mode() -> libc::c_uint {
       let fresh2 = &mut __v;
       let fresh3;
       let fresh4 = __x;
-      asm!("rorw $$8, ${0:w}" : "=r" (fresh3) : "0"
+      llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh3) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh2, fresh4)) : "cc");
       c2rust_asm_casts::AsmCast::cast_out(fresh2, fresh4, fresh3);
     }
@@ -750,7 +750,7 @@ unsafe extern "C" fn handle_port() {
                   let fresh5 = &mut __v;
                   let fresh6;
                   let fresh7 = __x;
-                  asm!("rorw $$8, ${0:w}" : "=r" (fresh6) : "0"
+                  llvm_asm!("rorw $$8, ${0:w}" : "=r" (fresh6) : "0"
      (c2rust_asm_casts::AsmCast::cast_in(fresh5, fresh7)) : "cc");
                   c2rust_asm_casts::AsmCast::cast_out(fresh5, fresh7, fresh6);
                 }
@@ -1407,7 +1407,7 @@ pub unsafe fn ftpd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
       as *mut *mut globals);
   *fresh11 = crate::libbb::xfuncs_printf::xzalloc(::std::mem::size_of::<globals>() as libc::c_ulong)
     as *mut globals;
-  asm!("" : : : "memory" : "volatile");
+  llvm_asm!("" : : : "memory" : "volatile");
   abs_timeout = (1i32 * 60i32 * 60i32) as libc::c_uint;
   verbose_S = 0 as libc::c_uint;
   (*ptr_to_globals).timeout = (2i32 * 60i32) as libc::c_uint;
