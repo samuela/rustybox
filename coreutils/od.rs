@@ -1458,7 +1458,7 @@ pub unsafe fn od_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) 
   opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"A:N:abcdfhij:lot:*vxsS:w:+:\x00" as *const u8 as *const libc::c_char,
-    od_longopts.as_ptr(),
+    od_longopts.as_ptr() as *const libc::c_char,
     &mut str_A as *mut *const libc::c_char,
     &mut str_N as *mut *const libc::c_char,
     &mut str_j as *mut *const libc::c_char,

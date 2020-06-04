@@ -134,7 +134,7 @@ pub unsafe fn chown_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_cha
   opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"^RhvcfLHP\x00-2\x00" as *const u8 as *const libc::c_char,
-    chown_longopts.as_ptr(),
+    chown_longopts.as_ptr() as *const libc::c_char,
   ) as libc::c_int;
   argv = argv.offset(optind as isize);
 

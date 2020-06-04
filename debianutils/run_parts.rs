@@ -133,7 +133,7 @@ pub unsafe fn run_parts_main(
   crate::libbb::getopt32::getopt32long(
     argv,
     b"^a:*u:\x00=1\x00" as *const u8 as *const libc::c_char,
-    runparts_longopts.as_ptr(),
+    runparts_longopts.as_ptr() as *const libc::c_char,
     &mut arg_list as *mut *mut llist_t,
     &mut umask_p as *mut *const libc::c_char,
   );

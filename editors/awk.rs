@@ -1309,7 +1309,7 @@ unsafe fn next_token(mut expected: u32) -> u32 {
         tc = (1i32 << 30i32) as u32
       } else {
         /* search for something known */
-        tl = tokenlist.as_ptr();
+        tl = tokenlist.as_ptr() as *const libc::c_char;
         tc = 0x1i32 as u32;
         ti = tokeninfo.as_ptr();
         loop {

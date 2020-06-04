@@ -2452,7 +2452,7 @@ pub unsafe fn dpkg_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
   opt = crate::libbb::getopt32::getopt32long(
     argv,
     b"CilPruF:\x00" as *const u8 as *const libc::c_char,
-    dpkg_longopts.as_ptr(),
+    dpkg_longopts.as_ptr() as *const libc::c_char,
     &mut str_f as *mut *mut libc::c_char,
   ) as libc::c_int;
   argv = argv.offset(optind as isize);

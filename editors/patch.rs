@@ -418,7 +418,7 @@ pub unsafe fn patch_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_cha
   opts = crate::libbb::getopt32::getopt32long(
     argv,
     b"Rup:i:NEfg\x00" as *const u8 as *const libc::c_char,
-    patch_longopts.as_ptr(),
+    patch_longopts.as_ptr() as *const libc::c_char,
     &mut opt_p as *mut *mut libc::c_char,
     &mut opt_i as *mut *mut libc::c_char,
   ) as libc::c_int;

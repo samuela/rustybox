@@ -802,7 +802,7 @@ unsafe fn print_found(mut line: *const libc::c_char) {
   let mut p: *mut libc::c_char = buf.as_mut_ptr();
   let mut n: size_t = 0;
   while *str != 0 {
-    n = strcspn(str, controls.as_ptr());
+    n = strcspn(str, controls.as_ptr() as *const libc::c_char);
     if n != 0 {
       if *str.offset(n as isize) == 0 {
         break;
@@ -811,7 +811,7 @@ unsafe fn print_found(mut line: *const libc::c_char) {
       p = p.offset(n as isize);
       str = str.offset(n as isize)
     }
-    n = strspn(str, controls.as_ptr());
+    n = strspn(str, controls.as_ptr() as *const libc::c_char);
     memset(p as *mut libc::c_void, '.' as i32, n);
     p = p.offset(n as isize);
     str = str.offset(n as isize)
@@ -876,7 +876,7 @@ unsafe fn print_ascii(mut str: *const libc::c_char) {
   let mut p: *mut libc::c_char = std::ptr::null_mut::<libc::c_char>();
   let mut n: size_t = 0;
   while *str != 0 {
-    n = strcspn(str, controls.as_ptr());
+    n = strcspn(str, controls.as_ptr() as *const libc::c_char);
     if n != 0 {
       if *str.offset(n as isize) == 0 {
         break;
@@ -888,7 +888,7 @@ unsafe fn print_ascii(mut str: *const libc::c_char) {
       );
       str = str.offset(n as isize)
     }
-    n = strspn(str, controls.as_ptr());
+    n = strspn(str, controls.as_ptr() as *const libc::c_char);
     p = buf.as_mut_ptr();
     loop {
       if *str as libc::c_int == 0x7fi32 {

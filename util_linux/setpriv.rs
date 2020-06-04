@@ -354,7 +354,7 @@ pub unsafe fn setpriv_main(
   opts = crate::libbb::getopt32::getopt32long(
     argv,
     b"+d\xfe:\xfd:\x00" as *const u8 as *const libc::c_char,
-    setpriv_longopts.as_ptr(),
+    setpriv_longopts.as_ptr() as *const libc::c_char,
     &mut inh_caps as *mut *mut libc::c_char,
     &mut ambient_caps as *mut *mut libc::c_char,
   ) as libc::c_int;

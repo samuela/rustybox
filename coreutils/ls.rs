@@ -1360,7 +1360,7 @@ pub unsafe fn ls_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) 
     0, 116, 116, 121, 0, 105, 102, 45, 116, 116, 121, 0, 0,
   ];
   /* need to initialize since --color has _an optional_ argument */
-  let mut color_opt: *const libc::c_char = color_str.as_ptr(); /* "always" */
+  let mut color_opt: *const libc::c_char = color_str.as_ptr() as *const libc::c_char; /* "always" */
   static mut ls_longopts: [i8; 47] = [
     102, 117, 108, 108, 45, 116, 105, 109, 101, 0, 0, -1, 103, 114, 111, 117, 112, 45, 100, 105,
     114, 101, 99, 116, 111, 114, 105, 101, 115, 45, 102, 105, 114, 115, 116, 0, 0, -2, 99, 111,
@@ -1385,7 +1385,7 @@ pub unsafe fn ls_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) 
         crate::libbb::getopt32::getopt32long(argv,
                      b"^Cadi1lgnsxAkFpRQctuSXrvLHhT:w:\x00nl:gl:\xffl:t-S:S-t:H-L:L-H:C-xl:x-Cl:l-xC:C-1:1-C:x-1:1-x:c-u:u-c:w+\x00"
                          as *const u8 as *const libc::c_char,
-                     ls_longopts.as_ptr(), 0 as *mut libc::c_void,
+                     ls_longopts.as_ptr() as *const libc::c_char, 0 as *mut libc::c_void,
                      &mut (*(bb_common_bufsiz1.as_mut_ptr() as
                                  *mut globals)).terminal_width as
                          *mut libc::c_uint,
@@ -1407,7 +1407,7 @@ pub unsafe fn ls_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) 
       (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).show_color = 0 as smallint
     } else {
       let mut current_block_15: u64;
-      match crate::libbb::compare_string_array::index_in_substrings(color_str.as_ptr(), color_opt) {
+      match crate::libbb::compare_string_array::index_in_substrings(color_str.as_ptr() as *const libc::c_char, color_opt) {
         3 | 4 | 5 => {
           if isatty(1i32) != 0 {
             current_block_15 = 1012356763440963274;

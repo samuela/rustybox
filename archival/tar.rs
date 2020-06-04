@@ -1134,7 +1134,7 @@ pub unsafe fn tar_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char)
     argv,
     b"^txC:f:OopvkchjT:*X:*zJam\xf8:\x00tt:vv:\xff::c:t:x:c--tx:t--cx:x--ct:\xf8+\x00" as *const u8
       as *const libc::c_char,
-    tar_longopts.as_ptr(),
+    tar_longopts.as_ptr() as *const libc::c_char,
     &mut base_dir as *mut *mut libc::c_char,
     &mut tar_filename as *mut *const libc::c_char,
     &mut (*tar_handle).accept as *mut *mut llist_t,

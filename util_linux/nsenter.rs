@@ -221,7 +221,7 @@ pub unsafe fn nsenter_main(
   opts = crate::libbb::getopt32::getopt32long(
     argv,
     opt_str.as_ptr(),
-    nsenter_longopts.as_ptr(),
+    nsenter_longopts.as_ptr() as *const libc::c_char,
     &mut (*ns_ctx_list
       .as_mut_ptr()
       .offset(NS_USR_POS as libc::c_int as isize))

@@ -291,7 +291,7 @@ pub unsafe fn unshare_main(
     argv,
     b"^+muinpUfr\xfd::\xfe:\xff:\x00\xf0m:\xf1u:\xf2i:\xf3n:\xf4p:\xf5U:rU:\xfdm\x00" as *const u8
       as *const libc::c_char,
-    unshare_longopts.as_ptr(),
+    unshare_longopts.as_ptr() as *const libc::c_char,
     &mut proc_mnt_target as *mut *const libc::c_char,
     &mut prop_str as *mut *const libc::c_char,
     &mut setgrp_str as *mut *const libc::c_char,

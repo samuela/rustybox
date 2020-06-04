@@ -1758,7 +1758,7 @@ pub unsafe fn wget_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
   crate::libbb::getopt32::getopt32long(
     argv,
     b"^cqSO:o:P:Y:U:T:+t:n::\x00-1:\xff::\x00" as *const u8 as *const libc::c_char,
-    wget_longopts.as_ptr(),
+    wget_longopts.as_ptr() as *const libc::c_char,
     &mut (*ptr_to_globals).fname_out as *mut *mut libc::c_char,
     &mut (*ptr_to_globals).fname_log as *mut *mut libc::c_char,
     &mut (*ptr_to_globals).dir_prefix as *mut *mut libc::c_char,
