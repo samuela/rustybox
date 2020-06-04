@@ -116,7 +116,7 @@ unsafe fn act(
   /*names[cur] = NULL; - xrealloc_vector did it */
   return 1i32;
 }
-static mut runparts_longopts: [libc::c_char; 55] = [
+static mut runparts_longopts: [i8; 55] = [
   97, 114, 103, 0, 1, 97, 117, 109, 97, 115, 107, 0, 1, 117, 114, 101, 118, 101, 114, 115, 101, 0,
   0, -16, 116, 101, 115, 116, 0, 0, -15, 101, 120, 105, 116, 45, 111, 110, 45, 101, 114, 114, 111,
   114, 0, 0, -14, 108, 105, 115, 116, 0, 0, -13, 0,

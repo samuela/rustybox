@@ -2435,7 +2435,7 @@ pub unsafe fn dpkg_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char
   let mut state_status: libc::c_int = 0;
   let mut status_num: libc::c_int = 0;
   let mut i: libc::c_int = 0;
-  static mut dpkg_longopts: [libc::c_char; 112] = [
+  static mut dpkg_longopts: [i8; 112] = [
     99, 111, 110, 102, 105, 103, 117, 114, 101, 0, 0, 67, 102, 111, 114, 99, 101, 0, 1, 70, 105,
     110, 115, 116, 97, 108, 108, 0, 0, 105, 108, 105, 115, 116, 0, 0, 108, 112, 117, 114, 103, 101,
     0, 0, 80, 114, 101, 109, 111, 118, 101, 0, 0, 114, 117, 110, 112, 97, 99, 107, 0, 0, 117, 102,

@@ -1727,7 +1727,7 @@ unsafe extern "C" fn download_one_url(mut url: *const libc::c_char) {
   };
 }
 pub unsafe fn wget_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
-  static mut wget_longopts: [libc::c_char; 266] = [
+  static mut wget_longopts: [i8; 266] = [
     99, 111, 110, 116, 105, 110, 117, 101, 0, 0, 99, 113, 117, 105, 101, 116, 0, 0, 113, 115, 101,
     114, 118, 101, 114, 45, 114, 101, 115, 112, 111, 110, 115, 101, 0, 0, 83, 111, 117, 116, 112,
     117, 116, 45, 100, 111, 99, 117, 109, 101, 110, 116, 0, 1, 79, 111, 117, 116, 112, 117, 116,

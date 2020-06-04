@@ -1355,13 +1355,13 @@ pub unsafe fn ls_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) 
    * 'auto', 'tty', 'if-tty'
    * (and substrings: "--color=alwa" work too)
    */
-  static mut color_str: [libc::c_char; 34] = [
+  static mut color_str: [i8; 34] = [
     97, 108, 119, 97, 121, 115, 0, 121, 101, 115, 0, 102, 111, 114, 99, 101, 0, 97, 117, 116, 111,
     0, 116, 116, 121, 0, 105, 102, 45, 116, 116, 121, 0, 0,
   ];
   /* need to initialize since --color has _an optional_ argument */
   let mut color_opt: *const libc::c_char = color_str.as_ptr(); /* "always" */
-  static mut ls_longopts: [libc::c_char; 47] = [
+  static mut ls_longopts: [i8; 47] = [
     102, 117, 108, 108, 45, 116, 105, 109, 101, 0, 0, -1, 103, 114, 111, 117, 112, 45, 100, 105,
     114, 101, 99, 116, 111, 114, 105, 101, 115, 45, 102, 105, 114, 115, 116, 0, 0, -2, 99, 111,
     108, 111, 114, 0, 2, -3, 0,

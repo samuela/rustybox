@@ -203,7 +203,7 @@ static mut ns_list: [namespace_descr; 6] = [
  * we are forced to use "fake" letters for them.
  * '+': stop at first non-option.
  */
-static mut unshare_longopts: [libc::c_char; 102] = [
+static mut unshare_longopts: [i8; 102] = [
   109, 111, 117, 110, 116, 0, 2, -16, 117, 116, 115, 0, 2, -15, 105, 112, 99, 0, 2, -14, 110, 101,
   116, 0, 2, -13, 112, 105, 100, 0, 2, -12, 117, 115, 101, 114, 0, 2, -11, 102, 111, 114, 107, 0,
   0, 102, 109, 97, 112, 45, 114, 111, 111, 116, 45, 117, 115, 101, 114, 0, 0, 114, 109, 111, 117,

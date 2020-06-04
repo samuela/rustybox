@@ -84,7 +84,7 @@ struct param_t {
  * The last option specified shall determine the behavior of the utility." */
 /* -L */
 /* -H or -L */
-static mut chown_longopts: [libc::c_char; 81] = [
+static mut chown_longopts: [i8; 81] = [
   114, 101, 99, 117, 114, 115, 105, 118, 101, 0, 0, 82, 100, 101, 114, 101, 102, 101, 114, 101,
   110, 99, 101, 0, 0, -1, 110, 111, 45, 100, 101, 114, 101, 102, 101, 114, 101, 110, 99, 101, 0, 0,
   104, 99, 104, 97, 110, 103, 101, 115, 0, 0, 99, 115, 105, 108, 101, 110, 116, 0, 0, 102, 113,

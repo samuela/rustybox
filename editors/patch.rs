@@ -401,7 +401,7 @@ pub unsafe fn patch_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_cha
   oldlen = oldlen;
   let mut newlen: libc::c_long = 0;
   newlen = newlen;
-  static mut patch_longopts: [libc::c_char; 137] = [
+  static mut patch_longopts: [i8; 137] = [
     114, 101, 118, 101, 114, 115, 101, 0, 0, 82, 117, 110, 105, 102, 105, 101, 100, 0, 0, 117, 115,
     116, 114, 105, 112, 0, 1, 112, 105, 110, 112, 117, 116, 0, 1, 105, 102, 111, 114, 119, 97, 114,
     100, 0, 0, 78, 114, 101, 109, 111, 118, 101, 45, 101, 109, 112, 116, 121, 45, 102, 105, 108,

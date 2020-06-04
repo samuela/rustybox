@@ -343,7 +343,7 @@ pub unsafe fn setpriv_main(
   mut _argc: libc::c_int,
   mut argv: *mut *mut libc::c_char,
 ) -> libc::c_int {
-  static mut setpriv_longopts: [libc::c_char; 55] = [
+  static mut setpriv_longopts: [i8; 55] = [
     100, 117, 109, 112, 0, 0, 100, 110, 110, 112, 0, 0, -1, 110, 111, 45, 110, 101, 119, 45, 112,
     114, 105, 118, 115, 0, 0, -1, 105, 110, 104, 45, 99, 97, 112, 115, 0, 1, -2, 97, 109, 98, 105,
     101, 110, 116, 45, 99, 97, 112, 115, 0, 1, -3, 0,

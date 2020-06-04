@@ -1418,7 +1418,7 @@ unsafe fn parse_old_offset(mut s: *const libc::c_char, mut offset: *mut off_t) -
 }
 
 pub unsafe fn od_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) -> libc::c_int {
-  static mut od_longopts: [libc::c_char; 104] = [
+  static mut od_longopts: [i8; 104] = [
     115, 107, 105, 112, 45, 98, 121, 116, 101, 115, 0, 1, 106, 97, 100, 100, 114, 101, 115, 115,
     45, 114, 97, 100, 105, 120, 0, 1, 65, 114, 101, 97, 100, 45, 98, 121, 116, 101, 115, 0, 1, 78,
     102, 111, 114, 109, 97, 116, 0, 1, 116, 111, 117, 116, 112, 117, 116, 45, 100, 117, 112, 108,
