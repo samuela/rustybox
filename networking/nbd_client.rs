@@ -382,7 +382,7 @@ pub unsafe fn nbdclient_main(
         }
         __v
       })
-      .wrapping_div(blksize as libc::c_ulong) as libc::c_uint;
+      .wrapping_div(blksize as u64) as libc::c_uint;
       ioctl(
         nbd_0,
         (0u32 << 0 + 8i32 + 8i32 + 14i32
@@ -517,7 +517,7 @@ pub unsafe fn nbdclient_main(
         }
         __v
       })
-      .wrapping_div(blksize as libc::c_ulong) as libc::c_uint;
+      .wrapping_div(blksize as u64) as libc::c_uint;
       ioctl(
         nbd_0,
         (0u32 << 0 + 8i32 + 8i32 + 14i32

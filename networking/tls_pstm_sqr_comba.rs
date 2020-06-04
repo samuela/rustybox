@@ -185,12 +185,12 @@ unsafe fn pstm_sqr_comba_gen(
     /* even columns have the square term in them */
     if ix & 1i32 == 0 {
       let mut t_0: pstm_word = 0;
-      t_0 = (c0 as libc::c_ulong).wrapping_add(
+      t_0 = (c0 as u64).wrapping_add(
         (*(*A).dp.offset((ix >> 1i32) as isize) as pstm_word)
           .wrapping_mul(*(*A).dp.offset((ix >> 1i32) as isize) as pstm_word),
       );
       c0 = t_0 as pstm_digit;
-      t_0 = (c1 as libc::c_ulong).wrapping_add(t_0 >> 32i32);
+      t_0 = (c1 as u64).wrapping_add(t_0 >> 32i32);
       c1 = t_0 as pstm_digit;
       c2 =
         (c2 as libc::c_uint).wrapping_add((t_0 >> 32i32) as pstm_digit) as pstm_digit as pstm_digit

@@ -20,7 +20,6 @@ use libc::fprintf;
 use libc::free;
 use libc::getenv;
 use libc::in_addr;
-use libc::off64_t;
 use libc::off_t;
 use libc::open;
 use libc::pid_t;
@@ -91,7 +90,7 @@ extern "C" {
   fn fileno_unlocked(__stream: *mut FILE) -> libc::c_int;
 
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off_t, __whence: libc::c_int) -> off_t;
   #[no_mangle]
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
@@ -130,7 +129,7 @@ extern "C" {
   #[no_mangle]
   fn execvp(__file: *const libc::c_char, __argv: *const *mut libc::c_char) -> libc::c_int;
   #[no_mangle]
-  fn ftruncate(__fd: libc::c_int, __length: off64_t) -> libc::c_int;
+  fn ftruncate(__fd: libc::c_int, __length: off_t) -> libc::c_int;
   #[no_mangle]
   fn vfork() -> libc::c_int;
 }
@@ -1191,7 +1190,7 @@ unsafe extern "C" fn retrieve_file_data(mut dfp: *mut FILE) {
    * This lets user to ^C if his 99% complete 10 GB file download
    * failed to restart *without* losing the almost complete file.
    */
-  let mut pos: off_t = lseek((*ptr_to_globals).output_fd, 0 as off64_t, 1i32); /* Use proxies if env vars are set  */
+  let mut pos: off_t = lseek((*ptr_to_globals).output_fd, 0 as off_t, 1i32); /* Use proxies if env vars are set  */
   if pos != -1i32 as off_t {
     ftruncate((*ptr_to_globals).output_fd, pos); /* socket to web/ftp server         */
   } /* socket to ftp server (data)      */

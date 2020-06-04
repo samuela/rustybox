@@ -21,15 +21,15 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
   /* LITTLE_ENDIAN */
   // In order to use word-sized ops, little-endian needs to byteswap.
   // On x86, code size increase is ~10 bytes compared to byte-by-byte.
-  let mut carryIn: libc::c_ulong = if *x.offset(15) as libc::c_int & 0x1i32 != 0 {
-    (0xe1i32 as libc::c_ulong) << 64i32 - 8i32
+  let mut carryIn: u64 = if *x.offset(15) as libc::c_int & 0x1i32 != 0 {
+    (0xe1i32 as u64) << 64i32 - 8i32
   } else {
-    0 as libc::c_ulong
+    0 as u64
   };
   // 64-bit code: need to process only 2 words
-  let mut tt: libc::c_ulong = {
+  let mut tt: u64 = {
     let mut __v: u64 = 0; // zero, or 0x800..00
-    let mut __x: u64 = *(x as *mut libc::c_ulong).offset(0);
+    let mut __x: u64 = *(x as *mut u64).offset(0);
     if false {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
@@ -49,9 +49,9 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
     }
     __v
   };
-  let mut carryOut: libc::c_ulong = tt << 64i32 - 1i32;
+  let mut carryOut: u64 = tt << 64i32 - 1i32;
   tt = tt >> 1i32 ^ carryIn;
-  *(x as *mut libc::c_ulong).offset(0) = {
+  *(x as *mut u64).offset(0) = {
     let mut __v: u64 = 0;
     let mut __x: u64 = tt;
     if false {
@@ -75,7 +75,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
   };
   tt = {
     let mut __v: u64 = 0;
-    let mut __x: u64 = *(x as *mut libc::c_ulong).offset(1);
+    let mut __x: u64 = *(x as *mut u64).offset(1);
     if false {
       __v = ((__x as libc::c_ulonglong & 0xff00000000000000u64) >> 56i32
         | (__x as libc::c_ulonglong & 0xff000000000000u64) >> 40i32
@@ -96,7 +96,7 @@ unsafe extern "C" fn RIGHTSHIFTX(mut x: *mut byte) {
     __v
   };
   tt = tt >> 1i32 ^ carryOut;
-  *(x as *mut libc::c_ulong).offset(1) = {
+  *(x as *mut u64).offset(1) = {
     let mut __v: u64 = 0;
     let mut __x: u64 = tt;
     if false {

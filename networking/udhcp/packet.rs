@@ -285,7 +285,7 @@ pub unsafe fn udhcp_recv_kernel_packet(
     return bytes;
     /* returns -1 */
   }
-  if (bytes as libc::c_ulong) < 240u64
+  if (bytes as u64) < 240u64
     || (*packet).cookie
       != ({
         let mut __v: libc::c_uint = 0;
@@ -418,7 +418,7 @@ pub unsafe fn udhcp_send_raw_packet(
     memset(
       &mut packet as *mut ip_udp_dhcp_packet as *mut libc::c_void,
       0,
-      28u64,
+      28,
     );
     packet.data = *dhcp_pkt;
     dest_sll.sll_family = 17i32 as libc::c_ushort;

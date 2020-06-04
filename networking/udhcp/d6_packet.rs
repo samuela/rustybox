@@ -289,7 +289,7 @@ pub unsafe fn d6_recv_kernel_packet(
     return bytes;
     /* returns -1 */
   }
-  if (bytes as libc::c_ulong) < 4u64 {
+  if (bytes as u64) < 4u64 {
     crate::libbb::verror_msg::bb_simple_info_msg(
       b"packet with bad magic, ignoring\x00" as *const u8 as *const libc::c_char,
     );
@@ -353,7 +353,7 @@ pub unsafe fn d6_send_raw_packet(
     memset(
       &mut packet as *mut ip6_udp_d6_packet as *mut libc::c_void,
       0,
-      48u64,
+      48,
     );
     packet.data = *d6_pkt;
     dest_sll.sll_family = 17i32 as libc::c_ushort;
@@ -460,8 +460,8 @@ pub unsafe fn d6_send_raw_packet(
       packet.udp.c2rust_unnamed.c2rust_unnamed_0.check = crate::libbb::inet_cksum::inet_cksum(
         (&mut packet as *mut ip6_udp_d6_packet as *mut u16).offset(2),
         48u64
-          .wrapping_sub(4i32 as libc::c_ulong)
-          .wrapping_add(d6_pkt_size as libc::c_ulong) as libc::c_int,
+          .wrapping_sub(4i32 as u64)
+          .wrapping_add(d6_pkt_size as u64) as libc::c_int,
       );
       /* fix 'hop limit' and 'next header' after UDP checksumming */
       packet.ip6.ip6_ctlun.ip6_un1.ip6_un1_hlim = 1i32 as u8; /* observed Windows machines to use hlim=1 */
@@ -470,7 +470,7 @@ pub unsafe fn d6_send_raw_packet(
       result = sendto(
         fd,
         &mut packet as *mut ip6_udp_d6_packet as *const libc::c_void,
-        48u64.wrapping_add(d6_pkt_size as libc::c_ulong),
+        48.wrapping_add(d6_pkt_size as size_t),
         0,
         __CONST_SOCKADDR_ARG {
           __sockaddr__: &mut dest_sll as *mut sockaddr_ll as *mut sockaddr,

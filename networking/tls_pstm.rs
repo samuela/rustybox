@@ -621,7 +621,7 @@ pub unsafe fn s_pstm_sub(
     t = (*(*a).dp.offset(x as isize) as pstm_word)
       .wrapping_sub((*(*b).dp.offset(x as isize) as pstm_word).wrapping_add(t));
     *(*c).dp.offset(x as isize) = t as pstm_digit;
-    t = t >> 32i32 & 1i32 as libc::c_ulong;
+    t = t >> 32i32 & 1i32 as u64;
     x += 1
   }
   while x < (*a).used {
@@ -677,12 +677,12 @@ unsafe extern "C" fn s_pstm_add(
     } else {
       bdp = *(*b).dp.offset(x as isize) as pstm_word
     }
-    t = (t as libc::c_ulong).wrapping_add(adp.wrapping_add(bdp)) as pstm_word as pstm_word;
+    t = (t as u64).wrapping_add(adp.wrapping_add(bdp)) as pstm_word as pstm_word;
     *(*c).dp.offset(x as isize) = t as pstm_digit;
     t >>= 32i32;
     x += 1
   }
-  if t != 0 as libc::c_ulong && x < 4096i32 {
+  if t != 0 as u64 && x < 4096i32 {
     if (*c).used == (*c).alloc {
       pstm_grow(c, (*c).alloc + 1i32);
       if 0 != 0 {
@@ -992,7 +992,7 @@ unsafe extern "C" fn pstm_mul_d(
     w = w >> 32i32;
     x += 1
   }
-  if w != 0 as libc::c_ulong && (*a).used != 4096i32 {
+  if w != 0 as u64 && (*a).used != 4096i32 {
     let fresh14 = (*c).used;
     (*c).used = (*c).used + 1;
     *(*c).dp.offset(fresh14 as isize) = w as pstm_digit;
@@ -1291,13 +1291,13 @@ unsafe extern "C" fn pstm_div(
                              * otherwise set q{i-t-1} to (xi*b + x{i-1})/yt */
                             if *x.dp.offset(i as isize) == *y.dp.offset(t as isize) {
                               *q.dp.offset((i - t - 1i32) as isize) = ((1i32 as pstm_word) << 32i32)
-                                .wrapping_sub(1i32 as libc::c_ulong)
+                                .wrapping_sub(1i32 as u64)
                                 as pstm_digit
                             } else {
                               let mut tmp: pstm_word = 0;
                               tmp = (*x.dp.offset(i as isize) as pstm_word) << 32i32 as pstm_word;
                               tmp |= *x.dp.offset((i - 1i32) as isize) as pstm_word;
-                              tmp = (tmp as libc::c_ulong)
+                              tmp = (tmp as u64)
                                 .wrapping_div(*y.dp.offset(t as isize) as pstm_word)
                                 as pstm_word as pstm_word;
                               /* USE_MATRIX_DIV64 */

@@ -1382,7 +1382,7 @@ unsafe extern "C" fn read_leases(mut file: *const libc::c_char) {
     time_passed = time(0 as *mut time_t) - written_at;
     /* Strange written_at, or lease file from old version of udhcpd
      * which had no "written_at" field? */
-    if !(time_passed as u64 > (12i32 * 60i32 * 60i32) as libc::c_ulong) {
+    if !(time_passed as u64 > (12i32 * 60i32 * 60i32) as u64) {
       /* NB: we do not add lease even if static_nip == lease.lease_nip.
        */
       while crate::libbb::read::full_read(

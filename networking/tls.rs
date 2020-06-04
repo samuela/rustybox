@@ -1052,7 +1052,7 @@ unsafe extern "C" fn xwrite_encrypted_and_hmac_signed(
   );
   (*tls).write_seq64_be = {
     let mut __v: u64 = 0;
-    let mut __x: u64 = (1i32 as libc::c_ulong).wrapping_add({
+    let mut __x: u64 = (1i32 as u64).wrapping_add({
       let mut __v_0: u64 = 0;
       let mut __x_0: u64 = (*tls).write_seq64_be;
       if false {
@@ -1264,7 +1264,7 @@ unsafe extern "C" fn xwrite_encrypted_aesgcm(
   /* seq64 is not used later in this func, can increment here */
   (*tls).write_seq64_be = {
     let mut __v: u64 = 0; /* yes, first cnt here is 2 (!) */
-    let mut __x: u64 = (1i32 as libc::c_ulong).wrapping_add({
+    let mut __x: u64 = (1i32 as u64).wrapping_add({
       let mut __v_0: u64 = 0;
       let mut __x_0: u64 = t64;
       if false {

@@ -675,8 +675,8 @@ unsafe extern "C" fn if_fetch(mut ife: *mut interface) -> libc::c_int {
   memset(
     &mut (*ife).metric as *mut libc::c_int as *mut libc::c_void,
     0,
-    136u64
-      .wrapping_sub(40u64)
+    136
+      .wrapping_sub(40)
       .wrapping_add(::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong),
   );
   crate::libbb::xfuncs::strncpy_IFNAMSIZ(ifr.ifr_ifrn.ifrn_name.as_mut_ptr(), ifname);

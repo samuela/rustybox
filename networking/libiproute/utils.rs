@@ -121,7 +121,7 @@ pub unsafe fn get_u32(mut arg: *mut libc::c_char, mut errmsg: *const libc::c_cha
   if *arg != 0 {
     res = strtoul(arg, &mut ptr, 0);
     //FIXME: "" will be accepted too, is it correct?!
-    if *ptr == 0 && res <= 0xffffffffu64 {
+    if *ptr == 0 && res as u64 <= 0xffffffffu64 {
       return res as u32;
     }
   }
