@@ -7,7 +7,6 @@ use libc;
 use libc::fclose;
 use libc::free;
 use libc::fstat;
-use libc::off64_t;
 use libc::off_t;
 use libc::printf;
 use libc::putchar_unlocked;
@@ -40,7 +39,7 @@ extern "C" {
   fn fputs_unlocked(__s: *const libc::c_char, __stream: *mut FILE) -> libc::c_int;
 
   #[no_mangle]
-  fn fseeko(__stream: *mut FILE, __off: off64_t, __whence: libc::c_int) -> libc::c_int;
+  fn fseeko(__stream: *mut FILE, __off: off_t, __whence: libc::c_int) -> libc::c_int;
 
   #[no_mangle]
   fn ferror_unlocked(__stream: *mut FILE) -> libc::c_int;

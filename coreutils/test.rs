@@ -818,7 +818,7 @@ unsafe fn filstat(mut nm: *mut libc::c_char, mut mode: token) -> libc::c_int {
         return (s.st_mode & i != 0 as libc::c_uint) as libc::c_int;
       }
       if mode as libc::c_uint == FILGZ as libc::c_int as libc::c_uint {
-        return (s.st_size > 0i64) as libc::c_int;
+        return (s.st_size > 0) as libc::c_int;
       }
       if mode as libc::c_uint == FILUID as libc::c_int as libc::c_uint {
         return (s.st_uid == geteuid()) as libc::c_int;

@@ -6,7 +6,7 @@ extern "C" {
   static mut optind: libc::c_int;
 
   #[no_mangle]
-  fn ftruncate(__fd: libc::c_int, __length: off64_t) -> libc::c_int;
+  fn ftruncate(__fd: libc::c_int, __length: off_t) -> libc::c_int;
 
   /* Close fd, but check for failures (some types of write errors) */
 
@@ -15,7 +15,6 @@ extern "C" {
 
 }
 
-use libc::off64_t;
 use libc::off_t;
 /* Last element is marked by mult == 0 */
 

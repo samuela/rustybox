@@ -411,8 +411,8 @@ unsafe fn display_single(mut dn: *const dnode) -> libc::c_uint {
       /* filetime's format: "Wed Jun 30 21:49:08 1993\n" */
       let mut age: time_t =
         (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).current_time_t - (*dn).dn_time;
-      if age < 3600i64 * 24i32 as libc::c_long * 365i32 as libc::c_long / 2
-        && age > (-15i32 * 60i32) as libc::c_long
+      if (age as i64) < 3600i64 * 24i32 as i64 * 365i32 as i64 / 2
+        && age > (-15i32 * 60i32) as time_t
       {
         /* less than 6 months old */
         /* "mmm dd hh:mm " */

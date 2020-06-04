@@ -15,7 +15,7 @@ extern "C" {
   fn dprintf(__fd: libc::c_int, __fmt: *const libc::c_char, _: ...) -> libc::c_int;
 
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off_t, __whence: libc::c_int) -> off_t;
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 
@@ -27,7 +27,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::off64_t;
 use libc::off_t;
 use libc::ssize_t;
 use libc::stat;
@@ -185,7 +184,7 @@ pub unsafe fn tail_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
         fmt = b"\n==> %s <==\n\x00" as *const u8 as *const libc::c_char
       }
       if !(*(bb_common_bufsiz1.as_mut_ptr() as *mut globals)).from_top {
-        let mut current: off_t = lseek(fd_0, 0 as off64_t, 2i32);
+        let mut current: off_t = lseek(fd_0, 0 as off_t, 2i32);
         if current > 0 {
           let mut off: libc::c_uint = 0;
           if opt & 0x2i32 != 0 {
@@ -412,7 +411,7 @@ pub unsafe fn tail_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
             let mut sbuf_0: stat = std::mem::zeroed();
             /* /proc files report zero st_size, don't lseek them */
             if fstat(fd_1, &mut sbuf_0) == 0 && sbuf_0.st_size > 0 {
-              let mut current_0: off_t = lseek(fd_1, 0 as off64_t, 1i32);
+              let mut current_0: off_t = lseek(fd_1, 0 as off_t, 1i32);
               if sbuf_0.st_size < current_0 {
                 crate::libbb::xfuncs_printf::xlseek(fd_1, 0 as off_t, 0);
               }

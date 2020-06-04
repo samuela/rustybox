@@ -222,7 +222,7 @@ pub unsafe fn split_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_cha
         } else {
           remaining as isize
         };
-        remaining -= to_write as i64
+        remaining -= to_write as off_t
       } else {
         /* split by lines */
         /* can be sped up by using _memrchr_

@@ -207,8 +207,8 @@ pub unsafe fn df_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_char) 
           chp,
           1i32 as libc::c_ulong,
           (9223372036854775807i64 as libc::c_ulong)
-            .wrapping_mul(2u64)
-            .wrapping_add(1u64),
+            .wrapping_mul(2)
+            .wrapping_add(1),
           kmg_i_suffixes.as_ptr(),
         )
       }
