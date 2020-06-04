@@ -15,7 +15,7 @@ extern "C" {
     __prot: libc::c_int,
     __flags: libc::c_int,
     __fd: libc::c_int,
-    __offset: off64_t,
+    __offset: off_t,
   ) -> *mut libc::c_void;
   #[no_mangle]
   fn munmap(__addr: *mut libc::c_void, __len: size_t) -> libc::c_int;
@@ -35,7 +35,6 @@ extern "C" {
 }
 
 use crate::librb::size_t;
-use libc::off64_t;
 use libc::off_t;
 // Initialized in run_static_initializers
 static mut sizes: [u8; 5] = [0; 5];

@@ -907,7 +907,7 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
       bbbig = (*val.offset(103) as u64) << 48i32
         | (*val.offset(102) as u64) << 32i32
         | (*val.offset(101) as u64) << 16i32
-        | *val.offset(100) as libc::c_ulong;
+        | *val.offset(100) as u64;
       printf(
         b"\tLBA48  user addressable sectors:%11lu\n\x00" as *const u8 as *const libc::c_char,
         bbbig,
@@ -920,15 +920,15 @@ unsafe extern "C" fn identify(mut val: *mut u16) -> ! {
       b"\tdevice size with M = 1024*1024: %11lu MBytes\n\x00" as *const u8 as *const libc::c_char,
       bbbig >> 11i32,
     );
-    bbbig = (bbbig << 9i32).wrapping_div(1000000i32 as libc::c_ulong);
+    bbbig = (bbbig << 9i32).wrapping_div(1000000i32 as u64);
     printf(
       b"\tdevice size with M = 1000*1000: %11lu MBytes \x00" as *const u8 as *const libc::c_char,
       bbbig,
     );
-    if bbbig > 1000i32 as libc::c_ulong {
+    if bbbig > 1000i32 as u64 {
       printf(
         b"(%lu GB)\n\x00" as *const u8 as *const libc::c_char,
-        bbbig.wrapping_div(1000i32 as libc::c_ulong),
+        bbbig.wrapping_div(1000i32 as u64),
       );
     } else {
       crate::libbb::xfuncs_printf::bb_putchar('\n' as i32);

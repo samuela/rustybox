@@ -249,7 +249,7 @@ others in terms of pages.  */
 unsafe extern "C" fn ptok(pagesize: libc::c_uint, pages: libc::c_ulong) -> libc::c_ulong {
   let mut tmp: libc::c_ulong = 0;
   /* Conversion.  */
-  if pages > (9223372036854775807i64 / pagesize as libc::c_long) as libc::c_ulong {
+  if pages > (9223372036854775807i64 / pagesize as i64) as libc::c_ulong {
     /* Could overflow.  */
     tmp = pages.wrapping_div(1024i32 as libc::c_ulong);
     return tmp.wrapping_mul(pagesize as libc::c_ulong); /* Smaller first, */

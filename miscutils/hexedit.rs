@@ -7,7 +7,7 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
-  fn ftruncate(__fd: libc::c_int, __length: off64_t) -> libc::c_int;
+  fn ftruncate(__fd: libc::c_int, __length: off_t) -> libc::c_int;
   #[no_mangle]
   static ptr_to_globals: *mut globals;
   #[no_mangle]
@@ -27,7 +27,7 @@ extern "C" {
     __prot: libc::c_int,
     __flags: libc::c_int,
     __fd: libc::c_int,
-    __offset: off64_t,
+    __offset: off_t,
   ) -> *mut libc::c_void;
   #[no_mangle]
   fn munmap(__addr: *mut libc::c_void, __len: size_t) -> libc::c_int;
@@ -53,7 +53,6 @@ extern "C" {
 
 pub type __int64_t = libc::c_long;
 
-use libc::off64_t;
 pub type int64_t = __int64_t;
 
 pub type uintptr_t = libc::c_ulong;

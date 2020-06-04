@@ -562,7 +562,7 @@ static mut bc_lex_kws: [BcLexKeyword; 20] = [
 ];
 #[inline(always)]
 unsafe fn lex_allowed_in_bc_expr(mut i: libc::c_uint) -> libc::c_long {
-  return (BC_PARSE_EXPRS_BITS as libc::c_ulong & 1u64 << i) as libc::c_long;
+  return (BC_PARSE_EXPRS_BITS as u64 & 1u64 << i) as libc::c_long;
 }
 static mut bc_ops_prec_and_assoc: [u8; 25] = [
   (0i32 * 0x10i32 + 1i32) as u8,
@@ -1446,7 +1446,7 @@ unsafe fn zbc_num_shift(mut n: *mut BcNum, mut places: size_t) -> BcStatus {
       .wrapping_mul(2u32)
       .wrapping_add(1u32)
       .wrapping_sub(1i32 as libc::c_uint)
-      | 0xffi32 as libc::c_uint) as libc::c_ulong
+      | 0xffi32 as libc::c_uint) as u64
   {
     if places.wrapping_add((*n).len)
       > (2147483647i32 as libc::c_uint)
@@ -5899,7 +5899,7 @@ unsafe fn xc_program_printString(mut str: *const libc::c_char) {
       } else {
         if n.wrapping_offset_from(esc.as_ptr()) as libc::c_long == 0 {
           // "\n" ?
-          (*ptr_to_globals).prog.nchars = 18446744073709551615u64
+          (*ptr_to_globals).prog.nchars = 18446744073709551615
         }
         c = (*::std::mem::transmute::<&[u8; 10], &[libc::c_char; 10]>(
           b"\n\x07\x08\x0c\r\t\\\\\\\x00",

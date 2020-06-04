@@ -364,7 +364,7 @@ pub unsafe fn nandwrite_main(
       memset(
         filebuf.offset(cnt as isize) as *mut libc::c_void,
         0,
-        (meminfo_writesize as isize - cnt) as u64,
+        (meminfo_writesize as isize - cnt) as libc::c_ulong,
       );
     }
     crate::libbb::xfuncs_printf::xwrite(

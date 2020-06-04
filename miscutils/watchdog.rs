@@ -138,7 +138,7 @@ pub unsafe fn watchdog_main(
       b"\x00" as *const u8 as *const libc::c_char as *const libc::c_void,
       1,
     ); /* write zero byte */
-    usleep((stimer_duration as libc::c_long * 1000i64) as useconds_t);
+    usleep((stimer_duration as i64 * 1000i64) as useconds_t);
   }
   /* - not reached, but gcc 4.2.1 is too dumb! */
 }
