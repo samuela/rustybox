@@ -213,7 +213,7 @@ pub unsafe fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c_int
   sector_size = (*ns).bytes_per_sector as libc::c_uint;
   cluster_size = ((*ns).sectors_per_cluster as libc::c_uint).wrapping_mul(sector_size);
   mft_cluster = (*ns).mft_cluster_location;
-  mft_off = mft_cluster.wrapping_mul(cluster_size as libc::c_ulong);
+  mft_off = mft_cluster.wrapping_mul(cluster_size as u64);
   if ((*ns).cluster_per_mft_record as libc::c_int) < 0 {
     /* size = -log2(mft_record_size); normally 1024 Bytes */
     mft_record_size = (1i32 << -((*ns).cluster_per_mft_record as libc::c_int)) as libc::c_uint
@@ -224,7 +224,7 @@ pub unsafe fn volume_id_probe_ntfs(mut id: *mut volume_id) -> libc::c_int
     id,
     (0i32 as u64)
       .wrapping_add(mft_off)
-      .wrapping_add((3i32 as libc::c_uint).wrapping_mul(mft_record_size) as libc::c_ulong),
+      .wrapping_add((3i32 as libc::c_uint).wrapping_mul(mft_record_size) as u64),
     mft_record_size as size_t,
   ) as *const u8;
   if !buf.is_null() {

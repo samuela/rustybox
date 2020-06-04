@@ -108,7 +108,7 @@ pub unsafe fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc::c_int
   let mut hs: *mut high_sierra_volume_descriptor = std::ptr::null_mut();
   buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
-    (0i32 as u64).wrapping_add(0x8000i32 as libc::c_ulong),
+    (0i32 as u64).wrapping_add(0x8000i32 as u64),
     0x200i32 as size_t,
   ) as *mut u8;
   if buf.is_null() {
@@ -135,7 +135,7 @@ pub unsafe fn volume_id_probe_iso9660(mut id: *mut volume_id) -> libc::c_int
       let mut svd_label: [u8; 64] = [0; 64];
       is = crate::util_linux::volume_id::util::volume_id_get_buffer(
         id,
-        (0i32 as u64).wrapping_add(vd_offset as libc::c_ulong),
+        (0i32 as u64).wrapping_add(vd_offset as u64),
         0x200i32 as size_t,
       ) as *mut iso_volume_descriptor;
       if is.is_null() || (*is).vd_type as libc::c_int == 0xffi32 {

@@ -339,10 +339,10 @@ pub unsafe fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c_int
       let mut fat_entry_off: u64 = 0;
       let mut count: libc::c_int = 0;
       next_off_sct = (next_cluster.wrapping_sub(2i32 as libc::c_uint) as u64)
-        .wrapping_mul((*vs).sectors_per_cluster as libc::c_ulong);
-      next_off = (start_data_sct as libc::c_ulong)
+        .wrapping_mul((*vs).sectors_per_cluster as u64);
+      next_off = (start_data_sct as u64)
         .wrapping_add(next_off_sct)
-        .wrapping_mul(sector_size_bytes as libc::c_ulong);
+        .wrapping_mul(sector_size_bytes as u64);
       /* get cluster */
       buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
         id,
@@ -364,10 +364,10 @@ pub unsafe fn volume_id_probe_vfat(mut id: *mut volume_id) -> libc::c_int
       }
       /* get FAT entry */
       fat_entry_off = ((reserved_sct as libc::c_int * sector_size_bytes as libc::c_int)
-        as libc::c_ulong)
+        as u64)
         .wrapping_add(
-          (next_cluster as libc::c_ulong)
-            .wrapping_mul(::std::mem::size_of::<u32>() as libc::c_ulong),
+          (next_cluster as u64)
+            .wrapping_mul(::std::mem::size_of::<u32>() as u64),
         );
       buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
         id,

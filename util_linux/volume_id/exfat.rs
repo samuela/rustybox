@@ -180,12 +180,12 @@ pub unsafe fn volume_id_probe_exfat(mut id: *mut volume_id) -> libc::c_int
   cluster_sz = sector_sz << (*sb).sectors_per_cluster as libc::c_int;
   // There are no clusters 0 and 1, so the first cluster is 2.
   root_dir_off = (0i32 as u64)
-    .wrapping_add((*sb).cluster_heap_offset.wrapping_mul(sector_sz) as libc::c_ulong)
+    .wrapping_add((*sb).cluster_heap_offset.wrapping_mul(sector_sz) as u64)
     .wrapping_add(
       (*sb)
         .root_dir
         .wrapping_sub(2i32 as libc::c_uint)
-        .wrapping_mul(cluster_sz) as libc::c_ulong,
+        .wrapping_mul(cluster_sz) as u64,
     );
   // Use DOS uuid as fallback, if no GUID set
   crate::util_linux::volume_id::util::volume_id_set_uuid(
@@ -202,7 +202,7 @@ pub unsafe fn volume_id_probe_exfat(mut id: *mut volume_id) -> libc::c_int
   while count < 100i32 as libc::c_uint {
     de = crate::util_linux::volume_id::util::volume_id_get_buffer(
       id,
-      root_dir_off.wrapping_add(count.wrapping_mul(32i32 as libc::c_uint) as libc::c_ulong),
+      root_dir_off.wrapping_add(count.wrapping_mul(32i32 as libc::c_uint) as u64),
       32i32 as size_t,
     ) as *mut exfat_dir_entry;
     if de.is_null() {

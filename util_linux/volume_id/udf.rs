@@ -186,7 +186,7 @@ pub unsafe fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_int
   let mut clen: libc::c_uint = 0;
   vsd = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
-    (0i32 as u64).wrapping_add(0x8000i32 as libc::c_ulong),
+    (0i32 as u64).wrapping_add(0x8000i32 as u64),
     0x200i32 as size_t,
   ) as *mut volume_structure_descriptor;
   if vsd.is_null() {
@@ -252,8 +252,8 @@ pub unsafe fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_int
     vsd = crate::util_linux::volume_id::util::volume_id_get_buffer(
       id,
       (0i32 as u64)
-        .wrapping_add(0x8000i32 as libc::c_ulong)
-        .wrapping_add(bs as libc::c_ulong),
+        .wrapping_add(0x8000i32 as u64)
+        .wrapping_add(bs as u64),
       0x800i32 as size_t,
     ) as *mut volume_structure_descriptor;
     if vsd.is_null() {
@@ -279,8 +279,8 @@ pub unsafe fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_int
         vsd = crate::util_linux::volume_id::util::volume_id_get_buffer(
           id,
           (0i32 as u64)
-            .wrapping_add(0x8000i32 as libc::c_ulong)
-            .wrapping_add(b.wrapping_mul(bs) as libc::c_ulong),
+            .wrapping_add(0x8000i32 as u64)
+            .wrapping_add(b.wrapping_mul(bs) as u64),
           0x800i32 as size_t,
         ) as *mut volume_structure_descriptor;
         if vsd.is_null() {
@@ -315,7 +315,7 @@ pub unsafe fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_int
           /* read anchor volume descriptor */
           vd = crate::util_linux::volume_id::util::volume_id_get_buffer(
             id,
-            (0i32 as u64).wrapping_add((256i32 as libc::c_uint).wrapping_mul(bs) as libc::c_ulong),
+            (0i32 as u64).wrapping_add((256i32 as libc::c_uint).wrapping_mul(bs) as u64),
             0x200i32 as size_t,
           ) as *mut volume_descriptor;
           if vd.is_null() {
@@ -335,7 +335,7 @@ pub unsafe fn volume_id_probe_udf(mut id: *mut volume_id) -> libc::c_int
               }
               vd = crate::util_linux::volume_id::util::volume_id_get_buffer(
                 id,
-                (0i32 as u64).wrapping_add(loc.wrapping_add(b).wrapping_mul(bs) as libc::c_ulong),
+                (0i32 as u64).wrapping_add(loc.wrapping_add(b).wrapping_mul(bs) as u64),
                 0x200i32 as size_t,
               ) as *mut volume_descriptor;
               if vd.is_null() {

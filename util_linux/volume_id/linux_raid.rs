@@ -115,10 +115,10 @@ pub unsafe fn volume_id_probe_linux_raid(mut id: *mut volume_id, mut size: u64) 
   let mut sboff: u64 = 0;
   let mut uuid: [u8; 16] = [0; 16];
   let mut mdp: *mut mdp_super_block = std::ptr::null_mut();
-  if size < 0x10000i32 as libc::c_ulong {
+  if size < 0x10000i32 as u64 {
     return -1i32;
   }
-  sboff = (size & !(0x10000i32 - 1i32) as libc::c_ulong).wrapping_sub(0x10000i32 as libc::c_ulong);
+  sboff = (size & !(0x10000i32 - 1i32) as u64).wrapping_sub(0x10000i32 as u64);
   mdp = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
     (0i32 as u64).wrapping_add(sboff),

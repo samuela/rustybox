@@ -180,7 +180,7 @@ pub unsafe fn volume_id_probe_sysv(mut id: *mut volume_id) -> libc::c_int
     }
     vs = crate::util_linux::volume_id::util::volume_id_get_buffer(
       id,
-      (0i32 as u64).wrapping_add(boff.wrapping_mul(0x1i32 as libc::c_uint) as libc::c_ulong),
+      (0i32 as u64).wrapping_add(boff.wrapping_mul(0x1i32 as libc::c_uint) as u64),
       0x200i32 as size_t,
     ) as *mut sysv_super;
     if vs.is_null() {
@@ -230,7 +230,7 @@ pub unsafe fn volume_id_probe_sysv(mut id: *mut volume_id) -> libc::c_int
         }
         xs = crate::util_linux::volume_id::util::volume_id_get_buffer(
           id,
-          (0i32 as u64).wrapping_add(boff.wrapping_add(0x18i32 as libc::c_uint) as libc::c_ulong),
+          (0i32 as u64).wrapping_add(boff.wrapping_add(0x18i32 as libc::c_uint) as u64),
           0x200i32 as size_t,
         ) as *mut xenix_super;
         if xs.is_null() {

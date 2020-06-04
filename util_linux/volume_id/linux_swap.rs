@@ -135,8 +135,8 @@ pub unsafe fn volume_id_probe_linux_swap(mut id: *mut volume_id) -> libc::c_int
     buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
       id,
       (0i32 as u64)
-        .wrapping_add(page as libc::c_ulong)
-        .wrapping_sub(10i32 as libc::c_ulong),
+        .wrapping_add(page as u64)
+        .wrapping_sub(10i32 as u64),
       10i32 as size_t,
     ) as *const u8;
     if buf.is_null() {

@@ -304,7 +304,7 @@ pub unsafe fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> libc::c_int
   let mut buf: *const u8 = std::ptr::null();
   buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
-    off.wrapping_add(0x400i32 as libc::c_ulong),
+    off.wrapping_add(0x400i32 as u64),
     0x200i32 as size_t,
   ) as *const u8;
   if buf.is_null() {
@@ -375,7 +375,7 @@ pub unsafe fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> libc::c_int
       ) as u64 as u64;
       buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
         id,
-        off.wrapping_add(0x400i32 as libc::c_ulong),
+        off.wrapping_add(0x400i32 as u64),
         0x200i32 as size_t,
       ) as *const u8;
       if buf.is_null() {
@@ -445,7 +445,7 @@ pub unsafe fn volume_id_probe_hfs_hfsplus(mut id: *mut volume_id) -> libc::c_int
       };
       buf = crate::util_linux::volume_id::util::volume_id_get_buffer(
         id,
-        off.wrapping_add(cat_block.wrapping_mul(blocksize) as libc::c_ulong),
+        off.wrapping_add(cat_block.wrapping_mul(blocksize) as u64),
         0x2000i32 as size_t,
       ) as *const u8;
       if !buf.is_null() {

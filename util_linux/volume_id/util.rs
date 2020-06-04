@@ -258,7 +258,7 @@ pub unsafe fn volume_id_get_buffer(
   let mut small_off: libc::c_uint = 0;
   let mut read_len: ssize_t = 0;
   /* check if requested area fits in superblock buffer */
-  if off.wrapping_add(len) <= 0x11000i32 as libc::c_ulong {
+  if off.wrapping_add(len as u64) <= 0x11000i32 as u64 {
     /* && off <= SB_BUFFER_SIZE - want this paranoid overflow check? */
     if (*id).sbbuf.is_null() {
       (*id).sbbuf = xmalloc(0x11000i32 as size_t) as *mut u8
@@ -266,7 +266,7 @@ pub unsafe fn volume_id_get_buffer(
     small_off = off as libc::c_uint;
     dst = (*id).sbbuf;
     /* check if we need to read */
-    len = (len as libc::c_ulong).wrapping_add(off) as size_t as size_t; /* we already have it */
+    len = (len as u64).wrapping_add(off) as size_t as size_t; /* we already have it */
     if len <= (*id).sbbuf_len {
       current_block = 3815402658071396482;
     } else {
@@ -281,7 +281,7 @@ pub unsafe fn volume_id_get_buffer(
     dst = (*id).seekbuf;
     /* check if we need to read */
     if off >= (*id).seekbuf_off
-      && off.wrapping_add(len) <= (*id).seekbuf_off.wrapping_add((*id).seekbuf_len)
+      && off.wrapping_add(len as u64) <= (*id).seekbuf_off.wrapping_add((*id).seekbuf_len)
     {
       small_off = off.wrapping_sub((*id).seekbuf_off) as libc::c_uint;
       current_block = 3815402658071396482; /* can't overflow */
@@ -298,7 +298,7 @@ pub unsafe fn volume_id_get_buffer(
   }
   match current_block {
     16164644963279819311 => {
-      if lseek((*id).fd, off as off64_t, 0) as libc::c_ulong != off {
+      if lseek((*id).fd, off as off64_t, 0) as u64 != off {
         current_block = 1886147455329398701;
       } else {
         read_len = crate::libbb::read::full_read((*id).fd, dst as *mut libc::c_void, len);
@@ -317,7 +317,7 @@ pub unsafe fn volume_id_get_buffer(
            * accesses. Rationale:
            * users complained of slow blkid due to empty floppy drives.
            */
-          if off < (64i32 * 1024i32) as libc::c_ulong {
+          if off < (64i32 * 1024i32) as u64 {
             (*id).error = 1i32
           }
           /* id->seekbuf_len or id->sbbuf_len is wrong now! Fixing. */

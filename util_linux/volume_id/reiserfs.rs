@@ -154,7 +154,7 @@ pub unsafe fn volume_id_probe_reiserfs(mut id: *mut volume_id) -> libc::c_int
   let mut rs4: *mut reiser4_super_block = std::ptr::null_mut();
   rs = crate::util_linux::volume_id::util::volume_id_get_buffer(
     id,
-    (0i32 as u64).wrapping_add(0x10000i32 as libc::c_ulong),
+    (0i32 as u64).wrapping_add(0x10000i32 as u64),
     0x200i32 as size_t,
   ) as *mut reiserfs_super_block;
   if rs.is_null() {
@@ -204,7 +204,7 @@ pub unsafe fn volume_id_probe_reiserfs(mut id: *mut volume_id) -> libc::c_int
       } else {
         rs = crate::util_linux::volume_id::util::volume_id_get_buffer(
           id,
-          (0i32 as u64).wrapping_add(0x2000i32 as libc::c_ulong),
+          (0i32 as u64).wrapping_add(0x2000i32 as u64),
           0x200i32 as size_t,
         ) as *mut reiserfs_super_block;
         if rs.is_null() {
