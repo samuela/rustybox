@@ -281,7 +281,7 @@ pub unsafe fn volume_id_get_buffer(
     dst = (*id).seekbuf;
     /* check if we need to read */
     if off >= (*id).seekbuf_off
-      && off.wrapping_add(len as u64) <= (*id).seekbuf_off.wrapping_add((*id).seekbuf_len)
+      && off.wrapping_add(len as u64) <= (*id).seekbuf_off.wrapping_add((*id).seekbuf_len as u64)
     {
       small_off = off.wrapping_sub((*id).seekbuf_off) as libc::c_uint;
       current_block = 3815402658071396482; /* can't overflow */

@@ -6,7 +6,6 @@ use libc;
 use libc::close;
 use libc::fclose;
 use libc::ioctl;
-use libc::off64_t;
 use libc::off_t;
 use libc::open;
 use libc::printf;
