@@ -13,7 +13,6 @@ use libc::geteuid;
 use libc::getpid;
 use libc::gid_t;
 use libc::ioctl;
-use libc::off64_t;
 use libc::off_t;
 use libc::open;
 use libc::opendir;
@@ -124,7 +123,7 @@ extern "C" {
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
 
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off_t, __whence: libc::c_int) -> off_t;
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
   #[no_mangle]

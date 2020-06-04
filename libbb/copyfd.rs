@@ -56,7 +56,7 @@ unsafe extern "C" fn bb_full_fd_action(
             dst_fd,
             src_fd,
             0 as *mut off64_t,
-            if size > sendfile_sz as i64 {
+            if size > sendfile_sz as off_t {
               sendfile_sz as size_t
             } else {
               size as size_t
@@ -124,12 +124,12 @@ unsafe extern "C" fn bb_full_fd_action(
             }
           }
         }
-        total += rd as i64;
+        total += rd as off_t;
         if !(status < 0) {
           continue;
         }
         /* if we aren't copying till EOF... */
-        size -= rd as i64;
+        size -= rd as off_t;
         if !(size == 0) {
           continue;
         }

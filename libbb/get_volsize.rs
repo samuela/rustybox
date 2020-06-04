@@ -1,11 +1,10 @@
 use crate::librb::size_t;
 use crate::librb::uoff_t;
 use libc;
-use libc::off64_t;
 use libc::off_t;
 extern "C" {
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off_t, __whence: libc::c_int) -> off_t;
 
 }
 /*
@@ -223,7 +222,7 @@ pub unsafe fn get_volume_size_in_bytes(
     //else {
     //	bb_error_msg("warning, block device is smaller");
     //}
-    if lseek(fd, result.wrapping_sub(1i32 as libc::c_ulong) as off64_t, 0) != -1i32 as off_t {
+    if lseek(fd, result.wrapping_sub(1i32 as libc::c_ulong) as off_t, 0) != -1i32 as off_t {
       if extend != 0 {
         crate::libbb::xfuncs_printf::xwrite(
           fd,

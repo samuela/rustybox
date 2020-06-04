@@ -54,7 +54,7 @@ unsafe fn rotl64(mut x: u64, mut n: libc::c_uint) -> u64 {
  * bytes worth to pass on.
  */
 unsafe fn common64_hash(mut ctx: *mut md5_ctx_t, mut buffer: *const libc::c_void, mut len: size_t) {
-  let mut bufpos: libc::c_uint = ((*ctx).total64 & 63i32 as libc::c_ulong) as libc::c_uint;
+  let mut bufpos: libc::c_uint = ((*ctx).total64 & 63i32 as u64) as libc::c_uint;
   (*ctx).total64 = ((*ctx).total64 as libc::c_ulong).wrapping_add(len) as u64 as u64;
   loop {
     let mut remaining: libc::c_uint = (64i32 as libc::c_uint).wrapping_sub(bufpos);
@@ -82,7 +82,7 @@ unsafe fn common64_hash(mut ctx: *mut md5_ctx_t, mut buffer: *const libc::c_void
 /* Buffer is filled up, process it */
 /* Process the remaining bytes in the buffer */
 unsafe fn common64_end(mut ctx: *mut md5_ctx_t, mut swap_needed: libc::c_int) {
-  let mut bufpos: libc::c_uint = ((*ctx).total64 & 63i32 as libc::c_ulong) as libc::c_uint;
+  let mut bufpos: libc::c_uint = ((*ctx).total64 & 63i32 as u64) as libc::c_uint;
   /* Pad the buffer to the next 64-byte boundary with 0x80,0,0,0... */
   let fresh0 = bufpos;
   bufpos = bufpos.wrapping_add(1);
@@ -938,14 +938,14 @@ unsafe fn sha512_process_block128(mut ctx: *mut sha512_ctx_t) {
   }
   /* Add the starting values of the context according to FIPS 180-2:6.3.2
   step 4.  */
-  (*ctx).hash[0] = ((*ctx).hash[0] as libc::c_ulong).wrapping_add(a) as u64 as u64;
-  (*ctx).hash[1] = ((*ctx).hash[1] as libc::c_ulong).wrapping_add(b) as u64 as u64;
-  (*ctx).hash[2] = ((*ctx).hash[2] as libc::c_ulong).wrapping_add(c) as u64 as u64;
-  (*ctx).hash[3] = ((*ctx).hash[3] as libc::c_ulong).wrapping_add(d) as u64 as u64;
-  (*ctx).hash[4] = ((*ctx).hash[4] as libc::c_ulong).wrapping_add(e) as u64 as u64;
-  (*ctx).hash[5] = ((*ctx).hash[5] as libc::c_ulong).wrapping_add(f) as u64 as u64;
-  (*ctx).hash[6] = ((*ctx).hash[6] as libc::c_ulong).wrapping_add(g) as u64 as u64;
-  (*ctx).hash[7] = ((*ctx).hash[7] as libc::c_ulong).wrapping_add(h) as u64 as u64;
+  (*ctx).hash[0] = ((*ctx).hash[0] as u64).wrapping_add(a) as u64 as u64;
+  (*ctx).hash[1] = ((*ctx).hash[1] as u64).wrapping_add(b) as u64 as u64;
+  (*ctx).hash[2] = ((*ctx).hash[2] as u64).wrapping_add(c) as u64 as u64;
+  (*ctx).hash[3] = ((*ctx).hash[3] as u64).wrapping_add(d) as u64 as u64;
+  (*ctx).hash[4] = ((*ctx).hash[4] as u64).wrapping_add(e) as u64 as u64;
+  (*ctx).hash[5] = ((*ctx).hash[5] as u64).wrapping_add(f) as u64 as u64;
+  (*ctx).hash[6] = ((*ctx).hash[6] as u64).wrapping_add(g) as u64 as u64;
+  (*ctx).hash[7] = ((*ctx).hash[7] as u64).wrapping_add(h) as u64 as u64;
 }
 /* NEED_SHA512 */
 pub unsafe fn sha1_begin(mut ctx: *mut sha1_ctx_t) {
@@ -1006,7 +1006,7 @@ pub unsafe fn sha512_begin(mut ctx: *mut sha512_ctx_t) {
   i = 0;
   while i < 2i32 + 8i32 {
     *tp.offset(i as isize) =
-      ((init256[i as usize] as u64) << 32i32).wrapping_add(init512_lo[i as usize] as libc::c_ulong);
+      ((init256[i as usize] as u64) << 32i32).wrapping_add(init512_lo[i as usize] as u64);
     i += 1
   }
   /*ctx->total64[0] = ctx->total64[1] = 0; - already done */
@@ -1016,13 +1016,13 @@ pub unsafe fn sha512_hash(
   mut buffer: *const libc::c_void,
   mut len: size_t,
 ) {
-  let mut bufpos: libc::c_uint = ((*ctx).total64[0] & 127i32 as libc::c_ulong) as libc::c_uint;
+  let mut bufpos: libc::c_uint = ((*ctx).total64[0] & 127i32 as u64) as libc::c_uint;
   let mut remaining: libc::c_uint = 0;
   /* First increment the byte count.  FIPS 180-2 specifies the possible
   length of the file up to 2^128 _bits_.
   We compute the number of _bytes_ and convert to bits later.  */
   (*ctx).total64[0] = ((*ctx).total64[0] as libc::c_ulong).wrapping_add(len) as u64 as u64;
-  if (*ctx).total64[0] < len {
+  if (*ctx).total64[0] < len as u64 {
     (*ctx).total64[1] = (*ctx).total64[1].wrapping_add(1)
   }
   loop {
@@ -1098,7 +1098,7 @@ pub unsafe fn sha512_end(
   mut ctx: *mut sha512_ctx_t,
   mut resbuf: *mut libc::c_void,
 ) -> libc::c_uint {
-  let mut bufpos: libc::c_uint = ((*ctx).total64[0] & 127i32 as libc::c_ulong) as libc::c_uint;
+  let mut bufpos: libc::c_uint = ((*ctx).total64[0] & 127i32 as u64) as libc::c_uint;
   /* Pad the buffer to the next 128-byte boundary with 0x80,0,0,0... */
   let fresh44 = bufpos;
   bufpos = bufpos.wrapping_add(1);
@@ -1384,7 +1384,7 @@ unsafe fn sha3_process_block72(mut state: *mut u64) {
     /* Iota */
     let ref mut fresh59 = *state.offset(0);
     *fresh59 ^= (IOTA_CONST[round as usize] as libc::c_uint
-      | IOTA_CONST_bit31 << round & 0x80000000u32) as libc::c_ulong
+      | IOTA_CONST_bit31 << round & 0x80000000u32) as u64
       | ((IOTA_CONST_bit63 << round & 0x80000000u32) as u64) << 32i32;
     round = round.wrapping_add(1)
   }

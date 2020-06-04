@@ -516,7 +516,7 @@ pub unsafe fn procps_scan(
       memset(
         &mut (*sp).vsz as *mut libc::c_ulong as *mut libc::c_void,
         0,
-        (::std::mem::size_of::<procps_status_t>() as libc::c_ulong).wrapping_sub(48u64),
+        (::std::mem::size_of::<procps_status_t>() as libc::c_ulong).wrapping_sub(48),
       ); /* we needed only pid, we got it */
       (*sp).pid = pid; /* process probably exited */
       if flags & !(PSSCAN_PID as libc::c_int) == 0 {

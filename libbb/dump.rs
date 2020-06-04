@@ -4,7 +4,6 @@ use crate::librb::size_t;
 use crate::librb::smallint;
 use libc;
 use libc::atoi;
-use libc::off64_t;
 use libc::off_t;
 use libc::printf;
 use libc::puts;
@@ -26,7 +25,7 @@ extern "C" {
   #[no_mangle]
   fn fread(__ptr: *mut libc::c_void, __size: size_t, __n: size_t, __stream: *mut FILE) -> size_t;
   #[no_mangle]
-  fn fseeko(__stream: *mut FILE, __off: off64_t, __whence: libc::c_int) -> libc::c_int;
+  fn fseeko(__stream: *mut FILE, __off: off_t, __whence: libc::c_int) -> libc::c_int;
   #[no_mangle]
   fn ferror_unlocked(__stream: *mut FILE) -> libc::c_int;
   #[no_mangle]
