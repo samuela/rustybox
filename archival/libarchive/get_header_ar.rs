@@ -1,7 +1,6 @@
 use crate::archival::libarchive::bb_archive::file_header_t;
 use crate::librb::size_t;
 use libc;
-use libc::off64_t;
 use libc::off_t;
 use libc::ssize_t;
 use libc::time_t;
@@ -11,7 +10,7 @@ extern "C" {
   fn read(__fd: libc::c_int, __buf: *mut libc::c_void, __nbytes: size_t) -> ssize_t;
 
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off_t, __whence: libc::c_int) -> off_t;
 
   #[no_mangle]
   fn memmove(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;

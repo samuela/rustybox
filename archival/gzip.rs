@@ -1341,18 +1341,18 @@ unsafe fn ct_tally(mut dist: libc::c_int, mut lc: libc::c_int) -> libc::c_int {
   if (*(ptr_to_globals as *mut globals2)).last_lit & 0xfffi32 as libc::c_uint == 0 as libc::c_uint {
     /* Compute an upper bound for the compressed length */
     let mut out_length: ulg =
-      ((*(ptr_to_globals as *mut globals2)).last_lit as libc::c_long * 8i64) as ulg;
+      ((*(ptr_to_globals as *mut globals2)).last_lit as i64 * 8i64) as ulg;
     let mut in_length: ulg = (*ptr_to_globals.offset(-1))
       .strstart
       .wrapping_sub((*ptr_to_globals.offset(-1)).block_start as libc::c_uint);
     let mut dcode: libc::c_int = 0;
     dcode = 0;
     while dcode < 30i32 {
-      out_length = (out_length as libc::c_long
+      out_length = (out_length as i64
         + (*(ptr_to_globals as *mut globals2)).dyn_dtree[dcode as usize]
           .fc
-          .freq as libc::c_long
-          * (5i64 + extra_dbits[dcode as usize] as libc::c_long)) as ulg;
+          .freq as i64
+          * (5i64 + extra_dbits[dcode as usize] as i64)) as ulg;
       dcode += 1
     }
     out_length >>= 3i32;
@@ -1711,7 +1711,7 @@ unsafe fn deflate() {
       *fresh60 = (*fresh60).wrapping_add(1);
       if flush != 0 {
         flush_block(
-          if (*ptr_to_globals.offset(-1)).block_start as libc::c_long >= 0i64 {
+          if (*ptr_to_globals.offset(-1)).block_start as i64 >= 0i64 {
             &mut *(*ptr_to_globals.offset(-1))
               .window
               .offset((*ptr_to_globals.offset(-1)).block_start as libc::c_uint as isize)
@@ -1741,7 +1741,7 @@ unsafe fn deflate() {
       ) != 0
       {
         flush_block(
-          if (*ptr_to_globals.offset(-1)).block_start as libc::c_long >= 0i64 {
+          if (*ptr_to_globals.offset(-1)).block_start as i64 >= 0i64 {
             &mut *(*ptr_to_globals.offset(-1))
               .window
               .offset((*ptr_to_globals.offset(-1)).block_start as libc::c_uint as isize)
@@ -1788,7 +1788,7 @@ unsafe fn deflate() {
     );
   }
   flush_block(
-    if (*ptr_to_globals.offset(-1)).block_start as libc::c_long >= 0i64 {
+    if (*ptr_to_globals.offset(-1)).block_start as i64 >= 0i64 {
       &mut *(*ptr_to_globals.offset(-1))
         .window
         .offset((*ptr_to_globals.offset(-1)).block_start as libc::c_uint as isize) as *mut uch
@@ -2020,7 +2020,7 @@ unsafe fn pack_gzip(mut _xstate: *mut transformer_state_t) -> libc::c_longlong {
     &mut (*ptr_to_globals.offset(-1)).crc as *mut u32 as *mut libc::c_void,
     0,
     (::std::mem::size_of::<globals>() as libc::c_ulong)
-      .wrapping_sub(40u64)
+      .wrapping_sub(40)
       .wrapping_add(::std::mem::size_of::<globals2>() as libc::c_ulong),
   );
   /* Clear input and output buffers */
@@ -2111,31 +2111,31 @@ pub unsafe fn gzip_main(mut argc: libc::c_int, mut argv: *mut *mut libc::c_char)
   /* Allocate all global buffers (for DYN_ALLOC option) */
   let ref mut fresh81 = (*ptr_to_globals.offset(-1)).l_buf;
   *fresh81 = crate::libbb::xfuncs_printf::xzalloc(
-    (((0x2000i32 as libc::c_long + 1i64) / 2i32 as libc::c_long) as size_t)
+    (((0x2000i32 as i64 + 1i64) / 2i32 as i64) as size_t)
       .wrapping_mul(2i32 as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<uch>() as libc::c_ulong),
   ) as *mut uch;
   let ref mut fresh82 = (*ptr_to_globals.offset(-1)).outbuf;
   *fresh82 = crate::libbb::xfuncs_printf::xzalloc(
-    (((8192i32 as libc::c_long + 1i64) / 2i32 as libc::c_long) as size_t)
+    (((8192i32 as i64 + 1i64) / 2i32 as i64) as size_t)
       .wrapping_mul(2i32 as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<uch>() as libc::c_ulong),
   ) as *mut uch;
   let ref mut fresh83 = (*ptr_to_globals.offset(-1)).d_buf;
   *fresh83 = crate::libbb::xfuncs_printf::xzalloc(
-    (((0x2000i32 as libc::c_long + 1i64) / 2i32 as libc::c_long) as size_t)
+    (((0x2000i32 as i64 + 1i64) / 2i32 as i64) as size_t)
       .wrapping_mul(2i32 as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<ush>() as libc::c_ulong),
   ) as *mut ush;
   let ref mut fresh84 = (*ptr_to_globals.offset(-1)).window;
   *fresh84 = crate::libbb::xfuncs_printf::xzalloc(
-    (((2i64 * 0x8000i32 as libc::c_long + 1i64) / 2i32 as libc::c_long) as size_t)
+    (((2i64 * 0x8000i32 as i64 + 1i64) / 2i32 as i64) as size_t)
       .wrapping_mul(2i32 as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<uch>() as libc::c_ulong),
   ) as *mut uch;
   let ref mut fresh85 = (*ptr_to_globals.offset(-1)).prev;
   *fresh85 = crate::libbb::xfuncs_printf::xzalloc(
-    ((((1i64 << 16i32) + 1i64) / 2i32 as libc::c_long) as size_t)
+    ((((1i64 << 16i32) + 1i64) / 2i32 as i64) as size_t)
       .wrapping_mul(2i32 as libc::c_ulong)
       .wrapping_mul(::std::mem::size_of::<ush>() as libc::c_ulong),
   ) as *mut ush;

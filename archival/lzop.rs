@@ -725,7 +725,7 @@ unsafe fn add_bytes_to_chksum(mut buf: *const libc::c_void, mut cnt: libc::c_int
   );
 }
 unsafe fn chksum_getresult(mut h_flags32: u32) -> u32 {
-  return if h_flags32 as libc::c_long & 0x1000i64 != 0 {
+  return if h_flags32 as i64 & 0x1000i64 != 0 {
     (*(bb_common_bufsiz1.as_mut_ptr() as *mut globals))
       .chksum
       .f_crc32
@@ -832,7 +832,7 @@ unsafe fn f_write(mut buf: *const libc::c_void, mut cnt: libc::c_int) {
 /* *********************************************************************/
 #[inline(never)]
 unsafe fn lzo_compress(mut h: *const header_t) -> libc::c_int {
-  let mut block_size: libc::c_uint = (256i32 as libc::c_long * 1024i64) as libc::c_uint; /* LZO_E_OK */
+  let mut block_size: libc::c_uint = (256i32 as i64 * 1024i64) as libc::c_uint; /* LZO_E_OK */
   let mut r: libc::c_int = 0;
   let b1: *mut u8 = crate::libbb::xfuncs_printf::xzalloc(block_size as size_t) as *mut u8;
   let b2: *mut u8 = crate::libbb::xfuncs_printf::xzalloc(
@@ -899,10 +899,10 @@ unsafe fn lzo_compress(mut h: *const header_t) -> libc::c_int {
       /* write uncompressed block size */
       /* exit if last block */
       /* compute checksum of uncompressed block */
-      if (*h).flags32 as libc::c_long & 0x1i64 != 0 {
+      if (*h).flags32 as i64 & 0x1i64 != 0 {
         d_adler32 = lzo_adler32(1i32 as u32, b1, src_len)
       }
-      if (*h).flags32 as libc::c_long & 0x100i64 != 0 {
+      if (*h).flags32 as i64 & 0x100i64 != 0 {
         d_crc32 = lzo_crc32(0i32 as u32, b1, src_len)
       }
       /* compress */
@@ -989,7 +989,7 @@ unsafe fn lzo_compress(mut h: *const header_t) -> libc::c_int {
         }
       }
       /* write checksum of uncompressed block */
-      if (*h).flags32 as libc::c_long & 0x1i64 != 0 {
+      if (*h).flags32 as i64 & 0x1i64 != 0 {
         let fresh85 = wordptr;
         wordptr = wordptr.offset(1);
         *fresh85 = {
@@ -1011,7 +1011,7 @@ unsafe fn lzo_compress(mut h: *const header_t) -> libc::c_int {
           __v
         }
       }
-      if (*h).flags32 as libc::c_long & 0x100i64 != 0 {
+      if (*h).flags32 as i64 & 0x100i64 != 0 {
         let fresh89 = wordptr;
         wordptr = wordptr.offset(1);
         *fresh89 = {
@@ -1035,7 +1035,7 @@ unsafe fn lzo_compress(mut h: *const header_t) -> libc::c_int {
       }
       if dst_len < src_len {
         /* write checksum of compressed block */
-        if (*h).flags32 as libc::c_long & 0x2i64 != 0 {
+        if (*h).flags32 as i64 & 0x2i64 != 0 {
           let fresh93 = wordptr;
           wordptr = wordptr.offset(1);
           *fresh93 = {
@@ -1057,7 +1057,7 @@ unsafe fn lzo_compress(mut h: *const header_t) -> libc::c_int {
             __v
           }
         }
-        if (*h).flags32 as libc::c_long & 0x200i64 != 0 {
+        if (*h).flags32 as i64 & 0x200i64 != 0 {
           let fresh97 = wordptr;
           wordptr = wordptr.offset(1);
           *fresh97 = {
@@ -1126,7 +1126,7 @@ unsafe fn lzo_check(
 // only flags32 field, changed to receive only that.
 #[inline(never)]
 unsafe fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
-  let mut block_size: libc::c_uint = (256i32 as libc::c_long * 1024i64) as libc::c_uint;
+  let mut block_size: libc::c_uint = (256i32 as i64 * 1024i64) as libc::c_uint;
   let mut r: libc::c_int = 0;
   let mut src_len: u32 = 0;
   let mut dst_len: u32 = 0;
@@ -1149,13 +1149,13 @@ unsafe fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
       break;
     }
     /* error if split file */
-    if dst_len as libc::c_long == 0xffffffffi64 {
+    if dst_len as i64 == 0xffffffffi64 {
       /* should not happen - not yet implemented */
       crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"this file is a split lzop file\x00" as *const u8 as *const libc::c_char,
       );
     }
-    if dst_len as libc::c_long > 64i32 as libc::c_long * 1024i64 * 1024i64 {
+    if dst_len as i64 > 64i32 as i64 * 1024i64 * 1024i64 {
       crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"corrupted data\x00" as *const u8 as *const libc::c_char,
       );
@@ -1179,18 +1179,18 @@ unsafe fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
         .wrapping_add(3i32 as libc::c_uint)
     }
     /* read checksum of uncompressed block */
-    if h_flags32 as libc::c_long & 0x1i64 != 0 {
+    if h_flags32 as i64 & 0x1i64 != 0 {
       d_adler32 = read32()
     }
-    if h_flags32 as libc::c_long & 0x100i64 != 0 {
+    if h_flags32 as i64 & 0x100i64 != 0 {
       d_crc32 = read32()
     }
     /* read checksum of compressed block */
     if src_len < dst_len {
-      if h_flags32 as libc::c_long & 0x2i64 != 0 {
+      if h_flags32 as i64 & 0x2i64 != 0 {
         c_adler32 = read32()
       }
-      if h_flags32 as libc::c_long & 0x200i64 != 0 {
+      if h_flags32 as i64 & 0x200i64 != 0 {
         c_crc32 = read32()
       }
     }
@@ -1206,7 +1206,7 @@ unsafe fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
       let mut d: libc::c_uint = dst_len;
       if option_mask32 & OPT_F as libc::c_int as libc::c_uint == 0 {
         /* verify checksum of compressed block */
-        if h_flags32 as libc::c_long & 0x2i64 != 0 {
+        if h_flags32 as i64 & 0x2i64 != 0 {
           lzo_check(
             1i32 as u32,
             b1,
@@ -1215,7 +1215,7 @@ unsafe fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
             c_adler32,
           );
         }
-        if h_flags32 as libc::c_long & 0x200i64 != 0 {
+        if h_flags32 as i64 & 0x200i64 != 0 {
           lzo_check(
             0 as u32,
             b1,
@@ -1242,7 +1242,7 @@ unsafe fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
     }
     if option_mask32 & OPT_F as libc::c_int as libc::c_uint == 0 {
       /* verify checksum of uncompressed block */
-      if h_flags32 as libc::c_long & 0x1i64 != 0 {
+      if h_flags32 as i64 & 0x1i64 != 0 {
         lzo_check(
           1i32 as u32,
           dst,
@@ -1251,7 +1251,7 @@ unsafe fn lzo_decompress(mut h_flags32: u32) -> libc::c_int {
           d_adler32,
         );
       }
-      if h_flags32 as libc::c_long & 0x100i64 != 0 {
+      if h_flags32 as i64 & 0x100i64 != 0 {
         lzo_check(
           0 as u32,
           dst,
@@ -1468,11 +1468,11 @@ unsafe fn read_header(mut h: *mut header_t) -> libc::c_int {
     }
     __v
   };
-  if (*h).flags32 as libc::c_long & 0x800i64 != 0 {
+  if (*h).flags32 as i64 & 0x800i64 != 0 {
     return 16i32;
   }
   /* check reserved flags */
-  if (*h).flags32 as libc::c_long & ((0x3fffi64 | 0xff000000i64 | 0xf00000i64) ^ 0xffffffffi64) != 0
+  if (*h).flags32 as i64 & ((0x3fffi64 | 0xff000000i64 | 0xf00000i64) ^ 0xffffffffi64) != 0
   {
     return -13i32;
   }
@@ -1490,7 +1490,7 @@ unsafe fn read_header(mut h: *mut header_t) -> libc::c_int {
     return 2i32;
   }
   /* skip extra field [not used yet] */
-  if (*h).flags32 as libc::c_long & 0x40i64 != 0 {
+  if (*h).flags32 as i64 & 0x40i64 != 0 {
     let mut extra_field_len: u32 = 0;
     let mut extra_field_checksum: u32 = 0;
     let mut k: u32 = 0;

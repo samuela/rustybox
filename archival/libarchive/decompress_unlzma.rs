@@ -229,10 +229,10 @@ pub unsafe fn unpack_lzma_stream(mut xstate: *mut transformer_state_t) -> libc::
   if header.dict_size == 0 as libc::c_uint {
     header.dict_size = header.dict_size.wrapping_add(1)
   }
-  buffer_size = if header.dst_size < header.dict_size as libc::c_ulong {
+  buffer_size = if header.dst_size < header.dict_size as u64 {
     header.dst_size
   } else {
-    header.dict_size as libc::c_ulong
+    header.dict_size as u64
   } as u32;
   buffer = xmalloc(buffer_size as size_t) as *mut u8;
   let mut num_probs: libc::c_int = 0;
@@ -248,7 +248,7 @@ pub unsafe fn unpack_lzma_stream(mut xstate: *mut transformer_state_t) -> libc::
   }
   rc = rc_init((*xstate).src_fd);
   's_151: loop {
-    if !(global_pos.wrapping_add(buffer_pos) < header.dst_size) {
+    if (!(global_pos.wrapping_add(buffer_pos) as u64) < header.dst_size) {
       current_block = 2884634553824165030;
       break;
     }
@@ -516,7 +516,7 @@ pub unsafe fn unpack_lzma_stream(mut xstate: *mut transformer_state_t) -> libc::
             total_written += header.dict_size as libc::c_longlong
           }
           len -= 1;
-          if len != 0 && buffer_pos < header.dst_size {
+          if len != 0 && (buffer_pos as u64) < header.dst_size {
             current_block = 11702799181856929651;
           } else {
             break;

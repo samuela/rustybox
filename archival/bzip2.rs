@@ -2262,7 +2262,7 @@ unsafe fn sendMTFValues(mut s: *mut EState) {
           as *mut bb__aliased_u64)
           | *(&mut *(*s).inUse.as_mut_ptr().offset((i * 16i32 + 8i32) as isize) as *mut Bool
             as *mut bb__aliased_u64)
-          != 0 as libc::c_ulong) as libc::c_int
+          != 0 as u64) as libc::c_int
     }
     i += 1
   }

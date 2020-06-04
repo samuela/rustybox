@@ -10,7 +10,6 @@ use libc::free;
 use libc::getopt;
 use libc::lstat;
 use libc::mode_t;
-use libc::off64_t;
 use libc::off_t;
 use libc::open;
 use libc::printf;
@@ -35,7 +34,7 @@ extern "C" {
   ) -> *mut libc::c_char;
 
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off_t, __whence: libc::c_int) -> off_t;
   #[no_mangle]
   fn memcpy(_: *mut libc::c_void, _: *const libc::c_void, _: libc::c_ulong) -> *mut libc::c_void;
 
@@ -289,7 +288,7 @@ unsafe fn find_cdf_offset() -> u32 {
   let mut p: *mut libc::c_uchar = std::ptr::null_mut();
   let mut end: off_t = 0;
   let mut found: u32 = 0;
-  end = lseek(zip_fd as libc::c_int, 0 as off64_t, 2i32);
+  end = lseek(zip_fd as libc::c_int, 0 as off_t, 2i32);
   if end == -1i32 as off_t {
     return 0xffffffffu32;
   }
@@ -468,7 +467,7 @@ unsafe fn unzip_extract(mut zip: *mut zip_header_t, mut dst_fd: libc::c_int) {
       );
     }
     /* Validate decompression - crc */
-    if (*zip).fmt.crc32 as libc::c_long != xstate.crc32 as libc::c_long ^ 0xffffffffi64 {
+    if (*zip).fmt.crc32 as i64 != xstate.crc32 as i64 ^ 0xffffffffi64 {
       crate::libbb::verror_msg::bb_simple_error_msg_and_die(
         b"crc error\x00" as *const u8 as *const libc::c_char,
       );

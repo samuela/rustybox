@@ -1683,12 +1683,12 @@ unsafe fn dec_index(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret {
         (*s).index.sequence = SEQ_INDEX_UNPADDED
       }
       1 => {
-        (*s).index.hash.unpadded = ((*s).index.hash.unpadded as libc::c_ulong)
+        (*s).index.hash.unpadded = ((*s).index.hash.unpadded as u64)
           .wrapping_add((*s).vli) as vli_type as vli_type;
         (*s).index.sequence = SEQ_INDEX_UNCOMPRESSED
       }
       2 => {
-        (*s).index.hash.uncompressed = ((*s).index.hash.uncompressed as libc::c_ulong)
+        (*s).index.hash.uncompressed = ((*s).index.hash.uncompressed as u64)
           .wrapping_add((*s).vli) as vli_type as vli_type;
         (*s).index.hash.crc32 = xz_crc32(
           &mut (*s).index.hash as *mut xz_dec_hash as *const u8,
@@ -1700,7 +1700,7 @@ unsafe fn dec_index(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret {
       }
       _ => {}
     }
-    if !((*s).index.count > 0 as libc::c_ulong) {
+    if !((*s).index.count > 0 as u64) {
       break;
     }
   }
@@ -1892,7 +1892,7 @@ unsafe fn dec_stream_footer(mut s: *mut xz_dec) -> xz_ret {
     != ({
       let mut v: u32 = *((*s).temp.buf.as_mut_ptr().offset(4) as *mut bb__aliased_u32);
       v
-    }) as libc::c_ulong
+    }) as u64
   {
     return XZ_DATA_ERROR;
   }
@@ -1961,8 +1961,8 @@ unsafe fn dec_main(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret {
         while (*s)
           .index
           .size
-          .wrapping_add((*b).in_pos.wrapping_sub((*s).in_start))
-          & 3i32 as libc::c_ulong
+          .wrapping_add((*b).in_pos.wrapping_sub((*s).in_start) as u64)
+          & 3i32 as u64
           != 0
         {
           if (*b).in_pos == (*b).in_size {
@@ -2051,7 +2051,7 @@ unsafe fn dec_main(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret {
     }
     match current_block_65 {
       8206085343828517749 => {
-        while (*s).block.compressed & 3i32 as libc::c_ulong != 0 {
+        while (*s).block.compressed & 3i32 as u64 != 0 {
           if (*b).in_pos == (*b).in_size {
             return XZ_OK;
           }
@@ -2117,13 +2117,13 @@ unsafe fn dec_block(mut s: *mut xz_dec, mut b: *mut xz_buf) -> xz_ret {
     {
       return XZ_DATA_ERROR;
     }
-    (*s).block.hash.unpadded = ((*s).block.hash.unpadded as libc::c_ulong)
-      .wrapping_add(((*s).block_header.size as libc::c_ulong).wrapping_add((*s).block.compressed))
+    (*s).block.hash.unpadded = ((*s).block.hash.unpadded as u64)
+      .wrapping_add(((*s).block_header.size as u64).wrapping_add((*s).block.compressed))
       as vli_type as vli_type;
     (*s).block.hash.unpadded = ((*s).block.hash.unpadded as libc::c_ulong)
       .wrapping_add(check_sizes[(*s).check_type as usize] as libc::c_ulong)
       as vli_type as vli_type;
-    (*s).block.hash.uncompressed = ((*s).block.hash.uncompressed as libc::c_ulong)
+    (*s).block.hash.uncompressed = ((*s).block.hash.uncompressed as u64)
       .wrapping_add((*s).block.uncompressed) as vli_type
       as vli_type;
     (*s).block.hash.crc32 = xz_crc32(
