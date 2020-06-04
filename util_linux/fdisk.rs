@@ -28,7 +28,7 @@ extern "C" {
   fn memset(_: *mut libc::c_void, _: libc::c_int, _: libc::c_ulong) -> *mut libc::c_void;
 
   #[no_mangle]
-  fn lseek(__fd: libc::c_int, __offset: off64_t, __whence: libc::c_int) -> off64_t;
+  fn lseek(__fd: libc::c_int, __offset: off_t, __whence: libc::c_int) -> off_t;
 
   #[no_mangle]
   static mut optind: libc::c_int;
@@ -447,7 +447,7 @@ unsafe fn bb_BLKGETSIZE_sectors(mut fd: libc::c_int) -> sector_t {
   {
     /* Got bytes, convert to 512 byte sectors */
     v64 >>= 9i32;
-    if v64 != v64 as sector_t as libc::c_ulong {
+    if v64 != v64 as sector_t as u64 {
       current_block = 4774164167766903100;
     } else {
       current_block = 15619007995458559411;
@@ -464,12 +464,12 @@ unsafe fn bb_BLKGETSIZE_sectors(mut fd: libc::c_int) -> sector_t {
     ) != 0
     {
       /* Perhaps this is a disk image */
-      let mut sz: off_t = lseek(fd, 0 as off64_t, 2i32);
+      let mut sz: off_t = lseek(fd, 0 as off_t, 2i32);
       longsectors = 0 as libc::c_ulong;
       if sz > 0 {
         longsectors = (sz as uoff_t).wrapping_div((*ptr_to_globals).sector_size as libc::c_ulong)
       }
-      lseek(fd, 0 as off64_t, 0);
+      lseek(fd, 0 as off_t, 0);
     }
     if ::std::mem::size_of::<libc::c_long>() as libc::c_ulong
       > ::std::mem::size_of::<sector_t>() as libc::c_ulong
@@ -580,7 +580,7 @@ unsafe fn fdisk_fatal(mut why: *const libc::c_char) {
   crate::libbb::verror_msg::bb_error_msg_and_die(why, (*ptr_to_globals).disk_device);
 }
 unsafe fn seek_sector(mut secno: sector_t) {
-  let mut off: u64 = (secno as u64).wrapping_mul((*ptr_to_globals).sector_size as libc::c_ulong);
+  let mut off: u64 = (secno as u64).wrapping_mul((*ptr_to_globals).sector_size as u64);
   if off
     > (if -1i32 as off_t > 0 {
       -1i32 as off_t
@@ -589,7 +589,7 @@ unsafe fn seek_sector(mut secno: sector_t) {
         << (::std::mem::size_of::<off_t>() as libc::c_ulong)
           .wrapping_mul(8i32 as libc::c_ulong)
           .wrapping_sub(1i32 as libc::c_ulong))
-    }) as libc::c_ulong
+    }) as u64
     || lseek(dev_fd as libc::c_int, off as off_t, 0) == -1i32 as off_t
   {
     fdisk_fatal(b"can\'t seek on %s\x00" as *const u8 as *const libc::c_char);
@@ -1324,7 +1324,7 @@ unsafe fn get_boot(mut what: action) -> libc::c_int {
       );
     }
     crate::libbb::xfuncs_printf::xmove_fd(fd, dev_fd as libc::c_int);
-    if 512i32 as libc::c_long
+    if 512i32 as i64
       != crate::libbb::read::full_read(
         dev_fd as libc::c_int,
         (*ptr_to_globals).MBRbuffer.as_mut_ptr() as *mut libc::c_void,

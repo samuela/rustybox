@@ -392,7 +392,7 @@ unsafe fn read_block(mut nr: libc::c_uint, mut addr: *mut libc::c_void) {
     (BLOCK_SIZE as libc::c_int as libc::c_uint).wrapping_mul(nr) as off_t,
     0,
   );
-  if BLOCK_SIZE as libc::c_int as libc::c_long
+  if BLOCK_SIZE as libc::c_int as i64
     != crate::libbb::read::full_read(
       dev_fd as libc::c_int,
       addr,
@@ -437,7 +437,7 @@ unsafe fn write_block(mut nr: libc::c_uint, mut addr: *mut libc::c_void) {
     (BLOCK_SIZE as libc::c_int as libc::c_uint).wrapping_mul(nr) as off_t,
     0,
   );
-  if BLOCK_SIZE as libc::c_int as libc::c_long
+  if BLOCK_SIZE as libc::c_int as i64
     != crate::libbb::full_write::full_write(
       dev_fd as libc::c_int,
       addr,
@@ -595,7 +595,7 @@ unsafe fn write_superblock() {
       ((*ptr_to_globals).u.Super.s_state as libc::c_int & !(MINIX_ERROR_FS as libc::c_int)) as u16
   }
   crate::libbb::xfuncs_printf::xlseek(dev_fd as libc::c_int, BLOCK_SIZE as libc::c_int as off_t, 0);
-  if BLOCK_SIZE as libc::c_int as libc::c_long
+  if BLOCK_SIZE as libc::c_int as i64
     != crate::libbb::full_write::full_write(
       dev_fd as libc::c_int,
       (*ptr_to_globals).u.superblock_buffer.as_mut_ptr() as *const libc::c_void,
@@ -773,7 +773,7 @@ unsafe fn read_tables() {
     (*ptr_to_globals).u.Super.s_nzones as libc::c_uint
   } as size_t) as *mut libc::c_uchar;
   if ((*ptr_to_globals).u.Super.s_imap_blocks as libc::c_uint)
-    .wrapping_mul(BLOCK_SIZE as libc::c_int as libc::c_uint) as libc::c_long
+    .wrapping_mul(BLOCK_SIZE as libc::c_int as libc::c_uint) as i64
     != read(
       dev_fd as libc::c_int,
       (*ptr_to_globals).inode_map as *mut libc::c_void,
@@ -784,7 +784,7 @@ unsafe fn read_tables() {
     die(b"can\'t read inode map\x00" as *const u8 as *const libc::c_char);
   }
   if ((*ptr_to_globals).u.Super.s_zmap_blocks as libc::c_uint)
-    .wrapping_mul(BLOCK_SIZE as libc::c_int as libc::c_uint) as libc::c_long
+    .wrapping_mul(BLOCK_SIZE as libc::c_int as libc::c_uint) as i64
     != read(
       dev_fd as libc::c_int,
       (*ptr_to_globals).zone_map as *mut libc::c_void,
@@ -802,7 +802,7 @@ unsafe fn read_tables() {
       MINIX1_INODES_PER_BLOCK as libc::c_int
     }) as libc::c_uint,
   )
-  .wrapping_mul(BLOCK_SIZE as libc::c_int as libc::c_uint) as libc::c_long
+  .wrapping_mul(BLOCK_SIZE as libc::c_int as libc::c_uint) as i64
     != read(
       dev_fd as libc::c_int,
       (*ptr_to_globals).inode_buffer as *mut libc::c_void,

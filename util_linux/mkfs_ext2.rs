@@ -645,8 +645,8 @@ pub unsafe fn mkfs_ext2_main(
     );
   }
   nreserved = (nblocks as u64)
-    .wrapping_mul(reserved_percent as libc::c_ulong)
-    .wrapping_div(100i32 as libc::c_ulong) as u32;
+    .wrapping_mul(reserved_percent as u64)
+    .wrapping_div(100i32 as u64) as u32;
   // N.B. killing e2fsprogs feature! Unused blocks don't account in calculations
   nblocks_full = nblocks;
   loop
@@ -672,8 +672,8 @@ pub unsafe fn mkfs_ext2_main(
     let mut remainder: u32 = 0;
     // ninodes is the max number of inodes in this filesystem
     let mut ninodes: u32 = (nblocks_full as u64)
-      .wrapping_mul(blocksize as libc::c_ulong)
-      .wrapping_div(bytes_per_inode as libc::c_ulong) as u32;
+      .wrapping_mul(blocksize as u64)
+      .wrapping_div(bytes_per_inode as u64) as u32;
     if ninodes < (11i32 + 1i32) as libc::c_uint {
       ninodes = (11i32 + 1i32) as u32
     }
@@ -1191,7 +1191,7 @@ pub unsafe fn mkfs_ext2_main(
       } else {
         BUG_wrong_field_size() as libc::c_uint
       }) as u64)
-        .wrapping_mul(blocksize as libc::c_ulong),
+        .wrapping_mul(blocksize as u64),
       buf as *mut libc::c_void,
       blocksize,
     );
@@ -1254,21 +1254,21 @@ pub unsafe fn mkfs_ext2_main(
       // N.B. 1024 byte blocks are special
       PUT(
         (pos as u64)
-          .wrapping_mul(blocksize as libc::c_ulong)
+          .wrapping_mul(blocksize as u64)
           .wrapping_add(
             (if 0 as libc::c_uint == i && 1024i32 as libc::c_uint != blocksize {
               1024i32
             } else {
               0
-            }) as libc::c_ulong,
+            }) as u64,
           ),
         sb as *mut libc::c_void,
         1024i32 as u32,
       );
       PUT(
         (pos as u64)
-          .wrapping_mul(blocksize as libc::c_ulong)
-          .wrapping_add(blocksize as libc::c_ulong),
+          .wrapping_mul(blocksize as u64)
+          .wrapping_add(blocksize as u64),
         gd as *mut libc::c_void,
         group_desc_blocks.wrapping_mul(blocksize),
       );
@@ -1294,7 +1294,7 @@ pub unsafe fn mkfs_ext2_main(
           BUG_wrong_field_size() as libc::c_uint
         })
         .wrapping_add(n) as u64)
-          .wrapping_mul(blocksize as libc::c_ulong),
+          .wrapping_mul(blocksize as u64),
         buf as *mut libc::c_void,
         blocksize,
       );
@@ -1419,8 +1419,8 @@ pub unsafe fn mkfs_ext2_main(
     } else {
       BUG_wrong_field_size() as libc::c_uint
     }) as u64)
-      .wrapping_mul(blocksize as libc::c_ulong)
-      .wrapping_add(((2i32 - 1i32) as libc::c_uint).wrapping_mul(inodesize) as libc::c_ulong),
+      .wrapping_mul(blocksize as u64)
+      .wrapping_add(((2i32 - 1i32) as libc::c_uint).wrapping_mul(inodesize) as u64),
     buf as *mut libc::c_void,
     inodesize,
   );
@@ -1484,8 +1484,8 @@ pub unsafe fn mkfs_ext2_main(
     } else {
       BUG_wrong_field_size() as libc::c_uint
     }) as u64)
-      .wrapping_mul(blocksize as libc::c_ulong)
-      .wrapping_add(((11i32 - 1i32) as libc::c_uint).wrapping_mul(inodesize) as libc::c_ulong),
+      .wrapping_mul(blocksize as u64)
+      .wrapping_add(((11i32 - 1i32) as libc::c_uint).wrapping_mul(inodesize) as u64),
     buf as *mut libc::c_void,
     inodesize,
   );
@@ -1513,7 +1513,7 @@ pub unsafe fn mkfs_ext2_main(
       .wrapping_add(inode_table_blocks)
       .wrapping_add(1i32 as libc::c_uint)
       .wrapping_add(i) as u64)
-        .wrapping_mul(blocksize as libc::c_ulong),
+        .wrapping_mul(blocksize as u64),
       buf as *mut libc::c_void,
       blocksize,
     );
@@ -1603,7 +1603,7 @@ pub unsafe fn mkfs_ext2_main(
     })
     .wrapping_add(inode_table_blocks)
     .wrapping_add(1i32 as libc::c_uint) as u64)
-      .wrapping_mul(blocksize as libc::c_ulong),
+      .wrapping_mul(blocksize as u64),
     buf as *mut libc::c_void,
     blocksize,
   );
@@ -1680,7 +1680,7 @@ pub unsafe fn mkfs_ext2_main(
     })
     .wrapping_add(inode_table_blocks)
     .wrapping_add(0i32 as libc::c_uint) as u64)
-      .wrapping_mul(blocksize as libc::c_ulong),
+      .wrapping_mul(blocksize as u64),
     buf as *mut libc::c_void,
     blocksize,
   );

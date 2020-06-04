@@ -359,7 +359,7 @@ pub unsafe fn readprofile_main(
           indx
             .wrapping_sub(1i32 as libc::c_ulong)
             .wrapping_mul(step as libc::c_ulong)
-            .wrapping_add(add0),
+            .wrapping_add(add0 as libc::c_ulong),
           *buf.offset(indx as isize),
         );
       }

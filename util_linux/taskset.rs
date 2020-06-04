@@ -189,7 +189,7 @@ pub unsafe fn taskset_main(
     pid = xatoul_range(
       pid_str,
       1i32 as libc::c_ulong,
-      ((9223372036854775807i64 as libc::c_ulong)
+      ((9223372036854775807i64 as u64)
         .wrapping_mul(2u64)
         .wrapping_add(1u64) as pid_t as libc::c_uint
         >> 1i32) as libc::c_ulong,

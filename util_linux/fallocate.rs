@@ -5,7 +5,7 @@ extern "C" {
   #[no_mangle]
   static mut optind: libc::c_int;
   #[no_mangle]
-  fn posix_fallocate(__fd: libc::c_int, __offset: off64_t, __len: off64_t) -> libc::c_int;
+  fn posix_fallocate(__fd: libc::c_int, __offset: off_t, __len: off_t) -> libc::c_int;
 
   #[no_mangle]
   static kmg_i_suffixes: [suffix_mult; 0];

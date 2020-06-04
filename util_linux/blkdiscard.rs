@@ -81,7 +81,7 @@ pub unsafe fn blkdiscard_main(
       &mut length as *mut u64 as *mut libc::c_void,
       b"BLKGETSIZE64\x00" as *const u8 as *const libc::c_char,
     );
-    length = (length as libc::c_ulong).wrapping_sub(offset) as u64 as u64
+    length = (length as u64).wrapping_sub(offset) as u64 as u64
   }
   range[0] = offset;
   range[1] = length;

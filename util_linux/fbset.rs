@@ -156,10 +156,10 @@ unsafe fn xatou32(mut numstr: *const libc::c_char) -> u32 {
   {
     return crate::libbb::xatonum::xatou(numstr);
   }
-  if (9223372036854775807i64 as libc::c_ulong)
+  if (9223372036854775807i64 as u64)
     .wrapping_mul(2u64)
     .wrapping_add(1u64)
-    == 0xffffffffu32 as libc::c_ulong
+    == 0xffffffffu32 as u64
   {
     return xatoul(numstr) as u32;
   }
