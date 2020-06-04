@@ -470,7 +470,7 @@ pub unsafe fn d6_send_raw_packet(
       result = sendto(
         fd,
         &mut packet as *mut ip6_udp_d6_packet as *const libc::c_void,
-        48.wrapping_add(d6_pkt_size as size_t),
+        (48 as size_t).wrapping_add(d6_pkt_size as size_t),
         0,
         __CONST_SOCKADDR_ARG {
           __sockaddr__: &mut dest_sll as *mut sockaddr_ll as *mut sockaddr,

@@ -1538,7 +1538,7 @@ unsafe extern "C" fn undo_push(
     }
     // If this deletion empties text[], strip the newline. When the buffer becomes
     // zero-length, a newline is added back, which requires this to compensate.
-    undo_entry = crate::libbb::xfuncs_printf::xzalloc(17u64.wrapping_add(length as libc::c_ulong))
+    undo_entry = crate::libbb::xfuncs_printf::xzalloc((17 as libc::c_ulong).wrapping_add(length as libc::c_ulong))
       as *mut undo_object;
     memcpy(
       (*undo_entry).undo_text.as_mut_ptr() as *mut libc::c_void,

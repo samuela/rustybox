@@ -862,8 +862,8 @@ unsafe fn topmem_sort(mut a: *mut libc::c_char, mut b: *mut libc::c_char) -> lib
   let mut l: mem_t = 0;
   let mut r: mem_t = 0;
   n = 24u64.wrapping_add(
-    ((*ptr_to_globals).sort_field as libc::c_ulong)
-      .wrapping_mul(::std::mem::size_of::<mem_t>() as libc::c_ulong),
+    ((*ptr_to_globals).sort_field as u64)
+      .wrapping_mul(::std::mem::size_of::<mem_t>() as u64),
   ) as libc::c_int;
   l = *(a.offset(n as isize) as *mut mem_t);
   r = *(b.offset(n as isize) as *mut mem_t);

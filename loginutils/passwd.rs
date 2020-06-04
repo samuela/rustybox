@@ -322,7 +322,7 @@ pub unsafe fn passwd_main(mut _argc: libc::c_int, mut argv: *mut *mut libc::c_ch
   }
   match current_block {
     11763295167351361500 => {
-      rlimit_fsize.rlim_max = (512i64 * 30000i32 as libc::c_long) as rlim_t;
+      rlimit_fsize.rlim_max = (512i64 * 30000i32 as i64) as rlim_t;
       rlimit_fsize.rlim_cur = rlimit_fsize.rlim_max;
       setrlimit(RLIMIT_FSIZE, &mut rlimit_fsize);
       crate::libbb::signals::bb_signals(

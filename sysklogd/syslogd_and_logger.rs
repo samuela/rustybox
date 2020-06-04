@@ -1149,9 +1149,9 @@ unsafe fn ipcsyslog_init() {
     0,
     (*ptr_to_globals).shm_size as libc::c_ulong,
   );
-  (*(*ptr_to_globals).shbuf).size = ((*ptr_to_globals).shm_size as libc::c_ulong)
+  (*(*ptr_to_globals).shbuf).size = ((*ptr_to_globals).shm_size as u64)
     .wrapping_sub(8u64)
-    .wrapping_sub(1i32 as libc::c_ulong) as i32;
+    .wrapping_sub(1i32 as u64) as i32;
   /*G.shbuf->tail = 0;*/
   /* we'll trust the OS to set initial semval to 0 (let's hope) */
   (*ptr_to_globals).s_semid = semget(KEY_ID as libc::c_int, 2i32, 0o1000i32 | 0o2000i32 | 1023i32);

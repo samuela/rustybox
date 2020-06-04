@@ -675,7 +675,7 @@ unsafe extern "C" fn if_fetch(mut ife: *mut interface) -> libc::c_int {
   memset(
     &mut (*ife).metric as *mut libc::c_int as *mut libc::c_void,
     0,
-    136
+    (136 as libc::c_ulong)
       .wrapping_sub(40)
       .wrapping_add(::std::mem::size_of::<[libc::c_char; 32]>() as libc::c_ulong),
   );

@@ -8333,7 +8333,7 @@ unsafe extern "C" fn copyfunc(mut n: *mut node) -> *mut funcnode {
   let mut f: *mut funcnode = std::ptr::null_mut();
   let mut blocksize: size_t = 0;
   /*funcstringsize = 0;*/
-  blocksize = 8u64.wrapping_add(calcsize(0i32, n) as libc::c_ulong);
+  blocksize = (8 as size_t).wrapping_add(calcsize(0i32, n) as size_t);
   f = crate::libbb::xfuncs_printf::xzalloc(blocksize) as *mut funcnode;
   funcblock = (f as *mut libc::c_char).offset(8) as *mut libc::c_void;
   funcstring_end = (f as *mut libc::c_char).offset(blocksize as isize);

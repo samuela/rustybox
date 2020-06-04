@@ -31,8 +31,8 @@ unsafe fn bb_strtoul(
   mut arg: *const libc::c_char,
   mut endp: *mut *mut libc::c_char,
   mut base: libc::c_int,
-) -> libc::c_ulong {
-  return crate::libbb::bb_strtonum::bb_strtoull(arg, endp, base) as libc::c_ulong;
+) -> u64 {
+  return crate::libbb::bb_strtonum::bb_strtoull(arg, endp, base) as u64;
 }
 /*
  * Copyright (c) 2017 Denys Vlasenko <vda.linux@googlemail.com>
