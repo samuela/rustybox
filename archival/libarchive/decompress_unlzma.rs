@@ -248,7 +248,7 @@ pub unsafe fn unpack_lzma_stream(mut xstate: *mut transformer_state_t) -> libc::
   }
   rc = rc_init((*xstate).src_fd);
   's_151: loop {
-    if (!(global_pos.wrapping_add(buffer_pos) as u64) < header.dst_size) {
+    if !((global_pos.wrapping_add(buffer_pos) as u64) < header.dst_size) {
       current_block = 2884634553824165030;
       break;
     }
