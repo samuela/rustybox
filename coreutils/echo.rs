@@ -1,6 +1,6 @@
 use std::env;
 
-pub fn main() {
+pub fn echo_main() {
     let mut output = String::new();
     let args: Vec<String> = env::args().collect();
     let options: [String; 1] = ["--n".to_owned()];
