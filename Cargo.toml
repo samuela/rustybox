@@ -21,6 +21,7 @@ c2rust-asm-casts = "0.1"
 libc = "0.2"
 lazy_static = "1.4"
 getopts = "0.2"
+regex = "1"
 
 [dev-dependencies]
 duct = "0.13.3"
