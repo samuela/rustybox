@@ -5,6 +5,8 @@ version = "0.0.0"
 publish = false
 edition = "2018"
 autobins = false
+license = "GPL-2.0-only"
+license-file = "LICENSE"
 
 # [lib]
 # name = "rustybox-lib"
